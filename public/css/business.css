@@ -1,0 +1,247 @@
+ .contact-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+    }
+
+        .contact-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .contact-modal-content {
+            background-color: #f4f4f4;
+            color: #000;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+            padding: 3.5rem 1.25rem;
+            border-radius: 2rem 2rem 0 0;
+            width: 100%;
+            max-width: 500px;
+        }
+
+      
+
+          
+        @media (min-width: 1024px) {
+             .contact-modal-overlay {
+                align-items: center;
+             }
+            .contact-modal-content {
+                padding: 3rem;
+                border-radius: 2rem;
+                max-width: 550px;
+            }
+
+        }
+
+
+        .contact-modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 2rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #333; /* Can be themed */
+        }
+       
+        
+ 
+ .contacts-card{
+            background: linear-gradient(to right, #f3f5f60f, #fbfbfb21);
+            border-radius: 1em;
+            border: 1px solid #0000001c;
+            position: relative;
+            line-height: 1;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .7em;
+            padding: 2em 1.25em;
+        }
+                
+              
+        @media (min-width: 1024px) {
+         
+            .contacts-card{
+                padding: 2em 2em;
+            }
+
+        }
+
+
+        .contacts-card-buttons{
+            position: absolute;
+            bottom: -10px;
+            display: flex;
+            width: 100%;
+            left: 0;
+            right: 0;
+            justify-content: flex-end;
+            gap: .5em
+        }
+      
+        .contacts-card-buttons .call-button {
+            background-color:rgb(45, 205, 82); 
+            color: #fff!important;
+        }
+
+        .contacts-card-buttons .whatsapp-button {
+            background-color: #25d366; 
+            color: #fff!important;
+        }
+
+        .contacts-card-buttons .email-button {
+            background-color:rgb(15, 107, 255); 
+            color: #fff!important;
+        }
+
+        .contacts-card-buttons .copy-button { 
+            background-color: #6c757d; 
+            color: #fff!important;
+        }
+
+
+
+
+
+        
+
+         #order-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-in-out;
+            padding: 1.5em 1em;
+            background: linear-gradient(to top, black, #0000);
+        }
+
+        #order-bar.active {
+            transform: translateY(0);
+        }
+
+
+        
+
+
+         .payments-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+    }
+
+        .payments-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .payments-modal-content {
+            background-color: #f4f4f4;
+            color: #000;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+            padding: 3.5rem 1.25rem;
+            border-radius: 2rem 2rem 0 0;
+            width: 100%;
+            max-width: 500px;
+        }
+
+      
+
+          
+        @media (min-width: 1024px) {
+             .payments-modal-overlay {
+                align-items: center;
+             }
+            .payments-modal-content {
+                padding: 3rem;
+                border-radius: 2rem;
+                max-width: 550px;
+            }
+
+        }
+
+
+        .payments-modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 2rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #333; /* Can be themed */
+        }
+       
+        
+
+         .payments-card{
+            background: linear-gradient(to right, #f3f5f6, #fbfbfb);
+            border-radius: 1em;
+            border: 1px solid #0000001c;
+            position: relative;
+            line-height: 1;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .7em;
+            padding: 2em 1.25em;
+        }
+                
+              
+        @media (min-width: 1024px) {
+         
+            .payments-card{
+                padding: 2em 2em;
+            }
+
+        }
+
+           .payments-card-buttons{
+            position: absolute;
+            bottom: -10px;
+            display: flex;
+            width: 100%;
+            left: 0;
+            right: 0;
+            justify-content: flex-end;
+            gap: .5em
+        }

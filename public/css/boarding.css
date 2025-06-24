@@ -1,0 +1,331 @@
+  
+  .container-app{
+    height: 100vh!important;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: .5em;
+    height: 100vh;
+    max-height: 100vh!important;
+    background: rgb(37, 37, 37);
+    padding: .5rem .8rem 8em .8rem!important;
+    color: #fff;
+    position: relative;
+}
+
+  @media (min-width: 576px) {
+ 
+    .container-app{
+        gap: 1em;
+        max-width: 380px;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 25px;
+    }
+  
+}
+
+
+#qrcode {
+    max-width:100%;
+    max-height:100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    background: #fff;
+   }
+   
+   #qrcode img{
+    border: 0px solid white;
+    max-height: 250px;
+   }
+
+  video#preview{
+      margin: 0!important;
+      padding: 0!important;
+      max-height: 500px;
+      width: 100%;
+  }
+
+
+  video.fullvideo{
+    width: 100vw!important;
+    border-radius: 15px;
+    height: 100%!important;
+    transform: scale(1)!important;
+    opacity: 1!important;
+  }
+
+
+
+.scan-app-panel-message{
+    border-radius: 10px;
+    background: rgba(255,255,255,.2);  }
+
+  .scan-app-video{
+    flex: 1;
+  }
+
+  .container-app video{
+    width: 100%!important;
+    border-radius: 15px;
+    opacity: .9;
+    max-height: 80%;
+  }
+
+  .container-app .app-panel{
+    border-radius: 1em;
+    background: rgba(255,255,255,.1);
+    padding: 1em;
+    color: #fff;
+  }
+
+
+  .container-app .app-footer{
+    border-radius: 1.75em 1.75em 0 0;
+    background: rgb(107, 107, 107);
+    padding: .95em .35em;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .container-app .app-footer ul{
+     display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .container-app .app-footer ul li{
+    flex: 1;
+  }
+
+.container-app .app-footer ul li a{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .35em;
+    color: rgb(200, 200, 200)!important;
+    font-size: .65em;
+  }
+
+  .container-app .app-footer ul li a img{
+    width: 30px;
+    height: 30px;
+    filter: invert(1);
+    opacity: .6;
+  }
+
+
+
+
+  .scan-app-counter{
+    border-radius: 1em;
+    display: flex;
+    align-items: stretch;
+    font-size: .9em;
+    gap: .5em;
+  }
+
+  .scan-app-counter > div{
+      flex: 1;
+      max-width: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 1em;
+      padding: .8em;
+      line-height: .9;
+      background: #504c4c;
+      color: #ffffff;
+  }
+
+  .scan-app-counter .scans-counter-label{
+    font-size: .8em;
+    text-transform: uppercase;
+    font-family: "FontBold";
+  }
+
+  .scan-app-counter .scans-counter-value{
+    font-size: 3em;
+  }
+ 
+  .container-video-scan{
+      position: relative!important;
+      min-height: 60vh;
+      max-height: 80vh;
+      width: 100%;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      background: rgb(0, 0, 0) !important;
+      border: 1px solid #fff;
+  }
+
+  .container-video-scan-content{
+    position: absolute!important;
+    top: 0;
+    left: 0;
+    width: 100%;
+   height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .container-video-scan-content.hide{
+  display: none;
+  }
+
+  .container-video-scan.fullvideo{
+      position: fixed!important;
+      top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+   background: #000!important;
+   z-index: 100;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+}
+
+.container-video-scan-content img{
+   width: 150px;
+   height: 150px;
+    opacity: 0.9;
+    filter: invert(1);
+    
+  
+}
+
+  .container-video-scan-content .app-instruction{
+    display: flex;
+    flex-direction: column;
+    align-items: centers;
+    justify-content: center;
+    opacity: 0.7;
+    font-family: FontBold;
+    gap: 1em;
+    font-size: 0.9em!important; 
+    margin-bottom: .5em!important;
+  }
+
+.scan-app-promo-list{
+    color: #000;
+    border-radius: 1em;
+    display: flex;
+    flex-direction: column;
+    gap: .35em;
+}
+
+.scan-app-promo-list .promo-card{
+    background: linear-gradient(90deg, rgb(218, 218, 215), rgb(197, 197, 197));
+    color: #000;
+    padding: .85em .85em;
+    border-radius: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5em;
+    line-height: .9;
+}
+
+
+
+.scan-app-promo-list .promo-card .promo-title{
+   font-size: .9em;
+   font-family: "FontBold";
+   flex-shrink: 1;
+   margin-bottom: .35em;
+}
+
+.scan-app-promo-list .promo-card .promo-desc{
+    font-size: .75em;
+    flex-grow: 1;
+}
+
+.scan-app-promo-list .promo-card .promo-dates{
+    max-width: 110px;
+    font-size: .65em;
+}
+
+.scan-app-promo-list .promo-card .promo-date-start{
+    
+}
+
+.scan-app-promo-list .promo-card .promo-date-end{
+    
+}
+
+.list-card-authorizations{
+
+}
+
+.list-card-authorizations .card-authorization{
+  background: linear-gradient(to right, aliceblue, rgb(187, 223, 255));
+  color: #000;
+  border-radius: 1em;
+  padding: .5em .5em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: .5em;
+}
+
+
+
+.list-card-authorizations .authorization-date{
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 0px solid #000;
+  text-align: center;
+  border-radius: 1em;
+  padding: .35em;
+  font-size: .65em;
+}
+
+.list-card-authorizations .authorization-date > span:first-child{
+  font-size: 1.8em;
+}
+
+.list-card-authorizations .authorization-card{
+  display: flex;
+  flex-direction: column;
+}
+
+.list-card-authorizations .card-holder{
+  font-size: 1em;
+  font-family: "FontBold";
+}
+
+.list-card-authorizations .card-number{
+  font-size: .9em;
+  width: 100%;
+}
+
+.list-card-authorizations .club-points{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: .5em;
+  background: rgb(251, 228, 123);
+  padding: .5em;
+  border-radius: 1em;
+  font-family: "FontBold";
+}
+
+.list-card-authorizations .club-points > span:first-child{
+  font-size: 2em;
+}
+

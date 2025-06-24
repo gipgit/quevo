@@ -1,0 +1,634 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model booking {
+  booking_id           Int                    @id @default(autoincrement())
+  booking_reference    String?                @unique @db.VarChar(50)
+  customer_email       String?                @db.VarChar(255)
+  customer_user_id     Int
+  customer_name        String?                @db.VarChar(50)
+  customer_phone       String?                @db.VarChar(50)
+  business_id          Int
+  service_id           Int
+  staff_id             Int?
+  booking_date         DateTime               @db.Date
+  booking_time_start   DateTime               @db.Time(6)
+  booking_time_end     DateTime               @db.Time(6)
+  status               booking_status_type    @default(pending)
+  customer_notes       String?
+  internal_notes       String?                @db.VarChar(200)
+  total_price          Decimal?               @db.Decimal(10, 2)
+  date_created         DateTime?              @default(now()) @db.Timestamp(6)
+  date_updated         DateTime?              @default(now()) @db.Timestamp(6)
+  business             business               @relation(fields: [business_id], references: [business_id])
+  usercustomer         usercustomer           @relation(fields: [customer_user_id], references: [user_id])
+  bookingservice       bookingservice         @relation(fields: [service_id], references: [service_id])
+  bookingmessage       bookingmessage[]
+  bookingstatushistory bookingstatushistory[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model bookingavailability {
+  availability_id     Int       @id @default(autoincrement())
+  business_id         Int
+  staff_id            Int?
+  day_of_week         Int       @db.SmallInt
+  time_start          DateTime  @db.Time(6)
+  time_end            DateTime  @db.Time(6)
+  is_recurring        Boolean?  @default(true)
+  date_effective_from DateTime? @db.Date
+  date_effective_to   DateTime? @db.Date
+  date_created        DateTime? @default(now()) @db.Timestamp(6)
+  date_updated        DateTime? @default(now()) @db.Timestamp(6)
+  business            business  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+}
+
+model bookingcategory {
+  category_id    Int              @id @default(autoincrement())
+  category_name  String           @unique @db.VarChar(255)
+  description    String?
+  bookingservice bookingservice[]
+}
+
+model bookingmessage {
+  message_id   Int       @id @default(autoincrement())
+  booking_id   Int
+  message_text String
+  sent_at      DateTime? @default(now()) @db.Timestamp(6)
+  sender_type  String?   @default("manager") @db.VarChar(20)
+  booking      booking   @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade)
+}
+
+model bookingservice {
+  service_id       Int              @id @default(autoincrement())
+  business_id      Int
+  category_id      Int?
+  service_name     String           @db.VarChar(255)
+  description      String?
+  duration_minutes Int?
+  price            Decimal?         @db.Decimal(10, 2)
+  is_active        Boolean?         @default(true)
+  date_created     DateTime?        @default(now()) @db.Timestamp(6)
+  date_updated     DateTime?        @default(now()) @db.Timestamp(6)
+  booking          booking[]
+  business         business         @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  bookingcategory  bookingcategory? @relation(fields: [category_id], references: [category_id])
+}
+
+model bookingstatushistory {
+  status_history_id Int                 @id @default(autoincrement())
+  booking_id        Int
+  old_status        booking_status_type
+  new_status        booking_status_type
+  changed_at        DateTime?           @default(now()) @db.Timestamp(6)
+  changed_by        String?             @db.VarChar(50)
+  booking           booking             @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade)
+}
+
+model business {
+  business_id                    Int                              @id @default(autoincrement())
+  manager_id                     Int
+  business_urlname               String                           @unique @db.VarChar(30)
+  business_urlname_last_edited   DateTime?                        @db.Timestamp(6)
+  business_name                  String                           @db.VarChar(50)
+  business_country               String                           @db.VarChar(50)
+  business_region                String                           @db.VarChar(50)
+  business_city                  String                           @db.VarChar(50)
+  business_address               String                           @db.VarChar(80)
+  business_phone                 String?                          @db.VarChar(20)
+  business_email                 String?                          @db.VarChar(255)
+  business_descr                 String?
+  date_created                   DateTime?                        @default(now()) @db.Timestamp(6)
+  company_name                   String                           @db.VarChar(50)
+  company_country                String                           @db.VarChar(50)
+  company_region                 String                           @db.VarChar(50)
+  company_city                   String                           @db.VarChar(50)
+  company_address                String                           @db.VarChar(80)
+  company_vat                    String                           @db.VarChar(50)
+  company_contact                String                           @db.VarChar(50)
+  sponsored                      Boolean?                         @default(false)
+  sponsored_level                Int?                             @default(0)
+  business_public_uuid           String?                          @unique @db.VarChar(36)
+  business_img_profile           String?                          @db.VarChar(255)
+  business_img_cover             String?                          @db.VarChar(255)
+  booking                        booking[]
+  bookingavailability            bookingavailability[]
+  bookingservice                 bookingservice[]
+  usermanager                    usermanager                      @relation(fields: [manager_id], references: [user_id], onDelete: Cascade)
+  businessad                     businessad[]
+  businesscategory               businesscategory[]
+  businesslink                   businesslink[]
+  businesspaymentmethod          businesspaymentmethod[]
+  businesspoints                 businesspoints[]
+  businessprofilesettings        businessprofilesettings?
+  businessreward                 businessreward[]
+  businesssponsorship            businesssponsorship[]
+  cardscan                       cardscan[]
+  cardscanauthorized             cardscanauthorized[]
+  menucategory                   menucategory[]
+  menuitem                       menuitem[]
+  promo                          promo[]
+  surveyquestionprebuiltfavorite surveyquestionprebuiltfavorite[]
+}
+
+model businessad {
+  business_id      Int
+  sponsored_level  Int?      @default(0)
+  date_start       DateTime  @db.Date
+  date_end         DateTime? @db.Date
+  business_urlname String?   @db.VarChar(30)
+  business_name    String?   @db.VarChar(50)
+  business_country String?   @db.VarChar(50)
+  business_region  String?   @db.VarChar(50)
+  business_city    String?   @db.VarChar(50)
+  business_address String?   @db.VarChar(50)
+  business         business  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+
+  @@id([business_id, date_start])
+}
+
+model businesscategory {
+  business_id Int
+  category_id Int
+  business    business @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  category    category @relation(fields: [category_id], references: [category_id], onDelete: Cascade)
+
+  @@id([business_id, category_id])
+}
+
+model businesslink {
+  business_link_id Int      @id @default(autoincrement())
+  business_id      Int
+  link_type        String   @db.VarChar(20)
+  link_url         String   @db.VarChar(255)
+  business         business @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+
+  @@unique([business_id, link_type])
+}
+
+model businesspaymentmethod {
+  business_payment_method_id Int           @id @default(autoincrement())
+  business_id                Int
+  payment_method_id          Int
+  method_details_json        Json?
+  business                   business      @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  paymentmethod              paymentmethod @relation(fields: [payment_method_id], references: [payment_method_id], onDelete: Cascade)
+
+  @@unique([business_id, payment_method_id])
+}
+
+model businesspoints {
+  card_number  String       @db.VarChar(20)
+  business_id  Int
+  points       Int          @default(0)
+  last_updated DateTime?    @default(now()) @db.Timestamp(6)
+  business     business     @relation(fields: [business_id], references: [business_id], onDelete: NoAction, onUpdate: NoAction)
+  customercard customercard @relation(fields: [card_number], references: [card_number], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([card_number, business_id])
+}
+
+model businessprofilesettings {
+  business_id            Int       @id
+  default_page           String?   @default("home") @db.VarChar(50)
+  theme_color_background String?   @default("#FFFFFF") @db.VarChar(7)
+  theme_color_text       String?   @default("#000000") @db.VarChar(7)
+  theme_color_button     String?   @default("#000000") @db.VarChar(7)
+  theme_font             String?   @default("1") @db.VarChar(2)
+  show_address           Boolean?  @default(true)
+  show_website           Boolean?  @default(true)
+  show_socials           Boolean?  @default(true)
+  show_btn_booking       Boolean?  @default(true)
+  show_btn_payments      Boolean?  @default(true)
+  show_btn_review        Boolean?  @default(true)
+  show_btn_phone         Boolean?  @default(true)
+  show_btn_email         Boolean?  @default(true)
+  show_btn_order         Boolean?  @default(false)
+  last_updated           DateTime? @default(now()) @db.Timestamp(6)
+  business               business  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model businessreward {
+  business_id        Int
+  reward_id          Int       @id @default(autoincrement())
+  reward_description String    @db.VarChar(255)
+  required_points    Int
+  reward_start_date  DateTime? @db.Date
+  reward_end_date    DateTime? @db.Date
+  quantity_available Int?
+  business           business  @relation(fields: [business_id], references: [business_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model businesssponsorship {
+  business_id            Int
+  sponsorship_date_start DateTime                            @db.Date
+  sponsorship_date_end   DateTime                            @db.Date
+  sponsorship_level      business_sponsorship_level
+  ad_content             String?
+  payment_amount         Decimal                             @db.Decimal(10, 2)
+  payment_status         business_sponsorship_payment_status @default(pending)
+  transaction_id         String?                             @db.VarChar(255)
+  business               business                            @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+
+  @@id([business_id, sponsorship_date_start])
+}
+
+model cardscan {
+  card_number      String       @db.VarChar(20)
+  business_id      Int
+  datetime_scanned DateTime     @default(now()) @db.Timestamp(6)
+  datetime_created DateTime?    @default(now()) @db.Timestamp(6)
+  business         business     @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  customercard     customercard @relation(fields: [card_number], references: [card_number], onDelete: Cascade)
+
+  @@id([card_number, business_id, datetime_scanned])
+}
+
+model cardscanauthorized {
+  card_number         String       @db.VarChar(50)
+  business_id         Int
+  datetime_authorized DateTime     @default(now()) @db.Timestamp(6)
+  datetime_created    DateTime?    @default(now()) @db.Timestamp(6)
+  promo_authorized    Int?
+  business            business     @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  customercard        customercard @relation(fields: [card_number], references: [card_number], onDelete: Cascade)
+  promo               promo?       @relation(fields: [promo_authorized], references: [promo_id], onDelete: Cascade)
+
+  @@id([card_number, business_id, datetime_authorized])
+}
+
+model category {
+  category_id          Int                @id @default(autoincrement())
+  category_name        String             @unique @db.VarChar(50)
+  category_description String?
+  businesscategory     businesscategory[]
+}
+
+model customercard {
+  card_number        String               @id @db.VarChar(20)
+  user_id            Int
+  date_issue         DateTime?            @default(now()) @db.Timestamp(6)
+  status             customer_card_status @default(active)
+  points             Int                  @default(0)
+  businesspoints     businesspoints[]
+  cardscan           cardscan[]
+  cardscanauthorized cardscanauthorized[]
+  usercustomer       usercustomer         @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+}
+
+model menucategory {
+  category_id   Int        @id @default(autoincrement())
+  business_id   Int
+  category_name String     @db.VarChar(50)
+  display_order Int?       @default(0)
+  date_created  DateTime?  @default(now()) @db.Timestamp(6)
+  date_update   DateTime?  @default(now()) @db.Timestamp(6)
+  business      business   @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  menuitem      menuitem[]
+
+  @@unique([business_id, category_name])
+}
+
+model menuitem {
+  item_id           Int                 @id @default(autoincrement())
+  business_id       Int
+  category_id       Int?
+  item_name         String              @db.VarChar(100)
+  display_order     Int?                @default(0)
+  item_notes        String?             @db.VarChar(100)
+  item_description  String?             @db.VarChar(200)
+  price             Decimal             @db.Decimal(10, 2)
+  price_type        String?             @default("fixed") @db.VarChar(50)
+  price_unit        String?             @db.VarChar(255)
+  is_available      Boolean?            @default(true)
+  image_available   Boolean?            @default(false)
+  image_url         String?             @db.VarChar(155)
+  date_created      DateTime?           @default(now()) @db.Timestamp(6)
+  date_update       DateTime?           @default(now()) @db.Timestamp(6)
+  business          business            @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  menucategory      menucategory?       @relation(fields: [category_id], references: [category_id])
+  menuitemvariation menuitemvariation[]
+}
+
+model menuitemvariation {
+  variation_id           Int       @id @default(autoincrement())
+  item_id                Int
+  variation_name         String    @db.VarChar(100)
+  additional_description String?
+  price_override         Decimal?  @db.Decimal(10, 2)
+  price_modifier         Decimal?  @db.Decimal(10, 2)
+  is_available           Boolean?  @default(true)
+  display_order          Int?      @default(0)
+  date_created           DateTime? @default(now()) @db.Timestamp(6)
+  date_update            DateTime? @default(now()) @db.Timestamp(6)
+  menuitem               menuitem  @relation(fields: [item_id], references: [item_id], onDelete: Cascade)
+
+  @@unique([item_id, variation_name])
+}
+
+model paymentmethod {
+  payment_method_id     Int                     @id @default(autoincrement())
+  method_name           String                  @unique @db.VarChar(50)
+  businesspaymentmethod businesspaymentmethod[]
+}
+
+model promo {
+  promo_id               Int                      @id @default(autoincrement())
+  business_id            Int
+  promo_title            String                   @db.VarChar(50)
+  promo_text_full        String                   @db.VarChar(100)
+  promo_conditions       String?                  @db.VarChar(255)
+  date_start             DateTime?                @db.Date
+  date_end               DateTime?                @db.Date
+  date_created           DateTime?                @default(now()) @db.Timestamp(6)
+  date_update            DateTime?                @default(now()) @db.Timestamp(6)
+  promo_nickname         String                   @db.VarChar(30)
+  locked                 Boolean                  @default(false)
+  cardscanauthorized     cardscanauthorized[]
+  business               business                 @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  promochallenge         promochallenge[]
+  usercustomerredemption usercustomerredemption[]
+  userguest              userguest[]
+  userguestredemption    userguestredemption[]
+}
+
+model promochallenge {
+  challenge_id                 Int                            @id @default(autoincrement())
+  promo_id                     Int
+  challenge_type               promo_challenge_type
+  title                        String                         @db.VarChar(255)
+  description                  String?
+  challenge_order              Int
+  challenge_data               Json?
+  is_active                    Boolean?                       @default(true)
+  date_created                 DateTime?                      @default(now()) @db.Timestamp(6)
+  date_updated                 DateTime?                      @default(now()) @db.Timestamp(6)
+  promo                        promo                          @relation(fields: [promo_id], references: [promo_id], onDelete: Cascade, onUpdate: NoAction)
+  surveydefinition             surveydefinition?
+  userchallengecompletion      userchallengecompletion[]
+  userguestchallengecompletion userguestchallengecompletion[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model surveyanswer {
+  answer_id            Int                         @id @default(autoincrement())
+  survey_definition_id Int
+  question_id          Int
+  question_type        survey_answer_question_type
+  user_id              Int?
+  guest_id             String?                     @db.VarChar(128)
+  answer_text          String?
+  answered_at          DateTime?                   @default(now()) @db.Timestamp(6)
+  userguest            userguest?                  @relation(fields: [guest_id], references: [guest_id], onDelete: Cascade, onUpdate: NoAction)
+  surveydefinition     surveydefinition            @relation(fields: [survey_definition_id], references: [survey_definition_id], onDelete: Cascade, onUpdate: NoAction)
+  usercustomer         usercustomer?               @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([survey_definition_id, question_id, question_type], map: "idx_answer_survey_question")
+  @@index([user_id, guest_id], map: "idx_answer_user_guest")
+}
+
+model surveydefinition {
+  survey_definition_id     Int                        @id @default(autoincrement())
+  promo_challenge_id       Int                        @unique
+  is_active                Boolean?                   @default(true)
+  date_created             DateTime?                  @default(now()) @db.Timestamp(6)
+  surveyanswer             surveyanswer[]
+  promochallenge           promochallenge             @relation(fields: [promo_challenge_id], references: [challenge_id], onDelete: Cascade, onUpdate: NoAction)
+  surveydefinitionquestion surveydefinitionquestion[]
+}
+
+model surveydefinitionquestion {
+  survey_definition_question_id Int                         @id @default(autoincrement())
+  survey_definition_id          Int
+  question_id                   Int
+  question_source               survey_question_source_type
+  question_order                Int
+  surveydefinition              surveydefinition            @relation(fields: [survey_definition_id], references: [survey_definition_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([survey_definition_id, question_id, question_source])
+}
+
+model surveyquestionbusiness {
+  question_id     Int                         @id @default(autoincrement())
+  business_id     Int
+  question_text   String
+  question_format survey_question_format_type
+  options_data    Json?
+  is_active       Boolean?                    @default(true)
+  date_created    DateTime?                   @default(now()) @db.Timestamp(6)
+  date_updated    DateTime?                   @default(now()) @db.Timestamp(6)
+}
+
+model surveyquestionprebuilt {
+  question_prebuilt_id           Int                              @id @default(autoincrement())
+  question_text                  String
+  question_format                survey_question_format_type
+  options_data                   Json?
+  is_active                      Boolean?                         @default(true)
+  date_created                   DateTime?                        @default(now()) @db.Timestamp(6)
+  date_updated                   DateTime?                        @default(now()) @db.Timestamp(6)
+  surveyquestionprebuiltfavorite surveyquestionprebuiltfavorite[]
+}
+
+model surveyquestionprebuiltfavorite {
+  business_id            Int
+  question_prebuilt_id   Int
+  date_favorited         DateTime?              @default(now()) @db.Timestamp(6)
+  business               business               @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  surveyquestionprebuilt surveyquestionprebuilt @relation(fields: [question_prebuilt_id], references: [question_prebuilt_id], onDelete: Cascade)
+
+  @@id([business_id, question_prebuilt_id])
+}
+
+model userchallengecompletion {
+  user_challenge_completion_id Int            @id @default(autoincrement())
+  user_id                      Int
+  challenge_id                 Int
+  completion_date              DateTime?      @default(now()) @db.Timestamp(6)
+  promochallenge               promochallenge @relation(fields: [challenge_id], references: [challenge_id], onDelete: Cascade, onUpdate: NoAction)
+  usercustomer                 usercustomer   @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, challenge_id])
+}
+
+model usercustomer {
+  user_id                 Int                         @id @default(autoincrement())
+  name_first              String                      @db.VarChar(50)
+  name_last               String                      @db.VarChar(50)
+  email                   String                      @unique @db.VarChar(255)
+  date_created            DateTime?                   @default(now()) @db.Timestamp(6)
+  active                  user_customer_active_status @default(inactive)
+  birth_date              DateTime?                   @db.Date
+  birth_country           String?                     @db.VarChar(50)
+  gender                  user_gender_type?
+  residence_country       String?                     @db.VarChar(50)
+  residence_region        String?                     @db.VarChar(50)
+  residence_city          String?                     @db.VarChar(50)
+  password                String                      @db.VarChar(255)
+  token_activation        String?                     @unique @db.VarChar(255)
+  user_public_uuid        String?                     @unique @db.VarChar(36)
+  booking                 booking[]
+  customercard            customercard[]
+  surveyanswer            surveyanswer[]
+  userchallengecompletion userchallengecompletion[]
+  usercustomerredemption  usercustomerredemption[]
+}
+
+model usercustomerredemption {
+  redemption_id          Int          @id @default(autoincrement())
+  redemption_token       String       @unique @db.VarChar(36)
+  user_id                Int
+  promo_id               Int
+  qr_content_data        String?
+  date_issued            DateTime?    @default(now()) @db.Timestamp(6)
+  date_expires           DateTime?    @db.Timestamp(6)
+  is_redeemed            Boolean?     @default(false)
+  date_redeemed          DateTime?    @db.Timestamp(6)
+  redeemed_by_manager_id Int?
+  promo                  promo        @relation(fields: [promo_id], references: [promo_id], onDelete: NoAction, onUpdate: NoAction)
+  usermanager            usermanager? @relation(fields: [redeemed_by_manager_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  usercustomer           usercustomer @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model userguest {
+  guest_id                     String                         @id @db.VarChar(128)
+  session_id                   String?                        @unique @db.VarChar(255)
+  date_created                 DateTime?                      @default(now()) @db.Timestamp(6)
+  last_active                  DateTime?                      @default(now()) @db.Timestamp(6)
+  email                        String?                        @db.VarChar(255)
+  promo_unlocked_promo_id      Int?
+  surveyanswer                 surveyanswer[]
+  promo                        promo?                         @relation(fields: [promo_unlocked_promo_id], references: [promo_id], onDelete: NoAction, onUpdate: NoAction)
+  userguestchallengecompletion userguestchallengecompletion[]
+  userguestredemption          userguestredemption[]
+}
+
+model userguestchallengecompletion {
+  guest_challenge_completion_id Int            @id @default(autoincrement())
+  guest_id                      String         @db.VarChar(128)
+  challenge_id                  Int
+  completion_date               DateTime?      @default(now()) @db.Timestamp(6)
+  data_submitted                String?
+  promochallenge                promochallenge @relation(fields: [challenge_id], references: [challenge_id], onDelete: NoAction, onUpdate: NoAction)
+  userguest                     userguest      @relation(fields: [guest_id], references: [guest_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([guest_id, challenge_id])
+}
+
+model userguestredemption {
+  redemption_id          Int          @id @default(autoincrement())
+  redemption_token       String       @unique @db.VarChar(36)
+  email                  String?      @db.VarChar(255)
+  guest_id               String       @db.VarChar(36)
+  promo_id               Int
+  qr_content_data        String?
+  date_issued            DateTime?    @default(now()) @db.Timestamp(6)
+  date_expires           DateTime?    @db.Timestamp(6)
+  is_redeemed            Boolean?     @default(false)
+  date_redeemed          DateTime?    @db.Timestamp(6)
+  redeemed_by_manager_id Int?
+  userguest              userguest    @relation(fields: [guest_id], references: [guest_id], onDelete: NoAction, onUpdate: NoAction)
+  promo                  promo        @relation(fields: [promo_id], references: [promo_id], onDelete: NoAction, onUpdate: NoAction)
+  usermanager            usermanager? @relation(fields: [redeemed_by_manager_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model usermanager {
+  user_id                Int                              @id @default(autoincrement())
+  name_first             String                           @db.VarChar(50)
+  name_last              String                           @db.VarChar(50)
+  email                  String                           @unique @db.VarChar(255)
+  date_created           DateTime?                        @default(now()) @db.Timestamp(6)
+  active                 user_customer_active_status      @default(inactive)
+  verification_status    user_manager_verification_status @default(waiting)
+  twenter_plan           String?                          @default("FREE") @db.VarChar(50)
+  birth_date             DateTime?                        @db.Date
+  birth_country          String?                          @db.VarChar(50)
+  gender                 user_gender_type?
+  residence_country      String?                          @db.VarChar(50)
+  residence_region       String?                          @db.VarChar(50)
+  residence_city         String?                          @db.VarChar(50)
+  residence_address      String?                          @db.VarChar(80)
+  tel                    String?                          @db.VarChar(20)
+  password               String                           @db.VarChar(255)
+  token_activation       String?                          @unique @db.VarChar(255)
+  business               business[]
+  usercustomerredemption usercustomerredemption[]
+  userguestredemption    userguestredemption[]
+}
+
+enum booking_status_type {
+  pending
+  confirmed
+  cancelled
+  completed
+  rescheduled
+}
+
+enum business_sponsorship_level {
+  basic
+  premium
+}
+
+enum business_sponsorship_payment_status {
+  pending
+  paid
+  failed
+}
+
+enum customer_card_status {
+  active
+  inactive
+  blocked
+}
+
+enum promo_challenge_type {
+  password
+  survey
+  social
+}
+
+enum survey_answer_question_type {
+  business
+  prebuilt
+}
+
+enum survey_question_format_type {
+  text
+  number
+  radio
+  checkbox
+  rating
+}
+
+enum survey_question_source_type {
+  custom
+  prebuilt
+}
+
+enum user_customer_active_status {
+  active
+  inactive
+  blocked
+}
+
+enum user_gender_type {
+  M
+  F
+  Other
+  Prefer_Not_To_Say @map("Prefer Not To Say")
+}
+
+enum user_manager_verification_status {
+  waiting
+  in_progress
+  verified
+  negative
+}
