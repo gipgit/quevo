@@ -1,3 +1,138 @@
+/* src/app/(main)/[business_urlname]/business.css */
+
+
+
+body {
+  font-family: var(--theme-font);
+  /* The background color of the body is largely dictated by the root div in page.js */
+  /* Ensure no conflicting body background styles here */
+}
+
+/* Base styles for elements that should inherit theme colors */
+/* Apply --theme-color-background directly to profile-header */
+.profile-header,
+#topbar-club,
+.category-pills-container {
+  background-color: var(--theme-color-background) !important;
+  color: var(--theme-color-text) !important;
+}
+
+/* Apply the new lighter background color to profile-main */
+.profile-main {
+  background-color: var(--lighter-theme-color-background) !important;
+  color: var(--theme-color-text) !important;
+}
+
+
+/* Specific background and text color for dark/light modes, inherited from body--dark-bg/body--light-bg */
+.body--dark-bg {
+  color: #fff; /* or another light color */
+}
+
+.body--light-bg {
+  color: #000; /* or another dark color */
+}
+
+.font-semibold,
+.font-bold,
+.button {
+  font-family: inherit !important;
+  font-weight: 700 !important;
+}
+
+.profile-cover::before {
+  background: var(--theme-color-background);
+}
+
+/* Gradients for header based on background mode */
+.body--dark-bg .profile-header {
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0) 35%);
+}
+.body--light-bg .profile-header {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0) 35%);
+}
+
+.btn-bg-settings {
+  background: var(--theme-color-button) !important;
+  color: #fff !important; /* Assuming buttons always have white text */
+}
+
+/* Image filter adjustments for dark/light modes */
+.body--dark-bg .profile-header .contact-button img,
+.body--dark-bg .profile-club-links-list .link-icon-wrapper img {
+  filter: invert(1) brightness(1.5);
+}
+.body--light-bg .profile-header .contact-button img,
+.body--light-bg .profile-club-links-list .link-icon-wrapper img {
+  filter: invert(0);
+}
+.body--dark-bg .profile-header .button img {
+  filter: invert(0);
+}
+.body--light-bg .profile-header .button img {
+  filter: invert(0);
+}
+.body--dark-bg .profile-club-links-list .link-icon-wrapper {
+  background-color: rgba(255, 255, 255, 0); /* Still transparent */
+}
+.body--light-bg .profile-club-links-list .link-icon-wrapper {
+  background-color: rgba(0, 0, 0, 0); /* Still transparent */
+}
+
+/* Borders and backgrounds using CSS variables */
+.profile-nav-sections {
+  border-color: var(--profile-nav-border-color);
+}
+.profile-nav-sections .section-active {
+  border-color: var(--section-active-border-color);
+}
+.category-pills-section {
+  background: var(--theme-color-background);
+}
+.category-pills-section .category-pills-wrapper {
+  background: var(--category-pills-section-background);
+}
+.category-pill {
+  border-color: var(--category-pill-border-color);
+  color: var(--theme-color-text);
+}
+.category-pill.active {
+  background-color: var(--theme-color-button);
+  color: #fff;
+  border-color: var(--theme-color-button);
+}
+.accordion-item {
+  border-color: var(--accordion-item-border-color);
+}
+.card-item {
+  background-color: var(--card-item-background);
+  border-color: rgba(var(--theme-color-text-rgb), var(--border-color-opacity)) !important; /* Use RGB variable here */
+  box-shadow: var(--card-item-box-shadow);
+}
+.link-look {
+  color: var(--theme-color-text);
+}
+.link-look a {
+  color: inherit;
+  text-decoration: underline;
+}
+.btn-google-review {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 9999px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+.btn-google-review img {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+}
+
  .contact-modal-overlay {
             position: fixed;
             top: 0;
@@ -21,7 +156,7 @@
 
         .contact-modal-content {
             background-color: #f4f4f4;
-            color: #000;
+            color: #000!important;
             text-align: center;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             position: relative;

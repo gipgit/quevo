@@ -2,7 +2,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { hexToRgb } from '../src/utils/colors'; // Make sure this utility is available or add it if not
+import { hexToRgb } from '../lib/utils/colors'; // Make sure this utility is available or add it if not
 
 const BusinessProfileHeader = ({
   businessData,
