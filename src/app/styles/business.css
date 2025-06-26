@@ -1,15 +1,19 @@
 /* src/app/(main)/[business_urlname]/business.css */
 
 
-
-body {
-  font-family: var(--theme-font);
-  /* The background color of the body is largely dictated by the root div in page.js */
-  /* Ensure no conflicting body background styles here */
+.profile-content-wrapper,
+.profile-content-wrapper h1,
+.profile-content-wrapper h2,
+.profile-content-wrapper h3,
+.profile-content-wrapper h4,
+.profile-content-wrapper h5,
+.profile-content-wrapper h6,
+.profile-content-wrapper button,
+.profile-content-wrapper .button {
+    font-family: var(--theme-font);
 }
 
-/* Base styles for elements that should inherit theme colors */
-/* Apply --theme-color-background directly to profile-header */
+
 .profile-header,
 #topbar-club,
 .category-pills-container {
@@ -80,10 +84,10 @@ body {
 }
 
 /* Borders and backgrounds using CSS variables */
-.profile-nav-sections {
+.profile-nav-sections ul{
   border-color: var(--profile-nav-border-color);
 }
-.profile-nav-sections .section-active {
+.profile-nav-sections li a.section-active {
   border-color: var(--section-active-border-color);
 }
 .category-pills-section {
@@ -106,7 +110,7 @@ body {
 }
 .card-item {
   background-color: var(--card-item-background);
-  border-color: rgba(var(--theme-color-text-rgb), var(--border-color-opacity)) !important; /* Use RGB variable here */
+  border-color: rgba(var(--theme-color-text-rgb), var(--border-color-opacity)) !important;
   box-shadow: var(--card-item-box-shadow);
 }
 .link-look {
@@ -117,7 +121,6 @@ body {
   text-decoration: underline;
 }
 .btn-google-review {
-  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -132,6 +135,85 @@ body {
   height: 24px;
   vertical-align: middle;
 }
+
+ 
+.profile-cover{
+    background: #666;
+    overflow: hidden;
+    position: relative;
+}
+.profile-cover::before{
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+    webkit-mask: linear-gradient(180deg,rgba(255, 255, 255, 0), #27272700,rgba(0, 0, 0, 0.16) 95%, #000);
+    mask: linear-gradient(180deg,rgba(255, 255, 255, 0), #27272700,rgba(0, 0, 0, 0.16) 70%, #000);
+}
+.profile-cover.cover-lg{
+             height: 165px;
+             overflow: hidden;
+}
+
+
+.profile-cover img{
+             width: 100%;
+             height: 100%;
+             object-fit: cover;
+             object-position: center;
+             overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+       .profile-cover{
+              height: 150px;
+              overflow: hidden;
+       }
+       .profile-cover.cover-lg{
+             height: 235px;
+             overflow: hidden;
+        }
+}
+
+.profile-nav-sections{
+    border-bottom: 2px solid;
+    border-color: #00000030;
+}
+
+.profile-nav-sections a{
+    max-width: 150px;
+    text-align: center;
+    padding: .5em 1.5em;
+    border-bottom: 3px solid transparent;
+    opacity: .6;
+    font-size: .9em;
+}
+
+.profile-nav-sections ul li a.section-active{
+    border-bottom: 3px solid;
+    background: linear-gradient(to top, #00000013, #00000000);
+    opacity: 1;
+}
+
+
+@media (min-width: 1024px) {
+    .profile-nav-sections{
+        margin-top: 1.5em;
+    }
+
+    .profile-nav-sections a{
+        max-width: 250px;
+    }
+
+    .profile-nav-sections .section-active{
+        border-bottom: 3px solid;
+    }
+
+}
+
 
  .contact-modal-overlay {
             position: fixed;
@@ -200,56 +282,27 @@ body {
  
  .contacts-card{
             background: linear-gradient(to right, #f3f5f60f, #fbfbfb21);
-            border-radius: 1em;
             border: 1px solid #0000001c;
-            position: relative;
-            line-height: 1;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: .7em;
-            padding: 2em 1.25em;
         }
-                
-              
-        @media (min-width: 1024px) {
-         
-            .contacts-card{
-                padding: 2em 2em;
-            }
-
-        }
-
-
-        .contacts-card-buttons{
-            position: absolute;
-            bottom: -10px;
-            display: flex;
-            width: 100%;
-            left: 0;
-            right: 0;
-            justify-content: flex-end;
-            gap: .5em
-        }
+  
       
-        .contacts-card-buttons .call-button {
-            background-color:rgb(45, 205, 82); 
+        .contacts-card .call-button {
+            background-color:rgb(45, 205, 82)!important; 
             color: #fff!important;
         }
 
-        .contacts-card-buttons .whatsapp-button {
-            background-color: #25d366; 
+        .contacts-card .whatsapp-button {
+            background-color: #25d366!important; 
             color: #fff!important;
         }
 
-        .contacts-card-buttons .email-button {
-            background-color:rgb(15, 107, 255); 
+        .contacts-card .email-button {
+            background-color:rgb(15, 107, 255)!important; 
             color: #fff!important;
         }
 
-        .contacts-card-buttons .copy-button { 
-            background-color: #6c757d; 
+        .contacts-card .copy-button { 
+            background-color: #6c757d!important; 
             color: #fff!important;
         }
 
@@ -348,35 +401,9 @@ body {
         
 
          .payments-card{
-            background: linear-gradient(to right, #f3f5f6, #fbfbfb);
+             background: linear-gradient(to right, #f3f5f60f, #fbfbfb21);
             border-radius: 1em;
             border: 1px solid #0000001c;
-            position: relative;
-            line-height: 1;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: .7em;
-            padding: 2em 1.25em;
         }
                 
               
-        @media (min-width: 1024px) {
-         
-            .payments-card{
-                padding: 2em 2em;
-            }
-
-        }
-
-           .payments-card-buttons{
-            position: absolute;
-            bottom: -10px;
-            display: flex;
-            width: 100%;
-            left: 0;
-            right: 0;
-            justify-content: flex-end;
-            gap: .5em
-        }

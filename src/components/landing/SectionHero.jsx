@@ -71,9 +71,7 @@ export default function SectionHero() {
     return (
         <section className="hero-parallax-section" ref={heroSectionRef}>
             <div className="hero-parallax-content">
-                <h3 className="leading-none mb-2 hero-text" ref={addToHeroTextRefs}>
-                    Migliora l'esperienza per i tuoi clienti
-                </h3>
+                <h2 className="leading-none mb-2 hero-text" ref={addToHeroTextRefs}>Migliora l'esperienza per i tuoi clienti</h2>
                 <p className="text-lg mb-2 hero-text" ref={addToHeroTextRefs}>
                     Migliora l'esperienza per i tuoi clienti
                 </p>

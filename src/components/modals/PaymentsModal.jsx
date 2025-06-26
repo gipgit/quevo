@@ -39,7 +39,7 @@ export default function PaymentsModal({
     // Apply the 'active' class based on the 'show' prop
     <div
       id="paymentsModalOverlay"
-      className={`payments-modal-overlay fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 ${show ? 'active' : ''}`}
+      className={`payments-modal-overlay fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center ${show ? 'active' : ''}`}
       onClick={onClose}
     >
       <div
@@ -63,7 +63,7 @@ export default function PaymentsModal({
         {businessPaymentMethods && businessPaymentMethods.length > 0 ? (
           <div className="flex flex-col gap-3">
             {businessPaymentMethods.map((method, index) => (
-              <div key={index} className="payments-card p-4 border rounded-lg flex items-center gap-4" style={{ borderColor: themeColorText + '30' }}>
+              <div key={index} className="payments-card relative py-8 px-4 border rounded-lg flex items-center gap-4" style={{ borderColor: themeColorText + '30' }}>
                 <div>
                   {method.icon && (
                     <Image src={method.icon} width={24} height={24} alt={`${method.label} Icon`} />
@@ -103,7 +103,7 @@ export default function PaymentsModal({
                   )}
                 </div>
 
-                <div className="payments-card-buttons flex flex-col gap-2">
+                <div className="absolute bottom-0 -mb-[10px] right-0 w-full flex flex-row justify-center gap-2">
                   {method.label === 'PayPal' && method.details.paypal_email && (
                     <>
                       <a

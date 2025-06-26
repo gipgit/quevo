@@ -1,4 +1,6 @@
 // components/MenuCategoryAccordion.js
+'use client';
+
 import React, { useState } from 'react';
 import MenuItemCard from './MenuItemCard'; // Assuming MenuItemCard is in the same directory
 

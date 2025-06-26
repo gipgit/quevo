@@ -50,7 +50,7 @@ export default function SectionFeatures() {
             <p className="text-center text-sm text-black-600 mb-7">Gestisci tutto comodamente dal tuo smartphone.</p>
 
             <div className="feature-cards-section">
-                <div className="d-flex flex-col md:flex-row gap-4 lg:gap-2 items-start justify-between">
+                <div className="flex flex-col md:flex-row gap-4 lg:gap-2 items-start justify-between">
                     {/* Feature Card 1 */}
                     <div className="flex-1 py-2 px-2 rounded-lg text-center animated-element">
                         <div className="feature-cards-image">

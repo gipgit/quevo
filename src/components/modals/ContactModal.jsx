@@ -56,7 +56,7 @@ export default function ContactModal({
     // Apply the 'active' class based on the 'show' prop
     <div
       id="contactModalOverlay"
-      className={`contact-modal-overlay fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 ${show ? 'active' : ''}`}
+      className={`contact-modal-overlay fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center ${show ? 'active' : ''}`}
       onClick={onClose}
     >
       <div
@@ -76,7 +76,7 @@ export default function ContactModal({
         </button>
 
         {businessSettings.show_btn_phone && (
-          <div id="phoneContactSection" className="contacts-card p-4 border rounded-lg mb-4 flex items-center gap-4" style={{ borderColor: themeColorText + '30' }}>
+          <div id="phoneContactSection" className="contacts-card relative py-8 px-4 border rounded-lg mb-4 flex items-center gap-4" style={{ borderColor: themeColorText + '30' }}>
             <div>
               <Image src="/icons/iconsax/phone.svg" width={24} height={24} alt="Phone" />
             </div>
@@ -87,7 +87,7 @@ export default function ContactModal({
                 <p className="text-sm" style={{ color: themeColorText + 'A0' }}>Telefono non disponibile.</p>
               )}
             </div>
-            <div className="contacts-card-buttons flex flex-col gap-2">
+            <div className="absolute bottom-0 -mb-[10px] right-0 w-full flex flex-row justify-end gap-2">
               {businessData.business_phone && (
                 <>
                   <a
@@ -113,7 +113,7 @@ export default function ContactModal({
         )}
 
         {businessSettings.show_btn_email && (
-          <div id="emailContactSection" className="contacts-card p-4 border rounded-lg mb-4 flex items-center gap-4" style={{ borderColor: themeColorText + '30' }}>
+          <div id="emailContactSection" className="contacts-card relative py-8 px-4 border rounded-lg mb-4 flex items-center gap-4" style={{ borderColor: themeColorText + '30' }}>
             <div>
               <Image src="/icons/iconsax/email.svg" width={24} height={24} alt="Email" />
             </div>
@@ -124,7 +124,7 @@ export default function ContactModal({
                 <p className="text-sm" style={{ color: themeColorText + 'A0' }}>Email non disponibile.</p>
               )}
             </div>
-            <div className="contacts-card-buttons flex flex-col gap-2">
+            <div className="absolute bottom-0 -mb-[10px] right-0 w-full flex flex-row justify-end gap-2">
               {businessData.business_email && (
                 <>
                   <a

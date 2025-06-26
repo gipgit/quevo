@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 
-
 :root {
    --color-main: #1d1d1d;
    --color-secondary: #f72c65;
@@ -1399,48 +1398,7 @@ img.img-icon.icon-lg{
 
 
 
- 
-.profile-cover{
-    background: #666;
-    height: 105px;
-    overflow: hidden;
-    position: relative;
-}
-.profile-cover::before{
-    content: "";
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    left: 0;
-    bottom: 0;
-    z-index: 1;
-    webkit-mask: linear-gradient(180deg,rgba(255, 255, 255, 0), #27272700,rgba(0, 0, 0, 0.16) 95%, #000);
-    mask: linear-gradient(180deg,rgba(255, 255, 255, 0), #27272700,rgba(0, 0, 0, 0.16) 70%, #000);
-}
-.profile-cover.cover-lg{
-             height: 165px;
-             overflow: hidden;
-}
 
-
-.profile-cover img{
-             width: 100%;
-             height: 100%;
-             object-fit: cover;
-             object-position: center;
-             overflow: hidden;
-}
-
-@media (min-width: 1024px) {
-       .profile-cover{
-              height: 150px;
-              overflow: hidden;
-       }
-       .profile-cover.cover-lg{
-             height: 235px;
-             overflow: hidden;
-        }
-}
 
 
 .promo-cover, .promo-challenge-cover, .booking-cover{
@@ -2548,7 +2506,6 @@ span.club-url-preview{
     border-radius: 50%!important;
     display: flex;
     width: fit-content;
-    position: relative;
     z-index: 1;
 }
 .container-profile-pic img{
@@ -3360,46 +3317,6 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.438);
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.25);
 }
 
-.profile-nav-sections{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-bottom: 2px solid;
-    border-color: #00000030;
-    margin-top: 1.25em;
-}
-
-.profile-nav-sections a{
-    max-width: 150px;
-    text-align: center;
-    padding: .5em 1.5em;
-    border-bottom: 3px solid transparent;
-    opacity: .6;
-    font-size: .9em;
-}
-
-.profile-nav-sections .section-active{
-    border-bottom: 3px solid;
-    background: linear-gradient(to top, #00000013, #00000000);
-    border-color: #212121;
-    opacity: 1;
-}
-
-
-@media (min-width: 1024px) {
-    .profile-nav-sections{
-        margin-top: 1.5em;
-    }
-
-    .profile-nav-sections a{
-        max-width: 250px;
-    }
-
-    .profile-nav-sections .section-active{
-        border-bottom: 4px solid;
-    }
-
-}
 
 
 
@@ -3451,3 +3368,5 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.438);
         }
 
 
+
+        

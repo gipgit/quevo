@@ -64,9 +64,9 @@ export default function SectionSmartphone() {
 
     return (
         <section id="smartphone-section" className="container-x-md py-8 lg:py-8 bg-gradient-purple text-white" ref={mouseTrackingAreaRef}>
-            <div className="d-flex flex-col md:flex-row items-center justify-between gap-2 lg:gap-8">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-2 lg:gap-8">
                 <div className="text-center lg:text-left p-5">
-                    <h4>Sempre più funzionalità nel tuo QR</h4>
+                    <h2>Sempre più funzionalità nel tuo QR</h2>
                     <p className="lg:text-md mt-2 mb-5">Usa comodamente il tuo sito eliminando i costi di realizzazione, dominio e hosting, noi intanto continuiamo a migliorare le funzionalità e creare di nuove su misura per te.</p>
                 </div>
                 <div>
