@@ -130,7 +130,7 @@ export default async function BusinessProfileLayout({
         const processedBusinessLinks = businessData.businesslink.map(link => {
             return {
                 ...link,
-                label: link.link_name || link.link_type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+                label: link.link_type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
                 icon: getSocialIconPath(link.link_type)
             };
         });
