@@ -1,5 +1,5 @@
 // src/app/(main)/layout.tsx
-/
+
 import '@/app/styles/landing.css';
 import '@/app/styles/main.css';
 
