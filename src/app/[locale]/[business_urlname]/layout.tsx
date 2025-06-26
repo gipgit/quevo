@@ -2,7 +2,7 @@
 
 
 import { notFound } from 'next/navigation';
-import prisma from '@/lib/prisma'; 
+import prisma from '@/lib/prisma';
 import { BusinessProfileClientWrapper } from './BusinessProfileClientWrapper';
 
 import '@/app/styles/business.css';
@@ -89,7 +89,7 @@ export default async function BusinessProfileLayout({
         notFound();
     }
 
-    let data: any = null; 
+    let data: any = null;
     let error: string | null = null;
 
     try {
@@ -113,7 +113,7 @@ export default async function BusinessProfileLayout({
             notFound();
         }
 
-      
+
         const defaultSettings = {
             default_page: 'home', theme_color_background: '#FFFFFF', theme_color_text: '#000000', theme_color_button: '#000000', theme_font: '1', show_address: true, show_website: true, show_socials: true, show_btn_booking: true, show_btn_payments: true, show_btn_review: true, show_btn_phone: true, show_btn_email: true, show_btn_order: false,
         };
@@ -123,7 +123,7 @@ export default async function BusinessProfileLayout({
         } : defaultSettings;
 
         const selectedFont = AVAILABLE_FONTS_PUBLIC.find(
-            (font) => font.font_id === parseInt(businessSettings.theme_font, 10)
+            (font) => font.font_id === parseInt(businessSettings.theme_font ?? '1', 10)
         );
         const themeFontCssStack = selectedFont ? selectedFont.font_css_stack : 'Arial, sans-serif';
 
@@ -173,14 +173,14 @@ export default async function BusinessProfileLayout({
         });
         const sortedCategoriesWithItems = Object.values(menuItemsByCategory).filter(cat => cat.items.length > 0).sort((a: any, b: any) => { if (a.category_id === UNCAT_CATEGORY_ID) return 1; if (b.category_id === UNCAT_CATEGORY_ID) return -1; if (a.display_order !== b.display_order) { return a.display_order - b.display_order; } return a.category_name.localeCompare(b.category_name); });
 
-        const businessPromos = businessData.promo?.map((promo: any) => ({ 
+        const businessPromos = businessData.promo?.map((promo: any) => ({
             ...promo,
             date_created: promo.date_created?.toISOString() || null,
             date_start: promo.date_start?.toISOString() || null,
             date_end: promo.date_end?.toISOString() || null,
         })) || [];
 
-        const businessRewards = businessData.businessreward?.map((reward: any) => ({ 
+        const businessRewards = businessData.businessreward?.map((reward: any) => ({
             ...reward,
             reward_start_date: reward.reward_start_date?.toISOString() || null,
             reward_end_date: reward.reward_end_date?.toISOString() || null,
@@ -194,7 +194,7 @@ export default async function BusinessProfileLayout({
             businessSettings: { ...businessSettings, theme_font_css_stack: themeFontCssStack, },
             businessLinks: processedBusinessLinks,
             websiteLinkUrl: websiteLinkUrl, googleReviewLinkUrl: googleReviewLinkUrl, bookingLinkUrl: bookingLinkUrl,
-            businessPaymentMethods: businessData.businesspaymentmethod.map((bpm: any) => { 
+            businessPaymentMethods: businessData.businesspaymentmethod.map((bpm: any) => {
                 let details = {};
                 if (bpm.method_details_json) {
                     try { details = typeof bpm.method_details_json === 'string' ? JSON.parse(bpm.method_details_json) : bpm.method_details_json; } catch (e) { console.error("Error processing method_details_json:", e); }
@@ -204,10 +204,10 @@ export default async function BusinessProfileLayout({
             businessMenuItems: sortedCategoriesWithItems,
             businessPromos: businessPromos,
             businessRewards: businessRewards,
-            businessServices: [], 
+            businessServices: [],
         };
 
-       
+
         const themeColorText = data.businessSettings.theme_color_text || '#000000';
         const themeColorBackground = data.businessSettings.theme_color_background || '#FFFFFF';
         const themeColorButton = data.businessSettings.theme_color_button || '#000000';
@@ -218,7 +218,7 @@ export default async function BusinessProfileLayout({
         const lighterThemeColorBackground = lightenHexColor(themeColorBackground, 0.2);
         const isDarkBackground = parseInt(themeColorBackground.replace('#', ''), 16) < (0xFFFFFF / 2);
 
-        data.themeVariables = { 
+        data.themeVariables = {
             '--theme-font': themeFont,
             '--theme-color-background': themeColorBackground,
             '--lighter-theme-color-background': lighterThemeColorBackground,
@@ -251,7 +251,7 @@ export default async function BusinessProfileLayout({
             businessName: data.businessData?.business_name,
             businessUUID: data.businessData?.business_public_uuid,
             themeBackground: data.themeColorBackground,
-        }, null, 2)); 
+        }, null, 2));
 
 
     } catch (e: any) {
@@ -266,7 +266,7 @@ export default async function BusinessProfileLayout({
         return <div className="text-center py-10 text-red-500">Errore: {error}</div>;
     }
 
-    if (!data) { 
+    if (!data) {
         console.warn(`[${new Date().toISOString()}] Server Layout - 'data' is null/undefined unexpectedly after processing, but no explicit error for ${business_urlname}.`);
         return <div className="text-center py-10">Caricamento layout...</div>;
     }
