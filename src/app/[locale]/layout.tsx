@@ -1,52 +1,52 @@
-// src/app/layout.tsx
+// src/app/[locale]/layout.tsx
 import '../styles/global.css';
 
-import getRequestConfig from '@/i18n';
+// Import the default export (getRequestConfig setup) and also 'locales' from your i18n file
+import getRequestConfig, { locales } from '@/i18n'; // Import 'locales' here for generateStaticParams
 import { NextIntlClientProvider } from 'next-intl';
 
-import { locales, defaultLocale } from '@/i18n';
+// No need to import defaultLocale here if not directly used
+// import { defaultLocale } from '@/i18n'; // Can be removed if not directly used
 
 export const metadata = {
   title: 'Quevo App',
   description: 'Quevo Profile Application',
 };
 
+// This function tells Next.js which locales to build static pages for.
+// It uses the 'locales' array directly from your i18n.js.
 export async function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
 export default async function RootLayout({
   children,
-  params: { locale = defaultLocale }
+  params: { locale } // 'locale' is provided by Next.js based on the [locale] folder
 }: {
   children: React.ReactNode;
-  params: { locale?: string };
+  params: { locale: string }; // 'locale' will be a string (e.g., 'en', 'it')
 }) {
   console.log(`[layout.tsx] RootLayout received locale from params: ${locale}`);
 
-  // FIX: Change 'locale' to 'requestLocale' to match GetRequestConfigParams
-  const config = await getRequestConfig({ requestLocale: locale as string });
+  // THIS IS THE KEY CHANGE:
+  // Call getRequestConfig directly without passing any arguments.
+  // next-intl will internally use the 'locale' from params.
+  const config = await getRequestConfig();
 
   console.log(`[layout.tsx] getRequestConfig returned locale: ${config.locale}`);
+  console.log(`[layout.tsx] Messages for NextIntlClientProvider (keys): ${Object.keys(config.messages).join(', ')}`);
 
-  // Safely access config.messages for Object.keys
-  console.log(`[layout.tsx] Messages for NextIntlClientProvider (keys): ${Object.keys(config.messages || {}).join(', ')}`);
-
-  // Safely access config.messages.Common
-  if (config.messages && config.messages.Common) {
+  // Your existing conditional console logs for messages
+  if (config.messages.Common && config.messages.Common.products) {
     console.log(`[layout.tsx] Common.products from config: "${config.messages.Common.products}"`);
     console.log(`[layout.tsx] Common.promotions from config: "${config.messages.Common.promotions}"`);
     console.log(`[layout.tsx] Common.rewards from config: "${config.messages.Common.rewards}"`);
-  } else {
-    // Optional: Add a log if messages or Common is missing, for debugging
-    console.warn(`[layout.tsx] config.messages or config.messages.Common is missing for locale: ${config.locale}`);
   }
-
 
   return (
     <html lang={config.locale}>
       <body>
-        <NextIntlClientProvider messages={config.messages || {}}>
+        <NextIntlClientProvider messages={config.messages} locale={config.locale}>
           {children}
         </NextIntlClientProvider>
       </body>
