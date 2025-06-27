@@ -1,9 +1,10 @@
 // next.config.js
-/** @type {import('next').NextConfig} */
-const nextConfig = {
- 
-};
+const createNextIntlPlugin = require('next-intl/plugin');
 
-const withNextIntl = require('next-intl/plugin')('./src/i18n.js');
+// IMPORTANT: Pass the correct path to your new i18n/request.js file!
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.js');
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
 
 module.exports = withNextIntl(nextConfig);
