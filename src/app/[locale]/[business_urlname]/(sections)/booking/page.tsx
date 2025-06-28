@@ -1,21 +1,27 @@
 // src/app/[locale]/[business_urlname]/(sections)/booking/page.tsx
 
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server'; // <--- Import getTranslations from 'next-intl/server'
+import { getTranslations } from 'next-intl/server';
 import { getBusinessProfileLeanData, getBookingServicesData } from '@/lib/data/business-profile';
 import BookingPageClientContent from '@/components/profile/sections/booking/BookingPageClientContent';
 
-export async function generateMetadata({ params }) {
-    const t = await getTranslations('Booking'); // <--- Use await getTranslations here
+// Define the interface for the params object
+interface BookingPageParams {
+  locale: string;
+  business_urlname: string;
+}
+
+export async function generateMetadata({ params }: { params: BookingPageParams }) {
+    const t = await getTranslations('Booking');
     // Ensure the messages are available for metadata generation
     // This part might still show MISSING_MESSAGE if Booking.pageDescription is not in your en.json
     return {
-        title: t('pageTitle'), // Make sure you have 'pageTitle' in your messages/en.json
-        description: t('pageDescription'), // Make sure you have 'pageDescription' in your messages/en.json
+        title: t('pageTitle'),
+        description: t('pageDescription'),
     };
 }
 
-export default async function BookingPage({ params }) {
+export default async function BookingPage({ params }: { params: BookingPageParams }) {
     const { locale, business_urlname } = params;
 
     // Fetch business profile data first to get business.business_id
