@@ -11,7 +11,7 @@ model booking {
   booking_id           Int                    @id @default(autoincrement())
   booking_reference    String?                @unique @db.VarChar(50)
   customer_email       String?                @db.VarChar(255)
-  customer_user_id     Int
+  customer_user_id     Int?
   customer_name        String?                @db.VarChar(50)
   customer_phone       String?                @db.VarChar(50)
   business_id          Int
@@ -27,7 +27,7 @@ model booking {
   date_created         DateTime?              @default(now()) @db.Timestamp(6)
   date_updated         DateTime?              @default(now()) @db.Timestamp(6)
   business             business               @relation(fields: [business_id], references: [business_id])
-  usercustomer         usercustomer           @relation(fields: [customer_user_id], references: [user_id])
+  usercustomer         usercustomer?          @relation(fields: [customer_user_id], references: [user_id], onDelete: Restrict)
   bookingservice       bookingservice         @relation(fields: [service_id], references: [service_id])
   bookingmessage       bookingmessage[]
   bookingstatushistory bookingstatushistory[]
@@ -51,9 +51,13 @@ model bookingavailability {
 
 model bookingcategory {
   category_id    Int              @id @default(autoincrement())
-  category_name  String           @unique @db.VarChar(255)
+  business_id    Int
+  category_name  String           @db.VarChar(255)
   description    String?
+  business       business         @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
   bookingservice bookingservice[]
+
+  @@unique([business_id, category_name], map: "uq_bookingcategory_name_business")
 }
 
 model bookingmessage {
@@ -72,6 +76,7 @@ model bookingservice {
   service_name     String           @db.VarChar(255)
   description      String?
   duration_minutes Int?
+  buffer_minutes   Int?             @default(0)
   price            Decimal?         @db.Decimal(10, 2)
   is_active        Boolean?         @default(true)
   date_created     DateTime?        @default(now()) @db.Timestamp(6)
@@ -119,6 +124,7 @@ model business {
   business_img_cover             String?                          @db.VarChar(255)
   booking                        booking[]
   bookingavailability            bookingavailability[]
+  bookingcategory                bookingcategory[]
   bookingservice                 bookingservice[]
   usermanager                    usermanager                      @relation(fields: [manager_id], references: [user_id], onDelete: Cascade)
   businessad                     businessad[]
@@ -196,7 +202,7 @@ model businesspoints {
 
 model businessprofilesettings {
   business_id            Int       @id
-  default_page           String?   @default("home") @db.VarChar(50)
+  default_page           String?   @default("products") @db.VarChar(50)
   theme_color_background String?   @default("#FFFFFF") @db.VarChar(7)
   theme_color_text       String?   @default("#000000") @db.VarChar(7)
   theme_color_button     String?   @default("#000000") @db.VarChar(7)

@@ -1,4 +1,4 @@
-// app/page.jsx
+// src/app/[locale]/(main)/page.jsx
 
 
 import SectionHero from '@/components/landing/SectionHero';

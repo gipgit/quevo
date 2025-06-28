@@ -1,11 +1,11 @@
-// src/app/[business_urlname]/BusinessProfileClient.js
+// src/app/[locale]/[business_urlname]/BusinessProfileClient.js
 
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 import { useBusinessProfile } from '@/contexts/BusinessProfileContext';
-import ProductListings from './sections/ProductsPageContent';
+import ProductListings from '../../../components/profile/sections/products/ProductsPageClientContent';
 import PromotionsDisplay from './sections/PromotionsPageContent';
 import RewardsDisplay from './sections/RewardsPageContent';
 

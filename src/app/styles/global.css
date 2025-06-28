@@ -1,8 +1,113 @@
 /* src/app/styles/global.css */
 
+@import 'react-big-calendar/lib/css/react-big-calendar.css'; /* ADD THIS FIRST */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom styles for React Big Calendar to integrate with your theme */
+.rbc-calendar {
+  font-family: inherit;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+
+/* Navigation buttons (Prev, Today, Next) */
+.rbc-toolbar{
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    margin-bottom: 1em;
+    gap: 1em;
+}
+.rbc-toolbar .rbc-toolbar-label {
+    flex-grow: 0;
+    padding: 0;
+    text-align: left;
+    font-size: 1.5em;
+    order: 1;
+ }
+.rbc-toolbar .rbc-btn-group{
+    order: 2;
+
+}
+.rbc-toolbar button {
+  background-color: var(--theme-color-button, #007bff) !important;
+  background: none!important;
+  color: white !important;
+  color: inherit!important;
+  border: none !important;
+  padding: 0.375rem .5rem!important;
+}
+
+.rbc-month-view {
+  background: #fff;
+}
+
+.rbc-header{
+    text-align: right;
+    padding: 10px;
+}
+
+.rbc-date-cell{
+    padding: 10px;
+}
+
+/* Today's day background and selected day */
+.rbc-today {
+  background-color: var(--theme-color-button, #007bff) !important; /* Theme color for today's background */
+  color: white !important; /* Text color for today */
+}
+
+/* Dates that are not in the current displayed month */
+.rbc-off-range-bg {
+  background-color: #f7f7f7 !important;
+}
+.rbc-off-range {
+  color: #dbdbdb;
+}
+
+/* Styling for highlighting available days on the calendar */
+.rbc-day-bg.has-availability {
+  position: relative;
+  color: #fff!important;
+}
+.rbc-day-bg.has-availability button{
+  color: #fff!important;
+}
+
+/* Optional: Add a dot/indicator for available days instead of background tint */
+.rbc-day-bg.has-availability::after {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  background-color: var(--theme-color-button, #007bff);
+  background-color: #04dd4e;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  transform: translateX(-50%);
+}
+
+/* Ensure text on highlighted days is readable */
+.rbc-day-bg.has-availability > button {
+    color: var(--theme-color-text, #333) !important; /* Use theme text color for numbers on highlighted days */
+}
+
+/* Ensure day numbers within a month are visible */
+.rbc-month-view .rbc-day-bg + div {
+    color: var(--theme-color-text, #333); /* Default day number color */
+}
+
+/* Ensure selected slot color is maintained */
+.rbc-date-cell.rbc-current button {
+    color: inherit !important;
+}
+
 
 
 * {

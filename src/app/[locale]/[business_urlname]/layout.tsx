@@ -1,5 +1,5 @@
-// src/app/(main)/[business_urlname]/layout.tsx
-
+// src/app/[locale]/[business_urlname]/layout.tsx
+// This is a Server Component.
 
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
@@ -7,9 +7,13 @@ import { BusinessProfileClientWrapper } from './BusinessProfileClientWrapper';
 
 import '@/app/styles/business.css';
 
+// Import getTranslations for server-side internationalization
+import { getTranslations } from 'next-intl/server';
 
-import { hexToRgb } from '@/lib/utils/colors';
+// Assuming these are utility functions or constants
+import { hexToRgb } from '@/lib/utils/colors'; // Make sure this path is correct
 
+// Helper function for theme color calculations
 function lightenHexColor(hex: string, percent: number) {
     if (!hex || typeof hex !== 'string' || !hex.startsWith('#') || hex.length !== 7) {
         return hex;
@@ -26,6 +30,7 @@ function lightenHexColor(hex: string, percent: number) {
     return "#" + ((1 << 24) + (newR << 16) + (newG << 8) + newB).toString(16).slice(1).toUpperCase();
 }
 
+// Function to get social icon path (can be moved to a utils file if used elsewhere)
 const getSocialIconPath = (linkType: string) => {
     const iconMap: { [key: string]: string } = {
         website: '/icons/website.svg', google_review: '/icons/google.png',
@@ -38,25 +43,38 @@ const getSocialIconPath = (linkType: string) => {
     return iconMap[linkType.toLowerCase()] || `/icons/links-icons/${linkType.toLowerCase()}.svg`;
 };
 
-const AVAILABLE_FONTS_PUBLIC = [{ font_id: 1, font_name: 'Font1', font_css_stack: 'Font1, Arial, serif' }, { font_id: 2, font_name: 'Font2', font_css_stack: 'Font2, Arial, serif' }, { font_id: 3, font_name: 'Font3', font_css_stack: 'Font3, Arial, serif' }, { font_id: 4, font_name: 'Font4', font_css_stack: "Font4, Arial, serif" }, { font_id: 5, font_name: 'Font5', font_css_stack: "Font5, Arial, serif" }];
+// Available fonts (can be moved to a config file)
+const AVAILABLE_FONTS_PUBLIC = [
+    { font_id: 1, font_name: 'Font1', font_css_stack: 'Font1, Arial, serif' },
+    { font_id: 2, font_name: 'Font2', font_css_stack: 'Font2, Arial, serif' },
+    { font_id: 3, font_name: 'Font3', font_css_stack: 'Font3, Arial, serif' },
+    { font_id: 4, font_name: 'Font4', font_css_stack: "Font4, Arial, serif" },
+    { font_id: 5, font_name: 'Font5', font_css_stack: "Font5, Arial, serif" }
+];
 
 
 export async function generateMetadata({ params }: { params: { business_urlname: string } }) {
     const { business_urlname } = params;
+    const t = await getTranslations('Common');
+
     const business = await prisma.business.findUnique({
         where: { business_urlname: business_urlname },
         select: { business_name: true, business_descr: true, business_public_uuid: true },
     });
+
     if (!business) {
-        return { title: 'Business Not Found', description: 'The requested business profile could not be found.' };
+        return {
+            title: t('errorBusinessNotFoundTitle'),
+            description: t('errorBusinessNotFoundDescription'),
+        };
     }
     const profileImageUrl = `/uploads/business/profile/${business.business_public_uuid}.webp`;
     return {
         title: business.business_name,
-        description: business.business_descr || `Discover ${business.business_name}'s profile and products.`,
+        description: business.business_descr || t('defaultBusinessDescription', { businessName: business.business_name }),
         openGraph: {
             title: business.business_name,
-            description: business.business_descr || `Discover ${business.business_name}'s profile and products.`,
+            description: business.business_descr || t('defaultBusinessDescription', { businessName: business.business_name }),
             url: `https://your-app-domain.com/${business_urlname}`,
             siteName: 'Your App Name',
             images: [{ url: profileImageUrl, width: 800, height: 600, alt: `${business.business_name} Profile` }],
@@ -65,13 +83,15 @@ export async function generateMetadata({ params }: { params: { business_urlname:
         twitter: {
             card: 'summary_large_image',
             title: business.business_name,
-            description: business.business_descr || `Discover ${business.business_name}'s profile and products.`,
+            description: business.business_descr || t('defaultBusinessDescription', { businessName: business.business_name }),
             creator: '@yourtwitterhandle',
             images: [profileImageUrl],
         },
     };
 }
 
+// Set revalidation time for this layout's data (e.g., every hour, as it's common data)
+export const revalidate = 3600; // 1 hour
 
 export default async function BusinessProfileLayout({
     children,
@@ -81,6 +101,7 @@ export default async function BusinessProfileLayout({
     params: { business_urlname: string };
 }) {
     const { business_urlname } = params;
+    const t = await getTranslations('Common');
 
     console.log(`[${new Date().toISOString()}] Server Layout - Request received for:`, business_urlname);
 
@@ -95,14 +116,11 @@ export default async function BusinessProfileLayout({
     try {
         const businessData = await prisma.business.findUnique({
             where: { business_urlname: business_urlname },
+            // *** REMOVED ALL SECTION-SPECIFIC INCLUDES ***
             include: {
-                businessprofilesettings: true,
-                businesslink: true,
-                businesspaymentmethod: { include: { paymentmethod: true } },
-                menuitem: { include: { menuitemvariation: { orderBy: { variation_name: 'asc' } }, menucategory: true }, orderBy: { display_order: 'asc' } },
-                menucategory: { orderBy: { display_order: 'asc' } },
-                promo: true,
-                businessreward: true,
+                businessprofilesettings: true, // Keep this for general settings and default_page
+                businesslink: true,             // Keep for universally displayed links (website, social icons in header/footer)
+                businesspaymentmethod: { include: { paymentmethod: true } }, // Keep if payment methods are always visible
             },
         });
 
@@ -113,9 +131,10 @@ export default async function BusinessProfileLayout({
             notFound();
         }
 
-
         const defaultSettings = {
-            default_page: 'home', theme_color_background: '#FFFFFF', theme_color_text: '#000000', theme_color_button: '#000000', theme_font: '1', show_address: true, show_website: true, show_socials: true, show_btn_booking: true, show_btn_payments: true, show_btn_review: true, show_btn_phone: true, show_btn_email: true, show_btn_order: false,
+            // Ensure `default_page` is included here as a fallback
+            default_page: 'products', // Changed from 'home' to 'products' for consistency with our plan
+            theme_color_background: '#FFFFFF', theme_color_text: '#000000', theme_color_button: '#000000', theme_font: '1', show_address: true, show_website: true, show_socials: true, show_btn_booking: true, show_btn_payments: true, show_btn_review: true, show_btn_phone: true, show_btn_email: true, show_btn_order: false,
         };
         const businessSettings = businessData.businessprofilesettings ? {
             ...businessData.businessprofilesettings,
@@ -137,7 +156,8 @@ export default async function BusinessProfileLayout({
 
         let websiteLinkUrl: string | null = null;
         let googleReviewLinkUrl: string | null = null;
-        let bookingLinkUrl = `/booking?b=${business_urlname}`;
+        // Adjust bookingLinkUrl to point to the new nested route
+        let bookingLinkUrl = `/${params.locale}/${business_urlname}/booking`; // Corrected path
         businessData.businesslink.forEach(link => {
             if (link.link_type === 'website') { websiteLinkUrl = link.link_url; }
             if (link.link_type === 'google_review') { googleReviewLinkUrl = link.link_url; }
@@ -146,67 +166,53 @@ export default async function BusinessProfileLayout({
         const profileImageUrl = `/uploads/business/profile/${businessData.business_public_uuid}.webp`;
         const coverImageUrl = `/uploads/business/cover/${businessData.business_public_uuid}.webp`;
 
-        const menuItemsByCategory: { [key: number]: any } = {};
-        const allCategories = businessData.menucategory || [];
-        allCategories.forEach(cat => { menuItemsByCategory[cat.category_id] = { category_id: cat.category_id, category_name: cat.category_name, display_order: cat.display_order, items: [] }; });
-        const UNCAT_CATEGORY_ID = -1;
-        if (!menuItemsByCategory[UNCAT_CATEGORY_ID]) {
-            menuItemsByCategory[UNCAT_CATEGORY_ID] = { category_id: UNCAT_CATEGORY_ID, category_name: 'Altro', display_order: Infinity, items: [] };
-        }
-        businessData.menuitem?.forEach(item => {
-            let itemImageUrl = null;
-            if (item.image_available) { itemImageUrl = `/uploads/menu/${businessData.business_public_uuid}/item_${item.item_id}.webp`; }
-            const processedItem = {
-                ...item, price: item.price?.toString() || null, item_img: itemImageUrl,
-                date_created: item.date_created?.toISOString() || null, date_update: item.date_update?.toISOString() || null,
-                menucategory: item.menucategory ? { ...item.menucategory, date_created: item.menucategory.date_created?.toISOString() || null, date_update: item.menucategory.date_update?.toISOString() || null, } : null,
-                menuitemvariation: item.menuitemvariation?.map((variation: any) => { // Use any for variation
-                    let calculatedVariationPrice;
-                    if (variation.price_override !== null && variation.price_override !== undefined) { calculatedVariationPrice = parseFloat(variation.price_override.toString());
-                    } else if (variation.price_modifier !== null && variation.price_modifier !== undefined) { calculatedVariationPrice = (parseFloat(item.price?.toString() || '0') + parseFloat(variation.price_modifier?.toString() || '0'));
-                    } else { calculatedVariationPrice = parseFloat(item.price?.toString() || '0'); }
-                    return { ...variation, calculated_variation_price: calculatedVariationPrice?.toString() || null, price_override: variation.price_override?.toString() || null, price_modifier: variation.price_modifier?.toString() || null, date_created: variation.date_created?.toISOString() || null, date_update: variation.date_update?.toISOString() || null, };
-                }) || [],
-            };
-            const targetCategoryId = processedItem.category_id || UNCAT_CATEGORY_ID;
-            if (menuItemsByCategory[targetCategoryId]) { menuItemsByCategory[targetCategoryId].items.push(processedItem); } else { menuItemsByCategory[UNCAT_CATEGORY_ID].items.push(processedItem); }
-        });
-        const sortedCategoriesWithItems = Object.values(menuItemsByCategory).filter(cat => cat.items.length > 0).sort((a: any, b: any) => { if (a.category_id === UNCAT_CATEGORY_ID) return 1; if (b.category_id === UNCAT_CATEGORY_ID) return -1; if (a.display_order !== b.display_order) { return a.display_order - b.display_order; } return a.category_name.localeCompare(b.category_name); });
-
-        const businessPromos = businessData.promo?.map((promo: any) => ({
-            ...promo,
-            date_created: promo.date_created?.toISOString() || null,
-            date_start: promo.date_start?.toISOString() || null,
-            date_end: promo.date_end?.toISOString() || null,
-        })) || [];
-
-        const businessRewards = businessData.businessreward?.map((reward: any) => ({
-            ...reward,
-            reward_start_date: reward.reward_start_date?.toISOString() || null,
-            reward_end_date: reward.reward_end_date?.toISOString() || null,
-        })) || [];
-
+        // *** REMOVED ALL DATA PROCESSING LOGIC FOR MENU ITEMS, SERVICES, PROMOS, REWARDS ***
+        // This logic will be moved to their respective section page.tsx files.
 
         data = {
             businessData: {
-                business_name: businessData.business_name, business_descr: businessData.business_descr, business_city: businessData.business_city, business_country: businessData.business_country, business_region: businessData.business_region, business_address: businessData.business_address, business_phone: businessData.business_phone, business_email: businessData.business_email, business_public_uuid: businessData.business_public_uuid, business_urlname: businessData.business_urlname, business_urlname_last_edited: businessData.business_urlname_last_edited?.toISOString() || null, date_created: businessData.date_created?.toISOString() || null, business_img_profile: profileImageUrl, business_img_cover: coverImageUrl,
+                business_name: businessData.business_name,
+                business_descr: businessData.business_descr,
+                business_city: businessData.business_city,
+                business_country: businessData.business_country,
+                business_region: businessData.business_region,
+                business_address: businessData.business_address,
+                business_phone: businessData.business_phone,
+                business_email: businessData.business_email,
+                business_public_uuid: businessData.business_public_uuid,
+                business_urlname: businessData.business_urlname,
+                business_urlname_last_edited: businessData.business_urlname_last_edited?.toISOString() || null,
+                date_created: businessData.date_created?.toISOString() || null,
+                business_img_profile: profileImageUrl,
+                business_img_cover: coverImageUrl,
             },
-            businessSettings: { ...businessSettings, theme_font_css_stack: themeFontCssStack, },
+            businessSettings: { ...businessSettings, theme_font_css_stack: themeFontCssStack },
             businessLinks: processedBusinessLinks,
-            websiteLinkUrl: websiteLinkUrl, googleReviewLinkUrl: googleReviewLinkUrl, bookingLinkUrl: bookingLinkUrl,
+            websiteLinkUrl: websiteLinkUrl,
+            googleReviewLinkUrl: googleReviewLinkUrl,
+            bookingLinkUrl: bookingLinkUrl,
             businessPaymentMethods: businessData.businesspaymentmethod.map((bpm: any) => {
                 let details = {};
                 if (bpm.method_details_json) {
-                    try { details = typeof bpm.method_details_json === 'string' ? JSON.parse(bpm.method_details_json) : bpm.method_details_json; } catch (e) { console.error("Error processing method_details_json:", e); }
+                    try {
+                        details = typeof bpm.method_details_json === 'string' ? JSON.parse(bpm.method_details_json) : bpm.method_details_json;
+                    } catch (e) {
+                        console.error("Error processing method_details_json:", e);
+                    }
                 }
-                return { ...bpm, details: details, label: bpm.paymentmethod.method_name, icon: `/icons/payment_icons/${bpm.paymentmethod.method_name.toLowerCase().replace(/\s/g, '_')}.svg` };
+                return {
+                    ...bpm,
+                    details: details,
+                    label: bpm.paymentmethod.method_name,
+                    icon: `/icons/payment_icons/${bpm.paymentmethod.method_name.toLowerCase().replace(/\s/g, '_')}.svg`
+                };
             }),
-            businessMenuItems: sortedCategoriesWithItems,
-            businessPromos: businessPromos,
-            businessRewards: businessRewards,
-            businessServices: [],
+            // *** REMOVED THESE PROPERTIES ***
+            // businessMenuItems: sortedMenuCategoriesWithItems,
+            // businessPromos: businessPromos,
+            // businessRewards: businessRewards,
+            // businessServices: sortedServiceCategoriesWithServices,
         };
-
 
         const themeColorText = data.businessSettings.theme_color_text || '#000000';
         const themeColorBackground = data.businessSettings.theme_color_background || '#FFFFFF';
@@ -246,29 +252,31 @@ export default async function BusinessProfileLayout({
             hasBusinessData: !!data.businessData,
             hasSettings: !!data.businessSettings,
             hasLinks: data.businessLinks?.length > 0,
-            hasMenuItems: data.businessMenuItems?.length > 0,
             hasThemeVariables: !!data.themeVariables,
             businessName: data.businessData?.business_name,
             businessUUID: data.businessData?.business_public_uuid,
             themeBackground: data.themeColorBackground,
+            // These properties should now be undefined/missing in the layout data
+            // hasMenuItems: data.businessMenuItems?.length > 0, // This should now be false/error if uncommented
+            // hasServices: data.businessServices?.length > 0, // This should now be false/error if uncommented
         }, null, 2));
 
 
     } catch (e: any) {
         console.error(`[${new Date().toISOString()}] BusinessProfileLayout: Caught error fetching or processing business data for ${business_urlname}:`, e.message, e.stack);
-        error = 'Failed to load business data: ' + e.message;
+        error = t('errorFetchingBusinessData', { error: e.message });
     }
 
     console.log(`[${new Date().toISOString()}] Server Layout - Before return: data is ${data ? 'populated' : 'null'}, error is ${error ? 'present' : 'null'} for ${business_urlname}`);
 
 
     if (error) {
-        return <div className="text-center py-10 text-red-500">Errore: {error}</div>;
+        return <div className="text-center py-10 text-red-500">{t('error')}: {error}</div>;
     }
 
     if (!data) {
         console.warn(`[${new Date().toISOString()}] Server Layout - 'data' is null/undefined unexpectedly after processing, but no explicit error for ${business_urlname}.`);
-        return <div className="text-center py-10">Caricamento layout...</div>;
+        return <div className="text-center py-10">{t('loadingLayout')}</div>;
     }
 
     const cssVariables = data.themeVariables;

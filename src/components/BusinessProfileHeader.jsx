@@ -4,10 +4,11 @@
 
 import React, { useCallback } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Link } from '@/i18n/navigation';
+
 import { useBusinessProfile } from '@/contexts/BusinessProfileContext';
-import { useTranslations } from 'next-intl'; // Import useTranslations
+import { useTranslations } from 'next-intl';
 
 const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggleMenuOverlay }) => {
     const {
@@ -22,11 +23,17 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
         isDarkBackground,
         themeColorText,
         themeColorButton,
-        activeSection,
     } = useBusinessProfile();
 
-    const t = useTranslations('Common'); // Initialize translator for 'Common' namespace
-    const tBooking = useTranslations('Booking'); // Initialize translator for 'Booking' namespace (for "Prenota" button)
+    const t = useTranslations('Common');
+    const tBooking = useTranslations('Booking');
+
+    const pathname = usePathname();
+    const pathSegments = pathname.split('/').filter(Boolean);
+    const businessUrlnameInPath = pathSegments[1];
+    const currentSectionSlug = pathSegments[2];
+
+    const activeSection = currentSectionSlug || businessSettings.default_page;
 
     if (!businessData) {
         return <div className="text-center py-4" style={{ color: themeColorText || 'gray' }}>{t('loadingHeader')}</div>;
@@ -34,7 +41,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
 
     const logoAltText = `${businessData.business_name} Logo`;
 
-    const getButtonContentColor = (bgColor) => {
+    const getButtonContentColor = useCallback((bgColor) => {
         if (!bgColor) return 'white';
         const hex = bgColor.replace('#', '');
         const r = parseInt(hex.substring(0, 2), 16);
@@ -42,7 +49,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
         const b = parseInt(hex.substring(4, 6), 16);
         const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
         return luminance > 0.5 ? 'black' : 'white';
-    };
+    }, []);
     const buttonContentColor = getButtonContentColor(themeColorButton);
 
     const primaryButtonClassName = `button btn-md block text-center shadow-lg`;
@@ -53,18 +60,19 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
 
     const circularButtonBaseClass = `flex flex-col items-center rounded-full transition-colors duration-200`;
 
-    const getButtonIconStyle = () => {
+    const getButtonIconStyle = useCallback(() => {
         return {
             filter: buttonContentColor === 'white' ? 'invert(1)' : 'none',
         };
-    };
+    }, [buttonContentColor]);
 
     const filteredSocialLinks = businessLinks.filter(
         (link) =>
             link.link_type !== 'website' &&
             link.link_type !== 'google_review' &&
             link.link_type !== 'phone' &&
-            link.link_type !== 'email'
+            link.link_type !== 'email' &&
+            link.link_type !== 'booking'
     );
 
     return (
@@ -73,7 +81,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                 {businessData.business_img_cover ? (
                     <Image
                         src={businessData.business_img_cover}
-                        alt="Cover Photo" // Alt text still hardcoded, consider translating if generic enough or passing it
+                        alt={t('coverPhotoAlt')}
                         fill
                         sizes="100vw"
                         className="object-cover"
@@ -116,7 +124,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                     {businessSettings.show_website && websiteLinkUrl && (
                         <div className="mt-1">
                             <Link href={websiteLinkUrl} target="_blank" rel="noopener noreferrer" className="text-xs underline" style={{ color: themeColorText }}>
-                                {websiteLinkUrl} {/* URLs are not typically translated */}
+                                {websiteLinkUrl}
                             </Link>
                         </div>
                     )}
@@ -142,9 +150,17 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                 </div>
 
                 <div className="flex flex-wrap justify-center items-center gap-2 mt-2">
-                    {businessSettings.show_btn_booking && bookingLinkUrl && (
-                        <Link href={bookingLinkUrl} className={primaryButtonClassName} style={primaryButtonStyle}>
-                            {tBooking('headerTitle')} {/* Using Booking.headerTitle for "Prenota" */}
+                    {businessSettings.show_btn_booking && (
+                        <Link
+                            href={
+                                businessData.business_link_booking
+                                    ? `/${businessUrlnameInPath}/booking`
+                                    : bookingLinkUrl
+                            }
+                            className={primaryButtonClassName}
+                            style={primaryButtonStyle}
+                        >
+                            {tBooking('headerTitle')}
                         </Link>
                     )}
 
@@ -200,24 +216,46 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                     </div>
                 )}
 
-                {/* Profile Section Navigation */}
                 <nav className="profile-nav-sections mt-4" style={{ borderColor: `rgba(${isDarkBackground ? '255,255,255' : '0,0,0'}, 0.2)` }}>
                     <ul className="flex justify-center text-sm font-semibold">
                         <li>
-                            <Link href={`/${businessData.business_urlname}`} className={`block py-2 px-4 transition-colors duration-200 ${activeSection === 'products' ? 'section-active border-b-2' : ''}`} style={activeSection === 'products' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}>
+                            <Link
+                                href={`/${businessUrlnameInPath}/products`}
+                                className={`block py-2 px-4 transition-colors duration-200 ${activeSection === 'products' ? 'section-active border-b-2' : ''}`}
+                                style={activeSection === 'products' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
+                            >
                                 {t('products')}
                             </Link>
                         </li>
                         <li>
-                            <Link href={`/${businessData.business_urlname}/promotions`} className={`block py-2 px-4 transition-colors duration-200 ${activeSection === 'promotions' ? 'section-active border-b-2' : ''}`} style={activeSection === 'promotions' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}>
+                            <Link
+                                href={`/${businessUrlnameInPath}/promotions`}
+                                className={`block py-2 px-4 transition-colors duration-200 ${activeSection === 'promotions' ? 'section-active border-b-2' : ''}`}
+                                style={activeSection === 'promotions' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
+                            >
                                 {t('promotions')}
                             </Link>
                         </li>
                         <li>
-                            <Link href={`/${businessData.business_urlname}/rewards`} className={`block py-2 px-4 transition-colors duration-200 ${activeSection === 'rewards' ? 'section-active border-b-2' : ''}`} style={activeSection === 'rewards' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}>
+                            <Link
+                                href={`/${businessUrlnameInPath}/rewards`}
+                                className={`block py-2 px-4 transition-colors duration-200 ${activeSection === 'rewards' ? 'section-active border-b-2' : ''}`}
+                                style={activeSection === 'rewards' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
+                            >
                                 {t('rewards')}
                             </Link>
                         </li>
+                        {businessSettings.show_btn_booking && (
+                            <li>
+                                <Link
+                                    href={`/${businessUrlnameInPath}/booking`}
+                                    className={`block py-2 px-4 transition-colors duration-200 ${activeSection === 'booking' ? 'section-active border-b-2' : ''}`}
+                                    style={activeSection === 'booking' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
+                                >
+                                    {tBooking('booking')}
+                                </Link>
+                            </li>
+                        )}
                     </ul>
                 </nav>
             </div>

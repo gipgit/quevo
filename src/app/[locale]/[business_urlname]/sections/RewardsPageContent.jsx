@@ -1,4 +1,4 @@
-// src/app/[locale]/(main)/[business_urlname]/sections/RewardsPageContent.jsx
+// src/app/[locale]/[business_urlname]/sections/RewardsPageContent.jsx
 
 "use client";
 

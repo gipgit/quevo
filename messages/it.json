@@ -1,5 +1,13 @@
 {
   "Common": {
+     "coverPhotoAlt": "Business Cover Photo",
+    "errorBusinessNotFoundTitle": "Attività non trovata",
+    "errorBusinessNotFoundDescription": "Il profilo dell'attività richiesto non è stato trovato.",
+    "defaultBusinessDescription": "Scopri il profilo e i prodotti di {businessName}.",
+    "uncategorized": "Non categorizzato",
+    "errorFetchingBusinessData": "Impossibile caricare i dati dell'attività: {error}",
+    "error": "Errore",
+    "loadingLayout": "Caricamento layout...",
     "loadingPage": "Caricamento pagina...",
     "loadingProducts": "Caricamento prodotti...",
     "noProductsAvailable": "Nessun prodotto disponibile.",
@@ -60,10 +68,49 @@
     "pointsRequired": "Punti richiesti"
   },
   "Booking": {
+    "loadingCalendar": "Caricamento del calendario",
+    "selectDate": "Seleziona una data",
+    "selectedDate": "Data selezionata",
+    "availableDayIndicator": "Giorni disponibili",
+    "selectTime": "Seleziona un orario",
+    "chooseService": "Seleziona il servizio",
+    "booking": "Prenotazioni",
     "pageTitle": "Prenota - {businessName}",
     "headerTitle": "Prenotazioni",
     "headerLocation": "{city} / {address}",
     "serviceDurationPrice": "{duration} min | €{price}",
-    "fromPrice": "da €{minPrice}"
+    "fromPrice": "da €{minPrice}",
+    "pageDescription": "Find the perfect time for your appointment.",
+    "duration": "Durata",
+    "minutes": "{minuti, plural, one {minuto} other {minuti}}",
+    "noSlotsAvailable": "Nessuna disponibilità per questa selezione",
+    "back": "Indietro",
+    "loadingSlots": "Caricando disponibilità..."
+  },
+  "Promotions": {
+    "loading": "Caricamento promozioni...",
+    "expires": "Scade il",
+    "validFrom": "Valido dal",
+    "validUntil": "Valido fino al",
+    "viewDetails": "Vedi Dettagli",
+    "conditions": "Condizioni",
+    "noPromotionsYet": "Nessuna promozione disponibile al momento.",
+    "checkBackLater": "Torna a controllare più tardi per nuove entusiasmanti offerte!",
+    "notFoundTitle": "Promozioni Non Trovate",
+    "notFoundDescription": "La pagina delle promozioni non è stata trovata."
+  },
+  "Rewards": {
+    "loading": "Caricamento premi...",
+    "requiredPoints": "Punti Richiesti",
+    "points": "punti",
+    "quantityAvailable": "Disponibili",
+    "outOfStock": "Esaurito",
+    "validFrom": "Valido dal",
+    "validUntil": "Valido fino al",
+    "redeem": "Riscatta Ora",
+    "noRewardsYet": "Nessun premio disponibile al momento.",
+    "checkBackLater": "Torna a controllare più tardi per nuovi premi entusiasmanti!",
+    "notFoundTitle": "Premi Non Trovati",
+    "notFoundDescription": "La pagina dei premi non è stata trovata."
   }
 }

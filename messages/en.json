@@ -1,5 +1,13 @@
 {
   "Common": {
+    "coverPhotoAlt": "Business Cover Photo",
+    "errorBusinessNotFoundTitle": "Business Not Found",
+    "errorBusinessNotFoundDescription": "The requested business profile could not be found.",
+    "defaultBusinessDescription": "Discover {businessName}'s profile and products.",
+    "uncategorized": "Uncategorized",
+    "errorFetchingBusinessData": "Failed to load business data: {error}",
+    "error": "Error",
+    "loadingLayout": "Loading layout...",
     "loadingPage": "Loading page...",
     "loadingProducts": "Loading products...",
     "noProductsAvailable": "No products available.",
@@ -60,10 +68,49 @@
     "pointsRequired": "Points Required"
   },
   "Booking": {
+    "loadingCalendar": "Loading calendar",
+    "selectDate": "Seleziona a date",
+    "selectedDate": "Date selected",
+    "availableDayIndicator": "Days available",
+    "selectTime": "Select a time",
+    "chooseService": "Select a service",
+    "booking": "Booking",
     "pageTitle": "Book - {businessName}",
     "headerTitle": "Bookings",
     "headerLocation": "{city} / {address}",
     "serviceDurationPrice": "{duration} min | €{price}",
-    "fromPrice": "from €{minPrice}"
+    "fromPrice": "from €{minPrice}",
+    "pageDescription": "Find the perfect time for your appointment.",
+    "duration": "Duration",
+    "minutes": "{minutes, plural, one {minute} other {minutes}}",
+    "noSlotsAvailable": "No slots available",
+    "back": "Back",
+    "loadingSlots": "Loading slots..."
+  },
+  "Promotions": {
+    "loading": "Loading promotions...",
+    "expires": "Expires",
+    "validFrom": "Valid from",
+    "validUntil": "Valid until",
+    "viewDetails": "View Details",
+    "conditions": "Conditions",
+    "noPromotionsYet": "No promotions available yet.",
+    "checkBackLater": "Please check back later for exciting new offers!",
+    "notFoundTitle": "Promotions Not Found",
+    "notFoundDescription": "The promotions page could not be found."
+  },
+  "Rewards": {
+    "loading": "Loading rewards...",
+    "requiredPoints": "Points Required",
+    "points": "points",
+    "quantityAvailable": "Available",
+    "outOfStock": "Out of Stock",
+    "validFrom": "Valid from",
+    "validUntil": "Valid until",
+    "redeem": "Redeem Now",
+    "noRewardsYet": "No rewards available yet.",
+    "checkBackLater": "Please check back later for exciting new rewards!",
+    "notFoundTitle": "Rewards Not Found",
+    "notFoundDescription": "The rewards page could not be found."
   }
 }

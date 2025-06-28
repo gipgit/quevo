@@ -1,4 +1,4 @@
-// src/app/(main)/layout.tsx
+// src/app/[locale]/(main)/layout.tsx
 
 import '@/app/styles/landing.css';
 import '@/app/styles/main.css';
