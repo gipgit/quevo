@@ -25,7 +25,7 @@ export default async function BookingPage({ params }: { params: BookingPageParam
     const { locale, business_urlname } = params;
 
     // Fetch business profile data first to get business.business_id
-    const { businessData: business, themeColorButton, themeColorText, error: businessError } = await getBusinessProfileLeanData(business_urlname);
+    const { businessData: business, themeColorButton, themeColorText} = await getBusinessProfileLeanData(business_urlname);
 
     if (!business) {
         // If business data fetching failed or business not found, return 404
