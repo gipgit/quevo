@@ -157,7 +157,7 @@ export default async function BusinessProfileLayout({
         let websiteLinkUrl: string | null = null;
         let googleReviewLinkUrl: string | null = null;
         // Adjust bookingLinkUrl to point to the new nested route
-        let bookingLinkUrl = `/${params.locale}/${business_urlname}/booking`; // Corrected path
+        let bookingLinkUrl = `/${business_urlname}/booking`; // Corrected path
         businessData.businesslink.forEach(link => {
             if (link.link_type === 'website') { websiteLinkUrl = link.link_url; }
             if (link.link_type === 'google_review') { googleReviewLinkUrl = link.link_url; }
