@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: BusinessPageParams 
 
 export default async function PromotionsPage({ params }: { params: BusinessPageParams }) {
     // Destructure locale and business_urlname from the now-typed params object
-    const { locale, business_urlname } = params;
+    const { locale, business_urlname } = params; // Ensure locale is destructured here
 
     // Fetch business profile data
     // TypeScript will infer the type of `businessData` based on `getBusinessProfileLeanData`'s return type.
@@ -44,6 +44,9 @@ export default async function PromotionsPage({ params }: { params: BusinessPageP
     };
 
     return (
-        <PromotionsPageClientContent initialPromotionsData={initialPromotionsData} />
+        <PromotionsPageClientContent
+            initialPromotionsData={initialPromotionsData}
+            locale={locale} // <<< --- IMPORTANT: Pass the locale prop here
+        />
     );
 }
