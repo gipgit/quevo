@@ -29,7 +29,7 @@ export default async function BookingPage({ params }: { params: BookingPageParam
 
     if (!business) {
         // If business data fetching failed or business not found, return 404
-        console.error(`[page.tsx] Business not found or error fetching for URL: ${business_urlname}, Error: ${businessError}`);
+        console.error(`[page.tsx] Business not found or error fetching for URL`);
         notFound();
     }
 
