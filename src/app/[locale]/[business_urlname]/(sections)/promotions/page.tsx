@@ -1,34 +1,37 @@
 // src/app/[locale]/[business_urlname]/(sections)/promotions/page.tsx
 
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
-import { getBusinessProfileLeanData, getPromotionsData } from '@/lib/data/business-profile'; // getPromotionsData will be updated below
+import { getTranslations } from 'next-intl/server'; // Keep this import if it's used elsewhere or you plan to use it for page content translations
+import { getBusinessProfileLeanData, getPromotionsData } from '@/lib/data/business-profile';
 
 // Adjusted import path for the client component
 import PromotionsPageClientContent from '@/components/profile/sections/promotions/PromotionsPageClientContent';
 
-export async function generateMetadata({ params: { locale, business_urlname } }) {
-    const t = await getTranslations({ locale, namespace: 'Promotions' });
+// Define the interface for the params object
+interface BusinessPageParams { // Use BusinessPageParams for consistency across similar routes
+  locale: string;
+  business_urlname: string;
+}
 
-    const { businessData } = await getBusinessProfileLeanData(business_urlname);
-
-    if (!businessData) {
-        return {
-            title: t('notFoundTitle'),
-            description: t('notFoundDescription'),
-        };
-    }
-
+export async function generateMetadata({ params }: { params: BusinessPageParams }) {
+    // Hardcoded static metadata as requested
     return {
-        title: t('pageTitle', { businessName: businessData.business_name }),
-        description: t('pageDescription', { businessName: businessData.business_name }),
+        title: "Quevo",
+        description: "Quevo",
     };
 }
 
-export default async function PromotionsPage({ params: { locale, business_urlname } }) {
+export default async function PromotionsPage({ params }: { params: BusinessPageParams }) {
+    // Destructure locale and business_urlname from the now-typed params object
+    const { locale, business_urlname } = params;
+
+    // Fetch business profile data
+    // TypeScript will infer the type of `businessData` based on `getBusinessProfileLeanData`'s return type.
     const { businessData } = await getBusinessProfileLeanData(business_urlname);
 
     if (!businessData) {
+        // If business data fetching failed or business not found, return 404
+        console.error(`[page.tsx] Business not found or error fetching for URL: ${business_urlname}`);
         notFound();
     }
 
@@ -36,7 +39,7 @@ export default async function PromotionsPage({ params: { locale, business_urlnam
     const promotions = await getPromotionsData(businessData.business_id);
 
     const initialPromotionsData = {
-        businessData,
+        businessData, // businessData is guaranteed not to be null here
         promotions,
     };
 

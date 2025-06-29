@@ -5,19 +5,15 @@ import { getTranslations } from 'next-intl/server';
 import { getBusinessProfileLeanData, getBookingServicesData } from '@/lib/data/business-profile';
 import BookingPageClientContent from '@/components/profile/sections/booking/BookingPageClientContent';
 
-// Define the interface for the params object
 interface BookingPageParams {
   locale: string;
   business_urlname: string;
 }
 
 export async function generateMetadata({ params }: { params: BookingPageParams }) {
-    const t = await getTranslations('Booking');
-    // Ensure the messages are available for metadata generation
-    // This part might still show MISSING_MESSAGE if Booking.pageDescription is not in your en.json
     return {
-        title: t('pageTitle'),
-        description: t('pageDescription'),
+        title: "Quevo",
+        description: "Quevo",
     };
 }
 
