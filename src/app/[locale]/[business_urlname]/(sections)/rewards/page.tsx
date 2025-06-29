@@ -1,7 +1,7 @@
 // src/app/[locale]/[business_urlname]/(sections)/rewards/page.tsx
 
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server'; // Keep this import if used elsewhere
 import { getBusinessProfileLeanData, getRewardsData } from '@/lib/data/business-profile';
 
 import RewardsPageClientContent from '@/components/profile/sections/rewards/RewardsPageClientContent';
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: BusinessPageParams 
 
 export default async function RewardsPage({ params }: { params: BusinessPageParams }) {
     // Destructure locale and business_urlname from the now-typed params object
-    const { locale, business_urlname } = params; // Make sure locale is destructured here
+    const { locale, business_urlname } = params; // 'locale' is destructured, but not passed to client component
 
     // Fetch business profile data
     const { businessData } = await getBusinessProfileLeanData(business_urlname);
@@ -37,14 +37,14 @@ export default async function RewardsPage({ params }: { params: BusinessPagePara
     const rewards = await getRewardsData(businessData.business_id);
 
     const initialRewardsData = {
-        businessData, // businessData is guaranteed not to be null here
+        businessData,
         rewards,
     };
 
     return (
         <RewardsPageClientContent
             initialRewardsData={initialRewardsData}
-            locale={locale} // <<< --- IMPORTANT: Pass the locale prop here
+            // locale={locale} // <<< --- REMOVED THIS LINE (as per your instruction to get it from context)
         />
     );
 }
