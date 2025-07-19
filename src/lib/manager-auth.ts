@@ -50,23 +50,4 @@ export function getManagerFromRequest(req: Request): null | { user_id: string; e
   return getManagerFromToken(match[1])
 }
 
-// For API routes that need full JWT verification, use this function
-export async function verifyManagerToken(token: string): Promise<null | { user_id: string; email: string; role: string }> {
-  // Dynamic import to avoid Edge Runtime issues
-  const jwt = await import("jsonwebtoken")
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET)
-    if (
-      typeof decoded === "object" &&
-      decoded &&
-      "user_id" in decoded &&
-      "email" in decoded &&
-      decoded.role === "manager"
-    ) {
-      return decoded as { user_id: string; email: string; role: string }
-    }
-    return null
-  } catch {
-    return null
-  }
-}
+
