@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { cookies } from 'next/headers';
-import { sign } from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'your-fallback-secret';
 
 export async function POST(
   request: NextRequest,
@@ -39,19 +36,8 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid password' }, { status: 401 });
     }
 
-    // Generate a JWT token for this board
-    const token = sign(
-      { 
-        board_id: serviceBoard.board_id,
-        board_ref: board_ref,
-        business_id: business_id
-      },
-      JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
-    // Set the token in a cookie
-    cookies().set(`board_access_${board_ref}`, token, {
+    // Set a signed cookie for board access
+    cookies().set(`board_access_${board_ref}`, serviceBoard.board_id, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',

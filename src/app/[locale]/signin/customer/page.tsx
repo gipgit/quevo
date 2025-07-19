@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
+import { signIn } from "next-auth/react"
 
 export default function CustomerSignInPage() {
   const t = useTranslations("CustomerSignIn")
@@ -21,16 +22,20 @@ export default function CustomerSignInPage() {
     setLoading(true)
     setError("")
     try {
-      const res = await fetch("/api/auth/signin-customer", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+      const result = await signIn("credentials", {
+        email: form.email,
+        password: form.password,
+        userType: "customer",
+        redirect: false,
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message || t("loginError"))
+      
+      if (result?.error) {
+        throw new Error(result.error)
+      }
+      
       router.push("/") // Redirect to home or customer dashboard
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message || t("loginError"))
     } finally {
       setLoading(false)
     }

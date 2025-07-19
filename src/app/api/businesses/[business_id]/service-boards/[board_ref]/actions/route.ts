@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { cookies } from 'next/headers';
-import { verify } from 'jsonwebtoken';
 import { auth } from '@/lib/auth';
-
-const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'your-fallback-secret';
 
 export async function GET(
   request: NextRequest,
@@ -37,13 +34,8 @@ export async function GET(
         return NextResponse.json({ error: 'Password required', requiresPassword: true }, { status: 401 });
       }
 
-      try {
-        // Verify the token
-        const decoded = verify(accessToken, JWT_SECRET) as { board_id: string };
-        if (decoded.board_id !== serviceBoard.board_id) {
-          return NextResponse.json({ error: 'Invalid access token', requiresPassword: true }, { status: 401 });
-        }
-      } catch (error) {
+      // Check if the access token matches the board_id
+      if (accessToken !== serviceBoard.board_id) {
         return NextResponse.json({ error: 'Invalid access token', requiresPassword: true }, { status: 401 });
       }
     }
