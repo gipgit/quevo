@@ -4,31 +4,10 @@
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import { BusinessProfileClientWrapper } from './BusinessProfileClientWrapper';
-
 import '@/app/styles/business.css';
-
-// Import getTranslations for server-side internationalization
 import { getTranslations } from 'next-intl/server';
+import { hexToRgb, adjustColor } from '@/lib/utils/colors'; // Make sure this path is correct
 
-// Assuming these are utility functions or constants
-import { hexToRgb } from '@/lib/utils/colors'; // Make sure this path is correct
-
-// Helper function for theme color calculations
-function lightenHexColor(hex: string, percent: number) {
-    if (!hex || typeof hex !== 'string' || !hex.startsWith('#') || hex.length !== 7) {
-        return hex;
-    }
-    const f = parseInt(hex.slice(1), 16);
-    const t = 255;
-    const p = percent;
-    const R = (f >> 16);
-    const G = (f >> 8) & 0x00ff;
-    const B = f & 0x0000ff;
-    const newR = Math.min(255, Math.max(0, Math.round(R + (t - R) * p)));
-    const newG = Math.min(255, Math.max(0, Math.round(G + (t - G) * p)));
-    const newB = Math.min(255, Math.max(0, Math.round(B + (t - B) * p)));
-    return "#" + ((1 << 24) + (newR << 16) + (newG << 8) + newB).toString(16).slice(1).toUpperCase();
-}
 
 // Function to get social icon path (can be moved to a utils file if used elsewhere)
 const getSocialIconPath = (linkType: string) => {
@@ -106,7 +85,6 @@ export default async function BusinessProfileLayout({
     console.log(`[${new Date().toISOString()}] Server Layout - Request received for:`, business_urlname);
 
     if (!business_urlname) {
-        console.log(`[${new Date().toISOString()}] Server Layout - business_urlname is missing, calling notFound().`);
         notFound();
     }
 
@@ -116,10 +94,9 @@ export default async function BusinessProfileLayout({
     try {
         const businessData = await prisma.business.findUnique({
             where: { business_urlname: business_urlname },
-            // *** REMOVED ALL SECTION-SPECIFIC INCLUDES ***
             include: {
                 businessprofilesettings: true, // Keep this for general settings and default_page
-                businesslink: true,             // Keep for universally displayed links (website, social icons in header/footer)
+                businesslink: true,          // Keep for universally displayed links (website, social icons in header/footer)
                 businesspaymentmethod: { include: { paymentmethod: true } }, // Keep if payment methods are always visible
             },
         });
@@ -127,13 +104,11 @@ export default async function BusinessProfileLayout({
         console.log(`[${new Date().toISOString()}] Server Layout - Prisma findUnique result for ${business_urlname}:`, businessData ? 'FOUND' : 'NOT FOUND', businessData?.business_name || '');
 
         if (!businessData) {
-            console.log(`[${new Date().toISOString()}] Server Layout - businessData not found from Prisma, calling notFound().`);
             notFound();
         }
 
         const defaultSettings = {
-            // Ensure `default_page` is included here as a fallback
-            default_page: 'products', // Changed from 'home' to 'products' for consistency with our plan
+            default_page: 'products',
             theme_color_background: '#FFFFFF', theme_color_text: '#000000', theme_color_button: '#000000', theme_font: '1', show_address: true, show_website: true, show_socials: true, show_btn_booking: true, show_btn_payments: true, show_btn_review: true, show_btn_phone: true, show_btn_email: true, show_btn_order: false,
         };
         const businessSettings = businessData.businessprofilesettings ? {
@@ -156,21 +131,19 @@ export default async function BusinessProfileLayout({
 
         let websiteLinkUrl: string | null = null;
         let googleReviewLinkUrl: string | null = null;
-        // Adjust bookingLinkUrl to point to the new nested route
-        let bookingLinkUrl = `/${business_urlname}/booking`; // Corrected path
+        let bookingLinkUrl = `/${business_urlname}/booking`;
         businessData.businesslink.forEach(link => {
             if (link.link_type === 'website') { websiteLinkUrl = link.link_url; }
             if (link.link_type === 'google_review') { googleReviewLinkUrl = link.link_url; }
         });
 
-        const profileImageUrl = `/uploads/business/profile/${businessData.business_public_uuid}.webp`;
-        const coverImageUrl = `/uploads/business/cover/${businessData.business_public_uuid}.webp`;
+        const profileImageUrl = `/uploads/business/${businessData.business_public_uuid}/profile.webp`;
+        const coverImageUrl = `/uploads/business/${businessData.business_public_uuid}/cover.webp`;
 
-        // *** REMOVED ALL DATA PROCESSING LOGIC FOR MENU ITEMS, SERVICES, PROMOS, REWARDS ***
-        // This logic will be moved to their respective section page.tsx files.
 
         data = {
             businessData: {
+                business_id: businessData.business_id,
                 business_name: businessData.business_name,
                 business_descr: businessData.business_descr,
                 business_city: businessData.business_city,
@@ -207,11 +180,6 @@ export default async function BusinessProfileLayout({
                     icon: `/icons/payment_icons/${bpm.paymentmethod.method_name.toLowerCase().replace(/\s/g, '_')}.svg`
                 };
             }),
-            // *** REMOVED THESE PROPERTIES ***
-            // businessMenuItems: sortedMenuCategoriesWithItems,
-            // businessPromos: businessPromos,
-            // businessRewards: businessRewards,
-            // businessServices: sortedServiceCategoriesWithServices,
         };
 
         const themeColorText = data.businessSettings.theme_color_text || '#000000';
@@ -221,13 +189,19 @@ export default async function BusinessProfileLayout({
 
         const themeColorTextRgb = hexToRgb(themeColorText);
         const borderColorOpacity = 0.2;
-        const lighterThemeColorBackground = lightenHexColor(themeColorBackground, 0.2);
+        const themeColorBorder = `rgba(${themeColorTextRgb}, ${borderColorOpacity})`;
+        
+        // Generate new background colors based on luminance
+        const themeColorBackgroundSecondary = adjustColor(themeColorBackground, 0.15, 0.055, 0.99);
+        const themeColorBackgroundCard = adjustColor(themeColorBackground, 0.4, 0.025, 0.99); 
+        
         const isDarkBackground = parseInt(themeColorBackground.replace('#', ''), 16) < (0xFFFFFF / 2);
 
         data.themeVariables = {
             '--theme-font': themeFont,
             '--theme-color-background': themeColorBackground,
-            '--lighter-theme-color-background': lighterThemeColorBackground,
+            '--theme-color-background-secondary': themeColorBackgroundSecondary, // New variable
+            '--theme-color-background-card': themeColorBackgroundCard,       // New variable
             '--theme-color-text': themeColorText,
             '--theme-color-button': themeColorButton,
             '--theme-color-text-rgb': themeColorTextRgb ? themeColorTextRgb.join(',') : '0,0,0',
@@ -245,29 +219,14 @@ export default async function BusinessProfileLayout({
         data.themeColorText = themeColorText;
         data.themeColorBackground = themeColorBackground;
         data.themeColorButton = themeColorButton;
-        data.isDarkBackground = isDarkBackground;
-
-        console.log(`[${new Date().toISOString()}] Server Layout - Final 'data' object structure for ${business_urlname}:`);
-        console.log(JSON.stringify({
-            hasBusinessData: !!data.businessData,
-            hasSettings: !!data.businessSettings,
-            hasLinks: data.businessLinks?.length > 0,
-            hasThemeVariables: !!data.themeVariables,
-            businessName: data.businessData?.business_name,
-            businessUUID: data.businessData?.business_public_uuid,
-            themeBackground: data.themeColorBackground,
-            // These properties should now be undefined/missing in the layout data
-            // hasMenuItems: data.businessMenuItems?.length > 0, // This should now be false/error if uncommented
-            // hasServices: data.businessServices?.length > 0, // This should now be false/error if uncommented
-        }, null, 2));
-
+        data.themeColorBackgroundSecondary = themeColorBackgroundSecondary; 
+        data.themeColorBackgroundCard = themeColorBackgroundCard;   
+        data.themeColorBorder = themeColorBorder;   
 
     } catch (e: any) {
         console.error(`[${new Date().toISOString()}] BusinessProfileLayout: Caught error fetching or processing business data for ${business_urlname}:`, e.message, e.stack);
         error = t('errorFetchingBusinessData', { error: e.message });
     }
-
-    console.log(`[${new Date().toISOString()}] Server Layout - Before return: data is ${data ? 'populated' : 'null'}, error is ${error ? 'present' : 'null'} for ${business_urlname}`);
 
 
     if (error) {

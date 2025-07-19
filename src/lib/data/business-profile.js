@@ -8,6 +8,7 @@ export async function getBusinessProfileLeanData(businessUrlname) {
         },
         select: {
             business_id: true,
+            business_public_uuid: true,
             business_name: true,
             business_descr: true,
             business_address: true,
@@ -25,7 +26,7 @@ export async function getBusinessProfileLeanData(businessUrlname) {
                 },
             },
             // Add other fields you need for the header/layout
-            bookingservice: {
+            service: {
                 select: { service_id: true }, // To check if booking services exist
                 take: 1, // Just need to know if any exist
             },
@@ -53,6 +54,7 @@ export async function getBusinessProfileLeanData(businessUrlname) {
     return {
         businessData: {
             business_id: business.business_id,
+            business_public_uuid: business.business_public_uuid,
             business_urlname: businessUrlname,
             business_name: business.business_name,
             business_descr: business.business_descr,
@@ -62,7 +64,7 @@ export async function getBusinessProfileLeanData(businessUrlname) {
             business_img_profile: business.business_img_profile,
             business_email: business.business_email,
             business_phone: business.business_phone,
-            business_link_booking: business.bookingservice && business.bookingservice.length > 0, // Check if booking services exist
+            business_link_booking: business.service && business.service.length > 0, // Check if booking services exist
             business_has_rewards: business.businessreward && business.businessreward.length > 0,
             business_has_promotions: business.promo && business.promo.length > 0,
             // ... other lean data properties
@@ -77,7 +79,7 @@ export async function getBusinessProfileLeanData(businessUrlname) {
 
 /**
  * Fetches promotions for a given business_id.
- * @param {number} businessId The ID of the business.
+ * @param {string} businessId The UUID of the business.
  * @returns {Promise<Array<Object>>} A list of promotion objects.
  */
 export async function getPromotionsData(businessId) {
@@ -122,7 +124,7 @@ export async function getPromotionsData(businessId) {
 
 /**
  * Fetches rewards for a given business_id.
- * @param {number} businessId The ID of the business.
+ * @param {string} businessId The UUID of the business.
  * @returns {Promise<Array<Object>>} A list of reward objects.
  */
 export async function getRewardsData(businessId) {
@@ -158,45 +160,47 @@ export async function getRewardsData(businessId) {
 
 /**
  * Fetches booking services and their categories for a given business_id.
- * @param {number} businessId The ID of the business.
+ * @param {string} businessId The UUID of the business.
  * @returns {Promise<{services: Array<Object>, categories: Array<Object>}>} A list of services and categories.
  */
-export async function getBookingServicesData(businessId) {
-    console.log(`[getBookingServicesData] Fetching data for businessId: ${businessId}`);
+export async function getServiceRequestServicesData(businessId) {
+    console.log(`[getServiceRequestServicesData] Fetching data for businessId: ${businessId}`);
     try {
-        const services = await prisma.bookingservice.findMany({
+        const services = await prisma.service.findMany({
             where: {
                 business_id: businessId,
                 is_active: true, // Only fetch active services
             },
             select: {
                 service_id: true,
+                business_id: true, // Add business_id to the selection
                 service_name: true,
                 description: true,
                 duration_minutes: true,
                 buffer_minutes: true,
-                price: true, // Prisma will return this as a Decimal object
+                price_base: true, // Prisma will return this as a Decimal object
+                date_selection: true, 
                 category_id: true, // To link with categories
             },
             orderBy: {
                 service_name: 'asc', // Order services alphabetically
             },
         });
-        // console.log(`[getBookingServicesData] Fetched services (raw from Prisma):`, services); // Optional: keep for raw check
+        // console.log(`[getServiceRequestServicesData] Fetched services (raw from Prisma):`, services); // Optional: keep for raw check
 
         // Convert Decimal 'price' to a number before passing to client component
         const serializedServices = services.map(service => ({
             ...service,
-            price: service.price.toNumber(), // <--- CONVERT DECIMAL TO NUMBER HERE
+            price_base: service.price_base.toNumber(), // <--- CONVERT DECIMAL TO NUMBER HERE
         }));
 
-        console.log(`[getBookingServicesData] Fetched services (serialized for client):`, serializedServices);
+        console.log(`[getServiceRequestServicesData] Fetched services (serialized for client):`, serializedServices);
 
 
         const categoryIds = [...new Set(serializedServices.map(s => s.category_id).filter(id => id !== null))];
-        console.log(`[getBookingServicesData] Deduced category IDs:`, categoryIds);
+        console.log(`[getServiceRequestServicesData] Deduced category IDs:`, categoryIds);
 
-        const categories = await prisma.bookingcategory.findMany({
+        const categories = await prisma.servicecategory.findMany({
             where: {
                 business_id: businessId,
                 category_id: {
@@ -212,11 +216,11 @@ export async function getBookingServicesData(businessId) {
                 category_name: 'asc',
             },
         });
-        console.log(`[getBookingServicesData] Fetched categories:`, categories);
+        console.log(`[getServiceRequestServicesData] Fetched categories:`, categories);
 
-        return { services: serializedServices, categories }; // <--- RETURN THE SERIALIZED SERVICES
+        return { services: serializedServices, categories };
     } catch (error) {
-        console.error(`[getBookingServicesData] Error fetching booking services for business ID ${businessId}:`, error);
+        console.error(`[getServiceRequestServicesData] Error fetching service request services for business ID ${businessId}:`, error);
         return { services: [], categories: [] };
     }
 }

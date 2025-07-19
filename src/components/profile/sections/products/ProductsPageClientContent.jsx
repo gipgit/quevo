@@ -16,17 +16,19 @@ export default function ProductsPageClientContent({ businessMenuItems }) {
 
     // Destructure properties from businessProfile context
     const {
-        businessData, // Global data, from layout
         businessSettings, // Global settings, from layout
-        isDarkBackground, // Theme data, from layout
         themeColorText,   // Theme data, from layout
         themeColorBackground, // Theme data, from layout
+        themeColorBackgroundCard, // Theme data, from layout
         themeColorButton, // Theme data, from layout
+        themeColorBorder, // Theme data, from layout
     } = businessProfile;
 
     // We no longer need 'activeSection' check here, as this component only renders if 'products' is the active route.
     // The previous 'if (!businessData || !businessSettings || !businessMenuItems)' check is mostly handled by the parent
     // server component now. However, `businessMenuItems` can be empty, so handle that.
+
+
 
     const [activeCategory, setActiveCategory] = React.useState(null);
     const categoryRefs = useRef({});
@@ -170,9 +172,9 @@ export default function ProductsPageClientContent({ businessMenuItems }) {
                                         ${activeCategory === category.category_id ? 'active' : ''}`}
                                     onClick={() => scrollToCategory(category.category_id)}
                                     style={{
-                                        borderColor: 'var(--category-pill-border-color)',
-                                        color: activeCategory === category.category_id ? themeColorButton : themeColorText,
-                                        backgroundColor: activeCategory === category.category_id ? 'var(--section-active-border-color)' : 'transparent',
+                                        borderColor: activeCategory === category.category_id ? themeColorButton : themeColorText,
+                                        color: activeCategory === category.category_id ? themeColorBackground : themeColorText,
+                                        backgroundColor: activeCategory === category.category_id ? themeColorButton : 'transparent',
                                     }}
                                 >
                                     {category.category_name}
@@ -183,7 +185,7 @@ export default function ProductsPageClientContent({ businessMenuItems }) {
                 </div>
             </section>
 
-            <section className="business-menu-items max-w-3xl mx-auto px-4 mt-4 pb-20">
+            <section className="business-menu-items max-w-3xl mx-auto px-4 mt-6 pb-20">
                 {businessMenuItems.map(category => (
                     <div
                         key={category.category_id}
@@ -194,8 +196,8 @@ export default function ProductsPageClientContent({ businessMenuItems }) {
                             category={category}
                             menuItems={category.items}
                             themeColorText={themeColorText}
-                            isDarkBackground={isDarkBackground}
-                            themeColorBackground={themeColorBackground}
+                            themeColorBackground={themeColorBackground} 
+                            themeColorBackgroundCard={themeColorBackgroundCard} 
                             themeColorButton={themeColorButton}
                         />
                     </div>

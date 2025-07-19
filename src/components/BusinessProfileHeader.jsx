@@ -9,6 +9,7 @@ import { Link } from '@/i18n/navigation';
 
 import { useBusinessProfile } from '@/contexts/BusinessProfileContext';
 import { useTranslations } from 'next-intl';
+import { parseContacts, hasValidContacts } from '@/lib/utils/contacts';
 
 const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggleMenuOverlay }) => {
     const {
@@ -51,6 +52,11 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
         return luminance > 0.5 ? 'black' : 'white';
     }, []);
     const buttonContentColor = getButtonContentColor(themeColorButton);
+
+    const phones = parseContacts(businessData.business_phone);
+    const emails = parseContacts(businessData.business_email);
+    const hasPhones = hasValidContacts(phones);
+    const hasEmails = hasValidContacts(emails);
 
     const primaryButtonClassName = `button btn-md block text-center shadow-lg`;
     const primaryButtonStyle = {
@@ -164,7 +170,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                         </Link>
                     )}
 
-                    {businessSettings.show_btn_phone && businessData.business_phone && (
+                    {businessSettings.show_btn_phone && hasPhones && (
                         <button onClick={() => toggleContactModal('phone')} className={circularButtonBaseClass} style={primaryButtonStyle}>
                             <div className="link-icon-wrapper w-12 h-12 flex items-center justify-center rounded-full">
                                 <Image
@@ -178,7 +184,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                         </button>
                     )}
 
-                    {businessSettings.show_btn_email && businessData.business_email && (
+                    {businessSettings.show_btn_email && hasEmails && (
                         <button onClick={() => toggleContactModal('email')} className={circularButtonBaseClass} style={primaryButtonStyle}>
                             <div className="link-icon-wrapper w-12 h-12 flex items-center justify-center rounded-full">
                                 <Image
@@ -219,6 +225,15 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                 <nav className="profile-nav-sections mt-4" style={{ borderColor: `rgba(${isDarkBackground ? '255,255,255' : '0,0,0'}, 0.2)` }}>
                     <ul className="flex justify-center text-sm font-semibold">
                         <li>
+                                <Link
+                                    href={`/${businessUrlnameInPath}/services`}
+                                    className={`block py-2 px-4 transition-colors duration-200 ${activeSection === 'booking' ? 'section-active border-b-2' : ''}`}
+                                    style={activeSection === 'services' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
+                                >
+                                    {t('services')}
+                                </Link>
+                        </li>
+                        <li>
                             <Link
                                 href={`/${businessUrlnameInPath}/products`}
                                 className={`block py-2 px-4 transition-colors duration-200 ${activeSection === 'products' ? 'section-active border-b-2' : ''}`}
@@ -245,17 +260,6 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                 {t('rewards')}
                             </Link>
                         </li>
-                        {businessSettings.show_btn_booking && (
-                            <li>
-                                <Link
-                                    href={`/${businessUrlnameInPath}/booking`}
-                                    className={`block py-2 px-4 transition-colors duration-200 ${activeSection === 'booking' ? 'section-active border-b-2' : ''}`}
-                                    style={activeSection === 'booking' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
-                                >
-                                    {tBooking('booking')}
-                                </Link>
-                            </li>
-                        )}
                     </ul>
                 </nav>
             </div>

@@ -3,6 +3,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { ALLOWED_PAYMENT_METHODS } from "@/lib/payment-methods-config";
 
 export default function PaymentsModal({
   show, // Keep the show prop
@@ -62,87 +63,96 @@ export default function PaymentsModal({
 
         {businessPaymentMethods && businessPaymentMethods.length > 0 ? (
           <div className="flex flex-col gap-3">
-            {businessPaymentMethods.map((method, index) => (
-              <div key={index} className="payments-card relative py-8 px-4 border rounded-lg flex items-center gap-4" style={{ borderColor: themeColorText + '30' }}>
-                <div>
-                  {method.icon && (
-                    <Image src={method.icon} width={24} height={24} alt={`${method.label} Icon`} />
-                  )}
-                </div>
+            {businessPaymentMethods.map((method, index) => {
+              // Find iconPath from config by label or id
+              const config = ALLOWED_PAYMENT_METHODS.find(
+                (pm) =>
+                  pm.name.toLowerCase() === method.label?.toLowerCase() ||
+                  pm.id === method.id
+              );
+              const iconPath = config?.iconPath;
+              return (
+                <div key={index} className="payments-card relative py-8 px-4 border rounded-lg flex items-center gap-4" style={{ borderColor: themeColorText + '30' }}>
+                  <div>
+                    {iconPath && (
+                      <Image src={iconPath} width={36} height={36} alt={`${method.label} Icon`} />
+                    )}
+                  </div>
 
-                <div className="flex-grow">
-                  <p className="text-md font-semibold mb-1" style={{ color: themeColorText }}>{method.label}</p>
+                  <div className="flex-grow">
+                    <p className="text-md font-semibold mb-1" style={{ color: themeColorText }}>{method.label}</p>
 
-                  {method.label === 'PayPal' && method.details.paypal_email && (
-                    <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Email: {method.details.paypal_email}</p>
-                  )}
-                  {method.label === 'Bank Transfer' && (
-                    <>
-                      {method.details.iban && <p className="text-sm" style={{ color: themeColorText + 'C0' }}>IBAN: <span id="ibanValue">{method.details.iban}</span></p>}
-                      {method.details.account_holder && <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Beneficiario: {method.details.account_holder}</p>}
-                      {method.details.bank_name && <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Banca: {method.details.bank_name}</p>}
-                    </>
-                  )}
-                  {method.label === 'Satispay' && method.details.phone_number && (
-                    <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Numero di telefono: {method.details.phone_number}</p>
-                  )}
-                  {method.label === 'Klarna' && method.details.merchant_id && (
-                    <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Klarna (ID Commerciante: {method.details.merchant_id})</p>
-                  )}
-                  {method.label === 'Stripe' && (
-                    <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Accetta pagamenti online tramite Stripe.</p>
-                  )}
-                  {method.label === 'Cash' && (
-                    <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Pagamento in contanti alla consegna/servizio.</p>
-                  )}
-                  {Object.keys(method.details).length > 0 && !['PayPal', 'Bank Transfer', 'Klarna', 'Satispay', 'Stripe', 'Cash'].includes(method.label) && (
-                    <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Dettagli: {JSON.stringify(method.details)}</p>
-                  )}
-                  {Object.keys(method.details).length === 0 && !['Stripe', 'Cash'].includes(method.label) && (
-                    <p className="text-sm" style={{ color: themeColorText + 'C0' }}></p>
-                  )}
-                </div>
+                    {method.label === 'PayPal' && method.details.paypal_email && (
+                      <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Email: {method.details.paypal_email}</p>
+                    )}
+                    {method.label === 'Bank Transfer' && (
+                      <>
+                        {method.details.iban && <p className="text-sm" style={{ color: themeColorText + 'C0' }}>IBAN: <span id="ibanValue">{method.details.iban}</span></p>}
+                        {method.details.account_holder && <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Beneficiario: {method.details.account_holder}</p>}
+                        {method.details.bank_name && <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Banca: {method.details.bank_name}</p>}
+                      </>
+                    )}
+                    {method.label === 'Satispay' && method.details.phone_number && (
+                      <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Numero di telefono: {method.details.phone_number}</p>
+                    )}
+                    {method.label === 'Klarna' && method.details.merchant_id && (
+                      <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Klarna (ID Commerciante: {method.details.merchant_id})</p>
+                    )}
+                    {method.label === 'Stripe' && (
+                      <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Accetta pagamenti online tramite Stripe.</p>
+                    )}
+                    {method.label === 'Cash' && (
+                      <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Pagamento in contanti alla consegna/servizio.</p>
+                    )}
+                    {Object.keys(method.details).length > 0 && !['PayPal', 'Bank Transfer', 'Klarna', 'Satispay', 'Stripe', 'Cash'].includes(method.label) && (
+                      <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Dettagli: {JSON.stringify(method.details)}</p>
+                    )}
+                    {Object.keys(method.details).length === 0 && !['Stripe', 'Cash'].includes(method.label) && (
+                      <p className="text-sm" style={{ color: themeColorText + 'C0' }}></p>
+                    )}
+                  </div>
 
-                <div className="absolute bottom-0 -mb-[10px] right-0 w-full flex flex-row justify-center gap-2">
-                  {method.label === 'PayPal' && method.details.paypal_email && (
-                    <>
-                      <a
-                        href={`mailto:${method.details.paypal_email}?subject=Pagamento`}
-                        className="button btn-sm paypal-button px-3 py-1 rounded text-center"
+                  <div className="absolute bottom-0 -mb-[10px] right-0 w-full flex flex-row justify-center gap-2">
+                    {method.label === 'PayPal' && method.details.paypal_email && (
+                      <>
+                        <a
+                          href={`mailto:${method.details.paypal_email}?subject=Pagamento`}
+                          className="button btn-sm paypal-button px-3 py-1 rounded text-center"
+                          style={{ backgroundColor: themeColorButton, color: buttonTextColor }}
+                        >
+                          Invia Pagamento
+                        </a>
+                        <button
+                          className="button btn-sm copy-button px-3 py-1 rounded"
+                          style={{ backgroundColor: themeColorButton, color: buttonTextColor }}
+                          onClick={() => handleCopy(method.details.paypal_email, 'Email Copiata!')}
+                        >
+                          Copia Email
+                        </button>
+                      </>
+                    )}
+                    {method.label === 'Bank Transfer' && method.details.iban && (
+                      <button
+                        className="button btn-sm iban-copy-button px-3 py-1 rounded"
                         style={{ backgroundColor: themeColorButton, color: buttonTextColor }}
+                        onClick={() => handleCopy(method.details.iban, 'IBAN Copiato!')}
                       >
-                        Invia Pagamento
-                      </a>
+                        Copia IBAN
+                      </button>
+                    )}
+                    {method.label === 'Satispay' && method.details.phone_number && (
                       <button
                         className="button btn-sm copy-button px-3 py-1 rounded"
                         style={{ backgroundColor: themeColorButton, color: buttonTextColor }}
-                        onClick={() => handleCopy(method.details.paypal_email, 'Email Copiata!')}
+                        onClick={() => handleCopy(method.details.phone_number, 'Numero Copiato!')}
                       >
-                        Copia Email
+                        Copia Numero
                       </button>
-                    </>
-                  )}
-                  {method.label === 'Bank Transfer' && method.details.iban && (
-                    <button
-                      className="button btn-sm iban-copy-button px-3 py-1 rounded"
-                      style={{ backgroundColor: themeColorButton, color: buttonTextColor }}
-                      onClick={() => handleCopy(method.details.iban, 'IBAN Copiato!')}
-                    >
-                      Copia IBAN
-                    </button>
-                  )}
-                  {method.label === 'Satispay' && method.details.phone_number && (
-                    <button
-                      className="button btn-sm copy-button px-3 py-1 rounded"
-                      style={{ backgroundColor: themeColorButton, color: buttonTextColor }}
-                      onClick={() => handleCopy(method.details.phone_number, 'Numero Copiato!')}
-                    >
-                      Copia Numero
-                    </button>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <p className="text-gray-600" style={{ color: themeColorText + 'A0' }}>Nessun metodo di pagamento disponibile per questa attività.</p>

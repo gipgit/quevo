@@ -18,11 +18,11 @@ export default async function ProductsSectionPage({ params }: { params: { busine
         where: { business_urlname: business_urlname },
         select: {
             business_public_uuid: true, // Needed for image URLs
-            menuitem: {
-                include: { menuitemvariation: { orderBy: { variation_name: 'asc' } }, menucategory: true },
+            product: {
+                include: { productvariation: { orderBy: { variation_name: 'asc' } }, productcategory: true },
                 orderBy: { display_order: 'asc' }
             },
-            menucategory: { orderBy: { display_order: 'asc' } },
+            productcategory: { orderBy: { display_order: 'asc' } },
         },
     });
 
@@ -32,7 +32,7 @@ export default async function ProductsSectionPage({ params }: { params: { busine
 
     // Process Menu Items (Products) - This logic was previously in layout.tsx
     const menuItemsByCategory: { [key: number]: any } = {};
-    const allMenuCategories = businessData.menucategory || [];
+    const allMenuCategories = businessData.productcategory || [];
     allMenuCategories.forEach(cat => {
         menuItemsByCategory[cat.category_id] = {
             category_id: cat.category_id,
@@ -52,7 +52,7 @@ export default async function ProductsSectionPage({ params }: { params: { busine
         };
     }
 
-    businessData.menuitem?.forEach(item => {
+    businessData.product?.forEach(item => {
         let itemImageUrl = null;
         if (item.image_available) {
             itemImageUrl = `/uploads/menu/${businessData.business_public_uuid}/item_${item.item_id}.webp`;
@@ -63,12 +63,12 @@ export default async function ProductsSectionPage({ params }: { params: { busine
             item_img: itemImageUrl,
             date_created: item.date_created?.toISOString() || null,
             date_update: item.date_update?.toISOString() || null,
-            menucategory: item.menucategory ? {
-                ...item.menucategory,
-                date_created: item.menucategory.date_created?.toISOString() || null,
-                date_update: item.menucategory.date_update?.toISOString() || null,
+            productcategory: item.productcategory ? {
+                ...item.productcategory,
+                date_created: item.productcategory.date_created?.toISOString() || null,
+                date_update: item.productcategory.date_update?.toISOString() || null,
             } : null,
-            menuitemvariation: item.menuitemvariation?.map((variation: any) => {
+            productvariation: item.productvariation?.map((variation: any) => {
                 let calculatedVariationPrice;
                 if (variation.price_override !== null && variation.price_override !== undefined) {
                     calculatedVariationPrice = parseFloat(variation.price_override.toString());

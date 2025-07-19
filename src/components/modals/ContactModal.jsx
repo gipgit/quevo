@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { parseContacts, hasValidContacts, createWhatsAppLink } from '@/lib/utils/contacts';
 
 export default function ContactModal({
   show, // Keep the show prop
@@ -37,8 +38,8 @@ export default function ContactModal({
     }
   };
 
-  const formattedPhoneNumber = businessData.business_phone ? businessData.business_phone.replace(/\s/g, '') : '';
-  const whatsappLink = `https://wa.me/${formattedPhoneNumber}`;
+  const phones = parseContacts(businessData.business_phone);
+  const emails = parseContacts(businessData.business_email);
 
   const getButtonTextColor = (bgColor) => {
     if (!bgColor) return 'white';
@@ -75,24 +76,35 @@ export default function ContactModal({
           &times;
         </button>
 
-        {businessSettings.show_btn_phone && (
-          <div id="phoneContactSection" className="contacts-card relative py-8 px-4 border rounded-lg mb-4 flex items-center gap-4" style={{ borderColor: themeColorText + '30' }}>
+        {businessSettings.show_btn_phone && phones.length > 0 && (
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-3" style={{ color: themeColorText }}>
+              Telefoni
+            </h3>
+            {phones.map((phone, index) => {
+              const whatsappLink = createWhatsAppLink(phone.value || '');
+              
+              return (
+                <div key={index} className="contacts-card relative py-4 px-4 border rounded-lg mb-3 flex items-center gap-4" style={{ borderColor: themeColorText + '30' }}>
             <div>
-              <Image src="/icons/iconsax/phone.svg" width={24} height={24} alt="Phone" />
+                    <Image src="/icons/iconsax/phone.svg" width={32} height={32} alt="Phone" />
             </div>
             <div className="flex-grow">
-              {businessData.business_phone ? (
-                <p className="text-lg" style={{ color: themeColorText }}>{businessData.business_phone}</p>
-              ) : (
-                <p className="text-sm" style={{ color: themeColorText + 'A0' }}>Telefono non disponibile.</p>
-              )}
+                    {phone.title && (
+                      <p className="text-sm font-medium mb-1" style={{ color: themeColorText + '80' }}>
+                        {phone.title}
+                      </p>
+                    )}
+                    <p className="text-lg" style={{ color: themeColorText }}>
+                      {phone.value || 'Telefono non disponibile'}
+                    </p>
             </div>
-            <div className="absolute bottom-0 -mb-[10px] right-0 w-full flex flex-row justify-end gap-2">
-              {businessData.business_phone && (
+                  <div className="flex flex-col gap-1">
+                    {phone.value && (
                 <>
                   <a
-                    href={`tel:${formattedPhoneNumber}`}
-                    className="button btn-sm call-button px-3 py-1 rounded"
+                          href={`tel:${phone.value}`}
+                          className="button btn-sm call-button px-3 py-1 rounded text-xs"
                     style={{ backgroundColor: themeColorButton, color: buttonTextColor }}
                   >
                     Chiama
@@ -101,7 +113,7 @@ export default function ContactModal({
                     href={whatsappLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="button btn-sm whatsapp-button px-3 py-1 rounded"
+                          className="button btn-sm whatsapp-button px-3 py-1 rounded text-xs"
                     style={{ backgroundColor: themeColorButton, color: buttonTextColor }}
                   >
                     WhatsApp
@@ -109,41 +121,62 @@ export default function ContactModal({
                 </>
               )}
             </div>
+                </div>
+              );
+            })}
           </div>
         )}
 
-        {businessSettings.show_btn_email && (
-          <div id="emailContactSection" className="contacts-card relative py-8 px-4 border rounded-lg mb-4 flex items-center gap-4" style={{ borderColor: themeColorText + '30' }}>
+        {businessSettings.show_btn_email && emails.length > 0 && (
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-3" style={{ color: themeColorText }}>
+              Email
+            </h3>
+            {emails.map((email, index) => (
+              <div key={index} className="contacts-card relative py-4 px-4 border rounded-lg mb-3 flex items-center gap-4" style={{ borderColor: themeColorText + '30' }}>
             <div>
-              <Image src="/icons/iconsax/email.svg" width={24} height={24} alt="Email" />
+                  <Image src="/icons/iconsax/email.svg" width={32} height={32} alt="Email" />
             </div>
             <div className="flex-grow">
-              {businessData.business_email ? (
-                <p id="modalEmailAddress" className="text-sm lg:text-md break-all" style={{ color: themeColorText }}>{businessData.business_email}</p>
-              ) : (
-                <p className="text-sm" style={{ color: themeColorText + 'A0' }}>Email non disponibile.</p>
-              )}
+                  {email.title && (
+                    <p className="text-sm font-medium mb-1" style={{ color: themeColorText + '80' }}>
+                      {email.title}
+                    </p>
+                  )}
+                  <p className="text-sm lg:text-md break-all" style={{ color: themeColorText }}>
+                    {email.value || 'Email non disponibile'}
+                  </p>
             </div>
-            <div className="absolute bottom-0 -mb-[10px] right-0 w-full flex flex-row justify-end gap-2">
-              {businessData.business_email && (
+                <div className="flex flex-col gap-1">
+                  {email.value && (
                 <>
                   <a
-                    href={`mailto:${businessData.business_email}`}
-                    className="button btn-sm email-button px-3 py-1 rounded"
+                        href={`mailto:${email.value}`}
+                        className="button btn-sm email-button px-3 py-1 rounded text-xs"
                     style={{ backgroundColor: themeColorButton, color: buttonTextColor }}
                   >
                     Invia Email
                   </a>
                   <button
-                    className="button btn-sm copy-button px-3 py-1 rounded"
+                        className="button btn-sm copy-button px-3 py-1 rounded text-xs"
                     style={{ backgroundColor: themeColorButton, color: buttonTextColor }}
-                    onClick={() => handleCopy(businessData.business_email, 'Email Copiata!')}
+                        onClick={() => handleCopy(email.value, 'Email Copiata!')}
                   >
                     Copia Email
                   </button>
                 </>
               )}
             </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {(!phones.length && !emails.length) && (
+          <div className="text-center py-8">
+            <p className="text-sm" style={{ color: themeColorText + 'A0' }}>
+              Nessun contatto disponibile.
+            </p>
           </div>
         )}
       </div>

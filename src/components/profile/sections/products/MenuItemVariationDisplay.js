@@ -8,7 +8,7 @@ const MenuItemVariationDisplay = ({ variation, isDarkBackground }) => {
   return (
     <div className="flex justify-between items-center py-2">
       <div>
-        <h5 className="font-medium">{variation.variation_name}</h5>
+        <p className="text-sm font-medium">{variation.variation_name}</p>
         {variation.additional_description && <p className="text-xs opacity-70">{variation.additional_description}</p>}
       </div>
       <span className="font-bold">€{displayPrice.toFixed(2)}</span>

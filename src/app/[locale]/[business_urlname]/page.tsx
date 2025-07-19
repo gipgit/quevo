@@ -37,6 +37,9 @@ export default async function BusinessRootPage({ params }: { params: { business_
     // Make sure these segments match the folder names you'll create under `(sections)/`
     let redirectToSegment: string;
     switch (defaultPageSetting) {
+        case 'services':
+            redirectToSegment = 'services';
+            break;
         case 'products':
             redirectToSegment = 'products';
             break;
@@ -46,13 +49,10 @@ export default async function BusinessRootPage({ params }: { params: { business_
         case 'rewards':
             redirectToSegment = 'rewards';
             break;
-        case 'booking':
-            redirectToSegment = 'booking';
-            break;
         // Add more cases here if you define other section types in your `default_page` setting.
         default:
             // Fallback to 'products' if the setting is null, undefined, or an unrecognized value.
-            redirectToSegment = 'products';
+            redirectToSegment = 'services';
             break;
     }
 
