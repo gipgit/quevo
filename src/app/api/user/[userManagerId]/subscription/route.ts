@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import stripe from '@/lib/stripe';
+import getStripe from '@/lib/stripe';
 
 export async function GET(req: NextRequest, { params }: { params: { userManagerId: string } }) {
   const { userManagerId } = params;
@@ -23,7 +23,8 @@ export async function GET(req: NextRequest, { params }: { params: { userManagerI
 
   // Fetch live Stripe subscription and payment method details
   try {
-    const subscription = await stripe!.subscriptions.retrieve(userManager.stripe_subscription_id, {
+    const stripe = getStripe();
+    const subscription = await stripe.subscriptions.retrieve(userManager.stripe_subscription_id, {
       expand: ['default_payment_method', 'items.data.price', 'latest_invoice.payment_intent'],
     });
     let defaultPaymentMethod = null;

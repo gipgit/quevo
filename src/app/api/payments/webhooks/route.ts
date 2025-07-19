@@ -2,7 +2,7 @@
 
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import stripe from '@/lib/stripe';
+import getStripe from '@/lib/stripe';
 import prisma from '@/lib/prisma';
 import { headers } from 'next/headers';
 import type { NextRequest } from 'next/server';
@@ -22,7 +22,8 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event;
 
   try {
-    event = stripe!.webhooks.constructEvent(body, signature, webhookSecret);
+    const stripe = getStripe();
+    event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     console.log(`Received Stripe event: ${event.type} (ID: ${event.id})`);
   } catch (err: any) {
     console.error('Webhook signature verification failed.', err.message);
@@ -60,7 +61,8 @@ export async function POST(req: NextRequest) {
       }
 
       try {
-        const subscription = await stripe!.subscriptions.retrieve(subscriptionId, {
+        const stripe = getStripe();
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
           expand: ['items.data.price', 'default_payment_method', 'latest_invoice'],
         });
         const currentPeriodEnd = subscription.items.data[0]?.current_period_end;

@@ -2,7 +2,7 @@
 
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import stripe from '@/lib/stripe'; // Your shared Stripe utility instance
+import getStripe from '@/lib/stripe'; // Your shared Stripe utility instance
 import type { NextRequest } from 'next/server';
 
 // This ensures the route is not cached, which is good practice for API routes
@@ -16,15 +16,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Session ID is required.' }, { status: 400 });
   }
 
-  if (!stripe) {
-    console.error('Stripe is not initialized.');
-    return NextResponse.json({ error: 'Stripe service is unavailable.' }, { status: 500 });
-  }
-
   try {
     // Retrieve the Checkout Session from Stripe
     // IMPORTANT: Expand 'line_items.data.price.product' to get the full product object
     // including its 'name' for the frontend. This is 4 levels deep, which is the limit.
+    const stripe = getStripe();
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
       expand: ['customer', 'subscription', 'line_items.data.price.product'],
     });

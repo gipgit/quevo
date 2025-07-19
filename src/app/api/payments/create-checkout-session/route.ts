@@ -2,7 +2,7 @@
 
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import stripe from '@/lib/stripe'; // Your Stripe utility
+import getStripe from '@/lib/stripe'; // Your Stripe utility
 import prisma from '@/lib/prisma'; // Your Prisma client
 
 export async function POST(req: Request) {
@@ -31,18 +31,20 @@ export async function POST(req: Request) {
     });
 
     if (existingUserManager?.stripe_customer_id) {
-      const customerResponse = await stripe!.customers.retrieve(existingUserManager.stripe_customer_id);
+      const stripe = getStripe();
+      const customerResponse = await stripe.customers.retrieve(existingUserManager.stripe_customer_id);
       if ((customerResponse as Stripe.DeletedCustomer).deleted) {
         throw new Error('Stripe customer has been deleted.');
       }
       customer = customerResponse as Stripe.Customer;
       if (customer.email !== userEmail) {
-        await stripe!.customers.update(customer.id, { email: userEmail });
+        await stripe.customers.update(customer.id, { email: userEmail });
       }
       // Do NOT update plan_id here. Only update in webhook after payment confirmation.
     } else {
       // Create a new Stripe customer
-      customer = await stripe!.customers.create({
+      const stripe = getStripe();
+      customer = await stripe.customers.create({
         email: userEmail,
         metadata: {
           userId: userId, // Link to your internal user_id from UserManager
@@ -63,7 +65,8 @@ export async function POST(req: Request) {
     }
 
     // 3. Create the Checkout Session
-    const session = await stripe!.checkout.sessions.create({
+    const stripe = getStripe();
+    const session = await stripe.checkout.sessions.create({
       customer: customer.id,
       mode: 'subscription',
       line_items: [
