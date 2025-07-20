@@ -3,13 +3,8 @@ import { AppointmentSchedulingDetails } from '@/types/service-board';
 
 export const appointmentSchedulingConfig: BaseRendererConfig<AppointmentSchedulingDetails>[] = [
   {
-    key: 'appointment_title',
-    label: 'Appointment Title',
-    type: 'text',
-  },
-  {
-    key: 'confirmation_status',
-    label: 'Status',
+    key: 'appointment_title_status',
+    label: 'Appointment',
     type: 'custom',
   },
   {
@@ -25,19 +20,19 @@ export const appointmentSchedulingConfig: BaseRendererConfig<AppointmentScheduli
   },
   {
     key: 'datetimes_options',
-    label: 'Suggested Times',
+    label: 'Select a date and time',
     type: 'custom',
     shouldRender: (details) => details.confirmation_status === 'pending_customer' && details.appointment_mode === 'multiple_choice',
   },
   {
     key: 'datetime_confirmed',
-    label: 'Appointment Time',
+    label: 'Confirmed date and time',
     type: 'custom',
     shouldRender: (details) => details.datetime_confirmed !== null,
   },
   {
     key: 'platform_options',
-    label: 'Available Platforms',
+    label: 'Select your preferred platform',
     type: 'custom',
     shouldRender: (details) => details.appointment_type === 'online' && details.confirmation_status === 'pending_customer',
   },
@@ -46,12 +41,6 @@ export const appointmentSchedulingConfig: BaseRendererConfig<AppointmentScheduli
     label: 'Confirmed Platform',
     type: 'custom',
     shouldRender: (details) => details.appointment_type === 'online' && details.platform_confirmed !== null,
-  },
-  {
-    key: 'platforms_selected',
-    label: 'Selected Platforms',
-    type: 'custom',
-    shouldRender: (details) => Boolean(details.appointment_type === 'online' && details.platforms_selected && details.platforms_selected.length > 0),
   },
   {
     key: 'reschedule_reason',
@@ -63,6 +52,6 @@ export const appointmentSchedulingConfig: BaseRendererConfig<AppointmentScheduli
     key: 'appointment_id',
     label: 'Appointment ID',
     type: 'text',
-    shouldRender: (details) => details.appointment_id !== null,
+    shouldRender: (details) => details.appointment_id !== null && details.confirmation_status !== 'confirmed',
   },
 ]; 

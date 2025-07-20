@@ -266,8 +266,9 @@ export function isPaymentRequestDetails(details: any): details is PaymentRequest
     (details.hidden_payment_methods === undefined || 
       (Array.isArray(details.hidden_payment_methods) && 
        details.hidden_payment_methods.every((method: any) => typeof method === 'string'))) &&
-    (details.payment_confirmation === undefined || 
+    (details.payment_confirmation === undefined || details.payment_confirmation === null || 
       (typeof details.payment_confirmation === 'object' &&
+       details.payment_confirmation !== null &&
        typeof details.payment_confirmation.confirmed_at === 'string' &&
        typeof details.payment_confirmation.method_used === 'string'))
   );

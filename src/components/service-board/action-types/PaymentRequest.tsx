@@ -104,7 +104,7 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
 
               return (
                 <div key={index} className="relative p-4 border-[1px] border-gray-400 bg-gray-0 rounded-lg shadow-sm">
-                  <div className="flex md:items-center flex-row-reverse md:flex-row gap-x-4 md:gap-x-6 gap-y-2">
+                  <div className="flex items-start gap-x-4 md:gap-x-6 gap-y-2">
                     {/* Icon */}
                     {iconPath && (
                       <div className="flex-shrink-0">
@@ -118,30 +118,35 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
                       
                       {/* PayPal */}
                       {method.label === 'PayPal' && method.details.paypal_email && (
-                        <p className="text-sm text-gray-600 mt-1 flex flex-wrap gap-x-1">
-                          Email: {method.details.paypal_email}
-                          <button
-                            onClick={() => handleCopy(method.details.paypal_email, 'PayPal')}
-                            className="text-blue-600 hover:text-blue-800"
-                          >
-                            {copiedText === 'PayPal' ? 'Copied!' : 'Copy'}
-                          </button>
-                        </p>
+                        <div className="flex flex-col mt-1">
+                          <span className="text-xs text-gray-500">Email</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm md:text-base font-medium text-gray-900">
+                              {method.details.paypal_email}
+                            </span>
+                            <button
+                              onClick={() => handleCopy(method.details.paypal_email, 'PayPal')}
+                              className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                            >
+                              {copiedText === 'PayPal' ? 'Copied!' : 'Copy'}
+                            </button>
+                          </div>
+                        </div>
                       )}
 
                       {/* Bank Transfer */}
                       {method.label === 'Bank Transfer' && (
                         <div className="space-y-2 mt-1">
                           {method.details.iban && (
-                            <div className="flex flex-col gap-x-2">
-                              
-                              <div className="px-3 py-2 rounded-lg bg-gray-100 border border-gray-300 flex items-center justify-between flex-wrap gap-x-2">
-                                <span className="text-base font-mono font-semibold text-gray-900">
-                                <span className="text-xs md:text-base text-gray-400">IBAN: </span> {method.details.iban}
+                            <div className="flex flex-col">
+                              <span className="text-xs text-gray-500">IBAN</span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm md:text-base text-gray-900">
+                                  {method.details.iban}
                                 </span>
                                 <button
                                   onClick={() => handleCopy(method.details.iban, 'IBAN')}
-                                  className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                                  className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
                                 >
                                   {copiedText === 'IBAN' ? 'Copied!' : 'Copy'}
                                 </button>
@@ -150,35 +155,49 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
                           )}
 
                           {method.details.account_holder && (
-                            <p className="text-sm text-gray-600 mt-1 flex flex-wrap gap-x-1">
-                              Account Holder: {method.details.account_holder}
-                              <button
-                                onClick={() => handleCopy(method.details.account_holder, 'Account Holder')}
-                                className="text-blue-600 hover:text-blue-800"
-                              >
-                                {copiedText === 'Account Holder' ? 'Copied!' : 'Copy'}
-                              </button>
-                            </p>
+                            <div className="flex flex-col">
+                              <span className="text-xs text-gray-500">Account Holder</span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm md:text-base font-medium text-gray-900">
+                                  {method.details.account_holder}
+                                </span>
+                                <button
+                                  onClick={() => handleCopy(method.details.account_holder, 'Account Holder')}
+                                  className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                                >
+                                  {copiedText === 'Account Holder' ? 'Copied!' : 'Copy'}
+                                </button>
+                              </div>
+                            </div>
                           )}
+                          
                           {method.details.bank_name && (
-                            <p className="text-sm text-gray-600">
-                              Bank: {method.details.bank_name}
-                            </p>
+                            <div className="flex flex-col">
+                              <span className="text-xs text-gray-500">Bank</span>
+                              <span className="text-sm md:text-base font-medium text-gray-900">
+                                {method.details.bank_name}
+                              </span>
+                            </div>
                           )}
                         </div>
                       )}
 
                       {/* Satispay */}
                       {method.label === 'Satispay' && method.details.phone_number && (
-                        <p className="text-sm text-gray-600 mt-1">
-                          Phone: {method.details.phone_number}
-                          <button
-                            onClick={() => handleCopy(method.details.phone_number, 'Satispay')}
-                            className="ml-2 text-blue-600 hover:text-blue-800"
-                          >
-                            {copiedText === 'Satispay' ? 'Copied!' : 'Copy'}
-                          </button>
-                        </p>
+                        <div className="flex flex-col mt-1">
+                          <span className="text-xs text-gray-500">Phone</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm md:text-base font-medium text-gray-900">
+                              {method.details.phone_number}
+                            </span>
+                            <button
+                              onClick={() => handleCopy(method.details.phone_number, 'Satispay')}
+                              className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                            >
+                              {copiedText === 'Satispay' ? 'Copied!' : 'Copy'}
+                            </button>
+                          </div>
+                        </div>
                       )}
 
                       {/* Klarna */}

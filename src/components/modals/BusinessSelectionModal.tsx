@@ -22,7 +22,7 @@ export default function BusinessSelectionModal({ isOpen, onClose }: BusinessSele
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <div className="bg-white rounded-xl p-8 max-w-lg w-full shadow-lg relative">
+      <div className="bg-white rounded-xl p-8 max-w-3xl w-full shadow-lg relative">
         <button 
           className="absolute top-2 right-2 text-gray-400 hover:text-gray-600" 
           onClick={onClose}
@@ -30,7 +30,7 @@ export default function BusinessSelectionModal({ isOpen, onClose }: BusinessSele
           <XMarkIcon className="h-6 w-6" />
         </button>
         <h2 className="text-xl font-bold mb-4">{t("currentBusiness.selectBusiness")}</h2>
-        <div className="grid grid-cols-1 gap-4">
+        <div className="flex flex-row items-center justify-center flex-wrap gap-4">
           {businesses.map((b) => (
             <div
               key={b.business_id}

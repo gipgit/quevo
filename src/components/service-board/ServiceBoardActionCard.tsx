@@ -20,7 +20,6 @@ import {
 } from "./action-types"
 import { 
   ServiceBoardAction,
-  UserDefinedTag,
   isDocumentDownloadDetails,
   isPaymentRequestDetails,
   isAppointmentSchedulingDetails,
@@ -72,35 +71,7 @@ function getStatusColor(status: string): string {
   }
 }
 
-function getTagTypeColor(tagType: string): string {
-  switch (tagType) {
-    case 'appointment_title':
-      return 'bg-blue-100 text-blue-800';
-    case 'payment_title':
-      return 'bg-green-100 text-green-800';
-    case 'general_tag':
-      return 'bg-gray-100 text-gray-800';
-    case 'category':
-      return 'bg-purple-100 text-purple-800';
-    default:
-      return 'bg-gray-100 text-gray-800';
-  }
-}
 
-function getTagTypeLabel(tagType: string): string {
-  switch (tagType) {
-    case 'appointment_title':
-      return 'Titolo';
-    case 'payment_title':
-      return 'Pagamento';
-    case 'general_tag':
-      return 'Tag';
-    case 'category':
-      return 'Categoria';
-    default:
-      return tagType;
-  }
-}
 
 export default function ServiceBoardActionCard({ action, onActionUpdate, onAppointmentConfirmed }: Props) {
   const t = useTranslations("ServiceBoard")
@@ -239,21 +210,6 @@ export default function ServiceBoardActionCard({ action, onActionUpdate, onAppoi
             </div>
           <h3 className="text-xl md:text-2xl font-bold mb-1">{action.action_title}</h3>
           <p className="text-gray-500 text-xs md:text-sm">{action.action_description}</p>
-          
-          {/* Display tags */}
-          {action.tags && action.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
-              {action.tags.map((tag: UserDefinedTag) => (
-                <span
-                  key={tag.tag_id}
-                  className={`px-2 py-1 text-xs rounded-full border ${getTagTypeColor(tag.tag_type)}`}
-                >
-                  <span className="mr-1">{tag.tag_name}</span>
-                  <span className="text-xs opacity-75">({getTagTypeLabel(tag.tag_type)})</span>
-                </span>
-              ))}
-            </div>
-          )}
         </div>
         {shouldShowExpandButton && (
           <button

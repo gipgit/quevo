@@ -47,8 +47,8 @@ export default function AppointmentSchedulingRenderer({
     return { formattedDate, formattedTime };
   };
 
-  // Special handling for confirmation status
-  if (field.key === 'confirmation_status') {
+  // Special handling for appointment title and status combined
+  if (field.key === 'appointment_title_status') {
     const getStatusStyles = (status: string) => {
       switch (status) {
         case 'pending_customer':
@@ -84,10 +84,15 @@ export default function AppointmentSchedulingRenderer({
     };
 
     return (
-      <div className="space-y-1 flex items-center gap-x-2">
+      <div className="space-y-1">
         <label className="text-sm font-medium text-gray-900">{field.label}</label>
-        <div className={`w-fit px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusStyles(value as string)}`}>
-          {getStatusText(value as string)}
+        <div className="flex items-center justify-between">
+          <div className="text-lg font-semibold text-gray-900">
+            {details.appointment_title || 'Appointment'}
+          </div>
+          <div className={`w-fit px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusStyles(details.confirmation_status)}`}>
+            {getStatusText(details.confirmation_status)}
+          </div>
         </div>
       </div>
     );
@@ -135,7 +140,7 @@ export default function AppointmentSchedulingRenderer({
               key={mode.key}
               className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
                 value === mode.key
-                  ? 'border-blue-500 bg-blue-50 shadow-md'
+                  ? 'border-gray-500 bg-gray-50 shadow-md'
                   : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
               }`}
               onClick={() => {
@@ -146,7 +151,7 @@ export default function AppointmentSchedulingRenderer({
               <div className="flex items-start gap-3">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
                   value === mode.key
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-gray-600 text-white'
                     : 'bg-gray-100 text-gray-600'
                 }`}>
                   {mode.icon}
@@ -156,7 +161,7 @@ export default function AppointmentSchedulingRenderer({
                   <p className="text-sm text-gray-600 mt-1">{mode.description}</p>
                 </div>
                 {value === mode.key && (
-                  <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center">
+                  <div className="w-5 h-5 rounded-full bg-gray-600 flex items-center justify-center">
                     <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
@@ -188,15 +193,14 @@ export default function AppointmentSchedulingRenderer({
     
     return (
       <div className="space-y-1">
-        <label className="text-sm font-medium text-gray-800">{field.label}</label>
-        <div className="p-4 rounded-lg border border-gray-300 bg-gray-50">
-          <div className="flex flex-col">
-            <div className="text-md md:text-lg font-medium text-gray-900">
-              {formattedDate}
-            </div>
-            <div className="text-sm text-gray-500">
-              {formattedTime}
-            </div>
+        <label className="text-sm font-medium text-gray-800">Confirmed date and time</label>
+        <div className="flex items-center gap-2">
+          <div className="text-md md:text-lg font-medium text-gray-900">
+            {formattedDate}
+          </div>
+          <div className="text-gray-400">•</div>
+          <div className="text-md md:text-lg font-medium text-gray-900">
+            {formattedTime}
           </div>
         </div>
       </div>
@@ -205,9 +209,11 @@ export default function AppointmentSchedulingRenderer({
 
   // Special handling for suggested datetimes
   if (field.key === 'datetimes_options' && Array.isArray(value)) {
+    const label = details.confirmation_status === 'pending_customer' ? 'Select a date and time' : 'Suggested Times';
+    
     return (
       <div className="space-y-1">
-        <label className="text-sm font-medium text-gray-800">{field.label}</label>
+        <label className="text-sm font-medium text-gray-800">{label}</label>
         <div className="space-y-2">
           {value.map((datetime, index) => {
             const { formattedDate, formattedTime } = formatDateTime(datetime);
@@ -258,9 +264,11 @@ export default function AppointmentSchedulingRenderer({
 
   // Special handling for suggested platforms
   if (field.key === 'platform_options' && Array.isArray(value)) {
+    const label = details.confirmation_status === 'pending_customer' ? 'Select your preferred platform' : 'Available Platforms';
+    
     return (
       <div className="space-y-1">
-        <label className="text-sm font-medium text-gray-800">{field.label}</label>
+        <label className="text-sm font-medium text-gray-800">{label}</label>
         <div className="space-y-2">
           {value.map((platform, index) => {
             const isSelected = platform === selectedPlatform;

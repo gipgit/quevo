@@ -6,8 +6,7 @@ import Image from 'next/image';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay, addHours, setHours, setMinutes } from 'date-fns';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import TagManager from '@/components/service-board/TagManager';
-import { UserDefinedTag } from '@/types/service-board';
+
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 // Calendar localizer
@@ -89,6 +88,9 @@ export default function AddActionModal({
   const [suggestedDatetimes, setSuggestedDatetimes] = useState<string[]>([]);
   const [fixedAppointmentDate, setFixedAppointmentDate] = useState<Date | null>(null);
   const [appointmentMode, setAppointmentMode] = useState<string>('multiple_choice');
+  
+  // Mobile navigation state
+  const [mobileStep, setMobileStep] = useState<'templates' | 'form' | 'calendar'>('templates');
 
   // Fetch action templates on component mount
   useEffect(() => {
@@ -132,6 +134,8 @@ export default function AddActionModal({
       setSelectedDate(null);
       setSelectedTimeSlot(null);
       setSuggestedDatetimes([]);
+      // On mobile, move to form step
+      setMobileStep('form');
     }
   };
 
@@ -235,9 +239,6 @@ export default function AddActionModal({
   const handleSubmit = async (formData: any) => {
     setIsSubmitting(true);
     try {
-      // Extract tags from formData
-      const { selectedTags, ...actionFormData } = formData;
-      
       // Create proper action_details based on template
       let actionDetails: any = {};
 
@@ -247,9 +248,9 @@ export default function AddActionModal({
       }
 
       // Override with form data
-      Object.keys(actionFormData).forEach(key => {
-        if (actionFormData[key] !== undefined && actionFormData[key] !== '') {
-          actionDetails[key] = actionFormData[key];
+      Object.keys(formData).forEach(key => {
+        if (formData[key] !== undefined && formData[key] !== '') {
+          actionDetails[key] = formData[key];
         }
       });
 
@@ -289,27 +290,12 @@ export default function AddActionModal({
         body: JSON.stringify({
           action_type: selectedTemplate.action_type,
           action_details: actionDetails,
-          action_title: actionFormData.action_title || selectedTemplate.translated_title,
-          action_description: actionFormData.action_description || selectedTemplate.translated_description
+          action_title: formData.action_title || selectedTemplate.translated_title,
+          action_description: formData.action_description || selectedTemplate.translated_description
         }),
       });
 
       if (response.ok) {
-        const newAction = await response.json();
-        
-        // Associate tags with the action if any are selected
-        if (selectedTags && selectedTags.length > 0) {
-          await fetch(`/api/service-board/actions/${newAction.id}/tags`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              tag_ids: selectedTags.map((tag: UserDefinedTag) => tag.tag_id)
-            }),
-          });
-        }
-
         onActionAdded();
         onClose();
       } else {
@@ -326,12 +312,68 @@ export default function AddActionModal({
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center" onClick={handleModalClick}>
-      <div className="w-full h-full max-w-7xl max-h-[95vh] bg-white text-gray-900 rounded-lg shadow-2xl flex flex-col">
+    <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4" onClick={handleModalClick}>
+      <div className={`w-full h-full max-h-[95vh] lg:max-h-[85vh] bg-white text-gray-900 rounded-lg shadow-2xl flex flex-col ${
+        selectedTemplate?.action_type === 'appointment_scheduling' 
+          ? 'max-w-7xl' 
+          : 'max-w-4xl'
+      }`}>
+        {/* Mobile Header with Navigation */}
+        <div className="lg:hidden border-b border-gray-200 bg-gray-50">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => setMobileStep('templates')}
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  mobileStep === 'templates'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Tipo
+              </button>
+              {selectedTemplate && (
+                <button
+                  onClick={() => setMobileStep('form')}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    mobileStep === 'form'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Dettagli
+                </button>
+              )}
+              {selectedTemplate?.action_type === 'appointment_scheduling' && (
+                <button
+                  onClick={() => setMobileStep('calendar')}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    mobileStep === 'calendar'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Calendario
+                </button>
+              )}
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 text-gray-400 hover:text-gray-600"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
         {/* Main Content */}
-        <div className="flex-1 flex flex-col lg:flex-row overflow-scroll">
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
           {/* Left Sidebar - Action Type Selection */}
-          <div className="w-full lg:w-72 md:w-96 bg-gray-50 border-r border-gray-200 overflow-y-auto">
+          <div className={`w-full lg:w-72 xl:w-80 bg-gray-50 border-r border-gray-200 overflow-y-auto lg:rounded-l-lg ${
+            mobileStep === 'templates' ? 'block' : 'hidden lg:block'
+          }`}>
             <div className="p-4">
               {loadingTemplates ? (
                 <div className="flex items-center justify-center h-full min-h-[400px]">
@@ -341,13 +383,13 @@ export default function AddActionModal({
                   </div>
                 </div>
               ) : (
-                <div className="space-y-1 flex flex-row lg:flex-col overflow-scroll">
+                <div className="space-y-1">
                   {templates.map((template) => (
                     <button
                       key={template.template_id}
                       onClick={() => handleTemplateSelect(template)}
                       disabled={!template.is_available_for_current_plan}
-                      className={`w-full p-4 rounded-lg border-2 transition-all duration-200 text-left relative ${
+                      className={`w-full p-3 rounded-lg border-2 transition-all duration-200 text-left relative ${
                         selectedTemplate?.template_id === template.template_id
                           ? 'border-gray-500 bg-gray-200 shadow-md'
                           : template.is_available_for_current_plan
@@ -356,7 +398,7 @@ export default function AddActionModal({
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 flex items-center justify-center rounded-lg shadow-sm ${
+                        <div className={`w-8 h-8 flex items-center justify-center rounded-lg shadow-sm ${
                           ACTION_TYPE_COLORS[template.action_type] || 'bg-blue-50'
                         }`}>
                           <Image
@@ -364,12 +406,12 @@ export default function AddActionModal({
                             alt={template.translated_title}
                             width={24}
                             height={24}
-                            className="w-6 h-6"
+                            className="w-5 h-5"
                           />
                         </div>
-                        <div className="flex-1">
-                          <h4 className="font-medium text-gray-900">{template.translated_title}</h4>
-                          <p className="text-xs text-gray-600 mt-1">{template.translated_description}</p>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-gray-900 text-sm lg:text-base truncate">{template.translated_title}</h4>
+                          <p className="text-xs text-gray-400 mt-0 line-clamp-2">{template.translated_description}</p>
                         </div>
                       </div>
                       {!template.is_available_for_current_plan && (
@@ -378,7 +420,7 @@ export default function AddActionModal({
                             <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                             </svg>
-                            Available on Pro
+                            Pro
                           </span>
                         </div>
                       )}
@@ -390,11 +432,13 @@ export default function AddActionModal({
           </div>
 
           {/* Center - Form Fields */}
-          <div className="flex-1 overflow-y-auto">
+          <div className={`flex-1 overflow-y-auto ${
+            mobileStep === 'form' ? 'block' : 'hidden lg:block'
+          }`}>
             {selectedTemplate ? (
-              <div className="p-6">
+              <div className="p-4 lg:p-6">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className={`w-12 h-12 flex items-center justify-center rounded-lg ${
+                  <div className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-lg ${
                     ACTION_TYPE_COLORS[selectedTemplate.action_type] || 'bg-blue-50'
                   }`}>
                     <Image
@@ -402,12 +446,11 @@ export default function AddActionModal({
                       alt={selectedTemplate.translated_title}
                       width={24}
                       height={24}
-                      className="w-6 h-6"
+                      className="w-5 h-5 lg:w-6 lg:h-6"
                     />
                   </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-900">{selectedTemplate.translated_title}</h3>
-                    <p className="text-gray-600">{selectedTemplate.translated_description}</p>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg lg:text-xl font-semibold text-gray-900 truncate">{selectedTemplate.translated_title}</h3>
                   </div>
                 </div>
                 <ActionForm
@@ -424,7 +467,7 @@ export default function AddActionModal({
                 />
               </div>
             ) : (
-              <div className="flex items-center justify-center h-full">
+              <div className="flex items-center justify-center h-full p-4">
                 <div className="text-center">
                   <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -432,26 +475,28 @@ export default function AddActionModal({
                     </svg>
                   </div>
                   <h3 className="text-lg font-medium text-gray-900 mb-2">Seleziona un tipo di azione</h3>
-                  <p className="text-gray-600">Scegli un tipo di azione dalla lista per iniziare a creare la tua azione.</p>
+                  <p className="text-gray-600 text-sm">Scegli un tipo di azione dalla lista per iniziare a creare la tua azione.</p>
                 </div>
               </div>
             )}
           </div>
 
-                    {/* Right Sidebar - Calendar (only for appointment scheduling) */}
+          {/* Right Sidebar - Calendar (only for appointment scheduling) */}
           {selectedTemplate?.action_type === 'appointment_scheduling' && (
-            <div className="w-88 lg:w-[380px] bg-gray-50 border-l border-gray-200 overflow-y-auto">
+            <div className={`w-full lg:w-80 xl:w-96 bg-gray-50 border-l border-gray-200 overflow-y-auto lg:rounded-r-lg ${
+              mobileStep === 'calendar' ? 'block' : 'hidden lg:block'
+            }`}>
               <div className="p-4">
                 
                 {/* Calendar Instructions */}
                 <div className="mb-4">
-                  <h4 className="font-medium text-gray-900 mb-2">
+                  <h4 className="font-medium text-gray-900 mb-2 text-sm lg:text-base">
                     {appointmentMode === 'fixed_confirmed' || appointmentMode === 'fixed_pending_confirmation' 
                       ? 'Seleziona data e orario per l\'appuntamento fisso'
-                      : 'Seleziona date per aggiungere orari suggeriti'
+                      : ''
                     }
                   </h4>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs lg:text-sm text-gray-600">
                     {appointmentMode === 'fixed_confirmed' || appointmentMode === 'fixed_pending_confirmation'
                       ? 'Clicca su una data, poi seleziona un orario. L\'appuntamento verrà impostato automaticamente.'
                       : 'Clicca su una data per vedere gli orari disponibili e aggiungerli ai suggerimenti'
@@ -472,23 +517,23 @@ export default function AddActionModal({
                       }))}
                       startAccessor="start"
                       endAccessor="end"
-                      style={{ height: 300 }}
+                      style={{ height: 250, fontSize: '12px' }}
                       onSelectSlot={({ start }: { start: Date }) => handleDateSelect(start)}
                       selectable
                       views={['month']}
                       defaultView="month"
-                      className="text-sm"
+                      className="text-xs lg:text-sm"
                     />
                   </div>
                   
                   {/* Selected Date and Time Slots */}
                   {selectedDate && (
                     <div>
-                      <h4 className="font-medium text-gray-900 mb-2">
+                      <h4 className="font-medium text-gray-900 mb-2 text-sm">
                         Data selezionata: {format(selectedDate, 'dd/MM/yyyy')}
                       </h4>
-                      <h5 className="text-sm font-medium text-gray-700 mb-2">Orari disponibili:</h5>
-                      <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto">
+                      <h5 className="text-xs lg:text-sm font-medium text-gray-700 mb-2">Orari disponibili:</h5>
+                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 max-h-48 overflow-y-auto">
                         {generateTimeSlots(selectedDate).map((slot, index) => {
                           const isSelected = selectedTimeSlot && 
                             selectedTimeSlot.toISOString() === slot.time.toISOString();
@@ -508,7 +553,7 @@ export default function AddActionModal({
                               }`}
                             >
                               {format(slot.time, 'HH:mm')}
-                              {slot.isOccupied && ' (Occupato)'}
+                              {slot.isOccupied && ' (O)'}
                               {slot.isAlreadySuggested && ' ✓'}
                               {isSelected && ' ✓'}
                             </button>
@@ -522,7 +567,7 @@ export default function AddActionModal({
                           <button
                             type="button"
                             onClick={handleAddDateTime}
-                            className="w-full py-2 px-3 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                            className="w-full py-2 px-3 bg-green-600 text-white text-xs lg:text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
                           >
                             Aggiungi {format(selectedTimeSlot, 'dd/MM/yyyy HH:mm')} ai suggerimenti
                           </button>
@@ -558,14 +603,9 @@ function ActionForm({ template, onSubmit, isSubmitting, themeColorButton, busine
     // Set default appointment mode for appointment scheduling
     ...(template?.action_type === 'appointment_scheduling' && { appointment_mode: 'multiple_choice' })
   });
-  const [selectedTags, setSelectedTags] = useState<UserDefinedTag[]>([]);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData((prev: any) => ({ ...prev, [field]: value }));
-  };
-
-  const handleTagsChange = (tags: UserDefinedTag[]) => {
-    setSelectedTags(tags);
   };
 
   const handleTitleChange = (title: string) => {
@@ -574,8 +614,8 @@ function ActionForm({ template, onSubmit, isSubmitting, themeColorButton, busine
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form data being submitted:', { ...formData, selectedTags });
-    onSubmit({ ...formData, selectedTags });
+    console.log('Form data being submitted:', formData);
+    onSubmit(formData);
   };
 
   const getButtonTextColor = (bgColor: string) => {
@@ -670,7 +710,7 @@ function ActionForm({ template, onSubmit, isSubmitting, themeColorButton, busine
                   id={field.name}
                   value={formData[field.name] || field.default_value || ''}
                   onChange={(e) => handleInputChange(field.name, e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm lg:text-base"
                   required={field.required}
                   placeholder={field.placeholder}
                 />
@@ -687,7 +727,7 @@ function ActionForm({ template, onSubmit, isSubmitting, themeColorButton, busine
                   value={formData[field.name] || field.default_value || ''}
                   onChange={(e) => handleInputChange(field.name, e.target.value)}
                   rows={field.rows || 3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm lg:text-base"
                   required={field.required}
                   placeholder={field.placeholder}
                 />
@@ -703,7 +743,7 @@ function ActionForm({ template, onSubmit, isSubmitting, themeColorButton, busine
                   id={field.name}
                   value={formData[field.name] || field.default_value || ''}
                   onChange={(e) => handleInputChange(field.name, e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm lg:text-base"
                   required={field.required}
                 >
                   <option value="">Seleziona...</option>
@@ -725,7 +765,7 @@ function ActionForm({ template, onSubmit, isSubmitting, themeColorButton, busine
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-6">
       {/* Action Title */}
       <div>
         <label htmlFor="action_title" className="block text-sm font-medium text-gray-700 mb-2">
@@ -736,7 +776,7 @@ function ActionForm({ template, onSubmit, isSubmitting, themeColorButton, busine
           id="action_title"
           value={formData.action_title || template.translated_title}
           onChange={(e) => handleTitleChange(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm lg:text-base"
           required
         />
       </div>
@@ -751,7 +791,7 @@ function ActionForm({ template, onSubmit, isSubmitting, themeColorButton, busine
           value={formData.action_description || template.translated_description}
           onChange={(e) => handleInputChange('action_description', e.target.value)}
           rows={2}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm lg:text-base"
         />
       </div>
 
@@ -766,7 +806,7 @@ function ActionForm({ template, onSubmit, isSubmitting, themeColorButton, busine
             id="appointment_title"
             value={formData.appointment_title || ''}
             onChange={(e) => handleInputChange('appointment_title', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm lg:text-base"
             required
             placeholder="Es. Consulenza Nutrizionale, Controllo Peso..."
           />
@@ -779,7 +819,7 @@ function ActionForm({ template, onSubmit, isSubmitting, themeColorButton, busine
           <label className="block text-sm font-medium text-gray-700 mb-3">
             Modalità Appuntamento *
           </label>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {[
               {
                 key: 'fixed_confirmed',
@@ -802,7 +842,7 @@ function ActionForm({ template, onSubmit, isSubmitting, themeColorButton, busine
             ].map((mode) => (
               <div
                 key={mode.key}
-                className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
+                className={`p-3 lg:p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
                   formData.appointment_mode === mode.key
                     ? 'border-blue-500 bg-blue-50 shadow-md'
                     : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
@@ -812,17 +852,19 @@ function ActionForm({ template, onSubmit, isSubmitting, themeColorButton, busine
                   onAppointmentModeChange?.(mode.key);
                 }}
               >
-                <div className="text-center">
-                  <div className={`w-8 h-8 lg:w-12 lg:h-12 rounded-full flex items-center justify-center text-lg font-medium mx-auto mb-3 ${
-                    formData.appointment_mode === mode.key
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-600'
-                  }`}>
-                    {mode.icon}
-                  </div>
-                  <div className="text-center">
-                    <h4 className="font-medium text-gray-900 text-sm mb-1">{mode.title}</h4>
-                    <p className="text-xs text-gray-600">{mode.description}</p>
+                <div className="flex flex-col lg:flex-col items-center">
+                  <div className="flex items-center justify-between w-full lg:flex-col lg:items-center">
+                    <div className="flex-1 lg:flex-none lg:text-center lg:order-2 lg:w-full">
+                      <h4 className="font-medium text-gray-900 text-xs lg:text-sm mb-1 lg:mb-1">{mode.title}</h4>
+                      <p className="text-xs text-gray-600 leading-tight lg:text-center">{mode.description}</p>
+                    </div>
+                    <div className={`w-8 h-8 lg:w-8 lg:h-8 rounded-full flex items-center justify-center text-sm lg:text-base font-medium ml-3 lg:ml-0 lg:mb-2 lg:order-1 ${
+                      formData.appointment_mode === mode.key
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {mode.icon}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -894,27 +936,14 @@ function ActionForm({ template, onSubmit, isSubmitting, themeColorButton, busine
       {/* Template-specific fields */}
       {renderFormFields()}
 
-      {/* Tags */}
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
-          Tag
-        </label>
-        <TagManager
-          businessId={businessId}
-          actionType={template.action_type}
-          selectedTags={selectedTags}
-          onTagsChange={handleTagsChange}
-          onTitleChange={handleTitleChange}
-          currentTitle={formData.action_title || template.translated_title}
-        />
-      </div>
+
 
       {/* Submit Button */}
-      <div className="flex justify-end pt-6 border-t border-gray-200">
+      <div className="flex justify-end pt-4 lg:pt-6 border-t border-gray-200">
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-8 py-3 rounded-lg text-white font-medium transition-colors disabled:opacity-50 shadow-sm hover:shadow-md"
+          className="px-6 lg:px-8 py-2 lg:py-3 rounded-lg text-white font-medium transition-colors disabled:opacity-50 shadow-sm hover:shadow-md text-sm lg:text-base"
           style={{
             backgroundColor: themeColorButton,
             color: getButtonTextColor(themeColorButton)

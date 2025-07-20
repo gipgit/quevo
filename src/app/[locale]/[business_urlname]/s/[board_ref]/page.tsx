@@ -12,6 +12,7 @@ import PaymentsModal from '@/components/modals/PaymentsModal';
 import AddActionModal from '@/components/modals/AddActionModal';
 import ShareModal from '@/components/modals/ShareModal';
 import { getPlatformIcon } from '@/lib/platform-icons';
+import { QRCodeSVG } from 'qrcode.react';
 
 
 interface BusinessData {
@@ -233,6 +234,8 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
   const [showPaymentsModal, setShowPaymentsModal] = useState(false);
   const [showAddActionModal, setShowAddActionModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showUpcomingAppointmentModal, setShowUpcomingAppointmentModal] = useState(false);
+  const [nextAppointment, setNextAppointment] = useState<Appointment | null>(null);
   const [contactType, setContactType] = useState<'phone' | 'email'>('phone');
   const [isCopied, setIsCopied] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
@@ -312,6 +315,22 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
       }
       setAppointments(data.appointments);
       console.log('Appointments state updated:', data.appointments); // Debug log
+      
+      // Check for upcoming appointments
+      const now = new Date();
+      const upcomingAppointments = data.appointments.filter((appointment: Appointment) => {
+        const appointmentDate = new Date(appointment.appointment_datetime);
+        return appointmentDate > now;
+      });
+      
+      if (upcomingAppointments.length > 0) {
+        // Sort by date and get the next one
+        const sortedUpcoming = upcomingAppointments.sort((a: Appointment, b: Appointment) => 
+          new Date(a.appointment_datetime).getTime() - new Date(b.appointment_datetime).getTime()
+        );
+        setNextAppointment(sortedUpcoming[0]);
+        setShowUpcomingAppointmentModal(true);
+      }
     } catch (err) {
       console.error('Error fetching appointments:', err);
     }
@@ -451,17 +470,30 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
     
     if (params.locale === 'it') {
       return date.toLocaleDateString('it-IT', {
-        weekday: 'long',
         day: 'numeric',
         month: 'long',
         year: 'numeric'
       });
     } else {
       return date.toLocaleDateString('en-US', {
-        weekday: 'long',
         year: 'numeric',
         month: 'long',
         day: 'numeric'
+      });
+    }
+  };
+
+  // Format weekday based on locale
+  const formatAppointmentWeekday = (dateString: string) => {
+    const date = new Date(dateString);
+    
+    if (params.locale === 'it') {
+      return date.toLocaleDateString('it-IT', {
+        weekday: 'long'
+      });
+    } else {
+      return date.toLocaleDateString('en-US', {
+        weekday: 'long'
       });
     }
   };
@@ -690,20 +722,36 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                   <h4 className="text-sm font-medium text-gray-900 mb-3">Appointments ({appointments.length})</h4>
                   <div className="space-y-4">
                     {appointments.map((appointment) => (
-                      <div key={appointment.id} className="bg-white rounded-lg border p-4 shadow-sm">
+                      <div key={appointment.id} className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-200 p-6 shadow-sm">
+                        {/* Appointment Title - Moved to top */}
+                        {appointment.appointment_title && (
+                          <div className="mb-3">
+                            <h3 className="text-xl font-semibold text-gray-900">{appointment.appointment_title}</h3>
+                          </div>
+                        )}
+                        
                         <div className="flex items-center flex-row flex-wrap gap-2 mb-3">
-                          <div className="flex items-center gap-4">
-                            {/* Date and Time with Icons */}
+                          <div className="flex items-center gap-2">
+                            {/* Date and Time with Icons in a row with separator */}
                             <div className="flex items-center gap-2">
-                              <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                               </svg>
-                              <span className="text-xl md:text-2xl font-bold text-gray-900">
-                                {formatAppointmentDate(appointment.appointment_datetime)}
-                              </span>
+                              <div className="flex flex-col -space-y-1">
+                                <span className="text-lg font-medium text-gray-900">
+                                  {formatAppointmentDate(appointment.appointment_datetime)}
+                                </span>
+                                <span className="text-sm text-gray-500">
+                                  {formatAppointmentWeekday(appointment.appointment_datetime)}
+                                </span>
+                              </div>
                             </div>
+                            
+                            {/* Separator */}
+                            <div className="w-px h-6 bg-gray-300 mx-2"></div>
+                            
                             <div className="flex items-center gap-2">
-                              <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
                               <span className="text-lg font-medium text-gray-900">
@@ -716,23 +764,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                           </span>
                         </div>
                         
-                        {/* Appointment Title */}
-                        {appointment.appointment_title && (
-                          <div className="mb-3">
-                            <h3 className="text-lg font-semibold text-gray-900">{appointment.appointment_title}</h3>
-                          </div>
-                        )}
-                        
                         <div className="space-y-2">
-                          {/* Appointment Type */}
-                          <div className="flex items-center gap-2">
-                            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                            <span className="text-sm text-gray-600">
-                              {appointment.appointment_type === 'online' ? 'Online Meeting' : 'In-Person Meeting'}
-                            </span>
-                          </div>
                           
                           {/* Location */}
                           {appointment.appointment_location && appointment.appointment_type !== 'online' && (
@@ -745,67 +777,72 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                             </div>
                           )}
                           
-                          {/* Platform with Icon */}
-                          {appointment.platform_name && (
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 flex items-center justify-center">
-                                <Image
-                                  src={getPlatformIcon(appointment.platform_name)}
-                                  alt={appointment.platform_name}
-                                  width={24}
-                                  height={24}
-                                  className="w-6 h-6"
-                                />
-                              </div>
-                              <span className="text-base text-gray-600">{appointment.platform_name}</span>
-                            </div>
-                          )}
-                          
-                          {/* Platform Link */}
-                          {appointment.platform_link && (
-                            <div className="flex items-center gap-2 mt-2">
-                              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                              </svg>
-                              <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg max-w-full">
-                                <span className="text-sm text-gray-600 truncate flex-1">
-                                  {appointment.platform_link}
-                                </span>
-                                <div className="flex items-center gap-1">
-                                  <button
-                                    onClick={() => {
-                                      if (appointment.platform_link) {
-                                        navigator.clipboard.writeText(appointment.platform_link);
-                                        // You could add a toast notification here
-                                      }
-                                    }}
-                                    className="p-1 hover:bg-gray-200 rounded transition-colors"
-                                    title="Copy link"
-                                  >
-                                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                    </svg>
-                                  </button>
-                                  <a
-                                    href={appointment.platform_link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors"
-                                  >
-                                    Open Link
-                                  </a>
+                          {/* Platform with Icon and Link on same row */}
+                          {(appointment.platform_name || appointment.platform_link) && (
+                            <div className="flex items-center gap-2 flex-wrap">
+                              {appointment.platform_name && (
+                                <div className="flex items-center gap-2">
+                                  <div className="w-6 h-6 flex items-center justify-center">
+                                    <Image
+                                      src={getPlatformIcon(appointment.platform_name)}
+                                      alt={appointment.platform_name}
+                                      width={24}
+                                      height={24}
+                                      className="w-6 h-6"
+                                    />
+                                  </div>
+                                  <span className="text-base text-gray-600">{appointment.platform_name}</span>
                                 </div>
-                              </div>
+                              )}
+                              
+                              {appointment.platform_link && (
+                                <div className="flex items-center gap-2 w-full">
+                                  <svg className="w-5 h-5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                  </svg>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
+                                      <span className="text-sm text-gray-600 truncate flex-1 min-w-0">
+                                        {appointment.platform_link}
+                                      </span>
+                                      <div className="flex items-center gap-1 flex-shrink-0">
+                                        <button
+                                          onClick={() => {
+                                            if (appointment.platform_link) {
+                                              navigator.clipboard.writeText(appointment.platform_link);
+                                              // You could add a toast notification here
+                                            }
+                                          }}
+                                          className="p-1 hover:bg-gray-200 rounded transition-colors"
+                                          title="Copy link"
+                                        >
+                                          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                          </svg>
+                                        </button>
+                                        <a
+                                          href={appointment.platform_link}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors"
+                                        >
+                                          Open Link
+                                        </a>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           )}
                           
                           {/* Notes */}
                           {appointment.notes && (
-                            <div className="flex items-start gap-2 mt-3 p-2 bg-gray-50 rounded-md">
+                            <div className="flex items-start gap-2 mt-3">
                               <svg className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                               </svg>
-                              <span className="text-sm text-gray-600 italic">{appointment.notes}</span>
+                              <span className="text-sm text-gray-600">{appointment.notes}</span>
                             </div>
                           )}
                         </div>
@@ -1274,6 +1311,181 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
         onShareEmail={shareViaEmail}
         isCopied={isCopied}
       />
+
+      {/* Upcoming Appointment Modal */}
+      {showUpcomingAppointmentModal && nextAppointment && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex-1"></div>
+                <h2 className="text-base font-medium text-gray-900 text-center flex-1 whitespace-nowrap">Upcoming Appointment</h2>
+                <div className="flex-1 flex justify-end">
+                  <button
+                    onClick={() => setShowUpcomingAppointmentModal(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Appointment Details - Now centered without card wrapper */}
+              <div className="mb-6">
+                {/* Appointment Title */}
+                {nextAppointment.appointment_title && (
+                  <div className="mb-3 text-center">
+                    <h3 className="text-xl font-semibold text-gray-900">{nextAppointment.appointment_title}</h3>
+                  </div>
+                )}
+                
+                {/* Status - Now shown first */}
+                <div className="flex justify-center mb-3">
+                  <span className={`text-xs md:text-lg px-3 py-1 capitalize rounded-full ${getStatusColor(nextAppointment.status)}`}>
+                    {nextAppointment.status}
+                  </span>
+                </div>
+
+                {/* Date and Time */}
+                <div className="flex flex-col items-center gap-2 mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2">
+                      <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <div className="flex flex-col text-center -space-y-1">
+                        <span className="text-lg font-medium text-gray-900">
+                          {formatAppointmentDate(nextAppointment.appointment_datetime)}
+                        </span>
+                        <span className="text-sm text-gray-500">
+                          {formatAppointmentWeekday(nextAppointment.appointment_datetime)}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="w-px h-6 bg-gray-300 mx-2"></div>
+                    
+                    <div className="flex items-center gap-2">
+                      <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="text-lg font-medium text-gray-900">
+                        {formatAppointmentTime(nextAppointment.appointment_datetime)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Location */}
+                {nextAppointment.appointment_location && nextAppointment.appointment_type !== 'online' && (
+                  <div className="flex items-center justify-center gap-2 mb-3">
+                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span className="text-sm text-gray-600">{nextAppointment.appointment_location}</span>
+                  </div>
+                )}
+                
+                {/* Platform */}
+                {(nextAppointment.platform_name || nextAppointment.platform_link) && (
+                  <div className="flex flex-col items-center gap-2 mb-3">
+                    {nextAppointment.platform_name && (
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 flex items-center justify-center">
+                          <Image
+                            src={getPlatformIcon(nextAppointment.platform_name)}
+                            alt={nextAppointment.platform_name}
+                            width={24}
+                            height={24}
+                            className="w-6 h-6"
+                          />
+                        </div>
+                        <span className="text-base text-gray-600">{nextAppointment.platform_name}</span>
+                      </div>
+                    )}
+                    
+                    {nextAppointment.platform_link && (
+                      <div className="flex flex-col items-center gap-2 w-full">
+                        <div className="flex-1 min-w-0 w-full">
+                          <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
+                            {/* Platform Icon inside the pill */}
+                            {nextAppointment.platform_name && (
+                              <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                                <Image
+                                  src={getPlatformIcon(nextAppointment.platform_name)}
+                                  alt={nextAppointment.platform_name}
+                                  width={20}
+                                  height={20}
+                                  className="w-5 h-5"
+                                />
+                              </div>
+                            )}
+                            <span className="text-sm text-gray-600 truncate flex-1 min-w-0">
+                              {nextAppointment.platform_link}
+                            </span>
+                            <div className="flex items-center gap-1 flex-shrink-0">
+                              <button
+                                onClick={() => {
+                                  if (nextAppointment.platform_link) {
+                                    navigator.clipboard.writeText(nextAppointment.platform_link);
+                                  }
+                                }}
+                                className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                              >
+                                Copy
+                              </button>
+                              <a
+                                href={nextAppointment.platform_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                              >
+                                Open
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {/* Notes */}
+                {nextAppointment.notes && (
+                  <div className="flex items-start justify-center gap-2 mt-3">
+                    <svg className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span className="text-sm text-gray-600 text-center">{nextAppointment.notes}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* QR Code - Now shown after appointment details */}
+              <div className="text-center">
+                <h3 className="text-sm font-medium text-gray-900 mb-3">Scan to access this board</h3>
+                <div className="flex justify-center mb-4">
+                  <div className="bg-white p-4 rounded-lg border border-gray-200">
+                    <QRCodeSVG
+                      value={getCurrentBoardUrl()}
+                      size={200}
+                      level="M"
+                      includeMargin={true}
+                    />
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600">
+                  Scan this QR code to quickly access this service board on your mobile device
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Floating Add Action Button for xs to md devices */}
       <button
