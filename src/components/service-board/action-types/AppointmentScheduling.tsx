@@ -7,6 +7,7 @@ import AppointmentSchedulingRenderer from './renderers/AppointmentSchedulingRend
 import DatetimeConfirmationModal from '@/components/modals/DatetimeConfirmationModal';
 import AppointmentConfirmationModal from '@/components/modals/AppointmentConfirmationModal';
 import { useBusinessProfile } from '@/contexts/BusinessProfileContext';
+import { useTranslations } from 'next-intl';
 
 interface Props {
   details: AppointmentSchedulingDetails;
@@ -25,6 +26,7 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
   const [confirmationDetails, setConfirmationDetails] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { businessData } = useBusinessProfile() as { businessData: { business_id: string } };
+  const t = useTranslations('ServiceBoard');
 
   const handleDatetimeSelect = (datetime: string) => {
     setSelectedDatetime(datetime);
@@ -56,7 +58,7 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to confirm appointment');
+        throw new Error(errorData.message || t('failedToConfirmAppointment'));
       }
       
       const { appointment } = await response.json();
@@ -64,7 +66,7 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
       
       // Set success confirmation details
       setConfirmationStatus('success');
-      setConfirmationMessage('Your appointment has been successfully confirmed!');
+      setConfirmationMessage(t('appointmentConfirmed'));
       setConfirmationDetails({
         title: (details as any).appointment_title,
         datetime: selectedDatetime,
@@ -86,7 +88,7 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
       
       // Set error confirmation details
       setConfirmationStatus('error');
-      setConfirmationMessage(error instanceof Error ? error.message : 'An error occurred while confirming your appointment. Please try again.');
+      setConfirmationMessage(error instanceof Error ? error.message : t('errorConfirmingAppointment'));
       setConfirmationDetails(null);
       
       // Show confirmation modal
@@ -117,7 +119,7 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to reject appointment');
+        throw new Error(errorData.message || t('failedToRejectAppointment'));
       }
       
       const { appointment } = await response.json();
@@ -125,7 +127,7 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
       
       // Show success confirmation
       setConfirmationStatus('success');
-      setConfirmationMessage('Appointment has been rejected successfully.');
+      setConfirmationMessage(t('appointmentRejected'));
       setConfirmationDetails(null);
       setShowConfirmationModal(true);
     } catch (error) {
@@ -133,7 +135,7 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
       
       // Show error confirmation
       setConfirmationStatus('error');
-      setConfirmationMessage(error instanceof Error ? error.message : 'An error occurred while rejecting the appointment. Please try again.');
+      setConfirmationMessage(error instanceof Error ? error.message : t('errorRejectingAppointment'));
       setConfirmationDetails(null);
       setShowConfirmationModal(true);
     }
@@ -155,7 +157,7 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to request reschedule');
+        throw new Error(errorData.message || t('failedToRequestReschedule'));
       }
       
       const { appointment } = await response.json();
@@ -163,7 +165,7 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
       
       // Show success confirmation
       setConfirmationStatus('success');
-      setConfirmationMessage('Reschedule request has been sent successfully.');
+      setConfirmationMessage(t('rescheduleRequestSent'));
       setConfirmationDetails(null);
       setShowConfirmationModal(true);
     } catch (error) {
@@ -171,7 +173,7 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
       
       // Show error confirmation
       setConfirmationStatus('error');
-      setConfirmationMessage(error instanceof Error ? error.message : 'An error occurred while requesting reschedule. Please try again.');
+      setConfirmationMessage(error instanceof Error ? error.message : t('errorRequestingReschedule'));
       setConfirmationDetails(null);
       setShowConfirmationModal(true);
     }
@@ -191,7 +193,7 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to cancel appointment');
+        throw new Error(errorData.message || t('failedToCancelAppointment'));
       }
       
       const { appointment } = await response.json();
@@ -199,7 +201,7 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
       
       // Show success confirmation
       setConfirmationStatus('success');
-      setConfirmationMessage('Appointment has been cancelled successfully.');
+      setConfirmationMessage(t('appointmentCancelled'));
       setConfirmationDetails(null);
       setShowConfirmationModal(true);
     } catch (error) {
@@ -207,7 +209,7 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
       
       // Show error confirmation
       setConfirmationStatus('error');
-      setConfirmationMessage(error instanceof Error ? error.message : 'An error occurred while cancelling the appointment. Please try again.');
+      setConfirmationMessage(error instanceof Error ? error.message : t('errorCancellingAppointment'));
       setConfirmationDetails(null);
       setShowConfirmationModal(true);
     }

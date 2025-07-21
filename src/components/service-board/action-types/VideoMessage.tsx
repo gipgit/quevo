@@ -69,7 +69,7 @@ export default function VideoMessage({ details, onUpdate }: Props) {
               default
             />
           )}
-          Your browser does not support the video tag.
+          {t('yourBrowserDoesNotSupportVideo')}
         </video>
 
         {!isPlaying && !hasWatched && (
@@ -85,7 +85,7 @@ export default function VideoMessage({ details, onUpdate }: Props) {
               <svg className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
               </svg>
-              Play Video
+              {t('playVideo')}
             </button>
           </div>
         )}
@@ -97,10 +97,10 @@ export default function VideoMessage({ details, onUpdate }: Props) {
             <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
             <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
           </svg>
-          {hasWatched ? 'Watched' : 'Not watched yet'}
+          {hasWatched ? t('watched') : t('notWatchedYet')}
         </div>
         <div className="text-gray-500">
-          Duration: {new Date(details.length_seconds * 1000).toISOString().substr(11, 8)}
+          {t('duration')}: {new Date(details.length_seconds * 1000).toISOString().substr(11, 8)}
         </div>
       </div>
 

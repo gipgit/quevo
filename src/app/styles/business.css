@@ -56,6 +56,19 @@
   background: linear-gradient(to top, rgba(0, 0, 0, 0.075), rgba(0, 0, 0, 0) 35%);
 }
 
+/* Remove background on desktop to show cover image */
+@media (min-width: 1024px) {
+  .profile-header {
+    background: none !important;
+  }
+  .body--dark-bg .profile-header {
+    background: none !important;
+  }
+  .body--light-bg .profile-header {
+    background: none !important;
+  }
+}
+
 .btn-bg-settings {
   background: var(--theme-color-button) !important;
   color: #fff !important; /* Assuming buttons always have white text */
@@ -155,7 +168,7 @@
     mask: linear-gradient(180deg,rgba(255, 255, 255, 0), #27272700,rgba(0, 0, 0, 0.16) 70%, #000);
 }
 .profile-cover.cover-lg{
-             height: 165px;
+             
              overflow: hidden;
 }
 
@@ -170,11 +183,11 @@
 
 @media (min-width: 1024px) {
        .profile-cover{
-              height: 150px;
+             
               overflow: hidden;
        }
        .profile-cover.cover-lg{
-             height: 235px;
+          
              overflow: hidden;
         }
 }

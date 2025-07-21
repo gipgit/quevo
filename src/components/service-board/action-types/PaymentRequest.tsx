@@ -8,6 +8,7 @@ import PaymentConfirmationModal from './PaymentConfirmationModal';
 import { useBusinessProfile } from '@/contexts/BusinessProfileContext';
 import Image from 'next/image';
 import { ALLOWED_PAYMENT_METHODS, PaymentMethodConfig } from "@/lib/payment-methods-config";
+import { useTranslations } from 'next-intl';
 
 interface BusinessPaymentMethod {
   id: string;
@@ -24,6 +25,7 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const { businessPaymentMethods } = useBusinessProfile() as { businessPaymentMethods: BusinessPaymentMethod[] };
   const [copiedText, setCopiedText] = useState<string | null>(null);
+  const t = useTranslations('ServiceBoard');
 
   // Filter out payment methods that are hidden for this action
   const visiblePaymentMethods = businessPaymentMethods?.filter((method: BusinessPaymentMethod) => 
@@ -128,7 +130,7 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
                               onClick={() => handleCopy(method.details.paypal_email, 'PayPal')}
                               className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
                             >
-                              {copiedText === 'PayPal' ? 'Copied!' : 'Copy'}
+                              {copiedText === 'PayPal' ? t('copied') : t('copy')}
                             </button>
                           </div>
                         </div>
@@ -148,7 +150,7 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
                                   onClick={() => handleCopy(method.details.iban, 'IBAN')}
                                   className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
                                 >
-                                  {copiedText === 'IBAN' ? 'Copied!' : 'Copy'}
+                                  {copiedText === 'IBAN' ? t('copied') : t('copy')}
                                 </button>
                               </div>
                             </div>
@@ -165,7 +167,7 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
                                   onClick={() => handleCopy(method.details.account_holder, 'Account Holder')}
                                   className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
                                 >
-                                  {copiedText === 'Account Holder' ? 'Copied!' : 'Copy'}
+                                  {copiedText === 'Account Holder' ? t('copied') : t('copy')}
                                 </button>
                               </div>
                             </div>
@@ -194,7 +196,7 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
                               onClick={() => handleCopy(method.details.phone_number, 'Satispay')}
                               className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
                             >
-                              {copiedText === 'Satispay' ? 'Copied!' : 'Copy'}
+                              {copiedText === 'Satispay' ? t('copied') : t('copy')}
                             </button>
                           </div>
                         </div>
@@ -203,7 +205,7 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
                       {/* Klarna */}
                       {method.label === 'Klarna' && method.details.merchant_id && (
                         <p className="text-sm text-gray-600 mt-1">
-                          Merchant ID: {method.details.merchant_id}
+                          {t('merchantId')}: {method.details.merchant_id}
                         </p>
                       )}
 
@@ -242,7 +244,7 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
                 onClick={() => handleCopy(details.payment_reason!, 'Payment Reason')}
                 className="text-purple-600 hover:text-purple-800 text-sm font-medium px-2 py-1 rounded-md hover:bg-purple-50 transition-colors"
               >
-                {copiedText === 'Payment Reason' ? 'Copied!' : 'Copy'}
+                {copiedText === 'Payment Reason' ? t('copied') : t('copy')}
               </button>
             </div>
           </div>
@@ -261,10 +263,10 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
             <div className="ml-3">
               <h3 className="text-sm font-medium text-green-800">Payment Confirmed</h3>
               <div className="mt-2 text-sm text-green-700">
-                <p>Method used: {details.payment_confirmation.method_used}</p>
-                <p>Confirmed at: {new Date(details.payment_confirmation.confirmed_at).toLocaleString()}</p>
+                <p>{t('methodUsed')}: {details.payment_confirmation.method_used}</p>
+                <p>{t('confirmedAt')}: {new Date(details.payment_confirmation.confirmed_at).toLocaleString()}</p>
                 {details.payment_confirmation.note && (
-                  <p className="mt-1">Note: {details.payment_confirmation.note}</p>
+                                      <p className="mt-1">{t('note')}: {details.payment_confirmation.note}</p>
                 )}
               </div>
             </div>

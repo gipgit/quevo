@@ -182,8 +182,8 @@ export default function ServiceBoardActionCard({ action, onActionUpdate, onAppoi
   const shouldShowExpandButton = action.action_status === 'completed'
 
   return (
-    <div className={`
-      ${action.is_customer_action_required && action.action_status !== 'completed' ? "border-[1px] rounded-2xl border-gray-400 p-6 shadow-sm bg-white" : "rounded-2xl border border-1 border-gray-500 p-6"}
+    <div className={`p-5 md:p-6 rounded-2xl
+      ${action.is_customer_action_required && action.action_status !== 'completed' ? "border-[1px]  border-gray-400 shadow-sm bg-white" : "border-[1px] border-gray-200"}
     `}>
       <div className="flex items-start justify-between mb-4">
         <div>

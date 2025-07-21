@@ -1,10 +1,12 @@
 import { ResourceLinkDetails } from "@/types/service-board"
+import { useTranslations } from "next-intl"
 
 interface Props {
   details: ResourceLinkDetails
 }
 
 export default function ResourceLink({ details }: Props) {
+  const t = useTranslations("ServiceBoard")
   const getResourceIcon = (type: string) => {
     switch (type.toLowerCase()) {
       case 'pdf':
@@ -78,7 +80,7 @@ export default function ResourceLink({ details }: Props) {
               <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
             </svg>
           )}
-          {details.requires_login ? 'Login & Access Resource' : 'Access Resource'}
+          {details.requires_login ? t('loginAndAccessResource') : t('accessResource')}
         </a>
       </div>
 

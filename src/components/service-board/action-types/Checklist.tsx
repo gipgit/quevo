@@ -56,7 +56,7 @@ export default function Checklist({ details, onUpdate }: Props) {
 
       <div>
         <div className="flex items-center justify-between">
-          <h4 className="text-sm font-medium text-gray-900">Progress</h4>
+          <h4 className="text-sm font-medium text-gray-900">{t('progress')}</h4>
           <span className="text-sm font-medium text-gray-900">{calculateProgress()}%</span>
         </div>
         <div className="mt-2 relative">
@@ -91,7 +91,7 @@ export default function Checklist({ details, onUpdate }: Props) {
                   </p>
                   {item.completed_at && (
                     <span className="text-xs text-gray-500">
-                      Completed {new Date(item.completed_at).toLocaleDateString()}
+                      {t('completed')} {new Date(item.completed_at).toLocaleDateString()}
                     </span>
                   )}
                 </div>

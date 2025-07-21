@@ -82,8 +82,73 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
     );
 
     return (
-        <header className="profile-header relative">
-            <div className="profile-cover w-full relative bg-gray-200 h-32 sm:h-40 md:h-40 lg:h-40">
+        <header className="profile-header relative h-full">
+            {/* Desktop Navbar - Only visible on lg+ devices */}
+            <nav className="hidden lg:block fixed top-0 left-0 right-0 z-50 bg-white shadow-sm" style={{ borderBottom: `1px solid ${isDarkBackground ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}` }}>
+                <div className="container mx-auto px-4">
+                    <div className="flex items-center justify-between h-16">
+                        {/* Left side - Profile image and business name */}
+                        <div className="flex items-center space-x-4">
+                            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                                {businessData.business_img_profile ? (
+                                    <Image
+                                        src={businessData.business_img_profile}
+                                        alt={logoAltText}
+                                        width={40}
+                                        height={40}
+                                        className="object-cover w-full h-full"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full" style={{ backgroundColor: themeVariables['--lighter-theme-color-background'] }}></div>
+                                )}
+                            </div>
+                            <div>
+                                <h1 className="text-lg font-semibold" style={{ color: themeColorText }}>
+                                    {businessData.business_name}
+                                </h1>
+                            </div>
+                        </div>
+
+                        {/* Right side - Navigation links */}
+                        <div className="flex items-center space-x-6">
+                            <Link
+                                href={`/${businessUrlnameInPath}/services`}
+                                className={`text-sm font-medium transition-colors duration-200 ${activeSection === 'services' ? 'border-b-2' : ''}`}
+                                style={activeSection === 'services' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
+                            >
+                                {t('services')}
+                            </Link>
+                            <Link
+                                href={`/${businessUrlnameInPath}/products`}
+                                className={`text-sm font-medium transition-colors duration-200 ${activeSection === 'products' ? 'border-b-2' : ''}`}
+                                style={activeSection === 'products' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
+                            >
+                                {t('products')}
+                            </Link>
+                            <Link
+                                href={`/${businessUrlnameInPath}/promotions`}
+                                className={`text-sm font-medium transition-colors duration-200 ${activeSection === 'promotions' ? 'border-b-2' : ''}`}
+                                style={activeSection === 'promotions' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
+                            >
+                                {t('promotions')}
+                            </Link>
+                            <Link
+                                href={`/${businessUrlnameInPath}/rewards`}
+                                className={`text-sm font-medium transition-colors duration-200 ${activeSection === 'rewards' ? 'border-b-2' : ''}`}
+                                style={activeSection === 'rewards' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
+                            >
+                                {t('rewards')}
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            {/* Add top padding to account for fixed navbar */}
+            <div className="lg:pt-16"></div>
+
+            {/* Mobile/Tablet Cover Image */}
+            <div className="lg:hidden profile-cover w-full relative bg-gray-200 h-32 sm:h-40 md:h-40">
                 {businessData.business_img_cover ? (
                     <Image
                         src={businessData.business_img_cover}
@@ -98,7 +163,8 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                 )}
             </div>
 
-            <div className="container-profile-pic pic-lg relative z-10 mx-auto -translate-y-1/2 rounded-full overflow-hidden bg-gray-100"
+            {/* Mobile/Tablet Profile Image - Hidden on desktop */}
+            <div className="lg:hidden container-profile-pic pic-lg relative z-10 mx-auto -translate-y-1/2 rounded-full overflow-hidden bg-gray-100"
                 style={{
                     width: '100px',
                     height: '100px',
@@ -117,23 +183,24 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                 )}
             </div>
 
-            <div className="container mx-auto max-w-3xl relative px-4 mt-[-50px]">
+            {/* Mobile/Tablet Layout (up to lg) */}
+            <div className="lg:hidden container flex flex-col mx-auto max-w-3xl relative px-4 mt-[-50px]">
                 <div className="text-center mt-4" style={{ color: themeColorText }}>
-                    <p className="text-2xl md:text-3xl font-bold">{businessData.business_name}</p>
+                    <p className="text-3xl md:text-4xl font-bold">{businessData.business_name}</p>
                     {businessData.business_descr && <p className="d-none text-sm opacity-80 mt-1 max-w-lg mx-auto">{businessData.business_descr}</p>}
-                    {(businessSettings.show_address && businessData.business_address) && (
-                        <p className="text-sm mt-1 opacity-70">
-                            {tBooking('headerLocation', { city: businessData.business_city, address: businessData.business_address })}
-                        </p>
-                    )}
+                    <div className="flex flex-wrap items-center justify-center gap-2 mt-1">
+                        {(businessSettings.show_address && businessData.business_address) && (
+                            <p className="text-sm opacity-70" style={{ color: themeColorText }}>
+                                {businessData.business_city} / {businessData.business_address}
+                            </p>
+                        )}
 
-                    {businessSettings.show_website && websiteLinkUrl && (
-                        <div className="mt-1">
-                            <Link href={websiteLinkUrl} target="_blank" rel="noopener noreferrer" className="text-xs underline" style={{ color: themeColorText }}>
-                                {websiteLinkUrl}
+                        {businessSettings.show_website && websiteLinkUrl && (
+                            <Link href={websiteLinkUrl} target="_blank" rel="noopener noreferrer" className="text-sm underline" style={{ color: themeColorText }}>
+                                {websiteLinkUrl.replace(/^https?:\/\/(www\.)?/, '')}
                             </Link>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-1 mt-1">
@@ -156,17 +223,22 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                 </div>
 
                 <div className="flex flex-wrap justify-center items-center gap-2 mt-2">
-                    {businessSettings.show_btn_booking && (
-                        <Link
-                            href={
-                                businessData.business_link_booking
-                                    ? `/${businessUrlnameInPath}/booking`
-                                    : bookingLinkUrl
-                            }
-                            className={primaryButtonClassName}
-                            style={primaryButtonStyle}
-                        >
-                            {tBooking('headerTitle')}
+                    {businessSettings.show_btn_payments && businessPaymentMethods && businessPaymentMethods.length > 0 && (
+                        <button onClick={togglePaymentsModal} className="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200" style={primaryButtonStyle}>
+                            Pagamenti
+                        </button>
+                    )}
+
+                    {businessSettings.show_btn_review && googleReviewLinkUrl && (
+                        <Link href={googleReviewLinkUrl} target="_blank" rel="noopener noreferrer" className="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center gap-1" style={primaryButtonStyle}>
+                            Recensione
+                            <Image
+                                src="/icons/google.png"
+                                alt="Google"
+                                width={16}
+                                height={16}
+                                style={getButtonIconStyle()}
+                            />
                         </Link>
                     )}
 
@@ -199,35 +271,12 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                     )}
                 </div>
 
-                {businessSettings.show_btn_payments && businessPaymentMethods && businessPaymentMethods.length > 0 && (
-                    <div className="text-center mt-4">
-                        <button onClick={togglePaymentsModal} className="hover:underline font-semibold text-sm flex items-center justify-center mx-auto" style={{ color: themeColorText }}>
-                            {t('paymentsMethod')}
-                        </button>
-                    </div>
-                )}
-
-                {businessSettings.show_btn_review && googleReviewLinkUrl && (
-                    <div className="text-center mt-1">
-                        <Link href={googleReviewLinkUrl} target="_blank" rel="noopener noreferrer" className="btn-google-review" style={{ color: themeColorText }}>
-                            {t('leaveReview')}
-                            <Image
-                                src="/icons/google.png"
-                                alt="Google"
-                                width={24}
-                                height={24}
-                                className="inline-block ml-1"
-                            />
-                        </Link>
-                    </div>
-                )}
-
-                <nav className="profile-nav-sections mt-4" style={{ borderColor: `rgba(${isDarkBackground ? '255,255,255' : '0,0,0'}, 0.2)` }}>
-                    <ul className="flex justify-center text-sm font-semibold">
+                <nav className="profile-nav-sections mt-4 lg:hidden" style={{ borderColor: `rgba(${isDarkBackground ? '255,255,255' : '0,0,0'}, 0.2)` }}>
+                    <ul className="flex justify-center text-base font-semibold">
                         <li>
                                 <Link
                                     href={`/${businessUrlnameInPath}/services`}
-                                    className={`block py-2 px-4 transition-colors duration-200 ${activeSection === 'booking' ? 'section-active border-b-2' : ''}`}
+                                    className={`block py-2 px-2 transition-colors duration-200 ${activeSection === 'booking' ? 'section-active border-b-2' : ''}`}
                                     style={activeSection === 'services' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
                                 >
                                     {t('services')}
@@ -236,7 +285,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                         <li>
                             <Link
                                 href={`/${businessUrlnameInPath}/products`}
-                                className={`block py-2 px-4 transition-colors duration-200 ${activeSection === 'products' ? 'section-active border-b-2' : ''}`}
+                                className={`block py-2 px-2 transition-colors duration-200 ${activeSection === 'products' ? 'section-active border-b-2' : ''}`}
                                 style={activeSection === 'products' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
                             >
                                 {t('products')}
@@ -245,7 +294,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                         <li>
                             <Link
                                 href={`/${businessUrlnameInPath}/promotions`}
-                                className={`block py-2 px-4 transition-colors duration-200 ${activeSection === 'promotions' ? 'section-active border-b-2' : ''}`}
+                                className={`block py-2 px-2 transition-colors duration-200 ${activeSection === 'promotions' ? 'section-active border-b-2' : ''}`}
                                 style={activeSection === 'promotions' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
                             >
                                 {t('promotions')}
@@ -254,7 +303,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                         <li>
                             <Link
                                 href={`/${businessUrlnameInPath}/rewards`}
-                                className={`block py-2 px-4 transition-colors duration-200 ${activeSection === 'rewards' ? 'section-active border-b-2' : ''}`}
+                                className={`block py-2 px-2 transition-colors duration-200 ${activeSection === 'rewards' ? 'section-active border-b-2' : ''}`}
                                 style={activeSection === 'rewards' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
                             >
                                 {t('rewards')}
@@ -262,6 +311,98 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                         </li>
                     </ul>
                 </nav>
+            </div>
+
+            {/* Desktop Hero Layout (lg+) */}
+            <div className="hidden lg:flex flex-col justify-center h-screen max-h-screen overflow-y-auto">
+                <div className="container mx-auto px-4">
+                    <div className="text-left" style={{ color: 'white' }}>
+                        <div className="mb-6">
+                            <p className="text-3xl font-bold mb-2">{businessData.business_name}</p>
+                            {businessData.business_descr && <p className="font-bold text-2xl opacity-90 mb-4">{businessData.business_descr}</p>}
+                            <div className="flex flex-wrap items-center gap-3 mb-6">
+                                {(businessSettings.show_address && businessData.business_address) && (
+                                    <p className="text-lg opacity-90">
+                                        {businessData.business_city} / {businessData.business_address}
+                                    </p>
+                                )}
+
+                                {businessSettings.show_website && websiteLinkUrl && (
+                                    <Link href={websiteLinkUrl} target="_blank" rel="noopener noreferrer" className="text-lg underline opacity-90 hover:opacity-100 transition-opacity">
+                                        {websiteLinkUrl.replace(/^https?:\/\/(www\.)?/, '')}
+                                    </Link>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-3 mb-6">
+                            {businessSettings.show_socials && filteredSocialLinks.map((link, index) => (
+                                <div key={index}>
+                                    <Link href={link.link_url} target="_blank" rel="noopener noreferrer" className="w-12 h-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors">
+                                        {link.icon && (
+                                            <Image
+                                                src={link.icon}
+                                                alt={link.label}
+                                                width={24}
+                                                height={24}
+                                            />
+                                        )}
+                                    </Link>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Desktop Action Buttons */}
+                        <div className="flex flex-wrap gap-3">
+                            {businessSettings.show_btn_payments && businessPaymentMethods && businessPaymentMethods.length > 0 && (
+                                <button onClick={togglePaymentsModal} className="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200" style={primaryButtonStyle}>
+                                    Pagamenti
+                                </button>
+                            )}
+
+                            {businessSettings.show_btn_review && googleReviewLinkUrl && (
+                                <Link href={googleReviewLinkUrl} target="_blank" rel="noopener noreferrer" className="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center gap-1" style={primaryButtonStyle}>
+                                    Recensione
+                                    <Image
+                                        src="/icons/google.png"
+                                        alt="Google"
+                                        width={16}
+                                        height={16}
+                                        style={getButtonIconStyle()}
+                                    />
+                                </Link>
+                            )}
+
+                            {businessSettings.show_btn_phone && hasPhones && (
+                                <button onClick={() => toggleContactModal('phone')} className={circularButtonBaseClass} style={primaryButtonStyle}>
+                                    <div className="link-icon-wrapper w-12 h-12 flex items-center justify-center rounded-full">
+                                        <Image
+                                            src="/icons/iconsax/phone.svg"
+                                            alt={t('call')}
+                                            width={24}
+                                            height={24}
+                                            style={getButtonIconStyle()}
+                                        />
+                                    </div>
+                                </button>
+                            )}
+
+                            {businessSettings.show_btn_email && hasEmails && (
+                                <button onClick={() => toggleContactModal('email')} className={circularButtonBaseClass} style={primaryButtonStyle}>
+                                    <div className="link-icon-wrapper w-12 h-12 flex items-center justify-center rounded-full">
+                                        <Image
+                                            src="/icons/iconsax/email.svg"
+                                            alt={t('email')}
+                                            width={24}
+                                            height={24}
+                                            style={getButtonIconStyle()}
+                                        />
+                                    </div>
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
     );

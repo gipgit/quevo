@@ -17,7 +17,7 @@ const MenuItemCard = ({ item, themeColorTextRgb, borderColorOpacity, themeColorB
     const itemBorderColor = `rgba(${themeColorTextRgb}, ${borderColorOpacity})`;
 
     return (
-        <div className="rounded-lg p-4 mb-4 border" style={{ backgroundColor: themeColorBackgroundCard, borderColor: itemBorderColor }}>
+        <div className="rounded-xl p-4 mb-4 border" style={{ backgroundColor: themeColorBackgroundCard, borderColor: itemBorderColor }}>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center cursor-pointer" onClick={toggleAccordion}>
                 <div className="flex flex-col md:flex-row items-start md:items-center w-full md:w-auto md:flex-grow">
                     {item.item_img && (

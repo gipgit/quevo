@@ -30,11 +30,11 @@ export default function ServiceSelection({
 
                     return (
                         <div key={categoryGroup.category_name} className="mb-6">
-                            <p className="text-md font-semibold mb-3 border-b pb-2" style={{ borderColor: themeColorText + '50' }}>{categoryGroup.category_name}</p>
+                            <p className="text-md font-medium mb-3 border-b pb-2" style={{ borderColor: themeColorText + '50' }}>{categoryGroup.category_name}</p>
                             {categoryGroup.services.map(service => (
                                 <div
                                     key={service.service_id}
-                                    className={`flex flex-col md:flex-row justify-between md:items-center gap-3 md:gap-5 p-4 mb-2 rounded-lg cursor-pointer transition-colors border ${
+                                    className={`flex flex-col md:flex-row justify-between md:items-center gap-3 md:gap-5 p-4 md:p-5 mb-2 rounded-2xl cursor-pointer transition-colors border ${
                                         selectedService?.service_id === service.service_id ? 'ring-2 ring-offset-2' : ''
                                     }`}
                                     style={{
@@ -46,7 +46,7 @@ export default function ServiceSelection({
                                     onClick={() => onServiceSelect(service)}
                                 >
                                     <div>
-                                        <p className="font-medium md:text-lg">{service.service_name}</p>
+                                        <p className="font-bold text-lg md:text-xl">{service.service_name}</p>
                                         {service.description && (
                                             <p className="mt-1 text-xs md:text-sm opacity-70">{service.description}</p>
                                         )}
@@ -59,7 +59,7 @@ export default function ServiceSelection({
                                             </>
                                         )}
                                     </div>
-                                    <span className="font-bold text-md md:text-lg">
+                                    <span className="font-medium text-md md:text-lg">
                                         {service.price_base.toLocaleString(locale, { style: 'currency', currency: 'EUR' })}
                                     </span>
                                 </div>

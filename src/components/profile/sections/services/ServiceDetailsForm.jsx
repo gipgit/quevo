@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { format } from 'date-fns';
+import LoadingSpinner from '../../../ui/LoadingSpinner';
 
 // Import specific date-fns locales for client-side use
 import enUS from 'date-fns/locale/en-US';
@@ -333,8 +334,8 @@ export default function ServiceDetailsForm({
             )}
 
             <div className="mt-2 mb-6 border-b pb-4">
-                <p className="font-bold text-xl md:text-2xl">{selectedService?.service_name}</p>
-                <p className="text-sm text-md opacity-80">{selectedService?.description}</p>
+                <p className="font-bold text-xl md:text-2xl lg:text-3xl">{selectedService?.service_name}</p>
+                <p className="text-sm text-md md:text-lg opacity-80">{selectedService?.description}</p>
                 <p className="text-xs mt-1">
                    {selectedService?.price_base != null ? ( // Check if price_base has any value (0 or positive)
                     selectedService.price_base > 0 ? (
@@ -352,7 +353,9 @@ export default function ServiceDetailsForm({
             </div>
 
             {isLoadingDetails ? (
-                <div className="bg-gray-300 p-2 rounded-xl text-center text-gray-600 text-sm my-4">{tCommon('loading')}...</div>
+                <div className="bg-gray-300 p-4 rounded-xl flex items-center justify-center my-4">
+                    <LoadingSpinner />
+                </div>
             ) : (
                 <>
                     {/* --- Service Items Section (New) --- */}
@@ -407,7 +410,7 @@ export default function ServiceDetailsForm({
                                     );
                                 })}
                             </div>
-                            <div className={`fixed bottom-0 left-0 p-4 w-full text-white flex flex-row justify-between`} style={{backgroundColor: themeColorButton}}>
+                            <div className={`p-4 w-full text-white flex flex-row justify-between`} style={{backgroundColor: themeColorButton}}>
                                 <div>
                                 <p className="text-xs">{t('totalPrice')}:</p>
                                 <p className="font-bold text-2xl">€ {totalQuotationPrice.toFixed(2)}</p>
@@ -501,27 +504,24 @@ export default function ServiceDetailsForm({
 
             {/* --- Your Details Section --- */}
             <form onSubmit={handleSubmit}>
-                <h3 className={`text-xl font-semibold mb-3 ${themeColorText}`}>{t('yourDetails')}</h3>
-                
-                {/* Authentication Status */}
-                {isLoggedIn && (
-                    <div className="mb-4 p-3 rounded-md bg-green-50 border border-green-200">
+                <div className="flex items-center justify-between mb-3">
+                    <h3 className={`text-xl font-semibold ${themeColorText}`}>{t('yourDetails')}</h3>
+                    
+                    {/* Authentication Status */}
+                    {isLoggedIn && (
                         <div className="flex items-center">
-                            <svg className="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <svg className="w-4 h-4 text-green-600 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-green-800 text-sm font-medium">
+                            <span className="text-green-600 text-xs font-medium">
                                 {userRole === 'manager' 
                                     ? t('loggedInAsManager') || 'Logged in as Business Manager'
                                     : t('loggedInAsCustomer') || 'Logged in as Customer'
                                 }
                             </span>
                         </div>
-                        <p className="text-green-700 text-xs mt-1">
-                            {t('formPrefilledWithAccountData') || 'Form has been pre-filled with your account data'}
-                        </p>
-                    </div>
-                )}
+                    )}
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 border-b pb-4">
                     <div>
                         <label htmlFor="customerName" className="block text-sm font-medium">{tCommon('name')}</label>

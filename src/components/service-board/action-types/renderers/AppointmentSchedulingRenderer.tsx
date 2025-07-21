@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { enUS, it } from 'date-fns/locale';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 interface AppointmentSchedulingRendererProps {
   field: BaseRendererConfig<AppointmentSchedulingDetails>;
@@ -27,6 +28,7 @@ export default function AppointmentSchedulingRenderer({
 }: AppointmentSchedulingRendererProps) {
   const params = useParams();
   const locale = params.locale as string;
+  const t = useTranslations('ServiceBoard');
   
   const getDateLocale = () => {
     switch(locale) {
@@ -69,15 +71,15 @@ export default function AppointmentSchedulingRenderer({
     const getStatusText = (status: string) => {
       switch (status) {
         case 'pending_customer':
-          return 'Pending Confirmation';
+          return t('pendingConfirmation');
         case 'confirmed':
-          return 'Confirmed';
+          return t('confirmed');
         case 'cancelled':
-          return 'Cancelled';
+          return t('cancelled');
         case 'rejected':
-          return 'Rejected';
+          return t('rejected');
         case 'rescheduled':
-          return 'Rescheduled';
+          return t('rescheduled');
         default:
           return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
       }
@@ -88,7 +90,7 @@ export default function AppointmentSchedulingRenderer({
         <label className="text-sm font-medium text-gray-900">{field.label}</label>
         <div className="flex items-center justify-between">
           <div className="text-lg font-semibold text-gray-900">
-            {details.appointment_title || 'Appointment'}
+            {details.appointment_title || t('appointment')}
           </div>
           <div className={`w-fit px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusStyles(details.confirmation_status)}`}>
             {getStatusText(details.confirmation_status)}

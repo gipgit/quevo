@@ -185,7 +185,7 @@ export default function ProductsPageClientContent({ businessMenuItems }) {
                 </div>
             </section>
 
-            <section className="business-menu-items max-w-3xl mx-auto px-4 mt-6 pb-20">
+            <section className="business-menu-items max-w-3xl mx-auto px-4 lg:px-8 mt-6 pb-20">
                 {businessMenuItems.map(category => (
                     <div
                         key={category.category_id}

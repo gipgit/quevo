@@ -17,6 +17,7 @@ import { useTranslations } from 'next-intl';
 
 import CustomToolbarCalendar from './CustomToolbarCalendar';
 import CustomDateCellWrapper from './CustomDateCellWrapper'; // This now handles everything
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 const locales = {
     'en-US': enUS, 'it': it, 'es': es, 'fr': fr, 'de': de, 'zh-CN': zhCN, 'ar': ar,
@@ -30,7 +31,7 @@ export default function DateTimeSelection({
     businessId, totalOccupancyDuration, onDateTimeSelect, selectedDateTime,
     themeColorText, themeColorBackgroundCard, themeColorButton, themeColorBorder, locale, onBack
 }) {
-    const t = useTranslations('Booking');
+    const t = useTranslations('ServiceRequest');
     const tCommon = useTranslations('Common');
 
     const [calendarDate, setCalendarDate] = useState(new Date());
@@ -152,10 +153,16 @@ export default function DateTimeSelection({
 
     return (
         <div className="" style={{ color: themeColorText}}>
+            <h3 className="text-xl font-semibold mb-6">{t('selectDate')} and {t('selectTime')}</h3>
             <div className="flex flex-col md:flex-row gap-8">
                 <div className="md:w-3/5">
-                    <h3 className="text-xl font-semibold mb-3">{t('selectDate')}</h3>
-                    {loadingOverview && <p className="text-sm">{t('loadingCalendar')}</p>}
+                    {loadingOverview && (
+                        <div className="relative rounded-lg p-8" style={{ backgroundColor: themeColorBackgroundCard }}>
+                            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-10 rounded-lg">
+                                <LoadingSpinner size="lg" color="gray" />
+                            </div>
+                        </div>
+                    )}
                     {overviewError && <p className="text-sm text-red-500">{overviewError}</p>}
                     {!loadingOverview && (
                         <Calendar
@@ -208,11 +215,16 @@ export default function DateTimeSelection({
                 </div>
 
                 <div className="md:w-2/5">
-                    <h3 className="text-xl font-semibold mb-3">{t('selectTime')}</h3>
                     <p className="text-sm mb-4">
                         {t('selectedDate')}: <span className="font-semibold">{format(selectedDate, 'dd/MM/yyyy')}</span>
                     </p>
-                    {loadingSlots && <p className="text-sm">{t('loadingSlots')}</p>}
+                    {loadingSlots && (
+                        <div className="relative rounded-lg p-6" style={{ backgroundColor: themeColorBackgroundCard }}>
+                            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-10 rounded-lg">
+                                <LoadingSpinner size="md" color="gray" />
+                            </div>
+                        </div>
+                    )}
                     {slotsError && <p className="text-sm text-red-500">{slotsError}</p>}
                     {!loadingSlots && availableTimeSlots.length === 0 && !slotsError && (
                         <p className="text-xs opacity-50">{t('noSlotsAvailable')}</p>

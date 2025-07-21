@@ -65,7 +65,7 @@ export default function SignatureRequest({ details, onUpdate }: Props) {
           <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
           </svg>
-          <span className="font-medium">Signed on {new Date(details.signature_date!).toLocaleDateString()}</span>
+          <span className="font-medium">{t('signedOn')} {new Date(details.signature_date!).toLocaleDateString()}</span>
         </div>
         {details.signature_image_url && (
           <div className="mt-4">
@@ -91,7 +91,7 @@ export default function SignatureRequest({ details, onUpdate }: Props) {
         </div>
         {details.rejection_reason && (
           <div className="mt-2 text-sm text-gray-600">
-            Reason: {details.rejection_reason}
+            {t('reason')}: {details.rejection_reason}
           </div>
         )}
       </div>
@@ -112,7 +112,7 @@ export default function SignatureRequest({ details, onUpdate }: Props) {
             <svg className="mr-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
             </svg>
-            View {details.document_name}
+            {t('viewDocument', { documentName: details.document_name })}
           </a>
         </div>
       </div>

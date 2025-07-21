@@ -109,15 +109,15 @@ interface Appointment {
 
 
 // Helper function to get relative time
-const getRelativeTime = (dateString: string) => {
+const getRelativeTime = (dateString: string, t: any) => {
   const date = new Date(dateString);
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  if (diffInSeconds < 60) return 'just now';
-  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-  if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+  if (diffInSeconds < 60) return t('justNow');
+  if (diffInSeconds < 3600) return t('minutesAgo', { minutes: Math.floor(diffInSeconds / 60) });
+  if (diffInSeconds < 86400) return t('hoursAgo', { hours: Math.floor(diffInSeconds / 3600) });
+  if (diffInSeconds < 604800) return t('daysAgo', { days: Math.floor(diffInSeconds / 86400) });
   return new Date(dateString).toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'long',
@@ -257,6 +257,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
 
   const t = useTranslations('Common');
   const tBooking = useTranslations('Booking');
+  const tServiceBoard = useTranslations('ServiceBoard');
 
   const businessCoverImageUrl = businessData.business_public_uuid
 ? `/uploads/business/${businessData.business_public_uuid}/cover.webp`
@@ -388,14 +389,14 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
             <svg className="h-5 w-5 text-red-400 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
             </svg>
-            <h3 className="text-sm font-medium text-red-800">Error loading actions</h3>
+            <h3 className="text-sm font-medium text-red-800">{tServiceBoard('errorLoadingActions')}</h3>
           </div>
           <div className="mt-2 text-sm text-red-700">{error}</div>
           <button
             onClick={fetchServiceBoardActions}
             className="mt-3 text-sm font-medium text-red-600 hover:text-red-500"
           >
-            Try again
+            {tServiceBoard('tryAgain')}
           </button>
         </div>
       </div>
@@ -539,7 +540,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-gray-800 via-gray-800/80 to-transparent"></div>
         </div>
         {/* Profile image positioned to align with navbar content */}
-        <div className="absolute bottom-4 left-6 w-12 h-12 rounded-full overflow-hidden bg-gray-100 border-3 border-white shadow-lg">
+        <div className="absolute bottom-2 left-6 w-16 h-16 rounded-full overflow-hidden bg-gray-100 border-3 border-white shadow-lg">
           {businessData.business_public_uuid ? (
             <img
               src={`/uploads/business/${businessData.business_public_uuid}/profile.webp`}
@@ -585,13 +586,6 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                     boardData.status === 'cancelled' ? 'bg-red-100 text-red-800 border border-red-200' :
                     'bg-gray-100 text-gray-800 border border-gray-200'
                   }`}>{boardData.status}</span>
-                  <span>•</span>
-                  <span>Created {getRelativeTime(boardData.created_at)}</span>
-                  <span>•</span>
-                  <span className='border-2 border-gray-200 rounded px-2 py-1 text-xs'>Ref: {params.board_ref}</span>
-                  
-                  {/* Share Button for xs to md devices - moved to this row */}
-                  <span>•</span>
                   <button
                     onClick={() => setShowShareModal(true)}
                     className="lg:hidden flex items-center gap-1 px-2 py-1 bg-gray-600 text-white rounded text-xs hover:bg-gray-700 transition-colors"
@@ -601,6 +595,9 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                     </svg>
                     Share
                   </button>
+                  <span className='border-2 border-gray-200 rounded px-2 py-1 text-xs'>Ref: {params.board_ref}</span>
+                  <span>•</span>
+                  <span>Created {getRelativeTime(boardData.created_at, tServiceBoard)}</span>
                 </div>
               </div>
             )}
@@ -616,7 +613,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              <span className="font-medium">Aggiungi Azione</span>
+              <span className="font-medium">{tServiceBoard('addAction')}</span>
             </button>
             
             {/* Share Menu Container - Hidden on xs to md, visible on lg+ */}
@@ -713,7 +710,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
       <div className="flex flex-col lg:flex-row">
         
         {/* Timeline Section */}
-        <div className="w-full bg-white text-gray-900 lg:w-2/3 lg:order-1 p-6">
+        <div className="w-full bg-white text-gray-900 lg:w-2/3 lg:order-1 p-5 md:p-6">
           {/* Board Data at the beginning of timeline */}
           
            {/* Appointments section */}
@@ -826,7 +823,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                                           rel="noopener noreferrer"
                                           className="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors"
                                         >
-                                          Open Link
+                                          {tServiceBoard('openLink')}
                                         </a>
                                       </div>
                                     </div>
@@ -854,12 +851,12 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
 
           {/* Timeline */}
           <div className="relative">
-            <div className="absolute left-[-5px] lg:left-5 top-0 bottom-0 w-0.5 bg-blue-500"></div>
+            <div className="absolute left-[-8px] lg:left-5 top-0 bottom-0 w-0.5 bg-blue-500"></div>
             <div className="space-y-8">
               {/* Other timeline actions */}
               {actions.map((action) => (
-                <div key={action.action_id} className="relative pl-2 lg:pl-10">
-                  <div className={`absolute left-[-5px] lg:left-5 -translate-x-1/2 w-4 h-4 md:w-5 md:h-5 rounded-full border-2 ${getTimelineDotColor(action)}`}></div>
+                <div key={action.action_id} className="relative pl-1 lg:pl-10">
+                  <div className={`absolute left-[-7px] lg:left-[20px] -translate-x-1/2 w-4 h-4 md:w-5 md:h-5 rounded-full border-2 ${getTimelineDotColor(action)}`}></div>
                   <ServiceBoardActionCard 
                     action={action}
                     onActionUpdate={fetchServiceBoardActions}
@@ -873,27 +870,27 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
 
               {/* Service Request as the oldest/most recent step (at the bottom) */}
               {boardData?.servicerequest && (
-                <div className="relative pl-2 lg:pl-10">
-                  <div className="absolute left-[-5px] lg:left-5 -translate-x-1/2 w-4 h-4 md:w-5 md:h-5 rounded-full border-2 bg-blue-500 border-blue-600"></div>
+                <div className="relative pl-1 lg:pl-10">
+                  <div className="absolute left-[-7px] lg:left-[20px] -translate-x-1/2 w-4 h-4 md:w-5 md:h-5 rounded-full border-2 bg-blue-500 border-blue-600"></div>
                   <div className="border border-gray-200 rounded-lg p-6 shadow-sm">
                    
                       <div className="flex items-center justify-between text-sm text-gray-500 mb-2">
-                        <span>Request created {getRelativeTime(boardData.servicerequest.date_created)}</span>
+                        <span>Request created {getRelativeTime(boardData.servicerequest.date_created, tServiceBoard)}</span>
                         {boardData.servicerequest.date_updated && boardData.servicerequest.date_updated !== boardData.servicerequest.date_created && (
-                          <span>Last updated {getRelativeTime(boardData.servicerequest.date_updated)}</span>
+                                                      <span>Last updated {getRelativeTime(boardData.servicerequest.date_updated, tServiceBoard)}</span>
                         )}
                       </div>
                    
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
                       <div>
-                        <h2 className="text-xl md:text-2xl font-bold">{boardData.servicerequest.customer_name} ha inviato una richiesta</h2>
+                        <h2 className="text-xl md:text-2xl font-bold">{tServiceBoard('customerSentRequest', { customerName: boardData.servicerequest.customer_name || 'Customer' })}</h2>
                       </div>
                       <div className="flex gap-2">
                             <span className={`text-sm px-3 py-1 rounded-lg ${getStatusColor(boardData.servicerequest.status)}`}>
                               {boardData.servicerequest.status}
                             </span>
                             <div className={`text-sm px-3 py-1 rounded-lg bg-gray-50 border-2 border-gray-400`}>
-                            <span className="text-sm text-gray-500 mr-1">Reference:</span>
+                            <span className="text-sm text-gray-500 mr-1">{tServiceBoard('reference')}:</span>
                             <span className="text-sm font-medium">{boardData.servicerequest.request_reference}</span>
                             </div>
                       </div>
@@ -905,13 +902,13 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                         <div className="space-y-2">
                           {boardData.servicerequest.customer_name && (
                             <div className="flex flex-col">
-                              <span className="text-xs text-gray-400">Name:</span>
+                              <span className="text-xs text-gray-400">{tServiceBoard('name')}:</span>
                               <span className="text-md md:text-lg font-medium">{boardData.servicerequest.customer_name}</span>
                             </div>
                           )}
                           {boardData.servicerequest.customer_email && (
                             <div className="flex flex-col">
-                              <span className="text-xs text-gray-400">Email:</span>
+                              <span className="text-xs text-gray-400">{tServiceBoard('email')}:</span>
                               <div className="flex items-center gap-2">
                                 <span className="text-md font-medium">{boardData.servicerequest.customer_email}</span>
                                 <button
@@ -933,7 +930,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                           )}
                           {boardData.servicerequest.customer_phone && (
                             <div className="flex flex-col">
-                              <span className="text-xs text-gray-400">Phone:</span>
+                              <span className="text-xs text-gray-400">{tServiceBoard('phone')}:</span>
                               <div className="flex items-center gap-2">
                                 <span className="text-md font-medium">{boardData.servicerequest.customer_phone}</span>
                                 <button
@@ -979,7 +976,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                         <div className="space-y-2">
                           {boardData.servicerequest.request_date && (
                             <div className="flex gap-x-2">
-                              <span className="text-sm text-gray-600">Preferred Date:</span>
+                              <span className="text-sm text-gray-600">{tServiceBoard('preferredDate')}:</span>
                               <span className="text-sm font-medium">
                                 {new Date(boardData.servicerequest.request_date).toLocaleDateString()}
                               </span>
@@ -987,7 +984,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                           )}
                           {boardData.servicerequest.request_time_start && (
                             <div className="flex gap-x-2">
-                              <span className="text-sm text-gray-600">Time:</span>
+                              <span className="text-sm text-gray-600">{tServiceBoard('time')}:</span>
                               <span className="text-sm font-medium">
                                 {new Date(boardData.servicerequest.request_time_start).toLocaleTimeString([], { 
                                   hour: '2-digit', 
@@ -1002,7 +999,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                     
                     {boardData.servicerequest.customer_notes && (
                       <div className="mt-4">
-                        <h4 className="text-xs font-medium text-gray-500 mb-2">Customer Notes</h4>
+                        <h4 className="text-xs font-medium text-gray-500 mb-2">{tServiceBoard('customerNotes')}</h4>
                         <p className="text-sm p-3 rounded-md bg-blue-100 border-2 border-blue-800">
                           {boardData.servicerequest.customer_notes}
                         </p>
@@ -1013,15 +1010,15 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                     {/* Selected Service Items */}
                     {boardData.servicerequest.selected_service_items_snapshot && boardData.servicerequest.selected_service_items_snapshot.length > 0 && (
                       <div className="mt-6 pt-4 border-t border-gray-200">
-                        <h4 className="text-sm font-medium text-gray-900 mb-3">Selected Service Items</h4>
+                        <h4 className="text-sm font-medium text-gray-900 mb-3">{tServiceBoard('selectedServiceItems')}</h4>
                         <div className="space-y-3">
                           {boardData.servicerequest.selected_service_items_snapshot.map((item, index) => (
                             <div key={index} className="bg-gray-50 p-3 border-2 border-gray-300 rounded-md">
                               <div className="flex justify-between items-center">
                                   <h5 className="text-md font-medium text-gray-900">{item.item_name}</h5>
                                   <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
-                                    <span>Qty: {item.quantity}</span>
-                                    <span>Price: €{parseFloat(item.price_at_request.toString()).toFixed(2)}</span>
+                                    <span>{tServiceBoard('quantity')}: {item.quantity}</span>
+                                    <span>{tServiceBoard('price')}: €{parseFloat(item.price_at_request.toString()).toFixed(2)}</span>
                                   </div>
                               </div>
                             </div>
@@ -1032,7 +1029,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
 
                     {boardData.servicerequest.price_subtotal && (
                             <div className="flex gap-2 mt-4">
-                              <span className="text-sm text-gray-600">Estimated price based on initial request:</span>
+                              <span className="text-sm text-gray-600">{tServiceBoard('estimatedPrice')}:</span>
                               <span className="text-sm font-medium">
                                 €{parseFloat(boardData.servicerequest.price_subtotal.toString()).toFixed(2)}
                               </span>
@@ -1042,7 +1039,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                     {/* Question Responses */}
                     {boardData.servicerequest.question_responses_snapshot && boardData.servicerequest.question_responses_snapshot.length > 0 && (
                       <div className="mt-6 pt-4 border-t border-gray-200">
-                        <h4 className="text-sm font-medium text-gray-900 mb-3">Question Responses</h4>
+                        <h4 className="text-sm font-medium text-gray-900 mb-3">{tServiceBoard('questionResponses')}</h4>
                         <div className="space-y-3">
                           {boardData.servicerequest.question_responses_snapshot.map((response, index) => (
                             <div key={index} className="border-b-2">
@@ -1071,7 +1068,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                     {/* Requirement Responses */}
                     {boardData.servicerequest.requirement_responses_snapshot && boardData.servicerequest.requirement_responses_snapshot.length > 0 && (
                       <div className="mt-6 pt-4 border-t border-gray-200">
-                        <h4 className="text-sm font-medium text-gray-900 mb-3">Requirements Confirmation</h4>
+                        <h4 className="text-sm font-medium text-gray-900 mb-3">{tServiceBoard('requirementsConfirmation')}</h4>
                         <div className="space-y-3">
                           {boardData.servicerequest.requirement_responses_snapshot.map((response, index) => (
                             <div key={index} className="border-b-2">
@@ -1088,7 +1085,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                                       ? 'bg-green-100 text-green-800' 
                                       : 'bg-red-100 text-red-800'
                                   }`}>
-                                    {response.customer_confirmed ? 'Confirmed' : 'Not Confirmed'}
+                                    {response.customer_confirmed ? tServiceBoard('confirmed') : tServiceBoard('notConfirmed')}
                                   </span>
                                 </div>
                               </div>
@@ -1320,7 +1317,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex-1"></div>
-                <h2 className="text-base font-medium text-gray-900 text-center flex-1 whitespace-nowrap">Upcoming Appointment</h2>
+                <h2 className="text-base font-medium text-gray-900 text-center flex-1 whitespace-nowrap">{tServiceBoard('upcomingAppointment')}</h2>
                 <div className="flex-1 flex justify-end">
                   <button
                     onClick={() => setShowUpcomingAppointmentModal(false)}
@@ -1436,16 +1433,16 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                                 }}
                                 className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
                               >
-                                Copy
+                                {tServiceBoard('copy')}
                               </button>
-                              <a
-                                href={nextAppointment.platform_link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                              >
-                                Open
-                              </a>
+                                                              <a
+                                  href={nextAppointment.platform_link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                                >
+                                  {tServiceBoard('open')}
+                                </a>
                             </div>
                           </div>
                         </div>
@@ -1467,7 +1464,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
 
               {/* QR Code - Now shown after appointment details */}
               <div className="text-center">
-                <h3 className="text-sm font-medium text-gray-900 mb-3">Scan to access this board</h3>
+                <h3 className="text-sm font-medium text-gray-900 mb-3">{tServiceBoard('scanToAccessBoard')}</h3>
                 <div className="flex justify-center mb-4">
                   <div className="bg-white p-4 rounded-lg border border-gray-200">
                     <QRCodeSVG
@@ -1479,7 +1476,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                   </div>
                 </div>
                 <p className="text-sm text-gray-600">
-                  Scan this QR code to quickly access this service board on your mobile device
+                  {tServiceBoard('scanQrDescription')}
                 </p>
               </div>
             </div>
@@ -1491,7 +1488,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
       <button
         onClick={() => setShowAddActionModal(true)}
         className="lg:hidden fixed bottom-6 right-6 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors z-40 flex items-center justify-center"
-        title="Add Action"
+        title={tServiceBoard('addAction')}
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
