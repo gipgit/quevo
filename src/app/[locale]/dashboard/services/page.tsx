@@ -53,6 +53,7 @@ interface Service {
 
 export default function ServicesPage() {
   const t = useTranslations("services")
+  const tCommon = useTranslations("Common")
   const { currentBusiness, usage, planLimits, refreshUsageForFeature } = useBusiness()
   const { showToast } = useToaster()
   const [services, setServices] = useState<Service[]>([])
@@ -237,85 +238,81 @@ export default function ServicesPage() {
                   className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
                 >
                   <div className="p-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                      {/* Service Details - Left Column */}
-                      <div className="lg:col-span-2">
+                    <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 lg:justify-end">
+                      {/* Unified Service Details & Elements Column */}
+                      <div>
                         <div className="mb-4">
-                          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                            {service.service_name}
-                          </h3>
-                          {/* Price, Duration, Status, and Category */}
-                          <div className="flex items-center gap-4 mb-2">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-gray-500">{t("price")}:</span>
-                              <span className="text-sm font-medium text-gray-700">{formatPrice(service.price_base)}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-gray-500">{t("duration")}:</span>
-                              <span className="text-sm font-medium text-gray-700">{formatDuration(service.duration_minutes)}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-gray-500">{t("status")}:</span>
-                              <span className={`text-sm font-medium ${service.is_active ? "text-green-600" : "text-red-600"}`}>
-                                {service.is_active ? t("active") : t("inactive")}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-gray-500">{t("category")}:</span>
-                              <span className="text-sm font-medium text-gray-700">
-                                {service.servicecategory?.category_name || t("uncategorized")}
-                              </span>
-                            </div>
+                          <div className="flex flex-wrap items-center gap-4 mb-2">
+                            <span className="text-2xl font-bold text-gray-900 mr-2">{service.service_name}</span>
+                            <span className="text-xl font-semibold text-blue-700 mr-2">{formatPrice(service.price_base)}</span>
+                            <span className="text-sm text-gray-700 mr-2">{formatDuration(service.duration_minutes)}</span>
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${service.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{service.is_active ? t('active') : t('inactive')}</span>
                           </div>
                           {/* Service Description */}
                           {service.description && (
                             <p className="text-gray-600 mb-3">{service.description}</p>
                           )}
                         </div>
-
-
-                      </div>
-
-                      {/* Service Elements - Middle Column */}
-                      <div className="lg:col-span-1">
-                        <div className="bg-gray-50 rounded-lg p-4">
-                          <h4 className="text-sm font-medium text-gray-700 mb-3">Service Elements</h4>
-                          <div className="space-y-3">
-                            {service.has_items && (
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm text-gray-600">Ha Elementi</span>
-                                <span className="text-sm font-medium text-gray-900">{service.serviceitem.length}</span>
+                        {/* Service Elements (no wrapper, no label) */}
+                        <div className="space-y-3">
+                            {/* Service Items as pills */}
+                            {service.serviceitem.length > 0 && (
+                              <div>
+                                <div className="flex flex-wrap gap-2">
+                                  {service.serviceitem.map(item => (
+                                    <span key={item.service_item_id} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                                      {item.item_name}
+                                    </span>
+                                  ))}
+                                </div>
                               </div>
                             )}
-                            {service.servicequestion.length > 0 && (
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm text-gray-600">Domande</span>
-                                <span className="text-sm font-medium text-gray-900">{service.servicequestion.length}</span>
+                            {(service.servicequestion.length > 0 || service.servicerequirementblock.length > 0) && (
+                              <div className="flex flex-row gap-4">
+                                {/* Service Questions as list */}
+                                <div className="flex-1 min-w-[180px] max-w-[320px]">
+                                  {service.servicequestion.length > 0 && (
+                                    <>
+                                      <div className="text-xs text-gray-500 mb-1">Domande</div>
+                                      <ul className="list-disc list-inside text-xs text-gray-700 break-words">
+                                        {service.servicequestion.map(q => (
+                                          <li key={q.question_id}>{q.question_text}</li>
+                                        ))}
+                                      </ul>
+                                    </>
+                                  )}
+                                </div>
+                                {/* Service Requirements as list */}
+                                <div className="flex-1 min-w-[180px] max-w-[320px]">
+                                  {service.servicerequirementblock.length > 0 && (
+                                    <>
+                                      <div className="text-xs text-gray-500 mb-1">Requisiti</div>
+                                      <ul className="list-disc list-inside text-xs text-gray-700 break-words">
+                                        {service.servicerequirementblock.map(r => (
+                                          <li key={r.requirement_block_id}>{r.title || r.requirements_text}</li>
+                                        ))}
+                                      </ul>
+                                    </>
+                                  )}
+                                </div>
                               </div>
                             )}
-                            {service.servicerequirementblock.length > 0 && (
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm text-gray-600">Requisiti</span>
-                                <span className="text-sm font-medium text-gray-900">{service.servicerequirementblock.length}</span>
-                              </div>
-                            )}
-                            {!service.has_items && service.servicequestion.length === 0 && service.servicerequirementblock.length === 0 && (
+                            {service.serviceitem.length === 0 && service.servicequestion.length === 0 && service.servicerequirementblock.length === 0 && (
                               <div className="text-sm text-gray-500 text-center py-2">
                                 No elements configured
                               </div>
                             )}
                           </div>
                         </div>
-                      </div>
 
                       {/* Action Buttons - Right Column */}
-                      <div className="lg:col-span-1">
-                        <div className="flex flex-col gap-3">
+                      <div className="lg:col-span-1 max-w-[110px] w-full lg:w-auto lg:ml-auto flex">
+                        <div className="flex flex-row gap-2 lg:flex-col lg:gap-3">
                           <button
                             onClick={() => handleEdit(service.service_id)}
-                            className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 font-medium"
+                            className="w-full px-4 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 font-medium"
                           >
-                            {t("edit")}
+                            {tCommon("edit")}
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
@@ -324,7 +321,7 @@ export default function ServicesPage() {
                             onClick={() => handleDeleteClick(service)}
                             className="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2 font-medium"
                           >
-                            {t("delete")}
+                            {tCommon("delete")}
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>

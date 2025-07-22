@@ -7,14 +7,14 @@ import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import BusinessSelectionModal from "@/components/modals/BusinessSelectionModal"
 import { 
-  LinkIcon, 
   UserIcon, 
-  Cog6ToothIcon, 
-  SwatchIcon, 
   CubeIcon, 
   CalendarIcon, 
   MegaphoneIcon,
-  XMarkIcon
+  ClipboardDocumentListIcon, 
+  Squares2X2Icon, 
+  Cog6ToothIcon,
+  GlobeAltIcon
 } from "@heroicons/react/24/outline"
 
 // Domain constant for public link
@@ -27,6 +27,7 @@ export default function DashboardPage() {
   const { currentBusiness, businesses, userManager, userPlan, usage, planLimits, switchBusiness, loading, error } = useBusiness()
   const [copied, setCopied] = useState(false)
   const [showBusinessModal, setShowBusinessModal] = useState(false)
+  const [isAnimating, setIsAnimating] = useState(false)
 
   // Add debugging
   console.log("DashboardPage render:", {
@@ -87,7 +88,9 @@ export default function DashboardPage() {
     try {
       await navigator.clipboard.writeText(publicUrl)
       setCopied(true)
+      setIsAnimating(true)
       setTimeout(() => setCopied(false), 2000)
+      setTimeout(() => setIsAnimating(false), 300)
     } catch (err) {
       console.error("Failed to copy: ", err)
     }
@@ -104,34 +107,16 @@ export default function DashboardPage() {
 
   const managementCards = [
     {
-      title: t("cards.qrLink.title"),
-      description: t("cards.qrLink.description"),
-      icon: LinkIcon,
-      href: "/dashboard/qr-link",
-    },
-    {
       title: t("cards.profile.title"),
       description: t("cards.profile.description"),
       icon: UserIcon,
       href: "/dashboard/profile",
     },
     {
-      title: t("cards.links.title"),
-      description: t("cards.links.description"),
-      icon: LinkIcon,
-      href: "/dashboard/profile/links",
-    },
-    {
-      title: t("cards.settings.title"),
-      description: t("cards.settings.description"),
-      icon: Cog6ToothIcon,
-      href: "/dashboard/profile/settings",
-    },
-    {
-      title: t("cards.appearance.title"),
-      description: t("cards.appearance.description"),
-      icon: SwatchIcon,
-      href: "/dashboard/profile/appearance",
+      title: t("cards.services.title"),
+      description: t("cards.services.description"),
+      icon: Squares2X2Icon,
+      href: "/dashboard/services",
     },
     {
       title: t("cards.products.title"),
@@ -140,10 +125,22 @@ export default function DashboardPage() {
       href: "/dashboard/products",
     },
     {
-      title: t("cards.bookings.title"),
-      description: t("cards.bookings.description"),
+      title: t("cards.serviceRequests.title"),
+      description: t("cards.serviceRequests.description"),
+      icon: ClipboardDocumentListIcon,
+      href: "/dashboard/service-requests",
+    },
+    {
+      title: t("cards.serviceBoards.title"),
+      description: t("cards.serviceBoards.description"),
+      icon: Squares2X2Icon,
+      href: "/dashboard/service-boards",
+    },
+    {
+      title: t("cards.appointments.title"),
+      description: t("cards.appointments.description"),
       icon: CalendarIcon,
-      href: "/dashboard/bookings",
+      href: "/dashboard/appointments",
     },
     {
       title: t("cards.promotions.title"),
@@ -268,26 +265,39 @@ export default function DashboardPage() {
        
         {/* Public Link Section */}
         <div className="mb-8">
-          <div className="bg-gray-800 text-gray-300 px-6 py-4 rounded-full text-base font-medium flex items-center justify-between gap-4 shadow-lg border border-gray-700">
-            <span className="text-sm">{publicUrl}</span>
+                      <div className={`bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-gray-300 px-6 py-4 rounded-full text-base font-medium flex items-center justify-between gap-4 shadow-lg border border-gray-700 transition-all duration-300 relative overflow-hidden ${
+              isAnimating ? 'animate-shine' : ''
+            }`}>
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <GlobeAltIcon className="w-5 h-5 md:w-6 md:h-6 text-blue-400 flex-shrink-0" />
+              <span className="text-sm md:text-lg truncate">{publicUrl}</span>
+            </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={handleCopy}
-                className="text-gray-400 hover:text-white transition-colors"
+                className={`text-gray-400 hover:text-white transition-all duration-300 flex items-center gap-2 ${copied ? 'text-green-400' : ''}`}
                 title={copied ? t("publicLink.copied") : t("publicLink.copy")}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
+                {copied ? (
+                  <svg className="w-4 h-4 animate-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                )}
+                <span className="hidden md:inline text-sm">{copied ? t("publicLink.copied") : t("publicLink.copy")}</span>
               </button>
               <button
                 onClick={handleOpen}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"
                 title={t("publicLink.open")}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
+                <span className="hidden md:inline text-sm">{t("publicLink.open")}</span>
               </button>
             </div>
           </div>

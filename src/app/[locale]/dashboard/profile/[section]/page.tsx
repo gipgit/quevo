@@ -23,6 +23,11 @@ import {
   SwatchIcon 
 } from "@heroicons/react/24/outline"
 
+// Domain constant for public link
+const DOMAIN = typeof window !== "undefined" && window.location.hostname.includes("localhost")
+  ? "http://localhost:3000"
+  : "your-production-domain.com" // <-- Replace with your actual domain
+
 interface SocialLink {
   url: string;
   visible: boolean;
@@ -342,43 +347,48 @@ export default function ProfilePage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">{t("title")}</h1>
-          <button className="text-blue-600 hover:text-blue-700 font-medium">{t("openProfile")}</button>
+          <a 
+            href={`${DOMAIN}/${currentBusiness?.business_urlname || ""}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 font-medium transition-colors"
+          >
+            {t("openProfile")}
+          </a>
         </div>
-        
+        {/* Tab Navigation Row - always visible */}
+        <div className="bg-gray-200 rounded-lg p-2 mb-8">
+          <nav className="flex justify-between overflow-x-auto">
+            {tabs.map((tab) => {
+              const isActive = section === tab.id
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => handleTabClick(tab.id)}
+                  className={`flex items-center space-x-2 py-3 px-4 rounded-md font-medium text-sm whitespace-nowrap transition-colors flex-1 ${
+                    isActive
+                      ? "bg-gray-200 text-gray-900 shadow-sm"
+                      : "text-gray-600"
+                  }`}
+                >
+                  {renderTabIcon(tab.icon, isActive)}
+                  <span>{tab.label}</span>
+                </button>
+              )
+            })}
+          </nav>
+        </div>
         {/* Main Content with Preview */}
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <LoadingSpinner size="lg" color="blue" />
           </div>
         ) : (
-                      <div className="flex flex-col lg:flex-row gap-8">
+          <>
+            <div className="flex flex-col lg:flex-row justify-between gap-8">
               {/* Left Column - Content Area */}
-              <div className="flex-1 min-w-0">
-              {/* Tabs Navigation */}
-              <div className="bg-gray-100 rounded-lg p-2 mb-8">
-                <nav className="flex justify-between overflow-x-auto">
-                  {tabs.map((tab) => {
-                    const isActive = section === tab.id
-                    return (
-                      <button
-                        key={tab.id}
-                        onClick={() => handleTabClick(tab.id)}
-                        className={`flex items-center space-x-2 py-3 px-4 rounded-md font-medium text-sm whitespace-nowrap transition-colors flex-1 ${
-                          isActive
-                            ? "bg-gray-200 text-gray-900 shadow-sm"
-                            : "text-gray-600"
-                        }`}
-                      >
-                        {renderTabIcon(tab.icon, isActive)}
-                        <span>{tab.label}</span>
-                      </button>
-                    )
-                  })}
-                </nav>
-              </div>
-              
+              <div className="max-w-2xl w-full">
               {/* Tab Content */}
-              <div className="p-4">
                 {section === "info" && (
                   <>
                     <ProfileInfoSection profileData={profileData} onChange={handleInputChange} />
@@ -452,26 +462,25 @@ export default function ProfilePage() {
                   />
                 )}
               </div>
-            </div>
-            
-            {/* Right Column - Fixed Width Preview */}
-            <div className="w-full lg:w-96 flex-shrink-0">
-              <div className="lg:sticky lg:top-6 lg:h-full">
-                <div className="h-full bg-gradient-to-br from-gray-100 to-gray-200 p-4 border rounded-xl flex flex-col">
-                  <div className="flex-1 flex items-center justify-center">
-                    <ProfilePreview
-                      profileData={profileData}
-                      profileSettings={profileSettings}
-                      profileImg={profileImgPreview || profileData?.business_img_profile}
-                      coverImg={coverImgPreview || profileData?.business_img_cover}
-                      businessName={profileData?.business_name}
-                      socialLinks={socialLinks}
-                    />
+              {/* Right Column - Fixed Width Preview */}
+              <div className="w-full lg:w-96 flex-shrink-0">
+                <div className="lg:sticky lg:top-6 lg:h-full">
+                  <div className="h-full bg-gradient-to-br from-gray-300 to-gray-400 p-4 border rounded-xl flex flex-col">
+                    <div className="flex-1 flex items-center justify-center">
+                      <ProfilePreview
+                        profileData={profileData}
+                        profileSettings={profileSettings}
+                        profileImg={profileImgPreview || profileData?.business_img_profile}
+                        coverImg={coverImgPreview || profileData?.business_img_cover}
+                        businessName={profileData?.business_name}
+                        socialLinks={socialLinks}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
     </DashboardLayout>

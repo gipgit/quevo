@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma"
 import type { NextAuthConfig, DefaultSession } from "next-auth"
 
 export const authConfig: NextAuthConfig = {
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -115,6 +116,12 @@ export const authConfig: NextAuthConfig = {
           return null
         } catch (error) {
           console.error("Auth error:", error)
+          console.error("Environment check:", {
+            hasAuthSecret: !!process.env.AUTH_SECRET,
+            hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET,
+            hasNextAuthUrl: !!process.env.NEXTAUTH_URL,
+            hasDatabaseUrl: !!process.env.DATABASE_URL,
+          })
           throw error
         }
       },

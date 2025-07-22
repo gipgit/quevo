@@ -7,7 +7,7 @@ const urlnameSchema = z.object({
     .string()
     .min(3, "Il nome URL deve contenere almeno 3 caratteri")
     .max(30, "Il nome URL non può superare i 30 caratteri")
-    .regex(/^[a-z0-9-]+$/, "Il nome URL può contenere solo lettere minuscole, numeri e trattini"),
+    .regex(/^[a-z0-9_-]+$/, "Il nome URL può contenere solo lettere minuscole, numeri, trattini e underscore"),
 })
 
 export async function POST(request: Request) {

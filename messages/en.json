@@ -38,7 +38,9 @@
     "phone": "Phone",
     "submitting": "Submitting",
     "back": "Back",
-    "free": "Free"
+    "free": "Free",
+    "edit": "Edit",
+    "delete": "Delete"
   },
   "ServiceRequest": {
     "loadingCalendar": "Loading calendar",
@@ -393,13 +395,12 @@
       "open": "Open"
     },
     "cards": {
-      "qrLink": { "title": "QR Link", "description": "Share your business QR code or link." },
-      "profile": { "title": "Profile", "description": "Edit your business profile." },
-      "links": { "title": "Links", "description": "Manage your social and web links." },
-      "settings": { "title": "Settings", "description": "Business settings and preferences." },
-      "appearance": { "title": "Appearance", "description": "Customize your business look." },
+      "profile": { "title": "Profile", "description": "Edit your business profile, links, settings, and appearance." },
+      "services": { "title": "Services", "description": "Manage your services." },
+      "serviceRequests": { "title": "Service Requests", "description": "View and manage service requests." },
+      "serviceBoards": { "title": "Service Boards", "description": "Manage your service boards." },
+      "appointments": { "title": "Appointments", "description": "View and manage appointments." },
       "products": { "title": "Products", "description": "Manage your products." },
-      "bookings": { "title": "Bookings", "description": "View and manage bookings." },
       "promotions": { "title": "Promotions", "description": "Create and manage promotions." }
     },
     "noBusiness": "No business selected.",
@@ -452,6 +453,13 @@
     "businessRegion": "Region",
     "businessCountry": "Country",
     "businessDescr": "Description",
+    "addEmail": "Add Email",
+    "addPhone": "Add Phone",
+    "emailPlaceholder": "email@example.com",
+    "phonePlaceholder": "+39 123 456 7890",
+    "emailTitlePlaceholder": "Title (optional)",
+    "phoneTitlePlaceholder": "Title (optional)",
+    "remove": "Remove",
     "links": {
       "googleReviews": "Google Reviews",
       "googleReviewsTitle": "Google Reviews Link",

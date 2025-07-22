@@ -535,10 +535,28 @@ export async function GET(
       where: {
         business_id
       },
-      include: {
+      orderBy: {
+        date_created: 'desc'
+      },
+      select: {
+        request_id: true,
+        request_reference: true,
+        customer_name: true,
+        customer_email: true,
+        customer_phone: true,
+        request_date: true,
+        status: true,
+        price_subtotal: true,
+        customer_notes: true,
+        date_created: true,
         service: {
-          include: {
-            servicecategory: true
+          select: {
+            service_name: true,
+            servicecategory: {
+              select: {
+                category_name: true
+              }
+            }
           }
         },
         usercustomer: {
@@ -552,17 +570,26 @@ export async function GET(
           orderBy: {
             changed_at: 'desc'
           },
-          take: 1
+          take: 1,
+          select: {
+            new_status: true,
+            changed_at: true
+          }
         },
         servicerequestmessage: {
           orderBy: {
             sent_at: 'desc'
           },
-          take: 5
-        }
-      },
-      orderBy: {
-        date_created: 'desc'
+          take: 5,
+          select: {
+            message_text: true,
+            sent_at: true,
+            sender_type: true
+          }
+        },
+        selected_service_items_snapshot: true,
+        question_responses_snapshot: true,
+        requirement_responses_snapshot: true
       }
     });
 

@@ -37,5 +37,6 @@ export const config = {
   // - Next.js internal files (/_next)
   // - Vercel specific internal files (/_vercel)
   // - Files with a dot (e.g., favicon.ico, images, etc.)
-  matcher: "/((?!api|trpc|_next|_vercel|.*\\..*).*)",
+  // - Auth-related routes
+  matcher: "/((?!api|trpc|_next|_vercel|auth|signin|signup|.*\\..*).*)",
 }

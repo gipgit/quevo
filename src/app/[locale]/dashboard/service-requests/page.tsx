@@ -7,6 +7,7 @@ import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { UsageLimitBar } from "@/components/dashboard/UsageLimitBar"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import EmptyState from "@/components/EmptyState"
+import { EnvelopeIcon } from '@heroicons/react/24/outline'
 
 interface ServiceRequest {
   request_id: string
@@ -29,7 +30,7 @@ interface ServiceRequest {
     name_first: string | null
     name_last: string | null
     email: string
-    phone: string | null
+    phone?: string | null
   } | null
   servicerequeststatushistory: Array<{
     new_status: string
@@ -39,6 +40,28 @@ interface ServiceRequest {
     message_text: string
     sent_at: string
     sender_type: string
+  }>
+  selected_service_items_snapshot?: Array<{
+    service_item_id: number
+    item_name: string
+    quantity: number
+    price_at_request: number
+  }>
+  question_responses_snapshot?: Array<{
+    question_id: number
+    question_text: string
+    question_type: string
+    response_text?: string
+    selected_options?: Array<{
+      option_id: number
+      option_text: string
+    }>
+  }>
+  requirement_responses_snapshot?: Array<{
+    requirement_block_id: number
+    title: string
+    requirements_text: string
+    customer_confirmed: boolean
   }>
 }
 
@@ -123,10 +146,7 @@ export default function ServiceRequestsPage() {
     window.location.href = `/dashboard/service-requests/${requestId}`
   }
 
-  const handleOpenBoard = (requestId: string) => {
-    // Navigate to service board for this request
-    window.location.href = `/dashboard/service-boards?request=${requestId}`
-  }
+  const businessUrlName = currentBusiness?.business_urlname;
 
   if (!currentBusiness) return null
 
@@ -169,14 +189,25 @@ export default function ServiceRequestsPage() {
                   className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
                 >
                   <div className="p-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                       {/* Request Details - Left Column */}
-                      <div className="lg:col-span-2">
+                      <div className="lg:col-span-1 flex flex-col gap-2">
                         <div className="mb-4">
-                          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                            {request.request_reference}
-                          </h3>
-                          {/* Status, Date, and Price */}
+                          {/* Date and Reference in one line */}
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="text-lg font-bold text-gray-800">{formatDate(request.request_date)}</span>
+                            <span className="px-2 py-0.5 border border-gray-300 bg-gray-100 rounded-md text-xs font-medium text-gray-700 ml-2">{request.request_reference}</span>
+                          </div>
+                          {/* Service Info */}
+                          <p className="text-gray-700 mb-2">
+                            <span className="text-2xl font-bold">{request.service.service_name}</span>
+                            {request.service.servicecategory && (
+                              <span className="text-xs text-gray-400 ml-2 align-middle">
+                                • {request.service.servicecategory.category_name}
+                              </span>
+                            )}
+                          </p>
+                          {/* Status and Price */}
                           <div className="flex items-center gap-4 mb-2">
                             <div className="flex items-center gap-2">
                               <span className="text-sm text-gray-500">{t("status")}:</span>
@@ -185,120 +216,96 @@ export default function ServiceRequestsPage() {
                               </span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <span className="text-sm text-gray-500">{t("date")}:</span>
-                              <span className="text-sm font-medium text-gray-700">{formatDate(request.request_date)}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
                               <span className="text-sm text-gray-500">{t("price")}:</span>
                               <span className="text-sm font-medium text-gray-700">{formatPrice(request.price_subtotal)}</span>
                             </div>
                           </div>
-                          {/* Service Info */}
-                          <p className="text-gray-600 mb-2">
-                            {request.service.service_name}
-                            {request.service.servicecategory && (
-                              <span className="text-gray-400 ml-2">
-                                • {request.service.servicecategory.category_name}
-                              </span>
+                          {/* Open Board Button */}
+                          <div className="mt-4">
+                            {businessUrlName && request.request_id && request.request_reference && (
+                              <a
+                                href={`/${businessUrlName}/s/${request.request_reference}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 text-sm font-medium flex-nowrap whitespace-nowrap"
+                              >
+                                {t("openBoard")}
+                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                              </a>
                             )}
-                          </p>
+                          </div>
                         </div>
-
-                        {/* Customer Notes */}
-                        {request.customer_notes && (
-                          <div className="mt-4 pt-4 border-t border-gray-100">
-                            <span className="text-sm text-gray-500">{t("notes")}:</span>
-                            <p className="text-gray-700 mt-1">{request.customer_notes}</p>
-                          </div>
-                        )}
-
-                        {/* Recent Messages Timeline */}
-                        {request.servicerequestmessage.length > 0 && (
-                          <div className="mt-4 pt-4 border-t border-gray-100">
-                            <span className="text-sm text-gray-500 mb-3 block">
-                              {request.servicerequestmessage.length} total messages, recent ones are:
-                            </span>
-                            <div className="flex items-center space-x-4 overflow-x-auto pb-2">
-                              {request.servicerequestmessage.slice(0, 5).map((message, index) => (
-                                <div key={index} className="flex items-center flex-shrink-0">
-                                  {/* Timeline dot */}
-                                  <div className="w-3 h-3 rounded-full bg-blue-300 mr-2"></div>
-                                  {/* Message content */}
-                                  <div className="bg-gray-50 rounded-lg px-3 py-2 min-w-0">
-                                    <div className="text-sm font-medium text-gray-900 truncate">
-                                      {message.sender_type}
-                                    </div>
-                                    <div className="text-xs text-gray-600 mt-1 truncate max-w-32">
-                                      {message.message_text}
-                                    </div>
-                                    <div className="text-xs text-gray-500 mt-1">
-                                      {new Date(message.sent_at).toLocaleDateString('it-IT', { 
-                                        month: 'short', 
-                                        day: 'numeric' 
-                                      })}
-                                    </div>
-                                  </div>
-                                  {/* Timeline connector (except for last item) */}
-                                  {index < Math.min(4, request.servicerequestmessage.length - 1) && (
-                                    <div className="w-8 h-0.5 bg-gray-200 mx-2"></div>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
                       </div>
 
-                      {/* Customer Details - Right Column */}
-                      <div className="lg:col-span-1">
-                        <div className="bg-gray-50 rounded-lg p-4">
-                          <h4 className="text-sm font-medium text-gray-700 mb-3">{t("customer")}</h4>
+                      {/* Customer Details - Now the middle column, right-aligned, max width */}
+                      <div className="lg:col-span-1 flex justify-end">
+                        <div className="border-2 border-gray-200 rounded-xl p-4 max-w-xs w-full h-full flex flex-col justify-center bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50">
                           <div className="space-y-3">
                             <div>
-                              <div className="font-semibold text-gray-900 mb-2">
+                              <div className="text-lg font-bold text-gray-900 mb-2">
                                 {request.usercustomer 
                                   ? `${request.usercustomer.name_first || ''} ${request.usercustomer.name_last || ''}`.trim() || request.usercustomer.email
                                   : request.customer_name || request.customer_email
                                 }
                               </div>
                             </div>
-                            
-                            {/* Customer Contact Info */}
+                            {/* Email Row */}
                             {(request.usercustomer?.email || request.customer_email) && (
                               <div className="flex items-center justify-between">
-                                <span className="text-sm text-gray-600 truncate">
+                                <span className="text-base text-gray-600 truncate flex items-center gap-2">
+                                  <EnvelopeIcon className="w-5 h-5 text-gray-400 inline-block" />
                                   {request.usercustomer?.email || request.customer_email}
                                 </span>
-                                <button
-                                  onClick={() => navigator.clipboard.writeText(request.usercustomer?.email || request.customer_email)}
-                                  className="text-blue-600 hover:text-blue-800 transition-colors flex-shrink-0 ml-2"
-                                  title="Copy email"
-                                >
-                                  📋
-                                </button>
+                                <div className="flex items-center gap-2 ml-2">
+                                  <a
+                                    href={`mailto:${request.usercustomer?.email || request.customer_email}`}
+                                    className="p-1 hover:bg-blue-100 rounded transition-colors"
+                                    title="Send email"
+                                  >
+                                    <EnvelopeIcon className="w-5 h-5 text-blue-600" />
+                                  </a>
+                                  <button
+                                    onClick={() => navigator.clipboard.writeText(request.usercustomer?.email || request.customer_email || '')}
+                                    className="p-1 hover:bg-gray-200 rounded transition-colors"
+                                    title="Copy email"
+                                  >
+                                    <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                    </svg>
+                                  </button>
+                                </div>
                               </div>
                             )}
                             {(request.usercustomer?.phone || request.customer_phone) && (
                               <div className="flex items-center justify-between">
-                                <span className="text-sm text-gray-600 truncate">
+                                <span className="text-base text-gray-600 truncate flex items-center gap-2">
+                                  <svg className="w-5 h-5 inline-block text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                  </svg>
                                   {request.usercustomer?.phone || request.customer_phone}
                                 </span>
-                                <div className="flex items-center gap-1 flex-shrink-0 ml-2">
+                                <div className="flex items-center gap-2 flex-shrink-0 ml-2">
                                   <a
                                     href={`tel:${request.usercustomer?.phone || request.customer_phone}`}
-                                    className="text-green-600 hover:text-green-800 transition-colors"
+                                    className="text-green-600 hover:text-green-800 transition-colors text-base"
                                     title="Call phone"
                                   >
-                                    📞
+                                    <svg className="w-5 h-5 text-green-600 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                    </svg>
                                   </a>
                                   <a
                                     href={`https://wa.me/${(request.usercustomer?.phone || request.customer_phone)?.replace(/\D/g, '')}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-green-600 hover:text-green-800 transition-colors"
+                                    className="text-green-600 hover:text-green-800 transition-colors text-base"
                                     title="WhatsApp"
                                   >
-                                    💬
+                                    <svg className="w-5 h-5 text-green-600 inline-block" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                                    </svg>
                                   </a>
                                 </div>
                               </div>
@@ -307,19 +314,54 @@ export default function ServiceRequestsPage() {
                         </div>
                       </div>
 
-                      {/* Open Board Button - Third Column */}
-                      <div className="lg:col-span-1">
-                        <div className="flex items-center justify-center h-full">
-                          <button
-                            onClick={() => handleOpenBoard(request.request_id)}
-                            className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 font-medium"
-                          >
-                            {t("openBoard")}
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </button>
-                        </div>
+                      {/* Notes and Selected Items/Responses - Now the right column (flex-grow) */}
+                      <div className="lg:col-span-1 flex flex-col gap-2 flex-grow min-w-0">
+                        {/* Customer Notes */}
+                        {request.customer_notes && (
+                          <div className="pt-0 border-t-0">
+                            <span className="text-xs text-gray-400">{t("notes")}:</span>
+                            <p className="text-gray-700 mt-1">{request.customer_notes}</p>
+                          </div>
+                        )}
+                        {/* Selected Service Items */}
+                        {request.selected_service_items_snapshot && request.selected_service_items_snapshot.length > 0 && (
+                          <div className="mt-2">
+                            <span className="text-xs text-gray-400 font-medium block mb-1">Selected Items:</span>
+                            <ul className="list-disc list-inside text-sm text-gray-700">
+                              {request.selected_service_items_snapshot.map((item) => (
+                                <li key={item.service_item_id}>
+                                  {item.item_name} x{item.quantity} ({item.price_at_request}€)
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {/* Question Responses */}
+                        {request.question_responses_snapshot && request.question_responses_snapshot.length > 0 && (
+                          <div className="mt-2">
+                            <span className="text-xs text-gray-400 font-medium block mb-1">Question Responses:</span>
+                            <ul className="list-disc list-inside text-sm text-gray-700">
+                              {request.question_responses_snapshot.map((q) => (
+                                <li key={q.question_id}>
+                                  <span className="font-semibold">{q.question_text}:</span> {q.response_text || (q.selected_options ? q.selected_options.map(opt => opt.option_text).join(', ') : '')}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {/* Requirement Responses */}
+                        {request.requirement_responses_snapshot && request.requirement_responses_snapshot.length > 0 && (
+                          <div className="mt-2">
+                            <span className="text-xs text-gray-400 font-medium block mb-1">Requirements Confirmed:</span>
+                            <ul className="list-disc list-inside text-sm text-gray-700">
+                              {request.requirement_responses_snapshot.map((r) => (
+                                <li key={r.requirement_block_id}>
+                                  <span className="font-semibold">{r.title}:</span> {r.customer_confirmed ? 'Confirmed' : 'Not confirmed'}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

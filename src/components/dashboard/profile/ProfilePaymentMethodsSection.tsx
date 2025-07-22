@@ -1,5 +1,9 @@
 import { useState } from "react"
-import { ALLOWED_PAYMENT_METHODS } from "@/lib/payment-methods-config"
+import { 
+  ALLOWED_PAYMENT_METHODS, 
+  PAYMENT_METHOD_CATEGORIES,
+  getPaymentMethodsByCategory 
+} from "@/lib/payment-methods-config"
 import { useTranslations } from "next-intl"
 import { XMarkIcon } from "@heroicons/react/24/outline"
 
@@ -57,25 +61,81 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
       {/* Payment Methods */}
       <div>
         <h3 className="text-lg font-semibold text-gray-900 mb-4">{t("paymentMethods.title") || "Payment Methods"}</h3>
-        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-6">
-          {ALLOWED_PAYMENT_METHODS.map((method) => {
-            const isActive = selected.includes(method.id)
-            return (
-              <button
-                key={method.id}
-                type="button"
-                className={`flex flex-col items-center justify-center p-3 rounded-lg transition-all focus:outline-none h-20 ${
-                  isActive
-                    ? "ring-2 ring-gray-400 bg-gray-100 shadow-md"
-                    : "border border-gray-300 hover:border-gray-400 bg-white"
-                }`}
-                onClick={() => handleToggle(method.id)}
-              >
-                <img src={method.iconPath} alt={method.name} className="w-8 h-8 mb-1" />
-                <span className="text-xs font-medium">{method.name}</span>
-              </button>
-            )
-          })}
+        
+        {/* Online Payment Methods */}
+        <div className="mb-8">
+          <h4 className="text-md font-medium text-gray-800 mb-3">{PAYMENT_METHOD_CATEGORIES[0].name}</h4>
+          <p className="text-sm text-gray-600 mb-4">{PAYMENT_METHOD_CATEGORIES[0].description}</p>
+          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3 mb-6">
+            {getPaymentMethodsByCategory('online').map((method) => {
+              const isActive = selected.includes(method.id)
+              return (
+                <button
+                  key={method.id}
+                  type="button"
+                  className={`flex flex-col items-center justify-center p-4 rounded-lg transition-all focus:outline-none h-24 ${
+                    isActive
+                      ? "ring-2 ring-gray-400 bg-gray-100 shadow-md"
+                      : "border border-gray-300 hover:border-gray-400 bg-white"
+                  }`}
+                  onClick={() => handleToggle(method.id)}
+                >
+                  <img 
+                    src={method.iconPath} 
+                    alt={method.name} 
+                    className="w-12 h-12 mb-2" 
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      const textElement = e.currentTarget.nextElementSibling;
+                      if (textElement) {
+                        textElement.classList.remove('text-xs', 'font-bold', 'text-gray-400');
+                        textElement.classList.add('text-lg', 'font-semibold', 'text-gray-300');
+                      }
+                    }}
+                  />
+                  <span className="text-xs font-bold text-gray-400">{method.name}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* In-Person Payment Methods */}
+        <div className="mb-8">
+          <h4 className="text-md font-medium text-gray-800 mb-3">{PAYMENT_METHOD_CATEGORIES[1].name}</h4>
+          <p className="text-sm text-gray-600 mb-4">{PAYMENT_METHOD_CATEGORIES[1].description}</p>
+          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-6">
+            {getPaymentMethodsByCategory('in-person').map((method) => {
+              const isActive = selected.includes(method.id)
+              return (
+                <button
+                  key={method.id}
+                  type="button"
+                  className={`flex flex-col items-center justify-center p-4 rounded-lg transition-all focus:outline-none h-24 ${
+                    isActive
+                      ? "ring-2 ring-gray-400 bg-gray-100 shadow-md"
+                      : "border border-gray-300 hover:border-gray-400 bg-white"
+                  }`}
+                  onClick={() => handleToggle(method.id)}
+                >
+                  <img 
+                    src={method.iconPath} 
+                    alt={method.name} 
+                    className="w-12 h-12 mb-2" 
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      const textElement = e.currentTarget.nextElementSibling;
+                      if (textElement) {
+                        textElement.classList.remove('text-xs', 'font-bold', 'text-gray-400');
+                        textElement.classList.add('text-lg', 'font-semibold', 'text-gray-300');
+                      }
+                    }}
+                  />
+                  <span className="text-xs font-bold text-gray-400">{method.name}</span>
+                </button>
+              )
+            })}
+          </div>
         </div>
         <div className="space-y-4">
           {selected.map((id) => {

@@ -17,12 +17,21 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
   // --- Business URL name validation logic ---
   const [urlValidation, setUrlValidation] = useState<UrlValidation>({ status: "idle", message: "" })
   const timeoutRef = useRef<NodeJS.Timeout>()
+  const originalUrlname = useRef<string>(profileData.business_urlname || "")
+  const [isUrlInputFocused, setIsUrlInputFocused] = useState(false)
 
   const checkUrlAvailability = async (urlname: string) => {
     if (!urlname || urlname.length < 3) {
       setUrlValidation({ status: "idle", message: "" })
       return false
     }
+    
+    // Don't validate if it's the same as the original URL name
+    if (urlname === originalUrlname.current) {
+      setUrlValidation({ status: "idle", message: "" })
+      return true
+    }
+    
     setUrlValidation({ status: "checking", message: t("businessUrlNameChecking") })
     try {
       const response = await fetch("/api/business/check-urlname", {
@@ -45,9 +54,10 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
   const handleUrlChange = (value: string) => {
     const cleanValue = value
       .toLowerCase()
-      .replace(/[^a-z0-9-]/g, "")
-      .replace(/-+/g, "")
-      .replace(/^-|-$/g, "")
+      .replace(/[^a-z0-9_-]/g, "")
+      .replace(/_+/g, "_")
+      .replace(/-+/g, "-")
+      .replace(/^[-_]|[-_]$/g, "")
     onChange("business_urlname", cleanValue)
     setUrlValidation({ status: "idle", message: "" })
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
@@ -71,14 +81,33 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
 
   // --- Emails/Phones logic ---
   const parseArray = (val: any) => {
-    if (Array.isArray(val)) return val
+    if (Array.isArray(val)) {
+      // Convert array of strings to array of objects with value and title
+      return val.map(item => {
+        if (typeof item === "string") {
+          return { value: item, title: "" }
+        } else if (typeof item === "object" && item.value) {
+          return { value: item.value, title: item.title || "" }
+        }
+        return { value: String(item), title: "" }
+      })
+    }
     if (typeof val === "string") {
       try {
         const arr = JSON.parse(val)
-        if (Array.isArray(arr)) return arr
+        if (Array.isArray(arr)) {
+          return arr.map(item => {
+            if (typeof item === "string") {
+              return { value: item, title: "" }
+            } else if (typeof item === "object" && item.value) {
+              return { value: item.value, title: item.title || "" }
+            }
+            return { value: String(item), title: "" }
+          })
+        }
       } catch {}
     }
-    return val ? [{ value: val, title: "" }] : []
+    return val ? [{ value: String(val), title: "" }] : []
   }
   const [emails, setEmails] = useState<{ value: string; title: string }[]>(
     parseArray(profileData.business_emails || profileData.business_email)
@@ -128,9 +157,6 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
       {/* Business URL Name */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">{t("businessUrlName")}</label>
-        <p className="mb-2 text-xs text-gray-500">
-          Questo sarà il link del tuo profilo. Deve contenere solo lettere minuscole, numeri e trattini.
-        </p>
         <div className="flex items-center rounded-full shadow-sm overflow-hidden bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200">
           <div className="flex items-center px-4 py-3 bg-gradient-to-r from-gray-100 to-gray-200 border-r border-gray-300">
             <GlobeAltIcon className="w-5 h-5 text-gray-600 mr-2" />
@@ -142,7 +168,11 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
             <input
               type="text"
               value={profileData.business_urlname || ""}
-              onBlur={(e) => handleUrlChange(e.target.value)}
+              onFocus={() => setIsUrlInputFocused(true)}
+              onBlur={(e) => {
+                setIsUrlInputFocused(false)
+                handleUrlChange(e.target.value)
+              }}
               onChange={(e) => handleUrlChange(e.target.value)}
               className={`w-full p-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-transparent ${
                 urlValidation.status === "available"
@@ -159,6 +189,11 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
             </div>
           </div>
         </div>
+        {isUrlInputFocused && (
+          <p className="mt-2 text-xs text-gray-500">
+            Questo sarà il link del tuo profilo. Deve contenere solo lettere minuscole, numeri, trattini e underscore.
+          </p>
+        )}
         {urlValidation.message && (
           <p
             className={`mt-2 text-sm ${
@@ -227,7 +262,12 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
       </div>
       {/* Emails */}
       <div className="mt-8">
-        <label className="block text-sm font-medium text-gray-700 mb-2">{t("businessEmail")}</label>
+        <div className="flex justify-between items-center mb-2">
+          <label className="block text-sm font-medium text-gray-700">{t("businessEmail")}</label>
+          {emails.length < 3 && (
+            <button type="button" onClick={handleAddEmail} className="text-blue-600 text-sm">{t("addEmail")}</button>
+          )}
+        </div>
         {emails.map((email, idx) => (
           <div key={idx} className="flex gap-2 mb-2">
             <input
@@ -249,13 +289,15 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
             )}
           </div>
         ))}
-        {emails.length < 3 && (
-          <button type="button" onClick={handleAddEmail} className="text-blue-600 mt-2">{t("addEmail")}</button>
-        )}
       </div>
       {/* Phones */}
       <div className="mt-8">
-        <label className="block text-sm font-medium text-gray-700 mb-2">{t("businessPhone")}</label>
+        <div className="flex justify-between items-center mb-2">
+          <label className="block text-sm font-medium text-gray-700">{t("businessPhone")}</label>
+          {phones.length < 3 && (
+            <button type="button" onClick={handleAddPhone} className="text-blue-600 text-sm">{t("addPhone")}</button>
+          )}
+        </div>
         {phones.map((phone, idx) => (
           <div key={idx} className="flex gap-2 mb-2">
             <input
@@ -277,9 +319,6 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
             )}
           </div>
         ))}
-        {phones.length < 3 && (
-          <button type="button" onClick={handleAddPhone} className="text-blue-600 mt-2">{t("addPhone")}</button>
-        )}
       </div>
     </div>
   )

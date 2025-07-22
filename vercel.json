@@ -1,0 +1,14 @@
+{
+  "env": {
+    "NEXTAUTH_URL": "@nextauth_url",
+    "AUTH_SECRET": "@auth_secret",
+    "NEXTAUTH_SECRET": "@nextauth_secret"
+  },
+  "build": {
+    "env": {
+      "NEXTAUTH_URL": "@nextauth_url",
+      "AUTH_SECRET": "@auth_secret",
+      "NEXTAUTH_SECRET": "@nextauth_secret"
+    }
+  }
+} 

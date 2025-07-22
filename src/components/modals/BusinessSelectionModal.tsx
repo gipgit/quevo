@@ -22,26 +22,26 @@ export default function BusinessSelectionModal({ isOpen, onClose }: BusinessSele
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <div className="bg-white rounded-xl p-8 max-w-3xl w-full shadow-lg relative">
+      <div className="bg-white rounded-xl p-8 max-w-5xl w-auto shadow-lg relative">
         <button 
           className="absolute top-2 right-2 text-gray-400 hover:text-gray-600" 
           onClick={onClose}
         >
           <XMarkIcon className="h-6 w-6" />
         </button>
-        <h2 className="text-xl font-bold mb-4">{t("currentBusiness.selectBusiness")}</h2>
-        <div className="flex flex-row items-center justify-center flex-wrap gap-4">
+        <h2 className="text-xl font-bold mb-4 text-center">{t("currentBusiness.selectBusiness")}</h2>
+        <div className="flex flex-col gap-2 pb-2 lg:flex-row lg:flex-wrap lg:items-center lg:justify-center lg:gap-4">
           {businesses.map((b) => (
             <div
               key={b.business_id}
-              className={`border rounded-lg p-4 cursor-pointer transition-all ${
+              className={`w-full h-14 border rounded-lg p-2 cursor-pointer transition-all flex-shrink-0 flex items-center justify-center lg:w-40 lg:h-24 lg:p-4 ${
                 currentBusiness?.business_id === b.business_id 
                   ? "border-blue-500 bg-blue-50" 
                   : "border-gray-200 hover:border-blue-300"
               }`}
               onClick={() => handleBusinessSelect(b.business_id)}
             >
-              <div className="font-semibold text-gray-900">{b.business_name}</div>
+              <div className="font-semibold text-gray-900 text-center w-full">{b.business_name}</div>
             </div>
           ))}
         </div>

@@ -38,7 +38,9 @@
     "phone": "Telefono",
     "submitting": "Invio in corso",
     "back": "Indietro",
-    "free": "Gratis"
+    "free": "Gratis",
+    "edit": "Modifica",
+    "delete": "Elimina"
   },
   "ServiceRequest": {
     "loadingCalendar": "Caricamento calendario",
@@ -420,13 +422,12 @@
       "open": "Apri"
     },
     "cards": {
-      "qrLink": { "title": "QR Link", "description": "Condividi il QR code o il link della tua attività." },
-      "profile": { "title": "Profilo", "description": "Modifica il profilo della tua attività." },
-      "links": { "title": "Link", "description": "Gestisci i tuoi link social e web." },
-      "settings": { "title": "Impostazioni", "description": "Impostazioni e preferenze attività." },
-      "appearance": { "title": "Aspetto", "description": "Personalizza l'aspetto della tua attività." },
+      "profile": { "title": "Profilo", "description": "Modifica profilo, link, impostazioni e aspetto attività." },
+      "services": { "title": "Servizi", "description": "Gestisci i tuoi servizi." },
+      "serviceRequests": { "title": "Richieste Servizi", "description": "Visualizza e gestisci le richieste servizi." },
+      "serviceBoards": { "title": "Bacheche Servizi", "description": "Gestisci le bacheche servizi." },
+      "appointments": { "title": "Appuntamenti", "description": "Visualizza e gestisci appuntamenti." },
       "products": { "title": "Prodotti", "description": "Gestisci i tuoi prodotti." },
-      "bookings": { "title": "Prenotazioni", "description": "Visualizza e gestisci le prenotazioni." },
       "promotions": { "title": "Promozioni", "description": "Crea e gestisci promozioni." }
     },
     "noBusiness": "Nessuna attività selezionata.",
@@ -479,6 +480,13 @@
     "businessRegion": "Regione",
     "businessCountry": "Nazione",
     "businessDescr": "Descrizione",
+    "addEmail": "Aggiungi Email",
+    "addPhone": "Aggiungi Telefono",
+    "emailPlaceholder": "email@esempio.com",
+    "phonePlaceholder": "+39 123 456 7890",
+    "emailTitlePlaceholder": "Titolo (opzionale)",
+    "phoneTitlePlaceholder": "Titolo (opzionale)",
+    "remove": "Rimuovi",
     "links": {
       "googleReviews": "Recensioni Google",
       "googleReviewsTitle": "Link Recensioni Google",

@@ -54,7 +54,7 @@ export default function ProfileLinksSection({ socialLinks, onChange }: ProfileLi
               <button
                 key={social.id}
                 type="button"
-                className={`flex flex-col items-center justify-center p-3 rounded-lg transition-all focus:outline-none h-20 ${
+                className={`flex flex-col items-center justify-center p-4 rounded-lg transition-all focus:outline-none h-24 ${
                   isActive
                     ? "ring-2 ring-gray-400 bg-gray-100 shadow-md"
                     : "border border-gray-300 hover:border-gray-400 bg-white"
@@ -62,7 +62,7 @@ export default function ProfileLinksSection({ socialLinks, onChange }: ProfileLi
                 onClick={() => handleSelect(social.id)}
               >
                 <img src={social.iconPath} alt={social.name} className="w-8 h-8 mb-1" />
-                <span className="text-xs font-medium">{social.name}</span>
+                <span className="text-xs font-semibold text-gray-400">{social.name}</span>
               </button>
             )
           })}
