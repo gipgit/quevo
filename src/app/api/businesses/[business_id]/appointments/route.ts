@@ -87,15 +87,16 @@ export async function GET(
       };
     });
 
-    // Get plan limits for appointments (using bookings limit)
+    // Get plan limits for appointments (new system)
     const planLimits = await prisma.planlimit.findMany({
       where: {
         plan_id: business.usermanager.plan_id,
-        feature: 'bookings'
+        feature: 'appointments',
+        limit_type: 'count',
+        scope: 'per_month',
       }
     });
-
-    const appointmentLimit = planLimits[0]?.max_count || 100;
+    const appointmentLimit = planLimits[0]?.value ?? 100;
 
     return NextResponse.json({
       appointments: transformedAppointments,

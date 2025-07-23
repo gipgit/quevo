@@ -311,7 +311,8 @@
     "additionalDescription": "Descrizione Aggiuntiva",
     "remove": "Rimuovi",
     "cancel": "Annulla",
-    "creating": "Creazione..."
+    "creating": "Creazione...",
+    "uncategorized": "Senza categoria"
   },
   "services": {
     "planInfo": "{current} di {max} servizi usati",
@@ -404,7 +405,8 @@
     "loading": "Caricamento dashboard...",
     "currentBusiness": {
       "label": "Attività Corrente",
-      "change": "Cambia"
+      "change": "Cambia",
+      "selectBusiness": "Seleziona un'attività"
     },
     "plan": {
       "label": "Piano",
@@ -738,6 +740,24 @@
     "cancelled": "Annullato",
     "confirmed": "Confermato",
     "rejected": "Rifiutato",
-    "rescheduled": "Riprogrammato"
+    "rescheduled": "Riprogrammato",
+    "shareWhatsApp": "Condividi WhatsApp",
+    "shareEmail": "Condividi Email",
+    "rescheduleOrCancelPrompt": "Non puoi più partecipare? Fallo sapere:",
+    "rescheduleOrCancel": "Riprogramma o Annulla",
+    "rescheduleOrCancelTitle": "Riprogramma o Annulla Appuntamento",
+    "selectReasonPrompt": "Seleziona un motivo per la tua richiesta:",
+    "optionalReasonPrompt": "Se vuoi, puoi indicare un motivo per la tua richiesta:",
+    "reason_unexpectedcommitment": "Impegno imprevisto",
+    "reason_feelingunwell": "Non mi sento bene",
+    "reason_transportissues": "Problemi di trasporto",
+    "reason_workconflict": "Conflitto di lavoro",
+    "reason_familyemergency": "Emergenza familiare",
+    "reason_other": "Altro",
+    "enterYourReason": "Inserisci il tuo motivo",
+    "requestReschedule": "Richiedi Riprogrammazione",
+    "cancelAppointment": "Annulla Appuntamento",
+    "cancelWarning": "L'attività vedrà l'appuntamento come annullato e potrebbe contattarti per chiarimenti.",
+    "confirmCancel": "Conferma Annullamento"
   }
 }

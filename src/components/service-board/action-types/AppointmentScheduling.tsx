@@ -266,36 +266,6 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
         </button>
       )}
 
-      {/* Action buttons based on status */}
-      <div className="flex flex-col space-y-2">
-        {details.confirmation_status === 'pending_customer' && (
-          <button
-            onClick={() => handleReject()}
-            className="w-full px-4 py-2 text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-md"
-          >
-            {t('rejectAllSuggestedTimes')}
-          </button>
-        )}
-
-        {details.confirmation_status === 'confirmed' && (
-          <button
-            onClick={() => handleRescheduleRequest('Need to reschedule')}
-            className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-100 rounded-md"
-          >
-            {t('requestReschedule')}
-          </button>
-        )}
-
-        {details.confirmation_status === 'confirmed' && (
-          <button
-            onClick={handleCancel}
-            className="w-full px-4 py-2 text-sm font-medium text-red-700 bg-red-200 hover:bg-red-100 rounded-md"
-          >
-            {t('cancelAppointment')}
-          </button>
-        )}
-      </div>
-
       {/* Confirmation Modal */}
       {isModalOpen && (
         <DatetimeConfirmationModal

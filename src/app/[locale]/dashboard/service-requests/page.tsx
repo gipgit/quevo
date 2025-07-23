@@ -161,7 +161,7 @@ export default function ServiceRequestsPage() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto">
+      <div className="mx-auto w-full max-w-full min-w-0 overflow-hidden">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -199,9 +199,9 @@ export default function ServiceRequestsPage() {
                   className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
                 >
                   <div className="p-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[2fr_1.5fr_1.5fr] w-full max-w-full min-w-0 overflow-hidden">
                       {/* Request Details - Left Column */}
-                      <div className="lg:col-span-1 flex flex-col gap-2">
+                      <div className="flex flex-col gap-2 min-w-0 w-full">
                         <div className="mb-4">
                           {/* Date and Reference in one line */}
                           <div className="flex items-center gap-3 mb-2">
@@ -250,10 +250,10 @@ export default function ServiceRequestsPage() {
                       </div>
 
                       {/* Customer Details - Now the middle column, right-aligned, max width */}
-                      <div className="lg:col-span-1 flex justify-end">
+                      <div className="flex min-w-0 w-full break-words">
                         <div className="space-y-3">
-                          <div className="border-2 border-gray-200 rounded-xl p-4 max-w-xs w-full bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50">
-                            <div className="space-y-3">
+                          <div className="border-2 border-gray-200 rounded-xl p-4 w-full min-w-0 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50">
+                            <div className="space-y-1">
                               <div>
                                 <div className="text-lg font-bold text-gray-900 mb-2">
                                   {request.usercustomer 
@@ -324,23 +324,23 @@ export default function ServiceRequestsPage() {
                             </div>
                           </div>
                           
-                          {/* Customer Notes - Small card with light blue background */}
-                          {request.customer_notes && (
-                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 max-w-xs w-full">
-                              <span className="text-xs text-blue-600 font-medium block mb-1">{t("notes")}:</span>
-                              <p className="text-sm text-blue-800">{request.customer_notes}</p>
-                            </div>
-                          )}
                         </div>
                       </div>
 
-                      {/* Selected Items/Responses - Now the right column (flex-grow) */}
-                      <div className="lg:col-span-1 flex flex-col gap-2 flex-grow min-w-0">
+                      {/* Selected Items/Responses */}
+                      <div className="flex flex-col gap-2 flex-grow min-w-0 w-full break-words break-all">
+                        {/* Customer Notes - Small card with light blue background (moved to col 3) */}
+                        {request.customer_notes && (
+                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 w-full min-w-0 mb-2 break-all">
+                            <span className="text-xs text-blue-600 font-medium whitespace-nowrap">{t("notes")}:</span>
+                            <span className="text-sm text-blue-800 ml-1">{request.customer_notes}</span>
+                          </div>
+                        )}
                         {/* Selected Service Items */}
                         {request.selected_service_items_snapshot && request.selected_service_items_snapshot.length > 0 && (
-                          <div className="mt-2">
+                          <div className="mt-2 w-full break-words break-all min-w-0">
                             <span className="text-xs text-gray-400 font-medium block mb-1">Selected Items:</span>
-                            <ul className="list-disc list-inside text-sm text-gray-700">
+                            <ul className="list-disc list-inside text-sm text-gray-700 w-full break-words break-all min-w-0">
                               {request.selected_service_items_snapshot.map((item) => (
                                 <li key={item.service_item_id}>
                                   {item.item_name} x{item.quantity} ({item.price_at_request}€)
@@ -351,9 +351,9 @@ export default function ServiceRequestsPage() {
                         )}
                         {/* Question Responses */}
                         {request.question_responses_snapshot && request.question_responses_snapshot.length > 0 && (
-                          <div className="mt-2">
+                          <div className="mt-2 w-full break-words break-all min-w-0">
                             <span className="text-xs text-gray-400 font-medium block mb-1">Question Responses:</span>
-                            <ul className="list-disc list-inside text-sm text-gray-700">
+                            <ul className="list-disc list-inside text-sm text-gray-700 w-full break-words break-all min-w-0">
                               {request.question_responses_snapshot.map((q) => (
                                 <li key={q.question_id}>
                                   <span className="font-semibold">{q.question_text}:</span> {q.response_text || (q.selected_options ? q.selected_options.map(opt => opt.option_text).join(', ') : '')}
@@ -364,15 +364,24 @@ export default function ServiceRequestsPage() {
                         )}
                         {/* Requirement Responses */}
                         {request.requirement_responses_snapshot && request.requirement_responses_snapshot.length > 0 && (
-                          <div className="mt-2">
+                          <div className="mt-2 w-full break-words break-all min-w-0">
                             <span className="text-xs text-gray-400 font-medium block mb-1">Requirements Confirmed:</span>
-                            <ul className="list-disc list-inside text-sm text-gray-700">
+                            <ul className="list-disc list-inside text-sm text-gray-700 w-full break-words break-all min-w-0">
                               {request.requirement_responses_snapshot.map((r) => (
                                 <li key={r.requirement_block_id}>
                                   <span className="font-semibold">{r.title}:</span> {r.customer_confirmed ? 'Confirmed' : 'Not confirmed'}
                                 </li>
                               ))}
                             </ul>
+                          </div>
+                        )}
+                        {/* Placeholder if no items/responses (notes are independent) */}
+                        {!(request.selected_service_items_snapshot && request.selected_service_items_snapshot.length > 0)
+                          && !(request.question_responses_snapshot && request.question_responses_snapshot.length > 0)
+                          && !(request.requirement_responses_snapshot && request.requirement_responses_snapshot.length > 0)
+                          && (
+                          <div className="border border-dashed border-gray-200 rounded-lg p-3 text-xs text-gray-400 text-center bg-gray-50 min-w-0 w-full break-all">
+                            No details available
                           </div>
                         )}
                       </div>

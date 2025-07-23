@@ -284,7 +284,8 @@
     "additionalDescription": "Additional Description",
     "remove": "Remove",
     "cancel": "Cancel",
-    "creating": "Creating..."
+    "creating": "Creating...",
+    "uncategorized": "Uncategorized"
   },
   "services": {
     "planInfo": "{current} of {max} services used",
@@ -377,7 +378,8 @@
     "loading": "Loading dashboard...",
     "currentBusiness": {
       "label": "Current Business",
-      "change": "Change"
+      "change": "Change",
+      "selectBusiness": "Select a business"
     },
     "plan": {
       "label": "Plan",
@@ -711,6 +713,24 @@
     "cancelled": "Cancelled",
     "confirmed": "Confirmed",
     "rejected": "Rejected",
-    "rescheduled": "Rescheduled"
+    "rescheduled": "Rescheduled",
+    "shareWhatsApp": "Share WhatsApp",
+    "shareEmail": "Share Email",
+    "rescheduleOrCancelPrompt": "If you will not be able to go, let us know:",
+    "rescheduleOrCancel": "Reschedule or Cancel",
+    "rescheduleOrCancelTitle": "Reschedule or Cancel Appointment",
+    "selectReasonPrompt": "Please select a reason for your request:",
+    "reason_unexpectedcommitment": "Unexpected commitment",
+    "reason_feelingunwell": "Feeling unwell",
+    "reason_transportissues": "Transport issues",
+    "reason_workconflict": "Work conflict",
+    "reason_familyemergency": "Family emergency",
+    "reason_other": "Other",
+    "enterYourReason": "Enter your reason",
+    "requestReschedule": "Request Reschedule",
+    "cancelAppointment": "Cancel Appointment",
+    "cancelWarning": "The business will see the appointment as cancelled and may contact you for clarification.",
+    "confirmCancel": "Confirm Cancel",
+    "optionalReasonPrompt": "If you want, you can provide a reason for your request:"
   }
 }

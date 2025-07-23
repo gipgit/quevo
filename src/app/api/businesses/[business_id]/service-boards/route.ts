@@ -71,11 +71,12 @@ export async function GET(
     const planLimits = await prisma.planlimit.findMany({
       where: {
         plan_id: business.usermanager.plan_id,
-        feature: 'boards'
+        feature: 'boards',
+        limit_type: 'count',
+        scope: 'global',
       }
     });
-
-    const boardLimit = planLimits[0]?.max_count || 10;
+    const boardLimit = planLimits[0]?.value ?? 10;
 
     return NextResponse.json({
       serviceBoards,

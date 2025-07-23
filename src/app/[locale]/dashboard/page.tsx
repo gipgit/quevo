@@ -132,7 +132,7 @@ export default function DashboardPage() {
       <DashboardLayout>
         <div className="w-full h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-gray-600 mb-4">Nessun business selezionato</p>
+            <p className="text-gray-600 mb-4">{t('currentBusiness.selectBusiness')}</p>
             <button 
               onClick={() => window.location.reload()} 
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"

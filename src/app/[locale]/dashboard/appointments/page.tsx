@@ -927,7 +927,7 @@ export default function AppointmentsPage() {
                                         {appt.customerPhone}
                                       </span>
                                       <button
-                                        onClick={() => navigator.clipboard.writeText(appt.customerPhone)}
+                                        onClick={() => appt.customerPhone && navigator.clipboard.writeText(appt.customerPhone)}
                                         className="p-0.5 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
                                         title="Copy phone"
                                       >
@@ -936,7 +936,7 @@ export default function AppointmentsPage() {
                                         </svg>
                                       </button>
                                       <button
-                                        onClick={() => window.open(`tel:${appt.customerPhone}`)}
+                                        onClick={() => appt.customerPhone && window.open(`tel:${appt.customerPhone}`)}
                                         className="p-0.5 text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 transition-colors"
                                         title="Call"
                                       >

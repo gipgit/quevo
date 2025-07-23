@@ -29,6 +29,7 @@ export async function GET() {
         date_created: true,
         sponsored: true,
         sponsored_level: true,
+        business_public_uuid: true,
       },
     })
 

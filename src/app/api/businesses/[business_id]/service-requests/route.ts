@@ -131,7 +131,16 @@ export async function POST(
     }
 
     // ENFORCE PER-MONTH SERVICE REQUEST LIMIT
-    const planId = business.plan_id;
+    // plan_id is on usermanager, not business
+    // Need to fetch usermanager for this business
+    const businessWithManager = await prisma.business.findUnique({
+      where: { business_id: business_id },
+      include: { usermanager: true }
+    });
+    const planId = businessWithManager?.usermanager?.plan_id;
+    if (!planId) {
+      return NextResponse.json({ error: 'Plan ID not found for business manager.' }, { status: 500 });
+    }
     const planLimits = await getPlanLimits(planId);
     const planLimitRequests = planLimits.find(l => l.feature === 'service_requests' && l.limit_type === 'count' && l.scope === 'per_month');
     if (!planLimitRequests) {
@@ -616,11 +625,12 @@ export async function GET(
     const planLimits = await prisma.planlimit.findMany({
       where: {
         plan_id: business.usermanager.plan_id,
-        feature: 'service_requests'
+        feature: 'service_requests',
+        limit_type: 'count',
+        scope: 'per_month',
       }
     });
-
-    const serviceRequestLimit = planLimits[0]?.max_count || 10;
+    const serviceRequestLimit = planLimits[0]?.value ?? 10;
 
     return NextResponse.json({
       serviceRequests,

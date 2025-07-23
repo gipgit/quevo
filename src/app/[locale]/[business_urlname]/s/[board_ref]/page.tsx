@@ -13,6 +13,9 @@ import AddActionModal from '@/components/modals/AddActionModal';
 import ShareModal from '@/components/modals/ShareModal';
 import { getPlatformIcon } from '@/lib/platform-icons';
 import { QRCodeSVG } from 'qrcode.react';
+import ShareButtons from '@/components/service-board/ShareButtons';
+import MapButtons from '@/components/service-board/MapButtons';
+import RescheduleCancelButton from '@/components/service-board/RescheduleCancelButton';
 
 
 interface BusinessData {
@@ -247,6 +250,61 @@ const getTimelineDotColor = (action: ServiceBoardAction) => {
   return 'bg-yellow-500 border-yellow-600';
 };
 
+// Move these above getAppointmentShareText
+const formatAppointmentDate = (dateString: string, locale: string) => {
+  const date = new Date(dateString);
+  if (locale === 'it') {
+    return date.toLocaleDateString('it-IT', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  } else {
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+};
+
+const formatAppointmentTime = (dateString: string, locale: string) => {
+  const date = new Date(dateString);
+  if (locale === 'it') {
+    return date.toLocaleTimeString('it-IT', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  } else {
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  }
+};
+
+// Helper for WhatsApp and Email share
+const getAppointmentShareText = (appointment: Appointment, locale: string) => {
+  let text = '';
+  if (locale === 'it') {
+    text += `Appuntamento: ${appointment.appointment_title || ''}\n`;
+    text += `Data: ${formatAppointmentDate(appointment.appointment_datetime, locale)}\n`;
+    text += `Ora: ${formatAppointmentTime(appointment.appointment_datetime, locale)}\n`;
+    if (appointment.appointment_location) text += `Luogo: ${appointment.appointment_location}\n`;
+    if (appointment.platform_link) text += `Piattaforma: ${appointment.platform_link}\n`;
+    if (appointment.notes) text += `Note: ${appointment.notes}\n`;
+  } else {
+    text += `Appointment: ${appointment.appointment_title || ''}\n`;
+    text += `Date: ${formatAppointmentDate(appointment.appointment_datetime, locale)}\n`;
+    text += `Time: ${formatAppointmentTime(appointment.appointment_datetime, locale)}\n`;
+    if (appointment.appointment_location) text += `Location: ${appointment.appointment_location}\n`;
+    if (appointment.platform_link) text += `Platform: ${appointment.platform_link}\n`;
+    if (appointment.notes) text += `Notes: ${appointment.notes}\n`;
+  }
+  return text;
+};
+
 export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
   const [actions, setActions] = useState<ServiceBoardAction[]>([]);
   const [boardData, setBoardData] = useState<ServiceBoardData | null>(null);
@@ -263,6 +321,20 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
   const [contactType, setContactType] = useState<'phone' | 'email'>('phone');
   const [isCopied, setIsCopied] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
+  const [showRescheduleCancelModal, setShowRescheduleCancelModal] = useState<string | null>(null); // appointment id or null
+  const [rescheduleCancelReason, setRescheduleCancelReason] = useState('');
+  const [rescheduleCancelLoading, setRescheduleCancelLoading] = useState(false);
+  const rescheduleCancelReasons = [
+    'Unexpected commitment',
+    'Feeling unwell',
+    'Transport issues',
+    'Work conflict',
+    'Family emergency',
+    'Other',
+  ];
+  const [selectedReason, setSelectedReason] = useState('');
+  const [customReason, setCustomReason] = useState('');
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   
   const { board_ref } = params;
   const { 
@@ -487,60 +559,6 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
     };
   };
 
-
-
-  // Format date based on locale
-  const formatAppointmentDate = (dateString: string) => {
-    const date = new Date(dateString);
-    
-    if (params.locale === 'it') {
-      return date.toLocaleDateString('it-IT', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      });
-    } else {
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-    }
-  };
-
-  // Format weekday based on locale
-  const formatAppointmentWeekday = (dateString: string) => {
-    const date = new Date(dateString);
-    
-    if (params.locale === 'it') {
-      return date.toLocaleDateString('it-IT', {
-        weekday: 'long'
-      });
-    } else {
-      return date.toLocaleDateString('en-US', {
-        weekday: 'long'
-      });
-    }
-  };
-
-  // Format time based on locale
-  const formatAppointmentTime = (dateString: string) => {
-    const date = new Date(dateString);
-    
-    if (params.locale === 'it') {
-      return date.toLocaleTimeString('it-IT', {
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    } else {
-      return date.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-      });
-    }
-  };
-
   const filteredSocialLinks = businessLinks.filter(
     (link) =>
       link.link_type !== 'website' &&
@@ -704,10 +722,11 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                       }}
                       className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                     >
-                      <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
-                      </svg>
-                      Share on WhatsApp
+                      <span className="flex-none inline-flex items-center justify-center w-7 h-7 bg-green-500 text-white rounded-full mr-2">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                        </svg>
+                      </span>
+                      <span className="whitespace-nowrap">{tServiceBoard('shareWhatsApp')}</span>
                     </button>
                     <button
                       onClick={() => {
@@ -716,10 +735,10 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                       }}
                       className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                     >
-                      <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                      Share via Email
+                      <span className="flex-none inline-flex items-center justify-center w-7 h-7 bg-blue-500 text-white rounded-full mr-2">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                      </span>
+                      <span className="whitespace-nowrap">{tServiceBoard('shareEmail')}</span>
                     </button>
                   </div>
                 </div>
@@ -744,13 +763,14 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                   <div className="space-y-4">
                     {appointments.map((appointment) => (
                       <div key={appointment.id} className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-200 p-6 shadow-sm">
-                        {/* Appointment Title - Moved to top */}
+                        <div className="flex flex-col md:flex-row gap-4">
+                          {/* Left column: appointment details */}
+                          <div className="flex-1 min-w-0">
                         {appointment.appointment_title && (
                           <div className="mb-3">
                             <h3 className="text-xl font-semibold text-gray-900">{appointment.appointment_title}</h3>
                           </div>
                         )}
-                        
                         <div className="flex items-center flex-row flex-wrap gap-2 mb-3">
                           <div className="flex items-center gap-2">
                             {/* Date and Time with Icons in a row with separator */}
@@ -760,23 +780,21 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                               </svg>
                               <div className="flex flex-col -space-y-1">
                                 <span className="text-lg font-medium text-gray-900">
-                                  {formatAppointmentDate(appointment.appointment_datetime)}
+                                  {formatAppointmentDate(appointment.appointment_datetime, params.locale)}
                                 </span>
                                 <span className="text-sm text-gray-500">
-                                  {formatAppointmentWeekday(appointment.appointment_datetime)}
+                                  {formatAppointmentTime(appointment.appointment_datetime, params.locale)}
                                 </span>
                               </div>
                             </div>
-                            
                             {/* Separator */}
                             <div className="w-px h-6 bg-gray-300 mx-2"></div>
-                            
                             <div className="flex items-center gap-2">
                               <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
                               <span className="text-lg font-medium text-gray-900">
-                                {formatAppointmentTime(appointment.appointment_datetime)}
+                                {formatAppointmentTime(appointment.appointment_datetime, params.locale)}
                               </span>
                             </div>
                           </div>
@@ -784,20 +802,44 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                             {getStatusText(appointment.status, tServiceBoard)}
                           </span>
                         </div>
-                        
                         <div className="space-y-2">
-                          
-                          {/* Location */}
+                              {/* Location with Maps/Waze buttons inline and copy */}
                           {appointment.appointment_location && appointment.appointment_type !== 'online' && (
-                            <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 flex-wrap">
                               <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                               </svg>
-                              <span className="text-sm text-gray-600">{appointment.appointment_location}</span>
+                                  <span className="text-sm text-gray-600 mr-2">{appointment.appointment_location}</span>
+                                  <button
+                                    onClick={() => navigator.clipboard.writeText(appointment.appointment_location)}
+                                    className="px-2 py-1 text-xs font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors flex items-center gap-1"
+                                    title="Copy address"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(appointment.appointment_location)}`;
+                                      window.open(url, '_blank');
+                                    }}
+                                    className="px-2 py-1 text-xs font-medium text-white bg-[#4285F4] hover:bg-[#357ae8] rounded-full shadow-sm transition-colors flex items-center gap-1"
+                                    title="Open in Google Maps"
+                                  >
+                                    <img src="/icons/appointments/googlemaps.svg" alt="Google Maps" className="w-4 h-4 mr-1" />Maps
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      const url = `https://waze.com/ul?q=${encodeURIComponent(appointment.appointment_location)}`;
+                                      window.open(url, '_blank');
+                                    }}
+                                    className="px-2 py-1 text-xs font-medium text-white bg-[#33CCFF] hover:bg-[#1eb8e6] rounded-full shadow-sm transition-colors flex items-center gap-1"
+                                    title="Open in Waze"
+                                  >
+                                    <img src="/icons/appointments/waze.svg" alt="Waze" className="w-4 h-4 mr-1" />Waze
+                                  </button>
                             </div>
                           )}
-                          
                           {/* Platform with Icon and Link on same row */}
                           {(appointment.platform_name || appointment.platform_link) && (
                             <div className="flex items-center gap-2 flex-wrap">
@@ -815,7 +857,6 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                                   <span className="text-base text-gray-600">{appointment.platform_name}</span>
                                 </div>
                               )}
-                              
                               {appointment.platform_link && (
                                 <div className="flex items-center gap-2 w-full">
                                   <svg className="w-5 h-5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -838,7 +879,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                                           title="Copy link"
                                         >
                                           <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                           </svg>
                                         </button>
                                         <a
@@ -856,7 +897,6 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                               )}
                             </div>
                           )}
-                          
                           {/* Notes */}
                           {appointment.notes && (
                             <div className="flex items-start gap-2 mt-3">
@@ -866,6 +906,185 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                               <span className="text-sm text-gray-600">{appointment.notes}</span>
                             </div>
                           )}
+                        </div>
+                      </div>
+                          {/* Right column: utility and action buttons */}
+                          <div className="flex flex-col gap-1 w-full md:w-64 md:flex-shrink-0 md:items-end md:justify-center">
+                            {/* Utility share buttons */}
+                            <div className="flex flex-col gap-1 mb-2 w-full md:w-auto">
+                              {/* Utility share buttons in a row */}
+                              <div className="flex flex-row gap-2 mb-1 w-full md:w-auto">
+                                <button
+                                  onClick={() => {
+                                    const text = getAppointmentShareText(appointment, params.locale);
+                                    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+                                    window.open(url, '_blank');
+                                  }}
+                                  className="flex-1 px-4 py-2 text-xs font-semibold text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 rounded-full shadow flex items-center gap-1 transition-colors justify-center min-w-[0]"
+                                  title="Share via WhatsApp"
+                                >
+                                  <span className="flex-none inline-flex items-center justify-center w-7 h-7 bg-green-500 text-white rounded-full mr-1">
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                        </svg>
+                                  </span>
+                                  <span className="whitespace-nowrap">{tServiceBoard('shareWhatsApp')}</span>
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    const text = getAppointmentShareText(appointment, params.locale);
+                                    const url = `mailto:?subject=Appointment&body=${encodeURIComponent(text)}`;
+                                    window.open(url, '_blank');
+                                  }}
+                                  className="flex-1 px-4 py-2 text-xs font-semibold text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 rounded-full shadow flex items-center gap-1 transition-colors justify-center min-w-[0]"
+                                  title="Share via Email"
+                                >
+                                  <span className="flex-none inline-flex items-center justify-center w-7 h-7 bg-blue-500 text-white rounded-full mr-1">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                  </span>
+                                  <span className="whitespace-nowrap">{tServiceBoard('shareEmail')}</span>
+                                </button>
+                              </div>
+                            </div>
+                            {/* Appointment Actions: Reschedule & Cancel in a row */}
+                            {['confirmed', 'scheduled'].includes(appointment.status) && (
+                              <div className="w-full md:w-auto mt-1 flex flex-col justify-end">
+                                <div className="text-xs text-gray-700 mb-1 text-center md:text-right">{tServiceBoard('rescheduleOrCancelPrompt')}</div>
+                                <button
+                                  onClick={() => {
+                                    setShowRescheduleCancelModal(appointment.id);
+                                    setRescheduleCancelReason('');
+                                  }}
+                                  className="w-full md:w-auto md:ml-auto px-5 py-2 text-xs font-semibold text-white bg-gray-700 hover:bg-gray-800 rounded-full shadow transition-colors"
+                                >
+                                  {tServiceBoard('rescheduleOrCancel')}
+                                </button>
+                                {/* Modal for reschedule/cancel */}
+                                {showRescheduleCancelModal === appointment.id && (
+                                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+                                    <div className="bg-white rounded-xl p-6 max-w-sm w-full shadow-lg relative">
+                                      <button
+                                        className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+                                        onClick={() => setShowRescheduleCancelModal(null)}
+                                      >
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                      </button>
+                                      <h3 className="text-2xl font-bold mb-3 text-center">{tServiceBoard('rescheduleOrCancelTitle')}</h3>
+                                      <div className="mb-3 text-xs text-gray-600 text-center">{tServiceBoard('optionalReasonPrompt')}</div>
+                                      <div className="flex flex-col gap-2 mb-4">
+                                        {rescheduleCancelReasons.map((reason) => (
+                                          <label key={reason} className="flex items-center gap-2 text-xs text-gray-400 font-normal cursor-pointer">
+                                            <input
+                                              type="radio"
+                                              name="reschedule-cancel-reason"
+                                              value={reason}
+                                              checked={selectedReason === reason}
+                                              onChange={() => setSelectedReason(reason)}
+                                            />
+                                            <span>{tServiceBoard(`reason_${reason.replace(/\s+/g, '').toLowerCase()}`)}</span>
+                                          </label>
+                                        ))}
+                                        {selectedReason === 'Other' && (
+                                          <input
+                                            type="text"
+                                            className="w-full border border-gray-300 rounded p-2 text-xs text-gray-500 mt-1"
+                                            placeholder={tServiceBoard('enterYourReason')}
+                                            value={customReason}
+                                            onChange={e => setCustomReason(e.target.value)}
+                                          />
+                                        )}
+                                      </div>
+                                      <div className="flex flex-row gap-2 mt-2">
+                                        <button
+                                          disabled={rescheduleCancelLoading}
+                                          onClick={async () => {
+                                            setRescheduleCancelLoading(true);
+                                            try {
+                                              const response = await fetch(`/api/businesses/${businessData.business_id}/appointments/reschedule`, {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({
+                                                  action_id: appointment.id,
+                                                  reason: selectedReason === 'Other' ? customReason : selectedReason,
+                                                  current_datetime: appointment.appointment_datetime,
+                                                }),
+                                              });
+                                              if (!response.ok) {
+                                                const errorData = await response.json().catch(() => ({}));
+                                                throw new Error(errorData.message || tServiceBoard('failedToRequestReschedule'));
+                                              }
+                                              alert(tServiceBoard('rescheduleRequestSent'));
+                                              setShowRescheduleCancelModal(null);
+                                            } catch (error) {
+                                              alert(error instanceof Error ? error.message : tServiceBoard('errorRequestingReschedule'));
+                                            } finally {
+                                              setRescheduleCancelLoading(false);
+                                            }
+                                          }}
+                                          className="flex-1 px-3 py-2 text-xs font-semibold text-white bg-black hover:bg-gray-900 rounded-md shadow transition-colors disabled:opacity-50"
+                                        >
+                                          {tServiceBoard('requestReschedule')}
+                                        </button>
+                                        <button
+                                          disabled={rescheduleCancelLoading}
+                                          onClick={() => setShowCancelConfirm(true)}
+                                          className="flex-1 px-3 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-md shadow transition-colors disabled:opacity-50"
+                                        >
+                                          {tServiceBoard('cancelAppointment')}
+                                        </button>
+                                      </div>
+                                      {/* Double confirmation step below buttons */}
+                                      {showCancelConfirm && (
+                                        <div className="mt-4 p-4 rounded-lg border border-red-200 bg-red-50 flex flex-col gap-3 w-full max-w-full">
+                                          <div className="text-xs text-red-700 text-center font-medium">
+                                            {tServiceBoard('cancelWarning')}
+                                          </div>
+                                          <div className="flex flex-row gap-2 w-full">
+                                            <button
+                                              type="button"
+                                              onClick={() => setShowCancelConfirm(false)}
+                                              className="sm:flex-1 w-full px-3 py-2 text-xs font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md shadow transition-colors"
+                                            >
+                                              {t('back')}
+                                            </button>
+                                            <button
+                                              disabled={rescheduleCancelLoading}
+                                              onClick={async () => {
+                                                setRescheduleCancelLoading(true);
+                                                try {
+                                                  const response = await fetch(`/api/businesses/${businessData.business_id}/appointments/cancel`, {
+                                                    method: 'POST',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({
+                                                      action_id: appointment.id,
+                                                      reason: selectedReason === 'Other' ? customReason : selectedReason,
+                                                    }),
+                                                  });
+                                                  if (!response.ok) {
+                                                    const errorData = await response.json().catch(() => ({}));
+                                                    throw new Error(errorData.message || tServiceBoard('failedToCancelAppointment'));
+                                                  }
+                                                  alert(tServiceBoard('appointmentCancelled'));
+                                                  setShowRescheduleCancelModal(null);
+                                                  setShowCancelConfirm(false);
+                                                } catch (error) {
+                                                  alert(error instanceof Error ? error.message : tServiceBoard('errorCancellingAppointment'));
+                                                } finally {
+                                                  setRescheduleCancelLoading(false);
+                                                }
+                                              }}
+                                              className="sm:flex-1 w-full px-3 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-md shadow transition-colors disabled:opacity-50"
+                                            >
+                                              {tServiceBoard('confirmCancel')}
+                                            </button>
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -1353,23 +1572,20 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                   </button>
                 </div>
               </div>
-
               {/* Appointment Details - Now centered without card wrapper */}
               <div className="mb-6">
-                {/* Appointment Title */}
-                {nextAppointment.appointment_title && (
-                  <div className="mb-3 text-center">
-                    <h3 className="text-xl font-semibold text-gray-900">{nextAppointment.appointment_title}</h3>
-                  </div>
-                )}
-                
                 {/* Status - Now shown first */}
                 <div className="flex justify-center mb-3">
                   <span className={`text-xs md:text-lg px-3 py-1 capitalize rounded-full ${getStatusColor(nextAppointment.status)}`}>
                     {getStatusText(nextAppointment.status, tServiceBoard)}
                   </span>
                 </div>
-
+                {/* Appointment Title */}
+                {nextAppointment.appointment_title && (
+                  <div className="mb-3 text-center">
+                    <h3 className="text-xl font-semibold text-gray-900">{nextAppointment.appointment_title}</h3>
+                  </div>
+                )}
                 {/* Date and Time */}
                 <div className="flex flex-col items-center gap-2 mb-3">
                   <div className="flex items-center gap-2">
@@ -1379,102 +1595,33 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                       </svg>
                       <div className="flex flex-col text-center -space-y-1">
                         <span className="text-lg font-medium text-gray-900">
-                          {formatAppointmentDate(nextAppointment.appointment_datetime)}
+                          {formatAppointmentDate(nextAppointment.appointment_datetime, params.locale)}
                         </span>
-                        <span className="text-sm text-gray-500">
-                          {formatAppointmentWeekday(nextAppointment.appointment_datetime)}
-                        </span>
+                        {/* Removed the time here, as it is already shown in the next column */}
                       </div>
                     </div>
-                    
                     <div className="w-px h-6 bg-gray-300 mx-2"></div>
-                    
                     <div className="flex items-center gap-2">
                       <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span className="text-lg font-medium text-gray-900">
-                        {formatAppointmentTime(nextAppointment.appointment_datetime)}
+                        {formatAppointmentTime(nextAppointment.appointment_datetime, params.locale)}
                       </span>
                     </div>
                   </div>
                 </div>
-                
-                {/* Location */}
+                {/* Address and Map/Copy/Waze buttons */}
                 {nextAppointment.appointment_location && nextAppointment.appointment_type !== 'online' && (
-                  <div className="flex items-center justify-center gap-2 mb-3">
-                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
+                  <>
+                    <div className="flex flex-row items-center justify-center gap-2 mb-1">
                     <span className="text-sm text-gray-600">{nextAppointment.appointment_location}</span>
                   </div>
-                )}
-                
-                {/* Platform */}
-                {(nextAppointment.platform_name || nextAppointment.platform_link) && (
-                  <div className="flex flex-col items-center gap-2 mb-3">
-                    {nextAppointment.platform_name && (
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 flex items-center justify-center">
-                          <Image
-                            src={getPlatformIcon(nextAppointment.platform_name)}
-                            alt={nextAppointment.platform_name}
-                            width={24}
-                            height={24}
-                            className="w-6 h-6"
-                          />
+                    <div className="flex justify-center mb-3">
+                      <MapButtons location={nextAppointment.appointment_location} className="flex-row gap-1" />
                         </div>
-                        <span className="text-base text-gray-600">{nextAppointment.platform_name}</span>
-                      </div>
-                    )}
-                    
-                    {nextAppointment.platform_link && (
-                      <div className="flex flex-col items-center gap-2 w-full">
-                        <div className="flex-1 min-w-0 w-full">
-                          <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
-                            {/* Platform Icon inside the pill */}
-                            {nextAppointment.platform_name && (
-                              <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
-                                <Image
-                                  src={getPlatformIcon(nextAppointment.platform_name)}
-                                  alt={nextAppointment.platform_name}
-                                  width={20}
-                                  height={20}
-                                  className="w-5 h-5"
-                                />
-                              </div>
-                            )}
-                            <span className="text-sm text-gray-600 truncate flex-1 min-w-0">
-                              {nextAppointment.platform_link}
-                            </span>
-                            <div className="flex items-center gap-1 flex-shrink-0">
-                              <button
-                                onClick={() => {
-                                  if (nextAppointment.platform_link) {
-                                    navigator.clipboard.writeText(nextAppointment.platform_link);
-                                  }
-                                }}
-                                className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
-                              >
-                                {tServiceBoard('copy')}
-                              </button>
-                                                              <a
-                                  href={nextAppointment.platform_link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                                >
-                                  {tServiceBoard('open')}
-                                </a>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  </>
                 )}
-                
                 {/* Notes */}
                 {nextAppointment.notes && (
                   <div className="flex items-start justify-center gap-2 mt-3">
@@ -1484,8 +1631,27 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                     <span className="text-sm text-gray-600 text-center">{nextAppointment.notes}</span>
                   </div>
                 )}
+                {/* Share buttons centered below notes */}
+                <div className="flex justify-center mt-4 mb-2">
+                  <ShareButtons appointment={nextAppointment} locale={params.locale} />
+                </div>
+                {/* Reschedule/Cancel button centered below share buttons */}
+                {['confirmed', 'scheduled'].includes(nextAppointment.status) && (
+                  <div className="flex flex-col items-center w-full md:w-auto mt-1">
+                    <div className="text-xs text-gray-700 mb-1 text-center">{tServiceBoard('rescheduleOrCancelPrompt')}</div>
+                    <div className="flex justify-center w-full">
+                      <RescheduleCancelButton
+                        appointment={nextAppointment}
+                        businessId={businessData.business_id}
+                        tServiceBoard={tServiceBoard}
+                        t={t}
+                        onReschedule={fetchAppointments}
+                        onCancel={fetchAppointments}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
-
               {/* QR Code - Now shown after appointment details */}
               <div className="text-center">
                 <h3 className="text-sm font-medium text-gray-900 mb-3">{tServiceBoard('scanToAccessBoard')}</h3>
