@@ -7,7 +7,7 @@ import type { NextAuthConfig, DefaultSession } from "next-auth"
 export const authConfig: NextAuthConfig = {
   secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
   trustHost: true,
-  debug: true, // Enable debug for troubleshooting
+  debug: process.env.NODE_ENV === 'development',
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -181,26 +181,21 @@ export const authConfig: NextAuthConfig = {
   },
 }
 
-// Add configuration validation
-const requiredEnvVars = [
-  'AUTH_SECRET',
-  'NEXTAUTH_SECRET', 
-  'NEXTAUTH_URL',
-  'DATABASE_URL'
-]
+// Configuration validation (only in development)
+if (process.env.NODE_ENV === 'development') {
+  const requiredEnvVars = [
+    'AUTH_SECRET',
+    'NEXTAUTH_SECRET', 
+    'NEXTAUTH_URL',
+    'DATABASE_URL'
+  ]
 
-const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName])
+  const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName])
 
-if (missingEnvVars.length > 0) {
-  console.error('Missing required environment variables:', missingEnvVars)
+  if (missingEnvVars.length > 0) {
+    console.error('Missing required environment variables:', missingEnvVars)
+  }
 }
-
-console.log('NextAuth configuration:', {
-  hasSecret: !!(process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET),
-  hasUrl: !!process.env.NEXTAUTH_URL,
-  hasDatabase: !!process.env.DATABASE_URL,
-  debug: true
-})
 
 export const { handlers, auth, signIn, signOut } = NextAuth(authConfig)
 
