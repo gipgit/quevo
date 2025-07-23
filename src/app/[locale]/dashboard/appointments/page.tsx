@@ -830,7 +830,7 @@ export default function AppointmentsPage() {
                                       </span>
                                       <div className="flex items-center gap-1">
                                         <button
-                                          onClick={() => navigator.clipboard.writeText(appt.platform_link)}
+                                          onClick={() => navigator.clipboard.writeText(appt.platform_link || '')}
                                           className="p-0.5 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
                                           title="Copy link"
                                         >

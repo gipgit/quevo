@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 
+
 export async function PUT(
   request: Request,
   { params }: { params: { business_id: string } }
