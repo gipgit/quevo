@@ -30,7 +30,10 @@ function DashboardLayoutContent({
   useEffect(() => {
     // If not authenticated, redirect to signin
     if (status !== "loading" && !session) {
-      router.push("/signin/manager")
+      // Get the current locale from the URL
+      const pathname = window.location.pathname
+      const locale = pathname.split('/')[1] || 'it'
+      router.push(`/${locale}/signin/manager`)
     }
   }, [session, status, router])
 

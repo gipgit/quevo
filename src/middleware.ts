@@ -1,33 +1,13 @@
 import createMiddleware from "next-intl/middleware"
 import { routing } from "./i18n/routing"
 import { NextRequest, NextResponse } from "next/server"
-import { getManagerFromToken } from "@/lib/manager-auth"
 
 const intlMiddleware = createMiddleware(routing)
 
 export function middleware(req: NextRequest) {
-  // First, run next-intl i18n middleware
-  const intlResult = intlMiddleware(req)
-  if (intlResult instanceof Response) {
-    // If i18n middleware returns a redirect/response, return it immediately
-    return intlResult
-  }
-
-  // Then, dashboard authentication logic (after locale is resolved)
-  const url = req.nextUrl
-  // The locale will be in the pathname, e.g. /en/dashboard
-  const isDashboard = /^\/(it|en|es)\/dashboard/.test(url.pathname)
-  if (isDashboard) {
-    const token = req.cookies.get("manager_token")?.value
-    const manager = token ? getManagerFromToken(token) : null
-    if (!manager) {
-      // Redirect to the correct locale sign-in page
-      const locale = url.pathname.split("/")[1] || "en"
-      const loginUrl = new URL(`/${locale}/signin/manager`, req.url)
-      return NextResponse.redirect(loginUrl)
-    }
-  }
-  return NextResponse.next()
+  // Only run next-intl i18n middleware
+  // NextAuth will handle authentication in the dashboard layout
+  return intlMiddleware(req)
 }
 
 export const config = {

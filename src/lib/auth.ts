@@ -139,27 +139,44 @@ export const authConfig: NextAuthConfig = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
-        token.role = user.role
-        token.redirectTo = user.redirectTo
-        token.businesses = user.businesses
+      try {
+        if (user) {
+          token.role = user.role
+          token.redirectTo = user.redirectTo
+          token.businesses = user.businesses
+        }
+        return token
+      } catch (error) {
+        console.error("JWT callback error:", error)
+        return token
       }
-      return token
     },
     async session({ session, token }) {
-      if (token) {
-        session.user.id = token.sub!
-        session.user.role = token.role as "customer" | "manager"
-        session.user.redirectTo = token.redirectTo as string
-        session.user.businesses = token.businesses as any[]
+      try {
+        if (token && token.sub) {
+          session.user.id = token.sub
+          session.user.role = (token.role as "customer" | "manager") || "manager"
+          session.user.redirectTo = (token.redirectTo as string) || "/dashboard"
+          session.user.businesses = (token.businesses as any[]) || []
+        } else {
+          console.error("Session callback: Missing token or token.sub", { token })
+        }
+        return session
+      } catch (error) {
+        console.error("Session callback error:", error)
+        return session
       }
-      return session
     },
     async redirect({ url, baseUrl }) {
-      // Handle post-login redirects
-      if (url.startsWith("/")) return `${baseUrl}${url}`
-      if (new URL(url).origin === baseUrl) return url
-      return baseUrl
+      try {
+        // Handle post-login redirects
+        if (url.startsWith("/")) return `${baseUrl}${url}`
+        if (new URL(url).origin === baseUrl) return url
+        return baseUrl
+      } catch (error) {
+        console.error("Redirect callback error:", error)
+        return baseUrl
+      }
     },
   },
 }
