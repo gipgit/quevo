@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getActionTemplateTranslation } from '@/lib/action-templates';
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/business/[businessId]/action-templates
 export async function GET(
   request: NextRequest,

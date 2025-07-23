@@ -5,6 +5,8 @@ import { auth } from '@/lib/auth';
 import { getPlanLimits } from '@/lib/plan-limit';
 import { canCreateMore } from '@/lib/usage-utils';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { business_id: string; board_ref: string } }
