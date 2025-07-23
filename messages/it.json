@@ -40,7 +40,8 @@
     "back": "Indietro",
     "free": "Gratis",
     "edit": "Modifica",
-    "delete": "Elimina"
+    "delete": "Elimina",
+    "save": "Salva"
   },
   "ServiceRequest": {
     "loadingCalendar": "Caricamento calendario",
@@ -394,7 +395,8 @@
     "hasRequirements": "{count} Requisiti",
     "noDuration": "Nessuna durata",
     "priceOnRequest": "Prezzo su richiesta",
-    "uncategorized": "Non categorizzato"
+    "uncategorized": "Non categorizzato",
+    "noElementsConfigured": "Nessun elemento configurato"
   },
   "dashboard": {
     "welcome": "Benvenuto {name}",
@@ -411,9 +413,13 @@
     "usage": {
       "title": "Utilizzo",
       "services": "Servizi",
+      "service_requests": "Richieste Servizi",
+      "appointments": "Appuntamenti",
+      "active_boards": "Bacheche Attive",
       "products": "Prodotti",
       "promos": "Promozioni",
-      "bookings": "Prenotazioni"
+      "bookings": "Prenotazioni",
+      "per_month": "/ mese"
     },
     "publicLink": {
       "label": "Link Pubblico",
@@ -447,7 +453,8 @@
       "surveyReports": "Report Sondaggi",
       "scanReports": "Report Scansioni",
       "reports": "Report",
-      "logout": "Esci"
+      "logout": "Esci",
+      "manageAccount": "Gestisci Account"
     }
   },
   "plan": {
@@ -459,11 +466,18 @@
     "unlimited": "Illimitato",
     "upgradePlan": "Aggiorna Piano",
     "upgradeInfo": "Contatta il supporto per aggiornare il piano.",
-    "noPlan": "Nessun piano assegnato."
+    "noPlan": "Nessun piano assegnato.",
+    "paymentMethod": "Metodo di Pagamento",
+    "noPaymentMethod": "Nessun metodo di pagamento",
+    "subscriptionStatus": "Stato Abbonamento",
+    "noStatus": "Nessuno stato",
+    "currentPeriodEnd": "Fine Periodo Corrente",
+    "nextInvoice": "Prossima Fattura"
   },
   "profile": {
     "title": "Profilo Attività",
     "noBusinessSelected": "Nessuna attività selezionata.",
+    "openProfile": "Apri Profilo",
     "tabs": {
       "information": "Informazioni",
       "images": "Immagini",
@@ -540,7 +554,8 @@
     "completed": "Completato",
     "rescheduled": "Riprogrammato",
     "viewDetails": "Visualizza Dettagli",
-    "openBoard": "Apri Bacheca"
+    "openBoard": "Apri Bacheca",
+    "notes": "Note"
   },
   "serviceBoards": {
     "title": "Bacheche Servizi",
@@ -561,11 +576,12 @@
     "completed": "Completato",
     "archived": "Archiviato",
     "openBoard": "Apri Bacheca",
-    "viewDetails": "Visualizza Dettagli"
+    "viewDetails": "Visualizza Dettagli",
+    "totalActions": "azioni totali",
+    "recentOnesAre": "quelle recenti sono"
   },
   "appointments": {
     "title": "Appuntamenti",
-    "description": "Gestisci i tuoi appuntamenti e agenda",
     "noAppointments": "Nessun appuntamento ancora",
     "noAppointmentsDescription": "I tuoi appuntamenti appariranno qui nel calendario.",
     "planInfo": "{current} di {max} appuntamenti usati",
@@ -687,6 +703,41 @@
     "justNow": "adesso",
     "minutesAgo": "{minutes}m fa",
     "hoursAgo": "{hours}h fa",
-    "daysAgo": "{days}d fa"
+    "daysAgo": "{days}d fa",
+    "pleaseSelectDate": "Seleziona una Data",
+    "pleaseSelectPlatform": "Seleziona una Piattaforma",
+    "confirmSelection": "Conferma Selezione",
+    "rejectAllSuggestedTimes": "Rifiuta Tutti gli Orari Suggeriti",
+    "requestReschedule": "Richiedi Riprogrammazione",
+    "cancelAppointment": "Annulla Appuntamento",
+    "thankYouForFeedback": "Grazie per il tuo feedback! Inviato il",
+    "openSurvey": "Apri Sondaggio",
+    "enterYourResponse": "Inserisci la tua risposta",
+    "availablePaymentMethods": "Metodi di Pagamento Disponibili",
+    "onlinePaymentViaStripe": "Pagamento online tramite Stripe",
+    "cashPaymentOnDelivery": "Pagamento in contanti alla consegna/servizio",
+    "paymentReason": "Motivo del Pagamento",
+    "paymentConfirmed": "Pagamento Confermato",
+    "confirmPaymentSent": "Conferma Pagamento Inviato",
+    "selectAnOption": "Seleziona un'opzione",
+    "submittedOn": "Inviato il",
+    "confirmPayment": "Conferma Pagamento",
+    "selectPaymentMethodUsed": "Seleziona Metodo di Pagamento Utilizzato",
+    "additionalNoteOptional": "Nota Aggiuntiva (opzionale)",
+    "addPaymentInfo": "Aggiungi qualsiasi informazione aggiuntiva sul tuo pagamento...",
+    "submit": "Invia",
+    "confirmAppointmentTime": "Conferma Orario Appuntamento",
+    "emailOptional": "Email (opzionale)",
+    "enterEmailForReminder": "Inserisci la tua email per il promemoria dell'appuntamento",
+    "confirming": "Confermando...",
+    "confirm": "Conferma",
+    "inProgress": "In Corso",
+    "invalidActionDetails": "Dettagli azione non validi per il tipo:",
+    "pending": "In Attesa",
+    "completed": "Completato",
+    "cancelled": "Annullato",
+    "confirmed": "Confermato",
+    "rejected": "Rifiutato",
+    "rescheduled": "Riprogrammato"
   }
 }

@@ -125,6 +125,30 @@ const getRelativeTime = (dateString: string, t: any) => {
   });
 };
 
+// Helper function to get status text with translations
+const getStatusText = (status: string, t: any): string => {
+  switch (status.toLowerCase()) {
+    case "in_progress":
+      return t('inProgress');
+    case "pending":
+      return t('pending');
+    case "completed":
+      return t('completed');
+    case "cancelled":
+      return t('cancelled');
+    case "confirmed":
+      return t('confirmed');
+    case "rejected":
+      return t('rejected');
+    case "rescheduled":
+      return t('rescheduled');
+    default:
+      return status.split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+  }
+};
+
 // Helper function to get status color
 const getStatusColor = (status: string) => {
   const statusLower = status.toLowerCase();
@@ -585,7 +609,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                     boardData.status === 'completed' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
                     boardData.status === 'cancelled' ? 'bg-red-100 text-red-800 border border-red-200' :
                     'bg-gray-100 text-gray-800 border border-gray-200'
-                  }`}>{boardData.status}</span>
+                  }`}>{getStatusText(boardData.status, tServiceBoard)}</span>
                   <button
                     onClick={() => setShowShareModal(true)}
                     className="lg:hidden flex items-center gap-1 px-2 py-1 bg-gray-600 text-white rounded text-xs hover:bg-gray-700 transition-colors"
@@ -757,7 +781,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                             </div>
                           </div>
                           <span className={`text-xs md:text-lg px-3 py-1 capitalize rounded-full ${getStatusColor(appointment.status)}`}>
-                            {appointment.status}
+                            {getStatusText(appointment.status, tServiceBoard)}
                           </span>
                         </div>
                         
@@ -887,7 +911,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                       </div>
                       <div className="flex gap-2">
                             <span className={`text-sm px-3 py-1 rounded-lg ${getStatusColor(boardData.servicerequest.status)}`}>
-                              {boardData.servicerequest.status}
+                              {getStatusText(boardData.servicerequest.status, tServiceBoard)}
                             </span>
                             <div className={`text-sm px-3 py-1 rounded-lg bg-gray-50 border-2 border-gray-400`}>
                             <span className="text-sm text-gray-500 mr-1">{tServiceBoard('reference')}:</span>
@@ -1342,7 +1366,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                 {/* Status - Now shown first */}
                 <div className="flex justify-center mb-3">
                   <span className={`text-xs md:text-lg px-3 py-1 capitalize rounded-full ${getStatusColor(nextAppointment.status)}`}>
-                    {nextAppointment.status}
+                    {getStatusText(nextAppointment.status, tServiceBoard)}
                   </span>
                 </div>
 

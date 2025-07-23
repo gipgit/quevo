@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { cookies } from 'next/headers';
 import { auth } from '@/lib/auth';
+import { getPlanLimits } from '@/lib/plan-limit';
+import { canCreateMore } from '@/lib/usage-utils';
 
 export async function GET(
   request: NextRequest,
@@ -101,9 +103,40 @@ export async function POST(
         customer_id: true,
       },
     });
-
     if (!serviceBoard) {
       return NextResponse.json({ error: 'Service board not found' }, { status: 404 });
+    }
+    // Fetch business to get manager_id
+    const business = await prisma.business.findUnique({
+      where: { business_id },
+      select: { manager_id: true },
+    });
+    if (!business) {
+      return NextResponse.json({ error: 'Business not found' }, { status: 404 });
+    }
+    // Fetch UserManager to get plan_id
+    const userManager = await prisma.usermanager.findUnique({
+      where: { user_id: business.manager_id },
+      select: { plan_id: true },
+    });
+    if (!userManager) {
+      return NextResponse.json({ error: 'Manager not found' }, { status: 404 });
+    }
+    // Get plan limits for actions per board
+    const planLimits = await getPlanLimits(userManager.plan_id);
+    const planLimitActions = planLimits.find(l => l.feature === 'actions' && l.limit_type === 'count' && l.scope === 'per_board');
+    if (!planLimitActions) {
+      return NextResponse.json({ error: 'Action per board plan limit not found' }, { status: 403 });
+    }
+    // Count current actions for this board (not archived)
+    const currentActionCount = await prisma.serviceboardaction.count({
+      where: {
+        board_id: serviceBoard.board_id,
+        is_archived: false,
+      },
+    });
+    if (!canCreateMore(currentActionCount, planLimitActions)) {
+      return NextResponse.json({ error: 'Action limit reached for this board.' }, { status: 403 });
     }
 
     // Create the new action

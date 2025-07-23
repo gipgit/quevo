@@ -259,10 +259,10 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
           }`}
         >
           {!selectedDatetime 
-            ? 'Please Select a Date'
+            ? t('pleaseSelectDate')
             : !selectedPlatform && details.appointment_type === 'online'
-            ? 'Please Select a Platform'
-            : 'Confirm Selection'}
+            ? t('pleaseSelectPlatform')
+            : t('confirmSelection')}
         </button>
       )}
 
@@ -273,7 +273,7 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
             onClick={() => handleReject()}
             className="w-full px-4 py-2 text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-md"
           >
-            Reject All Suggested Times
+            {t('rejectAllSuggestedTimes')}
           </button>
         )}
 
@@ -282,7 +282,7 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
             onClick={() => handleRescheduleRequest('Need to reschedule')}
             className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-100 rounded-md"
           >
-            Request Reschedule
+            {t('requestReschedule')}
           </button>
         )}
 
@@ -291,7 +291,7 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
             onClick={handleCancel}
             className="w-full px-4 py-2 text-sm font-medium text-red-700 bg-red-200 hover:bg-red-100 rounded-md"
           >
-            Cancel Appointment
+            {t('cancelAppointment')}
           </button>
         )}
       </div>

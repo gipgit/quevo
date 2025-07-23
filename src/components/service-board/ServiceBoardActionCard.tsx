@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { format } from "date-fns"
+import { useLocale } from "next-intl"
+import { enUS, it } from "date-fns/locale"
 import { 
   DocumentDownload,
   PaymentRequest,
@@ -41,14 +43,16 @@ interface Props {
   onAppointmentConfirmed?: () => void
 }
 
-function getStatusText(status: string): string {
+function getStatusText(status: string, t: any): string {
   switch (status.toLowerCase()) {
     case "in_progress":
-      return "In Progress";
+      return t('inProgress');
     case "pending":
+      return t('pending');
     case "completed":
+      return t('completed');
     case "cancelled":
-      return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+      return t('cancelled');
     default:
       return status.split('_')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -75,6 +79,7 @@ function getStatusColor(status: string): string {
 
 export default function ServiceBoardActionCard({ action, onActionUpdate, onAppointmentConfirmed }: Props) {
   const t = useTranslations("ServiceBoard")
+  const locale = useLocale()
   const [isExpanded, setIsExpanded] = useState(true) // Always start expanded
 
   const renderActionContent = () => {
@@ -169,7 +174,7 @@ export default function ServiceBoardActionCard({ action, onActionUpdate, onAppoi
 
     return (
       <div className="text-red-600">
-        <div>Invalid action details for type: {action.action_type}</div>
+        <div>{t('invalidActionDetails')} {action.action_type}</div>
         <div className="text-xs mt-2">
           <pre className="bg-gray-100 p-2 rounded text-xs overflow-auto">
             {JSON.stringify(details, null, 2)}
@@ -189,13 +194,13 @@ export default function ServiceBoardActionCard({ action, onActionUpdate, onAppoi
         <div>
             <div className="flex items-center flex-wrap gap-1 mb-2">
               <span className="text-gray-500 text-xs">
-                {format(new Date(action.created_at), "PPP")}
+                {format(new Date(action.created_at), "PPP", { locale: locale === 'it' ? it : enUS })}
               </span>
               <span className={`
                 px-3 py-1 rounded-full text-xs md:text-md
                 ${getStatusColor(action.action_status)}
               `}>
-                {getStatusText(action.action_status)}
+                {getStatusText(action.action_status, t)}
               </span>
               {action.is_customer_action_required && action.action_status !== 'completed' && (
                 <span className="px-2 py-1 rounded-full bg-blue-600 text-blue-100 text-xs md:text-md font-medium">
@@ -204,7 +209,7 @@ export default function ServiceBoardActionCard({ action, onActionUpdate, onAppoi
               )}
               {action.due_date && (
                 <span className="text-orange-600 text-xs md:text-md">
-                  {t("dueBy")}: {format(new Date(action.due_date), "PPP")}
+                  {t("dueBy")}: {format(new Date(action.due_date), "PPP", { locale: locale === 'it' ? it : enUS })}
                 </span>
               )}
             </div>

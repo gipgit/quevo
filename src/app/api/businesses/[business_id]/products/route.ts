@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { PrismaClient } from "@prisma/client"
 import { auth } from "@/lib/auth"
 import { getPlanLimits } from "@/lib/plan-limit"
+import { getUsage, incrementUsage, canCreateMore } from "@/lib/usage-utils"
 
 const prisma = new PrismaClient()
 
@@ -94,22 +95,19 @@ export async function POST(request: Request, { params }: { params: { business_id
       return NextResponse.json({ error: "Business not found" }, { status: 404 })
     }
 
-    // Check plan limits (DB-driven)
-    const currentProductCount = await prisma.product.count({
-      where: {
-        business_id: business_id,
-        is_available: true,
-      },
-    })
-
+    // Check plan limits (new system)
     const planId = business.usermanager.plan_id
     const planLimits = await getPlanLimits(planId)
-    const maxProducts = planLimits.products ?? -1
-    if (maxProducts !== -1 && currentProductCount >= maxProducts) {
+    const planLimitProducts = planLimits.find(l => l.feature === 'products' && l.limit_type === 'count' && l.scope === 'global')
+    if (!planLimitProducts) {
+      return NextResponse.json({ error: "Product plan limit not found" }, { status: 403 })
+    }
+    const currentUsage = await getUsage({ business_id, feature: 'products' })
+    if (!canCreateMore(currentUsage, planLimitProducts)) {
       return NextResponse.json({ error: "Product limit reached for your plan" }, { status: 403 })
     }
 
-    // Create product with variations
+    // Create product with variations and increment usage
     const newProduct = await prisma.$transaction(async (tx) => {
       // Create the product
       const product = await tx.product.create({
@@ -146,6 +144,9 @@ export async function POST(request: Request, { params }: { params: { business_id
           })
         }
       }
+
+      // Increment usage counter
+      await incrementUsage({ business_id, feature: 'products' })
 
       return product
     })

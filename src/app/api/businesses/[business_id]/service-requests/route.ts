@@ -6,6 +6,8 @@ import { addMinutes, parseISO, format } from "date-fns";
 import { Decimal } from "@prisma/client/runtime/library";
 import nodemailer from 'nodemailer';
 import { businessServiceRequestConfirmationEmail, customerServiceRequestConfirmationEmail } from '@/lib/emailTemplatesServiceRequest';
+import { getPlanLimits } from '@/lib/plan-limit';
+import { getUsage, incrementUsage, canCreateMore } from '@/lib/usage-utils';
 
 const BUSINESS_TIMEZONE = 'Europe/Rome';
 
@@ -126,6 +128,21 @@ export async function POST(
 
       // Skip time slot availability check for now
       console.log("Skipping time slot availability check");
+    }
+
+    // ENFORCE PER-MONTH SERVICE REQUEST LIMIT
+    const planId = business.plan_id;
+    const planLimits = await getPlanLimits(planId);
+    const planLimitRequests = planLimits.find(l => l.feature === 'service_requests' && l.limit_type === 'count' && l.scope === 'per_month');
+    if (!planLimitRequests) {
+      return NextResponse.json({ error: 'Service request plan limit not found' }, { status: 403 });
+    }
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const currentUsage = await getUsage({ business_id, feature: 'service_requests', year, month });
+    if (!canCreateMore(currentUsage, planLimitRequests)) {
+      return NextResponse.json({ error: 'Monthly service request limit reached for your plan.' }, { status: 403 });
     }
 
     // Create service request and service board with transaction
@@ -393,6 +410,8 @@ export async function POST(
 
       console.log("Service request updated with JSON snapshots");
 
+      // Increment monthly usage counter for service requests
+      await incrementUsage({ business_id, feature: 'service_requests', year, month });
       return { serviceRequest, serviceBoard };
     });
 

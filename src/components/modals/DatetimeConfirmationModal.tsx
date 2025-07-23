@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { useTranslations } from 'next-intl';
 
 interface DatetimeConfirmationModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export default function DatetimeConfirmationModal({
   isSubmitting = false,
 }: DatetimeConfirmationModalProps) {
   const [email, setEmail] = useState('');
+  const t = useTranslations('ServiceBoard');
   
   if (!isOpen) return null;
 
@@ -47,7 +49,7 @@ export default function DatetimeConfirmationModal({
             <div className="flex flex-col justify-center">
               <div className="mt-3 sm:mt-0 sm:ml-4 w-full">
                 <h3 className="text-xl font-bold leading-6 text-gray-900 mb-4">
-                  Confirm Appointment Time
+                  {t('confirmAppointmentTime')}
                 </h3>
                 
                 {/* Date and Time */}
@@ -106,7 +108,7 @@ export default function DatetimeConfirmationModal({
                   {/* Email Input */}
                   <div className="mt-4">
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                      Email (optional)
+                      {t('emailOptional')}
                     </label>
                     <input
                       type="email"
@@ -114,7 +116,7 @@ export default function DatetimeConfirmationModal({
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                      placeholder="Enter your email for appointment reminder"
+                      placeholder={t('enterEmailForReminder')}
                     />
                   </div>
                 </div>
@@ -135,10 +137,10 @@ export default function DatetimeConfirmationModal({
               {isSubmitting ? (
                 <>
                   <LoadingSpinner size="sm" color="white" className="mr-2" />
-                  Confirming...
+                  {t('confirming')}
                 </>
               ) : (
-                'Confirm'
+                t('confirm')
               )}
             </button>
             <button
@@ -146,7 +148,7 @@ export default function DatetimeConfirmationModal({
               onClick={onClose}
               className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
             >
-              Cancel
+              {t('cancel')}
             </button>
           </div>
         </div>

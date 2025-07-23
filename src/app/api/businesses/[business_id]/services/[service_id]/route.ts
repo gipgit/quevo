@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
+import { decrementUsage } from "@/lib/usage-utils"
 
 export async function DELETE(
   request: NextRequest,
@@ -31,6 +32,9 @@ export async function DELETE(
         service_id: serviceId,
       },
     })
+
+    // Decrement usage counter
+    await decrementUsage({ business_id, feature: 'services' })
 
     return NextResponse.json({ message: "Service deleted successfully" })
   } catch (error) {

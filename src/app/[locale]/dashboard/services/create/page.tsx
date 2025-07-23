@@ -8,6 +8,8 @@ import { useBusiness } from "@/lib/business-context"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { useRouter } from "next/navigation"
 import { useToaster } from "@/components/ui/ToasterProvider"
+import { canCreateMore, formatUsageDisplay } from "@/lib/usage-utils"
+import { UsageLimitBar } from "@/components/dashboard/UsageLimitBar"
 
 interface Category {
   category_id: number
@@ -196,12 +198,7 @@ export default function CreateServicePage() {
     }
 
     // Block creation if limit reached
-    if (
-      planLimits &&
-      planLimits.maxServices !== -1 &&
-      usage &&
-      usage.services >= planLimits.maxServices
-    ) {
+    if (serviceLimitReached) {
       showToast({
         type: "error",
         title: t("error"),
@@ -273,13 +270,10 @@ export default function CreateServicePage() {
 
   if (!currentBusiness) return null
 
-  // Check if service limit is reached
-  const serviceLimitReached = !!(
-    planLimits &&
-    planLimits.maxServices !== -1 &&
-    usage &&
-    usage.services >= planLimits.maxServices
-  )
+  // Find the plan limit for services
+  const planLimitServices = planLimits?.find(l => l.feature === 'services' && l.limit_type === 'count' && l.scope === 'global')
+  const currentUsage = usage?.services ?? 0
+  const serviceLimitReached = planLimitServices ? !canCreateMore(currentUsage, planLimitServices) : false
 
   // Show loading state while context is loading
   if (contextLoading) {
@@ -317,10 +311,7 @@ export default function CreateServicePage() {
             </div>
             <h3 className="text-lg font-medium text-red-800 mb-2">{t("maxServicesReached")}</h3>
             <p className="text-red-700 mb-6">
-              {t("serviceUsage", {
-                count: usage?.services || 0,
-                limit: planLimits?.maxServices || 0,
-              })}
+              {formatUsageDisplay(currentUsage, planLimitServices || { value: 0 })}
             </p>
             <div className="flex justify-center gap-4">
               <button
@@ -346,15 +337,22 @@ export default function CreateServicePage() {
     <DashboardLayout>
       <div className="mx-auto">
         <div className="mb-8">
-          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">{t("createService")}</h1>
-          {planLimits && usage && (
-            <div className="mt-2 text-sm text-gray-700">
-              {t("serviceUsage", {
-                count: usage.services,
-                limit: planLimits.maxServices === -1 ? t("unlimited") : planLimits.maxServices,
-              })}
-            </div>
-          )}
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">{t("createService")}</h1>
+            {planLimitServices && (
+              <div className="ml-4 min-w-[220px]">
+                <UsageLimitBar
+                  current={currentUsage}
+                  max={planLimitServices.value}
+                  label={formatUsageDisplay(currentUsage, planLimitServices)}
+                  showUpgrade={true}
+                  onUpgrade={() => router.push("/dashboard/plan")}
+                  upgradeText={t("upgradePlan")}
+                  unlimitedText={t("unlimited")}
+                />
+              </div>
+            )}
+          </div>
         </div>
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Basic Information */}

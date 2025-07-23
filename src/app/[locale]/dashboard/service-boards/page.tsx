@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { useBusiness } from "@/lib/business-context"
+import { canCreateMore, formatUsageDisplay } from "@/lib/usage-utils"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { UsageLimitBar } from "@/components/dashboard/UsageLimitBar"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import EmptyState from "@/components/EmptyState"
 import CopyButton from "@/components/CopyButton"
 import { EnvelopeIcon } from '@heroicons/react/24/outline'
+import Link from "next/link"
 
 interface ServiceBoard {
   board_id: string
@@ -46,7 +48,7 @@ interface ServiceBoard {
 
 export default function ServiceBoardsPage() {
   const t = useTranslations("serviceBoards")
-  const { currentBusiness, usage, planLimits, refreshUsageForFeature } = useBusiness()
+  const { currentBusiness, usage, planLimits } = useBusiness()
   const [serviceBoards, setServiceBoards] = useState<ServiceBoard[]>([])
   const [loading, setLoading] = useState(true)
   const [planLimitsData, setPlanLimitsData] = useState<any>(null)
@@ -120,6 +122,13 @@ export default function ServiceBoardsPage() {
     window.location.href = `/dashboard/service-boards/${boardId}/details`
   }
 
+  const planLimitBoards = planLimits?.find(l => l.feature === 'boards' && l.limit_type === 'count' && l.scope === 'global')
+  const currentUsage = usage?.boards ?? 0
+  const canCreateBoard = () => {
+    if (!planLimitBoards) return false
+    return canCreateMore(currentUsage, planLimitBoards)
+  }
+
   if (!currentBusiness) return null
 
   return (
@@ -132,17 +141,32 @@ export default function ServiceBoardsPage() {
           </div>
           <div className="flex items-center gap-6">
             <div className="flex flex-col items-end gap-2">
-              {planLimitsData && (
+              {planLimitBoards && (
                 <UsageLimitBar
-                  current={serviceBoards.length}
-                  max={planLimitsData.maxBoards}
-                  label={t("planInfo", { current: "{current}", max: "{max}" })}
+                  current={currentUsage}
+                  max={planLimitBoards.value}
+                  label={formatUsageDisplay(currentUsage, planLimitBoards)}
                   showUpgrade={true}
                   onUpgrade={() => (window.location.href = "/dashboard/plan")}
                   upgradeText={t("upgradePlan")}
                   unlimitedText={t("unlimited")}
                 />
               )}
+            </div>
+            <div>
+              <Link
+                href="/dashboard/service-boards/create"
+                className={`px-6 py-3 text-lg font-semibold rounded-lg transition-colors inline-flex items-center gap-2 ${
+                  canCreateBoard()
+                    ? "bg-blue-600 hover:bg-blue-700 text-white"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                {t("createBoard")}
+              </Link>
             </div>
           </div>
         </div>
@@ -302,7 +326,7 @@ export default function ServiceBoardsPage() {
                             {board.serviceboardaction.length > 0 ? (
                               <div className="mt-4 max-w-full w-full overflow-x-auto flex flex-col justify-center">
                                 <span className="text-xs text-gray-500 mb-1 block">
-                              {board.serviceboardaction.length} total actions, recent ones are:
+                              {board.serviceboardaction.length} {t("totalActions")}, {t("recentOnesAre")}:
                             </span>
                                 <div className="flex items-center space-x-2 overflow-x-auto pb-2">
                               {board.serviceboardaction.slice(0, 5).map((action, index) => (

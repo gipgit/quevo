@@ -3,6 +3,75 @@
     "coverPhotoAlt": "Business Cover Photo",
     "free": "Free",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "save": "Save"
+  },
+  "profile": {
+    "title": "Profile Settings",
+    "openProfile": "Open Profile",
+    "noChanges": "No changes to save",
+    "saveSuccess": "Changes saved successfully!",
+    "saveError": "Error saving changes",
+    "tabs": {
+      "info": "Information",
+      "images": "Images",
+      "links": "Links",
+      "payments": "Payments",
+      "settings": "Settings",
+      "appearance": "Appearance"
+    },
+    "businessUrlNameChecking": "Checking availability...",
+    "businessUrlNameError": "Error checking availability",
+    "settings": {
+      "general": "General Settings",
+      "defaultPage": "Default Page",
+      "visibility": "Visibility Settings"
+    },
+    "toasts": {
+      "noChanges": {
+        "title": "No Changes",
+        "message": "No changes detected to save."
+      },
+      "success": {
+        "info": {
+          "title": "Success",
+          "message": "Business information updated successfully!"
+        },
+        "links": {
+          "title": "Success",
+          "message": "Social links updated successfully!"
+        },
+        "payments": {
+          "title": "Success",
+          "message": "Payment methods updated successfully!"
+        },
+        "settings": {
+          "title": "Success",
+          "message": "Settings updated successfully!"
+        },
+        "images": {
+          "title": "Success",
+          "message": "Images uploaded successfully!"
+        }
+      },
+      "error": {
+        "saveFailed": {
+          "title": "Save Failed",
+          "message": "Failed to save changes. Please try again."
+        },
+        "uploadFailed": {
+          "title": "Upload Failed",
+          "message": "Failed to upload images. Please try again."
+        },
+        "networkError": {
+          "title": "Network Error",
+          "message": "Failed to connect to server. Please check your connection."
+        },
+        "loadError": {
+          "title": "Error Loading Profile",
+          "message": "Failed to load profile data. Please refresh the page."
+        }
+      }
+    }
   }
 } 

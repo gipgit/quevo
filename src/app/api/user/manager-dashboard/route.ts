@@ -33,6 +33,7 @@ export async function GET() {
         business_descr: true,
         business_img_profile: true,
         business_img_cover: true,
+        business_public_uuid: true,
         date_created: true,
       },
     })

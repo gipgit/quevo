@@ -107,12 +107,7 @@ export default function ProfileAppearanceSection({
         </div>
       </div>
 
-      {/* Save Button */}
-      <div className="pt-4">
-        <button className="w-full p-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
-          {t("appearance.saveChanges")}
-        </button>
-      </div>
+
     </div>
   )
 }

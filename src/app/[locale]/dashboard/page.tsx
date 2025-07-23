@@ -16,6 +16,8 @@ import {
   Cog6ToothIcon,
   GlobeAltIcon
 } from "@heroicons/react/24/outline"
+import { formatUsageDisplay } from "@/lib/usage-utils"
+import { getPlanColors, capitalizePlanName } from "@/lib/plan-colors"
 
 // Domain constant for public link
 const DOMAIN = typeof window !== "undefined" && window.location.hostname.includes("localhost")
@@ -37,6 +39,68 @@ export default function DashboardPage() {
     businessesCount: businesses.length,
     userManager: !!userManager
   })
+
+  // Add debug logs for planLimits and usage
+  console.log("DashboardPage planLimits:", planLimits)
+  console.log("DashboardPage usage:", usage)
+
+  // Helper to get plan limit value for a feature
+  const getPlanLimitValue = (feature: string) => {
+    // Map feature to correct scope
+    const scopeMap: Record<string, string> = {
+      services: 'global',
+      service_requests: 'per_month',
+      appointments: 'per_month',
+      active_boards: 'global',
+      products: 'global',
+    }
+    const scope = scopeMap[feature] || 'global'
+    const limit = planLimits?.find(l => l.feature === feature && l.limit_type === 'count' && l.scope === scope)
+    return limit?.value ?? null
+  }
+
+  // Helper to get the suffix for monthly limits
+  const getLimitSuffix = (feature: string) => {
+    const scopeMap: Record<string, string> = {
+      services: 'global',
+      service_requests: 'per_month',
+      appointments: 'per_month',
+      active_boards: 'global',
+      products: 'global',
+    }
+    const scope = scopeMap[feature] || 'global'
+    if (scope === 'per_month') {
+      return t('usage.per_month')
+    }
+    return ''
+  }
+
+  // Helper to get usage for a feature
+  const getUsageValue = (feature: string) => usage?.[feature] ?? 0
+
+  // Usage cards config
+  const usageCards = [
+    {
+      feature: 'services',
+      label: t("usage.services"),
+    },
+    {
+      feature: 'service_requests',
+      label: t("usage.service_requests"),
+    },
+    {
+      feature: 'appointments',
+      label: t("usage.appointments"),
+    },
+    {
+      feature: 'active_boards',
+      label: t("usage.active_boards"),
+    },
+    {
+      feature: 'products',
+      label: t("usage.products"),
+    },
+  ]
 
   // The layout already handles loading states, so we don't need to duplicate here
 
@@ -159,105 +223,73 @@ export default function DashboardPage() {
         onClose={() => setShowBusinessModal(false)} 
       />
         {/* Current Business Section */}
-        <div className="b-8">
+        <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <div>
-              <div className="text-sm text-gray-600 mb-1">{t("currentBusiness.label")}</div>
-              <div className="font-semibold text-3xl md:text-4xl text-gray-900">{currentBusiness?.business_name}</div>
+            <div className="flex items-center gap-4">
+              <div>
+                <div className="text-sm text-gray-600 mb-1">{t("currentBusiness.label")}</div>
+                <div className="font-semibold text-3xl md:text-4xl text-gray-900">{currentBusiness?.business_name}</div>
+              </div>
               <button
                 onClick={() => setShowBusinessModal(true)}
-                className="px-4 py-2 bg-white border text-black text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition-colors"
+                className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-50 transition-colors"
               >
                 {t("currentBusiness.change")}
               </button>
             </div>
            
              {/* Plan Section */}
-            <div className="mb-8">
-              <div className="flex items-end justify-end">
-                <div className="flex items-center gap-2">
-                  <div className="text-xs text-gray-600 mb-1">{t("plan.label")}</div>
-                  <div className="font-semibold text-lg text-gray-900">{userPlan?.plan_name || t("plan.noPlan")}</div>
-                </div>
-                <a
-                  href="/dashboard/plan"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
-                >
-                  {t("plan.manage")}
-                </a>
-              </div>
+            <div className="flex items-center gap-3">
+              {userPlan && (() => {
+                const planColors = getPlanColors(userPlan.plan_name);
+                return (
+                  <span className={`inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium ${planColors.gradient} ${planColors.textColor}`}>
+                    {planColors.showStar && (
+                      <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    )}
+                    {capitalizePlanName(userPlan.plan_name)}
+                  </span>
+                );
+              })()}
+              <a
+                href="/dashboard/plan"
+                className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+              >
+                {t("plan.manage")}
+              </a>
             </div>
           </div>
           
           {/* Usage Summary */}
           {usage && planLimits && (
             <div className="mb-8">
-              <h3 className="text-sm text-gray-600 mb-2">{t("usage.title")}</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <div className="text-sm text-gray-500">{t("usage.services")}</div>
-                  <div className="font-semibold text-lg mb-2">
-                    {usage.services} / {planLimits.maxServices === -1 ? "∞" : planLimits.maxServices}
-                  </div>
-                  {planLimits.maxServices !== -1 && (
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                        style={{ 
-                          width: `${Math.min((usage.services / planLimits.maxServices) * 100, 100)}%` 
-                        }}
-                      ></div>
+              <p className="text-xs text-gray-600 mb-2">{t("usage.title")}</p>
+              <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
+                {usageCards.map(card => {
+                  const max = getPlanLimitValue(card.feature)
+                  const current = getUsageValue(card.feature)
+                  const suffix = getLimitSuffix(card.feature)
+                  return (
+                    <div key={card.feature}>
+                      <div className="text-sm text-gray-500">{card.label}</div>
+                      <div className="font-semibold text-lg md:text-xl mb-2">
+                        {formatUsageDisplay(current, { value: max })} {suffix}
+                      </div>
+                      {max !== -1 && max !== null && (
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                            style={{
+                              width: `${Math.min((current / max) * 100, 100)}%`
+                            }}
+                          ></div>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <div>
-                  <div className="text-sm text-gray-500">{t("usage.products")}</div>
-                  <div className="font-semibold text-lg mb-2">
-                    {usage.products} / {planLimits.maxProducts === -1 ? "∞" : planLimits.maxProducts}
-                  </div>
-                  {planLimits.maxProducts !== -1 && (
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                        style={{ 
-                          width: `${Math.min((usage.products / planLimits.maxProducts) * 100, 100)}%` 
-                        }}
-                      ></div>
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <div className="text-sm text-gray-500">{t("usage.promos")}</div>
-                  <div className="font-semibold text-lg mb-2">
-                    {usage.promos} / {planLimits.maxPromos === -1 ? "∞" : planLimits.maxPromos}
-                  </div>
-                  {planLimits.maxPromos !== -1 && (
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                        style={{ 
-                          width: `${Math.min((usage.promos / planLimits.maxPromos) * 100, 100)}%` 
-                        }}
-                      ></div>
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <div className="text-sm text-gray-500">{t("usage.bookings")}</div>
-                  <div className="font-semibold text-lg mb-2">
-                    {usage.bookings} / {planLimits.maxBookings === -1 ? "∞" : planLimits.maxBookings}
-                  </div>
-                  {planLimits.maxBookings !== -1 && (
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                        style={{ 
-                          width: `${Math.min((usage.bookings / planLimits.maxBookings) * 100, 100)}%` 
-                        }}
-                      ></div>
-                    </div>
-                  )}
-                </div>
+                  )
+                })}
               </div>
             </div>
           )}

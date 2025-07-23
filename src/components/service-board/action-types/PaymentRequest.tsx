@@ -96,7 +96,7 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
       {/* Payment Methods */}
       {visiblePaymentMethods.length > 0 && (
         <div className="mt-8">
-          <h3 className="text-md font-medium text-gray-900 mb-4">Available Payment Methods</h3>
+          <h3 className="text-md font-medium text-gray-900 mb-4">{t('availablePaymentMethods')}</h3>
           <div className="space-y-2">
             {visiblePaymentMethods.map((method: BusinessPaymentMethod, index: number) => {
               const config = ALLOWED_PAYMENT_METHODS.find(
@@ -212,14 +212,14 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
                       {/* Stripe */}
                       {method.label === 'Stripe' && (
                         <p className="text-sm text-gray-600 mt-1">
-                          Online payment via Stripe
+                          {t('onlinePaymentViaStripe')}
                         </p>
                       )}
 
                       {/* Cash */}
                       {method.label === 'Cash' && (
                         <p className="text-sm text-gray-600 mt-1">
-                          Cash payment on delivery/service
+                          {t('cashPaymentOnDelivery')}
                         </p>
                       )}
                     </div>
@@ -234,17 +234,17 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
       {/* Payment Reason - Display once after payment methods */}
       {details.payment_reason && (
         <div className="mt-6">
-          <h3 className="text-md font-medium text-gray-900 mb-3">Payment Reason</h3>
+          <h3 className="text-md font-medium text-gray-900 mb-3">{t('paymentReason')}</h3>
           <div className="flex items-center gap-x-3">
             <div className="px-4 py-3 w-full rounded-xl bg-purple-100 border border-purple-200 flex items-center justify-between gap-x-3">
               <span className="text-base font-italic text-purple-800 italic">
                 {details.payment_reason}
               </span>
               <button
-                onClick={() => handleCopy(details.payment_reason!, 'Payment Reason')}
+                onClick={() => handleCopy(details.payment_reason!, t('paymentReason'))}
                 className="text-purple-600 hover:text-purple-800 text-sm font-medium px-2 py-1 rounded-md hover:bg-purple-50 transition-colors"
               >
-                {copiedText === 'Payment Reason' ? t('copied') : t('copy')}
+                {copiedText === t('paymentReason') ? t('copied') : t('copy')}
               </button>
             </div>
           </div>
@@ -261,7 +261,7 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-green-800">Payment Confirmed</h3>
+              <h3 className="text-sm font-medium text-green-800">{t('paymentConfirmed')}</h3>
               <div className="mt-2 text-sm text-green-700">
                 <p>{t('methodUsed')}: {details.payment_confirmation.method_used}</p>
                 <p>{t('confirmedAt')}: {new Date(details.payment_confirmation.confirmed_at).toLocaleString()}</p>
@@ -277,7 +277,7 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
           onClick={() => setIsConfirmationModalOpen(true)}
           className="mt-4 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
-          Confirm Payment Sent
+          {t('confirmPaymentSent')}
         </button>
       )}
 

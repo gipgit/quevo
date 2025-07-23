@@ -1,6 +1,77 @@
 {
   "Common": {
+    "coverPhotoAlt": "Foto di Copertina Business",
+    "free": "Gratuito",
     "edit": "Modifica",
-    "delete": "Elimina"
+    "delete": "Elimina",
+    "save": "Salva"
+  },
+  "profile": {
+    "title": "Impostazioni Profilo",
+    "openProfile": "Apri Profilo",
+    "noChanges": "Nessuna modifica da salvare",
+    "saveSuccess": "Modifiche salvate con successo!",
+    "saveError": "Errore nel salvare le modifiche",
+    "tabs": {
+      "info": "Informazioni",
+      "images": "Immagini",
+      "links": "Link",
+      "payments": "Pagamenti",
+      "settings": "Impostazioni",
+      "appearance": "Aspetto"
+    },
+    "businessUrlNameChecking": "Verifica disponibilità...",
+    "businessUrlNameError": "Errore nella verifica della disponibilità",
+    "settings": {
+      "general": "Impostazioni Generali",
+      "defaultPage": "Pagina Predefinita",
+      "visibility": "Impostazioni di Visibilità"
+    },
+    "toasts": {
+      "noChanges": {
+        "title": "Nessuna Modifica",
+        "message": "Nessuna modifica rilevata da salvare."
+      },
+      "success": {
+        "info": {
+          "title": "Successo",
+          "message": "Informazioni business aggiornate con successo!"
+        },
+        "links": {
+          "title": "Successo",
+          "message": "Link social aggiornati con successo!"
+        },
+        "payments": {
+          "title": "Successo",
+          "message": "Metodi di pagamento aggiornati con successo!"
+        },
+        "settings": {
+          "title": "Successo",
+          "message": "Impostazioni aggiornate con successo!"
+        },
+        "images": {
+          "title": "Successo",
+          "message": "Immagini caricate con successo!"
+        }
+      },
+      "error": {
+        "saveFailed": {
+          "title": "Salvataggio Fallito",
+          "message": "Impossibile salvare le modifiche. Riprova."
+        },
+        "uploadFailed": {
+          "title": "Caricamento Fallito",
+          "message": "Impossibile caricare le immagini. Riprova."
+        },
+        "networkError": {
+          "title": "Errore di Rete",
+          "message": "Impossibile connettersi al server. Verifica la connessione."
+        },
+        "loadError": {
+          "title": "Errore nel Caricamento del Profilo",
+          "message": "Impossibile caricare i dati del profilo. Ricarica la pagina."
+        }
+      }
+    }
   }
 } 

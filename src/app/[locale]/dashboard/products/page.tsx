@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { useBusiness } from "@/lib/business-context"
+import { canCreateMore, formatUsageDisplay } from "@/lib/usage-utils"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { UsageLimitBar } from "@/components/dashboard/UsageLimitBar"
 import EmptyState from "@/components/EmptyState"
@@ -66,6 +67,13 @@ export default function ProductsPage() {
     }).format(price)
   }
 
+  const planLimitProducts = planLimits?.find(l => l.feature === 'products' && l.limit_type === 'count' && l.scope === 'global')
+  const currentUsage = usage?.products ?? 0
+  const canCreateProduct = () => {
+    if (!planLimitProducts) return false
+    return canCreateMore(currentUsage, planLimitProducts)
+  }
+
   if (!currentBusiness) return null
 
   // Group products by category (define before return)
@@ -91,11 +99,11 @@ export default function ProductsPage() {
           </div>
           <div className="flex items-center gap-6">
             <div className="flex flex-col items-end gap-2">
-              {usage && planLimits && (
+              {planLimitProducts && (
                 <UsageLimitBar
-                  current={usage.products}
-                  max={planLimits.maxProducts}
-                  label={t("planInfo", { current: "{current}", max: "{max}" })}
+                  current={currentUsage}
+                  max={planLimitProducts.value}
+                  label={formatUsageDisplay(currentUsage, planLimitProducts)}
                   showUpgrade={true}
                   onUpgrade={() => (window.location.href = "/dashboard/plan")}
                   upgradeText={t("upgradePlan")}
@@ -104,7 +112,15 @@ export default function ProductsPage() {
               )}
             </div>
             <div>
-              <button className="px-6 py-3 text-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors inline-flex items-center gap-2">
+              <button
+                className={`px-6 py-3 text-lg font-semibold rounded-lg transition-colors inline-flex items-center gap-2 ${
+                  canCreateProduct()
+                    ? "bg-blue-600 hover:bg-blue-700 text-white"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+                disabled={!canCreateProduct()}
+                onClick={() => window.location.href = "/dashboard/products/create"}
+              >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>

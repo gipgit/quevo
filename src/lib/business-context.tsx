@@ -15,6 +15,7 @@ interface Business {
   business_descr: string
   business_img_profile: string | null
   business_img_cover: string | null
+  business_public_uuid: string
   date_created: string
 }
 
@@ -32,13 +33,9 @@ interface UserManager {
   plan: Plan
 }
 
-interface UsageData {
-  businesses: number
-  products: number
-  services: number
-  promos: number
-  bookings: number
-}
+// Replace the old UsageData interface with a flexible type
+// interface UsageData { ... }
+type UsageData = Record<string, number>;
 
 interface PlanLimits {
   maxBusinesses: number
@@ -55,7 +52,7 @@ interface BusinessContextType {
   businesses: Business[]
   currentBusiness: Business | null
   usage: UsageData | null
-  planLimits: PlanLimits | null
+  planLimits: any[] | null // changed from PlanLimits | null
   switchBusiness: (businessId: string) => void
   refreshUsage: () => Promise<void>
   refreshUsageForFeature: (feature: keyof UsageData) => Promise<void>
@@ -72,7 +69,7 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
   const [businesses, setBusinesses] = useState<Business[]>([])
   const [currentBusiness, setCurrentBusiness] = useState<Business | null>(null)
   const [usage, setUsage] = useState<UsageData | null>(null)
-  const [planLimits, setPlanLimits] = useState<PlanLimits | null>(null)
+  const [planLimits, setPlanLimits] = useState<any[] | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -123,7 +120,9 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
       })
       
       setUserManager(data.userManager)
+      console.log("BusinessContext: setUserManager", data.userManager)
       setUserPlan(data.userManager?.plan || null)
+      console.log("BusinessContext: setUserPlan", data.userManager?.plan)
       setBusinesses(data.businesses || [])
 
       // If user has no businesses, we'll let the useEffect handle the redirect
@@ -147,6 +146,7 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
         console.log("BusinessContext: Using first business:", business?.business_name)
       }
       setCurrentBusiness(business)
+      console.log("BusinessContext: setCurrentBusiness", business)
       if (business) {
         sessionStorage.setItem("currentBusinessId", business.business_id)
       }
@@ -174,22 +174,13 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
 
   const fetchPlanLimits = useCallback(async () => {
     try {
+      console.log("BusinessContext: fetchPlanLimits called, userPlan:", userPlan)
       if (!userPlan?.plan_id) return
-      
       const response = await fetch(`/api/plan-limits/${userPlan.plan_id}`)
-      if (response.ok) {
-        const data = await response.json()
-        // Map the API response to the expected interface structure
-        const mappedLimits: PlanLimits = {
-          maxBusinesses: data.limits.businesses || 0,
-          maxProducts: data.limits.products || 0,
-          maxServices: data.limits.services || 0,
-          maxPromos: data.limits.promos || 0,
-          maxBookings: data.limits.bookings || 0,
-          maxQuestionsPerService: data.limits.questions_per_service || 0,
-        }
-        setPlanLimits(mappedLimits)
-      }
+      if (!response.ok) throw new Error("Failed to fetch plan limits")
+      const data = await response.json()
+      setPlanLimits(data.limits)
+      console.log("BusinessContext: setPlanLimits", data.limits)
     } catch (err) {
       console.error("Error fetching plan limits:", err)
     }
@@ -197,17 +188,17 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
 
   const fetchUsage = useCallback(async () => {
     try {
-      if (!currentBusiness?.business_id) return
-      
+      console.log("BusinessContext: fetchUsage called, currentBusiness:", currentBusiness, "planLimits:", planLimits)
+      if (!currentBusiness?.business_id || !planLimits) return
       const response = await fetch(`/api/plan-usage?businessId=${currentBusiness.business_id}`)
-      if (response.ok) {
-        const data = await response.json()
-        setUsage(data.usage)
-      }
+      if (!response.ok) throw new Error("Failed to fetch usage")
+      const data = await response.json()
+      setUsage(data.usage)
+      console.log("BusinessContext: setUsage", data.usage)
     } catch (err) {
       console.error("Error fetching usage:", err)
     }
-  }, [currentBusiness?.business_id])
+  }, [currentBusiness?.business_id, planLimits])
 
   useEffect(() => {
     console.log("BusinessContext: useEffect - fetchManagerDashboard triggered")
@@ -255,12 +246,14 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
   }, [userPlan, fetchPlanLimits])
 
   useEffect(() => {
-    console.log("BusinessContext: useEffect - currentBusiness changed:", currentBusiness?.business_id)
-    // Fetch usage when current business changes
-    if (currentBusiness?.business_id) {
+    console.log("BusinessContext: useEffect - fetchUsage trigger", {
+      currentBusiness: currentBusiness?.business_id,
+      planLimitsLoaded: !!planLimits
+    })
+    if (currentBusiness?.business_id && planLimits) {
       fetchUsage()
     }
-  }, [currentBusiness, fetchUsage])
+  }, [currentBusiness, planLimits, fetchUsage])
 
   const refreshUsage = async () => {
     await fetchUsage()

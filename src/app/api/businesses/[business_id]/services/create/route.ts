@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { getPlanLimits } from "@/lib/plan-limit"
+import { getUsage, incrementUsage, canCreateMore } from "@/lib/usage-utils"
 
 export async function POST(req: NextRequest, { params }: { params: { business_id: string } }) {
   try {
@@ -35,21 +36,22 @@ export async function POST(req: NextRequest, { params }: { params: { business_id
       return NextResponse.json({ error: "Plan ID not found for business manager" }, { status: 404 })
     }
 
-    // Check plan limits (DB-driven)
-    const currentServiceCount = await prisma.service.count({
-      where: { business_id: business_id, is_active: true },
-    })
+    // Check plan limits (new system)
     const planId = business.usermanager.plan_id
     const planLimits = await getPlanLimits(planId)
-    const maxServices = planLimits.services ?? planLimits.maxServices ?? -1
-    if (maxServices !== -1 && currentServiceCount >= maxServices) {
+    const planLimitServices = planLimits.find(l => l.feature === 'services' && l.limit_type === 'count' && l.scope === 'global')
+    if (!planLimitServices) {
+      return NextResponse.json({ error: "Service plan limit not found" }, { status: 403 })
+    }
+    const currentUsage = await getUsage({ business_id, feature: 'services' })
+    if (!canCreateMore(currentUsage, planLimitServices)) {
       return NextResponse.json({ error: "Service limit reached for your plan" }, { status: 403 })
     }
 
     // Allowed question types for ServiceQuestion
     const ALLOWED_QUESTION_TYPES = ["open", "checkbox_single", "checkbox_multi",  "media_upload"]
 
-    // Create service with related data
+    // Create service with related data and increment usage
     const newService = await prisma.$transaction(async (tx) => {
       // Create the service
       const service = await tx.service.create({
@@ -131,6 +133,8 @@ export async function POST(req: NextRequest, { params }: { params: { business_id
           })
         }
       }
+      // Increment usage counter
+      await incrementUsage({ business_id, feature: 'services' })
       return service
     })
     return NextResponse.json(newService)

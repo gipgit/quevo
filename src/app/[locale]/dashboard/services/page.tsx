@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { useBusiness } from "@/lib/business-context"
+import { canCreateMore, formatUsageDisplay } from "@/lib/usage-utils"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import Link from "next/link"
 import { UsageLimitBar } from "@/components/dashboard/UsageLimitBar"
@@ -62,6 +63,15 @@ export default function ServicesPage() {
   const [serviceToDelete, setServiceToDelete] = useState<Service | null>(null)
   const [deleting, setDeleting] = useState(false)
 
+  // Add debug logs for planLimits and usage
+  useEffect(() => {
+    console.log("ServicesPage planLimits:", planLimits)
+    console.log("ServicesPage usage:", usage)
+    if (planLimits) {
+      const found = planLimits.find(l => l.feature === 'services' && l.limit_type === 'count' && l.scope === 'global')
+      console.log("ServicesPage planLimitServices:", found)
+    }
+  }, [planLimits, usage])
 
   useEffect(() => {
     if (currentBusiness) {
@@ -160,10 +170,11 @@ export default function ServicesPage() {
     return `${mins}m`
   }
 
+  const planLimitServices = planLimits?.find(l => l.feature === 'services' && l.limit_type === 'count' && l.scope === 'global')
+  const currentUsage = usage?.services ?? 0
   const canCreateService = () => {
-    if (!planLimits) return false
-    const currentUsage = usage?.services ?? services.length
-    return planLimits.maxServices === -1 || currentUsage < planLimits.maxServices
+    if (!planLimitServices) return false
+    return canCreateMore(currentUsage, planLimitServices)
   }
 
   if (!currentBusiness) return null
@@ -191,11 +202,11 @@ export default function ServicesPage() {
           </div>
           <div className="flex items-center gap-6">
             <div className="flex flex-col items-end gap-2">
-              {planLimits && (
+              {planLimitServices && (
                 <UsageLimitBar
-                  current={usage?.services ?? services.length}
-                  max={planLimits.maxServices}
-                  label={t("planInfo", { current: "{current}", max: "{max}" })}
+                  current={currentUsage}
+                  max={planLimitServices.value}
+                  label={formatUsageDisplay(currentUsage, planLimitServices)}
                   showUpgrade={true}
                   onUpgrade={() => (window.location.href = "/dashboard/plan")}
                   upgradeText={t("upgradePlan")}
@@ -298,8 +309,8 @@ export default function ServicesPage() {
                               </div>
                             )}
                             {service.serviceitem.length === 0 && service.servicequestion.length === 0 && service.servicerequirementblock.length === 0 && (
-                              <div className="text-sm text-gray-500 text-center py-2">
-                                No elements configured
+                              <div className="text-sm text-gray-500 py-2">
+                                {t("noElementsConfigured")}
                               </div>
                             )}
                           </div>
@@ -310,19 +321,19 @@ export default function ServicesPage() {
                         <div className="flex flex-row gap-2 lg:flex-col lg:gap-3">
                           <button
                             onClick={() => handleEdit(service.service_id)}
-                            className="w-full px-4 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 font-medium"
+                            className="w-full px-2 py-2 md:px-4 md:py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm font-medium"
                           >
-                            {tCommon("edit")}
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <span className="hidden sm:inline">{tCommon("edit")}</span>
+                            <svg className="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                           </button>
                           <button
                             onClick={() => handleDeleteClick(service)}
-                            className="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2 font-medium"
+                            className="w-full px-2 py-2 md:px-4 md:py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm font-medium"
                           >
-                            {tCommon("delete")}
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <span className="hidden sm:inline">{tCommon("delete")}</span>
+                            <svg className="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
                           </button>

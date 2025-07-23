@@ -495,7 +495,7 @@ model servicerequirementblock {
 }
 
 model plan {
-  plan_id           Int           @id @default(autoincrement())
+  plan_id           Int           @id
   plan_name         String        @unique @db.VarChar(50)
   display_price     String        @db.VarChar(50)
   display_frequency String?       @db.VarChar(20)
@@ -718,11 +718,15 @@ model appointment {
 }
 
 model planlimit {
-  id        Int    @id @default(autoincrement())
-  plan_id   Int
-  feature   String @db.VarChar(50)
-  max_count Int
-  plan      plan   @relation(fields: [plan_id], references: [plan_id], onDelete: Cascade, onUpdate: NoAction)
+  id         Int      @id @default(autoincrement())
+  plan_id    Int?
+  feature    String   @db.VarChar(64)
+  limit_type String   @db.VarChar(32)
+  scope      String   @db.VarChar(32)
+  value      Int?
+  enabled    Boolean?
+  notes      String?
+  plan       plan?    @relation(fields: [plan_id], references: [plan_id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([plan_id, feature])
 }
@@ -776,6 +780,7 @@ model serviceboard {
   is_password_protected Boolean              @default(false)
   board_password        String?              @db.VarChar(30)
   status                String               @default("pending") @db.VarChar(50)
+  action_count          Int                  @default(0)
   created_at            DateTime             @default(now()) @db.Timestamptz(6)
   updated_at            DateTime             @default(now()) @db.Timestamptz(6)
   appointment           appointment[]
@@ -805,6 +810,30 @@ model serviceboardaction {
   serviceboard                serviceboard            @relation(fields: [board_id], references: [board_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sba_service_board")
   usercustomer                usercustomer            @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_sba_user_customer")
   serviceboardactiontag       serviceboardactiontag[]
+}
+
+model usagecounter {
+  id          Int       @id @default(autoincrement())
+  business_id String    @db.Uuid
+  feature     String    @db.VarChar(64)
+  usage_count Int       @default(0)
+  updated_at  DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@unique([business_id, feature])
+  @@index([business_id, feature], map: "idx_usagecounter_business_feature")
+}
+
+model usagecountermonthly {
+  id          Int       @id @default(autoincrement())
+  business_id String    @db.Uuid
+  feature     String    @db.VarChar(64)
+  year        Int
+  month       Int
+  usage_count Int       @default(0)
+  updated_at  DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@unique([business_id, feature, year, month])
+  @@index([business_id, feature, year, month], map: "idx_usagecountermonthly_business_feature_month")
 }
 
 enum business_sponsorship_level {

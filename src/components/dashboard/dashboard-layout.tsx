@@ -7,6 +7,7 @@ import { useBusiness } from "@/lib/business-context"
 import { signOut } from "next-auth/react"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import BusinessSelectionModal from "@/components/modals/BusinessSelectionModal"
+import { getPlanColors, capitalizePlanName } from "@/lib/plan-colors"
 
 import { 
   HomeIcon, 
@@ -126,18 +127,63 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     return businessName.charAt(0).toUpperCase()
   }
 
+  const getUserInitial = () => {
+    if (!userManager) return ""
+    const firstName = userManager.name_first || ""
+    const lastName = userManager.name_last || ""
+    const firstInitial = firstName.charAt(0).toUpperCase()
+    const lastInitial = lastName.charAt(0).toUpperCase()
+    return firstInitial + lastInitial
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Desktop Sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-80 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-200 px-6 py-6">
+        <div className="flex grow flex-col gap-y-3 overflow-y-auto bg-gray-200 px-6 py-6">
+          {/* User Plan Card */}
+          {userPlan && (
+            <div className="bg-gray-50 rounded-lg p-4">
+              <Link href="/dashboard/plan" className="block">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3 flex-1 min-w-0">
+                    <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center overflow-hidden">
+                      <span className="text-white text-sm font-medium">
+                        {getUserInitial()}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-gray-900 font-medium text-sm truncate">{getManagerFullName()}</p>
+                      <p className="text-xs text-gray-600">Manage your plan</p>
+                    </div>
+                  </div>
+                  <div className="flex-shrink-0 ml-3">
+                    {(() => {
+                      const planColors = getPlanColors(userPlan.plan_name);
+                      return (
+                        <span className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium ${planColors.gradient} ${planColors.textColor}`}>
+                          {planColors.showStar && (
+                            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                          )}
+                          {capitalizePlanName(userPlan.plan_name)}
+                        </span>
+                      );
+                    })()}
+                  </div>
+                </div>
+              </Link>
+            </div>
+          )}
+
           {/* Business Info Card */}
-          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 cursor-pointer hover:shadow-md transition-shadow" onClick={() => setShowBusinessModal(true)}>
+          <div className="bg-gray-50 rounded-lg p-4 cursor-pointer hover:bg-gray-100 transition-colors mb-2" onClick={() => setShowBusinessModal(true)}>
             <div className="flex items-center space-x-3">
               <div className="h-10 w-10 rounded-full bg-gray-600 flex items-center justify-center overflow-hidden">
-                {businessImage ? (
+                {(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? (
                   <img
-                    src={businessImage || "/placeholder.svg"}
+                    src={currentBusiness?.business_img_profile || `/uploads/business/${currentBusiness.business_public_uuid}/profile.webp`}
                     alt={businessName}
                     className="h-full w-full object-cover"
                     onError={(e) => {
@@ -147,34 +193,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     }}
                   />
                 ) : null}
-                <span className={`text-white text-sm font-medium ${businessImage ? "hidden" : ""}`}>
+                <span className={`text-white text-sm font-medium ${(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? "hidden" : ""}`}>
                   {getBusinessInitial()}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="text-gray-900 font-semibold text-sm truncate">{businessName}</h2>
-                <p className="text-gray-600 text-xs truncate">{getManagerFullName()}</p>
               </div>
             </div>
           </div>
-
-          {/* User Plan Card */}
-          {userPlan && (
-            <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-              <Link href="/dashboard/plan" className="block">
-                <div className="flex items-center justify-between">
-                  <div className="flex-shrink-0">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      {userPlan.plan_name}
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs text-gray-600">Manage your plan</p>
-                  </div>
-                </div>
-              </Link>
-            </div>
-          )}
           {/* Navigation Items */}
           <nav className="flex-1">
             <ul className="space-y-0">

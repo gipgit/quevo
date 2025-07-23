@@ -40,7 +40,8 @@
     "back": "Back",
     "free": "Free",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "save": "Save"
   },
   "ServiceRequest": {
     "loadingCalendar": "Loading calendar",
@@ -367,7 +368,8 @@
     "hasRequirements": "{count} Requirements",
     "noDuration": "No duration",
     "priceOnRequest": "Price on request",
-    "uncategorized": "Uncategorized"
+    "uncategorized": "Uncategorized",
+    "noElementsConfigured": "No elements configured"
   },
   "dashboard": {
     "welcome": "Welcome {name}",
@@ -384,9 +386,13 @@
     "usage": {
       "title": "Usage",
       "services": "Services",
+      "service_requests": "Service Requests",
+      "appointments": "Appointments",
+      "active_boards": "Active Boards",
       "products": "Products",
       "promos": "Promotions",
-      "bookings": "Bookings"
+      "bookings": "Bookings",
+      "per_month": "/ month"
     },
     "publicLink": {
       "label": "Public Link",
@@ -420,7 +426,8 @@
       "surveyReports": "Survey Reports",
       "scanReports": "Scan Reports",
       "reports": "Reports",
-      "logout": "Logout"
+      "logout": "Logout",
+      "manageAccount": "Manage Account"
     }
   },
   "plan": {
@@ -432,11 +439,18 @@
     "unlimited": "Unlimited",
     "upgradePlan": "Upgrade Plan",
     "upgradeInfo": "Contact support to upgrade your plan.",
-    "noPlan": "No plan assigned."
+    "noPlan": "No plan assigned.",
+    "paymentMethod": "Payment Method",
+    "noPaymentMethod": "No payment method",
+    "subscriptionStatus": "Subscription Status",
+    "noStatus": "No status",
+    "currentPeriodEnd": "Current Period End",
+    "nextInvoice": "Next Invoice"
   },
   "profile": {
     "title": "Business Profile",
     "noBusinessSelected": "No business selected.",
+    "openProfile": "Open Profile",
     "tabs": {
       "information": "Information",
       "images": "Images",
@@ -513,7 +527,8 @@
     "completed": "Completed",
     "rescheduled": "Rescheduled",
     "viewDetails": "View Details",
-    "openBoard": "Open Board"
+    "openBoard": "Open Board",
+    "notes": "Notes"
   },
   "serviceBoards": {
     "title": "Service Boards",
@@ -534,11 +549,12 @@
     "completed": "Completed",
     "archived": "Archived",
     "openBoard": "Open Board",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "totalActions": "total actions",
+    "recentOnesAre": "recent ones are"
   },
   "appointments": {
     "title": "Appointments",
-    "description": "Manage your appointments and schedule",
     "noAppointments": "No appointments yet",
     "noAppointmentsDescription": "Your appointments will appear here in the calendar.",
     "planInfo": "{current} of {max} appointments used",
@@ -660,6 +676,41 @@
     "justNow": "just now",
     "minutesAgo": "{minutes}m ago",
     "hoursAgo": "{hours}h ago",
-    "daysAgo": "{days}d ago"
+    "daysAgo": "{days}d ago",
+    "pleaseSelectDate": "Please Select a Date",
+    "pleaseSelectPlatform": "Please Select a Platform",
+    "confirmSelection": "Confirm Selection",
+    "rejectAllSuggestedTimes": "Reject All Suggested Times",
+    "requestReschedule": "Request Reschedule",
+    "cancelAppointment": "Cancel Appointment",
+    "thankYouForFeedback": "Thank you for your feedback! Submitted on",
+    "openSurvey": "Open Survey",
+    "enterYourResponse": "Enter your response",
+    "availablePaymentMethods": "Available Payment Methods",
+    "onlinePaymentViaStripe": "Online payment via Stripe",
+    "cashPaymentOnDelivery": "Cash payment on delivery/service",
+    "paymentReason": "Payment Reason",
+    "paymentConfirmed": "Payment Confirmed",
+    "confirmPaymentSent": "Confirm Payment Sent",
+    "selectAnOption": "Select an option",
+    "submittedOn": "Submitted on",
+    "confirmPayment": "Confirm Payment",
+    "selectPaymentMethodUsed": "Select Payment Method Used",
+    "additionalNoteOptional": "Additional Note (optional)",
+    "addPaymentInfo": "Add any additional information about your payment...",
+    "submit": "Submit",
+    "confirmAppointmentTime": "Confirm Appointment Time",
+    "emailOptional": "Email (optional)",
+    "enterEmailForReminder": "Enter your email for appointment reminder",
+    "confirming": "Confirming...",
+    "confirm": "Confirm",
+    "inProgress": "In Progress",
+    "invalidActionDetails": "Invalid action details for type:",
+    "pending": "Pending",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "confirmed": "Confirmed",
+    "rejected": "Rejected",
+    "rescheduled": "Rescheduled"
   }
 }

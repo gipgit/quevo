@@ -44,7 +44,7 @@ export default function FeedbackRequest({ details, onUpdate }: Props) {
   if (details.submission_status === 'submitted') {
     return (
       <div className="text-sm text-gray-500">
-        Thank you for your feedback! Submitted on {new Date(details.submitted_date!).toLocaleDateString()}
+        {t('thankYouForFeedback')} {new Date(details.submitted_date!).toLocaleDateString()}
       </div>
     )
   }
@@ -59,7 +59,7 @@ export default function FeedbackRequest({ details, onUpdate }: Props) {
           rel="noopener noreferrer"
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
-          Open Survey
+          {t('openSurvey')}
         </a>
       </div>
     )
@@ -112,7 +112,7 @@ export default function FeedbackRequest({ details, onUpdate }: Props) {
               onChange={(e) => handleResponseChange(index, e.target.value)}
               rows={3}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-              placeholder="Enter your response"
+              placeholder={t('enterYourResponse')}
             />
           )}
         </div>

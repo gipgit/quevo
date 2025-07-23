@@ -71,7 +71,7 @@ export default function InformationRequest({ details, onUpdate }: Props) {
               className="p-2 mt-1 block w-full rounded-md border bg-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               required={field.is_required}
             >
-              <option value="">Select an option</option>
+              <option value="">{t('selectAnOption')}</option>
               {field.options.map((option, optIndex) => (
                 <option key={optIndex} value={option}>{option}</option>
               ))}
@@ -105,7 +105,7 @@ export default function InformationRequest({ details, onUpdate }: Props) {
       <div className="flex items-center justify-between">
         <div className="text-sm text-gray-500">
           {details.submission_status === 'submitted' && details.submission_date && (
-            <span>Submitted on {new Date(details.submission_date).toLocaleDateString()}</span>
+            <span>{t('submittedOn')} {new Date(details.submission_date).toLocaleDateString()}</span>
           )}
         </div>
         <button

@@ -8,6 +8,7 @@ export interface Toast {
   type: "success" | "error" | "warning" | "info"
   title: string
   message: string
+  technicalDetails?: string // Optional technical details for errors
   duration?: number // in milliseconds, default 5000ms
 }
 
@@ -98,6 +99,11 @@ const Toaster: React.FC<ToasterProps> = ({ toast, onClose }) => {
             <h4 className="text-sm font-semibold text-gray-900">{toast.title}</h4>
           </div>
           <p className="text-sm text-gray-600">{toast.message}</p>
+          {toast.technicalDetails && (
+            <p className="text-xs text-gray-500 mt-1 font-mono break-all">
+              {toast.technicalDetails}
+            </p>
+          )}
         </div>
         
         <button
