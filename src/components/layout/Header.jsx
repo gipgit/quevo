@@ -61,8 +61,8 @@ export default function Header() {
                             </div>
                         ) : (
                             <div className="flex items-center gap-x-3">
-                                <Link href="/login" className="text-sm">Accedi</Link> {/* Cleaned up rootDir */}
-                                <Link href="/signup-business" className="button btn-sm md:btn-md btn-gradient-radial text-sm md:text-md">Registrati</Link> {/* Cleaned up rootDir */}
+                                <Link href="/signin/manager" className="text-sm">Accedi</Link> {/* Cleaned up rootDir */}
+                                <Link href="/signup/business" className="button btn-sm md:btn-md btn-gradient-radial text-sm md:text-md">Registrati</Link> {/* Cleaned up rootDir */}
                             </div>
                         )}
                     </div>
