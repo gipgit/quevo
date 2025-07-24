@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { BusinessProvider } from "@/lib/business-context"
 import { SessionProvider } from "next-auth/react"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
+import AnimatedLoadingBackground from "@/components/ui/AnimatedLoadingBackground"
 
 export default function DashboardLayout({
   children,
@@ -40,9 +41,11 @@ function DashboardLayoutContent({
   // Show loading state while checking session
   if (status === "loading") {
     return (
-      <div className="w-full h-screen flex items-center justify-center">
-        <LoadingSpinner size="xl" color="blue" />
-      </div>
+      <AnimatedLoadingBackground>
+        <div className="text-center">
+          <LoadingSpinner size="xl" color="blue" />
+        </div>
+      </AnimatedLoadingBackground>
     )
   }
 

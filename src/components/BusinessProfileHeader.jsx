@@ -2,7 +2,7 @@
 
 'use client';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
@@ -12,6 +12,8 @@ import { useTranslations } from 'next-intl';
 import { parseContacts, hasValidContacts } from '@/lib/utils/contacts';
 
 const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggleMenuOverlay }) => {
+    const [scrollOpacity, setScrollOpacity] = useState(1);
+    
     const {
         businessData,
         businessSettings,
@@ -35,6 +37,30 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
     const currentSectionSlug = pathSegments[2];
 
     const activeSection = currentSectionSlug || businessSettings.default_page;
+
+    // Scroll effect for desktop hero
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollY = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const fadeStart = 0;
+            const fadeEnd = windowHeight * 0.8; // Start fading after 80% of viewport height
+            
+            if (scrollY <= fadeStart) {
+                setScrollOpacity(1);
+            } else if (scrollY >= fadeEnd) {
+                setScrollOpacity(0);
+            } else {
+                const fadeRange = fadeEnd - fadeStart;
+                const currentFade = scrollY - fadeStart;
+                const opacity = 1 - (currentFade / fadeRange);
+                setScrollOpacity(Math.max(0, opacity));
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     if (!businessData) {
         return <div className="text-center py-4" style={{ color: themeColorText || 'gray' }}>{t('loadingHeader')}</div>;
@@ -82,9 +108,9 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
     );
 
     return (
-        <header className="profile-header relative h-full">
+        <header className="profile-header relative h-full z-50">
             {/* Desktop Navbar - Only visible on lg+ devices */}
-            <nav className="hidden lg:block fixed top-0 left-0 right-0 z-50 bg-white shadow-sm" style={{ borderBottom: `1px solid ${isDarkBackground ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}` }}>
+            <nav className="profile-navbar hidden lg:block fixed top-0 left-0 right-0 z-50 shadow-sm" style={{ borderBottom: `1px solid ${isDarkBackground ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}` }}>
                 <div className="container mx-auto px-4">
                     <div className="flex items-center justify-between h-16">
                         {/* Left side - Profile image and business name */}
@@ -109,7 +135,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                             </div>
                         </div>
 
-                        {/* Right side - Navigation links */}
+                        {/* Right side - Navigation links and action buttons */}
                         <div className="flex items-center space-x-6">
                             <Link
                                 href={`/${businessUrlnameInPath}/services`}
@@ -139,13 +165,61 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                             >
                                 {t('rewards')}
                             </Link>
+                            
+                            {/* Action Buttons */}
+                            <div className="flex items-center space-x-3 ml-4">
+                                {businessSettings.show_btn_payments && businessPaymentMethods && businessPaymentMethods.length > 0 && (
+                                    <button onClick={togglePaymentsModal} className="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200" style={primaryButtonStyle}>
+                                        Pagamenti
+                                    </button>
+                                )}
+
+                                {businessSettings.show_btn_review && googleReviewLinkUrl && (
+                                    <Link href={googleReviewLinkUrl} target="_blank" rel="noopener noreferrer" className="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center gap-1" style={primaryButtonStyle}>
+                                        Recensione
+                                        <Image
+                                            src="/icons/google.png"
+                                            alt="Google"
+                                            width={16}
+                                            height={16}
+                                            style={getButtonIconStyle()}
+                                        />
+                                    </Link>
+                                )}
+
+                                {businessSettings.show_btn_phone && hasPhones && (
+                                    <button onClick={() => toggleContactModal('phone')} className={circularButtonBaseClass} style={primaryButtonStyle}>
+                                        <div className="link-icon-wrapper w-10 h-10 flex items-center justify-center rounded-full">
+                                            <Image
+                                                src="/icons/iconsax/phone.svg"
+                                                alt={t('call')}
+                                                width={20}
+                                                height={20}
+                                                style={getButtonIconStyle()}
+                                            />
+                                        </div>
+                                    </button>
+                                )}
+
+                                {businessSettings.show_btn_email && hasEmails && (
+                                    <button onClick={() => toggleContactModal('email')} className={circularButtonBaseClass} style={primaryButtonStyle}>
+                                        <div className="link-icon-wrapper w-10 h-10 flex items-center justify-center rounded-full">
+                                            <Image
+                                                src="/icons/iconsax/email.svg"
+                                                alt={t('email')}
+                                                width={20}
+                                                height={20}
+                                                style={getButtonIconStyle()}
+                                            />
+                                        </div>
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
             </nav>
 
-            {/* Add top padding to account for fixed navbar */}
-            <div className="lg:pt-16"></div>
 
             {/* Mobile/Tablet Cover Image */}
             <div className="lg:hidden profile-cover w-full relative bg-gray-200 h-32 sm:h-40 md:h-40">
@@ -316,19 +390,19 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
             {/* Desktop Hero Layout (lg+) */}
             <div className="hidden lg:flex flex-col justify-center h-screen max-h-screen overflow-y-auto">
                 <div className="container mx-auto px-4">
-                    <div className="text-left" style={{ color: 'white' }}>
+                    <div className="text-left transition-opacity duration-300" style={{ color: 'white', opacity: scrollOpacity }}>
                         <div className="mb-6">
-                            <p className="text-3xl font-bold mb-2">{businessData.business_name}</p>
-                            {businessData.business_descr && <p className="font-bold text-2xl opacity-90 mb-4">{businessData.business_descr}</p>}
+                            <p className="text-xl font-bold mb-2" style={{ textShadow: '1px 1px 4px rgba(0, 0, 0, 0.5)' }}>{businessData.business_name}</p>
+                            {businessData.business_descr && <p className="font-bold text-2xl md:text-4xl lg:text-5xl max-w-2xl mb-4" style={{ textShadow: '1px 1px 4px rgba(0, 0, 0, 0.5)' }}>{businessData.business_descr}</p>}
                             <div className="flex flex-wrap items-center gap-3 mb-6">
                                 {(businessSettings.show_address && businessData.business_address) && (
-                                    <p className="text-lg opacity-90">
+                                    <p className="text-lg opacity-90" style={{ textShadow: '0.5px 0.5px 3px rgba(0, 0, 0, 0.4)' }}>
                                         {businessData.business_city} / {businessData.business_address}
                                     </p>
                                 )}
 
                                 {businessSettings.show_website && websiteLinkUrl && (
-                                    <Link href={websiteLinkUrl} target="_blank" rel="noopener noreferrer" className="text-lg underline opacity-90 hover:opacity-100 transition-opacity">
+                                    <Link href={websiteLinkUrl} target="_blank" rel="noopener noreferrer" className="text-lg underline opacity-90 hover:opacity-100 transition-opacity" style={{ textShadow: '0.5px 0.5px 3px rgba(0, 0, 0, 0.4)' }}>
                                         {websiteLinkUrl.replace(/^https?:\/\/(www\.)?/, '')}
                                     </Link>
                                 )}
@@ -352,55 +426,6 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                             ))}
                         </div>
 
-                        {/* Desktop Action Buttons */}
-                        <div className="flex flex-wrap gap-3">
-                            {businessSettings.show_btn_payments && businessPaymentMethods && businessPaymentMethods.length > 0 && (
-                                <button onClick={togglePaymentsModal} className="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200" style={primaryButtonStyle}>
-                                    Pagamenti
-                                </button>
-                            )}
-
-                            {businessSettings.show_btn_review && googleReviewLinkUrl && (
-                                <Link href={googleReviewLinkUrl} target="_blank" rel="noopener noreferrer" className="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center gap-1" style={primaryButtonStyle}>
-                                    Recensione
-                                    <Image
-                                        src="/icons/google.png"
-                                        alt="Google"
-                                        width={16}
-                                        height={16}
-                                        style={getButtonIconStyle()}
-                                    />
-                                </Link>
-                            )}
-
-                            {businessSettings.show_btn_phone && hasPhones && (
-                                <button onClick={() => toggleContactModal('phone')} className={circularButtonBaseClass} style={primaryButtonStyle}>
-                                    <div className="link-icon-wrapper w-12 h-12 flex items-center justify-center rounded-full">
-                                        <Image
-                                            src="/icons/iconsax/phone.svg"
-                                            alt={t('call')}
-                                            width={24}
-                                            height={24}
-                                            style={getButtonIconStyle()}
-                                        />
-                                    </div>
-                                </button>
-                            )}
-
-                            {businessSettings.show_btn_email && hasEmails && (
-                                <button onClick={() => toggleContactModal('email')} className={circularButtonBaseClass} style={primaryButtonStyle}>
-                                    <div className="link-icon-wrapper w-12 h-12 flex items-center justify-center rounded-full">
-                                        <Image
-                                            src="/icons/iconsax/email.svg"
-                                            alt={t('email')}
-                                            width={24}
-                                            height={24}
-                                            style={getButtonIconStyle()}
-                                        />
-                                    </div>
-                                </button>
-                            )}
-                        </div>
                     </div>
                 </div>
             </div>

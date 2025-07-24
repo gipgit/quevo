@@ -20,6 +20,7 @@
     "sendEmail": "Send Email",
     "copyEmail": "Copy Email",
     "contactsUnavailable": "Sorry, contact information is not available at the moment. Please try again later.",
+    "services": "Services",
     "products": "Products",
     "bookings": "Bookings",
     "quotations": "Quotations",
@@ -42,6 +43,17 @@
     "edit": "Edit",
     "delete": "Delete",
     "save": "Save"
+  },
+  "Pricing": {
+    "title": "Pricing Plans",
+    "subtitle": "Choose the perfect plan for your business",
+    "month": "month",
+    "getStarted": "Get Started",
+    "contactSales": "Contact Sales",
+    "needHelp": "Need Help?",
+    "needHelpDescription": "Not sure which plan to choose? Our team is here to help you find the perfect solution for your business.",
+    "contactSupport": "Contact Support",
+    "viewDemo": "View Demo"
   },
   "ServiceRequest": {
     "loadingCalendar": "Loading calendar",

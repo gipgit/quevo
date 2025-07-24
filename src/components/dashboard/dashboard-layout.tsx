@@ -8,6 +8,7 @@ import { signOut } from "next-auth/react"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import BusinessSelectionModal from "@/components/modals/BusinessSelectionModal"
 import { getPlanColors, capitalizePlanName } from "@/lib/plan-colors"
+import AnimatedLoadingBackground from "@/components/ui/AnimatedLoadingBackground"
 
 import { 
   HomeIcon, 
@@ -21,7 +22,9 @@ import {
   ArrowRightOnRectangleIcon,
   XMarkIcon,
   ClipboardDocumentListIcon,
-  ClipboardDocumentIcon
+  ClipboardDocumentIcon,
+  Bars3Icon,
+  Cog6ToothIcon
 } from "@heroicons/react/24/outline"
 
 interface DashboardLayoutProps {
@@ -45,9 +48,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <LoadingSpinner size="xl" color="blue" />
-      </div>
+      <AnimatedLoadingBackground>
+        <div className="text-center">
+          <LoadingSpinner size="xl" color="blue" />
+        </div>
+      </AnimatedLoadingBackground>
     )
   }
 
@@ -286,31 +291,105 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           </div>
         </div>
       </div>
-      {/* Mobile Menu */}
-      <div className={`lg:hidden ${isMobileMenuOpen ? "fixed inset-0 z-50" : "hidden"}`}>
-        <div className="flex h-full flex-col bg-gray-900 p-4">
+
+      {/* Mobile Sidebar Overlay */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-50" onClick={() => setIsMobileMenuOpen(false)} />
+      )}
+
+      {/* Mobile Sidebar */}
+      <div className={`lg:hidden fixed inset-y-0 left-0 z-50 w-80 transform transition-transform duration-300 ease-in-out ${
+        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        <div className="flex h-full flex-col bg-gray-200 px-6 py-6">
           {/* Close Button */}
-          <div className="flex justify-end">
+          <div className="flex justify-end mb-4">
             <button
               onClick={() => setIsMobileMenuOpen(false)}
-              className="text-gray-400 hover:text-white"
+              className="text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100"
             >
-                <XMarkIcon className="h-6 w-6" />
+              <XMarkIcon className="h-6 w-6" />
             </button>
           </div>
+
+          {/* User Plan Card */}
+          {userPlan && (
+            <div className="bg-gray-50 rounded-lg p-4 mb-4">
+              <Link href="/dashboard/plan" className="block" onClick={() => setIsMobileMenuOpen(false)}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3 flex-1 min-w-0">
+                    <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center overflow-hidden">
+                      <span className="text-white text-sm font-medium">
+                        {getUserInitial()}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-gray-900 font-medium text-sm truncate">{getManagerFullName()}</p>
+                      <p className="text-xs text-gray-600">Manage your plan</p>
+                    </div>
+                  </div>
+                  <div className="flex-shrink-0 ml-3">
+                    {(() => {
+                      const planColors = getPlanColors(userPlan.plan_name);
+                      return (
+                        <span className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium ${planColors.gradient} ${planColors.textColor}`}>
+                          {planColors.showStar && (
+                            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                          )}
+                          {capitalizePlanName(userPlan.plan_name)}
+                        </span>
+                      );
+                    })()}
+                  </div>
+                </div>
+              </Link>
+            </div>
+          )}
+
+          {/* Business Info Card */}
+          <div className="bg-gray-50 rounded-lg p-4 cursor-pointer hover:bg-gray-100 transition-colors mb-4" onClick={() => {
+            setShowBusinessModal(true)
+            setIsMobileMenuOpen(false)
+          }}>
+            <div className="flex items-center space-x-3">
+              <div className="h-10 w-10 rounded-full bg-gray-600 flex items-center justify-center overflow-hidden">
+                {(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? (
+                  <img
+                    src={currentBusiness?.business_img_profile || `/uploads/business/${currentBusiness.business_public_uuid}/profile.webp`}
+                    alt={businessName}
+                    className="h-full w-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement
+                      target.style.display = "none"
+                      target.nextElementSibling?.classList.remove("hidden")
+                    }}
+                  />
+                ) : null}
+                <span className={`text-white text-sm font-medium ${(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? "hidden" : ""}`}>
+                  {getBusinessInitial()}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-gray-900 font-semibold text-sm truncate">{businessName}</h2>
+              </div>
+            </div>
+          </div>
+
           {/* Navigation Items */}
-          <nav className="mt-4 flex-1">
-            <ul className="space-y-2">
+          <nav className="flex-1">
+            <ul className="space-y-0">
                 {navigationItems.map((item) => {
                   const IconComponent = item.icon
                   return (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className={`flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 transition-all ${
+                    className={`flex items-center gap-x-3 rounded-md p-2 text-sm md:text-base leading-6 transition-all ${
                       pathname === item.href
-                        ? "bg-gray-800 text-white"
-                        : "text-gray-400 hover:bg-gray-700"
+                        ? "bg-white text-gray-900 shadow-sm"
+                        : "text-gray-700 hover:bg-gray-200"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -322,11 +401,64 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 })}
             </ul>
           </nav>
+
+          {/* Reports Section */}
+          <div>
+            <p className="text-xs font-semibold text-gray-600 uppercase">{t("nav.reports")}</p>
+            <ul className="mt-2 space-y-2">
+                {reportItems.map((item) => {
+                  const IconComponent = item.icon
+                  return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={`flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 transition-all ${
+                      pathname === item.href
+                        ? "bg-white text-gray-900 shadow-sm"
+                        : "text-gray-600 hover:bg-gray-200"
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                        <IconComponent className="h-5 w-5" />
+                    {item.label}
+                  </Link>
+                </li>
+                  )
+                })}
+            </ul>
+          </div>
+
+          {/* Account Section */}
+          <div>
+            <p className="text-xs font-semibold text-gray-600 uppercase">Account</p>
+            <ul className="mt-2 space-y-2">
+                {accountItems.map((item) => {
+                  const IconComponent = item.icon
+                  return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={`flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 transition-all ${
+                      pathname === item.href
+                        ? "bg-white text-gray-900 shadow-sm"
+                        : "text-gray-600 hover:bg-gray-200"
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                        <IconComponent className="h-5 w-5" />
+                    {item.label}
+                  </Link>
+                </li>
+                  )
+                })}
+            </ul>
+          </div>
+
           {/* Logout Button */}
           <div className="mt-auto">
             <button
               onClick={handleLogout}
-              className="flex w-full items-center justify-center gap-x-3 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold leading-6 text-white transition-all hover:bg-red-700"
+              className="flex w-full items-center justify-center gap-x-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold leading-6 text-gray-700 transition-all hover:bg-gray-50"
             >
                 <ArrowRightOnRectangleIcon className="h-5 w-5" />
               {t("nav.logout") || "Logout"}
@@ -334,9 +466,85 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           </div>
         </div>
       </div>
+
+      {/* Bottom Navigation Bar (Mobile) */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-gradient-to-t from-gray-100 to-gray-200 border-t border-gray-300 rounded-t-3xl shadow-lg">
+        <div className="flex items-center justify-around px-4 py-3">
+          {/* Essential Navigation Items */}
+          <Link
+            href="/dashboard"
+            className={`flex flex-col items-center p-2 rounded-lg transition-colors ${
+              pathname === "/dashboard"
+                ? "text-blue-600 bg-blue-50"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
+          >
+            <HomeIcon className="h-6 w-6" />
+            <span className="text-xs mt-1 font-medium">Home</span>
+          </Link>
+
+          <Link
+            href="/dashboard/appointments"
+            className={`flex flex-col items-center p-2 rounded-lg transition-colors ${
+              pathname === "/dashboard/appointments"
+                ? "text-blue-600 bg-blue-50"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
+          >
+            <CalendarIcon className="h-6 w-6" />
+            <span className="text-xs mt-1 font-medium">Appointments</span>
+          </Link>
+
+          <Link
+            href="/dashboard/services"
+            className={`flex flex-col items-center p-2 rounded-lg transition-colors ${
+              pathname === "/dashboard/services"
+                ? "text-blue-600 bg-blue-50"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
+          >
+            <WrenchScrewdriverIcon className="h-6 w-6" />
+            <span className="text-xs mt-1 font-medium">Services</span>
+          </Link>
+
+          <Link
+            href="/dashboard/service-boards"
+            className={`flex flex-col items-center p-2 rounded-lg transition-colors ${
+              pathname === "/dashboard/service-boards"
+                ? "text-blue-600 bg-blue-50"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
+          >
+            <ClipboardDocumentIcon className="h-6 w-6" />
+            <span className="text-xs mt-1 font-medium">Boards</span>
+          </Link>
+
+          <Link
+            href="/dashboard/profile"
+            className={`flex flex-col items-center p-2 rounded-lg transition-colors ${
+              pathname === "/dashboard/profile"
+                ? "text-blue-600 bg-blue-50"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
+          >
+            <UserIcon className="h-6 w-6" />
+            <span className="text-xs mt-1 font-medium">Profile</span>
+          </Link>
+
+          {/* Sidebar Toggle Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="flex flex-col items-center p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+          >
+            <Bars3Icon className="h-6 w-6" />
+            <span className="text-xs mt-1 font-medium">Menu</span>
+          </button>
+        </div>
+      </div>
+
       {/* Main Content */}
       <div className="lg:pl-80">
-        <div className="px-4 py-6 sm:px-6 md:px-10 lg:px-12">
+        <div className="px-4 py-6 sm:px-6 md:px-10 lg:px-12 pb-20 lg:pb-6">
           {children}
         </div>
       </div>

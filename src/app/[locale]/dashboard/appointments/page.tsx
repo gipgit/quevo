@@ -269,17 +269,17 @@ export default function AppointmentsPage() {
   const renderHeader = () => (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
       <div className="flex-1 min-w-0">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-3xl lg:text-3xl font-bold text-gray-900">
           {t('title')}
         </h1>
         {/* Calendar/List View Tabs */}
-        <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg mt-4 w-fit">
+        <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg mt-4 w-fit">
           <button
             onClick={() => setViewMode('calendar')}
             className={`py-2 px-4 text-sm font-medium rounded-md transition-colors ${
               viewMode === 'calendar'
-                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
             }`}
           >
             <div className="flex items-center gap-2">
@@ -293,8 +293,8 @@ export default function AppointmentsPage() {
             onClick={() => setViewMode('list')}
             className={`py-2 px-4 text-sm font-medium rounded-md transition-colors ${
               viewMode === 'list'
-                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
             }`}
           >
             <div className="flex items-center gap-2">
@@ -322,7 +322,7 @@ export default function AppointmentsPage() {
         )}
         <Link
           href="/dashboard/appointments/create"
-          className={`ml-2 px-6 py-3 text-lg font-semibold rounded-lg transition-colors inline-flex items-center gap-2 ${
+          className={`ml-2 px-4 py-2 md:px-6 md:py-3 text-sm md:text-lg font-semibold rounded-lg transition-colors inline-flex items-center gap-2 ${
             canCreateAppointment()
               ? "bg-blue-600 hover:bg-blue-700 text-white"
               : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -367,17 +367,17 @@ export default function AppointmentsPage() {
                   {/* Day Header */}
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
-                      <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                      <h2 className="text-xl font-bold text-gray-900">
                         {formatDate(dayDate)}
                       </h2>
                       {isToday && (
-                        <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-full">
+                        <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
                           Today
                         </span>
                       )}
                     </div>
-                    <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700"></div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                    <div className="flex-1 h-px bg-gray-200"></div>
+                    <span className="text-sm text-gray-500">
                       {dayAppointments.length} appointment{dayAppointments.length !== 1 ? 's' : ''}
                     </span>
                   </div>
@@ -389,19 +389,19 @@ export default function AppointmentsPage() {
                       .map((appointment) => (
                         <div
                           key={appointment.id}
-                          className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6 transition-colors bg-white dark:bg-gray-800"
+                          className="border border-gray-200 rounded-lg p-4 sm:p-6 transition-colors bg-white"
                         >
                           <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
                             <div className="w-full lg:w-64 flex-shrink-0">
                               {/* Date and Time Card */}
-                              <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 lg:p-6 bg-white dark:bg-gray-800">
+                              <div className="border border-gray-200 rounded-lg p-4 lg:p-6 bg-white">
                                 <div className="flex flex-col items-center gap-3">
                                   {/* Time Section - Top */}
                                   <div className="text-center">
-                                    <div className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+                                    <div className="text-2xl lg:text-3xl font-bold text-gray-900">
                                       {formatTime(appointment.start)}
                                     </div>
-                                    <div className="text-sm lg:text-base text-gray-600 dark:text-gray-400">
+                                    <div className="text-sm lg:text-base text-gray-600">
                                       {formatTime(appointment.end)}
                                     </div>
                                   </div>
@@ -413,7 +413,7 @@ export default function AppointmentsPage() {
                                   
                                   {/* Date Section - Bottom */}
                                   <div className="text-center">
-                                    <div className="text-xs lg:text-sm text-gray-600 dark:text-gray-400">
+                                    <div className="text-xs lg:text-sm text-gray-600">
                                       {new Date(appointment.start).toLocaleDateString('it-IT', { 
                                         weekday: 'short',
                                         day: 'numeric',
@@ -429,11 +429,11 @@ export default function AppointmentsPage() {
                             <div className="flex-1 min-w-0">
                               <div className="flex flex-col gap-3">
                                 <div>
-                                  <h3 className="text-xl lg:text-2xl font-semibold text-gray-900 dark:text-white mb-1">
+                                  <h3 className="text-xl lg:text-2xl font-semibold text-gray-900 mb-1">
                                     {appointment.title}
                                   </h3>
                                   {appointment.service_board_title && (
-                                    <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">
+                                    <p className="text-sm text-blue-600 font-medium">
                                       {appointment.service_board_title}
                                     </p>
                                   )}
@@ -449,20 +449,20 @@ export default function AppointmentsPage() {
                                         className="w-4 h-4"
                                       />
                                     </div>
-                                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                                    <span className="text-sm font-medium text-gray-900">
                                       {appointment.platform_name}
                                     </span>
                                   </div>
                                 )}
                                 {appointment.platform_name && appointment.platform_link && (
-                                  <div className="flex items-center space-x-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg px-3 py-2 mb-3">
-                                    <span className="text-xs text-blue-600 dark:text-blue-400 font-medium truncate">
+                                  <div className="flex items-center space-x-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 mb-3">
+                                    <span className="text-xs text-blue-600 font-medium truncate">
                                       {appointment.platform_link}
                                     </span>
                                     <div className="flex space-x-1">
                                       <button
                                         onClick={() => navigator.clipboard.writeText(appointment.platform_link!)}
-                                        className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                                        className="p-1 text-blue-600 hover:text-blue-800 transition-colors"
                                         title="Copy link"
                                       >
                                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -473,7 +473,7 @@ export default function AppointmentsPage() {
                                         href={appointment.platform_link}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                                        className="p-1 text-blue-600 hover:text-blue-800 transition-colors"
                                         title="Open link"
                                       >
                                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -486,12 +486,12 @@ export default function AppointmentsPage() {
                                 {!appointment.platform_name && appointment.appointment_location && (
                                   <div className="flex items-center space-x-2 mb-3">
                                     <div className="w-5 h-5 flex items-center justify-center">
-                                      <svg className="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                       </svg>
                                     </div>
-                                    <span className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                                    <span className="text-sm text-gray-600 line-clamp-2">
                                       {appointment.appointment_location}
                                     </span>
                                   </div>
@@ -500,25 +500,25 @@ export default function AppointmentsPage() {
                                 {/* Customer Info */}
                                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
                                   <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                                      <span className="text-blue-600 dark:text-blue-400 font-bold text-sm">
+                                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                      <span className="text-blue-600 font-bold text-sm">
                                         {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
                                       </span>
                                     </div>
-                                    <h4 className="font-medium text-gray-900 dark:text-white text-base">
+                                    <h4 className="font-medium text-gray-900 text-base">
                                       {appointment.customerName}
                                     </h4>
                                   </div>
                                   
                                   {/* Email */}
                                   <div className="flex items-center gap-2">
-                                    <span className="text-xs font-medium text-gray-900 dark:text-white">
+                                    <span className="text-xs font-medium text-gray-900">
                                       {appointment.customerEmail}
                                     </span>
                                     <div className="flex items-center gap-1">
                                       <button
                                         onClick={() => navigator.clipboard.writeText(appointment.customerEmail)}
-                                        className="p-0.5 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                                        className="p-0.5 text-gray-500 hover:text-gray-700 transition-colors"
                                         title="Copy email"
                                       >
                                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -527,7 +527,7 @@ export default function AppointmentsPage() {
                                       </button>
                                       <button
                                         onClick={() => window.open(`mailto:${appointment.customerEmail}`)}
-                                        className="p-0.5 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                                        className="p-0.5 text-blue-600 hover:text-blue-800 transition-colors"
                                         title="Send email"
                                       >
                                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -540,13 +540,13 @@ export default function AppointmentsPage() {
                                   {/* Phone */}
                                   {appointment.customerPhone && (
                                     <div className="flex items-center gap-2">
-                                      <span className="text-xs font-medium text-gray-900 dark:text-white">
+                                      <span className="text-xs font-medium text-gray-900">
                                         {appointment.customerPhone}
                                       </span>
                                       <div className="flex items-center gap-1">
                                         <button
                                           onClick={() => appointment.customerPhone && navigator.clipboard.writeText(appointment.customerPhone)}
-                                          className="p-0.5 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                                          className="p-0.5 text-gray-500 hover:text-gray-700 transition-colors"
                                           title="Copy phone"
                                         >
                                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -555,7 +555,7 @@ export default function AppointmentsPage() {
                                       </button>
                                         <button
                                           onClick={() => window.open(`tel:${appointment.customerPhone}`)}
-                                          className="p-0.5 text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 transition-colors"
+                                          className="p-0.5 text-green-600 hover:text-green-800 transition-colors"
                                           title="Call"
                                         >
                                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -564,7 +564,7 @@ export default function AppointmentsPage() {
                                         </button>
                                         <button
                                           onClick={() => appointment.customerPhone && window.open(`https://wa.me/${appointment.customerPhone.replace(/\D/g, '')}`)}
-                                          className="p-0.5 text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 transition-colors"
+                                          className="p-0.5 text-green-600 hover:text-green-800 transition-colors"
                                           title="WhatsApp"
                                         >
                                           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
@@ -578,8 +578,8 @@ export default function AppointmentsPage() {
                                 
                                 {appointment.notes && (
                                   <div className="flex items-center gap-2">
-                                    <span className="text-gray-500 dark:text-gray-400 text-xs whitespace-nowrap">Notes:</span>
-                                    <p className="text-xs text-gray-700 dark:text-gray-300 mt-0 line-clamp-2">
+                                    <span className="text-gray-500 text-xs whitespace-nowrap">Notes:</span>
+                                    <p className="text-xs text-gray-700 mt-0 line-clamp-2">
                                       {appointment.notes}
                                     </p>
                                   </div>
@@ -714,7 +714,7 @@ export default function AppointmentsPage() {
               onNavigate={handleNavigate}
               step={60}
               timeslots={1}
-              className="dark:bg-gray-900"
+              className=""
               popup={false}
               {...({
                 components: {
@@ -756,11 +756,11 @@ export default function AppointmentsPage() {
             <div className="lg:w-[45%] lg:mt-0 mt-6">
               <div className="lg:sticky lg:top-6">
                 <div className="mb-4 text-center lg:text-left">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  <h3 className="text-lg font-semibold text-gray-900">
                     {formatDate(selectedDate)}
                   </h3>
                   {isSameDay(selectedDate, new Date()) && (
-                    <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">Today</span>
+                    <span className="text-sm text-blue-600 font-medium">Today</span>
                   )}
                 </div>
                 
@@ -780,18 +780,18 @@ export default function AppointmentsPage() {
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">
                         {dayAppointments.length} appointment{dayAppointments.length !== 1 ? 's' : ''}
                       </h4>
                       {dayAppointments.map(appt => (
-                        <div key={appt.id} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
+                        <div key={appt.id} className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
                           <div className="flex items-start gap-4">
                             {/* Left side - Time and Status */}
                             <div className="flex-shrink-0 text-center">
-                              <div className="text-base font-medium text-gray-900 dark:text-gray-100">
+                              <div className="text-base font-medium text-gray-900">
                                 {formatTime(appt.start)}
                               </div>
-                              <div className="text-sm text-gray-500 dark:text-gray-500">
+                              <div className="text-sm text-gray-500">
                                 {formatTime(appt.end)}
                               </div>
                               <span className={`inline-block px-2 py-1 text-xs rounded-full mt-2 ${getStatusColor(appt.status)}`}>
@@ -803,7 +803,7 @@ export default function AppointmentsPage() {
                             <div className="flex-1 min-w-0">
                               {/* Title */}
                               <div className="mb-2">
-                                <h5 className="font-medium text-gray-900 dark:text-gray-100 text-sm mb-1">
+                                <h5 className="font-medium text-gray-900 text-sm mb-1">
                                   {appt.title}
                                 </h5>
                               </div>
@@ -819,19 +819,19 @@ export default function AppointmentsPage() {
                                         className="w-3 h-3"
                                       />
                                     </div>
-                                    <span className="text-xs font-medium text-gray-900 dark:text-white">
+                                    <span className="text-xs font-medium text-gray-900">
                                       {appt.platform_name}
                                     </span>
                                   </div>
                                   {appt.platform_link && (
-                                    <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded px-2 py-1">
-                                      <span className="text-xs text-blue-600 dark:text-blue-400 font-medium truncate flex-1">
+                                    <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded px-2 py-1">
+                                      <span className="text-xs text-blue-600 font-medium truncate flex-1">
                                         {appt.platform_link}
                                       </span>
                                       <div className="flex items-center gap-1">
                                         <button
                                           onClick={() => navigator.clipboard.writeText(appt.platform_link || '')}
-                                          className="p-0.5 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                                          className="p-0.5 text-blue-600 hover:text-blue-800 transition-colors"
                                           title="Copy link"
                                         >
                                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -842,7 +842,7 @@ export default function AppointmentsPage() {
                                           href={appt.platform_link}
                                           target="_blank"
                                           rel="noopener noreferrer"
-                                          className="p-0.5 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                                          className="p-0.5 text-blue-600 hover:text-blue-800 transition-colors"
                                           title="Open link"
                                         >
                                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -859,12 +859,12 @@ export default function AppointmentsPage() {
                                 <div className="mb-2">
                                   <div className="flex items-center gap-2">
                                     <div className="w-4 h-4 flex items-center justify-center">
-                                      <svg className="w-3 h-3 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                       </svg>
                                     </div>
-                                    <span className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
+                                    <span className="text-xs text-gray-600 line-clamp-2">
                                       {appt.appointment_location}
                                     </span>
                                   </div>
@@ -874,7 +874,7 @@ export default function AppointmentsPage() {
                               {/* Service Board - After Platform/Location */}
                               {appt.service_board_title && (
                                 <div className="mb-2">
-                                  <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                                  <p className="text-xs text-blue-600 font-medium">
                                     {appt.service_board_title}
                                   </p>
                                 </div>
@@ -885,24 +885,24 @@ export default function AppointmentsPage() {
                                 <div className="flex flex-wrap items-center gap-2">
                                   {/* Customer Avatar and Name */}
                                   <div className="flex items-center gap-2">
-                                    <div className="w-5 h-5 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                                      <span className="text-blue-600 dark:text-blue-400 font-bold text-xs">
+                                    <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
+                                      <span className="text-blue-600 font-bold text-xs">
                                         {appt.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
                                       </span>
                                     </div>
-                                    <span className="text-xs font-medium text-gray-900 dark:text-gray-100">
+                                    <span className="text-xs font-medium text-gray-900">
                                       {appt.customerName}
                                     </span>
                                   </div>
                                   
                                   {/* Email with copy and mail buttons */}
                                   <div className="flex items-center gap-1">
-                                    <span className="text-xs text-gray-600 dark:text-gray-400">
+                                    <span className="text-xs text-gray-600">
                                       {appt.customerEmail}
                                     </span>
                                     <button
                                       onClick={() => navigator.clipboard.writeText(appt.customerEmail)}
-                                      className="p-0.5 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                                      className="p-0.5 text-gray-500 hover:text-gray-700 transition-colors"
                                       title="Copy email"
                                     >
                                       <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -911,7 +911,7 @@ export default function AppointmentsPage() {
                                     </button>
                                     <button
                                       onClick={() => window.open(`mailto:${appt.customerEmail}`)}
-                                      className="p-0.5 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                                      className="p-0.5 text-blue-600 hover:text-blue-800 transition-colors"
                                       title="Send email"
                                     >
                                       <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -923,12 +923,12 @@ export default function AppointmentsPage() {
                                   {/* Phone with copy and call buttons */}
                                   {appt.customerPhone && (
                                     <div className="flex items-center gap-1">
-                                      <span className="text-xs text-gray-600 dark:text-gray-400">
+                                      <span className="text-xs text-gray-600">
                                         {appt.customerPhone}
                                       </span>
                                       <button
                                         onClick={() => appt.customerPhone && navigator.clipboard.writeText(appt.customerPhone)}
-                                        className="p-0.5 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                                        className="p-0.5 text-gray-500 hover:text-gray-700 transition-colors"
                                         title="Copy phone"
                                       >
                                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -937,7 +937,7 @@ export default function AppointmentsPage() {
                                       </button>
                                       <button
                                         onClick={() => appt.customerPhone && window.open(`tel:${appt.customerPhone}`)}
-                                        className="p-0.5 text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 transition-colors"
+                                        className="p-0.5 text-green-600 hover:text-green-800 transition-colors"
                                         title="Call"
                                       >
                                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -951,10 +951,10 @@ export default function AppointmentsPage() {
                             </div>
                           </div>
                           {appt.notes && (
-                            <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                            <div className="mt-3 pt-3 border-t border-gray-100">
                               <div className="flex items-start gap-2">
-                                <span className="text-gray-500 dark:text-gray-400 text-xs whitespace-nowrap mt-0.5">Notes:</span>
-                                <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
+                                <span className="text-gray-500 text-xs whitespace-nowrap mt-0.5">Notes:</span>
+                                <p className="text-xs text-gray-600 line-clamp-2">
                                   {appt.notes}
                                 </p>
                               </div>

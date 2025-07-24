@@ -20,6 +20,7 @@
     "sendEmail": "Invia Email",
     "copyEmail": "Copia Email",
     "contactsUnavailable": "Spiacenti, nessun contatto disponibile al momento. Riprova più tardi.",
+    "services": "Servizi",
     "products": "Prodotti",
     "bookings": "Prenotazioni",
     "quotations": "Preventivi",
@@ -42,6 +43,17 @@
     "edit": "Modifica",
     "delete": "Elimina",
     "save": "Salva"
+  },
+  "Pricing": {
+    "title": "Piani di Prezzo",
+    "subtitle": "Scegli il piano perfetto per la tua attività",
+    "month": "mese",
+    "getStarted": "Inizia Ora",
+    "contactSales": "Contatta Vendite",
+    "needHelp": "Hai bisogno di aiuto?",
+    "needHelpDescription": "Non sei sicuro di quale piano scegliere? Il nostro team è qui per aiutarti a trovare la soluzione perfetta per la tua attività.",
+    "contactSupport": "Contatta Supporto",
+    "viewDemo": "Visualizza Demo"
   },
   "ServiceRequest": {
     "loadingCalendar": "Caricamento calendario",

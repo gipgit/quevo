@@ -4,8 +4,8 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { useBusiness } from "@/lib/business-context"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
-import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import BusinessSelectionModal from "@/components/modals/BusinessSelectionModal"
+import Link from "next/link"
 import { 
   UserIcon, 
   CubeIcon, 
@@ -225,17 +225,24 @@ export default function DashboardPage() {
         {/* Current Business Section */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-4">
+            <div className="md:flex md:flex-row md:items-center gap-2 md:gap-4">
               <div>
-                <div className="text-sm text-gray-600 mb-1">{t("currentBusiness.label")}</div>
                 <div className="font-semibold text-3xl md:text-4xl text-gray-900">{currentBusiness?.business_name}</div>
               </div>
-              <button
-                onClick={() => setShowBusinessModal(true)}
-                className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-50 transition-colors"
-              >
-                {t("currentBusiness.change")}
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowBusinessModal(true)}
+                  className="px-2 py-1 w-auto bg-white border border-gray-300 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-50 transition-colors"
+                >
+                  {t("currentBusiness.change")}
+                </button>
+                <Link
+                  href="/dashboard/onboarding"
+                  className="px-2 py-1 w-auto bg-white border border-gray-300 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-50 transition-colors"
+                >
+                  Add Business
+                </Link>
+              </div>
             </div>
            
              {/* Plan Section */}
@@ -266,17 +273,17 @@ export default function DashboardPage() {
           {usage && planLimits && (
             <div className="mb-8">
               <p className="text-xs text-gray-600 mb-2">{t("usage.title")}</p>
-              <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
+              <div className="grid grid-cols-3 md:grid-cols-5 gap-1 md:gap-4 items-end">
                 {usageCards.map(card => {
                   const max = getPlanLimitValue(card.feature)
                   const current = getUsageValue(card.feature)
                   const suffix = getLimitSuffix(card.feature)
                   return (
                     <div key={card.feature}>
-                      <div className="text-sm text-gray-500">{card.label}</div>
-                      <div className="font-semibold text-lg md:text-xl mb-2">
+                      <div className="font-medium text-md md:text-lg lg:text-xl mb-1">
                         {formatUsageDisplay(current, { value: max })} {suffix}
                       </div>
+                      <div className="text-xs md:text-sm text-gray-500 mb-2">{card.label}</div>
                       {max !== -1 && max !== null && (
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div
@@ -298,10 +305,10 @@ export default function DashboardPage() {
         {/* Public Link Section */}
         <div className="mb-8">
                       <div className={`bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-gray-300 px-6 py-4 rounded-full text-base font-medium flex items-center justify-between gap-4 shadow-lg border border-gray-700 transition-all duration-300 relative overflow-hidden ${
-              isAnimating ? 'animate-shine' : ''
+              isAnimating ? 'animate-pill-shine' : ''
             }`}>
-            <div className="flex items-center gap-3 min-w-0 flex-1">
-              <GlobeAltIcon className="w-5 h-5 md:w-6 md:h-6 text-blue-400 flex-shrink-0" />
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <GlobeAltIcon className="w-6 h-6 md:w-7 md:h-7 text-blue-400 flex-shrink-0" />
               <span className="text-sm md:text-lg truncate">{publicUrl}</span>
             </div>
             <div className="flex items-center gap-2">
@@ -343,7 +350,7 @@ export default function DashboardPage() {
               <a
                 key={index}
                 href={card.href}
-                className={`bg-white rounded-xl p-6 border border-gray-200 transition-all duration-200 group`}
+                className={`bg-white rounded-xl p-4 md:p-6 border border-gray-200 transition-all duration-200 group`}
               >
                 <div className="flex flex-col space-y-4">
                   <div className="transition-transform duration-200">
@@ -351,7 +358,7 @@ export default function DashboardPage() {
                   </div>
                   <div>
                     <h3 className="text-md font-semibold text-gray-900 mb-2">{card.title}</h3>
-                    <p className="text-sm text-gray-600">{card.description}</p>
+                    <p className="text-xs md:text-sm text-gray-600">{card.description}</p>
                   </div>
                 </div>
               </a>

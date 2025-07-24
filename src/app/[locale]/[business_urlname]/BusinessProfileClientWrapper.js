@@ -96,25 +96,27 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
             <div style={cssVariables} className={`${bodyClass} profile-content-wrapper relative`}>
                 {/* Cover Image Background - Only for desktop layout */}
                 {!isBookingConfirmationPage && !isServiceBoardPage && initialServerData.businessData.business_img_cover && (
-                    <div className="hidden lg:block fixed inset-0 z-0">
+                    <div className="hidden lg:block fixed inset-0 z-0 p-6 rounded-lg">
+                        <div className="relative h-full w-full rounded-lg">
                         <Image
                             src={initialServerData.businessData.business_img_cover}
                             alt="Cover Background"
                             fill
                             sizes="100vw"
-                            className="object-cover"
+                            className="object-cover rounded-2xl"
                             priority
                         />
                         {/* Overlay for better text readability */}
-                        <div className="absolute inset-0 bg-black/20"></div>
+                        <div className="absolute inset-0 bg-black/20 rounded-2xl"></div>
+                        </div>
                     </div>
                 )}
 
                 {/* --- CONDITIONAL RENDERING OF BusinessProfileHeader --- */}
                 {!isBookingConfirmationPage && !isServiceBoardPage && (
                  
-                    <div className="flex flex-col lg:flex-row items-center relative z-10 lg:p-10 lg:pt-15">
-                        <div className="w-full lg:w-1/2 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-hidden">
+                    <div className="flex flex-col lg:flex-row lg:items-start relative z-10 lg:p-10">
+                        <div className="w-full lg:w-1/2 lg:sticky lg:top-0 lg:overflow-y-hidden">
                             <BusinessProfileHeader
                                 toggleContactModal={openContactModal}
                                 togglePaymentsModal={openPaymentsModal}
@@ -123,8 +125,8 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
                             />
                         </div>
                         
-                        <div className="w-full lg:w-1/2 max-h-screen overflow-y-scroll">
-                            <div className='profile-main rounded-lg'>
+                        <div className="w-full lg:w-1/2 lg:min-h-screen lg:mt-12">
+                            <div className='profile-main lg:min-h-screen lg:rounded-2xl'>
                                 {children} {/* This is where the specific section's page.tsx content will render */}
                             </div>
                         </div>

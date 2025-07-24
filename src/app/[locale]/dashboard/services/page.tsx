@@ -198,7 +198,7 @@ export default function ServicesPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">{t("title")}</h1>
+            <h1 className="text-3xl lg:text-3xl font-bold text-gray-900">{t("title")}</h1>
           </div>
           <div className="flex items-center gap-6">
             <div className="flex flex-col items-end gap-2">
@@ -217,7 +217,7 @@ export default function ServicesPage() {
             <div>
               <Link
                 href="/dashboard/services/create"
-                className={`px-6 py-3 text-lg font-semibold rounded-lg transition-colors inline-flex items-center gap-2 ${
+                className={`px-4 py-2 md:px-6 md:py-3 text-sm md:text-lg font-semibold rounded-lg transition-colors inline-flex items-center gap-2 ${
                   canCreateService()
                     ? "bg-blue-600 hover:bg-blue-700 text-white"
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"

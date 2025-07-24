@@ -16,8 +16,14 @@
 
 .profile-header,
 #topbar-club,
-.category-pills-container {
+.category-pills-container,
+.profile-navbar{
   background-color: var(--theme-color-background) !important;
+  color: var(--theme-color-text) !important;
+}
+
+.profile-content-wrapper {
+  background-color: var(--theme-color-background-secondary) !important;
   color: var(--theme-color-text) !important;
 }
 

@@ -611,18 +611,22 @@ export default function ProfilePage() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-2 md:p-4 lg:p-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">{t("title")}</h1>
-          <a 
-            href={publicUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 font-medium transition-colors"
-          >
-            {t("openProfile")}
-          </a>
+        <div className="flex flex-row justify-between items-start sm:items-center gap-4 mb-8">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">{t("title")}</h1>
+          </div>
+          <div>
+            <a 
+              href={publicUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 font-medium transition-colors"
+            >
+              {t("openProfile")}
+            </a>
+          </div>
         </div>
         
         {/* Tab Navigation */}

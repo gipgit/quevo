@@ -338,7 +338,7 @@ export default function CreateServicePage() {
       <div className="mx-auto">
         <div className="mb-8">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">{t("createService")}</h1>
+            <h1 className="text-2xl lg:text-xl font-bold text-gray-900">{t("createService")}</h1>
             {planLimitServices && (
               <div className="ml-4 min-w-[220px]">
                 <UsageLimitBar
