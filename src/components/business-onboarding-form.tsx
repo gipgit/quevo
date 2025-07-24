@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { ArrowLeftIcon, ArrowRightIcon, CheckIcon, ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline"
+import { ArrowLeftIcon, ArrowRightIcon, CheckIcon, ArrowPathIcon, XMarkIcon, ClipboardDocumentIcon } from "@heroicons/react/24/outline"
 import { BusinessInfoStep } from "./onboarding-steps/business-info-step"
 import { BusinessUrlStep } from "./onboarding-steps/business-url-step"
 import { ContactInfoStep } from "./onboarding-steps/contact-info-step"
@@ -79,6 +79,7 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
   const [canProceed, setCanProceed] = useState(false)
   const [submissionModalOpen, setSubmissionModalOpen] = useState(false)
   const [submissionError, setSubmissionError] = useState<string | null>(null)
+  const [submissionErrorDetails, setSubmissionErrorDetails] = useState<any>(null)
   const [submissionSuccess, setSubmissionSuccess] = useState(false)
 
   const [formData, setFormData] = useState<BusinessFormData>({
@@ -154,6 +155,7 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
   const handleSubmit = async () => {
     setSubmissionModalOpen(true)
     setSubmissionError(null)
+    setSubmissionErrorDetails(null)
     setSubmissionSuccess(false)
     setLoading(true)
     
@@ -198,13 +200,47 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
           router.push(`/dashboard/`)
         }, 1500)
       } else {
-        const errorData = await response.json()
-        const errorMessage = errorData.error || errorData.message || "Errore durante la creazione del business"
+        let errorData
+        let errorMessage = "Errore durante la creazione del business"
+        
+        try {
+          errorData = await response.json()
+          errorMessage = errorData.error || errorData.message || errorMessage
+        } catch (parseError) {
+          // If response is not JSON, use status text
+          errorData = { message: response.statusText }
+          errorMessage = response.statusText || errorMessage
+        }
+        
+        // Add more specific error messages based on status code
+        if (response.status === 400) {
+          errorMessage = "Dati non validi. Controlla i dettagli tecnici per maggiori informazioni."
+        } else if (response.status === 401) {
+          errorMessage = "Non autorizzato. Effettua nuovamente l'accesso."
+        } else if (response.status === 409) {
+          errorMessage = "Nome URL business già in uso. Scegli un nome diverso."
+        } else if (response.status === 500) {
+          errorMessage = "Errore interno del server. Riprova più tardi o contatta il supporto."
+        }
+        
         setSubmissionError(errorMessage)
+        
+        // Store detailed error information for debugging
+        setSubmissionErrorDetails({
+          status: response.status,
+          statusText: response.statusText,
+          errorData: errorData,
+          timestamp: new Date().toISOString()
+        })
       }
     } catch (error) {
       console.error("Error submitting form:", error)
       setSubmissionError("Errore di connessione. Riprova più tardi.")
+      setSubmissionErrorDetails({
+        error: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined,
+        timestamp: new Date().toISOString()
+      })
     } finally {
       setLoading(false)
     }
@@ -214,7 +250,20 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
     if (!loading) {
       setSubmissionModalOpen(false)
       setSubmissionError(null)
+      setSubmissionErrorDetails(null)
       setSubmissionSuccess(false)
+    }
+  }
+
+  const copyErrorDetails = () => {
+    if (submissionErrorDetails) {
+      const errorText = `Error: ${submissionError}\n\nTechnical Details:\n${JSON.stringify(submissionErrorDetails, null, 2)}`
+      navigator.clipboard.writeText(errorText).then(() => {
+        // You could add a toast notification here
+        console.log('Error details copied to clipboard')
+      }).catch(err => {
+        console.error('Failed to copy error details:', err)
+      })
     }
   }
 
@@ -317,39 +366,111 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
         </div>
       </div>
 
-      {/* Submission Modal */}
-      {submissionModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
-          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-            {loading && !submissionError && !submissionSuccess ? (
-              // Loading state
-              <div className="text-center">
-                <LoadingSpinner size="lg" color="blue" />
-                <h3 className="text-xl font-semibold text-gray-900 mt-4 mb-2">
-                  Creazione Business in corso...
-                </h3>
-                <p className="text-gray-600">
-                  Stiamo creando il tuo business. Questo potrebbe richiedere alcuni secondi.
-                </p>
-              </div>
-            ) : (
-              // Success or Error state
-              <>
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-xl font-semibold text-gray-900">
-                    {submissionSuccess ? "Business Creato!" : "Errore"}
-                  </h3>
-                  {!loading && (
-                    <button onClick={closeSubmissionModal} className="text-gray-500 hover:text-gray-700">
-                      <XMarkIcon className="h-6 w-6" />
-                    </button>
-                  )}
-                </div>
+             {/* Submission Modal */}
+       {submissionModalOpen && (
+         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
+           <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+                         {loading && !submissionError && !submissionSuccess ? (
+               // Loading state
+               <div className="text-center py-4">
+                 <LoadingSpinner size="lg" color="blue" />
+                 <h3 className="text-xl font-semibold text-gray-900 mt-4 mb-2">
+                   Creazione Business in corso...
+                 </h3>
+                 <p className="text-gray-600">
+                   Stiamo creando il tuo business. Questo potrebbe richiedere alcuni secondi.
+                 </p>
+               </div>
+                           ) : (
+                 // Success or Error state
+                 <div className="py-2">
+                   <div className="flex justify-between items-center mb-4">
+                     <h3 className="text-xl font-semibold text-gray-900">
+                       {submissionSuccess ? "Business Creato!" : `Errore ${submissionErrorDetails?.status ? `(${submissionErrorDetails.status})` : ''}`}
+                     </h3>
+                     {!loading && (
+                       <button onClick={closeSubmissionModal} className="text-gray-500 hover:text-gray-700">
+                         <XMarkIcon className="h-6 w-6" />
+                       </button>
+                     )}
+                   </div>
                 
                 {submissionError && (
                   <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
                     <strong className="font-bold">Errore!</strong>
                     <span className="block sm:inline"> {submissionError}</span>
+                    
+                    {/* Show helpful suggestions */}
+                    <div className="mt-2 text-sm">
+                      <strong>Suggerimenti:</strong>
+                      <ul className="list-disc list-inside mt-1 ml-2">
+                        <li>Controlla che tutti i campi obbligatori siano compilati</li>
+                        <li>Verifica che il nome URL business non sia già in uso</li>
+                        <li>Assicurati che i file immagine non siano troppo grandi</li>
+                        <li>Se il problema persiste, copia i dettagli tecnici e contatta il supporto</li>
+                      </ul>
+                    </div>
+                    
+                    {/* Show detailed error information */}
+                    {submissionErrorDetails && (
+                      <div className="mt-3 pt-3 border-t border-red-300">
+                        <details className="text-sm">
+                          <summary className="cursor-pointer font-medium hover:text-red-800">
+                            Dettagli tecnici (clicca per espandere)
+                          </summary>
+                          <div className="mt-2 space-y-2">
+                            {submissionErrorDetails.status && (
+                              <div>
+                                <strong>Status:</strong> {submissionErrorDetails.status} {submissionErrorDetails.statusText}
+                              </div>
+                            )}
+                            
+                            {submissionErrorDetails.errorData?.errors && (
+                              <div>
+                                <strong>Errori di validazione:</strong>
+                                <ul className="list-disc list-inside mt-1 ml-2">
+                                  {Object.entries(submissionErrorDetails.errorData.errors).map(([field, errors]: [string, any]) => (
+                                    <li key={field}>
+                                      <strong>{field}:</strong> {Array.isArray(errors) ? errors.join(', ') : errors}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            
+                            {submissionErrorDetails.error && (
+                              <div>
+                                <strong>Errore tecnico:</strong> {submissionErrorDetails.error}
+                              </div>
+                            )}
+                            
+                            {submissionErrorDetails.timestamp && (
+                              <div className="text-xs opacity-75">
+                                <strong>Timestamp:</strong> {new Date(submissionErrorDetails.timestamp).toLocaleString('it-IT')}
+                              </div>
+                            )}
+                            
+                            {/* Show full error data for debugging */}
+                            <div className="mt-2">
+                              <div className="flex items-center justify-between">
+                                <strong>Dati completi:</strong>
+                                <button
+                                  onClick={copyErrorDetails}
+                                  className="text-xs bg-red-200 hover:bg-red-300 px-2 py-1 rounded flex items-center gap-1"
+                                  title="Copia dettagli errore"
+                                >
+                                  <ClipboardDocumentIcon className="w-3 h-3" />
+                                  Copia
+                                </button>
+                              </div>
+                              <pre className="mt-1 text-xs bg-red-50 p-2 rounded overflow-auto max-h-32">
+                                {JSON.stringify(submissionErrorDetails.errorData || submissionErrorDetails, null, 2)}
+                              </pre>
+                            </div>
+                          </div>
+                        </details>
+                      </div>
+                    )}
                   </div>
                 )}
                 
@@ -360,18 +481,18 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
                   </div>
                 )}
                 
-                {!loading && (
-                  <div className="flex justify-end">
-                    <button
-                      onClick={closeSubmissionModal}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                    >
-                      Chiudi
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
+                                 {!loading && (
+                   <div className="flex justify-end">
+                     <button
+                       onClick={closeSubmissionModal}
+                       className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                     >
+                       Chiudi
+                     </button>
+                   </div>
+                 )}
+               </div>
+             )}
           </div>
         </div>
       )}
