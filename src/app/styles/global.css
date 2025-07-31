@@ -474,25 +474,25 @@ body.bg-transition {
 
 @font-face {
     font-family: "FontMain";
-    src: url("../../../public/fonts/custom/Manrope-Regular.otf") format("opentype");
+    src: url("../../../public/fonts/custom/ppneuemontreal-book.otf") format("opentype");
 }
 
 @font-face {
     font-family: "FontSemiBold";
-    src: url("../../../public/fonts/custom/Manrope-Medium.otf") format("truetype");
+    src: url("../../../public/fonts/custom/ppneuemontreal-medium.otf") format("truetype");
 }
 @font-face {
     font-family: "FontBold";
-    src: url("../../../public/fonts/custom/Manrope-SemiBold.otf") format("truetype");
+    src: url("../../../public/fonts/custom/ppneuemontreal-medium.otf") format("truetype");
 }
 @font-face {
     font-family: "FontHeading";
-    src: url("../../../public/fonts/custom/Manrope-Bold.otf") format("truetype");
+    src: url("../../../public/fonts/custom/ppneuemontreal-medium.otf") format("truetype");
 }
 
 @font-face {
     font-family: "FontButton";
-    src: url("../../../public/fonts/custom/PlusJakartaSans-Regular.ttf") format("truetype");
+    src: url("../../../public/fonts/custom/ppneuemontreal-book.otf") format("truetype");
 }
 
 

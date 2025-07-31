@@ -273,23 +273,11 @@ export default function BusinessSignupPage() {
       <div className="min-h-screen flex flex-col md:flex-row">
         {/* Left side - Form */}
         <div className="flex-1 flex items-center justify-center bg-white p-8">
-          <div className="w-full max-w-md">
-            <div className="mb-8">
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">{t("brandTitle")}</h1>
-              <h2 className="text-xl text-gray-700">{t("pageTitle")}</h2>
+          <div className="w-full max-w-[400px]">
+            <div className="mb-6">
+              <h1 className="text-xl font-bold text-gray-900 mb-2">{t("brandTitle")}</h1>
+              <h2 className="text-2xl font-boldtext-gray-900">{t("pageTitle")}</h2>
             </div>
-
-            {message && (
-              <div
-                className={`mb-6 p-4 rounded-md text-sm ${
-                  message.includes("successo") || message.includes("Completata") || message === t("signupSuccess")
-                    ? "bg-green-100 text-green-800 border border-green-200"
-                    : "bg-red-100 text-red-800 border border-red-200"
-                }`}
-              >
-                {message}
-              </div>
-            )}
 
             <form onSubmit={handleSubmit} className="space-y-2">
               {/* Name Field */}
@@ -436,11 +424,29 @@ export default function BusinessSignupPage() {
               </button>
             </form>
 
+            {message && (
+              <div
+                className={`mt-6 p-4 rounded-md text-sm ${
+                  message.includes("successo") || message.includes("Completata") || message === t("signupSuccess")
+                    ? "bg-green-100 text-green-800 border border-green-200"
+                    : "bg-red-100 text-red-800 border border-red-200"
+                }`}
+              >
+                {message}
+              </div>
+            )}
+
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-gray-600 mb-2">
                 {t("alreadyHaveAccount")}{" "}
                 <Link href="/signin/business" className="font-medium text-blue-600 hover:text-blue-500">
                   {t("signInLink")}
+                </Link>
+              </p>
+              <p className="text-xs text-gray-600 mb-4">
+                {t("rightSideSubtitle")}{" "}
+                <Link href="/signup/general" className="text-blue-600 hover:text-blue-300 underline">
+                  {t("rightSideLink")}
                 </Link>
               </p>
               
@@ -455,16 +461,42 @@ export default function BusinessSignupPage() {
           </div>
         </div>
 
-        {/* Right side - Dark background with branding */}
+        {/* Right side - Dark background with branding and benefits */}
         <div className="flex-1 bg-gray-900 flex items-center justify-center text-white p-8">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold mb-4">{t("rightSideTitle")}</h1>
-            <p className="text-gray-300 mb-8">
-              {t("rightSideSubtitle")}{" "}
-              <Link href="/signup/general" className="text-blue-400 hover:text-blue-300 underline">
-                {t("rightSideLink")}
-              </Link>
-            </p>
+          <div className="text-left max-w-md">
+            <h1 className="text-2xl font-bold mb-4">{t("rightSideTitle")}</h1>
+           
+            
+            {/* Benefits List */}
+            <div className="text-left">
+              <h3 className="text-xl font-semibold mb-6">{t("benefits.title")}</h3>
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <CheckIcon className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-200">{t("benefits.freePlan")}</span>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <CheckIcon className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-200">{t("benefits.noPaymentDetails")}</span>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <CheckIcon className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-200">{t("benefits.cancelAnytime")}</span>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <CheckIcon className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-200">{t("benefits.instantSetup")}</span>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <CheckIcon className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-200">{t("benefits.professionalTools")}</span>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <CheckIcon className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-200">{t("benefits.customerSupport")}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

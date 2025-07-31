@@ -164,9 +164,9 @@ export default function SectionActions({ locale }) {
 
                      {/* Right Column - Action Image */}
            <div className="relative flex items-center justify-center">
-             <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-2xl p-8 w-full h-full flex flex-col items-center justify-center">
+             <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-2xl px-4 py-6 lg:p-8 w-full h-full flex flex-col items-center justify-center">
                {/* Static link pill */}
-               <div className="text-center mb-8">
+               <div className="text-center mb-4">
                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
@@ -176,7 +176,7 @@ export default function SectionActions({ locale }) {
                </div>
 
                {/* Smartphone frame */}
-               <div className="relative w-[360px] h-[600px] bg-gray-800 rounded-3xl shadow-2xl p-2">
+               <div className="relative w-[95%] h-[450px] lg:w-[360px] lg:h-[600px] bg-gray-800 rounded-3xl shadow-2xl p-2">
                 {/* Image container with gradient overlay */}
                 <div className={`relative w-full h-full rounded-2xl overflow-hidden bg-gradient-to-br ${localizedCurrentAction.gradient}`}>
                   <img 

@@ -190,10 +190,10 @@ export default function SectionBoard({ locale }) {
                      </div>
 
                     {/* Service Board Benefits Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 lg:gap-6 max-w-6xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4 lg:gap-6 max-w-6xl mx-auto">
                        
                        {/* Unified View */}
-                       <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100 hover:shadow-xl transition-all duration-300 md:col-span-2 lg:col-span-1">
+                       <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100 md:col-span-2 lg:col-span-1">
                             <div className="flex items-start gap-4">
                                 <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                                     <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -210,7 +210,7 @@ export default function SectionBoard({ locale }) {
                         </div>
                         
                        {/* Clear View */}
-                       <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
+                       <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100">
                             <div className="flex items-start gap-4">
                                 <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                                     <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -227,7 +227,7 @@ export default function SectionBoard({ locale }) {
                         </div>
 
                         {/* Problem-Solving Power */}
-                        <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
+                        <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100">
                             <div className="flex items-start gap-4">
                                 <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
                                     <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -244,7 +244,7 @@ export default function SectionBoard({ locale }) {
                         </div>
 
                         {/* Effortless Action Management */}
-                        <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
+                        <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100">
                             <div className="flex items-start gap-4">
                                 <div className="w-12 h-12 rounded-full bg-cyan-100 flex items-center justify-center flex-shrink-0">
                                     <svg className="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -261,7 +261,7 @@ export default function SectionBoard({ locale }) {
                         </div>
 
                         {/* Automated Notifications */}
-                        <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
+                        <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100">
                             <div className="flex items-start gap-4">
                                 <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
                                     <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -278,7 +278,7 @@ export default function SectionBoard({ locale }) {
                         </div>
 
                         {/* Secure & Shareable Access */}
-                        <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
+                        <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100">
                             <div className="flex items-start gap-4">
                                 <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0">
                                     <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -381,7 +381,7 @@ export default function SectionBoard({ locale }) {
 
                     {/* Board Pill Link Example and Get Started Button - Moved below cards */}
                     <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
-                        <div className="w-full lg:w-[500px] inline-flex items-center gap-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded-full px-4 py-2 shadow-md border border-gray-200">
+                        <div className="w-full max-w-[85vw] lg:w-[500px] inline-flex items-center gap-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded-full px-4 py-2 shadow-md border border-gray-200">
                             <div className="flex items-center gap-1 min-w-0 flex-1">
                                 <svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
                                     <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="2" />

@@ -63,8 +63,8 @@ export default function SectionCategories() {
     return (
         <section className="container-x-lg py-8 lg:py-8 bg-gray-50" ref={parallaxSectionRef}>
             <div className="d-flex flex-col lg:flex-row gap-4 lg:gap-8 items-center">
-                <div className="flex-grow flex-basis-80 text-center" style={{ minWidth: '50%' }}>
-                    <p className="font-bold text-lg lg:text-xl mb-3 text-center">{t('Categories.title')}</p>
+                <div className="flex-grow flex-basis-80 text-center mx-auto" style={{ maxWidth: '600px' }}>
+                    <p className="font-bold text-2xl lg:text-3xl mb-3 text-center">{t('Categories.title')}</p>
                     <p className="lg:text-md text-center">{t('Categories.subtitle')}</p>
                 </div>
 

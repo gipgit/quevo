@@ -261,7 +261,16 @@
     "serverError": "Errore interno del server. Riprova più tardi.",
     "invalidData": "Dati non validi",
     "alreadyHaveAccount": "Hai già un account?",
-    "signInLink": "Accedi qui"
+    "signInLink": "Accedi qui",
+    "benefits": {
+      "title": "Perché scegliere Quevo Business?",
+      "freePlan": "1 piano sempre gratuito",
+      "noPaymentDetails": "Inizia gratis senza dati di pagamento",
+      "cancelAnytime": "Cambia o cancella in qualsiasi momento",
+      "instantSetup": "Setup e attivazione istantanei",
+      "professionalTools": "Strumenti professionali per il business",
+      "customerSupport": "Supporto clienti 24/7"
+    }
   },
   "UserManagerActivation": {
     "subject": "Attiva il tuo account Quevo Business",

@@ -325,7 +325,16 @@
     "serverError": "Error interno del servidor. Por favor intenta más tarde.",
     "invalidData": "Datos inválidos",
          "alreadyHaveAccount": "¿Ya tienes una cuenta?",
-     "signInLink": "Inicia sesión aquí"
+     "signInLink": "Inicia sesión aquí",
+     "benefits": {
+       "title": "¿Por qué elegir Quevo Business?",
+       "freePlan": "1 plan siempre gratuito",
+       "noPaymentDetails": "Comienza gratis sin datos de pago",
+       "cancelAnytime": "Cambia o cancela en cualquier momento",
+       "instantSetup": "Configuración e activación instantáneas",
+       "professionalTools": "Herramientas profesionales para negocios",
+       "customerSupport": "Soporte al cliente 24/7"
+     }
    },
         "SignupConfirmation": {
        "title": "¡Registro Completado!",

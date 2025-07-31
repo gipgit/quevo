@@ -75,10 +75,10 @@ export default function SectionFaqs() {
     return (
         <section className="container-x-md py-8 lg:py-12">
             <div className="text-center mb-12">
-                <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+                <h2 className="text-2xl lg:text-2xl font-bold text-gray-900 mb-2 leading-tight">
                     {t('FAQ.title')}
                 </h2>
-                <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-tight">
                     {t('FAQ.subtitle')}
                 </p>
             </div>

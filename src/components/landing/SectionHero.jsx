@@ -236,7 +236,7 @@ export default function SectionHero({ locale }) {
                     
                     {/* Top Row - Content */}
                      <div className="space-y-6 max-w-[1000px] text-center">
-                         <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-none mb-8">
+                         <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-none mb-6">
                              {renderTextWithItalic(t('Hero.title'))}
                          </h1>
                          <p className="text-lg text-gray-600 leading-relaxed">
@@ -244,7 +244,7 @@ export default function SectionHero({ locale }) {
                          </p>
                          
                          {/* 3 Horizontal List Items */}
-                         <div className="flex flex-wrap justify-center gap-6 mt-6">
+                         <div className="flex flex-wrap justify-center gap-1 lg:gap-6 mt-4">
                              <div className="flex items-center gap-2 text-blue-500">
                                  <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -266,8 +266,8 @@ export default function SectionHero({ locale }) {
                          </div>
 
                         {/* Example URL Link Pill and Get Started Button */}
-                        <div className="inline-flex flex-col sm:flex-row gap-4 items-center justify-center max-w-[700px]">
-                                                         <div className="w-full lg:w-[1000px] inline-flex items-center gap-3 bg-gradient-to-r from-blue-100 via-indigo-100 to-purple-100 rounded-full px-6 py-3 shadow-lg relative" style={{
+                        <div className="inline-flex flex-col sm:flex-row gap-4 items-center justify-center max-w-[85vw] lg:max-w-[700px]">
+                                                         <div className="w-full inline-flex items-center gap-3 bg-gradient-to-r from-blue-100 via-indigo-100 to-purple-100 rounded-full px-6 py-3 shadow-lg relative" style={{
                                background: 'linear-gradient(white, white) padding-box, linear-gradient(to right, #60a5fa, #8b5cf6, #ec4899, #f59e0b, #10b981, #3b82f6) border-box',
                                border: '3px solid transparent'
                              }}>
@@ -283,7 +283,7 @@ export default function SectionHero({ locale }) {
                                 </div>
                                 <Link 
                                     href={`/${locale}/${currentBusiness.url}`}
-                                    className="inline-flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors flex-shrink-0"
+                                    className="inline-flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-full text-xs lg:text-sm font-medium transition-colors flex-shrink-0"
                                 >
                                     {t('Hero.viewExample')}
                                     <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

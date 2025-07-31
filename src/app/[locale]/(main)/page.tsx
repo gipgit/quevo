@@ -26,20 +26,14 @@ export default function HomePage({ params }: HomePageProps) {
                 <SectionFeatures locale={params.locale} />
                 
                 <SectionActions locale={params.locale} />
-                
             
                 <SectionBoard locale={params.locale} />
 
-                
-
                 <SectionSteps locale={params.locale} />
 
-                
                 <SectionCategories/>
                 
-
                 <SectionFaqs />
-
 
                 <SectionCTA />
 

@@ -65,7 +65,7 @@ export default function SectionFeatures({ locale }) {
       <div className="container mx-auto px-12 py-16 max-w-7xl">
         {/* Title Section */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-4">
+          <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4">
             {t('Features.title')}
           </h2>
           <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto mb-8">
@@ -78,9 +78,9 @@ export default function SectionFeatures({ locale }) {
           {featuresCards.map((card, index) => (
             <div
               key={index}
-              className="flex flex-row lg:flex-col gap-4 lg:gap-0 rounded-2xl p-4 lg:p-4 items-center"
+              className="flex flex-row lg:flex-col gap-4 lg:gap-0 rounded-2xl p-2 lg:p-4 items-start"
             >
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+              <div className="flex-shrink-0 w-8 h-8 lg:w-8 lg:h-8 rounded-full bg-blue-100 flex items-center justify-center mb-2">
                 <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
