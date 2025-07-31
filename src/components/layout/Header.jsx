@@ -34,7 +34,7 @@ export default function Header() {
           <div className="flex items-center space-x-8">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-2">
-              <img src="/icons/home.png" alt="Quevo" className="h-8 w-8" />
+              <img src="/icons/home.png" alt="Quevo" className="h-4 lg:h-8 w-4 lg:w-8" />
               <span className="text-xl font-bold text-gray-900">Quevo</span>
             </Link>
 
@@ -61,7 +61,7 @@ export default function Header() {
             
             <Link 
               href="/signin/business" 
-              className="text-gray-600 hover:text-gray-900 transition-colors"
+              className="text-sm lg:text-base text-gray-600 hover:text-gray-900 transition-colors"
             >
               Sign In
             </Link>

@@ -300,14 +300,14 @@ export default function SectionBoard({ locale }) {
                     {/* Bottom Column - Carousel */}
                     <div className="relative">
                         {/* Desktop and Smartphone Views */}
-                        <div className="relative flex justify-center items-center">
+                        <div className="relative flex flex-col lg:flex-row justify-center items-center gap-4">
                             {/* Smartphone View */}
                             <div className="relative z-20 -left-1 flex items-center">
                                 <div className="bg-gray-800 rounded-3xl shadow-2xl p-1">
                                     <img 
                                         src={currentBusiness.smartphoneImage}
                                         alt={`${currentBusiness.name} mobile view`}
-                                        className="w-56 h-auto rounded-2xl"
+                                        className="w-[280px] h-[520px] rounded-2xl object-cover object-top"
                                         onError={(e) => {
                                             e.target.style.display = 'none';
                                             e.target.nextSibling.style.display = 'block';
@@ -325,8 +325,8 @@ export default function SectionBoard({ locale }) {
                             </div>
 
                             {/* Desktop View */}
-                            <div className="relative z-10 w-full max-w-9xl ml-4 overflow-visible">
-                                <div className="bg-gray-800 rounded-2xl shadow-2xl p-1">
+                            <div className="relative z-10 max-w-9xl overflow-visible w-[100vw] h-auto lg:w-full">
+                                <div className="bg-gray-800 rounded-xl shadow-2xl p-1">
                                     <img 
                                         src={currentBusiness.desktopImage}
                                         alt={`${currentBusiness.name} desktop view`}

@@ -27,12 +27,6 @@ export default function Footer() {
             <Link href="/pricing" className="text-gray-400 hover:text-white transition-colors text-sm">
               Pricing
             </Link>
-            <Link href="/demo" className="text-gray-400 hover:text-white transition-colors text-sm">
-              Demo
-            </Link>
-            <Link href="/about" className="text-gray-400 hover:text-white transition-colors text-sm">
-              About
-            </Link>
             <Link href="/contact" className="text-gray-400 hover:text-white transition-colors text-sm">
               Contact
             </Link>

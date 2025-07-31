@@ -221,9 +221,9 @@
   "BusinessSignup": {
     "pageTitle": "Create your account",
     "brandTitle": "twenter Business",
-    "rightSideTitle": "Create your Twenter Business account",
+    "rightSideTitle": "Create your Quevo Business account",
     "rightSideSubtitle": "Not a Business Owner?",
-    "rightSideLink": "Create your Twenter",
+    "rightSideLink": "Create your Quevo",
     "nameLabel": "Name",
     "namePlaceholder": "Enter your name",
     "nameRequired": "Name is required",
@@ -322,13 +322,13 @@
     "logo_url": "https://quevo.com/logo.png"
   },
     "UserCustomerActivation": {
-    "subject": "Activate your Twenter Customer account",
-    "welcome_heading": "Welcome to Twenter, {recipientName}!",
+    "subject": "Activate your Quevo Customer account",
+    "welcome_heading": "Welcome to Quevo, {recipientName}!",
     "confirm_email_prompt": "Confirm your email to access all features.",
     "confirm_button_text": "Activate my account",
     "fallback_link_instruction": "If the button doesn't work, you can also copy and paste this link into your browser:",
     "closing_salutation": "Regards,",
-    "team_name": "The Twenter Team",
+    "team_name": "The Quevo Team",
     "logo_url": "https://yourwebsite.com/logo.png"
   },
   "BusinessActivationPage": {
@@ -337,7 +337,7 @@
     "pleaseWait": "Attendi mentre verifichiamo la tua email.",
     "activationSuccessful": "Attivazione Completata!",
     "activationSuccessDefault": "Il tuo account è stato attivato con successo!",
-    "welcomeMessage": "Benvenuto su Twenter, {recipientName}.",
+    "welcomeMessage": "Benvenuto su Quevo, {recipientName}.",
     "accountActiveMessage": "Il tuo account Business è attivo e il tuo profilo è online.",
     "verificationNote": "Effettuiamo delle verifiche per evitare utilizzi non autorizzati delle identità delle aziende. Se abbiamo domande, te lo faremo sapere.",
     "yourUserId": "Il tuo User ID",

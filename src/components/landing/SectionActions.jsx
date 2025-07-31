@@ -61,11 +61,11 @@ export default function SectionActions({ locale }) {
       <div className="container mx-auto px-6 lg:px-12 py-16 max-w-7xl">
 
         {/* Primary Title Section */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-8 lg:mb-16">
           <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4">
             {t('Actions.title')}
           </h1>
-          <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto mb-8">
+          <p className="text-md lg:text-xl text-gray-600 leading-tight lg:leading-relaxed max-w-3xl mx-auto mb-8">
             {t('Actions.subtitle')}
           </p>
         </div>
@@ -96,7 +96,7 @@ export default function SectionActions({ locale }) {
                        <div className="flex items-center justify-between">
                          <div className="flex items-center gap-4 flex-1">
                            {/* Action Icon */}
-                           <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${
+                           <div className={`flex-shrink-0 w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center ${
                              getActionIconAndColor(action.key).color
                            }`}>
                              <img 
@@ -119,7 +119,7 @@ export default function SectionActions({ locale }) {
                            </div>
                            
                            <div className="flex-1">
-                             <h3 className={`text-lg font-semibold ${
+                             <h3 className={`text-lg font-semibold leading-tight ${
                                index === currentActionIndex ? 'text-blue-700' : 'text-gray-900'
                              }`}>
                                {localizedAction.title}
@@ -176,7 +176,7 @@ export default function SectionActions({ locale }) {
                </div>
 
                {/* Smartphone frame */}
-               <div className="relative w-[95%] h-[450px] lg:w-[360px] lg:h-[600px] bg-gray-800 rounded-3xl shadow-2xl p-2">
+               <div className="relative w-[90%] h-[500px] lg:w-[360px] lg:h-[600px] max-w-[360px] bg-gray-800 rounded-3xl shadow-2xl p-2">
                 {/* Image container with gradient overlay */}
                 <div className={`relative w-full h-full rounded-2xl overflow-hidden bg-gradient-to-br ${localizedCurrentAction.gradient}`}>
                   <img 

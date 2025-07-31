@@ -245,23 +245,23 @@ export default function SectionHero({ locale }) {
                          
                          {/* 3 Horizontal List Items */}
                          <div className="flex flex-wrap justify-center gap-1 lg:gap-6 mt-4">
-                             <div className="flex items-center gap-2 text-blue-500">
+                             <div className="flex items-center gap-1 lg:gap-2 text-blue-500">
                                  <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                  </svg>
-                                 <span className="text-blue-500 font-medium">{t('Hero.benefits.freePlan')}</span>
+                                 <span className="text-blue-500 font-medium text-sm lg:text-base">{t('Hero.benefits.freePlan')}</span>
                              </div>
-                             <div className="flex items-center gap-2 text-blue-500">
+                             <div className="flex items-center gap-1 lg:gap-2 text-blue-500">
                                  <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                  </svg>
-                                 <span className="text-blue-500 font-medium">{t('Hero.benefits.noPaymentDetails')}</span>
+                                 <span className="text-blue-500 font-medium text-sm lg:text-base">{t('Hero.benefits.noPaymentDetails')}</span>
                              </div>
-                             <div className="flex items-center gap-2 text-blue-500">
+                             <div className="flex items-center gap-1 lg:gap-2 text-blue-500">
                                  <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                  </svg>
-                                 <span className="text-blue-500 font-medium">{t('Hero.benefits.cancelAnytime')}</span>
+                                 <span className="text-blue-500 font-medium text-sm lg:text-base">{t('Hero.benefits.cancelAnytime')}</span>
                              </div>
                          </div>
 
@@ -310,7 +310,7 @@ export default function SectionHero({ locale }) {
                                     <img 
                                         src={currentBusiness.smartphoneImage}
                                         alt={`${currentBusiness.name} mobile view`}
-                                        className="w-[280px] h-[460px] rounded-2xl object-cover object-top"
+                                        className="w-[280px] h-[520px] rounded-2xl object-cover object-top"
                                         onError={(e) => {
                                             e.target.style.display = 'none';
                                             e.target.nextSibling.style.display = 'block';
@@ -321,7 +321,7 @@ export default function SectionHero({ locale }) {
                                         }}
                                     />
                                     <div 
-                                        className="w-56 h-72 rounded-2xl bg-gradient-to-br from-gray-300 to-gray-400"
+                                        className="w-[280px] h-[520px] rounded-2xl bg-gradient-to-br from-gray-300 to-gray-400"
                                         style={{ display: 'none', minWidth: '14rem', minHeight: '18rem' }}
                                     />
                                 </div>
@@ -329,7 +329,7 @@ export default function SectionHero({ locale }) {
                             {/* Desktop View */}
                             <div className="relative z-10 w-full max-w-9xl overflow-visible">
                                 <div 
-                                    className="bg-gray-800 rounded-2xl shadow-2xl p-1 overflow-visible w-[100vw] h-auto lg:w-full lg:ml-0"
+                                    className="bg-gray-800 rounded-xl shadow-2xl p-1 overflow-visible w-[100vw] h-auto lg:w-full"
                                 >
                                     <img 
                                         src={currentBusiness.desktopImage}

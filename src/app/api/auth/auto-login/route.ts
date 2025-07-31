@@ -27,18 +27,8 @@ export async function POST(request: Request) {
 
     console.log(`Auto-login successful for user: ${user.email}`)
 
-    // Clear the auto-login token after use (but don't fail if this fails)
-    try {
-      await prisma.usermanager.update({
-        where: { user_id: user.user_id },
-        data: {
-          token_activation: null
-        },
-      })
-    } catch (clearTokenError) {
-      console.error("Failed to clear auto-login token:", clearTokenError)
-      // Don't fail the auto-login if clearing the token fails
-    }
+    // Don't clear the token here - let NextAuth handle it after successful sign-in
+    // This prevents the race condition where NextAuth tries to validate a cleared token
 
     // Return user data for session creation
     return NextResponse.json(

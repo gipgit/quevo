@@ -68,44 +68,47 @@ export default function BusinessActivationPage() {
               const autoLoginData = await autoLoginResponse.json();
               console.log(`[activation] Auto-login response:`, autoLoginData);
 
-              if (autoLoginResponse.ok && autoLoginData.success) {
-                // Use NextAuth to sign in the user
-                const { signIn } = await import('next-auth/react');
-                const signInResult = await signIn('credentials', {
-                  email: emailFromParams,
-                  userType: 'manager',
-                  autoLoginToken: data.autoLoginToken,
-                  redirect: false,
-                });
+                             if (autoLoginResponse.ok && autoLoginData.success) {
+                 // Use NextAuth to sign in the user with retry mechanism
+                 const attemptSignIn = async (attempt: number = 1): Promise<boolean> => {
+                   try {
+                     const { signIn } = await import('next-auth/react');
+                     const signInResult = await signIn('credentials', {
+                       email: emailFromParams,
+                       userType: 'manager',
+                       autoLoginToken: data.autoLoginToken,
+                       redirect: false,
+                     });
 
-                if (signInResult?.ok) {
-                  // Redirect to dashboard
-                  router.push(`/${currentLocale}/dashboard/onboarding`);
-                  return;
-                } else {
-                  console.error('[activation] Auto-login failed:', signInResult);
-                  // Add a retry mechanism
-                  setTimeout(async () => {
-                    try {
-                      const retrySignInResult = await signIn('credentials', {
-                        email: emailFromParams,
-                        userType: 'manager',
-                        autoLoginToken: data.autoLoginToken,
-                        redirect: false,
-                      });
-                      
-                      if (retrySignInResult?.ok) {
-                        router.push(`/${currentLocale}/dashboard/onboarding`);
-                        return;
-                      }
-                    } catch (retryError) {
-                      console.error('[activation] Retry auto-login failed:', retryError);
-                    }
-                    
-                    // Final fallback to signin page with success message
-                    router.push(`/${currentLocale}/signin/business?email=${encodeURIComponent(emailFromParams)}&message=${encodeURIComponent(t('activationSuccessful'))}`);
-                  }, 2000); // Wait 2 seconds before retry
-                }
+                     if (signInResult?.ok) {
+                       console.log(`[activation] Auto-login successful on attempt ${attempt}`);
+                       router.push(`/${currentLocale}/dashboard/onboarding`);
+                       return true;
+                     } else {
+                       console.error(`[activation] Auto-login failed on attempt ${attempt}:`, signInResult);
+                       return false;
+                     }
+                   } catch (error) {
+                     console.error(`[activation] Auto-login error on attempt ${attempt}:`, error);
+                     return false;
+                   }
+                 };
+
+                 // Try immediate sign-in
+                 const immediateSuccess = await attemptSignIn(1);
+                 if (immediateSuccess) return;
+
+                 // Retry with exponential backoff
+                 const retryDelays = [1000, 2000, 4000]; // 1s, 2s, 4s
+                 for (let i = 0; i < retryDelays.length; i++) {
+                   await new Promise(resolve => setTimeout(resolve, retryDelays[i]));
+                   const retrySuccess = await attemptSignIn(i + 2);
+                   if (retrySuccess) return;
+                 }
+
+                 // Final fallback to signin page with success message
+                 console.log('[activation] All auto-login attempts failed, redirecting to signin');
+                 router.push(`/${currentLocale}/signin/business?email=${encodeURIComponent(emailFromParams)}&message=${encodeURIComponent(t('activationSuccessful'))}`);
               } else {
                 console.error('[activation] Auto-login API failed:', autoLoginData);
                 // Fallback to signin page with success message
@@ -118,8 +121,10 @@ export default function BusinessActivationPage() {
             }
           };
 
-          // Start auto-login process
-          handleAutoLogin();
+          // Add a small delay to ensure database update is committed before auto-login
+          setTimeout(() => {
+            handleAutoLogin();
+          }, 500); // Wait 500ms before starting auto-login
           return; // Exit early to prevent the outer catch from executing
         } else {
           if (response.status === 409 && data.message === 'Your account is already active.') {

@@ -79,7 +79,7 @@ export default function SectionSteps({ locale }) {
                   )}
 
                    {/* Step Header */}
-                   <div className="p-6">
+                   <div className="p-4 lg:p-6">
                      <div className="flex items-center justify-between">
                        <div className="flex items-center gap-2 lg:gap-4 flex-1">
                          {/* Step number circle */}
@@ -92,7 +92,7 @@ export default function SectionSteps({ locale }) {
                          </div>
                          
                          <div className="flex-1">
-                           <h3 className={`text-lg font-semibold ${
+                           <h3 className={`text-lg font-semibold leading-tight ${
                              index === currentStepIndex ? 'text-blue-700' : 'text-gray-900'
                            }`}>
                              {step.title}
@@ -139,9 +139,9 @@ export default function SectionSteps({ locale }) {
 
                      {/* Right Column - Step Image */}
            <div className="relative flex items-center justify-center">
-             <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-2xl p-8 w-full h-full flex flex-col items-center justify-center">
+             <div className="bg-gradient-to-t from-gray-100 to-gray-50 rounded-2xl shadow-2xl p-4 lg:p-8 w-full h-full flex flex-col items-center justify-center">
                {/* Step illustration */}
-               <div className="relative w-[280px] h-[500px] bg-gray-800 rounded-2xl shadow-2xl p-2">
+               <div className="relative w-[260px] lg:w-[280px] h-[450px] lg:h-[500px] bg-gray-800 rounded-2xl shadow-2xl p-2">
                 {/* Image container with gradient overlay */}
                 <div className={`relative w-full h-full rounded-xl overflow-hidden bg-gradient-to-br ${currentStep.gradient}`}>
                   <img 
