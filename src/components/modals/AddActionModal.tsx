@@ -23,39 +23,7 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-// Action type to icon mapping
-const ACTION_TYPE_ICONS: Record<string, string> = {
-  'generic_message': '/icons/sanity/info-outline.svg',
-  'payment_request': '/icons/payments/credit-card.svg',
-  'appointment_scheduling': '/icons/sanity/calendar.svg',
-  'information_request': '/icons/sanity/help-circle.svg',
-  'document_download': '/icons/sanity/download.svg',
-  'signature_request': '/icons/sanity/edit.svg',
-  'approval_request': '/icons/sanity/checkmark-circle.svg',
-  'feedback_request': '/icons/sanity/comment.svg',
-  'milestone_update': '/icons/sanity/trend-upward.svg',
-  'resource_link': '/icons/sanity/link.svg',
-  'checklist': '/icons/sanity/checkmark.svg',
-  'video_message': '/icons/sanity/image.svg',
-  'opt_in_request': '/icons/sanity/checkmark.svg'
-};
-
-// Action type to color mapping
-const ACTION_TYPE_COLORS: Record<string, string> = {
-  'generic_message': 'bg-blue-100',
-  'payment_request': 'bg-green-100',
-  'appointment_scheduling': 'bg-purple-100',
-  'information_request': 'bg-yellow-100',
-  'document_download': 'bg-indigo-100',
-  'signature_request': 'bg-red-100',
-  'approval_request': 'bg-orange-100',
-  'feedback_request': 'bg-teal-100',
-  'milestone_update': 'bg-pink-100',
-  'resource_link': 'bg-cyan-100',
-  'checklist': 'bg-emerald-100',
-  'video_message': 'bg-violet-100',
-  'opt_in_request': 'bg-lime-100'
-};
+import { ACTION_TYPE_ICONS, ACTION_TYPE_COLORS } from '@/lib/action-templates';
 
 interface AddActionModalProps {
   show: boolean;

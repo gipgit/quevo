@@ -1,37 +1,75 @@
-// components/layout/Footer.jsx
+'use client';
 
-import Link from 'next/link'; // Use Link for internal navigation
+import React from 'react';
+import Link from 'next/link';
+import LocaleSwitcherButton from '@/components/ui/LocaleSwitcherButton';
+import LocaleSelectModal from '@/components/ui/LocaleSelectModal';
+import { useLocaleSwitcher } from '@/hooks/useLocaleSwitcher';
 
 export default function Footer() {
-    return (
-        <footer className="text-sm container-x-lg py-3">
-            <div className="d-flex flex-wrap flex-col lg:flex-row justify-between lg:items-start gap-3 my-8">
+  const { isModalOpen, setIsModalOpen, currentLocale, availableLocales, switchLocale } = useLocaleSwitcher();
 
-                <div className="d-flex items-center flex-col lg:flex-row gap-3">
-                    <div className="d-flex items-center flex-col lg:flex-row flex-wrap gap-1">
-                        <div><Link href="/" className="logo logo-lg">Twnter</Link></div>
-                        <div>per i Business</div>
-                    </div>
+  return (
+    <footer className="bg-gray-900 text-white">
+      <div className="container mx-auto px-4 py-6">
+        {/* Main Footer Content */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          {/* Logo */}
+          <div className="flex items-center space-x-2">
+            <img src="/icons/home.png" alt="Quevo" className="h-6 w-6" />
+            <span className="text-lg font-bold">Quevo</span>
+          </div>
 
-                    <div>
-                        {/* Image paths should be absolute from the public directory */}
-                        <img src="/assets/images/icons/icon-facebook.png" alt="Facebook" className="footer-icon-social" />
-                        <img src="/assets/images/icons/icon-instagram.png" alt="Instagram" className="footer-icon-social" />
-                        <img src="/assets/images/icons/icon-youtube.png" alt="YouTube" className="footer-icon-social" />
-                    </div>
-                </div>
+          {/* Links */}
+          <div className="flex flex-wrap justify-center gap-6">
+            <Link href="/features" className="text-gray-400 hover:text-white transition-colors text-sm">
+              Features
+            </Link>
+            <Link href="/pricing" className="text-gray-400 hover:text-white transition-colors text-sm">
+              Pricing
+            </Link>
+            <Link href="/demo" className="text-gray-400 hover:text-white transition-colors text-sm">
+              Demo
+            </Link>
+            <Link href="/about" className="text-gray-400 hover:text-white transition-colors text-sm">
+              About
+            </Link>
+            <Link href="/contact" className="text-gray-400 hover:text-white transition-colors text-sm">
+              Contact
+            </Link>
+          </div>
 
-                <ul className="mt-2 d-flex gap-y-1 gap-x-4 flex-wrap list-unstyled text-xs lg:text-sm">
-                    <li><Link href="/signupmanager">Twenter per i Business</Link></li>
-                    <li><Link href="/assistenza">Assistenza</Link></li> {/* Assuming a route for assistenza */}
-                    <li><Link href="/faq">FAQ</Link></li> {/* Assuming a route for faq */}
-                    <li><Link href="/contatti">Contatti</Link></li> {/* Assuming a route for contatti */}
-                    <li><Link href="/termini-e-condizioni">Termini e condizioni</Link></li> {/* Assuming a route */}
-                    <li><Link href="/protezione-dei-dati">Protezione dei dati</Link></li> {/* Assuming a route */}
-                    <li><Link href="/cookies">Cookies</Link></li> {/* Assuming a route */}
-                </ul>
+          {/* Locale Switcher */}
+          <LocaleSwitcherButton 
+            onClick={() => setIsModalOpen(true)}
+            className="text-gray-400 hover:text-white"
+          />
+        </div>
 
-            </div>
-        </footer>
-    );
-}
+        {/* Bottom Bar */}
+        <div className="border-t border-gray-800 mt-4 pt-4 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-gray-400 text-xs">
+            © 2024 Quevo. All rights reserved.
+          </p>
+          <div className="flex space-x-4">
+            <Link href="/privacy" className="text-gray-400 hover:text-white text-xs transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="text-gray-400 hover:text-white text-xs transition-colors">
+              Terms of Service
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Locale Selection Modal */}
+      <LocaleSelectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        currentLocale={currentLocale}
+        availableLocales={availableLocales}
+        onLocaleSelect={switchLocale}
+      />
+    </footer>
+  );
+} 

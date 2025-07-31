@@ -42,7 +42,66 @@
     "free": "Free",
     "edit": "Edit",
     "delete": "Delete",
-    "save": "Save"
+    "save": "Save",
+    "domainPrefix": "quevo.com/",
+    "getStarted": "Get Started",
+    "language": "Language",
+    "selectLanguage": "Select Language",
+    "requestLanguage": "Request New Language",
+    "mailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "••••••••",
+    "loginButton": "Sign In",
+    "createAccountLink": "Create Account"
+  },
+  "FAQ": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about Queva",
+    "showMore": "Show more questions",
+    "showLess": "Show fewer questions",
+    "questions": {
+      "accountCreation": {
+        "question": "How can I create an account?",
+        "answer": "You can create your account by clicking on the \"Create your account\" link in the main section or by visiting the registration page. The process is simple and fast, taking only a few minutes to complete the registration."
+      },
+      "freePlan": {
+        "question": "Is Queva free?",
+        "answer": "Yes, we offer a free plan that allows you to try the basic features. You can also try Queva Premium for free for one month with no commitment. The free plan includes all essential features to get started."
+      },
+      "pointsSystem": {
+        "question": "How does the points and rewards system work?",
+        "answer": "Your customers earn points every time they visit your establishment and scan their personal QR code. You can define the rewards they can redeem once they reach certain points. The system is fully customizable and allows you to create tailored loyalty programs."
+      },
+      "mobileMenu": {
+        "question": "Can I manage the digital menu from my phone?",
+        "answer": "Absolutely yes! Your digital menu is fully customizable and can be managed comfortably from your phone or tablet, updating in real-time for your customers. You can modify prices, add new dishes, and manage availability from anywhere."
+      },
+      "profileSupport": {
+        "question": "Do you offer support for profile creation?",
+        "answer": "Of course! If you need help, we can create your profile, upload the menu, and set up initial promotions for you. We also offer training to ensure you are autonomous in management. Our support team is always available to help you."
+      },
+      "dataSecurity": {
+        "question": "Is my data secure?",
+        "answer": "Absolutely yes. We use the most advanced security technologies to protect your data and that of your customers. All information is encrypted and we strictly comply with privacy regulations, including GDPR."
+      },
+      "customerSupport": {
+        "question": "How can I contact customer support?",
+        "answer": "Our support team is available 24/7 through email, live chat, and phone. We will respond within a few hours and are always ready to help you with any questions or technical issues you may have."
+      },
+      "integration": {
+        "question": "Does Queva integrate with other systems?",
+        "answer": "Yes, Queva integrates perfectly with major restaurant management systems, POS, and delivery platforms. We offer open APIs and native integrations to ensure a smooth transition without disrupting your workflow."
+      },
+      "pricing": {
+        "question": "What are the costs of premium plans?",
+        "answer": "Our premium plans start from €29/month and include advanced features such as detailed analytics, automated marketing, priority support, and advanced customizations. We also offer discounts for annual payments and custom plans for large companies."
+      },
+      "technicalRequirements": {
+        "question": "What are the technical requirements?",
+        "answer": "Queva works on any device with a modern web browser. No complex software installations are required. For customers, just a smartphone with a camera to scan QR codes. The system is optimized to work even with slow internet connections."
+      }
+    }
   },
   "Pricing": {
     "title": "Pricing Plans",
@@ -205,8 +264,7 @@
   },
   "SignupConfirmation": {
     "title": "Confirm your email to get started",
-    "subtitle": "Click the link we sent to your email.",
-    "emailSentTo": "Email sent to:",
+    "emailSentTo": "We've sent a confirmation link to {email}",
     "checkSpam": "Don't see the email? Check your spam or junk folder.",
     "goToSignIn": "Go to sign in page",
     "tryAgain": "Try registration again",
@@ -226,6 +284,15 @@
     "generalAccess": "General Access",
     "discoverQuevo": "Discover Quevo"
   },
+  "BusinessSignIn": {
+    "subtitle": "Sign in to your business account",
+    "noAccountText": "Don't have an account?",
+    "errorLogin": "Login Error",
+    "errorConnection": "Connection Error",
+    "errorSystem": "System Error",
+    "unexpectedError": "An unexpected error occurred. Please try again.",
+    "connectionError": "Connection error. Please check your internet connection and try again."
+  },
   "Validation": {
     "emailManagerExists": "A manager account with this email already exists",
     "emailSupabaseExists": "This email is already registered in the system",
@@ -235,15 +302,15 @@
     "emailInvalid": "Invalid email format"
   },
   "UserManagerActivation": {
-    "subject": "Activate Your Twenter Business Account",
-    "welcome_heading": "Welcome to Twenter, {recipientName}!",
-    "confirm_email_prompt": "Confirm your email to start managing your Business profile immediately.",
-    "after_confirmation_note": "After confirmation, your profile will be online immediately and you can do everything.",
-    "confirm_button_text": "Confirm and start",
-    "fallback_link_instruction": "If the button does not work, you can also copy and paste this link into your browser:",
-    "closing_salutation": "See you soon,",
-    "team_name": "The Twenter team",
-    "logo_url": "https://yourwebsite.com/logo.png"
+    "subject": "Activate Your Quevo Business Account",
+    "welcome_heading": "Hello {recipientName}!",
+    "confirm_email_prompt": "Thank you for signing up for Quevo Business. To complete your registration, please confirm your email address by clicking the button below.",
+    "after_confirmation_note": "Once confirmed, you'll be able to access all Quevo Business features and start managing your business.",
+    "confirm_button_text": "Confirm Email",
+    "fallback_link_instruction": "If the button doesn't work, copy and paste this link into your browser:",
+    "closing_salutation": "Best regards,",
+    "team_name": "The Quevo team",
+    "logo_url": "https://quevo.com/logo.png"
   },
     "UserCustomerActivation": {
     "subject": "Activate your Twenter Customer account",
@@ -273,7 +340,8 @@
     "checkLinkOrContactSupport": "Controlla il tuo link o contatta il supporto se il problema persiste.",
     "trySignupAgain": "Riprova la Registrazione",
     "accountAlreadyActive": "Il tuo account è già stato attivato.",
-    "unexpectedError": "Si è verificato un errore imprevisto durante l'attivazione. Riprova più tardi."
+    "unexpectedError": "Si è verificato un errore imprevisto durante l'attivazione. Riprova più tardi.",
+    "autoLoginInProgress": "Logging you in automatically..."
   },
   "products": {
     "title": "Products",
@@ -744,5 +812,248 @@
     "cancelWarning": "The business will see the appointment as cancelled and may contact you for clarification.",
     "confirmCancel": "Confirm Cancel",
     "optionalReasonPrompt": "If you want, you can provide a reason for your request:"
+  },
+  "HowPoints": {
+    "title": "How It Works",
+    "subtitle": "Get your professional business website up and running in just a few simple steps."
+  },
+  "Actions": {
+    "title": "Powerful Features for Your Business",
+    "subtitle": "Everything you need to create a professional online presence and grow your business.",
+    "domainLink": "domain.com/yourbusiness/s/board"
+  },
+  "Board": {
+    "title": "Clear and seamless communication, transforming complex processes into clear, guided experiences.",
+    "Benefits": {
+      "effortlessManagement": "Effortless Action Management",
+      "effortlessManagementDescription": "From one dashboard, send payment requests, schedule appointments, request info, or share documents. Simplify every interaction.",
+      "automatedNotifications": "Automated Notifications",
+      "automatedNotificationsDescription": "Keep customers informed. Key updates trigger instant email alerts, no manual effort needed.",
+      "secureAccess": "Secure & Shareable Access",
+      "secureAccessDescription": "Unique, secure links for every service. Share effortlessly, with optional password protection.",
+      "unifiedView": "Unified Customer View",
+      "unifiedViewDescription": "Customers see exactly what's needed and the current service status at a glance. No more confusion, just clarity.",
+      "problemSolving": "Problem-Solving Power",
+      "problemSolvingDescription": "End miscommunications and disputes. A shared, chronological record keeps everyone aligned.",
+      "mobileReady": "Mobile-Ready Experience",
+      "mobileReadyDescription": "Access and manage on any device. Your customers get a smooth experience, wherever they are."
+    }
+  },
+  "Landing": {
+    "Hero": {
+      "title": "Give your customers everything they need, all in one single, intuitive screen.",
+      "subtitle": "Simplify every interaction and increase conversions and satisfaction. Easily showcase your brand and services, manage inquiries, streamline service operations like payment requests and appoinments.",
+      "startFree": "Start FREE. No payment details required.",
+      "viewExample": "View Example",
+      "getStarted": "Get Started",
+      "benefits": {
+        "freePlan": "1 plan always free",
+        "noPaymentDetails": "Start free without payment details",
+        "cancelAnytime": "Change or cancel anytime"
+      }
+    },
+    "Actions": {
+      "title": "Powerful Features for Your Business",
+      "subtitle": "Everything you need to create a professional online presence and grow your business.",
+      "domainLink": "domain.com/yourbusiness/s/board",
+      "cards": {
+        "serviceListing": {
+          "title": "Service Listings",
+          "description": "Showcase your offerings with clarity. Attract more clients by detailing every service."
+        },
+        "serviceRequests": {
+          "title": "Direct Service Requests",
+          "description": "Let customers reach out instantly. Capture leads directly from your page."
+        },
+        "appointmentsScheduling": {
+          "title": "Online Appointment Booking",
+          "description": "Simplify scheduling. Customers book when it's convenient, you manage with ease."
+        },
+        "quoteSimulation": {
+          "title": "Instant Quote Simulation",
+          "description": "Empower customers to estimate costs. Boost transparency and conversions."
+        },
+        "qrWebsite": {
+          "title": "QR Code Website",
+          "description": "Get discovered anywhere. A unique QR code links directly to your digital presence."
+        },
+        "digitalMenu": {
+          "title": "Digital Menu",
+          "description": "Modernize your offerings. Easy-to-access menus for seamless customer browse."
+        },
+        "mailingList": {
+          "title": "Mailing Lists & Campaigns",
+          "description": "Build your audience, send targeted emails. Stay connected and drive repeat business."
+        },
+        "fidelityCard": {
+          "title": "Customer Loyalty Program",
+          "description": "Reward your best customers. Foster retention and build lasting relationships."
+        },
+        "surveys": {
+          "title": "Feedback & Surveys",
+          "description": "Understand your customers better. Collect insights to continuously improve."
+        },
+        "promotions": {
+          "title": "Promotions Management",
+          "description": "Create irresistible offers. Drive sales and engage your audience."
+        }
+      }
+    },
+    "Features": {
+      "title": "Everything You Need to Succeed",
+      "subtitle": "Discover all the powerful tools and features that will help your business grow and thrive in the digital world.",
+      "cards": {
+        "serviceListing": {
+          "title": "Service Listings",
+          "description": "Showcase your offerings with clarity. Attract more clients by detailing every service."
+        },
+        "serviceRequests": {
+          "title": "Direct Service Requests",
+          "description": "Let customers reach out instantly. Capture leads directly from your page."
+        },
+        "appointmentsScheduling": {
+          "title": "Online Appointment Booking",
+          "description": "Simplify scheduling. Customers book when it's convenient, you manage with ease."
+        },
+        "quoteSimulation": {
+          "title": "Instant Quote Simulation",
+          "description": "Empower customers to estimate costs. Boost transparency and conversions."
+        },
+        "qrWebsite": {
+          "title": "QR Code Website",
+          "description": "Get discovered anywhere. A unique QR code links directly to your digital presence."
+        },
+        "digitalMenu": {
+          "title": "Digital Menu",
+          "description": "Modernize your offerings. Easy-to-access menus for seamless customer browse."
+        },
+        "mailingList": {
+          "title": "Mailing Lists & Campaigns",
+          "description": "Build your audience, send targeted emails. Stay connected and drive repeat business."
+        },
+        "fidelityCard": {
+          "title": "Customer Loyalty Program",
+          "description": "Reward your best customers. Foster retention and build lasting relationships."
+        },
+        "surveys": {
+          "title": "Feedback & Surveys",
+          "description": "Understand your customers better. Collect insights to continuously improve."
+        },
+        "promotions": {
+          "title": "Promotions Management",
+          "description": "Create irresistible offers. Drive sales and engage your audience."
+        }
+      }
+    },
+    "Board": {
+      "title": "Clear and seamless communication, transforming complex processes into clear, guided experiences.",
+      "description": "Service Boards are designed to simplify the management of complex, multi-step services that require ongoing customer interaction, updates, appointments, and payments. The Service Board is versatile, allowing businesses to tailor it to their unique workflow.",
+      "benefits": {
+        "unifiedView": {
+          "title": "A Central Point Accessible Everywhere",
+          "description": "A central point for the entire service process, viewable and manageable from any device. No scattered messages or emails."
+        },
+        "clearView": {
+          "title": "Clear and Complete Vision",
+          "description": "Customers see exactly the current service status, what has already happened, what needs to be done and what comes next. Every process becomes a clear and transparent service."
+        },
+        "effortlessManagement": {
+          "title": "Effortless and Versatile Management",
+          "description": "Versatile generic actions and predefined actions to quickly add payment requests, schedule appointments, provide documents etc."
+        },
+        "automatedNotifications": {
+          "title": "Automated Notifications",
+          "description": "Keep customers informed. Key updates trigger instant email alerts, no manual effort needed."
+        },
+        "secureAccess": {
+          "title": "Secure & Shareable Access",
+          "description": "Unique, secure links for every service. Share effortlessly, with optional password protection."
+        },
+        "problemSolving": {
+          "title": "Problem-Solving Power",
+          "description": "End miscommunications and disputes. A shared, chronological record keeps everyone aligned."
+        }
+      }
+    },
+    "Steps": {
+      "title": "How It Works",
+      "subtitle": "Get your professional business website up and running in just a few simple steps.",
+      "steps": {
+        "optionalServices": {
+          "title": "Optional Additional Services",
+          "description": "Create your profile in minutes"
+        },
+        "requirementsConsents": {
+          "title": "Requirements, Consents and Details",
+          "description": "Requirements or consents to confirm, Mandatory information to provide"
+        },
+        "dateSelection": {
+          "title": "Date Selection",
+          "description": "Selectable dates"
+        },
+        "quoteSimulation": {
+          "title": "Quote Simulation",
+          "description": "Scale your business online"
+        },
+        "processManagementTitle": "Get your process management system"
+      }
+    },
+    "Categories": {
+      "title": "Designed for many types of activities",
+      "subtitle": "You can use it in various ways and there's always a free plan. Discover how Queva can simplify your customers' experience, help you build their loyalty and receive valuable feedback directly from them."
+    },
+    "FAQ": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Everything you need to know about Queva",
+      "showMore": "Show more questions",
+      "showLess": "Show less questions",
+      "questions": {
+        "accountCreation": {
+          "question": "How can I create an account?",
+          "answer": "You can create your account by clicking the \"Create your account\" link in the main section or visiting the registration page. The process is simple and fast, it only takes a few minutes to complete the registration."
+        },
+        "freePlan": {
+          "question": "Is Queva free?",
+          "answer": "Yes, we offer a free plan that allows you to try the basic features. You can also try Queva Premium for free for one month with no commitment. The free plan includes all essential features to get started."
+        },
+        "pointsSystem": {
+          "question": "How does the points and rewards system work?",
+          "answer": "Your customers earn points every time they visit your establishment and scan their personal QR code. You can define the rewards they can redeem once they reach certain points. The system is completely customizable and allows you to create tailored loyalty programs."
+        },
+        "mobileMenu": {
+          "question": "Can I manage the digital menu from my phone?",
+          "answer": "Absolutely yes! Your digital menu is completely customizable and can be managed comfortably from your phone or tablet, updating in real time for your customers. You can modify prices, add new dishes and manage availability from anywhere."
+        },
+        "profileSupport": {
+          "question": "Do you offer support for profile creation?",
+          "answer": "Of course! If you need help, we can create your profile, upload the menu and set up initial promotions for you. We also offer training to ensure you are autonomous in management. Our support team is always available to help you."
+        },
+        "dataSecurity": {
+          "question": "Is my data secure?",
+          "answer": "Absolutely yes. We use the most advanced security technologies to protect your data and that of your customers. All information is encrypted and we strictly comply with privacy regulations, including GDPR."
+        },
+        "customerSupport": {
+          "question": "How can I contact customer support?",
+          "answer": "Our support team is available 24/7 via email, live chat and phone. We will respond within hours and are always ready to help you with any questions or technical problems you may have."
+        },
+        "integration": {
+          "question": "Does Queva integrate with other systems?",
+          "answer": "Yes, Queva integrates perfectly with the main restaurant management systems, POS and delivery platforms. We offer open APIs and native integrations to ensure a smooth transition without disrupting your workflow."
+        },
+        "pricing": {
+          "question": "What are the costs of premium plans?",
+          "answer": "Our premium plans start from €29/month and include advanced features such as detailed analytics, automated marketing, priority support and advanced customizations. We also offer discounts for annual payments and custom plans for large companies."
+        },
+        "technicalRequirements": {
+          "question": "What are the technical requirements?",
+          "answer": "Queva works on any device with a modern web browser. No complex software installations are required. For customers, just a smartphone with a camera to scan QR codes. The system is optimized to work even with slow internet connections."
+        }
+      }
+    },
+    "CTA": {
+      "title": "Create your professional website in minutes",
+      "subtitle": "Start now with the free plan",
+      "button": "Get Started"
+    }
   }
 }

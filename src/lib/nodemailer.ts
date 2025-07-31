@@ -26,7 +26,9 @@ interface SendMailProps {
 }
 
 export async function sendMail({ to, subject, template, templateProps, locale }: SendMailProps) {
-  const templatePath = path.join(process.cwd(), 'emails', 'templates', `${template}.html`);
+  // Handle case sensitivity for template names
+  const templateFileName = template === 'UserManagerActivation' ? 'userManagerActivation' : template;
+  const templatePath = path.join(process.cwd(), 'emails', 'templates', `${templateFileName}.html`);
   
   try {
     const { messages } = await getRequestConfig({ requestLocale: Promise.resolve(locale) });

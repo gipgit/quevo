@@ -4,10 +4,14 @@ import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import Link from "next/link"
 import { EnvelopeIcon } from "@heroicons/react/24/outline"
+import LocaleSwitcherButton from "@/components/ui/LocaleSwitcherButton"
+import LocaleSelectModal from "@/components/ui/LocaleSelectModal"
+import { useLocaleSwitcher } from "@/hooks/useLocaleSwitcher"
 
 export default function SignupConfirmationPage() {
   const searchParams = useSearchParams()
   const t = useTranslations("SignupConfirmation")
+  const { isModalOpen, setIsModalOpen, currentLocale, availableLocales, switchLocale } = useLocaleSwitcher()
   const email = searchParams?.get("email") || ""
 
   return (
@@ -20,15 +24,13 @@ export default function SignupConfirmationPage() {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">{t("title")}</h1>
+          <h1 className="text-xl font-bold text-gray-900 mb-4">{t("title")}</h1>
 
           {/* Instructions */}
           <div className="space-y-4">
-            <p className="text-lg font-medium text-gray-700">{t("subtitle")}</p>
-
             {email && (
-              <p className="text-gray-600">
-                {t("emailSentTo")} <span className="font-medium text-gray-900">{email}</span>
+              <p className="text-lg font-medium text-gray-700">
+                {t("emailSentTo", { email })}
               </p>
             )}
 
@@ -55,8 +57,25 @@ export default function SignupConfirmationPage() {
               </Link>
             </p>
           </div>
+
+          {/* Locale Switcher */}
+          <div className="mt-6 flex justify-center">
+            <LocaleSwitcherButton 
+              onClick={() => setIsModalOpen(true)}
+              className="text-gray-600 hover:text-gray-800"
+            />
+          </div>
         </div>
       </div>
+
+      {/* Locale Selection Modal */}
+      <LocaleSelectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        availableLocales={availableLocales}
+        currentLocale={currentLocale}
+        onLocaleSelect={switchLocale}
+      />
     </div>
   )
 }

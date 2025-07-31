@@ -474,25 +474,31 @@ body.bg-transition {
 
 @font-face {
     font-family: "FontMain";
-    src: url("../../../public/fonts/custom/ABC\ Diatype\ Light.otf") format("opentype");
+    src: url("../../../public/fonts/custom/Manrope-Regular.otf") format("opentype");
 }
 
 @font-face {
     font-family: "FontSemiBold";
-    src: url("../../../public/fonts/custom/ABC\ Diatype\ Regular.otf") format("truetype");
+    src: url("../../../public/fonts/custom/Manrope-Medium.otf") format("truetype");
 }
 @font-face {
     font-family: "FontBold";
-    src: url("../../../public/fonts/custom/ABC\ Diatype\ Medium.otf") format("truetype");
+    src: url("../../../public/fonts/custom/Manrope-SemiBold.otf") format("truetype");
 }
 @font-face {
     font-family: "FontHeading";
-    src: url("../../../public/fonts/custom/ABC\ Diatype\ Medium.otf") format("truetype");
+    src: url("../../../public/fonts/custom/Manrope-Bold.otf") format("truetype");
 }
 
 @font-face {
     font-family: "FontButton";
-    src: url("../../../public/fonts/custom/ABC\ Diatype\ Medium.otf") format("truetype");
+    src: url("../../../public/fonts/custom/PlusJakartaSans-Regular.ttf") format("truetype");
+}
+
+
+@font-face {
+    font-family: "FontItalic";
+    src: url("../../../public/fonts/custom/instrumentserif-italic.ttf") format("truetype");
 }
 
 
@@ -515,6 +521,10 @@ h1,h2,h3,h4,h5,h6{
 }
 button, .button{
     font-family: "FontButton", sans-serif;
+}
+
+.font-italic{
+    font-family: "FontItalic", sans-serif;
 }
 
 

@@ -2,7 +2,7 @@
   "Common": {
     "coverPhotoAlt": "Foto de Portada del Negocio",
     "errorBusinessNotFoundTitle": "Negocio No Encontrado",
-    "errorBusinessNotFoundDescription": "El perfil del negocio solicitado no pudo ser encontrado.",
+    "errorBusinessNotFoundDescription": "El perfil del negocio solicitado no se pudo encontrar.",
     "defaultBusinessDescription": "Descubre el perfil y productos de {businessName}.",
     "uncategorized": "Sin Categorizar",
     "errorFetchingBusinessData": "Error al cargar datos del negocio: {error}",
@@ -15,11 +15,11 @@
     "cancel": "Cancelar",
     "confirm": "Confirmar",
     "close": "Cerrar",
-    "errorBusinessDataNotAvailable": "Error: datos del negocio no disponibles.",
+    "errorBusinessDataNotAvailable": "Error: Datos del negocio no disponibles.",
     "call": "Llamar",
     "sendEmail": "Enviar Email",
     "copyEmail": "Copiar Email",
-    "contactsUnavailable": "Lo sentimos, la información de contacto no está disponible en este momento. Inténtalo más tarde.",
+    "contactsUnavailable": "Lo sentimos, la información de contacto no está disponible en este momento. Inténtalo de nuevo más tarde.",
     "services": "Servicios",
     "products": "Productos",
     "bookings": "Reservas",
@@ -27,9 +27,9 @@
     "promotions": "Promociones",
     "rewards": "Recompensas",
     "paymentsMethod": "Métodos de Pago",
-    "leaveReview": "Dejar una Reseña",
+    "leaveReview": "Dejar Reseña",
     "composeOrder": "Componer Pedido",
-    "discountSuffix": " de descuento",
+    "discountSuffix": " descuento",
     "validFrom": "Válido desde",
     "to": "hasta",
     "notApplicable": "N/A",
@@ -37,22 +37,339 @@
     "name": "Nombre",
     "email": "Email",
     "phone": "Teléfono",
-    "submitting": "Enviando",
+    "submitting": "Enviando...",
     "back": "Atrás",
     "free": "Gratis",
     "edit": "Editar",
     "delete": "Eliminar",
-    "save": "Guardar"
-  },
-  "Pricing": {
-    "title": "Planes de Precios",
-    "subtitle": "Elige el plan perfecto para tu negocio",
-    "month": "mes",
+    "save": "Guardar",
+    "domainPrefix": "quevo.com/",
     "getStarted": "Comenzar",
-    "contactSales": "Contactar Ventas",
-    "needHelp": "¿Necesitas Ayuda?",
-    "needHelpDescription": "¿No estás seguro de qué plan elegir? Nuestro equipo está aquí para ayudarte a encontrar la solución perfecta para tu negocio.",
-    "contactSupport": "Contactar Soporte",
-    "viewDemo": "Ver Demo"
-  }
-} 
+    "language": "Idioma",
+    "selectLanguage": "Seleccionar Idioma",
+    "requestLanguage": "Solicitar Nuevo Idioma",
+    "mailLabel": "Email",
+    "emailPlaceholder": "tu@email.com",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "••••••••",
+    "loginButton": "Iniciar Sesión",
+    "createAccountLink": "Crear Cuenta"
+  },
+  "Landing": {
+    "Hero": {
+      "title": "Dale a tus clientes todo lo que necesitan, todo en una sola pantalla intuitiva.",
+      "subtitle": "Simplifica cada interacción y aumenta las conversiones y la satisfacción. Muestra fácilmente tu marca y servicios, gestiona consultas, optimiza las operaciones de servicio como solicitudes de pago y citas.",
+      "startFree": "Comienza GRATIS. No se requieren datos de pago.",
+      "viewExample": "Ver Ejemplo",
+      "getStarted": "Comenzar",
+      "benefits": {
+        "freePlan": "1 plan siempre gratuito",
+        "noPaymentDetails": "Comienza gratis sin datos de pago",
+        "cancelAnytime": "Cambia o cancela en cualquier momento"
+      }
+    },
+    "Actions": {
+      "title": "Funciones Potentes para Tu Negocio",
+      "subtitle": "Todo lo que necesitas para crear una presencia online profesional y hacer crecer tu negocio.",
+      "domainLink": "domain.com/tunegocio/s/board",
+      "cards": {
+        "serviceListing": {
+          "title": "Listado de Servicios",
+          "description": "Muestra tus ofertas con claridad. Atrae más clientes detallando cada servicio."
+        },
+        "serviceRequests": {
+          "title": "Solicitudes de Servicio Directas",
+          "description": "Deja que los clientes te contacten al instante. Captura leads directamente desde tu página."
+        },
+        "appointmentsScheduling": {
+          "title": "Reserva de Citas Online",
+          "description": "Simplifica la programación. Los clientes reservan cuando es conveniente, tú gestionas con facilidad."
+        },
+        "quoteSimulation": {
+          "title": "Simulación de Presupuestos Instantánea",
+          "description": "Dale a los clientes la capacidad de estimar costos. Aumenta la transparencia y las conversiones."
+        },
+        "qrWebsite": {
+          "title": "Sitio Web QR Code",
+          "description": "Hazte descubrir en cualquier lugar. Un código QR único enlaza directamente a tu presencia digital."
+        },
+        "digitalMenu": {
+          "title": "Menú Digital",
+          "description": "Moderniza tus ofertas. Menús de fácil acceso para una navegación fluida de los clientes."
+        },
+        "mailingList": {
+          "title": "Listas de Correo y Campañas",
+          "description": "Construye tu audiencia, envía emails dirigidos. Mantente conectado y genera negocios recurrentes."
+        },
+        "fidelityCard": {
+          "title": "Programa de Fidelización de Clientes",
+          "description": "Premia a tus mejores clientes. Fomenta la retención y construye relaciones duraderas."
+        },
+        "surveys": {
+          "title": "Feedback y Encuestas",
+          "description": "Comprende mejor a tus clientes. Recopila insights para mejorar continuamente."
+        },
+        "promotions": {
+          "title": "Gestión de Promociones",
+          "description": "Crea ofertas irresistibles. Impulsa las ventas y compromete a tu audiencia."
+        }
+      }
+    },
+    "Features": {
+      "title": "Todo Lo Que Necesitas Para Triunfar",
+      "subtitle": "Descubre todas las herramientas y funciones potentes que ayudarán a tu negocio a crecer y prosperar en el mundo digital.",
+      "cards": {
+        "serviceListing": {
+          "title": "Listado de Servicios",
+          "description": "Muestra tus ofertas con claridad. Atrae más clientes detallando cada servicio."
+        },
+        "serviceRequests": {
+          "title": "Solicitudes de Servicio Directas",
+          "description": "Deja que los clientes te contacten al instante. Captura leads directamente desde tu página."
+        },
+        "appointmentsScheduling": {
+          "title": "Reserva de Citas Online",
+          "description": "Simplifica la programación. Los clientes reservan cuando es conveniente, tú gestionas con facilidad."
+        },
+        "quoteSimulation": {
+          "title": "Simulación de Presupuestos Instantánea",
+          "description": "Dale a los clientes la capacidad de estimar costos. Aumenta la transparencia y las conversiones."
+        },
+        "qrWebsite": {
+          "title": "Sitio Web QR Code",
+          "description": "Hazte descubrir en cualquier lugar. Un código QR único enlaza directamente a tu presencia digital."
+        },
+        "digitalMenu": {
+          "title": "Menú Digital",
+          "description": "Moderniza tus ofertas. Menús de fácil acceso para una navegación fluida de los clientes."
+        },
+        "mailingList": {
+          "title": "Listas de Correo y Campañas",
+          "description": "Construye tu audiencia, envía emails dirigidos. Mantente conectado y genera negocios recurrentes."
+        },
+        "fidelityCard": {
+          "title": "Programa de Fidelización de Clientes",
+          "description": "Premia a tus mejores clientes. Fomenta la retención y construye relaciones duraderas."
+        },
+        "surveys": {
+          "title": "Feedback y Encuestas",
+          "description": "Comprende mejor a tus clientes. Recopila insights para mejorar continuamente."
+        },
+        "promotions": {
+          "title": "Gestión de Promociones",
+          "description": "Crea ofertas irresistibles. Impulsa las ventas y compromete a tu audiencia."
+        }
+      }
+    },
+    "Board": {
+      "title": "Comunicación clara y fluida, transformando procesos complejos en experiencias claras y guiada.",
+      "description": "Las Service Board están diseñadas para simplificar la gestión de servicios complejos que requieren interacción continua con el cliente, actualizaciones, citas y pagos. La Service Board es versátil y permite a los negocios adaptarla a su propio flujo de trabajo.",
+      "benefits": {
+        "unifiedView": {
+          "title": "Un Punto Central Accesible en Cualquier Lugar",
+          "description": "Un punto central para todo el proceso de servicio, consultable y gestionable desde cualquier dispositivo. Sin mensajes o emails dispersos."
+        },
+        "clearView": {
+          "title": "Visión Clara y Completa",
+          "description": "Los clientes ven exactamente el estado actual del servicio, qué ya ha sucedido, qué se necesita hacer y qué viene después. Cada proceso se convierte en un servicio claro y transparente."
+        },
+        "effortlessManagement": {
+          "title": "Gestión Sin Esfuerzo y Versátil",
+          "description": "Acciones genéricas versátiles y acciones predefinidas para agregar rápidamente solicitudes de pago, programar citas, proporcionar documentos etc."
+        },
+        "automatedNotifications": {
+          "title": "Notificaciones Automatizadas",
+          "description": "Mantén a los clientes informados. Las actualizaciones clave activan alertas de email instantáneas, sin esfuerzo manual requerido."
+        },
+        "secureAccess": {
+          "title": "Acceso Seguro y Compartible",
+          "description": "Enlaces únicos y seguros para cada servicio. Comparte sin esfuerzo, con protección de contraseña opcional."
+        },
+        "problemSolving": {
+          "title": "Poder de Resolución de Problemas",
+          "description": "Termina malentendidos y disputas. Un registro cronológico compartido mantiene a todos alineados."
+        }
+      }
+    },
+    "Steps": {
+      "title": "Cómo Funciona",
+      "subtitle": "Obtén tu sitio web profesional para tu negocio en solo unos simples pasos.",
+      "steps": {
+        "optionalServices": {
+          "title": "Servicios adicionales opcionales",
+          "description": "Crea tu perfil en minutos"
+        },
+        "requirementsConsents": {
+          "title": "Requisitos, Consentimientos y Detalles",
+          "description": "Requisitos o consentimientos a confirmar, Información obligatoria a proporcionar"
+        },
+        "dateSelection": {
+          "title": "Selección de fechas",
+          "description": "Fechas seleccionables"
+        },
+        "quoteSimulation": {
+          "title": "Simulación de presupuesto",
+          "description": "Haz crecer tu negocio online"
+        },
+        "processManagementTitle": "Obtén tu sistema de gestión de procesos"
+      }
+    },
+    "Categories": {
+      "title": "Pensado para muchos tipos de actividades",
+      "subtitle": "Puedes usarlo de varias maneras y siempre hay un plan gratuito. Descubre cómo Queva puede simplificar la experiencia de tus clientes, ayudarte a construir su lealtad y recibir comentarios valiosos directamente de ellos."
+    },
+    "FAQ": {
+      "title": "Preguntas Frecuentes",
+      "subtitle": "Todo lo que necesitas saber sobre Queva",
+      "showMore": "Mostrar más preguntas",
+      "showLess": "Mostrar menos preguntas",
+      "questions": {
+        "accountCreation": {
+          "question": "¿Cómo puedo crear una cuenta?",
+          "answer": "Puedes crear tu cuenta haciendo clic en el enlace \"Crea tu cuenta\" en la sección principal o visitando la página de registro. El proceso es simple y rápido, solo toma unos minutos para completar el registro."
+        },
+        "freePlan": {
+          "question": "¿Queva es gratuito?",
+          "answer": "Sí, ofrecemos un plan gratuito que te permite probar las funciones básicas. También puedes probar Queva Premium gratis durante un mes sin compromiso. El plan gratuito incluye todas las funciones esenciales para comenzar."
+        },
+        "pointsSystem": {
+          "question": "¿Cómo funciona el sistema de puntos y recompensas?",
+          "answer": "Tus clientes ganan puntos cada vez que visitan tu establecimiento y escanean su código QR personal. Puedes definir las recompensas que pueden canjear una vez que alcancen ciertos puntos. El sistema es completamente personalizable y te permite crear programas de fidelización a medida."
+        },
+        "mobileMenu": {
+          "question": "¿Puedo gestionar el menú digital desde mi teléfono?",
+          "answer": "¡Absolutamente sí! Tu menú digital es completamente personalizable y se puede gestionar cómodamente desde tu teléfono o tablet, actualizándose en tiempo real para tus clientes. Puedes modificar precios, agregar nuevos platos y gestionar la disponibilidad desde cualquier lugar."
+        },
+        "profileSupport": {
+          "question": "¿Ofrecen soporte para la creación del perfil?",
+          "answer": "¡Por supuesto! Si necesitas ayuda, podemos crear tu perfil, subir el menú y configurar las promociones iniciales para ti. También ofrecemos formación para asegurar que seas autónomo en la gestión. Nuestro equipo de soporte siempre está disponible para ayudarte."
+        },
+        "dataSecurity": {
+          "question": "¿Mis datos están seguros?",
+          "answer": "Absolutamente sí. Utilizamos las tecnologías de seguridad más avanzadas para proteger tus datos y los de tus clientes. Toda la información está encriptada y cumplimos estrictamente con las normativas de privacidad, incluyendo el GDPR."
+        },
+        "customerSupport": {
+          "question": "¿Cómo puedo contactar al soporte al cliente?",
+          "answer": "Nuestro equipo de soporte está disponible 24/7 a través de email, chat en vivo y teléfono. Te responderemos en pocas horas y siempre estamos listos para ayudarte con cualquier pregunta o problema técnico que puedas tener."
+        },
+        "integration": {
+          "question": "¿Queva se integra con otros sistemas?",
+          "answer": "Sí, Queva se integra perfectamente con los principales sistemas de gestión de restaurantes, POS y plataformas de delivery. Ofrecemos APIs abiertas e integraciones nativas para garantizar una transición fluida sin interrumpir tu flujo de trabajo."
+        },
+        "pricing": {
+          "question": "¿Cuáles son los costos de los planes premium?",
+          "answer": "Nuestros planes premium comienzan desde €29/mes e incluyen funciones avanzadas como análisis detallados, marketing automatizado, soporte prioritario y personalizaciones avanzadas. También ofrecemos descuentos para pagos anuales y planes personalizados para grandes empresas."
+        },
+        "technicalRequirements": {
+          "question": "¿Cuáles son los requisitos técnicos?",
+          "answer": "Queva funciona en cualquier dispositivo con un navegador web moderno. No se requieren instalaciones de software complejas. Para los clientes, solo un smartphone con cámara para escanear códigos QR. El sistema está optimizado para funcionar incluso con conexiones de internet lentas."
+        }
+      }
+    },
+    "CTA": {
+      "title": "Crea tu sitio web profesional en minutos",
+      "subtitle": "Comienza ahora con el plan gratuito",
+      "button": "Comenzar"
+    }
+  },
+  "BusinessSignIn": {
+    "subtitle": "Inicia sesión en tu cuenta de negocio",
+    "noAccountText": "¿No tienes una cuenta?",
+    "errorLogin": "Error de Inicio de Sesión",
+    "errorConnection": "Error de Conexión",
+    "errorSystem": "Error del Sistema",
+    "unexpectedError": "Se produjo un error inesperado. Inténtalo de nuevo.",
+    "connectionError": "Error de conexión. Verifica tu conexión a internet e inténtalo de nuevo."
+  },
+  "BusinessSignup": {
+    "pageTitle": "Crea tu cuenta",
+    "brandTitle": "Quevo Business",
+    "rightSideTitle": "Crea tu cuenta de Quevo Business",
+    "rightSideSubtitle": "¿No eres dueño de un negocio?",
+    "rightSideLink": "Crea tu cuenta de Quevo",
+    "nameLabel": "Nombre",
+    "namePlaceholder": "Ingresa tu nombre",
+    "nameRequired": "El nombre es requerido",
+    "nameMinLength": "El nombre debe tener al menos 2 caracteres",
+    "nameMaxLength": "El nombre no puede exceder 50 caracteres",
+    "nameInvalidChars": "El nombre contiene caracteres inválidos",
+    "emailLabel": "Email",
+    "emailPlaceholder": "email@ejemplo.com",
+    "emailRequired": "El email es requerido",
+    "emailInvalid": "Formato de email inválido",
+    "emailAlreadyExists": "El email ya está en uso",
+    "emailAvailable": "Email disponible",
+    "emailChecking": "Verificando disponibilidad...",
+    "emailCheckError": "Error de verificación",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "Crea una contraseña segura",
+    "passwordRequired": "La contraseña es requerida",
+    "passwordRequirementsTitle": "Requisitos de contraseña:",
+    "passwordMinLength": "Al menos 8 caracteres",
+    "passwordLowercase": "Una letra minúscula",
+    "passwordUppercase": "Una letra mayúscula",
+    "passwordNumber": "Un número",
+    "passwordSpecialChar": "Un carácter especial (@$!%*?&)",
+    "passwordStrong": "Contraseña fuerte",
+    "confirmPasswordLabel": "Confirmar Contraseña",
+    "confirmPasswordPlaceholder": "Confirma tu contraseña",
+    "confirmPasswordMismatch": "Las contraseñas no coinciden",
+    "planLabel": "Plan",
+    "planFree": "Plan Gratuito",
+    "createAccountButton": "Crear Cuenta",
+    "creatingAccount": "Creando cuenta...",
+    "pleaseWait": "Por favor espera, estamos creando tu cuenta...",
+    "signupSuccess": "¡Registro completado! Revisa tu email para activar tu cuenta.",
+    "signupError": "Error en el registro",
+    "connectionError": "Error de conexión",
+    "serverError": "Error interno del servidor. Por favor intenta más tarde.",
+    "invalidData": "Datos inválidos",
+         "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+     "signInLink": "Inicia sesión aquí"
+   },
+        "SignupConfirmation": {
+       "title": "¡Registro Completado!",
+       "emailSentTo": "Hemos enviado un enlace de confirmación a {email}",
+       "checkSpam": "Revisa tu carpeta de spam si no encuentras el email.",
+       "tryAgain": "Intentar de nuevo",
+       "needHelp": "¿Necesitas ayuda?",
+       "contactSupport": "Contacta con soporte"
+     },
+     "UserManagerActivation": {
+       "subject": "Activa tu cuenta de Quevo Business",
+       "logo_url": "https://quevo.com/logo.png",
+       "welcome_heading": "¡Hola {recipientName}!",
+       "confirm_email_prompt": "Gracias por registrarte en Quevo Business. Para completar tu registro, por favor confirma tu dirección de email haciendo clic en el botón de abajo.",
+       "after_confirmation_note": "Una vez confirmado, podrás acceder a todas las funciones de Quevo Business y comenzar a gestionar tu negocio.",
+       "confirm_button_text": "Confirmar Email",
+       "fallback_link_instruction": "Si el botón no funciona, copia y pega este enlace en tu navegador:",
+               "closing_salutation": "Saludos,",
+        "team_name": "El equipo de Quevo"
+      },
+      "BusinessActivationPage": {
+        "invalidLinkMissingInfo": "El enlace de activación no es válido o faltan información del token/email.",
+        "activatingAccount": "Activando tu cuenta...",
+        "pleaseWait": "Por favor espera mientras verificamos tu email.",
+        "activationSuccessful": "¡Activación Completada!",
+        "activationSuccessDefault": "Tu cuenta ha sido activada exitosamente.",
+        "welcomeMessage": "¡Bienvenido a Quevo, {recipientName}!",
+        "accountActiveMessage": "Tu cuenta Business está activa y tu perfil está en línea.",
+        "verificationNote": "Realizamos verificaciones para evitar usos no autorizados de identidades empresariales. Si tenemos preguntas, te lo haremos saber.",
+        "redirectingToDashboard": "Redirigiendo al panel de control...",
+        "accountAlreadyActiveTitle": "Cuenta Ya Activa",
+        "accountAlreadyActive": "Tu cuenta ya está activa.",
+        "redirectToLoginPrompt": "Serás redirigido a la página de inicio de sesión.",
+        "goToSignIn": "Ir a Iniciar Sesión",
+        "activationFailed": "Activación Fallida",
+        "activationFailedDefault": "No se pudo activar tu cuenta.",
+        "checkLinkOrContactSupport": "Verifica el enlace o contacta con soporte.",
+        "trySignupAgain": "Intentar Registro Nuevamente",
+        "unexpectedError": "Se produjo un error inesperado.",
+        "autoLoginInProgress": "Iniciando sesión automáticamente..."
+      },
+      "onboarding": {
+        "loading": "Cargando...",
+        "pleaseWait": "Por favor espera...",
+        "createBusinessTitle": "Crea tu negocio"
+      }
+    } 

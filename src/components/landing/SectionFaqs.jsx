@@ -2,35 +2,60 @@
 'use client'; // Needs client-side interactivity for accordion functionality
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 export default function SectionFaqs() {
+  const t = useTranslations('Landing');
+  const [expandedQuestions, setExpandedQuestions] = useState(new Set([0, 1, 2]));
+    
     // State to keep track of which accordion item is currently open.
     // We'll store the index of the open item. -1 means no item is open.
     const [openItemIndex, setOpenItemIndex] = useState(-1);
+    const [showAllQuestions, setShowAllQuestions] = useState(false);
 
     // Data for your FAQ items. This makes the component more reusable.
-    const faqItems = [
-        {
-            question: "Come posso creare un account?",
-            answer: "Puoi creare il tuo account cliccando sul link \"Crea il tuo account\" nella sezione principale o visitando la pagina di registrazione."
-        },
-        {
-            question: "Queva è gratuito?",
-            answer: "Sì, offriamo un piano gratuito che ti permette di provare le funzionalità base. Puoi anche provare Queva Premium gratuitamente per un mese senza impegno."
-        },
-        {
-            question: "Come funziona il sistema di punti e premi?",
-            answer: "I tuoi clienti guadagnano punti ogni volta che visitano il tuo locale e scannerizzano il loro QR personale. Tu puoi definire i premi che possono riscattare una volta raggiunti determinati punti."
-        },
-        {
-            question: "Posso gestire il menu digitale dal mio cellulare?",
-            answer: "Assolutamente sì! Il tuo menu digitale è completamente personalizzabile e può essere gestito comodamente dal tuo cellulare o tablet, aggiornando in tempo reale per i tuoi clienti."
-        },
-        {
-            question: "Offrite supporto per la creazione del profilo?",
-            answer: "Certo! Se hai bisogno di aiuto, possiamo creare il tuo profilo, caricare il menu e impostare le promozioni iniziali per te. Offriamo anche formazione per assicurarti di essere autonomo nella gestione."
-        },
-    ];
+    const faqData = [
+    {
+      question: t('FAQ.questions.accountCreation.question'),
+      answer: t('FAQ.questions.accountCreation.answer')
+    },
+    {
+      question: t('FAQ.questions.freePlan.question'),
+      answer: t('FAQ.questions.freePlan.answer')
+    },
+    {
+      question: t('FAQ.questions.pointsSystem.question'),
+      answer: t('FAQ.questions.pointsSystem.answer')
+    },
+    {
+      question: t('FAQ.questions.mobileMenu.question'),
+      answer: t('FAQ.questions.mobileMenu.answer')
+    },
+    {
+      question: t('FAQ.questions.profileSupport.question'),
+      answer: t('FAQ.questions.profileSupport.answer')
+    },
+    {
+      question: t('FAQ.questions.dataSecurity.question'),
+      answer: t('FAQ.questions.dataSecurity.answer')
+    },
+    {
+      question: t('FAQ.questions.customerSupport.question'),
+      answer: t('FAQ.questions.customerSupport.answer')
+    },
+    {
+      question: t('FAQ.questions.integration.question'),
+      answer: t('FAQ.questions.integration.answer')
+    },
+    {
+      question: t('FAQ.questions.pricing.question'),
+      answer: t('FAQ.questions.pricing.answer')
+    },
+    {
+      question: t('FAQ.questions.technicalRequirements.question'),
+      answer: t('FAQ.questions.technicalRequirements.answer')
+    }
+  ];
 
     const toggleAccordion = (index) => {
         // If the clicked item is already open, close it.
@@ -38,34 +63,114 @@ export default function SectionFaqs() {
         setOpenItemIndex(prevIndex => (prevIndex === index ? -1 : index));
     };
 
+    const toggleShowAllQuestions = () => {
+        setShowAllQuestions(!showAllQuestions);
+        // Reset open accordion when toggling
+        setOpenItemIndex(-1);
+    };
+
+    // Show only first 3 questions by default, or all if showAllQuestions is true
+    const visibleQuestions = showAllQuestions ? faqData : faqData.slice(0, 3);
+
     return (
-        <section className="container-x-md py-8 lg:py-8">
-            <p className="font-bold text-lg lg:text-lg mb-8 leading-none">Alcune domande e risposte</p>
-            <div className="accordion-container">
-                {faqItems.map((item, index) => (
-                    <div className="accordion-item" key={index}>
+        <section className="container-x-md py-8 lg:py-12">
+            <div className="text-center mb-12">
+                <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+                    {t('FAQ.title')}
+                </h2>
+                <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                    {t('FAQ.subtitle')}
+                </p>
+            </div>
+            
+            <div className="max-w-4xl mx-auto">
+                {visibleQuestions.map((item, index) => (
+                    <div key={index} className="border-b border-gray-200 last:border-b-0">
                         <button
-                            className={`accordion-header ${openItemIndex === index ? 'active' : ''}`}
+                            className="w-full py-6 text-left flex items-center justify-between"
                             onClick={() => toggleAccordion(index)}
                             aria-expanded={openItemIndex === index ? "true" : "false"}
                         >
-                            <p className="text-sm md:text-md">{item.question}</p>
-                            <span className="accordion-icon">{openItemIndex === index ? '−' : '+'}</span>
+                            <h3 className="text-lg font-medium text-gray-900 pr-4">
+                                {item.question}
+                            </h3>
+                            <div className="flex-shrink-0">
+                                <svg 
+                                    className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
+                                        openItemIndex === index ? 'rotate-45' : ''
+                                    }`}
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path 
+                                        strokeLinecap="round" 
+                                        strokeLinejoin="round" 
+                                        strokeWidth={2} 
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" 
+                                    />
+                                </svg>
+                            </div>
                         </button>
-                        {/* Conditionally render content or apply height for animation */}
                         <div
-                            className="accordion-content"
-                            style={{
-                                maxHeight: openItemIndex === index ? '500px' : '0', // Adjust max-height as needed for content
-                                opacity: openItemIndex === index ? '1' : '0',
-                                overflow: 'hidden',
-                                transition: 'max-height 0.3s ease-in-out, opacity 0.3s ease-in-out',
-                            }}
+                            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                                openItemIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                            }`}
                         >
-                            <p>{item.answer}</p>
+                            <div className="pb-6 px-6">
+                                <p className="text-gray-700 leading-relaxed">{item.answer}</p>
+                            </div>
                         </div>
                     </div>
                 ))}
+                
+                {!showAllQuestions && (
+                    <div className="text-center mt-8">
+                        <button
+                            onClick={toggleShowAllQuestions}
+                            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200"
+                        >
+                            <span>{t('FAQ.showMore')}</span>
+                            <svg 
+                                className="w-5 h-5" 
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24"
+                            >
+                                <path 
+                                    strokeLinecap="round" 
+                                    strokeLinejoin="round" 
+                                    strokeWidth={2} 
+                                    d="M19 9l-7 7-7-7" 
+                                />
+                            </svg>
+                        </button>
+                    </div>
+                )}
+                
+                {showAllQuestions && (
+                    <div className="text-center mt-8">
+                        <button
+                            onClick={toggleShowAllQuestions}
+                            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200"
+                        >
+                            <span>{t('FAQ.showLess')}</span>
+                            <svg 
+                                className="w-5 h-5" 
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24"
+                            >
+                                <path 
+                                    strokeLinecap="round" 
+                                    strokeLinejoin="round" 
+                                    strokeWidth={2} 
+                                    d="M5 15l7-7 7 7" 
+                                />
+                            </svg>
+                        </button>
+                    </div>
+                )}
             </div>
         </section>
     );

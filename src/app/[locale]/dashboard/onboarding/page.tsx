@@ -11,7 +11,7 @@ import ProfilePreview from "@/components/dashboard/profile/ProfilePreview"
 export default function OnboardingPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const t = useTranslations("Onboarding")
+  const t = useTranslations("onboarding")
   const [formData, setFormData] = useState<any>({
     business_name: "",
     business_urlname: "",
@@ -107,22 +107,30 @@ export default function OnboardingPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Top Navbar */}
-      <div className="bg-white border-b border-gray-200 px-4 lg:px-6 py-4">
+      <div className="px-4 lg:px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">Q</span>
+          {/* xs to md: centered layout */}
+          <div className="flex flex-col items-center lg:hidden flex-1">
+            <div className="flex items-center space-x-3 mb-2">
+              <h1 className="text-lg font-bold text-gray-900">Quevo</h1>
             </div>
-            <h1 className="text-lg lg:text-xl font-bold text-gray-900">Quevo</h1>
+            <div className="text-sm text-gray-500 text-center">
+              {t("createBusinessTitle")}
+            </div>
           </div>
-          <div className="text-xs lg:text-sm text-gray-500 hidden sm:block">
-            {t("createBusinessTitle") || "Crea il tuo business"}
+          
+          {/* lg+: original layout */}
+          <div className="hidden lg:flex items-center space-x-3">
+            <h1 className="text-xl font-bold text-gray-900">Quevo</h1>
+          </div>
+          <div className="hidden lg:block text-sm text-gray-500">
+            {t("createBusinessTitle")}
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col lg:flex-row max-w-4xl mx-auto w-full pb-24 lg:items-center">
+      <div className="flex-1 flex flex-col lg:flex-row max-w-4xl mx-auto w-full pb-24 lg:items-center py-0 px-6">
         {/* Left Column - Form */}
         <div className="flex-1 min-w-0 p-4 lg:p-6">
           <BusinessOnboardingForm 

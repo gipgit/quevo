@@ -5,69 +5,112 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { useLocaleSwitcher } from '@/hooks/useLocaleSwitcher';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 export default function BusinessActivationPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const t = useTranslations('BusinessActivationPage');
+  const { currentLocale } = useLocaleSwitcher();
 
-  const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'already_active'>('loading');
+  const [status, setStatus] = useState<'loading' | 'success' | 'auto_login' | 'error' | 'already_active'>('loading');
   const [message, setMessage] = useState('');
   const [userData, setUserData] = useState<{ user_id: string; name_first: string; name_last: string; email: string } | null>(null);
+  const [userEmail, setUserEmail] = useState<string>('');
 
   useEffect(() => {
     const token = searchParams.get('token');
-    const userEmail = searchParams.get('email');
+    const emailFromParams = searchParams.get('email');
 
-    if (!token || !userEmail) {
+    if (!token || !emailFromParams) {
       setStatus('error');
       setMessage(t('invalidLinkMissingInfo'));
       return;
     }
 
+    setUserEmail(emailFromParams);
+
     const activateAccount = async () => {
       try {
+        console.log(`[activation] Attempting to activate account for email: ${emailFromParams}`);
         const response = await fetch('/api/auth/activate-manager', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ token, email: userEmail }),
+          body: JSON.stringify({ token, email: emailFromParams }),
         });
 
         const data = await response.json();
+        console.log(`[activation] Response status: ${response.status}, data:`, data);
 
         if (response.ok) {
-          setStatus('success');
-          setMessage(data.message || t('activationSuccessDefault'));
+          // Immediately set to auto_login to prevent any error state from showing
+          setStatus('auto_login');
           setUserData(data.data);
 
-          // --- AUTO-LOGIN FLOW ---
-          // Directly sign in with NextAuth credentials provider (auto-login password)
-          const signInRes = await import('next-auth/react').then(({ signIn }) =>
-            signIn('credentials', {
-              email: userEmail,
-              password: 'auto-login',
-              userType: 'manager',
-              redirect: false,
-            })
-          );
-          if (signInRes?.ok) {
-            // Redirect to onboarding/dashboard
-            router.push('/dashboard/onboarding');
-            return;
-          } else {
-            setStatus('error');
-            setMessage(t('autoLoginFailed'));
-            return;
-          }
-          // --- END AUTO-LOGIN FLOW ---
+          // Auto-login the user - handle this separately to avoid triggering the outer catch
+          const handleAutoLogin = async () => {
+            try {
+              console.log(`[activation] Attempting auto-login for email: ${emailFromParams}`);
+              const autoLoginResponse = await fetch('/api/auth/auto-login', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                  autoLoginToken: data.autoLoginToken, 
+                  email: emailFromParams 
+                }),
+              });
+
+              const autoLoginData = await autoLoginResponse.json();
+              console.log(`[activation] Auto-login response:`, autoLoginData);
+
+              if (autoLoginResponse.ok && autoLoginData.success) {
+                // Use NextAuth to sign in the user
+                const { signIn } = await import('next-auth/react');
+                const signInResult = await signIn('credentials', {
+                  email: emailFromParams,
+                  userType: 'manager',
+                  autoLoginToken: data.autoLoginToken,
+                  redirect: false,
+                });
+
+                if (signInResult?.ok) {
+                  // Redirect to dashboard
+                  router.push(`/${currentLocale}/dashboard/onboarding`);
+                  return;
+                } else {
+                  console.error('[activation] Auto-login failed:', signInResult);
+                  // Fallback to signin page with success message
+                  router.push(`/${currentLocale}/signin/business?email=${encodeURIComponent(emailFromParams)}&message=${encodeURIComponent(t('activationSuccessful'))}`);
+                }
+              } else {
+                console.error('[activation] Auto-login API failed:', autoLoginData);
+                // Fallback to signin page with success message
+                router.push(`/${currentLocale}/signin/business?email=${encodeURIComponent(emailFromParams)}&message=${encodeURIComponent(t('activationSuccessful'))}`);
+              }
+            } catch (autoLoginError) {
+              console.error('[activation] Auto-login error:', autoLoginError);
+              // Fallback to signin page with success message
+              router.push(`/${currentLocale}/signin/business?email=${encodeURIComponent(emailFromParams)}&message=${encodeURIComponent(t('activationSuccessful'))}`);
+            }
+          };
+
+          // Start auto-login process
+          handleAutoLogin();
+          return; // Exit early to prevent the outer catch from executing
         } else {
           if (response.status === 409 && data.message === 'Your account is already active.') {
             setStatus('already_active');
             setMessage(t('accountAlreadyActive'));
-            // Immediately redirect to login if already active
-            router.push(`/signin?email=${encodeURIComponent(userEmail)}&message=${encodeURIComponent(t('accountAlreadyActive'))}`);
+            // Immediately redirect to login if already active with locale
+            router.push(`/${currentLocale}/signin/business?email=${encodeURIComponent(emailFromParams)}&message=${encodeURIComponent(t('accountAlreadyActive'))}`);
+          } else if (response.status === 404) {
+            setStatus('error');
+            setMessage(t('invalidLinkMissingInfo'));
           } else {
             setStatus('error');
             setMessage(data.message || t('activationFailedDefault'));
@@ -88,37 +131,52 @@ export default function BusinessActivationPage() {
       <div className="w-full max-w-md text-center">
         {status === 'loading' && (
           <>
-            <h2 className="mb-4 text-2xl font-bold">{t('activatingAccount')}</h2>
+            <LoadingSpinner size="lg" color="blue" className="mt-6 mb-4" />
+            <p className="mb-4 text-lg font-bold">{t('activatingAccount')}</p>
             <p className="text-gray-700">{t('pleaseWait')}</p>
-            <div className="mt-4 animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
           </>
         )}
 
         {status === 'success' && (
           <>
-            <h2 className="mb-4 text-2xl font-bold">{t('activationSuccessful')}</h2>
             {userData && (
               <>
-                <p className="font-bold text-lg lg:text-lg mb-3">{t('welcomeMessage', { recipientName: userData.name_first })}</p>
+                <p className="font-bold text-xl lg:text-2xl mb-3">{t('welcomeMessage', { recipientName: userData.name_first })}</p>
                 <p className="mb-4">{t('accountActiveMessage')}</p>
-                <p className="text-sm text-black-600">{t('verificationNote')}</p>
               </>
             )}
             <p className="mt-4 text-sm text-gray-600">
               {t('redirectingToDashboard')}
             </p>
-            {/* No direct link here as auto-redirect is happening */}
+            <Link href={`/${currentLocale}/signin/business?email=${encodeURIComponent(userEmail)}`} className="mt-6 inline-block rounded-md bg-indigo-600 px-6 py-2 text-white font-medium hover:bg-indigo-700">
+              {t('goToSignIn')}
+            </Link>
+          </>
+        )}
+
+        {status === 'auto_login' && (
+          <>
+            {userData && (
+              <>
+                <p className="font-bold text-xl lg:text-2xl mb-3">{t('welcomeMessage', { recipientName: userData.name_first })}</p>
+                <p className="mb-4">{t('accountActiveMessage')}</p>
+              </>
+            )}
+            <LoadingSpinner size="md" color="blue" className="mt-6 mb-4" />
+            <p className="text-sm text-gray-600">
+              {t('autoLoginInProgress')}
+            </p>
           </>
         )}
 
         {status === 'already_active' && (
           <>
-            <h2 className="mb-4 text-2xl font-bold text-blue-600">{t('accountAlreadyActiveTitle')}</h2>
+            <h2 className="mb-4 text-2xl font-bold">{t('accountAlreadyActiveTitle')}</h2>
             <p className="text-gray-700">{message}</p>
             <p className="mt-4 text-sm text-gray-600">
               {t('redirectToLoginPrompt')}
             </p>
-            <Link href="/signin" className="mt-6 inline-block rounded-md bg-indigo-600 px-6 py-2 text-white font-medium hover:bg-indigo-700">
+            <Link href={`/${currentLocale}/signin/business`} className="mt-6 inline-block rounded-md bg-indigo-600 px-6 py-2 text-white font-medium hover:bg-indigo-700">
               {t('goToSignIn')}
             </Link>
           </>
@@ -126,12 +184,12 @@ export default function BusinessActivationPage() {
 
         {status === 'error' && (
           <>
-            <h2 className="mb-4 text-2xl font-bold text-red-600">{t('activationFailed')}</h2>
+            <h2 className="mb-4 text-2xl font-bold">{t('activationFailed')}</h2>
             <p className="text-gray-700">{message}</p>
             <p className="mt-4 text-sm text-gray-600">
               {t('checkLinkOrContactSupport')}
             </p>
-            <Link href="/signup/business" className="mt-6 inline-block rounded-md bg-red-600 px-6 py-2 text-white font-medium hover:bg-red-700">
+            <Link href={`/${currentLocale}/signup/business`} className="mt-6 inline-block py-1 font-bold border-b border-gray-500">
               {t('trySignupAgain')}
             </Link>
           </>

@@ -1,93 +1,102 @@
-// components/SectionFeatures.jsx
-'use client'; // This component uses useEffect and IntersectionObserver for animations
+// components/landing/SectionFeatures.jsx
+'use client';
 
-import { useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 
-export default function SectionFeatures() {
-    const sectionRef = useRef(null); // Ref for the main section to observe
+export default function SectionFeatures({ locale }) {
+  const t = useTranslations('Landing');
 
-    useEffect(() => {
-        const observerOptions = {
-            root: null, // observe against the viewport
-            rootMargin: '0px',
-            threshold: 0.15 // Trigger when 15% of the element is visible, as per your JS
-        };
+  // Features data
+  const featuresCards = [
+    {
+      icon: "✓",
+      title: t('Features.cards.serviceListing.title'),
+      description: t('Features.cards.serviceListing.description')
+    },
+    {
+      icon: "✓",
+      title: t('Features.cards.serviceRequests.title'),
+      description: t('Features.cards.serviceRequests.description')
+    },
+    {
+      icon: "✓",
+      title: t('Features.cards.appointmentsScheduling.title'),
+      description: t('Features.cards.appointmentsScheduling.description')
+    },
+    {
+      icon: "✓",
+      title: t('Features.cards.quoteSimulation.title'),
+      description: t('Features.cards.quoteSimulation.description')
+    },
+    {
+      icon: "✓",
+      title: t('Features.cards.qrWebsite.title'),
+      description: t('Features.cards.qrWebsite.description')
+    },
+    {
+      icon: "✓",
+      title: t('Features.cards.digitalMenu.title'),
+      description: t('Features.cards.digitalMenu.description')
+    },
+    {
+      icon: "✓",
+      title: t('Features.cards.mailingList.title'),
+      description: t('Features.cards.mailingList.description')
+    },
+    {
+      icon: "✓",
+      title: t('Features.cards.fidelityCard.title'),
+      description: t('Features.cards.fidelityCard.description')
+    },
+    {
+      icon: "✓",
+      title: t('Features.cards.surveys.title'),
+      description: t('Features.cards.surveys.description')
+    },
+    {
+      icon: "✓",
+      title: t('Features.cards.promotions.title'),
+      description: t('Features.cards.promotions.description')
+    }
+  ];
 
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // Get all child elements within this section that need to be animated
-                    const animatedElements = entry.target.querySelectorAll('.animated-element');
-                    animatedElements.forEach((element, index) => {
-                        // Stagger the animations slightly
-                        element.style.transitionDelay = `${index * 0.15}s`; // 150ms delay per element
-                        element.classList.add('is-visible');
-                    });
-                    // Stop observing this section once it's animated to prevent re-triggering
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
+  return (
+    <section className="min-h-screen bg-white flex items-center">
+      <div className="container mx-auto px-12 py-16 max-w-7xl">
+        {/* Title Section */}
+        <div className="text-center mb-16">
+          <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-4">
+            {t('Features.title')}
+          </h2>
+          <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto mb-8">
+            {t('Features.subtitle')}
+          </p>
+        </div>
 
-        // Observe the current section
-        if (sectionRef.current) {
-            observer.observe(sectionRef.current);
-        }
-
-        // Cleanup function
-        return () => {
-            if (sectionRef.current) {
-                observer.unobserve(sectionRef.current);
-            }
-        };
-    }, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
-
-    return (
-        <section className="bg-white container-x-lg py-8 lg:py-8" ref={sectionRef}>
-            <p className="font-bold text-center text-lg lg:text-xl mb-2">Un QR, un piano gratuito, tanti strumenti</p>
-
-            <p className="text-center lg:text-md mb-2">Offri ai clienti varie funzionalità riunite nel tuo unico QR senza applicazioni.</p>
-            <p className="text-center text-sm text-black-600 mb-7">Gestisci tutto comodamente dal tuo smartphone.</p>
-
-            <div className="feature-cards-section">
-                <div className="flex flex-col md:flex-row gap-4 lg:gap-2 items-start justify-between">
-                    {/* Feature Card 1 */}
-                    <div className="flex-1 py-2 px-2 rounded-lg text-center animated-element">
-                        <div className="feature-cards-image">
-                            <img src="/assets/images/landing-screens/profile.png" alt="Vetrina Prodotti e Servizi" />
-                        </div>
-                        <p className="mt-5 font-bold text-md mb-1">Vetrina Prodotti e Servizi</p>
-                        <p className="text-black-600 mb-3">Il tuo menu Prodotti / Servizi digitale personalizzabile che puoi gestire comodamente dal tuo cellulare.</p>
-                    </div>
-
-                    {/* Feature Card 2 */}
-                    <div className="flex-1 py-2 px-2 rounded-lg text-center animated-element">
-                        <div className="feature-cards-image">
-                            <img src="/assets/images/landing-screens/booking.png" alt="Prenotazioni Online" />
-                        </div>
-                        <p className="mt-5 font-bold text-md mb-1">Prenotazioni Online</p>
-                        <p className="text-black-600">Offri la prenotazione per diversi servizi. Dal tuo celluare puoi confermarle, riprogrammarle, annullarle e trovare i contatti del cliente.</p>
-                    </div>
-
-                    {/* Feature Card 3 */}
-                    <div className="flex-1 py-2 px-2 rounded-lg text-center animated-element">
-                        <div className="feature-cards-image">
-                            <img src="/assets/images/landing-screens/profile.png" alt="Raccolta Punti e Premi" />
-                        </div>
-                        <p className="mt-5 font-bold text-md mb-1">Raccolta Punti e Premi</p>
-                        <p className="text-black-600">Crea un esperienza che premia i clienti per la loro fedeltà. Imposta i tuoi premi e fai guadagnare punti semplicemente scannerizzando il QR del cliente. </p>
-                    </div>
-
-                    {/* Feature Card 4 */}
-                    <div className="flex-1 py-2 px-2 rounded-lg text-center animated-element">
-                        <div className="feature-cards-image">
-                            <img src="/assets/images/landing-screens/promotion-challenge.png" alt="Promozioni Sbloccabili" />
-                        </div>
-                        <p className="mt-5 font-bold text-md mb-1">Promozioni Sbloccabili</p>
-                        <p className="text-black-600">Ottieni risposte a un breve sondaggio oppure un interazione sui social in cambio di una promozione. Puoi creare anche promozioni libere.</p>
-                    </div>
-                </div>
+        {/* Features Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2 lg:gap-4 max-w-7xl mx-auto mb-8">
+          {featuresCards.map((card, index) => (
+            <div
+              key={index}
+              className="flex flex-row lg:flex-col gap-4 lg:gap-0 rounded-2xl p-4 lg:p-4 items-center"
+            >
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+                <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1 lg:mb-2 leading-tight">
+                  {card.title}
+                </h3>
+                <p className="text-sm text-gray-600">
+                  {card.description}
+                </p>
+              </div>
             </div>
-        </section>
-    );
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }

@@ -552,7 +552,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       {/* Business Selection Modal */}
       <BusinessSelectionModal 
         isOpen={showBusinessModal} 
-        onClose={() => setShowBusinessModal(false)} 
+        onClose={() => setShowBusinessModal(false)}
       />
     </div>
   )

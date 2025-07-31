@@ -113,108 +113,127 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
             <nav className="profile-navbar hidden lg:block fixed top-0 left-0 right-0 z-50 shadow-sm" style={{ borderBottom: `1px solid ${isDarkBackground ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}` }}>
                 <div className="container mx-auto px-4">
                     <div className="flex items-center justify-between h-16">
-                        {/* Left side - Profile image and business name */}
-                        <div className="flex items-center space-x-4">
-                            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
-                                {businessData.business_img_profile ? (
-                                    <Image
-                                        src={businessData.business_img_profile}
-                                        alt={logoAltText}
-                                        width={40}
-                                        height={40}
-                                        className="object-cover w-full h-full"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full" style={{ backgroundColor: themeVariables['--lighter-theme-color-background'] }}></div>
-                                )}
+                        {/* Left side - Profile image, business name, and navigation links */}
+                        <div className="flex items-center space-x-8">
+                            <div className="flex items-center space-x-4">
+                                <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                                    {businessData.business_img_profile ? (
+                                        <Image
+                                            src={businessData.business_img_profile}
+                                            alt={logoAltText}
+                                            width={40}
+                                            height={40}
+                                            className="object-cover w-full h-full"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full" style={{ backgroundColor: themeVariables['--lighter-theme-color-background'] }}></div>
+                                    )}
+                                </div>
+                                <div>
+                                    <h1 className="text-lg font-semibold" style={{ color: themeColorText }}>
+                                        {businessData.business_name}
+                                    </h1>
+                                </div>
                             </div>
-                            <div>
-                                <h1 className="text-lg font-semibold" style={{ color: themeColorText }}>
-                                    {businessData.business_name}
-                                </h1>
+
+                            {/* Navigation links */}
+                            <div className="flex items-center space-x-6">
+                                <Link
+                                    href={`/${businessUrlnameInPath}/services`}
+                                    className={`text-sm font-medium transition-colors duration-200 ${activeSection === 'services' ? 'border-b-2' : ''}`}
+                                    style={activeSection === 'services' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
+                                >
+                                    {t('services')}
+                                </Link>
+                                <Link
+                                    href={`/${businessUrlnameInPath}/products`}
+                                    className={`text-sm font-medium transition-colors duration-200 ${activeSection === 'products' ? 'border-b-2' : ''}`}
+                                    style={activeSection === 'products' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
+                                >
+                                    {t('products')}
+                                </Link>
+                                <Link
+                                    href={`/${businessUrlnameInPath}/promotions`}
+                                    className={`text-sm font-medium transition-colors duration-200 ${activeSection === 'promotions' ? 'border-b-2' : ''}`}
+                                    style={activeSection === 'promotions' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
+                                >
+                                    {t('promotions')}
+                                </Link>
+                                <Link
+                                    href={`/${businessUrlnameInPath}/rewards`}
+                                    className={`text-sm font-medium transition-colors duration-200 ${activeSection === 'rewards' ? 'border-b-2' : ''}`}
+                                    style={activeSection === 'rewards' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
+                                >
+                                    {t('rewards')}
+                                </Link>
                             </div>
                         </div>
 
-                        {/* Right side - Navigation links and action buttons */}
-                        <div className="flex items-center space-x-6">
-                            <Link
-                                href={`/${businessUrlnameInPath}/services`}
-                                className={`text-sm font-medium transition-colors duration-200 ${activeSection === 'services' ? 'border-b-2' : ''}`}
-                                style={activeSection === 'services' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
-                            >
-                                {t('services')}
-                            </Link>
-                            <Link
-                                href={`/${businessUrlnameInPath}/products`}
-                                className={`text-sm font-medium transition-colors duration-200 ${activeSection === 'products' ? 'border-b-2' : ''}`}
-                                style={activeSection === 'products' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
-                            >
-                                {t('products')}
-                            </Link>
-                            <Link
-                                href={`/${businessUrlnameInPath}/promotions`}
-                                className={`text-sm font-medium transition-colors duration-200 ${activeSection === 'promotions' ? 'border-b-2' : ''}`}
-                                style={activeSection === 'promotions' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
-                            >
-                                {t('promotions')}
-                            </Link>
-                            <Link
-                                href={`/${businessUrlnameInPath}/rewards`}
-                                className={`text-sm font-medium transition-colors duration-200 ${activeSection === 'rewards' ? 'border-b-2' : ''}`}
-                                style={activeSection === 'rewards' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
-                            >
-                                {t('rewards')}
-                            </Link>
+                        {/* Right side - Social links and action buttons */}
+                        <div className="flex items-center space-x-3">
+                            {/* Social Links */}
+                            {businessSettings.show_socials && filteredSocialLinks.map((link, index) => (
+                                <div key={index}>
+                                    <Link href={link.link_url} target="_blank" rel="noopener noreferrer" className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                                        {link.icon && (
+                                            <Image
+                                                src={link.icon}
+                                                alt={link.label}
+                                                width={16}
+                                                height={16}
+                                            />
+                                        )}
+                                    </Link>
+                                </div>
+                            ))}
                             
                             {/* Action Buttons */}
-                            <div className="flex items-center space-x-3 ml-4">
-                                {businessSettings.show_btn_payments && businessPaymentMethods && businessPaymentMethods.length > 0 && (
-                                    <button onClick={togglePaymentsModal} className="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200" style={primaryButtonStyle}>
-                                        Pagamenti
-                                    </button>
-                                )}
+                            {businessSettings.show_btn_payments && businessPaymentMethods && businessPaymentMethods.length > 0 && (
+                                <button onClick={togglePaymentsModal} className="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200" style={primaryButtonStyle}>
+                                    Pagamenti
+                                </button>
+                            )}
 
-                                {businessSettings.show_btn_review && googleReviewLinkUrl && (
-                                    <Link href={googleReviewLinkUrl} target="_blank" rel="noopener noreferrer" className="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center gap-1" style={primaryButtonStyle}>
-                                        Recensione
+                            {businessSettings.show_btn_review && googleReviewLinkUrl && (
+                                <Link href={googleReviewLinkUrl} target="_blank" rel="noopener noreferrer" className="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center gap-1" style={primaryButtonStyle}>
+                                    Recensione
+                                    <Image
+                                        src="/icons/google.png"
+                                        alt="Google"
+                                        width={16}
+                                        height={16}
+                                        style={getButtonIconStyle()}
+                                    />
+                                </Link>
+                            )}
+
+                            {businessSettings.show_btn_phone && hasPhones && (
+                                <button onClick={() => toggleContactModal('phone')} className={circularButtonBaseClass} style={primaryButtonStyle}>
+                                    <div className="link-icon-wrapper w-10 h-10 flex items-center justify-center rounded-full">
                                         <Image
-                                            src="/icons/google.png"
-                                            alt="Google"
-                                            width={16}
-                                            height={16}
+                                            src="/icons/iconsax/phone.svg"
+                                            alt={t('call')}
+                                            width={20}
+                                            height={20}
                                             style={getButtonIconStyle()}
                                         />
-                                    </Link>
-                                )}
+                                    </div>
+                                </button>
+                            )}
 
-                                {businessSettings.show_btn_phone && hasPhones && (
-                                    <button onClick={() => toggleContactModal('phone')} className={circularButtonBaseClass} style={primaryButtonStyle}>
-                                        <div className="link-icon-wrapper w-10 h-10 flex items-center justify-center rounded-full">
-                                            <Image
-                                                src="/icons/iconsax/phone.svg"
-                                                alt={t('call')}
-                                                width={20}
-                                                height={20}
-                                                style={getButtonIconStyle()}
-                                            />
-                                        </div>
-                                    </button>
-                                )}
-
-                                {businessSettings.show_btn_email && hasEmails && (
-                                    <button onClick={() => toggleContactModal('email')} className={circularButtonBaseClass} style={primaryButtonStyle}>
-                                        <div className="link-icon-wrapper w-10 h-10 flex items-center justify-center rounded-full">
-                                            <Image
-                                                src="/icons/iconsax/email.svg"
-                                                alt={t('email')}
-                                                width={20}
-                                                height={20}
-                                                style={getButtonIconStyle()}
-                                            />
-                                        </div>
-                                    </button>
-                                )}
-                            </div>
+                            {businessSettings.show_btn_email && hasEmails && (
+                                <button onClick={() => toggleContactModal('email')} className={circularButtonBaseClass} style={primaryButtonStyle}>
+                                    <div className="link-icon-wrapper w-10 h-10 flex items-center justify-center rounded-full">
+                                        <Image
+                                            src="/icons/iconsax/email.svg"
+                                            alt={t('email')}
+                                            width={20}
+                                            height={20}
+                                            style={getButtonIconStyle()}
+                                        />
+                                    </div>
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -409,22 +428,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                             </div>
                         </div>
 
-                        <div className="flex flex-wrap gap-3 mb-6">
-                            {businessSettings.show_socials && filteredSocialLinks.map((link, index) => (
-                                <div key={index}>
-                                    <Link href={link.link_url} target="_blank" rel="noopener noreferrer" className="w-12 h-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors">
-                                        {link.icon && (
-                                            <Image
-                                                src={link.icon}
-                                                alt={link.label}
-                                                width={24}
-                                                height={24}
-                                            />
-                                        )}
-                                    </Link>
-                                </div>
-                            ))}
-                        </div>
+
 
                     </div>
                 </div>

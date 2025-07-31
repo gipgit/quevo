@@ -56,6 +56,7 @@ export default function ServiceDetailsForm({
 
     const [submissionError, setSubmissionError] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showDescription, setShowDescription] = useState(false);
 
     // Effect to check authentication and fetch user data
     useEffect(() => {
@@ -333,23 +334,48 @@ export default function ServiceDetailsForm({
                 </div>
             )}
 
-            <div className="mt-2 mb-6 border-b pb-4">
-                <p className="font-bold text-xl md:text-2xl lg:text-3xl">{selectedService?.service_name}</p>
-                <p className="text-sm text-md md:text-lg opacity-80">{selectedService?.description}</p>
-                <p className="text-xs mt-1">
-                   {selectedService?.price_base != null ? ( // Check if price_base has any value (0 or positive)
-                    selectedService.price_base > 0 ? (
-                        <p>{t('basePrice')}: € {parseFloat(selectedService.price_base).toFixed(2)}</p>
-                    ) : (
-                        <p className="text-green-400 font-semibold">{tCommon('free')}</p> // You can adjust this className
-                    )
-                    ) : (
-                        <p className="opacity-50 italic">{t('priceNotAvailable')}</p> // You can adjust this className
+            <div className="mt-2 mb-4 border-b pb-4">
+                <div className="flex flex-col lg:flex-row lg:gap-8">
+                    {/* Service Information Column */}
+                    <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                            <p className="font-bold text-xl md:text-2xl lg:text-3xl">{selectedService?.service_name}</p>
+                            {selectedService?.description && (
+                                <button
+                                    type="button"
+                                    onClick={() => setShowDescription(!showDescription)}
+                                    className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                                    aria-label={showDescription ? 'Hide description' : 'Show description'}
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </button>
+                            )}
+                        </div>
+                        {showDescription && selectedService?.description && (
+                            <p className="text-sm text-md md:text-lg opacity-80 mb-2">{selectedService?.description}</p>
+                        )}
+                        <p className="text-xs mt-1">
+                           {selectedService?.price_base != null ? ( // Check if price_base has any value (0 or positive)
+                            selectedService.price_base > 0 ? (
+                                <p>{t('basePrice')}: € {parseFloat(selectedService.price_base).toFixed(2)}</p>
+                            ) : (
+                                <p className="text-green-400 font-semibold">{tCommon('free')}</p> // You can adjust this className
+                            )
+                            ) : (
+                                <p className="opacity-50 italic">{t('priceNotAvailable')}</p> // You can adjust this className
+                            )}
+                        </p>
+                    </div>
+
+                    {/* Date Selection Column */}
+                    {selectedService?.date_selection && (
+                        <div className="flex-shrink-0 mt-4 lg:mt-0">
+                            <p className="text-lg md:text-2xl lg:text-xl">{formattedDate}, {formattedTime}</p>
+                        </div>
                     )}
-                </p>
-                 {selectedService?.date_selection && (
-                    <p className="mt-2 text-lg md:text-2xl">{formattedDate}, {formattedTime}</p>
-                )}
+                </div>
             </div>
 
             {isLoadingDetails ? (
@@ -361,8 +387,7 @@ export default function ServiceDetailsForm({
                     {/* --- Service Items Section (New) --- */}
                     {serviceItems.length > 0 && (
                         <div className="mb-6 border-b pb-4">
-                            <h3 className={`text-xl font-semibold ${themeColorText}`}>{t('optionalItemsTitle')}</h3>
-                            <p className={`text-xs md:text-md mt-1 mb-5 ${themeColorText}`}>{t('optionalItemsDescription')}</p>
+                            <p className={`font-bold text-lg mt-1 mb-2 ${themeColorText}`}>{t('optionalItemsTitle')}</p>
                             <div className="grid grid-cols-1 gap-2 mb-4">
                                 {serviceItems.sort((a, b) => a.display_order - b.display_order).map(item => {
                                     const isSelected = selectedServiceItems[item.service_item_id] && selectedServiceItems[item.service_item_id].quantity > 0;
@@ -410,13 +435,14 @@ export default function ServiceDetailsForm({
                                     );
                                 })}
                             </div>
-                            <div className={`p-4 w-full text-white flex flex-row justify-between`} style={{backgroundColor: themeColorButton}}>
-                                <div>
+                            {/* --- Quotation Summary Card --- */}
+                            <div className={`p-4 w-full text-white flex flex-row items-center`} style={{backgroundColor: themeColorButton}}>
+                                <div className="w-1/3">
                                 <p className="text-xs">{t('totalPrice')}:</p>
                                 <p className="font-bold text-2xl">€ {totalQuotationPrice.toFixed(2)}</p>
                                 </div>
-                                <div>
-                                    
+                                <div className="w-2/3">
+                                <p className="text-xs">{t('optionalItemsDescription')}</p>
                                 </div>
                             </div>
                         </div>

@@ -32,7 +32,14 @@ export async function POST(request: Request) {
     const validatedData = signupSchema.parse(body)
 
     // Get locale from request headers
-    const requestLocale = request.headers.get("Accept-Language")?.split(",")[0].split("-")[0] || "it"
+    const acceptLanguage = request.headers.get("Accept-Language")
+    const requestLocale = acceptLanguage?.split(",")[0].split("-")[0] || "it"
+    
+    // Validate locale is supported
+    const supportedLocales = ["it", "en", "es"]
+    const finalLocale = supportedLocales.includes(requestLocale) ? requestLocale : "it"
+    
+    console.log(`[signup-manager] Request locale: ${requestLocale}, Final locale: ${finalLocale}`)
 
     // Ensure AUTH_URL is defined
     if (!process.env.AUTH_URL) {
@@ -81,8 +88,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Errore durante la creazione del profilo manager." }, { status: 500 })
     }
 
-    // Generate activation link
-    const activationLink = `${process.env.AUTH_URL}/signup/business/activation?token=${activationToken}&email=${encodeURIComponent(validatedData.email)}`
+    // Generate activation link with locale
+    const activationLink = `${process.env.AUTH_URL}/${finalLocale}/signup/business/activation?token=${activationToken}&email=${encodeURIComponent(validatedData.email)}`
 
     // Send activation email
     try {
@@ -93,7 +100,7 @@ export async function POST(request: Request) {
           recipientName: validatedData.name_first,
           confirmationLink: activationLink,
         },
-        locale: requestLocale,
+        locale: finalLocale,
       })
     } catch (emailError) {
       console.error("Email sending error:", emailError)
@@ -118,7 +125,7 @@ export async function POST(request: Request) {
     console.log("--- Manager Signup Success ---")
     console.log(`Email: ${validatedData.email}`)
     console.log(`Activation Link: ${activationLink}`)
-    console.log(`Locale: ${requestLocale}`)
+    console.log(`Locale: ${finalLocale}`)
     console.log("-----------------------------")
 
     return NextResponse.json(

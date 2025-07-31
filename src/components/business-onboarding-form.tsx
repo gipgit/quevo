@@ -293,7 +293,7 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
   return (
     <>
       {/* Step Header */}
-      <div className="mb-8">
+      <div className="mb-8 text-center lg:text-left">
         <h2 className="text-2xl font-semibold text-gray-900">{STEPS[currentStep - 1].name}</h2>
         <p className="text-sm text-gray-500">{STEPS[currentStep - 1].description}</p>
       </div>

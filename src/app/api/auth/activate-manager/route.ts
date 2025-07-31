@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
-import { cookies } from "next/headers"
 
 export const dynamic = 'force-dynamic';
 
@@ -38,34 +37,24 @@ export async function POST(request: Request) {
       },
     })
 
-    // Create a secure session token for automatic login
-    const sessionToken = crypto.randomUUID()
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000) // 10 minutes expiry
+    // Create a temporary auto-login token that will be used for automatic signin
+    const autoLoginToken = crypto.randomUUID()
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000) // 5 minutes expiry
 
-    // Store the session token temporarily in database
+    // Store the auto-login token temporarily in database
     await prisma.usermanager.update({
       where: { user_id: user.user_id },
       data: {
         // We'll use a temporary field for the auto-login token
-        // You might want to create a separate table for this in production
-        token_activation: sessionToken, // Reusing this field temporarily
+        token_activation: autoLoginToken, // Reusing this field temporarily
       },
-    })
-
-    // Set a secure cookie for automatic login
-    const cookieStore = cookies()
-    cookieStore.set("activation-session", sessionToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 10 * 60, // 10 minutes
-      path: "/",
     })
 
     return NextResponse.json(
       {
         message: "Account attivato con successo!",
         success: true,
+        autoLoginToken: autoLoginToken,
         data: {
           user_id: activatedUser.user_id,
           name_first: activatedUser.name_first,

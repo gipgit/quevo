@@ -1,34 +1,47 @@
 // src/app/[locale]/(main)/page.jsx
 
-
+import SectionBoard from '@/components/landing/SectionBoard';
+import SectionActions from '@/components/landing/SectionActions';
 import SectionHero from '@/components/landing/SectionHero';
-import SectionFeatures from '@/components/landing/SectionFeatures';
-import SectionSmartphone from '@/components/landing/SectionSmartphone';
-import SectionHowPoints from '@/components/landing/SectionHowPoints'; 
+import SectionSteps from '@/components/landing/SectionSteps'; 
 import SectionFaqs from '@/components/landing/SectionFaqs'; 
-import SectionExamplesSwiper from '@/components/landing/SectionExamplesSwiper';
-import SectionPlansSwiper from '@/components/landing/SectionPlansSwiper'; 
+import SectionCTA from '@/components/landing/SectionCTA'; 
+import SectionCategories from '@/components/landing/SectionCategories';
+import SectionFeatures from '@/components/landing/SectionFeatures';
 
+interface HomePageProps {
+  params: {
+    locale: string;
+  };
+}
 
-export default function HomePage() {
+export default function HomePage({ params }: HomePageProps) {
     return (
         <>
          
             <main>
 
-                <SectionHero />
+                <SectionHero locale={params.locale} />
+                
+                <SectionFeatures locale={params.locale} />
+                
+                <SectionActions locale={params.locale} />
+                
+            
+                <SectionBoard locale={params.locale} />
 
-                <SectionFeatures />
+                
 
-                <SectionSmartphone />
+                <SectionSteps locale={params.locale} />
 
-                <SectionHowPoints />
+                
+                <SectionCategories/>
+                
 
                 <SectionFaqs />
 
-                <SectionExamplesSwiper />
 
-                <SectionPlansSwiper />
+                <SectionCTA />
 
 
             </main>

@@ -1,25 +1,25 @@
 {
   "Common": {
     "coverPhotoAlt": "Foto di Copertina dell'Attività",
-    "errorBusinessNotFoundTitle": "Attività non trovata",
+    "errorBusinessNotFoundTitle": "Attività Non Trovata",
     "errorBusinessNotFoundDescription": "Il profilo dell'attività richiesto non è stato trovato.",
     "defaultBusinessDescription": "Scopri il profilo e i prodotti di {businessName}.",
-    "uncategorized": "Senza categoria",
+    "uncategorized": "Non Categorizzato",
     "errorFetchingBusinessData": "Impossibile caricare i dati dell'attività: {error}",
     "error": "Errore",
     "loading": "Caricamento...",
     "loadingLayout": "Caricamento layout...",
     "loadingPage": "Caricamento pagina...",
-    "loadingHeader": "Caricamento intestazione profilo attività...",
+    "loadingHeader": "Caricamento Header Profilo Attività...",
     "next": "Avanti",
     "cancel": "Annulla",
     "confirm": "Conferma",
     "close": "Chiudi",
-    "errorBusinessDataNotAvailable": "Errore: dati attività non disponibili.",
+    "errorBusinessDataNotAvailable": "Errore: Dati attività non disponibili.",
     "call": "Chiama",
     "sendEmail": "Invia Email",
     "copyEmail": "Copia Email",
-    "contactsUnavailable": "Spiacenti, nessun contatto disponibile al momento. Riprova più tardi.",
+    "contactsUnavailable": "Spiacenti, le informazioni di contatto non sono disponibili al momento. Riprova più tardi.",
     "services": "Servizi",
     "products": "Prodotti",
     "bookings": "Prenotazioni",
@@ -29,20 +29,79 @@
     "paymentsMethod": "Metodi di Pagamento",
     "leaveReview": "Lascia una Recensione",
     "composeOrder": "Componi Ordine",
-    "discountSuffix": " di sconto",
+    "discountSuffix": " sconto",
     "validFrom": "Valido dal",
     "to": "al",
-    "notApplicable": "N/D",
+    "notApplicable": "N/A",
     "pointsRequired": "Punti Richiesti",
     "name": "Nome",
     "email": "Email",
     "phone": "Telefono",
-    "submitting": "Invio in corso",
+    "submitting": "Invio in corso...",
     "back": "Indietro",
     "free": "Gratis",
     "edit": "Modifica",
     "delete": "Elimina",
-    "save": "Salva"
+    "save": "Salva",
+    "domainPrefix": "quevo.com/",
+    "getStarted": "Inizia Ora",
+    "language": "Lingua",
+    "selectLanguage": "Seleziona Lingua",
+    "requestLanguage": "Richiedi Nuova Lingua",
+    "mailLabel": "Email",
+    "emailPlaceholder": "la tua@email.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "••••••••",
+    "loginButton": "Accedi",
+    "createAccountLink": "Crea Account"
+  },
+  "FAQ": {
+    "title": "Domande Frequenti",
+    "subtitle": "Tutto quello che devi sapere su Queva",
+    "showMore": "Mostra altre domande",
+    "showLess": "Mostra meno domande",
+    "questions": {
+      "accountCreation": {
+        "question": "Come posso creare un account?",
+        "answer": "Puoi creare il tuo account cliccando sul link \"Crea il tuo account\" nella sezione principale o visitando la pagina di registrazione. Il processo è semplice e veloce, richiede solo pochi minuti per completare la registrazione."
+      },
+      "freePlan": {
+        "question": "Queva è gratuito?",
+        "answer": "Sì, offriamo un piano gratuito che ti permette di provare le funzionalità base. Puoi anche provare Queva Premium gratuitamente per un mese senza impegno. Il piano gratuito include tutte le funzionalità essenziali per iniziare."
+      },
+      "pointsSystem": {
+        "question": "Come funziona il sistema di punti e premi?",
+        "answer": "I tuoi clienti guadagnano punti ogni volta che visitano il tuo locale e scannerizzano il loro QR personale. Tu puoi definire i premi che possono riscattare una volta raggiunti determinati punti. Il sistema è completamente personalizzabile e ti permette di creare programmi fedeltà su misura."
+      },
+      "mobileMenu": {
+        "question": "Posso gestire il menu digitale dal mio cellulare?",
+        "answer": "Assolutamente sì! Il tuo menu digitale è completamente personalizzabile e può essere gestito comodamente dal tuo cellulare o tablet, aggiornando in tempo reale per i tuoi clienti. Puoi modificare prezzi, aggiungere nuovi piatti e gestire la disponibilità ovunque tu sia."
+      },
+      "profileSupport": {
+        "question": "Offrite supporto per la creazione del profilo?",
+        "answer": "Certo! Se hai bisogno di aiuto, possiamo creare il tuo profilo, caricare il menu e impostare le promozioni iniziali per te. Offriamo anche formazione per assicurarti di essere autonomo nella gestione. Il nostro team di supporto è sempre disponibile per aiutarti."
+      },
+      "dataSecurity": {
+        "question": "I miei dati sono al sicuro?",
+        "answer": "Assolutamente sì. Utilizziamo le più avanzate tecnologie di sicurezza per proteggere i tuoi dati e quelli dei tuoi clienti. Tutte le informazioni sono crittografate e rispettiamo rigorosamente le normative sulla privacy, inclusa la GDPR."
+      },
+      "customerSupport": {
+        "question": "Come posso contattare il supporto clienti?",
+        "answer": "Il nostro team di supporto è disponibile 24/7 attraverso email, chat live e telefono. Ti risponderemo entro poche ore e siamo sempre pronti ad aiutarti con qualsiasi domanda o problema tecnico tu possa avere."
+      },
+      "integration": {
+        "question": "Queva si integra con altri sistemi?",
+        "answer": "Sì, Queva si integra perfettamente con i principali sistemi di gestione ristorante, POS e piattaforme di delivery. Offriamo API aperte e integrazioni native per garantire una transizione fluida e senza interruzioni del tuo flusso di lavoro."
+      },
+      "pricing": {
+        "question": "Quali sono i costi dei piani premium?",
+        "answer": "I nostri piani premium partono da €29/mese e includono funzionalità avanzate come analisi dettagliate, marketing automatizzato, supporto prioritario e personalizzazioni avanzate. Offriamo anche sconti per pagamenti annuali e piani personalizzati per grandi aziende."
+      },
+      "technicalRequirements": {
+        "question": "Quali sono i requisiti tecnici?",
+        "answer": "Queva funziona su qualsiasi dispositivo con un browser web moderno. Non sono necessarie installazioni software complesse. Per i clienti, basta uno smartphone con fotocamera per scansionare i QR code. Il sistema è ottimizzato per funzionare anche con connessioni internet lente."
+      }
+    }
   },
   "Pricing": {
     "title": "Piani di Prezzo",
@@ -204,10 +263,20 @@
     "alreadyHaveAccount": "Hai già un account?",
     "signInLink": "Accedi qui"
   },
+  "UserManagerActivation": {
+    "subject": "Attiva il tuo account Quevo Business",
+    "logo_url": "https://quevo.com/logo.png",
+    "welcome_heading": "Ciao {recipientName}!",
+    "confirm_email_prompt": "Grazie per esserti registrato su Quevo Business. Per completare la registrazione, conferma il tuo indirizzo email cliccando sul pulsante qui sotto.",
+    "after_confirmation_note": "Una volta confermato, potrai accedere a tutte le funzionalità di Quevo Business e iniziare a gestire la tua attività.",
+    "confirm_button_text": "Conferma Email",
+    "fallback_link_instruction": "Se il pulsante non funziona, copia e incolla questo link nel tuo browser:",
+    "closing_salutation": "Cordiali saluti,",
+    "team_name": "Il team di Quevo"
+  },
   "SignupConfirmation": {
     "title": "Conferma la tua email per iniziare",
-    "subtitle": "Clicca il link che abbiamo inviato alla tua email.",
-    "emailSentTo": "Email inviata a:",
+    "emailSentTo": "Abbiamo inviato un link di conferma a {email}",
     "checkSpam": "Non vedi l'email? Controlla la cartella spam o posta indesiderata.",
     "goToSignIn": "Vai alla pagina di accesso",
     "tryAgain": "Riprova registrazione",
@@ -226,6 +295,15 @@
     "createBusinessAccount": "Crea un account Business",
     "generalAccess": "Accesso Generale",
     "discoverQuevo": "Scopri Quevo"
+  },
+  "BusinessSignIn": {
+    "subtitle": "Accedi al tuo account business",
+    "noAccountText": "Non hai un account?",
+    "errorLogin": "Errore di Accesso",
+    "errorConnection": "Errore di Connessione",
+    "errorSystem": "Errore di Sistema",
+    "unexpectedError": "Si è verificato un errore imprevisto. Riprova.",
+    "connectionError": "Errore di connessione. Controlla la tua connessione internet e riprova."
   },
   "Dashboard": {
     "welcome": "Benvenuto {name}",
@@ -300,7 +378,8 @@
     "checkLinkOrContactSupport": "Controlla il tuo link o contatta il supporto se il problema persiste.",
     "trySignupAgain": "Riprova la Registrazione",
     "accountAlreadyActive": "Il tuo account è già stato attivato.",
-    "unexpectedError": "Si è verificato un errore imprevisto durante l'attivazione. Riprova più tardi."
+    "unexpectedError": "Si è verificato un errore imprevisto durante l'attivazione. Riprova più tardi.",
+    "autoLoginInProgress": "Accesso automatico in corso..."
   },
   "products": {
     "title": "Prodotti",
@@ -771,5 +850,231 @@
     "cancelAppointment": "Annulla Appuntamento",
     "cancelWarning": "L'attività vedrà l'appuntamento come annullato e potrebbe contattarti per chiarimenti.",
     "confirmCancel": "Conferma Annullamento"
+  },
+  "HowPoints": {
+    "title": "Come Funziona",
+    "subtitle": "Ottieni il tuo sito web professionale per la tua attività in pochi semplici passaggi."
+  },
+  "Actions": {
+    "title": "Funzionalità Potenti per la Tua Attività",
+    "subtitle": "Tutto quello che ti serve per creare una presenza online professionale e far crescere la tua attività.",
+    "domainLink": "domain.com/tuaattivita/s/board"
+  },
+  "Landing": {
+    "Hero": {
+      "title": "Dai ai tuoi clienti tutto quello che serve, tutto in un unico schermo intuitivo.",
+      "subtitle": "Semplifica ogni interazione e aumenta conversioni e soddisfazione. Mostra facilmente il tuo brand e servizi, gestisci richieste, ottimizza le operazioni di servizio come richieste di pagamento e appuntamenti.",
+      "startFree": "Inizia GRATIS. Nessun dato di pagamento richiesto.",
+      "viewExample": "Vedi Esempio",
+      "getStarted": "Inizia Ora",
+      "benefits": {
+        "freePlan": "1 piano sempre gratuito",
+        "noPaymentDetails": "Inizia gratis senza dati di pagamento",
+        "cancelAnytime": "Cambia o cancella in qualsiasi momento"
+      }
+    },
+    "Actions": {
+      "title": "Funzionalità Potenti per la Tua Attività",
+      "subtitle": "Tutto quello che ti serve per creare una presenza online professionale e far crescere la tua attività.",
+      "domainLink": "domain.com/tuaattivita/s/board",
+      "cards": {
+        "serviceListing": {
+          "title": "Elenco Servizi",
+          "description": "Mostra le tue offerte con chiarezza. Attrai più clienti dettagliando ogni servizio."
+        },
+        "serviceRequests": {
+          "title": "Richieste di Servizio Dirette",
+          "description": "Lascia che i clienti ti contattino istantaneamente. Cattura lead direttamente dalla tua pagina."
+        },
+        "appointmentsScheduling": {
+          "title": "Prenotazione Appuntamenti Online",
+          "description": "Semplifica la programmazione. I clienti prenotano quando è conveniente, tu gestisci con facilità."
+        },
+        "quoteSimulation": {
+          "title": "Simulazione Preventivi Istantanea",
+          "description": "Dai ai clienti la possibilità di stimare i costi. Aumenta la trasparenza e le conversioni."
+        },
+        "qrWebsite": {
+          "title": "Sito Web QR Code",
+          "description": "Fatti scoprire ovunque. Un QR code unico collega direttamente alla tua presenza digitale."
+        },
+        "digitalMenu": {
+          "title": "Menu Digitale",
+          "description": "Modernizza le tue offerte. Menu di facile accesso per una navigazione fluida dei clienti."
+        },
+        "mailingList": {
+          "title": "Mailing List e Campagne",
+          "description": "Costruisci la tua audience, invia email mirate. Rimani connesso e guida business ricorrenti."
+        },
+        "fidelityCard": {
+          "title": "Programma Fedeltà Clienti",
+          "description": "Premia i tuoi migliori clienti. Favorisci la retention e costruisci relazioni durature."
+        },
+        "surveys": {
+          "title": "Feedback e Sondaggi",
+          "description": "Comprendi meglio i tuoi clienti. Raccogli insights per migliorare continuamente."
+        },
+        "promotions": {
+          "title": "Gestione Promozioni",
+          "description": "Crea offerte irresistibili. Guida le vendite e coinvolgi la tua audience."
+        }
+      }
+    },
+    "Features": {
+      "title": "Tutto Quello che Ti Serve per Riuscire",
+      "subtitle": "Scopri tutti gli strumenti e le funzionalità potenti che aiuteranno la tua attività a crescere e prosperare nel mondo digitale.",
+      "cards": {
+        "serviceListing": {
+          "title": "Elenco Servizi",
+          "description": "Mostra le tue offerte con chiarezza. Attrai più clienti dettagliando ogni servizio."
+        },
+        "serviceRequests": {
+          "title": "Richieste di Servizio Dirette",
+          "description": "Lascia che i clienti ti contattino istantaneamente. Cattura lead direttamente dalla tua pagina."
+        },
+        "appointmentsScheduling": {
+          "title": "Prenotazione Appuntamenti Online",
+          "description": "Semplifica la programmazione. I clienti prenotano quando è conveniente, tu gestisci con facilità."
+        },
+        "quoteSimulation": {
+          "title": "Simulazione Preventivi Istantanea",
+          "description": "Dai ai clienti la possibilità di stimare i costi. Aumenta la trasparenza e le conversioni."
+        },
+        "qrWebsite": {
+          "title": "Sito Web QR Code",
+          "description": "Fatti scoprire ovunque. Un QR code unico collega direttamente alla tua presenza digitale."
+        },
+        "digitalMenu": {
+          "title": "Menu Digitale",
+          "description": "Modernizza le tue offerte. Menu di facile accesso per una navigazione fluida dei clienti."
+        },
+        "mailingList": {
+          "title": "Mailing List e Campagne",
+          "description": "Costruisci la tua audience, invia email mirate. Rimani connesso e guida business ricorrenti."
+        },
+        "fidelityCard": {
+          "title": "Programma Fedeltà Clienti",
+          "description": "Premia i tuoi migliori clienti. Favorisci la retention e costruisci relazioni durature."
+        },
+        "surveys": {
+          "title": "Feedback e Sondaggi",
+          "description": "Comprendi meglio i tuoi clienti. Raccogli insights per migliorare continuamente."
+        },
+        "promotions": {
+          "title": "Gestione Promozioni",
+          "description": "Crea offerte irresistibili. Guida le vendite e coinvolgi la tua audience."
+        }
+      }
+    },
+    "Board": {
+      "title": "Comunicazione chiara e fluida, trasformando processi complessi in esperienze chiare e guidata.",
+      "description": "Le Service Board sono progettate per semplificare la gestione di servizi complessi che richiedono interazione continua con il cliente, aggiornamenti, appuntamenti e pagamenti. La Service Board è versatile e permette alle attività di adattarla al proprio flusso di lavoro.",
+      "benefits": {
+        "unifiedView": {
+          "title": "Un Punto Centrale Accessibile Ovunque",
+          "description": "Un punto centrale per l'intero processo di servizio, consultabile e gestibile da qualsiasi dispositivo. Niente messaggi o email sparse."
+        },
+        "clearView": {
+          "title": "Visione Chiara e Completa",
+          "description": "I clienti vedono esattamente lo stato attuale del servizio, cosa è già successo, cosa serve fare e cosa viene dopo. Ogni processo diventa un servizio chiaro e trasparente."
+        },
+        "effortlessManagement": {
+          "title": "Gestione Senza Sforzo e Versatile",
+          "description": "Azioni generiche versatili e azioni predefinite per aggiungere velocemente richieste di pagamento, pianificare appuntamenti, fornire documenti etc."
+        },
+        "automatedNotifications": {
+          "title": "Notifiche Automatizzate",
+          "description": "Mantieni i clienti informati. Gli aggiornamenti chiave attivano alert email istantanei, nessuno sforzo manuale richiesto."
+        },
+        "secureAccess": {
+          "title": "Accesso Sicuro e Condivisibile",
+          "description": "Link unici e sicuri per ogni servizio. Condividi senza sforzo, con protezione password opzionale."
+        },
+        "problemSolving": {
+          "title": "Potere di Risoluzione Problemi",
+          "description": "Finisci malintesi e dispute. Un record cronologico condiviso mantiene tutti allineati."
+        }
+      }
+    },
+    "Steps": {
+      "title": "Come Funziona",
+      "subtitle": "Ottieni il tuo sito web professionale per la tua attività in pochi semplici passaggi.",
+      "steps": {
+        "optionalServices": {
+          "title": "Servizi aggiuntivi opzionali",
+          "description": "Crea il tuo profilo in pochi minuti"
+        },
+        "requirementsConsents": {
+          "title": "Requisiti, Consensi e Dettagli",
+          "description": "Requisiti o consensi da confermare, Informazioni obbligatorie da fornire"
+        },
+        "dateSelection": {
+          "title": "Selezione di date",
+          "description": "Date selezionabili"
+        },
+        "quoteSimulation": {
+          "title": "Simulazione di preventivo",
+          "description": "Fai crescere la tua attività online"
+        },
+        "processManagementTitle": "Ottieni il tuo sistema di gestione del processo"
+      }
+    },
+    "Categories": {
+      "title": "Pensato per tanti tipi di attività",
+      "subtitle": "Puoi usarlo in vari modi e c'è un piano sempre gratuito. Scopri come Queva può semplificare l'esperienza dei tuoi clienti, aiutarti a costruire la loro fedeltà e ricevere opinioni preziose direttamente da loro."
+    },
+    "FAQ": {
+      "title": "Preguntas Frecuentes",
+      "subtitle": "Todo lo que necesitas saber sobre Queva",
+      "showMore": "Mostrar más preguntas",
+      "showLess": "Mostrar menos preguntas",
+      "questions": {
+        "accountCreation": {
+          "question": "¿Cómo puedo crear una cuenta?",
+          "answer": "Puedes crear tu cuenta haciendo clic en el enlace \"Crea tu cuenta\" en la sección principal o visitando la página de registro. El proceso es simple y rápido, solo toma unos minutos para completar el registro."
+        },
+        "freePlan": {
+          "question": "¿Queva es gratuito?",
+          "answer": "Sí, ofrecemos un plan gratuito que te permite probar las funciones básicas. También puedes probar Queva Premium gratis durante un mes sin compromiso. El plan gratuito incluye todas las funciones esenciales para comenzar."
+        },
+        "pointsSystem": {
+          "question": "¿Cómo funciona el sistema de puntos y recompensas?",
+          "answer": "Tus clientes ganan puntos cada vez que visitan tu establecimiento y escanean su código QR personal. Puedes definir las recompensas que pueden canjear una vez que alcancen ciertos puntos. El sistema es completamente personalizable y te permite crear programas de fidelización a medida."
+        },
+        "mobileMenu": {
+          "question": "¿Puedo gestionar el menú digital desde mi teléfono?",
+          "answer": "¡Absolutamente sí! Tu menú digital es completamente personalizable y se puede gestionar cómodamente desde tu teléfono o tablet, actualizándose en tiempo real para tus clientes. Puedes modificar precios, agregar nuevos platos y gestire la disponibilidad desde cualquier lugar."
+        },
+        "profileSupport": {
+          "question": "¿Ofrecen soporte para la creación del perfil?",
+          "answer": "¡Por supuesto! Si necesitas ayuda, podemos crear tu perfil, subir el menú y configurar las promociones iniciales para ti. También ofrecemos formación para asegurar que seas autónomo en la gestión. Nuestro equipo de soporte siempre está disponible para ayudarte."
+        },
+        "dataSecurity": {
+          "question": "¿Mis datos están seguros?",
+          "answer": "Absolutamente sí. Utilizamos las tecnologías de seguridad más avanzadas para proteger tus datos y los de tus clientes. Toda la información está encriptada y cumplimos estrictamente con las normativas de privacidad, inclusa el GDPR."
+        },
+        "customerSupport": {
+          "question": "¿Cómo puedo contactar al soporte al cliente?",
+          "answer": "Nuestro equipo de soporte está disponible 24/7 a través de email, chat en vivo y teléfono. Te responderemos en pocas horas y siempre estamos listos para ayudarte con cualquier pregunta o problema técnico que puedas tener."
+        },
+        "integration": {
+          "question": "¿Queva se integra con otros sistemas?",
+          "answer": "Sí, Queva se integra perfectamente con los principales sistemas de gestión de restaurantes, POS y plataformas de delivery. Ofrecemos APIs abiertas e integraciones nativas para garantizar una transición fluida sin interrumpir tu flujo de trabajo."
+        },
+        "pricing": {
+          "question": "¿Cuáles son los costos de los planes premium?",
+          "answer": "Nuestros planes premium comienzan desde €29/mes e incluyen funciones avanzadas como análisis detallados, marketing automatizado, soporte prioritario y personalizaciones avanzadas. También ofrecemos descuentos para pagos anuales y planes personalizados para grandes empresas."
+        },
+        "technicalRequirements": {
+          "question": "¿Cuáles son los requisitos técnicos?",
+          "answer": "Queva funciona en cualquier dispositivo con un navegador web moderno. No se requieren instalaciones de software complejas. Para los clientes, solo un smartphone con cámara para escanear códigos QR. El sistema está optimizado para funcionar incluso con conexiones de internet lentas."
+        }
+      }
+    },
+    "CTA": {
+      "title": "Crea il tuo sito web professionale in pochi minuti",
+      "subtitle": "Inizia subito con il piano gratuito",
+      "button": "Inizia Ora"
+    }
   }
 }

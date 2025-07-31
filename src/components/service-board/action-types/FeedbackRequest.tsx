@@ -118,12 +118,16 @@ export default function FeedbackRequest({ details, onUpdate }: Props) {
         </div>
       ))}
 
-      <div className="flex justify-end">
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-gray-600">{t('submit')}</span>
         <button
           type="submit"
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors"
         >
-          {t('submit')}
+          <span className="mr-1">{t('submit')}</span>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
         </button>
       </div>
     </form>

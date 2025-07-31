@@ -11,13 +11,19 @@ export const authConfig: NextAuthConfig = {
   providers: [
     CredentialsProvider({
       name: "credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-        userType: { label: "User Type", type: "text" }, // 'manager' or 'customer'
-      },
+                credentials: {
+            email: { label: "Email", type: "email" },
+            password: { label: "Password", type: "password" },
+            userType: { label: "User Type", type: "text" }, // 'manager' or 'customer'
+            autoLoginToken: { label: "Auto Login Token", type: "text" }, // For auto-login from activation
+          },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password || !credentials?.userType) {
+        if (!credentials?.email || !credentials?.userType) {
+          return null
+        }
+
+        // For auto-login, password is optional if autoLoginToken is provided
+        if (!credentials?.password && !credentials?.autoLoginToken) {
           return null
         }
 
@@ -25,6 +31,7 @@ export const authConfig: NextAuthConfig = {
           const email = credentials.email as string
           const password = credentials.password as string
           const userType = credentials.userType as string
+          const autoLoginToken = credentials.autoLoginToken as string
 
           if (userType === "manager") {
             const user = await prisma.usermanager.findUnique({
@@ -45,11 +52,19 @@ export const authConfig: NextAuthConfig = {
             }
 
             // Handle auto-login case (from activation)
-            if (password === "auto-login") {
-              // For auto-login, we trust the email since it came from our secure activation process
+            if (autoLoginToken) {
+              // For auto-login with token, verify the token matches
+              if (user.token_activation !== autoLoginToken) {
+                throw new Error("Token di auto-login non valido.")
+              }
               if (user.active !== "active") {
                 throw new Error("Account non attivo.")
               }
+              // Clear the auto-login token after use
+              await prisma.usermanager.update({
+                where: { user_id: user.user_id },
+                data: { token_activation: null }
+              })
             } else {
               // Normal login - check password
               if (!user.password) {

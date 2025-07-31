@@ -220,7 +220,7 @@ export default function DashboardPage() {
       {/* Business Selection Modal */}
       <BusinessSelectionModal 
         isOpen={showBusinessModal} 
-        onClose={() => setShowBusinessModal(false)} 
+        onClose={() => setShowBusinessModal(false)}
       />
         {/* Current Business Section */}
         <div className="mb-8">

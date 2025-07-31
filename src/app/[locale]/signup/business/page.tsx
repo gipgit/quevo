@@ -8,6 +8,10 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { CheckIcon, ArrowPathIcon, ExclamationTriangleIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid"
 import { PasswordRequirements } from "@/components/password-requirements"
+import LocaleSwitcherButton from "@/components/ui/LocaleSwitcherButton"
+import LocaleSelectModal from "@/components/ui/LocaleSelectModal"
+import LoadingSpinner from "@/components/ui/LoadingSpinner"
+import { useLocaleSwitcher } from "@/hooks/useLocaleSwitcher"
 
 interface FormData {
   name_first: string
@@ -29,6 +33,8 @@ interface PasswordValidation {
 export default function BusinessSignupPage() {
   const router = useRouter()
   const t = useTranslations("BusinessSignup")
+  const tCommon = useTranslations("Common")
+  const { isModalOpen, setIsModalOpen, currentLocale, availableLocales, switchLocale } = useLocaleSwitcher()
   const emailTimeoutRef = useRef<NodeJS.Timeout>()
   const passwordTimeoutRef = useRef<NodeJS.Timeout>()
 
@@ -197,9 +203,13 @@ export default function BusinessSignupPage() {
 
     setLoading(true)
     try {
+      console.log(`[signup] Sending request with locale: ${currentLocale}`)
       const response = await fetch("/api/auth/signup-manager", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept-Language": currentLocale
+        },
         body: JSON.stringify(formData),
       })
 
@@ -216,7 +226,7 @@ export default function BusinessSignupPage() {
           setMessage(data.message || t("signupError"))
         }
       } else {
-        router.push(`/signup/business/confirmation?email=${encodeURIComponent(formData.email)}`)
+        router.push(`/${currentLocale}/signup/business/confirmation?email=${encodeURIComponent(formData.email)}`)
       }
     } catch (error) {
       setMessage(t("connectionError"))
@@ -250,18 +260,15 @@ export default function BusinessSignupPage() {
 
   return (
     <>
-      {/* Full Screen Loading Overlay */}
-      {loading && (
-        <div className="fixed inset-0 bg-white flex items-center justify-center z-50">
-          <div className="rounded-lg p-8 flex flex-col items-center">
-            <ArrowPathIcon className="w-12 h-12 text-blue-600 animate-spin mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">{t("creatingAccount")}</h3>
-            <p className="text-gray-600 text-center">
-              {t("pleaseWait") || "Attendere prego, stiamo creando il tuo account..."}
-            </p>
-          </div>
-        </div>
-      )}
+             {/* Full Screen Loading Overlay */}
+       {loading && (
+         <div className="fixed inset-0 bg-white flex items-center justify-center z-50">
+           <div className="p-8 flex flex-col items-center">
+              <LoadingSpinner size="lg" color="blue" className="mb-4" />
+              <p className="text-lg text-gray-900">{t("creatingAccount")}</p>
+           </div>
+         </div>
+       )}
 
       <div className="min-h-screen flex flex-col md:flex-row">
         {/* Left side - Form */}
@@ -308,7 +315,7 @@ export default function BusinessSignupPage() {
               {/* Email Field with Real-time Validation */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  {t("emailLabel")} *
+                  {tCommon("mailLabel")} *
                 </label>
                 <div className="relative">
                   <input
@@ -328,7 +335,7 @@ export default function BusinessSignupPage() {
                             ? "border-red-300 bg-red-50"
                             : "border-gray-300"
                     }`}
-                    placeholder={t("emailPlaceholder")}
+                    placeholder={tCommon("emailPlaceholder")}
                   />
                   <div className="absolute inset-y-0 right-0 pr-3 flex items-center">{getEmailInputIcon()}</div>
                 </div>
@@ -351,7 +358,7 @@ export default function BusinessSignupPage() {
               {/* Password Field with Requirements and Toggle */}
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  {t("passwordLabel")} *
+                  {tCommon("passwordLabel")} *
                 </label>
                 <div className="relative">
                   <input
@@ -372,7 +379,7 @@ export default function BusinessSignupPage() {
                             ? "border-red-300 bg-red-50"
                             : "border-gray-300"
                     }`}
-                    placeholder={t("passwordPlaceholder")}
+                    placeholder={tCommon("passwordPlaceholder")}
                   />
                   <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                     <button type="button" onClick={togglePasswordVisibility} className="text-gray-500 hover:text-gray-700">
@@ -419,9 +426,9 @@ export default function BusinessSignupPage() {
                 disabled={loading || emailValidation.status === "checking" || emailValidation.status === "unavailable"}
               >
                 {loading ? (
-                  <div className="flex items-center justify-center">
-                    <ArrowPathIcon className="w-5 h-5 mr-2 animate-spin" />
-                    {t("creatingAccount")}
+                  <div className="flex flex-col items-center justify-center">
+                    <LoadingSpinner size="sm" color="white" className="mb-2" />
+                    <p className="text-sm">{t("creatingAccount")}</p>
                   </div>
                 ) : (
                   t("createAccountButton")
@@ -430,12 +437,20 @@ export default function BusinessSignupPage() {
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 mb-4">
                 {t("alreadyHaveAccount")}{" "}
-                <Link href="/signin" className="font-medium text-blue-600 hover:text-blue-500">
+                <Link href="/signin/business" className="font-medium text-blue-600 hover:text-blue-500">
                   {t("signInLink")}
                 </Link>
               </p>
+              
+              {/* Locale Switcher */}
+              <div className="flex justify-center">
+                <LocaleSwitcherButton 
+                  onClick={() => setIsModalOpen(true)}
+                  className="text-gray-600 hover:text-gray-800"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -453,6 +468,15 @@ export default function BusinessSignupPage() {
           </div>
         </div>
       </div>
+      
+      {/* Locale Selection Modal */}
+      <LocaleSelectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        availableLocales={availableLocales}
+        currentLocale={currentLocale}
+        onLocaleSelect={switchLocale}
+      />
     </>
   )
 }

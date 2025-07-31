@@ -1,57 +1,53 @@
 import { NextResponse } from "next/server"
-import { cookies } from "next/headers"
 import prisma from "@/lib/prisma"
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
-    const cookieStore = cookies()
-    const activationSession = cookieStore.get("activation-session")
+    const { autoLoginToken, email } = await request.json()
 
-    if (!activationSession?.value) {
-      return NextResponse.json({ message: "Sessione di attivazione non trovata." }, { status: 401 })
+    if (!autoLoginToken || !email) {
+      return NextResponse.json({ message: "Auto-login token and email are required." }, { status: 400 })
     }
 
-    // Find user with the activation session token
+    // Find user by auto-login token and email
     const user = await prisma.usermanager.findFirst({
       where: {
-        token_activation: activationSession.value,
-        active: "active",
+        token_activation: autoLoginToken,
+        email: email.toLowerCase().trim(),
+        active: "active", // Only allow auto-login for active accounts
       },
     })
 
     if (!user) {
-      // Clear the invalid cookie
-      cookieStore.delete("activation-session")
-      return NextResponse.json({ message: "Sessione di attivazione non valida." }, { status: 401 })
+      return NextResponse.json({ message: "Invalid auto-login token or account not active." }, { status: 404 })
     }
 
-    // Clear the activation session token from database
+    // Clear the auto-login token after use
     await prisma.usermanager.update({
       where: { user_id: user.user_id },
       data: {
-        token_activation: null,
+        token_activation: null
       },
     })
 
-    // Clear the cookie
-    cookieStore.delete("activation-session")
-
-    // Return user data for client-side sign in
+    // Return user data for session creation
     return NextResponse.json(
       {
+        message: "Auto-login successful",
         success: true,
         user: {
           id: user.user_id,
           email: user.email,
-          name: `${user.name_first} ${user.name_last}`.trim(),
+          name: user.name_first,
+          userType: 'manager'
         },
       },
       { status: 200 },
     )
   } catch (error) {
     console.error("Auto-login error:", error)
-    return NextResponse.json({ message: "Errore durante il login automatico." }, { status: 500 })
+    return NextResponse.json({ message: "Internal server error during auto-login." }, { status: 500 })
   }
 }
