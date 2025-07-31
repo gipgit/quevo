@@ -27,21 +27,9 @@ const signupSchema = z.object({
 })
 
 export async function POST(request: Request) {
-  console.log("[signup-manager] POST request received")
-  console.log("[signup-manager] Request URL:", request.url)
-  console.log("[signup-manager] Request headers:", Object.fromEntries(request.headers.entries()))
-  
   try {
     const body = await request.json()
-    console.log("[signup-manager] Request body received:", { 
-      name_first: body.name_first ? "***" : "undefined",
-      email: body.email ? "***" : "undefined",
-      hasPassword: !!body.password,
-      promotional_code: body.promotional_code ? "***" : "undefined"
-    })
-    
     const validatedData = signupSchema.parse(body)
-    console.log("[signup-manager] Data validated successfully")
 
     // Get locale from request headers
     const acceptLanguage = request.headers.get("Accept-Language")
@@ -53,37 +41,11 @@ export async function POST(request: Request) {
     
     console.log(`[signup-manager] Request locale: ${requestLocale}, Final locale: ${finalLocale}`)
 
-    // Use AUTH_URL or fallback to NEXTAUTH_URL, or construct from request
-    let authUrl = process.env.AUTH_URL || process.env.NEXTAUTH_URL
-    
-    // If neither is set, try to construct from the request
-    if (!authUrl) {
-      const url = new URL(request.url)
-      authUrl = `${url.protocol}//${url.host}`
-      console.log(`[signup-manager] Constructed AUTH_URL from request: ${authUrl}`)
+    // Ensure AUTH_URL is defined
+    if (!process.env.AUTH_URL) {
+      console.error("Environment variable AUTH_URL is not defined. Cannot generate activation link.")
+      return NextResponse.json({ message: "Errore di configurazione del server." }, { status: 500 })
     }
-
-    if (!authUrl) {
-      console.error("Environment variables AUTH_URL and NEXTAUTH_URL are not defined. Cannot generate activation link.")
-      return NextResponse.json({ message: "Errore di configurazione del server." }, { 
-        status: 500,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Accept-Language',
-        }
-      })
-    }
-
-    console.log("[signup-manager] Environment check:", {
-      hasAuthUrl: !!process.env.AUTH_URL,
-      hasNextAuthUrl: !!process.env.NEXTAUTH_URL,
-      hasSmtpHost: !!process.env.SMTP_HOST,
-      hasSmtpUser: !!process.env.SMTP_USER,
-      hasSmtpPass: !!process.env.SMTP_PASS,
-      hasEmailFrom: !!process.env.EMAIL_FROM,
-      hasDatabaseUrl: !!process.env.DATABASE_URL,
-    })
 
     // Check if user already exists in Prisma usermanager table
     const existingManagerProfile = await prisma.usermanager.findUnique({
@@ -91,18 +53,8 @@ export async function POST(request: Request) {
     })
 
     if (existingManagerProfile) {
-      console.log("[signup-manager] User already exists:", validatedData.email)
-      return NextResponse.json({ message: "Un account manager per questa email esiste già." }, { 
-        status: 409,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Accept-Language',
-        }
-      })
+      return NextResponse.json({ message: "Un account manager per questa email esiste già." }, { status: 409 })
     }
-
-    console.log("[signup-manager] User does not exist, proceeding with creation")
 
     // Hash password and generate activation token
     const hashedPassword = await bcrypt.hash(validatedData.password, 12)
@@ -131,25 +83,16 @@ export async function POST(request: Request) {
           date_created: new Date(),
         },
       })
-      console.log("[signup-manager] User created successfully:", newManagerProfile.user_id)
     } catch (dbError) {
       console.error("Database transaction error:", dbError)
-      return NextResponse.json({ message: "Errore durante la creazione del profilo manager." }, { 
-        status: 500,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Accept-Language',
-        }
-      })
+      return NextResponse.json({ message: "Errore durante la creazione del profilo manager." }, { status: 500 })
     }
 
     // Generate activation link with locale
-    const activationLink = `${authUrl}/${finalLocale}/signup/business/activation?token=${activationToken}&email=${encodeURIComponent(validatedData.email)}`
+    const activationLink = `${process.env.AUTH_URL}/${finalLocale}/signup/business/activation?token=${activationToken}&email=${encodeURIComponent(validatedData.email)}`
 
     // Send activation email
     try {
-      console.log("[signup-manager] Attempting to send activation email")
       await sendMail({
         to: validatedData.email,
         template: "UserManagerActivation",
@@ -159,7 +102,6 @@ export async function POST(request: Request) {
         },
         locale: finalLocale,
       })
-      console.log("[signup-manager] Activation email sent successfully")
     } catch (emailError) {
       console.error("Email sending error:", emailError)
       // Clean up user if email fails
@@ -175,14 +117,7 @@ export async function POST(request: Request) {
         {
           message: "Errore durante l'invio dell'email di attivazione. Riprova più tardi.",
         },
-        { 
-          status: 500,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Accept-Language',
-          }
-        },
+        { status: 500 },
       )
     }
 
@@ -198,14 +133,7 @@ export async function POST(request: Request) {
         message: "Registrazione completata! Controlla la tua email per attivare l'account.",
         success: true,
       },
-      { 
-        status: 201,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Accept-Language',
-        }
-      },
+      { status: 201 },
     )
   } catch (error) {
     console.error("Manager Signup Error:", error)
@@ -216,36 +144,10 @@ export async function POST(request: Request) {
           message: "Dati non validi",
           errors: error.flatten().fieldErrors,
         },
-        { 
-          status: 400,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Accept-Language',
-          }
-        },
+        { status: 400 },
       )
     }
 
-    return NextResponse.json({ message: "Errore interno del server. Riprova più tardi." }, { 
-      status: 500,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Accept-Language',
-      }
-    })
+    return NextResponse.json({ message: "Errore interno del server. Riprova più tardi." }, { status: 500 })
   }
-}
-
-// Add OPTIONS handler for CORS preflight requests
-export async function OPTIONS(request: Request) {
-  return new Response(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Accept-Language',
-    },
-  })
 }
