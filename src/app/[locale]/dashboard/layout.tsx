@@ -31,10 +31,17 @@ function DashboardLayoutContent({
   useEffect(() => {
     // If not authenticated, redirect to signin
     if (status !== "loading" && !session) {
+      console.log('[dashboard] No session found, redirecting to signin', { status, session })
       // Get the current locale from the URL
       const pathname = window.location.pathname
       const locale = pathname.split('/')[1] || 'it'
-      router.push(`/${locale}/signin/manager`)
+      router.push(`/${locale}/signin/business`)
+    } else if (status === "authenticated" && session) {
+      console.log('[dashboard] Session found, user authenticated', { 
+        userId: session.user?.id, 
+        userEmail: session.user?.email,
+        userRole: session.user?.role 
+      })
     }
   }, [session, status, router])
 

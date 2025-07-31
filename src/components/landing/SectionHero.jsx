@@ -239,7 +239,7 @@ export default function SectionHero({ locale }) {
                          <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-none mb-6">
                              {renderTextWithItalic(t('Hero.title'))}
                          </h1>
-                         <p className="text-lg text-gray-600 leading-relaxed">
+                         <p className="text-lg text-gray-600 leading-tight lg:leading-relaxed">
                              {renderTextWithItalic(t('Hero.subtitle'))}
                          </p>
                          
@@ -293,7 +293,7 @@ export default function SectionHero({ locale }) {
                             </div>
                             <Link 
                                 href="/signup" 
-                                className="inline-flex items-center gap-2 bg-gradient-to-r from-gray-900 via-black to-gray-800 hover:from-black hover:to-gray-900 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 whitespace-nowrap"
+                                className="inline-flex items-center gap-2 bg-gradient-to-r from-gray-900 via-black to-gray-800 hover:from-black hover:to-gray-900 text-white px-8 py-3 lg:py-4 rounded-full text-md lg:text-lg transition-all duration-300 shadow-lg hover:shadow-xl  whitespace-nowrap"
                             >
                                 {tCommon('getStarted')}
                             </Link>

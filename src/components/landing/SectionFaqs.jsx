@@ -73,12 +73,12 @@ export default function SectionFaqs() {
     const visibleQuestions = showAllQuestions ? faqData : faqData.slice(0, 3);
 
     return (
-        <section className="container-x-md py-8 lg:py-12">
-            <div className="text-center mb-12">
-                <h2 className="text-2xl lg:text-2xl font-bold text-gray-900 mb-2 leading-tight">
+        <section className="container-x-md px-6 lg:px-12 py-10 lg:py-12">
+            <div className="text-center mb-8">
+                <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2 leading-tight">
                     {t('FAQ.title')}
                 </h2>
-                <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-tight">
+                <p className="text-md text-gray-600 max-w-3xl mx-auto leading-tight">
                     {t('FAQ.subtitle')}
                 </p>
             </div>

@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 
     // Create a temporary auto-login token that will be used for automatic signin
     const autoLoginToken = crypto.randomUUID()
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000) // 5 minutes expiry
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000) // 10 minutes expiry for production
 
     // Store the auto-login token temporarily in database
     await prisma.usermanager.update({
@@ -49,6 +49,9 @@ export async function POST(request: Request) {
         token_activation: autoLoginToken, // Reusing this field temporarily
       },
     })
+
+    // Add a small delay to ensure the database update is committed
+    await new Promise(resolve => setTimeout(resolve, 100))
 
     return NextResponse.json(
       {

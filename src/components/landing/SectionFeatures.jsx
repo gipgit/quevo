@@ -62,13 +62,13 @@ export default function SectionFeatures({ locale }) {
 
   return (
     <section className="min-h-screen bg-white flex items-center">
-      <div className="container mx-auto px-12 py-16 max-w-7xl">
+      <div className="container mx-auto px-6 lg:px-12 py-16 max-w-7xl">
         {/* Title Section */}
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4">
             {t('Features.title')}
           </h2>
-          <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto mb-8">
+          <p className="text-lg lg:text-xl text-gray-600 leading-tight lg:leading-relaxed max-w-3xl mx-auto mb-8">
             {t('Features.subtitle')}
           </p>
         </div>

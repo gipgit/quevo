@@ -21,16 +21,24 @@ export async function POST(request: Request) {
     })
 
     if (!user) {
+      console.error(`Auto-login failed: User not found for token ${autoLoginToken} and email ${email}`)
       return NextResponse.json({ message: "Invalid auto-login token or account not active." }, { status: 404 })
     }
 
-    // Clear the auto-login token after use
-    await prisma.usermanager.update({
-      where: { user_id: user.user_id },
-      data: {
-        token_activation: null
-      },
-    })
+    console.log(`Auto-login successful for user: ${user.email}`)
+
+    // Clear the auto-login token after use (but don't fail if this fails)
+    try {
+      await prisma.usermanager.update({
+        where: { user_id: user.user_id },
+        data: {
+          token_activation: null
+        },
+      })
+    } catch (clearTokenError) {
+      console.error("Failed to clear auto-login token:", clearTokenError)
+      // Don't fail the auto-login if clearing the token fails
+    }
 
     // Return user data for session creation
     return NextResponse.json(

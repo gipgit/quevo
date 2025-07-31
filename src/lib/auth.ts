@@ -53,18 +53,31 @@ export const authConfig: NextAuthConfig = {
 
             // Handle auto-login case (from activation)
             if (autoLoginToken) {
+              console.log(`Auto-login attempt for email: ${email}, token: ${autoLoginToken}`)
+              console.log(`User token_activation: ${user.token_activation}`)
+              
               // For auto-login with token, verify the token matches
               if (user.token_activation !== autoLoginToken) {
+                console.error(`Token mismatch for user ${email}. Expected: ${autoLoginToken}, Got: ${user.token_activation}`)
                 throw new Error("Token di auto-login non valido.")
               }
               if (user.active !== "active") {
+                console.error(`Account not active for user ${email}`)
                 throw new Error("Account non attivo.")
               }
-              // Clear the auto-login token after use
-              await prisma.usermanager.update({
-                where: { user_id: user.user_id },
-                data: { token_activation: null }
-              })
+              
+              console.log(`Auto-login successful for user: ${email}`)
+              
+              // Clear the auto-login token after use (but don't fail if this fails)
+              try {
+                await prisma.usermanager.update({
+                  where: { user_id: user.user_id },
+                  data: { token_activation: null }
+                })
+              } catch (clearTokenError) {
+                console.error("Failed to clear auto-login token:", clearTokenError)
+                // Don't fail the auto-login if clearing the token fails
+              }
             } else {
               // Normal login - check password
               if (!user.password) {

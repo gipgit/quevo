@@ -13,7 +13,7 @@ export const LocaleSwitcherButton: React.FC<LocaleSwitcherButtonProps> = ({ onCl
     <button
       type="button"
       onClick={onClick}
-      className={`flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100 transition ${className || ''}`}
+      className={`flex items-center gap-2 px-3 py-2 rounded ${className || ''}`}
       aria-label={t('language')}
     >
       {/* Inline globe SVG icon */}
@@ -23,7 +23,7 @@ export const LocaleSwitcherButton: React.FC<LocaleSwitcherButtonProps> = ({ onCl
         <line x1="1" y1="10" x2="19" y2="10" stroke="currentColor" strokeWidth="2" />
         <line x1="10" y1="1" x2="10" y2="19" stroke="currentColor" strokeWidth="2" />
       </svg>
-      <span className="hidden sm:inline">{t('language')}</span>
+      <span className="text-xs lg:text-sm inline">{t('language')}</span>
     </button>
   );
 };

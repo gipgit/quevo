@@ -16,7 +16,7 @@ export default function SectionCTA() {
                 </p>
                 <p className="text-xl lg:text-3xl mb-4 text-white leading-tight">{t('CTA.subtitle')}</p>
                 <div className="flex flex-col gap-4 justify-center items-center">
-                    <a href="/signup" className="button btn-lg mobile-w-full btn-gradient-green bg-white text-gray-900 hover:bg-gray-100">{t('CTA.button')}</a>
+                    <a href="/signup" className="button py-2 px-4 lg:py-3 lg:px-6 btn-gradient-green bg-white text-gray-900 hover:bg-gray-100">{t('CTA.button')}</a>
                 </div>
             </div>
         </section>

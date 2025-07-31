@@ -51,7 +51,7 @@ export default function SectionSteps({ locale }) {
 
   return (
     <section className="min-h-screen bg-gray-50 flex items-center">
-      <div className="container mx-auto px-12 py-16 max-w-7xl">
+      <div className="container mx-auto px-6 lg:px-12 py-16 max-w-7xl">
         
         <h2 className='text-center text-3xl lg:text-4xl font-bold mb-6'>{t('Steps.steps.processManagementTitle')}</h2>
 
@@ -78,12 +78,12 @@ export default function SectionSteps({ locale }) {
                     }`} />
                   )}
 
-                                     {/* Step Header */}
+                   {/* Step Header */}
                    <div className="p-6">
                      <div className="flex items-center justify-between">
-                       <div className="flex items-center gap-4 flex-1">
+                       <div className="flex items-center gap-2 lg:gap-4 flex-1">
                          {/* Step number circle */}
-                         <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-base ${
+                         <div className={`flex-shrink-0 w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-white font-bold text-base ${
                            index === currentStepIndex 
                              ? 'bg-blue-500 shadow-lg' 
                              : 'bg-gray-400'

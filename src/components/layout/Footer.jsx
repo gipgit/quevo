@@ -13,10 +13,9 @@ export default function Footer() {
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-6">
         {/* Main Footer Content */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="flex flex-col justify-between items-center gap-4">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <img src="/icons/home.png" alt="Quevo" className="h-6 w-6" />
             <span className="text-lg font-bold">Quevo</span>
           </div>
 
@@ -39,18 +38,16 @@ export default function Footer() {
             </Link>
           </div>
 
-          {/* Locale Switcher */}
-          <LocaleSwitcherButton 
-            onClick={() => setIsModalOpen(true)}
-            className="text-gray-400 hover:text-white"
-          />
+         
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800 mt-4 pt-4 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-gray-400 text-xs">
-            © 2024 Quevo. All rights reserved.
-          </p>
+        <div className="border-t border-gray-800 mt-4 pt-4 flex flex-col md:flex-row justify-center items-center gap-4">
+           {/* Locale Switcher */}
+           <LocaleSwitcherButton 
+            onClick={() => setIsModalOpen(true)}
+            className="text-gray-400 hover:text-white"
+          />
           <div className="flex space-x-4">
             <Link href="/privacy" className="text-gray-400 hover:text-white text-xs transition-colors">
               Privacy Policy
@@ -59,6 +56,9 @@ export default function Footer() {
               Terms of Service
             </Link>
           </div>
+          <p className="text-gray-400 text-xs">
+            © 2025 Quevo. All rights reserved.
+          </p>
         </div>
       </div>
 
