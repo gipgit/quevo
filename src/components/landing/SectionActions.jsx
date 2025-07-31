@@ -119,7 +119,7 @@ export default function SectionActions({ locale }) {
                            </div>
                            
                            <div className="flex-1">
-                             <h3 className={`text-lg font-semibold leading-tight ${
+                             <h3 className={`text-md lg:text-lg font-semibold leading-tight ${
                                index === currentActionIndex ? 'text-blue-700' : 'text-gray-900'
                              }`}>
                                {localizedAction.title}
