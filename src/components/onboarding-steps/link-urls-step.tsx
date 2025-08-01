@@ -59,7 +59,7 @@ export default function LinkUrlsStep({ formData, updateFormData, onValidationCha
   return (
     <div className="space-y-6">
       <div className="mb-6">
-        <p className="text-sm text-gray-600">Inserisci il link per gli elementi che hai selezionato.</p>
+        <p className="text-sm text-center lg:text-left text-gray-600">Inserisci il link per gli elementi che hai selezionato.</p>
       </div>
 
       <div className="space-y-4">

@@ -78,9 +78,6 @@ export default function SectionFaqs() {
                 <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2 leading-tight">
                     {t('FAQ.title')}
                 </h2>
-                <p className="text-md text-gray-600 max-w-3xl mx-auto leading-tight">
-                    {t('FAQ.subtitle')}
-                </p>
             </div>
             
             <div className="max-w-4xl mx-auto">
@@ -117,8 +114,8 @@ export default function SectionFaqs() {
                                 openItemIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                             }`}
                         >
-                            <div className="pb-6 px-6">
-                                <p className="text-gray-700 leading-relaxed">{item.answer}</p>
+                            <div className="pb-6 px-2">
+                                <p className="text-gray-600 leading-tight lg:leading-relaxed">{item.answer}</p>
                             </div>
                         </div>
                     </div>

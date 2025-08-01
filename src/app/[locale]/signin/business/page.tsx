@@ -134,7 +134,7 @@ export default function ManagerSignInPage() {
         <p className="text-gray-600">{t("subtitle")}</p>
       </div>
       
-             <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 w-full max-w-md">
+        <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 w-full max-w-[380px]">
         
         {/* Error Toast */}
         {error.show && (

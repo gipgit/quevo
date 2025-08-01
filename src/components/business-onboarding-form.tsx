@@ -294,7 +294,7 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
     <>
       {/* Step Header */}
       <div className="mb-8 text-center lg:text-left">
-        <h2 className="text-2xl font-semibold text-gray-900">{STEPS[currentStep - 1].name}</h2>
+        <h2 className="text-3xl font-semibold text-gray-900">{STEPS[currentStep - 1].name}</h2>
         <p className="text-sm text-gray-500">{STEPS[currentStep - 1].description}</p>
       </div>
 
@@ -309,7 +309,7 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
             <button
               onClick={handlePrevious}
               disabled={currentStep === 1}
-              className="flex items-center px-3 lg:px-6 py-2 lg:py-3 text-sm lg:text-base text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+              className="flex items-center px-3 lg:px-6 py-2 lg:py-3 text-sm lg:text-base text-gray-700 bg-gray-50 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
             >
               <ArrowLeftIcon className="w-4 h-4 lg:w-5 lg:h-5 mr-1 lg:mr-2" />
               Indietro
@@ -377,13 +377,13 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
                  <h3 className="text-xl font-semibold text-gray-900 mt-4 mb-2">
                    Creazione Business in corso...
                  </h3>
-                 <p className="text-gray-600">
-                   Stiamo creando il tuo business. Questo potrebbe richiedere alcuni secondi.
+                 <p className="text-xs text-gray-600">
+                   Perfavore, attendi. Questo potrebbe richiedere alcuni secondi.
                  </p>
                </div>
                            ) : (
                  // Success or Error state
-                 <div className="py-2">
+                 <div className="py-2 text-center">
                    <div className="flex justify-between items-center mb-4">
                      <h3 className="text-xl font-semibold text-gray-900">
                        {submissionSuccess ? "Business Creato!" : `Errore ${submissionErrorDetails?.status ? `(${submissionErrorDetails.status})` : ''}`}
@@ -475,7 +475,7 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
                 )}
                 
                 {submissionSuccess && (
-                  <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                  <div className="text-centerbg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
                     <strong className="font-bold">Successo!</strong>
                     <span className="block sm:inline"> Il tuo business è stato creato con successo!</span>
                   </div>

@@ -187,13 +187,13 @@ export default function ServiceBoardActionCard({ action, onActionUpdate, onAppoi
   const shouldShowExpandButton = action.action_status === 'completed'
 
   return (
-    <div className={`p-5 md:p-6 rounded-2xl
-      ${action.is_customer_action_required && action.action_status !== 'completed' ? "border-[1px]  border-gray-400 shadow-sm bg-white" : "border-[1px] border-gray-200"}
+    <div className={`p-5 md:p-6 lg:p-7 rounded-2xl
+      ${action.is_customer_action_required && action.action_status !== 'completed' ? "bg-white border-[1px] border-gray-300 shadow-sm" : "bg-white border-[1px] border-gray-200"}
     `}>
       <div className="flex items-start justify-between mb-4">
         <div>
             <div className="flex items-center flex-wrap gap-1 mb-2">
-              <span className="text-gray-500 text-xs">
+              <span className="text-gray-600 text-xs lg:text-base">
                 {format(new Date(action.created_at), "PPP", { locale: locale === 'it' ? it : enUS })}
               </span>
               <span className={`

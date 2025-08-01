@@ -86,13 +86,13 @@ export default function AppointmentSchedulingRenderer({
     };
 
     return (
-      <div className="space-y-1">
-        <label className="text-sm font-medium text-gray-900">{field.label}</label>
-        <div className="flex items-center justify-between">
+      <div className="space-y-0">
+        <label className="text-xs text-gray-500">{field.label}</label>
+        <div className="flex items-center gap-x-2 gap-y-0 flex-wrap">
           <div className="text-lg font-semibold text-gray-900">
             {details.appointment_title || t('appointment')}
           </div>
-          <div className={`w-fit px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusStyles(details.confirmation_status)}`}>
+          <div className={`w-fit px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap capitalize ${getStatusStyles(details.confirmation_status)}`}>
             {getStatusText(details.confirmation_status)}
           </div>
         </div>
@@ -100,12 +100,12 @@ export default function AppointmentSchedulingRenderer({
     );
   }
 
-  // Special handling for address - moved before dates
+  // Special handling for address
   if (field.key === 'address' && value) {
     return (
       <div className="space-y-0">
-        <label className="text-sm font-medium text-gray-500">{field.label}</label>
-        <div className="text-lg font-bold text-gray-700">{value}</div>
+        <label className="text-xs lg:text-sm font-medium text-gray-500">{field.label}</label>
+        <div className="text-md lg:text-lg font-bold text-gray-700">{value}</div>
       </div>
     );
   }
@@ -278,7 +278,7 @@ export default function AppointmentSchedulingRenderer({
             return (
               <div 
                 key={index} 
-                className={`p-4 rounded-lg cursor-pointer flex justify-between items-center ${
+                className={`px-4 py-2 rounded-lg cursor-pointer flex justify-between items-center ${
                   isSelected 
                     ? 'border-[1px] border-green-500 bg-green-50' 
                     : 'border-[1px] border-gray-300 bg-gray-50 hover:bg-gray-50'
@@ -286,7 +286,7 @@ export default function AppointmentSchedulingRenderer({
                 onClick={() => onPlatformSelect?.(platform)}
               >
                 <div className="flex flex-col">
-                  <div className="text-md font-medium text-gray-900">
+                  <div className="text-sm md:text-md font-medium text-gray-900">
                     {platform}
                   </div>
                 </div>

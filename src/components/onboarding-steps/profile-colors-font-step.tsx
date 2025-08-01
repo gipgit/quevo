@@ -39,7 +39,6 @@ export default function ProfileColorsFontStep({
     <div className="space-y-8">
       {/* Color Pickers */}
       <div className="space-y-4">
-        <h4 className="text-sm font-medium text-gray-700">Colori del Tema</h4>
         <div className="grid grid-cols-3 gap-4">
           {/* Sfondo */}
           <div className="space-y-2">
@@ -98,16 +97,16 @@ export default function ProfileColorsFontStep({
       {/* Font Selection */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-3">Font</label>
-        <div className="flex flex-col gap-2 flex-wrap">
+        <div className="flex flex-row lg:flex-col gap-2 overflow-x-scroll">
           {FONT_OPTIONS.map((font) => (
             <button
               key={font.value}
               type="button"
               onClick={() => updateSetting("theme_font", font.value)}
-              className={`px-4 py-2 w-full rounded-sm flex items-center gap-2 border transition-colors ${formData.settings.theme_font === font.value ? "border-blue-500 bg-blue-50 text-blue-700" : "border-gray-300 hover:border-gray-400"} ${font.className}`}
+              className={`px-4 py-2 w-full rounded-xl flex items-center gap-2 border transition-colors ${formData.settings.theme_font === font.value ? "border-blue-500 bg-blue-50 text-blue-700" : "border-gray-300 hover:border-gray-400"} ${font.className}`}
               style={{ fontFamily: font.label }}
             >
-              <span className={`${font.className} text-2xl font-bold`} style={{ fontFamily: font.label }}>
+              <span className={`${font.className} text-xl lg:text-2xl font-bold`} style={{ fontFamily: font.label }}>
                 {formData.business_name || 'Business Name'}
               </span>
             </button>

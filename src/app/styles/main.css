@@ -808,7 +808,6 @@ input::-moz-focus-inner {
 }
 
 label{
-    display: block!important;
     opacity: 0.8;
     margin-top: 0;
     margin-bottom: 0;

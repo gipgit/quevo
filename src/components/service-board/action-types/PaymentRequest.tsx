@@ -105,12 +105,12 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
               const iconPath = config?.iconPath;
 
               return (
-                <div key={index} className="relative p-4 border-[1px] border-gray-400 bg-gray-0 rounded-lg shadow-sm">
+                <div key={index} className="relative p-4 border-[1px] border-gray-300 rounded-lg">
                   <div className="flex items-start gap-x-4 md:gap-x-6 gap-y-2">
                     {/* Icon */}
                     {iconPath && (
                       <div className="flex-shrink-0">
-                        <Image src={iconPath} width={40} height={40} alt={`-`} className="w-8 sm:w-10 md:w-12 lg:w-12"/>
+                        <Image src={iconPath} width={40} height={40} alt={`-`} className="w-8 sm:w-10 md:w-10 lg:w-10"/>
                       </div>
                     )}
 
@@ -123,12 +123,12 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
                         <div className="flex flex-col mt-1">
                           <span className="text-xs text-gray-500">Email</span>
                           <div className="flex items-center gap-2">
-                            <span className="text-sm md:text-base font-medium text-gray-900">
+                            <span className="text-sm md:text-sm text-gray-900">
                               {method.details.paypal_email}
                             </span>
                             <button
                               onClick={() => handleCopy(method.details.paypal_email, 'PayPal')}
-                              className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                              className="px-2 py-1 text-xs bg-gray-100 text-gray-500 rounded hover:bg-gray-200 transition-colors"
                             >
                               {copiedText === 'PayPal' ? t('copied') : t('copy')}
                             </button>
@@ -143,12 +143,12 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
                             <div className="flex flex-col">
                               <span className="text-xs text-gray-500">IBAN</span>
                               <div className="flex items-center gap-2">
-                                <span className="text-sm md:text-base text-gray-900">
+                                <span className="text-sm md:text-sm text-gray-900">
                                   {method.details.iban}
                                 </span>
                                 <button
                                   onClick={() => handleCopy(method.details.iban, 'IBAN')}
-                                  className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                                  className="px-2 py-1 text-xs bg-gray-100 text-gray-500 rounded hover:bg-gray-200 transition-colors"
                                 >
                                   {copiedText === 'IBAN' ? t('copied') : t('copy')}
                                 </button>
@@ -160,12 +160,12 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
                             <div className="flex flex-col">
                               <span className="text-xs text-gray-500">Account Holder</span>
                               <div className="flex items-center gap-2">
-                                <span className="text-sm md:text-base font-medium text-gray-900">
+                                <span className="text-sm md:text-sm text-gray-900">
                                   {method.details.account_holder}
                                 </span>
                                 <button
                                   onClick={() => handleCopy(method.details.account_holder, 'Account Holder')}
-                                  className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                                  className="px-2 py-1 text-xs bg-gray-100 text-gray-500 rounded hover:bg-gray-200 transition-colors"
                                 >
                                   {copiedText === 'Account Holder' ? t('copied') : t('copy')}
                                 </button>
@@ -176,7 +176,7 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
                           {method.details.bank_name && (
                             <div className="flex flex-col">
                               <span className="text-xs text-gray-500">Bank</span>
-                              <span className="text-sm md:text-base font-medium text-gray-900">
+                              <span className="text-sm md:text-sm text-gray-900">
                                 {method.details.bank_name}
                               </span>
                             </div>

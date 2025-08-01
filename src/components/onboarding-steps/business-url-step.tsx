@@ -115,9 +115,8 @@ export function BusinessUrlStep({ formData, updateFormData, onValidationChange }
     <div className="space-y-6">
       <div>
        
-         <p className="mb-2 text-xs text-gray-500">
-          Questo sarà il link del tuo profilo. Deve contenere solo lettere minuscole, numeri e
-          trattini.
+         <p className="mb-2 text-center lg:text-left text-xs text-gray-500">
+          Deve contenere solo lettere minuscole, numeri e trattini.
         </p>
         {/* Custom style for the flex container */}
         <div className="flex items-center rounded-full shadow-sm overflow-hidden bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200">
@@ -151,7 +150,7 @@ export function BusinessUrlStep({ formData, updateFormData, onValidationChange }
         </div>
         {urlValidation.message && (
           <p
-            className={`mt-2 text-sm ${
+            className={`mt-2 text-center lg:text-left text-xs lg:text-sm ${
               urlValidation.status === "available"
                 ? "text-green-600"
                 : urlValidation.status === "unavailable"

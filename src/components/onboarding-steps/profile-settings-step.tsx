@@ -10,10 +10,10 @@ interface ProfileSettingsStepProps {
 }
 
 const DEFAULT_PAGES = [
+  { value: "services", label: "Servizi" },
   { value: "promotions", label: "Promozioni" },
   { value: "bookings", label: "Prenotazioni" },
   { value: "products", label: "Prodotti" },
-  { value: "services", label: "Servizi" },
 ]
 
 export default function ProfileSettingsStep({

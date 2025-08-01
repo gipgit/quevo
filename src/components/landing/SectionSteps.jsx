@@ -79,11 +79,11 @@ export default function SectionSteps({ locale }) {
                   )}
 
                    {/* Step Header */}
-                   <div className="p-4 lg:p-6">
+                   <div className="p-4 lg:px-6 lg:py-4">
                      <div className="flex items-center justify-between">
                        <div className="flex items-center gap-2 lg:gap-4 flex-1">
                          {/* Step number circle */}
-                         <div className={`flex-shrink-0 w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-white font-bold text-base ${
+                         <div className={`flex-shrink-0 w-6 h-6 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-white text-sm lg:text-base ${
                            index === currentStepIndex 
                              ? 'bg-blue-500 shadow-lg' 
                              : 'bg-gray-400'
@@ -116,8 +116,8 @@ export default function SectionSteps({ locale }) {
 
                                                         {/* Step Details (expanded content) */}
                    {index === currentStepIndex && (
-                     <div className="px-6 pb-6 border-t border-gray-200">
-                       <p className="text-gray-700 leading-tight mt-1">
+                     <div className="px-6 pb-4">
+                       <p className="text-gray-700 text-sm lg:text-base leading-tight">
                          {step.description}
                        </p>
                      </div>

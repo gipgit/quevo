@@ -648,7 +648,6 @@ button {
     display: inline-block;
     text-decoration: none;
     transition: background-color 0.3s ease;
-    border: none;
     cursor: pointer;
     font-family: "FontButton", sans-serif;
     border-radius: 2em;

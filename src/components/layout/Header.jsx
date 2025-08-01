@@ -105,7 +105,7 @@ export default function Header() {
             </nav>
 
             {/* Right side - Auth buttons and locale switcher */}
-            <div className="flex items-center space-x-4 ml-auto">
+            <div className="flex items-center space-x-2 lg:space-x-4 ml-auto">
               <LocaleSwitcherButton 
                 onClick={() => setIsModalOpen(true)}
                 className="hidden lg:flex text-gray-600 hover:text-gray-800"
@@ -113,7 +113,7 @@ export default function Header() {
               
               <Link 
                 href="/signin/business" 
-                className="text-sm lg:text-base text-gray-600 hover:text-gray-900 transition-colors"
+                className="border border-gray-900 text-gray-900 text-sm lg:text-base px-4 py-2 rounded-md hover:bg-gray-100 hover:text-gray-900 transition-colors"
               >
                 Sign In
               </Link>
@@ -168,17 +168,17 @@ export default function Header() {
 
               {/* Mobile Navigation Links */}
               <nav className="flex-1 px-6 py-8">
-                <div className="space-y-6">
+                <div className="space-y-8">
                   <Link 
                     href="/features" 
-                    className="block text-2xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                    className="block text-4xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Features
                   </Link>
                   <Link 
                     href="/pricing" 
-                    className="block text-2xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                    className="block text-4xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Pricing
@@ -208,7 +208,7 @@ export default function Header() {
                 <div className="space-y-3">
                   <Link 
                     href="/signin/business" 
-                    className="block w-full text-center py-3 text-lg font-medium text-gray-900 hover:text-blue-600 transition-colors"
+                    className="block w-full text-center py-3 text-lg font-medium bg-black text-white rounded-lg hover:text-blue-600 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Sign In

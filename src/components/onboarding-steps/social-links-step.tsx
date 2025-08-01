@@ -55,7 +55,7 @@ export default function SocialLinksStep({ formData, updateFormData, onValidation
   return (
     <div className="space-y-6">
 
-      <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-2 lg:gap-4">
         {ALLOWED_LINK_TYPES.map((linkType) => {
           const isSelected = formData.selected_links.includes(linkType.id)
           // Updated icon path
@@ -64,12 +64,11 @@ export default function SocialLinksStep({ formData, updateFormData, onValidation
             <button
               key={linkType.id}
               onClick={() => toggleLink(linkType.id)}
-              className={`relative p-4 rounded-lg border-2 transition-all duration-200 ${
+              className={`relative p-4 rounded-lg border-[1px] transition-all duration-200 ${
                 isSelected
-                  ? "bg-gray-50 text-gray-900 shadow-lg transform scale-105"
-                  : "bg-white text-gray-700 border-gray-200 hover:border-gray-300 hover:shadow-md"
+                  ? "bg-gray-50 text-gray-900 border-gray-500 shadow-lg"
+                  : "bg-white text-gray-700 border-gray-300 hover:border-gray-300 hover:shadow-md"
               }`}
-              style={isSelected ? { border: '2px solid #9CA3AF' } : {}}
             >
               <div className="text-center">
                 {/* Use Next.js Image component for the SVG icon */}
@@ -100,7 +99,7 @@ export default function SocialLinksStep({ formData, updateFormData, onValidation
       </div>
 
       {formData.selected_links.length === 0 && (
-        <div className="text-center py-2"></div>
+        <div className="text-center py-0"></div>
       )}
     </div>
   )

@@ -320,7 +320,6 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
   const [nextAppointment, setNextAppointment] = useState<Appointment | null>(null);
   const [contactType, setContactType] = useState<'phone' | 'email'>('phone');
   const [isCopied, setIsCopied] = useState(false);
-  const [showShareMenu, setShowShareMenu] = useState(false);
   const [showRescheduleCancelModal, setShowRescheduleCancelModal] = useState<string | null>(null); // appointment id or null
   const [rescheduleCancelReason, setRescheduleCancelReason] = useState('');
   const [rescheduleCancelLoading, setRescheduleCancelLoading] = useState(false);
@@ -442,20 +441,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
     }
   }, [businessData.business_id, board_ref]);
 
-  // Close share menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element;
-      if (showShareMenu && !target.closest('.share-menu-container')) {
-        setShowShareMenu(false);
-      }
-    };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showShareMenu]);
 
   if (requiresPassword) {
     return (
@@ -479,18 +465,17 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
 
   if (error) {
     return (
-      <div className="container h-100 flex flex-col items-center justify-center mx-auto p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <svg className="h-5 w-5 text-red-400 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+      <div className="container h-screen flex flex-col items-center justify-center mx-auto p-6">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+          <div className="flex flex-col justify-center items-center">
+            <svg className="h-8 w-8 text-red-800 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
             </svg>
-            <h3 className="text-sm font-medium text-red-800">{tServiceBoard('errorLoadingActions')}</h3>
+            <div className="mt-2 text-md  text-red-700">{error}</div>
           </div>
-          <div className="mt-2 text-sm text-red-700">{error}</div>
           <button
             onClick={fetchServiceBoardActions}
-            className="mt-3 text-sm font-medium text-red-600 hover:text-red-500"
+            className="mt-3 text-sm font-medium text-gray-60"
           >
             {tServiceBoard('tryAgain')}
           </button>
@@ -606,9 +591,8 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
           <div className="flex-1">
             {boardData && (
               <div className="flex flex-col sm:flex-row sm:items-center gap-y-3 gap-x-8">
-                
                 <div>
-                  <h1 className="text-4xl md:text-3xl font-bold">{boardData.board_title}</h1>
+                  <h1 className="text-3xl md:text-3xl font-bold">{boardData.board_title}</h1>
                   <div className="flex items-center flex-wrap gap-y-1 gap-x-2 mt-1">
                   {boardData.service && (
                        <div className="text-sm">
@@ -616,7 +600,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                        </div>
                   )}
                   {boardData.board_description && (
-                    <p className="text-sm line-clamp-1 text-gray-300">{boardData.board_description}</p>
+                    <p className="text-xs line-clamp-1 text-gray-300">{boardData.board_description}</p>
                   )}
                 </div>
                 </div>
@@ -647,32 +631,21 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
           
           {/* Right Column - Actions and Share */}
           <div className="flex-shrink-0 flex items-center gap-4">
-            {/* Add Action Button - Hidden on xs to md, visible on lg+ */}
-            <button
-              onClick={() => setShowAddActionModal(true)}
-              className="hidden lg:flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              <span className="font-medium">{tServiceBoard('addAction')}</span>
-            </button>
-            
             {/* Share Menu Container - Hidden on xs to md, visible on lg+ */}
             <div className="relative share-menu-container hidden lg:block">
               {/* Pill Link Container */}
               <div className={`flex items-center justify-between gap-2 px-4 py-2 rounded-full border-2 transition-all duration-300 ${
                 isCopied 
-                  ? 'bg-green-100 border-green-500 shadow-lg scale-105' 
-                  : 'bg-gray-50 border-gray-300 hover:border-gray-400'
+                  ? 'bg-green-800 border-green-400 shadow-lg' 
+                  : 'bg-gray-700 border-gray-600 hover:border-gray-500'
               }`}>
                 <div className='flex items-center gap-2'>
                 {/* Globe Icon */}
-                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                 </svg>
                 {/* URL Text */}
-                <span className="text-sm text-gray-700 font-medium truncate max-w-[200px]">
+                <span className="text-sm text-gray-200 font-medium truncate max-w-[200px]">
                   {getCurrentBoardUrl().replace(/^https?:\/\//, '')}
                 </span>
                 </div>
@@ -682,8 +655,8 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                   onClick={copyToClipboard}
                   className={`p-1 rounded-full transition-all duration-200 ${
                     isCopied 
-                      ? 'bg-green-500 text-white' 
-                      : 'hover:bg-gray-200 text-gray-600'
+                      ? 'bg-green-600 text-white' 
+                      : 'hover:bg-gray-600 text-gray-300'
                   }`}
                   title={isCopied ? 'Copied!' : 'Copy link'}
                 >
@@ -700,8 +673,8 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                 
                 {/* Share Button */}
                 <button
-                  onClick={() => setShowShareMenu(!showShareMenu)}
-                  className="p-1 rounded-full hover:bg-gray-200 text-gray-600 transition-all duration-200"
+                  onClick={() => setShowShareModal(true)}
+                  className="p-1 rounded-full hover:bg-gray-600 text-gray-300 transition-all duration-200"
                   title="Share"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -711,70 +684,45 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                 </div>
               </div>
               
-              {/* Share Menu Dropdown */}
-              {showShareMenu && (
-                <div className="absolute top-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[200px]">
-                  <div className="py-1">
-                    <button
-                      onClick={() => {
-                        shareViaWhatsApp();
-                        setShowShareMenu(false);
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                    >
-                      <span className="flex-none inline-flex items-center justify-center w-7 h-7 bg-green-500 text-white rounded-full mr-2">
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
-                        </svg>
-                      </span>
-                      <span className="whitespace-nowrap">{tServiceBoard('shareWhatsApp')}</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        shareViaEmail();
-                        setShowShareMenu(false);
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                    >
-                      <span className="flex-none inline-flex items-center justify-center w-7 h-7 bg-blue-500 text-white rounded-full mr-2">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                      </span>
-                      <span className="whitespace-nowrap">{tServiceBoard('shareEmail')}</span>
-                    </button>
-                  </div>
-                </div>
-              )}
+
             </div>
+            
+            {/* Add Action Button on right of the Share Menu Container - Hidden on xs to md, visible on lg+ */}
+            <button
+              onClick={() => setShowAddActionModal(true)}
+              className="hidden lg:flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              <span className="font-medium">{tServiceBoard('addAction')}</span>
+            </button>
 
 
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row">
-        
-        {/* Timeline Section */}
-        <div className="w-full bg-white text-gray-900 lg:w-2/3 lg:order-1 p-5 md:p-6">
-          {/* Board Data at the beginning of timeline */}
-          
-           {/* Appointments section */}
-           {appointments && appointments.length > 0 && (
-                <div className="pb-2 border-bottom border-gray-200 mb-5">
-                  <h4 className="text-sm font-medium text-gray-900 mb-3">Appointments ({appointments.length})</h4>
-                  <div className="space-y-4">
+      <div className="flex flex-col lg:flex-row justify-between">
+
+        {/* Appointments section */}
+        {appointments && appointments.length > 0 && (
+                <div className="pb-2 mb-5 lg:w-[25%] lg:order-2 p-5 md:p-6">
+                  <div className="space-y-4 sticky top-0 pt-2">
                     {appointments.map((appointment) => (
-                      <div key={appointment.id} className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-200 p-6 shadow-sm">
-                        <div className="flex flex-col md:flex-row gap-4">
+                      <div key={appointment.id} className="text-gray-900 bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+                        <div className="flex flex-col gap-4">
                           {/* Left column: appointment details */}
                           <div className="flex-1 min-w-0">
                         {appointment.appointment_title && (
-                          <div className="mb-3 flex flex-row items-center gap-2">
+                          <div className="mb-3 flex flex-row items-center flex-wrap gap-2">
                             <h3 className="text-xl font-semibold text-gray-900">{appointment.appointment_title}</h3>
-                            <span className={`text-xs md:text-lg px-3 py-1 capitalize rounded-full ${getStatusColor(appointment.status)}`}>
+                            <span className={`text-xs md:text-base px-3 py-1 capitalize rounded-full ${getStatusColor(appointment.status)}`}>
                               {getStatusText(appointment.status, tServiceBoard)}
                             </span>
                           </div>
                         )}
-                        <div className="flex items-center flex-row flex-wrap lg:flex-nowrap gap-2 mb-3">
+                        <div className="flex items-center flex-row flex-wrap gap-x-6 gap-y-2 mb-3">
                           <div className="flex items-center gap-2">
                             {/* Date and Time */}
                             <div className="flex items-center gap-2">
@@ -787,8 +735,6 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                                 </span>
                               </div>
                             </div>
-                            {/* Separator */}
-                            <div className="w-px h-6 bg-gray-300 mx-2"></div>
                             <div className="flex items-center gap-2">
                               <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -798,7 +744,6 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                               </span>
                             </div>
                           </div>
-                          <div className="w-px h-6 bg-gray-300 mx-2"></div>
                           <div>
                                   {/* Location with Maps/Waze*/}
                                   {appointment.appointment_location && appointment.appointment_type !== 'online' && (
@@ -839,7 +784,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                                   )}
                                   {/* Platform with Icon and Link on same row */}
                                 {(appointment.platform_name || appointment.platform_link) && (
-                                  <div className="flex items-center gap-2 flex-wrap">
+                                  <div className="flex items-center gap-x-2 gap-y-0 flex-wrap">
                                     {appointment.platform_name && (
                                       <div className="flex items-center gap-2">
                                         <div className="w-6 h-6 flex items-center justify-center">
@@ -848,7 +793,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                                             alt={appointment.platform_name}
                                             width={24}
                                             height={24}
-                                            className="w-6 h-6"
+                                            className="w-4 h-4 lg:w-4 lg:h-4"
                                           />
                                         </div>
                                         <span className="text-sm text-gray-600">{appointment.platform_name}</span>
@@ -859,8 +804,8 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                                         <svg className="w-5 h-5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                                         </svg>
-                                        <div className="flex-1 min-w-0 max-w-[500px]">
-                                          <div className="flex items-center gap-2 px-2 py-1.5 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
+                                        <div className="flex-1 min-w-0 max-w-[280px]">
+                                          <div className="flex items-center gap-2 px-2 py-1 bg-gray-50 border border-gray-200 rounded-xl w-full overflow-hidden">
                                             <span className="text-xs text-gray-600 truncate flex-1 min-w-0">
                                               {appointment.platform_link}
                                             </span>
@@ -869,7 +814,6 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                                                 onClick={() => {
                                                   if (appointment.platform_link) {
                                                     navigator.clipboard.writeText(appointment.platform_link);
-                                                    // You could add a toast notification here
                                                   }
                                                 }}
                                                 className="p-1 hover:bg-gray-200 rounded transition-colors"
@@ -909,7 +853,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                         </div>
                       </div>
                           {/* Right column: utility and action buttons */}
-                          <div className="flex flex-col gap-1 w-full md:w-64 md:flex-shrink-0 md:items-end md:justify-center">
+                          <div className="flex flex-col gap-0 w-full">
                             {/* Utility share buttons */}
                             <div className="flex flex-col gap-1 mb-2 w-full md:w-auto">
                               {/* Utility share buttons in a row */}
@@ -947,7 +891,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                             </div>
                             {/* Appointment Actions: Reschedule & Cancel in a row */}
                             {['confirmed', 'scheduled'].includes(appointment.status) && (
-                              <div className="w-full md:w-auto mt-1 flex flex-col justify-end">
+                              <div className="w-full md:w-auto flex flex-col justify-end">
                                 <div className="text-xs text-gray-700 mb-1 text-center md:text-right">
                                   {tServiceBoard('rescheduleOrCancelPrompt')}{' '}
                                   <button
@@ -1093,11 +1037,15 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                   </div>
                 </div>
           )}
+        
+        {/* Timeline Section */}
+        <div className="w-full  text-gray-900 flex-1 lg:min-w-[50%] lg:max-w-[800px] lg:order-1 p-5 md:p-6">
+          {/* Board Data at the beginning of timeline */}
 
           {/* Timeline */}
           <div className="relative">
             <div className="absolute left-[-8px] lg:left-5 top-0 bottom-0 w-0.5 bg-blue-500"></div>
-            <div className="space-y-8">
+            <div className="space-y-2 lg:space-y-4">
               {/* Other timeline actions */}
               {actions.map((action) => (
                 <div key={action.action_id} className="relative pl-1 lg:pl-10">
@@ -1117,7 +1065,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
               {boardData?.servicerequest && (
                 <div className="relative pl-1 lg:pl-10">
                   <div className="absolute left-[-7px] lg:left-[20px] -translate-x-1/2 w-4 h-4 md:w-5 md:h-5 rounded-full border-2 bg-blue-500 border-blue-600"></div>
-                  <div className="border border-gray-200 rounded-lg p-6 shadow-sm">
+                  <div className="bg-white border border-gray-200 rounded-xl p-6 md:p-6 lg:p-7 shadow-sm">
                    
                       <div className="flex items-center justify-between text-sm text-gray-500 mb-2">
                         <span>Request created {getRelativeTime(boardData.servicerequest.date_created, tServiceBoard)}</span>
@@ -1131,12 +1079,12 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                         <h2 className="text-xl md:text-2xl font-bold">{tServiceBoard('customerSentRequest', { customerName: boardData.servicerequest.customer_name || 'Customer' })}</h2>
                       </div>
                       <div className="flex gap-2">
-                            <span className={`text-sm px-3 py-1 rounded-lg ${getStatusColor(boardData.servicerequest.status)}`}>
+                            <span className={`text-sm px-3 py-1 rounded-lg whitespace-nowrap ${getStatusColor(boardData.servicerequest.status)}`}>
                               {getStatusText(boardData.servicerequest.status, tServiceBoard)}
                             </span>
-                            <div className={`text-sm px-3 py-1 rounded-lg bg-gray-50 border-2 border-gray-400`}>
+                            <div className={`text-sm px-3 py-1 rounded-lg bg-gray-50 border-2 border-gray-400 whitespace-nowrap`}>
                             <span className="text-sm text-gray-500 mr-1">{tServiceBoard('reference')}:</span>
-                            <span className="text-sm font-medium">{boardData.servicerequest.request_reference}</span>
+                            <span className="text-sm font-medium ">{boardData.servicerequest.request_reference}</span>
                             </div>
                       </div>
                     </div>
@@ -1347,17 +1295,17 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
         </div>
 
         {/* Business Info Section - Responsive */}
-        <div className="w-full lg:w-1/3 lg:order-1">
+        <div className="w-full flex-1 lg:max-w-[50%] lg:order-3">
           <div className="sticky top-0 p-6">
             <div className="flex flex-col items-center">
-              <div className="board-cover relative w-full h-[250px] overflow-hidden rounded-t-2xl">
+              <div className="board-cover relative w-full h-[180px] lg:h-[200px] overflow-hidden rounded-t-2xl">
                 <img
                   src={businessCoverImageUrl}
                   alt={businessData.business_name || 'Business cover'}
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="h-24 w-24 -mt-8 z-10 rounded-full overflow-hidden bg-gray-100 border-2 border-white">
+              <div className="w-20 h-20 lg:w-20 lg:h-20 -mt-8 z-10 rounded-full overflow-hidden bg-gray-100 border-2 border-white">
                 {businessData.business_public_uuid ? (
                   <img
                     src={`/uploads/business/${businessData.business_public_uuid}/profile.webp`}
@@ -1373,7 +1321,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                 )}
               </div>
               <div className="text-center mt-2">
-                <h2 className="text-xl md:text-2xl font-semibold">{businessData.business_name}</h2>
+                <h2 className="text-xl lg:text-xl font-semibold">{businessData.business_name}</h2>
                 {businessData.business_description && (
                   <p className="text-gray-600 text-sm mt-1">{businessData.business_description}</p>
                 )}
@@ -1398,7 +1346,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
 
                 {/* Social Links */}
                 {businessSettings?.show_socials && filteredSocialLinks.length > 0 && (
-                  <div className="flex flex-wrap justify-center gap-2 mb-4">
+                  <div className="flex flex-wrap justify-center gap-1 mb-4">
                     {filteredSocialLinks.map((link, index) => (
                       <div key={index} className="text-center">
                         <a 

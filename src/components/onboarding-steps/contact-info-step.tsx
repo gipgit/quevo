@@ -93,7 +93,7 @@ export function ContactInfoStep({ formData, updateFormData, onValidationChange }
     <div className="space-y-8">
       {/* Emails Section */}
       <div>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-2">
           <h3 className="text-lg font-medium text-gray-900">Email</h3>
           {emails.length < 3 && (
             <button
@@ -144,7 +144,7 @@ export function ContactInfoStep({ formData, updateFormData, onValidationChange }
 
       {/* Phones Section */}
       <div>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-2">
           <h3 className="text-lg font-medium text-gray-900">Telefoni</h3>
           {phones.length < 3 && (
             <button

@@ -189,13 +189,45 @@ export default function SectionBoard({ locale }) {
                          </p>
                      </div>
 
+                     {/* Board Pill Link Example and Get Started Button - Moved below cards */}
+                    <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
+                        <div className="w-full max-w-[90vw] lg:w-[500px] inline-flex items-center gap-2 rounded-full px-3 lg:px-4 py-2 lg:py-2 shadow-md border border-gray-200">
+                            <div className="flex items-center gap-1 min-w-0 flex-1">
+                                <svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
+                                    <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="2" />
+                                    <ellipse cx="10" cy="10" rx="4" ry="9" stroke="currentColor" strokeWidth="2" />
+                                    <line x1="1" y1="10" x2="19" y2="10" stroke="currentColor" strokeWidth="2" />
+                                    <line x1="10" y1="1" x2="10" y2="19" stroke="currentColor" strokeWidth="2" />
+                                </svg>
+                                <span className="text-gray-600 font-medium text-xs lg:text-sm">{tCommon('domainPrefix')}</span>
+                                <span className="text-gray-800 font-semibold -ml-1 text-xs lg:text-sm">{currentBusiness.url}</span>
+                                <span className="text-gray-600 truncate -ml-1 text-xs lg:text-sm">/s/{currentBusiness.board_ref}</span>
+                            </div>
+                            <Link 
+                                href={`/${locale}/${currentBusiness.url}/s/${currentBusiness.board_ref}`}
+                                className="inline-flex items-center gap-1 bg-gray-300 hover:bg-gray-400 text-gray-700 px-2 py-1 lg:px-3 lg:py-1.5 rounded-full text-xs font-medium transition-colors flex-shrink-0"
+                            >
+                                {t('viewExample')}
+                                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                            </Link>
+                        </div>
+                        <Link 
+                            href="/signup/business" 
+                            className="button py-2 px-4 lg:py-2 lg:px-6 text-sm lg:text-base bg-gradient-to-r from-gray-700 to-gray-900 text-white hover:from-gray-600 hover:to-gray-800 inline-block"
+                        >
+                            {t('getStarted')}
+                        </Link>
+                    </div>
+
                     {/* Service Board Benefits Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4 lg:gap-6 max-w-6xl mx-auto">
                        
                        {/* Unified View */}
                        <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100 md:col-span-2 lg:col-span-1">
                             <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                                     <svg className="w-4 h-6 lg:w-6 lg:h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                     </svg>
@@ -212,7 +244,7 @@ export default function SectionBoard({ locale }) {
                        {/* Clear View */}
                        <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100">
                             <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                                     <svg className="w-4 h-6 lg:w-6 lg:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                                     </svg>
@@ -229,7 +261,7 @@ export default function SectionBoard({ locale }) {
                         {/* Problem-Solving Power */}
                         <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100">
                             <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
                                     <svg className="w-4 h-6 lg:w-6 lg:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
@@ -246,7 +278,7 @@ export default function SectionBoard({ locale }) {
                         {/* Effortless Action Management */}
                         <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100">
                             <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 rounded-full bg-cyan-100 flex items-center justify-center flex-shrink-0">
+                                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-cyan-100 flex items-center justify-center flex-shrink-0">
                                     <svg className="w-4 h-6 lg:w-6 lg:h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                                     </svg>
@@ -263,7 +295,7 @@ export default function SectionBoard({ locale }) {
                         {/* Automated Notifications */}
                         <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100">
                             <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
                                     <svg className="w-4 h-6 lg:w-6 lg:h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
@@ -280,7 +312,7 @@ export default function SectionBoard({ locale }) {
                         {/* Secure & Shareable Access */}
                         <div className="bg-white rounded-2xl p-4 md:p-5 lg:p-6 border border-gray-100">
                             <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0">
+                                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0">
                                     <svg className="w-4 h-6 lg:w-6 lg:h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                     </svg>
@@ -379,37 +411,6 @@ export default function SectionBoard({ locale }) {
                         ))}
                     </div>
 
-                    {/* Board Pill Link Example and Get Started Button - Moved below cards */}
-                    <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
-                        <div className="w-full max-w-[85vw] lg:w-[500px] inline-flex items-center gap-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded-full px-4 py-2 shadow-md border border-gray-200">
-                            <div className="flex items-center gap-1 min-w-0 flex-1">
-                                <svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
-                                    <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="2" />
-                                    <ellipse cx="10" cy="10" rx="4" ry="9" stroke="currentColor" strokeWidth="2" />
-                                    <line x1="1" y1="10" x2="19" y2="10" stroke="currentColor" strokeWidth="2" />
-                                    <line x1="10" y1="1" x2="10" y2="19" stroke="currentColor" strokeWidth="2" />
-                                </svg>
-                                <span className="text-gray-600 font-medium text-sm">{tCommon('domainPrefix')}</span>
-                                <span className="text-gray-800 font-semibold truncate -ml-1 text-sm">{currentBusiness.url}</span>
-                                <span className="text-gray-600 truncate -ml-1 text-sm">/s/{currentBusiness.board_ref}</span>
-                            </div>
-                            <Link 
-                                href={`/${locale}/${currentBusiness.url}/s/${currentBusiness.board_ref}`}
-                                className="inline-flex items-center gap-1 bg-gray-300 hover:bg-gray-400 text-gray-700 px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex-shrink-0"
-                            >
-                                {t('viewExample')}
-                                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                </svg>
-                            </Link>
-                        </div>
-                        <Link 
-                            href="/signup" 
-                            className="button btn-md bg-gradient-to-r from-gray-700 to-gray-900 text-white hover:from-gray-600 hover:to-gray-800 inline-block"
-                        >
-                            {t('getStarted')}
-                        </Link>
-                    </div>
                 </div>
             </div>
         </section>

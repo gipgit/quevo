@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl"
 import { ArrowPathIcon } from "@heroicons/react/24/outline"
 import { BusinessOnboardingForm } from "@/components/business-onboarding-form"
 import ProfilePreview from "@/components/dashboard/profile/ProfilePreview"
+import { LocaleSwitcherButton } from "@/components/ui/LocaleSwitcherButton"
 
 export default function OnboardingPage() {
   const { data: session, status } = useSession()
@@ -108,31 +109,23 @@ export default function OnboardingPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Top Navbar */}
       <div className="px-4 lg:px-6 py-4">
-        <div className="flex items-center justify-between">
-          {/* xs to md: centered layout */}
-          <div className="flex flex-col items-center lg:hidden flex-1">
-            <div className="flex items-center space-x-3 mb-2">
-              <h1 className="text-lg font-bold text-gray-900">Quevo</h1>
-            </div>
-            <div className="text-sm text-gray-500 text-center">
+        <div className="flex items-center justify-center lg:justify-between">
+          <div className="flex items-center space-x-3">
+            <h1 className="text-md lg:text-2xl font-bold text-gray-900">Quevo</h1>
+            <div className="text-sm text-gray-500">
               {t("createBusinessTitle")}
             </div>
           </div>
-          
-          {/* lg+: original layout */}
-          <div className="hidden lg:flex items-center space-x-3">
-            <h1 className="text-xl font-bold text-gray-900">Quevo</h1>
-          </div>
-          <div className="hidden lg:block text-sm text-gray-500">
-            {t("createBusinessTitle")}
+          <div className="hidden lg:block">
+            Supporto
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col lg:flex-row max-w-4xl mx-auto w-full pb-24 lg:items-center py-0 px-6">
+      <div className="flex-1 flex flex-col lg:flex-row max-w-4xl mx-auto w-full pb-24 lg:items-center py-4 px-6">
         {/* Left Column - Form */}
-        <div className="flex-1 min-w-0 p-4 lg:p-6">
+        <div className="lg:flex-1 min-w-0 p-4 lg:p-6">
           <BusinessOnboardingForm 
             onFormDataChange={setFormData}
             formData={formData}

@@ -52,13 +52,13 @@ export default function GenericMessage({ details }: Props) {
   }
 
   return (
-    <div className={`rounded-lg border p-4 ${getSeverityStyles(details.severity)}`}>
-      <div className="flex">
-        <div className="flex-shrink-0">
+    <div className={`rounded-lg border p-3 lg:p-4 ${getSeverityStyles(details.severity)}`}>
+      <div className="flex relative">
+        <div className="flex-shrink-0 absolute lg:relative top-0 left-0 translate-y-[50%] -translate-x-[100%] lg:translate-x-0 lg:translate-y-0">
           {getSeverityIcon(details.severity)}
         </div>
-        <div className="ml-3">
-          <div className="text-sm">
+        <div className="ml-2">
+          <div className="text-sm leading-tight lg:leading-normal">
             {details.message_content}
           </div>
           {details.requires_acknowledgment && !details.acknowledged_at && (

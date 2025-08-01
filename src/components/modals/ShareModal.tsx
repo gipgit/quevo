@@ -39,12 +39,12 @@ export default function ShareModal({
         </div>
 
         <div className="mb-4">
-          <h4 className="text-sm font-medium text-gray-700 mb-2">Board Title</h4>
-          <p className="text-lg font-semibold text-gray-900">{boardTitle}</p>
+          <h4 className="text-xs font-medium text-gray-700 mb-1">Board Title</h4>
+          <p className="text-xl font-semibold text-gray-900">{boardTitle}</p>
         </div>
 
         <div className="mb-6">
-          <h4 className="text-sm font-medium text-gray-700 mb-2">Share Link</h4>
+          <h4 className="text-xs font-medium text-gray-700 mb-1">Share Link</h4>
           {/* Pill Link Container */}
           <div className={`flex items-center justify-between gap-2 px-4 py-2 rounded-full border-2 transition-all duration-300 ${
             isCopied 

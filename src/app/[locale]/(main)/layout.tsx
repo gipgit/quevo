@@ -9,8 +9,8 @@ import LocaleModalWrapper from '@/components/ui/LocaleModalWrapper';
 import { LocaleSwitcherProvider } from '@/components/ui/LocaleSwitcherProvider';
 
 export const metadata = {
-  title: 'Quevo App - Main', 
-  description: 'Quevo main application content.',
+  title: 'Quevo', 
+  description: 'Quevo - Landing',
 };
 
 export default function MainLayout({

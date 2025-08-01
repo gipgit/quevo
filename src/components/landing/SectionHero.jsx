@@ -266,8 +266,8 @@ export default function SectionHero({ locale }) {
                          </div>
 
                         {/* Example URL Link Pill and Get Started Button */}
-                        <div className="inline-flex flex-col sm:flex-row gap-4 items-center justify-center max-w-[85vw] lg:max-w-[700px]">
-                                                         <div className="w-full inline-flex items-center gap-3 bg-gradient-to-r from-blue-100 via-indigo-100 to-purple-100 rounded-full px-6 py-3 shadow-lg relative" style={{
+                        <div className="inline-flex flex-col sm:flex-row gap-4 items-center justify-center max-w-[90vw] lg:max-w-[700px]">
+                               <div className="w-full inline-flex items-center gap-3 bg-gradient-to-r from-blue-100 via-indigo-100 to-purple-100 rounded-full px-3 lg:px-6 py-2 lg:py-3 shadow-lg relative" style={{
                                background: 'linear-gradient(white, white) padding-box, linear-gradient(to right, #60a5fa, #8b5cf6, #ec4899, #f59e0b, #10b981, #3b82f6) border-box',
                                border: '3px solid transparent'
                              }}>
@@ -278,15 +278,15 @@ export default function SectionHero({ locale }) {
                                         <line x1="1" y1="10" x2="19" y2="10" stroke="currentColor" strokeWidth="2" />
                                         <line x1="10" y1="1" x2="10" y2="19" stroke="currentColor" strokeWidth="2" />
                                     </svg>
-                                    <span className="text-gray-600 font-medium">{tCommon('domainPrefix')}</span>
-                                    <span className="text-gray-900 font-semibold truncate -ml-2">{currentBusiness.url}</span>
+                                    <span className="text-xs lg:text-sm text-gray-600 font-medium">{tCommon('domainPrefix')}</span>
+                                    <span className="text-xs lg:text-sm text-gray-900 font-semibold truncate -ml-2">{currentBusiness.url}</span>
                                 </div>
                                 <Link 
                                     href={`/${locale}/${currentBusiness.url}`}
-                                    className="inline-flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-full text-xs lg:text-sm font-medium transition-colors flex-shrink-0"
+                                    className="inline-flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-2 py-1 lg:px-4 lg:py-2 rounded-full text-xs lg:text-sm font-medium transition-colors flex-shrink-0"
                                 >
                                     {t('Hero.viewExample')}
-                                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <svg className="hidden lg:block" width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </Link>
@@ -329,12 +329,12 @@ export default function SectionHero({ locale }) {
                             {/* Desktop View */}
                             <div className="relative z-10 w-full max-w-9xl overflow-visible">
                                 <div 
-                                    className="bg-gray-800 rounded-xl shadow-2xl p-1 overflow-visible w-[100vw] h-auto lg:w-full"
+                                    className="bg-gray-800 rounded-lg shadow-2xl p-[1px] overflow-visible w-[100vw] h-auto lg:w-full"
                                 >
                                     <img 
                                         src={currentBusiness.desktopImage}
                                         alt={`${currentBusiness.name} desktop view`}
-                                        className="w-full h-auto rounded-xl object-contain"
+                                        className="w-full h-auto rounded-lg object-contain"
                                         onError={(e) => {
                                             e.target.style.display = 'none';
                                             e.target.nextSibling.style.display = 'block';
@@ -345,7 +345,7 @@ export default function SectionHero({ locale }) {
                                         }}
                                     />
                                     <div 
-                                        className="w-full h-[300px] lg:h-64 rounded-xl bg-gradient-to-br from-gray-300 to-gray-400"
+                                        className="w-full h-[180px] lg:h-64 rounded-lg bg-gradient-to-br from-gray-300 to-gray-400"
                                         style={{ 
                                             display: 'none', 
                                             minWidth: '20rem', 
@@ -363,16 +363,16 @@ export default function SectionHero({ locale }) {
                             <button
                                 key={business.id}
                                 onClick={() => handleBusinessSelect(index)}
-                                className={`relative px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 overflow-hidden ${
+                                className={`relative px-2 lg:px-3 py-1 lg:py-1.5 rounded-full text-xs font-medium transition-all duration-200 overflow-hidden ${
                                     index === currentBusinessIndex
-                                        ? 'bg-gray-300 text-gray-900 shadow-lg'
-                                        : 'bg-transparent text-gray-600 hover:text-gray-800 border border-gray-300'
+                                        ? 'bg-gray-200 text-gray-500 shadow-lg'
+                                        : 'bg-transparent text-gray-500 hover:text-gray-800 border border-gray-300'
                                 }`}
                             >
                                 {/* Loading bar background */}
                                 {index === currentBusinessIndex && isAutoPlaying && (
                                     <div 
-                                        className="absolute inset-0 bg-gray-400 transition-all duration-50 ease-linear"
+                                        className="absolute inset-0 bg-gray-300 transition-all duration-50 ease-linear"
                                         style={{ 
                                             width: `${progressPercentage}%`,
                                             left: '0',
