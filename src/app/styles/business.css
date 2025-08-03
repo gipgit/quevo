@@ -33,6 +33,14 @@
   color: var(--theme-color-text) !important;
 }
 
+@media (min-width: 1024px) {
+  .profile-main {
+    background-color: transparent !important;
+  }
+}
+
+
+
 
 /* Specific background and text color for dark/light modes, inherited from body--dark-bg/body--light-bg */
 .body--dark-bg {
@@ -44,8 +52,7 @@
 }
 
 .font-semibold,
-.font-bold,
-.button {
+.font-bold{
   font-family: inherit !important;
   font-weight: 700 !important;
 }
@@ -301,29 +308,9 @@
         
  
  .contacts-card{
-            background: linear-gradient(to right, #f3f5f60f, #fbfbfb21);
-            border: 1px solid #0000001c;
-        }
-  
-      
-        .contacts-card .call-button {
-            background-color:rgb(45, 205, 82)!important; 
-            color: #fff!important;
-        }
-
-        .contacts-card .whatsapp-button {
-            background-color: #25d366!important; 
-            color: #fff!important;
-        }
-
-        .contacts-card .email-button {
-            background-color:rgb(15, 107, 255)!important; 
-            color: #fff!important;
-        }
-
-        .contacts-card .copy-button { 
-            background-color: #6c757d!important; 
-            color: #fff!important;
+            background:  #f3f5f60f;
+            border-radius: 1.5em;
+            border: 2px solid #0000001c;
         }
 
 
@@ -398,9 +385,9 @@
         
 
          .payments-card{
-             background: linear-gradient(to right, #f3f5f60f, #fbfbfb21);
-            border-radius: 1em;
-            border: 1px solid #0000001c;
+            background: #f3f5f60f;
+            border-radius: 1.5em;
+            border: 2px solid #0000001c;
         }
                 
               

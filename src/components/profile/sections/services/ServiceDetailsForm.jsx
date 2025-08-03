@@ -326,7 +326,7 @@ export default function ServiceDetailsForm({
 
     return (
         <div className="pb-20">
-            <p className={`text-sm ${themeColorText}`}>{t('confirmServiceRequestTitle')}</p>
+            <p className={`hidden lg:block text-sm ${themeColorText}`}>{t('confirmServiceRequestTitle')}</p>
 
             {fetchError && (
                 <div className="bg-red-100 text-red-800 p-3 rounded-md mt-4 mb-4">
@@ -338,23 +338,25 @@ export default function ServiceDetailsForm({
                 <div className="flex flex-col lg:flex-row lg:gap-8">
                     {/* Service Information Column */}
                     <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                            <p className="font-bold text-xl md:text-2xl lg:text-3xl">{selectedService?.service_name}</p>
-                            {selectedService?.description && (
-                                <button
-                                    type="button"
-                                    onClick={() => setShowDescription(!showDescription)}
-                                    className="p-1 rounded-full hover:bg-gray-100 transition-colors"
-                                    aria-label={showDescription ? 'Hide description' : 'Show description'}
-                                >
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </button>
-                            )}
+                        <div className="mb-2">
+                            <p className="font-bold text-xl md:text-2xl lg:text-3xl">
+                                {selectedService?.service_name}
+                                {selectedService?.description && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowDescription(!showDescription)}
+                                        className="p-1 rounded-full hover:bg-gray-100 transition-colors ml-2"
+                                        aria-label={showDescription ? 'Hide description' : 'Show description'}
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </button>
+                                )}
+                            </p>
                         </div>
                         {showDescription && selectedService?.description && (
-                            <p className="text-sm text-md md:text-lg opacity-80 mb-2">{selectedService?.description}</p>
+                            <p className="text-xs md:text-sm leading-tight opacity-80 mb-2">{selectedService?.description}</p>
                         )}
                         <p className="text-xs mt-1">
                            {selectedService?.price_base != null ? ( // Check if price_base has any value (0 or positive)
@@ -371,7 +373,7 @@ export default function ServiceDetailsForm({
 
                     {/* Date Selection Column */}
                     {selectedService?.date_selection && (
-                        <div className="flex-shrink-0 mt-4 lg:mt-0">
+                        <div className="flex-shrink-0 mt-4 lg:mt-0 lg:max-w-[30%]">
                             <p className="text-lg md:text-2xl lg:text-xl">{formattedDate}, {formattedTime}</p>
                         </div>
                     )}
@@ -396,9 +398,10 @@ export default function ServiceDetailsForm({
                                             key={item.service_item_id}
                                             className={`
                                                 relative flex flex-row md:items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 ease-in-out border
+                                                ${isSelected ? 'border-l-4' : 'border-l'}
                                             `}
                                             onClick={() => handleServiceItemToggle(item)}
-                                            style={isSelected ? { backgroundColor: themeColorButton, color: 'white', borderColor: themeColorButton } : { backgroundColor: themeColorBackgroundCard, color: themeColorText, borderColor: themeColorBorder }}
+                                            style={isSelected ? { backgroundColor: themeColorBackgroundCard, color: themeColorText, borderColor: themeColorButton } : { backgroundColor: themeColorBackgroundCard, color: themeColorText, borderColor: themeColorBorder }}
                                         >
                                             <div className="text-base">
                                                 <p className="font-medium">{item.item_name}</p>
@@ -436,13 +439,13 @@ export default function ServiceDetailsForm({
                                 })}
                             </div>
                             {/* --- Quotation Summary Card --- */}
-                            <div className={`p-4 w-full text-white flex flex-row items-center`} style={{backgroundColor: themeColorButton}}>
-                                <div className="w-1/3">
+                            <div className={`p-4 w-full text-white flex flex-col lg:flex-row lg:items-center`} style={{backgroundColor: themeColorButton}}>
+                                <div className="lg:w-1/3">
                                 <p className="text-xs">{t('totalPrice')}:</p>
                                 <p className="font-bold text-2xl">€ {totalQuotationPrice.toFixed(2)}</p>
                                 </div>
-                                <div className="w-2/3">
-                                <p className="text-xs">{t('optionalItemsDescription')}</p>
+                                <div className="lg:w-2/3">
+                                <p className="text-xs leading-none opacity-80">{t('optionalItemsDescription')}</p>
                                 </div>
                             </div>
                         </div>

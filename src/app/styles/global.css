@@ -645,17 +645,14 @@ section {
 
 .button,
 button {
-    display: inline-block;
     text-decoration: none;
     transition: background-color 0.3s ease;
     cursor: pointer;
+    background: none;
     font-family: "FontButton", sans-serif;
-    border-radius: 2em;
 }
 
-button {
-    background: none;
-}
+
 
 
 

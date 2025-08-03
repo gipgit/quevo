@@ -21,7 +21,7 @@ export default function ServiceSelection({
 
     return (
         <div className="x" style={{ color: themeColorText}}>
-            <p className="text-xl font-bold mb-4">{t('chooseService')}</p>
+            <p className="text-lg lg:text-xl mb-4">{t('chooseService')}</p>
 
             {/* Render categorized services */}
             {servicesByCategory && Array.isArray(servicesByCategory) && servicesByCategory.length > 0 && (
@@ -30,7 +30,7 @@ export default function ServiceSelection({
 
                     return (
                         <div key={categoryGroup.category_name} className="mb-6">
-                            <p className="text-md font-medium mb-3 border-b pb-2" style={{ borderColor: themeColorText + '50' }}>{categoryGroup.category_name}</p>
+                            <p className="text-sm font-medium mb-3 border-b pb-1" style={{ borderColor: themeColorText + '50' }}>{categoryGroup.category_name}</p>
                             {categoryGroup.services.map(service => (
                                 <div
                                     key={service.service_id}
@@ -75,7 +75,7 @@ export default function ServiceSelection({
             {/* Render uncategorized services if any */}
             {uncategorizedServices && uncategorizedServices.length > 0 && (
                 <div className="mb-6">
-                    <h3 className="text-xl font-semibold mb-3 border-b pb-2" style={{ borderColor: themeColorText + '40' }}>{t('uncategorizedServices')}</h3>
+                    <h3 className="text-sm font-semibold mb-3 border-b pb-1" style={{ borderColor: themeColorText + '40' }}>{t('uncategorizedServices')}</h3>
                     {uncategorizedServices.map(service => (
                         <div
                             key={service.service_id}

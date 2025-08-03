@@ -266,20 +266,20 @@ export async function POST(
 
       console.log("Service request created with ID:", serviceRequest.request_id);
 
-      // Create service board for all users (both authenticated and guest)
-      const serviceBoard = await prisma.serviceboard.create({
-        data: {
-          business_id: business_id,
-          customer_id: finalCustomerUserId,
-          request_id: serviceRequest.request_id,
-          service_id: serviceId,
-          board_title: `Request by ${sanitizedCustomerName} - ${serviceRequest.request_reference}`,
-          board_description: `Service Board for ${sanitizedCustomerName}`,
-          board_ref: boardRef,
-          is_password_protected: false,
-          status: 'pending'
-        },
-      });
+             // Create service board for all users (both authenticated and guest)
+       const serviceBoard = await prisma.serviceboard.create({
+         data: {
+           business_id: business_id,
+           customer_id: finalCustomerUserId,
+           request_id: serviceRequest.request_id,
+           service_id: serviceId,
+           board_title: `${service.service_name} - ${sanitizedCustomerName}`,
+           board_description: getLocalizedBoardDescription(requestLocale, sanitizedCustomerName),
+           board_ref: boardRef,
+           is_password_protected: false,
+           status: 'pending'
+         },
+       });
 
       console.log("Service board created with ID:", serviceBoard.board_id);
 
@@ -427,10 +427,47 @@ export async function POST(
     // Get business URL name for confirmation page URL
     const businessUrlName = business.business_urlname;
 
-    // Prepare for Email Sending
-    const host = request.headers.get('host');
-    const appBaseUrl = `http${process.env.NODE_ENV === 'production' ? 's' : ''}://${host}`;
-    const requestLocale = request.headers.get('x-next-intl-locale') || 'en-US';
+         // Prepare for Email Sending
+     const host = request.headers.get('host');
+     const appBaseUrl = `http${process.env.NODE_ENV === 'production' ? 's' : ''}://${host}`;
+     const requestLocale = request.headers.get('x-next-intl-locale') || 'en-US';
+
+           // Helper function to get localized board description
+      const getLocalizedBoardDescription = (locale: string, customerName: string): string => {
+        const localeMap: Record<string, string> = {
+          // English
+          'en': `Service Board for ${customerName}`,
+          'en-US': `Service Board for ${customerName}`,
+          'en-GB': `Service Board for ${customerName}`,
+          
+          // Italian
+          'it': `Bacheca Servizio per ${customerName}`,
+          'it-IT': `Bacheca Servizio per ${customerName}`,
+          
+          // Spanish
+          'es': `Tablero de Servicio para ${customerName}`,
+          'es-ES': `Tablero de Servicio para ${customerName}`,
+          
+          // German
+          'de': `Service-Board für ${customerName}`,
+          'de-DE': `Service-Board für ${customerName}`,
+          
+          // French
+          'fr': `Tableau de Service pour ${customerName}`,
+          'fr-FR': `Tableau de Service pour ${customerName}`,
+          
+          // Arabic
+          'ar': `لوحة الخدمة لـ ${customerName}`,
+          'ar-SA': `لوحة الخدمة لـ ${customerName}`,
+          
+          // Chinese
+          'zh': `${customerName}的服务板`,
+          'zh-CN': `${customerName}的服务板`,
+          'zh-TW': `${customerName}的服務板`
+        };
+        
+        return localeMap[locale] || localeMap['en-US'];
+      };
 
     // Format date for emails
     const formattedRequestDate = result.serviceRequest.request_date ? format(new Date(result.serviceRequest.request_date), 'PPPP') : 'N/A';

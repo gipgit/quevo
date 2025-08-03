@@ -153,7 +153,7 @@ export default function DateTimeSelection({
 
     return (
         <div className="" style={{ color: themeColorText}}>
-            <h3 className="text-xl font-semibold mb-6">{t('selectDate')} and {t('selectTime')}</h3>
+            <h3 className="text-sm lg:text-xl font-semibold mb-6 capitalize">{t('selectDate')} - {t('selectTime')}</h3>
             <div className="flex flex-col md:flex-row gap-8">
                 <div className="md:w-3/5">
                     {loadingOverview && (

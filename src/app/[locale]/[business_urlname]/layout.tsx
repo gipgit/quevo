@@ -188,12 +188,12 @@ export default async function BusinessProfileLayout({
         const themeFont = data.businessSettings.theme_font_css_stack;
 
         const themeColorTextRgb = hexToRgb(themeColorText);
-        const borderColorOpacity = 0.2;
+        const borderColorOpacity = 0.1;
         const themeColorBorder = `rgba(${themeColorTextRgb}, ${borderColorOpacity})`;
         
         // Generate new background colors based on luminance
-        const themeColorBackgroundSecondary = adjustColor(themeColorBackground, 0.15, 0.055, 0.99);
-        const themeColorBackgroundCard = adjustColor(themeColorBackground, 0.4, 0.025, 0.99); 
+        const themeColorBackgroundSecondary = adjustColor(themeColorBackground, 0.18, 0.025);
+        const themeColorBackgroundCard = adjustColor(themeColorBackground, 0.18, 0.135); 
         
         const isDarkBackground = parseInt(themeColorBackground.replace('#', ''), 16) < (0xFFFFFF / 2);
 
