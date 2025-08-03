@@ -13,7 +13,7 @@ export const LocaleSwitcherButton: React.FC<LocaleSwitcherButtonProps> = ({ onCl
     <button
       type="button"
       onClick={onClick}
-      className={`flex items-center gap-2 px-3 py-2 rounded ${className || ''}`}
+      className={`inline-flex w-fit items-center gap-2 rounded text-gray-500 ${className || ''}`}
       aria-label={t('language')}
     >
       {/* Inline globe SVG icon */}

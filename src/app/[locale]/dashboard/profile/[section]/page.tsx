@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { useBusiness } from "@/lib/business-context"
+import { useTheme } from "@/contexts/ThemeContext"
 import { ALLOWED_SOCIAL_LINKS } from "@/lib/social-links-config"
 import ProfileInfoSection from "@/components/dashboard/profile/ProfileInfoSection"
 import ProfileLinksSection from "@/components/dashboard/profile/ProfileLinksSection"
@@ -79,6 +80,7 @@ export default function ProfilePage() {
   const sectionParam = params?.section as string | undefined;
   const section = sectionParam || "info";
   const { currentBusiness, userManager } = useBusiness()
+  const { theme } = useTheme()
   
   // Current state
   const [profileData, setProfileData] = useState<any>(null)
@@ -615,7 +617,9 @@ export default function ProfilePage() {
         {/* Header */}
         <div className="flex flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">{t("title")}</h1>
+            <h1 className={`text-xl lg:text-2xl font-bold ${
+              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+            }`}>{t("title")}</h1>
           </div>
           <div>
             <a 
@@ -630,7 +634,9 @@ export default function ProfilePage() {
         </div>
         
         {/* Tab Navigation */}
-        <div className="bg-gray-200 rounded-lg p-2 mb-8">
+        <div className={`rounded-lg p-2 mb-8 ${
+          theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
+        }`}>
           <nav className="flex justify-between overflow-x-auto">
             {tabs.map((tab) => {
               const isActive = section === tab.id;
@@ -640,8 +646,12 @@ export default function ProfilePage() {
                   onClick={() => handleTabClick(tab.id)}
                   className={`flex items-center space-x-2 py-3 px-4 rounded-md font-medium text-sm whitespace-nowrap transition-colors flex-1 ${
                     isActive
-                      ? "bg-gray-200 text-gray-900 shadow-sm"
-                      : "text-gray-600"
+                      ? theme === 'dark' 
+                        ? "bg-gray-600 text-gray-100 shadow-sm" 
+                        : "bg-gray-200 text-gray-900 shadow-sm"
+                      : theme === 'dark'
+                        ? "text-gray-300"
+                        : "text-gray-600"
                   }`}
                 >
                   {renderTabIcon(tab.icon, isActive)}
@@ -759,7 +769,11 @@ export default function ProfilePage() {
               {/* Right Column - Preview */}
               <div className="w-full lg:w-96 flex-shrink-0">
                 <div className="lg:sticky lg:top-6 lg:h-full">
-                  <div className="h-full bg-gradient-to-br from-gray-300 to-gray-400 p-4 border rounded-xl flex flex-col">
+                  <div className={`h-full p-4 border rounded-xl flex flex-col ${
+                    theme === 'dark' 
+                      ? 'bg-gradient-to-br from-gray-600 to-gray-700 border-gray-600' 
+                      : 'bg-gradient-to-br from-gray-300 to-gray-400 border-gray-200'
+                  }`}>
                     <div className="flex-1 flex items-center justify-center">
                       <ProfilePreview
                         profileData={profileData}

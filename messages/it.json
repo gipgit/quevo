@@ -1,4 +1,23 @@
 {
+  "Header": {
+    "brandName": "Quevo",
+    "logoAlt": "Logo Quevo",
+    "toggleMobileMenu": "Apri/chiudi menu mobile",
+    "closeMobileMenu": "Chiudi menu mobile",
+    "features": "Funzionalità",
+    "pricing": "Prezzi",
+    "support": "Supporto",
+    "signIn": "Accedi"
+  },
+  "Footer": {
+    "brandName": "Quevo",
+    "features": "Funzionalità",
+    "pricing": "Prezzi",
+    "contact": "Contatti",
+    "privacyPolicy": "Informativa Privacy",
+    "termsOfService": "Termini di Servizio",
+    "copyright": "© 2025 Quevo. Tutti i diritti riservati."
+  },
   "Common": {
     "coverPhotoAlt": "Foto di Copertina dell'Attività",
     "errorBusinessNotFoundTitle": "Attività Non Trovata",
@@ -817,6 +836,14 @@
     "enterYourResponse": "Inserisci la tua risposta",
     "availablePaymentMethods": "Metodi di Pagamento Disponibili",
     "onlinePaymentViaStripe": "Pagamento online tramite Stripe",
+    "actionSubmitted": "Azione Inviata con Successo",
+    "actionSubmissionError": "Errore nell'Invio dell'Azione",
+    "technicalDetails": "Dettagli Tecnici",
+    "shareBoardLink": "Condividi Link del Board",
+    "share": "Condividi",
+    "copyLink": "Copia Link",
+    "copied": "Copiato!",
+    "close": "Chiudi",
     "cashPaymentOnDelivery": "Pagamento in contanti alla consegna/servizio",
     "paymentReason": "Motivo del Pagamento",
     "paymentConfirmed": "Pagamento Confermato",
@@ -996,7 +1023,7 @@
           "description": "Mantieni i clienti informati. Gli aggiornamenti chiave attivano alert email istantanei, nessuno sforzo manuale richiesto."
         },
         "secureAccess": {
-          "title": "Accesso Sicuro e Condivisibile",
+          "title": "Accesso Riservato e Sicuro",
           "description": "Link unici e sicuri per ogni servizio. Condividi senza sforzo, con protezione password opzionale."
         },
         "problemSolving": {
@@ -1033,49 +1060,49 @@
       "subtitle": "Puoi usarlo in vari modi e c'è un piano sempre gratuito. Scopri come Queva può semplificare l'esperienza dei tuoi clienti, aiutarti a costruire la loro fedeltà e ricevere opinioni preziose direttamente da loro."
     },
     "FAQ": {
-      "title": "Preguntas Frecuentes",
-      "showMore": "Mostrar más preguntas",
-      "showLess": "Mostrar menos preguntas",
+      "title": "Domande Frequenti",
+      "showMore": "Mostra altre domande",
+      "showLess": "Mostra meno domande",
       "questions": {
         "accountCreation": {
-          "question": "¿Cómo puedo crear una cuenta?",
-          "answer": "Puedes crear tu cuenta haciendo clic en el enlace \"Crea tu cuenta\" en la sección principal o visitando la página de registro. El proceso es simple y rápido, solo toma unos minutos para completar el registro."
+          "question": "Come posso creare un account?",
+          "answer": "Puoi creare il tuo account cliccando sul link \"Crea il tuo account\" nella sezione principale o visitando la pagina di registrazione. Il processo è semplice e veloce, richiede solo pochi minuti per completare la registrazione."
         },
         "freePlan": {
-          "question": "¿Queva es gratuito?",
-          "answer": "Sí, ofrecemos un plan gratuito que te permite probar las funciones básicas. También puedes probar Queva Premium gratis durante un mes sin compromiso. El plan gratuito incluye todas las funciones esenciales para comenzar."
+          "question": "Queva è gratuito?",
+          "answer": "Sì, offriamo un piano gratuito che ti permette di provare le funzionalità base. Puoi anche provare Queva Premium gratuitamente per un mese senza impegno. Il piano gratuito include tutte le funzionalità essenziali per iniziare."
         },
         "pointsSystem": {
-          "question": "¿Cómo funciona el sistema de puntos y recompensas?",
-          "answer": "Tus clientes ganan puntos cada vez que visitan tu establecimiento y escanean su código QR personal. Puedes definir las recompensas que pueden canjear una vez que alcancen ciertos puntos. El sistema es completamente personalizable y te permite crear programas de fidelización a medida."
+          "question": "Come funziona il sistema di punti e premi?",
+          "answer": "I tuoi clienti guadagnano punti ogni volta che visitano il tuo locale e scannerizzano il loro QR personale. Tu puoi definire i premi che possono riscattare una volta raggiunti determinati punti. Il sistema è completamente personalizzabile e ti permette di creare programmi fedeltà su misura."
         },
         "mobileMenu": {
-          "question": "¿Puedo gestionar el menú digital desde mi teléfono?",
-          "answer": "¡Absolutamente sí! Tu menú digital es completamente personalizable y se puede gestionar cómodamente desde tu teléfono o tablet, actualizándose en tiempo real para tus clientes. Puedes modificar precios, agregar nuevos platos y gestire la disponibilidad desde cualquier lugar."
+          "question": "Posso gestire il menu digitale dal mio cellulare?",
+          "answer": "Assolutamente sì! Il tuo menu digitale è completamente personalizzabile e può essere gestito comodamente dal tuo cellulare o tablet, aggiornando in tempo reale per i tuoi clienti. Puoi modificare prezzi, aggiungere nuovi piatti e gestire la disponibilità ovunque tu sia."
         },
         "profileSupport": {
-          "question": "¿Ofrecen soporte para la creación del perfil?",
-          "answer": "¡Por supuesto! Si necesitas ayuda, podemos crear tu perfil, subir el menú y configurar las promociones iniciales para ti. También ofrecemos formación para asegurar que seas autónomo en la gestión. Nuestro equipo de soporte siempre está disponible para ayudarte."
+          "question": "Offrite supporto per la creazione del profilo?",
+          "answer": "Certo! Se hai bisogno di aiuto, possiamo creare il tuo profilo, caricare il menu e impostare le promozioni iniziali per te. Offriamo anche formazione per assicurarci di essere autonomo nella gestione. Il nostro team di supporto è sempre disponibile per aiutarti."
         },
         "dataSecurity": {
-          "question": "¿Mis datos están seguros?",
-          "answer": "Absolutamente sí. Utilizamos las tecnologías de seguridad más avanzadas para proteger tus datos y los de tus clientes. Toda la información está encriptada y cumplimos estrictamente con las normativas de privacidad, inclusa el GDPR."
+          "question": "I miei dati sono al sicuro?",
+          "answer": "Assolutamente sì. Utilizziamo le più avanzate tecnologie di sicurezza per proteggere i tuoi dati e quelli dei tuoi clienti. Tutte le informazioni sono crittografate e rispettiamo rigorosamente le normative sulla privacy, inclusa la GDPR."
         },
         "customerSupport": {
-          "question": "¿Cómo puedo contactar al soporte al cliente?",
-          "answer": "Nuestro equipo de soporte está disponible 24/7 a través de email, chat en vivo y teléfono. Te responderemos en pocas horas y siempre estamos listos para ayudarte con cualquier pregunta o problema técnico que puedas tener."
+          "question": "Come posso contattare il supporto clienti?",
+          "answer": "Il nostro team di supporto è disponibile 24/7 attraverso email, chat live e telefono. Ti risponderemo entro poche ore e siamo sempre pronti ad aiutarti con qualsiasi domanda o problema tecnico tu possa avere."
         },
         "integration": {
-          "question": "¿Queva se integra con otros sistemas?",
-          "answer": "Sí, Queva se integra perfectamente con los principales sistemas de gestión de restaurantes, POS y plataformas de delivery. Ofrecemos APIs abiertas e integraciones nativas para garantizar una transición fluida sin interrumpir tu flujo de trabajo."
+          "question": "Queva si integra con altri sistemi?",
+          "answer": "Sì, Queva si integra perfettamente con i principali sistemi di gestione ristorante, POS e piattaforme di delivery. Offriamo API aperte e integrazioni native per garantire una transizione fluida e senza interruzioni del tuo flusso di lavoro."
         },
         "pricing": {
-          "question": "¿Cuáles son los costos de los planes premium?",
-          "answer": "Nuestros planes premium comienzan desde €29/mes e incluyen funciones avanzadas como análisis detallados, marketing automatizado, soporte prioritario y personalizaciones avanzadas. También ofrecemos descuentos para pagos anuales y planes personalizados para grandes empresas."
+          "question": "Quali sono i costi dei piani premium?",
+          "answer": "I nostri piani premium partono da €29/mese e includono funzionalità avanzate come analisi dettagliate, marketing automatizzato, supporto prioritario e personalizzazioni avanzate. Offriamo anche sconti per pagamenti annuali e piani personalizzati per grandi aziende."
         },
         "technicalRequirements": {
-          "question": "¿Cuáles son los requisitos técnicos?",
-          "answer": "Queva funciona en cualquier dispositivo con un navegador web moderno. No se requieren instalaciones de software complejas. Para los clientes, solo un smartphone con cámara para escanear códigos QR. El sistema está optimizado para funcionar incluso con conexiones de internet lentas."
+          "question": "Quali sono i requisiti tecnici?",
+          "answer": "Queva funziona su qualsiasi dispositivo con un browser web moderno. Non sono necessarie installazioni software complesse. Per i clienti, basta uno smartphone con fotocamera per scansionare i QR code. Il sistema è ottimizzato per funzionare anche con connessioni internet lente."
         }
       }
     },

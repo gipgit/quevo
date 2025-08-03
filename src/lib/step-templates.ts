@@ -2,19 +2,19 @@
 export const stepTemplateTranslations = {
   'step_1': {
     it: {
-      title: 'Invio Richiesta',
+      title: 'Cliente Invia Richiesta',
       description: 'Il cliente invia una richiesta di servizio, indicando come contatto anche solo un indirizzo email (non servono registrazioni o altre applicazioni).',
       image: '/landing/steps/it/1.webp',
       gradient: 'from-gray-400 to-gray-600'
     },
     en: {
-      title: 'Request Submission',
+      title: 'Customer Submits Request',
       description: 'The customer submits a service request, providing just an email address as contact (no registrations or other applications needed).',
       image: '/landing/steps/en/1.webp',
       gradient: 'from-gray-400 to-gray-600'
     },
     es: {
-      title: 'Envío de Solicitud',
+      title: 'Cliente Envía Solicitud',
       description: 'El cliente envía una solicitud de servicio, proporcionando solo una dirección de email como contacto (no se necesitan registraciones u otras aplicaciones).',
       image: '/landing/steps/es/1.webp',
       gradient: 'from-gray-400 to-gray-600'
@@ -43,19 +43,19 @@ export const stepTemplateTranslations = {
   'step_3': {
     it: {
       title: 'Tutto Pronto',
-      description: 'Fatto. Il cliente ha già il link e la Service Board è a disposizione, accessibile da qualsiasi dispositivo, usando il link che ricevi via email o ritrovando la board nella tua Area Riservata.',
+      description: 'Il cliente ha già il link e la Service Board è a disposizione, accessibile da qualsiasi dispositivo, gestibile usando il link che ricevi via email o ritrovando la board nella tua Area Riservata.',
       image: '/landing/steps/it/3.webp',
       gradient: 'from-gray-600 to-gray-800'
     },
     en: {
       title: 'Everything Ready',
-      description: 'Done. The customer already has the link and the Service Board is available, accessible from any device, using the link you receive via email or finding the board in your Reserved Area.',
+      description: 'The customer already has the link and the Service Board is available, accessible from any device, manageable using the link you receive via email or finding the board in your Reserved Area.',
       image: '/landing/steps/en/3.webp',
       gradient: 'from-gray-600 to-gray-800'
     },
     es: {
       title: 'Todo Listo',
-      description: 'Listo. El cliente ya tiene el enlace y la Service Board está disponible, accesible desde cualquier dispositivo, usando el enlace que recibes por email o encontrando la board en tu Área Reservada.',
+      description: 'El cliente ya tiene el enlace y la Service Board está disponible, accesible desde cualquier dispositivo, administrable usando el enlace que recibes por email o encontrando la board en tu Área Reservada.',
       image: '/landing/steps/es/3.webp',
       gradient: 'from-gray-600 to-gray-800'
     }

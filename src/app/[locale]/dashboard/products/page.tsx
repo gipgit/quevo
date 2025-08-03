@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { useBusiness } from "@/lib/business-context"
+import { useTheme } from "@/contexts/ThemeContext"
 import { canCreateMore, formatUsageDisplay } from "@/lib/usage-utils"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { UsageLimitBar } from "@/components/dashboard/UsageLimitBar"
@@ -13,6 +14,7 @@ export default function ProductsPage() {
   const t = useTranslations("products")
   const tCommon = useTranslations("Common")
   const { currentBusiness, usage, planLimits, refreshUsageForFeature } = useBusiness()
+  const { theme } = useTheme()
   const [products, setProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -95,7 +97,9 @@ export default function ProductsPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl lg:text-3xl font-bold text-gray-900">{t("title")}</h1>
+            <h1 className={`text-xl lg:text-2xl font-bold ${
+              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+            }`}>{t("title")}</h1>
           </div>
           <div className="flex items-center gap-6">
             <div className="flex flex-col items-end gap-2">
@@ -113,7 +117,7 @@ export default function ProductsPage() {
             </div>
             <div>
               <button
-                className={`px-4 py-2 md:px-6 md:py-3 text-sm md:text-lg font-semibold rounded-lg transition-colors inline-flex items-center gap-2 ${
+                className={`px-4 py-2 md:px-4 md:py-2 text-sm md:text-lg rounded-lg transition-colors inline-flex items-center gap-2 ${
                   canCreateProduct()
                     ? "bg-blue-600 hover:bg-blue-700 text-white"
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -136,12 +140,18 @@ export default function ProductsPage() {
         ) : (
           Object.entries(productsByCategory).map(([categoryName, categoryProducts]) => (
             <div key={categoryName} className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">{categoryName}</h2>
+              <h2 className={`text-xl font-semibold mb-6 ${
+                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+              }`}>{categoryName}</h2>
               <div className="space-y-6">
                 {(categoryProducts as any[]).map((product: any) => (
                   <div
                     key={product.item_id}
-                    className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+                    className={`rounded-xl shadow-sm border overflow-hidden ${
+                      theme === 'dark' 
+                        ? 'bg-gray-800 border-gray-600' 
+                        : 'bg-white border-gray-200'
+                    }`}
                   >
                     <div className="p-6">
                       <div className="flex flex-col lg:flex-row lg:items-start gap-6">
@@ -158,9 +168,15 @@ export default function ProductsPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                             <div className="flex-1">
-                              <h3 className="text-lg font-semibold text-gray-900 mb-2">{product.item_name}</h3>
-                              {product.item_description && <p className="text-gray-600 mb-3">{product.item_description}</p>}
-                              <p className="text-xl font-bold text-gray-900">{formatPrice(product.price)}</p>
+                              <h3 className={`text-lg font-semibold mb-2 ${
+                                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                              }`}>{product.item_name}</h3>
+                              {product.item_description && <p className={`mb-3 ${
+                                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                              }`}>{product.item_description}</p>}
+                              <p className={`text-xl font-bold ${
+                                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                              }`}>{formatPrice(product.price)}</p>
                             </div>
                             {/* Action Buttons */}
                             <div className="flex flex-wrap gap-2 lg:flex-col lg:items-end">
@@ -187,7 +203,9 @@ export default function ProductsPage() {
                               {product.menuitemvariation.map((variation: any) => (
                                 <div
                                   key={variation.variation_id}
-                                  className="flex justify-between items-center text-sm text-gray-600 mb-2"
+                                  className={`flex justify-between items-center text-sm mb-2 ${
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                                  }`}
                                 >
                                   <span>
                                     {variation.variation_name} {variation.additional_description ? `- ${variation.additional_description}` : ""} (+{formatPrice(variation.price_override || variation.price_modifier)})

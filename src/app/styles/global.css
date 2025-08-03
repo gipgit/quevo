@@ -474,25 +474,25 @@ body.bg-transition {
 
 @font-face {
     font-family: "FontMain";
-    src: url("../../../public/fonts/custom/ppneuemontreal-book.otf") format("opentype");
+    src: url("../../../public/fonts/custom/Geist-Light.otf") format("opentype");
 }
 
 @font-face {
     font-family: "FontSemiBold";
-    src: url("../../../public/fonts/custom/ppneuemontreal-medium.otf") format("truetype");
+    src: url("../../../public/fonts/custom/Geist-Medium.otf") format("truetype");
 }
 @font-face {
     font-family: "FontBold";
-    src: url("../../../public/fonts/custom/ppneuemontreal-medium.otf") format("truetype");
+    src: url("../../../public/fonts/custom/Geist-Medium.otf") format("truetype");
 }
 @font-face {
     font-family: "FontHeading";
-    src: url("../../../public/fonts/custom/ppneuemontreal-medium.otf") format("truetype");
+    src: url("../../../public/fonts/custom/Geist-Medium.otf") format("truetype");
 }
 
 @font-face {
     font-family: "FontButton";
-    src: url("../../../public/fonts/custom/ppneuemontreal-book.otf") format("truetype");
+    src: url("../../../public/fonts/custom/Geist-Regular.otf") format("truetype");
 }
 
 
@@ -965,32 +965,10 @@ background: radial-gradient(circle at top center,rgba(255, 255, 153, 0.3) 0,tran
     }
 }
 
-.border{
-    border: 1px solid #00000030;
-}
 
-.border-bottom{
-    border-bottom: 1px solid #000;
-}
-.border-bottom-light{
-    border-bottom: 1px solid #858585;
-}
 
-.border-bottom-mobile{
-    border-bottom: 1px solid #000;
-}
-.border-top-mobile{
-    border-top: 1px solid #000;
-}
 
-@media (min-width: 768px) {
-    .border-bottom-mobile{
-        border: none;
-    }
-    .border-top-mobile{
-        border: none;
-    }
-}
+
 
 .min-width-mobile-sm{
     min-width: 120px;
@@ -1049,5 +1027,21 @@ background: radial-gradient(circle at top center,rgba(255, 255, 153, 0.3) 0,tran
   display: flex !important;
   flex-direction: column !important;
   justify-content: flex-start !important;
+}
+
+/* Custom animations for new actions */
+@keyframes slideInFromTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-slideInFromTop {
+  animation: slideInFromTop 0.5s ease-out forwards;
 }
 

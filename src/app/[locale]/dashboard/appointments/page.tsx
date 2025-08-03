@@ -14,6 +14,7 @@ import { UpgradePlanCTA } from '@/components/dashboard/UpgradePlanCTA';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useToaster } from '@/components/ui/ToasterProvider';
 import { useBusiness } from '@/lib/business-context';
+import { useTheme } from '@/contexts/ThemeContext';
 import EmptyState from '@/components/EmptyState';
 import { getPlatformIcon } from '@/lib/platform-icons';
 import { canCreateMore, formatUsageDisplay } from '@/lib/usage-utils';
@@ -59,6 +60,7 @@ export default function AppointmentsPage() {
   const t = useTranslations('appointments');
   const { showToast } = useToaster();
   const { currentBusiness, usage, planLimits } = useBusiness();
+  const { theme } = useTheme();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -269,41 +271,55 @@ export default function AppointmentsPage() {
   const renderHeader = () => (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
       <div className="flex-1 min-w-0">
-        <h1 className="text-3xl lg:text-3xl font-bold text-gray-900">
-          {t('title')}
-        </h1>
-        {/* Calendar/List View Tabs */}
-        <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg mt-4 w-fit">
-          <button
-            onClick={() => setViewMode('calendar')}
-            className={`py-2 px-4 text-sm font-medium rounded-md transition-colors ${
-              viewMode === 'calendar'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              Calendar
-            </div>
-          </button>
-          <button
-            onClick={() => setViewMode('list')}
-            className={`py-2 px-4 text-sm font-medium rounded-md transition-colors ${
-              viewMode === 'list'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-              </svg>
-              List
-            </div>
-          </button>
+        <div className="flex items-center gap-4">
+          <h1 className={`text-xl lg:text-2xl font-bold ${
+            theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+          }`}>
+            {t('title')}
+          </h1>
+          {/* Calendar/List View Tabs */}
+          <div className={`flex space-x-1 p-1 rounded-lg ${
+            theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
+          }`}>
+            <button
+              onClick={() => setViewMode('calendar')}
+              className={`py-1.5 px-3 text-xs font-medium rounded-md transition-colors ${
+                viewMode === 'calendar'
+                  ? theme === 'dark' 
+                    ? 'bg-gray-600 text-gray-100 shadow-sm' 
+                    : 'bg-white text-gray-900 shadow-sm'
+                  : theme === 'dark'
+                    ? 'text-gray-300 hover:text-gray-100'
+                    : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <div className="flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Calendar
+              </div>
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`py-1.5 px-3 text-xs font-medium rounded-md transition-colors ${
+                viewMode === 'list'
+                  ? theme === 'dark' 
+                    ? 'bg-gray-600 text-gray-100 shadow-sm' 
+                    : 'bg-white text-gray-900 shadow-sm'
+                  : theme === 'dark'
+                    ? 'text-gray-300 hover:text-gray-100'
+                    : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <div className="flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+                List
+              </div>
+            </button>
+          </div>
         </div>
       </div>
       <div className="flex items-center gap-4">
@@ -322,7 +338,7 @@ export default function AppointmentsPage() {
         )}
         <Link
           href="/dashboard/appointments/create"
-          className={`ml-2 px-4 py-2 md:px-6 md:py-3 text-sm md:text-lg font-semibold rounded-lg transition-colors inline-flex items-center gap-2 ${
+          className={`ml-2 px-4 py-2 md:px-4 md:py-2 text-sm md:text-lg rounded-lg transition-colors inline-flex items-center gap-2 ${
             canCreateAppointment()
               ? "bg-blue-600 hover:bg-blue-700 text-white"
               : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -367,7 +383,9 @@ export default function AppointmentsPage() {
                   {/* Day Header */}
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
-                      <h2 className="text-xl font-bold text-gray-900">
+                      <h2 className={`text-xl font-bold ${
+                        theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                      }`}>
                         {formatDate(dayDate)}
                       </h2>
                       {isToday && (
@@ -377,7 +395,9 @@ export default function AppointmentsPage() {
                       )}
                     </div>
                     <div className="flex-1 h-px bg-gray-200"></div>
-                    <span className="text-sm text-gray-500">
+                    <span className={`text-sm ${
+                      theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                    }`}>
                       {dayAppointments.length} appointment{dayAppointments.length !== 1 ? 's' : ''}
                     </span>
                   </div>
@@ -389,31 +409,29 @@ export default function AppointmentsPage() {
                       .map((appointment) => (
                         <div
                           key={appointment.id}
-                          className="border border-gray-200 rounded-lg p-4 sm:p-6 transition-colors bg-white"
+                          className={`border rounded-lg p-4 sm:p-6 transition-colors ${
+                            theme === 'dark' 
+                              ? 'border-gray-600 bg-gray-800' 
+                              : 'border-gray-200 bg-white'
+                          }`}
                         >
                           <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-                            <div className="w-full lg:w-64 flex-shrink-0">
+                            <div className="w-full lg:w-56 flex-shrink-0">
                               {/* Date and Time Card */}
-                              <div className="border border-gray-200 rounded-lg p-4 lg:p-6 bg-white">
-                                <div className="flex flex-col items-center gap-3">
-                                  {/* Time Section - Top */}
+                              <div className={`border rounded-lg p-4 lg:p-6 ${
+                                theme === 'dark' 
+                                  ? 'border-gray-600 bg-gray-700' 
+                                  : 'border-gray-200 bg-gray-50'
+                              }`}>
+                                <div className="flex flex-row lg:flex-col items-center gap-3">
+                                  {/* Status Pill and Date - Top */}
                                   <div className="text-center">
-                                    <div className="text-2xl lg:text-3xl font-bold text-gray-900">
-                                      {formatTime(appointment.start)}
-                                    </div>
-                                    <div className="text-sm lg:text-base text-gray-600">
-                                      {formatTime(appointment.end)}
-                                    </div>
-                                  </div>
-                                  
-                                  {/* Status Pill - Middle */}
-                                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(appointment.status)}`}>
-                                    {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
-                                  </span>
-                                  
-                                  {/* Date Section - Bottom */}
-                                  <div className="text-center">
-                                    <div className="text-xs lg:text-sm text-gray-600">
+                                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(appointment.status)}`}>
+                                      {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
+                                    </span>
+                                    <div className={`text-xs lg:text-sm mt-2 ${
+                                      theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                                    }`}>
                                       {new Date(appointment.start).toLocaleDateString('it-IT', { 
                                         weekday: 'short',
                                         day: 'numeric',
@@ -421,19 +439,37 @@ export default function AppointmentsPage() {
                                       })}
                                     </div>
                                   </div>
+                                  
+                                  {/* Time Section - Bottom */}
+                                  <div className="text-center">
+                                    <div className={`text-xl lg:text-2xl font-bold ${
+                                      theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                                    }`}>
+                                      {formatTime(appointment.start)}
+                                    </div>
+                                    <div className={`text-xs lg:text-sm ${
+                                      theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                                    }`}>
+                                      Ends at {formatTime(appointment.end)}
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
                             </div>
 
-                            {/* Column 2: Title, Platform/Location, Customer Info and Notes */}
+                            {/* Column 2: Title, Platform/Location, and Notes */}
                             <div className="flex-1 min-w-0">
                               <div className="flex flex-col gap-3">
                                 <div>
-                                  <h3 className="text-xl lg:text-2xl font-semibold text-gray-900 mb-1">
+                                  <h3 className={`text-xl lg:text-2xl font-semibold mb-1 ${
+                                    theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                                  }`}>
                                     {appointment.title}
                                   </h3>
                                   {appointment.service_board_title && (
-                                    <p className="text-sm text-blue-600 font-medium">
+                                    <p className={`text-xs font-medium ${
+                                      theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                                    }`}>
                                       {appointment.service_board_title}
                                     </p>
                                   )}
@@ -441,7 +477,7 @@ export default function AppointmentsPage() {
                                 
                                 {/* Platform/Location Info */}
                                 {appointment.platform_name && (
-                                  <div className="flex items-center space-x-2 mb-2">
+                                  <div className="flex items-center space-x-2">
                                     <div className="w-5 h-5 flex items-center justify-center">
                                       <img 
                                         src={getPlatformIcon(appointment.platform_name)} 
@@ -449,42 +485,45 @@ export default function AppointmentsPage() {
                                         className="w-4 h-4"
                                       />
                                     </div>
-                                    <span className="text-sm font-medium text-gray-900">
+                                    <span className={`text-sm font-medium ${
+                                      theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                                    }`}>
                                       {appointment.platform_name}
                                     </span>
-                                  </div>
-                                )}
-                                {appointment.platform_name && appointment.platform_link && (
-                                  <div className="flex items-center space-x-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 mb-3">
-                                    <span className="text-xs text-blue-600 font-medium truncate">
-                                      {appointment.platform_link}
-                                    </span>
-                                    <div className="flex space-x-1">
-                                      <button
-                                        onClick={() => navigator.clipboard.writeText(appointment.platform_link!)}
-                                        className="p-1 text-blue-600 hover:text-blue-800 transition-colors"
-                                        title="Copy link"
-                                      >
-                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                        </svg>
-                                      </button>
-                                      <a
-                                        href={appointment.platform_link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="p-1 text-blue-600 hover:text-blue-800 transition-colors"
-                                        title="Open link"
-                                      >
-                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                        </svg>
-                                      </a>
-                                    </div>
+                                    {appointment.platform_link && (
+                                      <>
+                                        <span className="text-gray-400">•</span>
+                                        <span className="text-xs text-blue-600 font-medium truncate max-w-32">
+                                          {appointment.platform_link}
+                                        </span>
+                                        <div className="flex space-x-1">
+                                          <button
+                                            onClick={() => navigator.clipboard.writeText(appointment.platform_link!)}
+                                            className="p-1 text-blue-600 hover:text-blue-800 transition-colors"
+                                            title="Copy link"
+                                          >
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                            </svg>
+                                          </button>
+                                          <a
+                                            href={appointment.platform_link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="p-1 text-blue-600 hover:text-blue-800 transition-colors"
+                                            title="Open link"
+                                          >
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                            </svg>
+                                          </a>
+                                        </div>
+                                      </>
+                                    )}
                                   </div>
                                 )}
                                 {!appointment.platform_name && appointment.appointment_location && (
-                                  <div className="flex items-center space-x-2 mb-3">
+                                  <div className="flex items-center space-x-2 mb-2">
                                     <div className="w-5 h-5 flex items-center justify-center">
                                       <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -497,22 +536,46 @@ export default function AppointmentsPage() {
                                   </div>
                                 )}
                                 
-                                {/* Customer Info */}
-                                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
+                                {appointment.notes && (
                                   <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                      <span className="text-blue-600 font-bold text-sm">
+                                    <span className="text-gray-500 text-xs whitespace-nowrap">Notes:</span>
+                                    <p className={`text-xs mt-0 line-clamp-2 ${
+                                      theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                    }`}>
+                                      {appointment.notes}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Column 3: Customer Info */}
+                            <div className="w-full lg:w-64 flex-shrink-0">
+                              <div className={`border rounded-lg p-4 lg:p-6 ${
+                                theme === 'dark' 
+                                  ? 'border-gray-600 bg-gray-700' 
+                                  : 'border-gray-200 bg-gray-50'
+                              }`}>
+                                <div className="flex flex-col gap-1 lg:gap-2">
+                                  {/* Customer Avatar and Name */}
+                                  <div className="flex items-center gap-2 lg:gap-2">
+                                    <div className="w-8 h-8 lg:w-10 lg:h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                      <span className="text-blue-600 font-bold text-xs lg:text-sm">
                                         {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
                                       </span>
                                     </div>
-                                    <h4 className="font-medium text-gray-900 text-base">
+                                    <h4 className={`font-medium text-sm lg:text-base ${
+                                      theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                                    }`}>
                                       {appointment.customerName}
                                     </h4>
                                   </div>
                                   
                                   {/* Email */}
                                   <div className="flex items-center gap-2">
-                                    <span className="text-xs font-medium text-gray-900">
+                                    <span className={`text-xs font-medium ${
+                                      theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                                    }`}>
                                       {appointment.customerEmail}
                                     </span>
                                     <div className="flex items-center gap-1">
@@ -540,7 +603,9 @@ export default function AppointmentsPage() {
                                   {/* Phone */}
                                   {appointment.customerPhone && (
                                     <div className="flex items-center gap-2">
-                                      <span className="text-xs font-medium text-gray-900">
+                                      <span className={`text-xs font-medium ${
+                                        theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                                      }`}>
                                         {appointment.customerPhone}
                                       </span>
                                       <div className="flex items-center gap-1">
@@ -551,8 +616,8 @@ export default function AppointmentsPage() {
                                         >
                                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                        </svg>
-                                      </button>
+                                          </svg>
+                                        </button>
                                         <button
                                           onClick={() => window.open(`tel:${appointment.customerPhone}`)}
                                           className="p-0.5 text-green-600 hover:text-green-800 transition-colors"
@@ -575,31 +640,30 @@ export default function AppointmentsPage() {
                                     </div>
                                   )}
                                 </div>
-                                
-                                {appointment.notes && (
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-gray-500 text-xs whitespace-nowrap">Notes:</span>
-                                    <p className="text-xs text-gray-700 mt-0 line-clamp-2">
-                                      {appointment.notes}
-                                    </p>
-                                  </div>
-                                )}
                               </div>
                             </div>
 
-                            {/* Column 3: Management Buttons */}
+                            {/* Column 4: Management Buttons */}
                             <div className="w-full lg:w-32 flex-shrink-0">
                               <div className="flex flex-row lg:flex-col gap-2">
                                 <button
                                   onClick={() => handleStatusChange(appointment.id, 'confirmed')}
-                                  className="flex-1 lg:w-full px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
+                                  className={`flex-1 lg:w-full px-3 py-2 text-sm rounded-md border transition-colors ${
+                                    theme === 'dark'
+                                      ? 'border-green-500 text-green-400 hover:bg-green-900/20'
+                                      : 'border-green-500 text-green-600 hover:bg-green-50'
+                                  }`}
                                 >
                                   Confirm
                                 </button>
                                 
                                 <button
                                   onClick={() => handleStatusChange(appointment.id, 'cancelled')}
-                                  className="flex-1 lg:w-full px-3 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
+                                  className={`flex-1 lg:w-full px-3 py-2 text-sm rounded-md border transition-colors ${
+                                    theme === 'dark'
+                                      ? 'border-red-500 text-red-400 hover:bg-red-900/20'
+                                      : 'border-red-500 text-red-600 hover:bg-red-50'
+                                  }`}
                                 >
                                   Cancel
                                 </button>
@@ -607,7 +671,11 @@ export default function AppointmentsPage() {
                                 <div className="flex gap-2">
                                   <button
                                     onClick={() => handleEventSelect(appointment)}
-                                    className="w-8 h-8 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors flex items-center justify-center"
+                                    className={`w-8 h-8 rounded-full border transition-colors flex items-center justify-center ${
+                                      theme === 'dark'
+                                        ? 'border-blue-500 text-blue-400 hover:bg-blue-900/20'
+                                        : 'border-blue-500 text-blue-600 hover:bg-blue-50'
+                                    }`}
                                     title="View Details"
                                   >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -618,7 +686,11 @@ export default function AppointmentsPage() {
                                   
                                   <button
                                     onClick={() => handleDeleteAppointment(appointment.id)}
-                                    className="w-8 h-8 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors flex items-center justify-center"
+                                    className={`w-8 h-8 rounded-full border transition-colors flex items-center justify-center ${
+                                      theme === 'dark'
+                                        ? 'border-red-500 text-red-400 hover:bg-red-900/20'
+                                        : 'border-red-500 text-red-600 hover:bg-red-50'
+                                    }`}
                                     title="Delete Appointment"
                                   >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -756,7 +828,9 @@ export default function AppointmentsPage() {
             <div className="lg:w-[45%] lg:mt-0 mt-6">
               <div className="lg:sticky lg:top-6">
                 <div className="mb-4 text-center lg:text-left">
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <h3 className={`text-lg font-semibold ${
+                    theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                  }`}>
                     {formatDate(selectedDate)}
                   </h3>
                   {isSameDay(selectedDate, new Date()) && (
@@ -776,22 +850,34 @@ export default function AppointmentsPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                       </div>
-                      <p className="text-gray-500 text-sm">No appointments scheduled for this date</p>
+                      <p className={`text-sm ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                      }`}>No appointments scheduled for this date</p>
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <h4 className="text-sm font-medium text-gray-700 mb-3">
+                      <h4 className={`text-sm font-medium mb-3 ${
+                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                      }`}>
                         {dayAppointments.length} appointment{dayAppointments.length !== 1 ? 's' : ''}
                       </h4>
                       {dayAppointments.map(appt => (
-                        <div key={appt.id} className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+                        <div key={appt.id} className={`rounded-lg border p-4 shadow-sm ${
+                          theme === 'dark' 
+                            ? 'bg-gray-800 border-gray-600' 
+                            : 'bg-white border-gray-200'
+                        }`}>
                           <div className="flex items-start gap-4">
                             {/* Left side - Time and Status */}
                             <div className="flex-shrink-0 text-center">
-                              <div className="text-base font-medium text-gray-900">
+                              <div className={`text-base font-medium ${
+                                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                              }`}>
                                 {formatTime(appt.start)}
                               </div>
-                              <div className="text-sm text-gray-500">
+                              <div className={`text-sm ${
+                                theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
+                              }`}>
                                 {formatTime(appt.end)}
                               </div>
                               <span className={`inline-block px-2 py-1 text-xs rounded-full mt-2 ${getStatusColor(appt.status)}`}>
@@ -803,7 +889,9 @@ export default function AppointmentsPage() {
                             <div className="flex-1 min-w-0">
                               {/* Title */}
                               <div className="mb-2">
-                                <h5 className="font-medium text-gray-900 text-sm mb-1">
+                                <h5 className={`font-medium text-sm mb-1 ${
+                                  theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                                }`}>
                                   {appt.title}
                                 </h5>
                               </div>
@@ -819,7 +907,9 @@ export default function AppointmentsPage() {
                                         className="w-3 h-3"
                                       />
                                     </div>
-                                    <span className="text-xs font-medium text-gray-900">
+                                    <span className={`text-xs font-medium ${
+                                      theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                                    }`}>
                                       {appt.platform_name}
                                     </span>
                                   </div>
@@ -890,14 +980,18 @@ export default function AppointmentsPage() {
                                         {appt.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
                                       </span>
                                     </div>
-                                    <span className="text-xs font-medium text-gray-900">
+                                    <span className={`text-xs font-medium ${
+                                      theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                                    }`}>
                                       {appt.customerName}
                                     </span>
                                   </div>
                                   
                                   {/* Email with copy and mail buttons */}
                                   <div className="flex items-center gap-1">
-                                    <span className="text-xs text-gray-600">
+                                    <span className={`text-xs ${
+                                      theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                                    }`}>
                                       {appt.customerEmail}
                                     </span>
                                     <button
@@ -923,7 +1017,9 @@ export default function AppointmentsPage() {
                                   {/* Phone with copy and call buttons */}
                                   {appt.customerPhone && (
                                     <div className="flex items-center gap-1">
-                                      <span className="text-xs text-gray-600">
+                                      <span className={`text-xs ${
+                                        theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                                      }`}>
                                         {appt.customerPhone}
                                       </span>
                                       <button
@@ -951,10 +1047,12 @@ export default function AppointmentsPage() {
                             </div>
                           </div>
                           {appt.notes && (
-                            <div className="mt-3 pt-3 border-t border-gray-100">
+                            <div className="mt-2 pt-2 border-t border-gray-100">
                               <div className="flex items-start gap-2">
-                                <span className="text-gray-500 text-xs whitespace-nowrap mt-0.5">Notes:</span>
-                                <p className="text-xs text-gray-600 line-clamp-2">
+                                <span className="text-gray-500 text-xs whitespace-nowrap">Notes:</span>
+                                <p className={`text-xs line-clamp-2 ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                                }`}>
                                   {appt.notes}
                                 </p>
                               </div>

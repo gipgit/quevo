@@ -11,6 +11,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const tCommon = useTranslations('Common');
+  const tHeader = useTranslations('Header');
 
   // Handle scroll effect
   useEffect(() => {
@@ -57,7 +58,7 @@ export default function Header() {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="lg:hidden flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-900 transition-colors"
-              aria-label="Toggle mobile menu"
+              aria-label={tHeader('toggleMobileMenu')}
             >
               <svg
                 className={`w-6 h-6 transition-transform duration-300 ${
@@ -87,20 +88,20 @@ export default function Header() {
 
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-2">
-              <img src="/icons/home.png" alt="Quevo" className="h-4 lg:h-8 w-4 lg:w-8" />
-              <span className="text-xl font-bold text-gray-900">Quevo</span>
+              <img src="/icons/home.png" alt={tHeader('logoAlt')} className="h-4 lg:h-8 w-4 lg:w-8" />
+              <span className="text-xl font-bold text-gray-900">{tHeader('brandName')}</span>
             </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-8 ml-8">
               <Link href="/features" className="text-gray-600 hover:text-gray-900 transition-colors">
-                Features
+                {tHeader('features')}
               </Link>
               <Link href="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors">
-                Pricing
+                {tHeader('pricing')}
               </Link>
               <Link href="/contact" className="text-gray-600 hover:text-gray-900 transition-colors">
-                Support
+                {tHeader('support')}
               </Link>
             </nav>
 
@@ -115,7 +116,7 @@ export default function Header() {
                 href="/signin/business" 
                 className="border border-gray-900 text-gray-900 text-sm lg:text-base px-4 py-2 rounded-md hover:bg-gray-100 hover:text-gray-900 transition-colors"
               >
-                Sign In
+                {tHeader('signIn')}
               </Link>
               
               <Link 
@@ -141,14 +142,14 @@ export default function Header() {
                   className="flex items-center space-x-2"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <img src="/icons/home.png" alt="Quevo" className="h-8 w-8" />
-                  <span className="text-2xl font-bold text-gray-900">Quevo</span>
+                  <img src="/icons/home.png" alt={tHeader('logoAlt')} className="h-8 w-8" />
+                  <span className="text-2xl font-bold text-gray-900">{tHeader('brandName')}</span>
                 </Link>
                 
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
-                  aria-label="Close mobile menu"
+                  aria-label={tHeader('closeMobileMenu')}
                 >
                   <svg
                     className="w-6 h-6"
@@ -174,21 +175,21 @@ export default function Header() {
                     className="block text-4xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    Features
+                    {tHeader('features')}
                   </Link>
                   <Link 
                     href="/pricing" 
                     className="block text-4xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    Pricing
+                    {tHeader('pricing')}
                   </Link>
                   <Link 
                     href="/contact" 
                     className="block text-2xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    Support
+                    {tHeader('support')}
                   </Link>
                 </div>
               </nav>
@@ -211,7 +212,7 @@ export default function Header() {
                     className="block w-full text-center py-3 text-lg font-medium bg-black text-white rounded-lg hover:text-blue-600 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    Sign In
+                    {tHeader('signIn')}
                   </Link>
                   
                   <Link 

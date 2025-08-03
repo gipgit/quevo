@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { useBusiness } from "@/lib/business-context"
+import { useTheme } from "@/contexts/ThemeContext"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import BusinessSelectionModal from "@/components/modals/BusinessSelectionModal"
 import Link from "next/link"
@@ -27,6 +28,7 @@ const DOMAIN = typeof window !== "undefined" && window.location.hostname.include
 export default function DashboardPage() {
   const t = useTranslations("dashboard")
   const { currentBusiness, businesses, userManager, userPlan, usage, planLimits, switchBusiness, loading, error } = useBusiness()
+  const { theme } = useTheme()
   const [copied, setCopied] = useState(false)
   const [showBusinessModal, setShowBusinessModal] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -225,54 +227,47 @@ export default function DashboardPage() {
         {/* Current Business Section */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <div className="md:flex md:flex-row md:items-center gap-2 md:gap-4">
-              <div>
-                <div className="font-semibold text-3xl md:text-4xl text-gray-900">{currentBusiness?.business_name}</div>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setShowBusinessModal(true)}
-                  className="px-2 py-1 w-auto bg-white border border-gray-300 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-50 transition-colors"
-                >
-                  {t("currentBusiness.change")}
-                </button>
-                <Link
-                  href="/dashboard/onboarding"
-                  className="px-2 py-1 w-auto bg-white border border-gray-300 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-50 transition-colors"
-                >
-                  Add Business
-                </Link>
-              </div>
-            </div>
-           
-             {/* Plan Section */}
-            <div className="flex items-center gap-3">
-              {userPlan && (() => {
-                const planColors = getPlanColors(userPlan.plan_name);
-                return (
-                  <span className={`inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium ${planColors.gradient} ${planColors.textColor}`}>
-                    {planColors.showStar && (
-                      <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    )}
-                    {capitalizePlanName(userPlan.plan_name)}
-                  </span>
-                );
-              })()}
-              <a
-                href="/dashboard/plan"
-                className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
-              >
-                {t("plan.manage")}
-              </a>
-            </div>
+                         <div className="md:flex md:flex-row md:items-center gap-2 md:gap-4">
+               <div>
+                 <div className={`font-semibold text-3xl md:text-4xl ${
+                   theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                 }`}>{currentBusiness?.business_name}</div>
+               </div>
+             </div>
+            
+              {/* Plan Section */}
+             <div className="flex items-center gap-3">
+               <div className="flex gap-2">
+                 <button
+                   onClick={() => setShowBusinessModal(true)}
+                   className={`px-2 py-1 w-auto border rounded-lg text-xs font-medium transition-colors ${
+                     theme === 'dark'
+                       ? 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
+                       : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                   }`}
+                 >
+                   {t("currentBusiness.change")}
+                 </button>
+                 <Link
+                   href="/dashboard/onboarding"
+                   className={`px-2 py-1 w-auto border rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                     theme === 'dark'
+                       ? 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
+                       : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                   }`}
+                 >
+                   Add Business
+                 </Link>
+               </div>
+             </div>
           </div>
           
           {/* Usage Summary */}
           {usage && planLimits && (
             <div className="mb-8">
-              <p className="text-xs text-gray-600 mb-2">{t("usage.title")}</p>
+              <p className={`text-xs mb-2 ${
+                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+              }`}>{t("usage.title")}</p>
               <div className="grid grid-cols-3 md:grid-cols-5 gap-1 md:gap-4 items-end">
                 {usageCards.map(card => {
                   const max = getPlanLimitValue(card.feature)
@@ -283,9 +278,13 @@ export default function DashboardPage() {
                       <div className="font-medium text-md md:text-lg lg:text-xl mb-1">
                         {formatUsageDisplay(current, { value: max })} {suffix}
                       </div>
-                      <div className="text-xs md:text-sm text-gray-500 mb-2">{card.label}</div>
+                      <div className={`text-xs md:text-sm mb-2 ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                      }`}>{card.label}</div>
                       {max !== -1 && max !== null && (
-                        <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className={`w-full rounded-full h-2 ${
+                          theme === 'dark' ? 'bg-gray-600' : 'bg-gray-200'
+                        }`}>
                           <div
                             className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                             style={{
@@ -304,17 +303,21 @@ export default function DashboardPage() {
        
         {/* Public Link Section */}
         <div className="mb-8">
-                      <div className={`bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-gray-300 px-6 py-4 rounded-full text-base font-medium flex items-center justify-between gap-4 shadow-lg border border-gray-700 transition-all duration-300 relative overflow-hidden ${
-              isAnimating ? 'animate-pill-shine' : ''
-            }`}>
+                      <div className={`px-4 py-2 md:px-6 md:py-4 rounded-full text-base font-medium flex items-center justify-between gap-4 shadow-sm border transition-all duration-300 relative overflow-hidden ${
+                        theme === 'dark'
+                          ? 'bg-gray-700 text-gray-300 border-gray-600'
+                          : 'bg-gray-100 text-gray-700 border-gray-200'
+                      } ${isAnimating ? 'animate-pill-shine' : ''}`}>
             <div className="flex items-center gap-2 min-w-0 flex-1">
-              <GlobeAltIcon className="w-6 h-6 md:w-7 md:h-7 text-blue-400 flex-shrink-0" />
+              <GlobeAltIcon className="w-6 h-6 md:w-7 md:h-7 text-blue-600 flex-shrink-0" />
               <span className="text-sm md:text-lg truncate">{publicUrl}</span>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={handleCopy}
-                className={`text-gray-400 hover:text-white transition-all duration-300 flex items-center gap-2 ${copied ? 'text-green-400' : ''}`}
+                className={`transition-all duration-300 flex items-center gap-2 ${
+                  theme === 'dark' ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'
+                } ${copied ? 'text-green-600' : ''}`}
                 title={copied ? t("publicLink.copied") : t("publicLink.copy")}
               >
                 {copied ? (
@@ -330,7 +333,9 @@ export default function DashboardPage() {
               </button>
               <button
                 onClick={handleOpen}
-                className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"
+                className={`transition-colors flex items-center gap-2 ${
+                  theme === 'dark' ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'
+                }`}
                 title={t("publicLink.open")}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -350,15 +355,23 @@ export default function DashboardPage() {
               <a
                 key={index}
                 href={card.href}
-                className={`bg-white rounded-xl p-4 md:p-6 border border-gray-200 transition-all duration-200 group`}
+                className={`rounded-xl p-4 md:p-6 border transition-all duration-200 group ${
+                  theme === 'dark'
+                    ? 'bg-gray-800 border-gray-600 hover:bg-gray-700'
+                    : 'bg-white border-gray-200 hover:bg-gray-50'
+                }`}
               >
                 <div className="flex flex-col space-y-4">
                   <div className="transition-transform duration-200">
                     <IconComponent className="h-12 w-12 text-gray-600 group-hover:text-blue-600" />
                   </div>
                   <div>
-                    <h3 className="text-md font-semibold text-gray-900 mb-2">{card.title}</h3>
-                    <p className="text-xs md:text-sm text-gray-600">{card.description}</p>
+                    <h3 className={`text-md font-semibold mb-2 ${
+                      theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                    }`}>{card.title}</h3>
+                    <p className={`text-xs md:text-sm ${
+                      theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                    }`}>{card.description}</p>
                   </div>
                 </div>
               </a>

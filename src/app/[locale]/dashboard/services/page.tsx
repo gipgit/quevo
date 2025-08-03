@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { useBusiness } from "@/lib/business-context"
+import { useTheme } from "@/contexts/ThemeContext"
 import { canCreateMore, formatUsageDisplay } from "@/lib/usage-utils"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import Link from "next/link"
@@ -57,11 +58,15 @@ export default function ServicesPage() {
   const tCommon = useTranslations("Common")
   const { currentBusiness, usage, planLimits, refreshUsageForFeature } = useBusiness()
   const { showToast } = useToaster()
+  const { theme } = useTheme()
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [serviceToDelete, setServiceToDelete] = useState<Service | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set())
+  const [expandedQuestions, setExpandedQuestions] = useState<Set<number>>(new Set())
+  const [expandedRequirements, setExpandedRequirements] = useState<Set<number>>(new Set())
 
   // Add debug logs for planLimits and usage
   useEffect(() => {
@@ -152,6 +157,42 @@ export default function ServicesPage() {
     setServiceToDelete(null)
   }
 
+  const handleToggleItems = (serviceId: number) => {
+    setExpandedItems(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(serviceId)) {
+        newSet.delete(serviceId)
+      } else {
+        newSet.add(serviceId)
+      }
+      return newSet
+    })
+  }
+
+  const handleToggleQuestions = (serviceId: number) => {
+    setExpandedQuestions(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(serviceId)) {
+        newSet.delete(serviceId)
+      } else {
+        newSet.add(serviceId)
+      }
+      return newSet
+    })
+  }
+
+  const handleToggleRequirements = (serviceId: number) => {
+    setExpandedRequirements(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(serviceId)) {
+        newSet.delete(serviceId)
+      } else {
+        newSet.add(serviceId)
+      }
+      return newSet
+    })
+  }
+
   const formatPrice = (price: number | null) => {
     if (price === null) return t("priceOnRequest")
     return new Intl.NumberFormat("it-IT", {
@@ -196,9 +237,11 @@ export default function ServicesPage() {
     <DashboardLayout>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-4 lg:mb-6">
           <div>
-            <h1 className="text-3xl lg:text-3xl font-bold text-gray-900">{t("title")}</h1>
+            <h1 className={`text-xl lg:text-2xl font-bold ${
+              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+            }`}>{t("title")}</h1>
           </div>
           <div className="flex items-center gap-6">
             <div className="flex flex-col items-end gap-2">
@@ -217,7 +260,7 @@ export default function ServicesPage() {
             <div>
               <Link
                 href="/dashboard/services/create"
-                className={`px-4 py-2 md:px-6 md:py-3 text-sm md:text-lg font-semibold rounded-lg transition-colors inline-flex items-center gap-2 ${
+                className={`px-4 py-2 md:px-4 md:py-2 text-sm md:text-lg rounded-lg transition-colors inline-flex items-center gap-2 ${
                   canCreateService()
                     ? "bg-blue-600 hover:bg-blue-700 text-white"
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -240,104 +283,167 @@ export default function ServicesPage() {
             {/* Services by Category */}
             {Object.entries(servicesByCategory).map(([categoryName, categoryServices]) => (
           <div key={categoryName} className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">{categoryName}</h2>
+            <h2 className={`text-lg mb-2 ${
+              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+            }`}>{categoryName}</h2>
 
             <div className="space-y-6">
               {categoryServices.map((service) => (
                 <div
                   key={service.service_id}
-                  className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+                  className={`rounded-xl shadow-sm border overflow-hidden ${
+                    theme === 'dark' 
+                      ? 'bg-gray-800 border-gray-600' 
+                      : 'bg-white border-gray-200'
+                  }`}
                 >
                   <div className="p-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 lg:justify-end">
-                      {/* Unified Service Details & Elements Column */}
-                      <div>
+                    <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr_auto] gap-6">
+                      {/* Column 1: Service Main Details + Service Items */}
+                      <div className="min-h-[120px]">
                         <div className="mb-4">
-                          <div className="flex flex-wrap items-center gap-4 mb-2">
-                            <span className="text-2xl font-bold text-gray-900 mr-2">{service.service_name}</span>
-                            <span className="text-xl font-semibold text-blue-700 mr-2">{formatPrice(service.price_base)}</span>
-                            <span className="text-sm text-gray-700 mr-2">{formatDuration(service.duration_minutes)}</span>
-                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${service.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{service.is_active ? t('active') : t('inactive')}</span>
+                          {/* Service Title, Price, Duration, Status - All on same line on lg+ */}
+                          <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4 mb-2">
+                            <span className={`text-xl font-bold ${
+                              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                            }`}>{service.service_name}</span>
+                            <div className="flex flex-wrap items-center gap-4 mt-2 lg:mt-0">
+                              <span className="text-xl font-semibold text-blue-700">{formatPrice(service.price_base)}</span>
+                              <span className={`text-sm ${
+                                theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                              }`}>{formatDuration(service.duration_minutes)}</span>
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${service.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{service.is_active ? t('active') : t('inactive')}</span>
+                            </div>
                           </div>
                           {/* Service Description */}
                           {service.description && (
-                            <p className="text-gray-600 mb-3">{service.description}</p>
+                            <p className={`text-sm mb-3 ${
+                              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                            }`}>{service.description}</p>
                           )}
                         </div>
-                        {/* Service Elements (no wrapper, no label) */}
-                        <div className="space-y-3">
-                            {/* Service Items as pills */}
-                            {service.serviceitem.length > 0 && (
-                              <div>
-                                <div className="flex flex-wrap gap-2">
-                                  {service.serviceitem.map(item => (
-                                    <span key={item.service_item_id} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
-                                      {item.item_name}
-                                    </span>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                            {(service.servicequestion.length > 0 || service.servicerequirementblock.length > 0) && (
-                              <div className="flex flex-row gap-4">
-                                {/* Service Questions as list */}
-                                <div className="flex-1 min-w-[180px] max-w-[320px]">
-                                  {service.servicequestion.length > 0 && (
-                                    <>
-                                      <div className="text-xs text-gray-500 mb-1">Domande</div>
-                                      <ul className="list-disc list-inside text-xs text-gray-700 break-words">
-                                        {service.servicequestion.map(q => (
-                                          <li key={q.question_id}>{q.question_text}</li>
-                                        ))}
-                                      </ul>
-                                    </>
-                                  )}
-                                </div>
-                                {/* Service Requirements as list */}
-                                <div className="flex-1 min-w-[180px] max-w-[320px]">
-                                  {service.servicerequirementblock.length > 0 && (
-                                    <>
-                                      <div className="text-xs text-gray-500 mb-1">Requisiti</div>
-                                      <ul className="list-disc list-inside text-xs text-gray-700 break-words">
-                                        {service.servicerequirementblock.map(r => (
-                                          <li key={r.requirement_block_id}>{r.title || r.requirements_text}</li>
-                                        ))}
-                                      </ul>
-                                    </>
-                                  )}
-                                </div>
-                              </div>
-                            )}
-                            {service.serviceitem.length === 0 && service.servicequestion.length === 0 && service.servicerequirementblock.length === 0 && (
-                              <div className="text-sm text-gray-500 py-2">
-                                {t("noElementsConfigured")}
-                              </div>
+                        {/* Service Items */}
+                        {service.serviceitem.length > 0 && (
+                          <div className="space-y-2">
+                            {/* Items container */}
+                            <div className="flex flex-wrap gap-2">
+                              {/* First 2 items always shown */}
+                              {service.serviceitem.slice(0, 2).map(item => (
+                                <span key={item.service_item_id} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0">
+                                  {item.item_name}
+                                </span>
+                              ))}
+                              {/* Additional items when expanded */}
+                              {expandedItems.has(service.service_id) && service.serviceitem.slice(2).map(item => (
+                                <span key={item.service_item_id} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                                  {item.item_name}
+                                </span>
+                              ))}
+                              {/* Show More/Less button */}
+                              {service.serviceitem.length > 2 && (
+                                <button 
+                                  onClick={() => handleToggleItems(service.service_id)}
+                                  className="px-3 py-1 text-blue-600 text-xs font-medium hover:text-blue-800 transition-colors"
+                                >
+                                  {expandedItems.has(service.service_id) ? t("showLess") : `+${service.serviceitem.length - 2} ${t("showAll")}`}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {service.serviceitem.length === 0 && service.servicequestion.length === 0 && service.servicerequirementblock.length === 0 && (
+                          <div className="text-sm text-gray-500 py-2">
+                            {t("noElementsConfigured")}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Column 2: Questions and Requirements */}
+                      <div className="space-y-4 min-h-[120px]">
+                        {/* Service Questions */}
+                        {service.servicequestion.length > 0 && (
+                          <div>
+                            <div className={`text-xs mb-1 ${
+                              theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
+                            }`}>Domande</div>
+                            <ul className={`list-disc list-inside text-xs break-words ${
+                              theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+                            }`}>
+                              {service.servicequestion.slice(0, expandedQuestions.has(service.service_id) ? service.servicequestion.length : 3).map(q => (
+                                <li key={q.question_id}>{q.question_text}</li>
+                              ))}
+                            </ul>
+                            {service.servicequestion.length > 3 && (
+                              <button 
+                                onClick={() => handleToggleQuestions(service.service_id)}
+                                className={`px-3 py-1 text-xs font-medium transition-colors mt-1 ${
+                                  theme === 'dark' 
+                                    ? 'text-blue-400 hover:text-blue-300' 
+                                    : 'text-blue-600 hover:text-blue-800'
+                                }`}
+                              >
+                                {expandedQuestions.has(service.service_id) ? t("showLess") : `+${service.servicequestion.length - 3} ${t("showAll")}`}
+                              </button>
                             )}
                           </div>
-                        </div>
+                        )}
+                        {/* Service Requirements */}
+                        {service.servicerequirementblock.length > 0 && (
+                          <div>
+                            <div className={`text-xs mb-1 ${
+                              theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
+                            }`}>Requisiti</div>
+                            <ul className={`list-disc list-inside text-xs break-words ${
+                              theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+                            }`}>
+                              {service.servicerequirementblock.slice(0, expandedRequirements.has(service.service_id) ? service.servicerequirementblock.length : 3).map(r => (
+                                <li key={r.requirement_block_id}>{r.title || r.requirements_text}</li>
+                              ))}
+                            </ul>
+                            {service.servicerequirementblock.length > 3 && (
+                              <button 
+                                onClick={() => handleToggleRequirements(service.service_id)}
+                                className={`px-3 py-1 text-xs font-medium transition-colors mt-1 ${
+                                  theme === 'dark' 
+                                    ? 'text-blue-400 hover:text-blue-300' 
+                                    : 'text-blue-600 hover:text-blue-800'
+                                }`}
+                              >
+                                {expandedRequirements.has(service.service_id) ? t("showLess") : `+${service.servicerequirementblock.length - 3} ${t("showAll")}`}
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
 
-                      {/* Action Buttons - Right Column */}
-                      <div className="lg:col-span-1 max-w-[110px] w-full lg:w-auto lg:ml-auto flex">
-                        <div className="flex flex-row gap-2 lg:flex-col lg:gap-3">
-                          <button
-                            onClick={() => handleEdit(service.service_id)}
-                            className="w-full px-2 py-2 md:px-4 md:py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm font-medium"
-                          >
-                            <span className="hidden sm:inline">{tCommon("edit")}</span>
-                            <svg className="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                          </button>
-                          <button
-                            onClick={() => handleDeleteClick(service)}
-                            className="w-full px-2 py-2 md:px-4 md:py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm font-medium"
-                          >
-                            <span className="hidden sm:inline">{tCommon("delete")}</span>
-                            <svg className="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
-                        </div>
+                      {/* Column 3: Action Buttons */}
+                      <div className="flex flex-row lg:flex-col gap-2 lg:min-h-[120px] lg:justify-center">
+                        <button
+                          onClick={() => handleEdit(service.service_id)}
+                          className={`px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm font-medium border ${
+                            theme === 'dark' 
+                              ? 'border-gray-400 text-gray-300 hover:bg-gray-700' 
+                              : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                          <span className="hidden sm:inline">{tCommon("edit")}</span>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteClick(service)}
+                          className={`px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm font-medium border ${
+                            theme === 'dark' 
+                              ? 'border-gray-400 text-red-400 hover:bg-gray-700' 
+                              : 'border-gray-300 text-red-600 hover:bg-gray-50'
+                          }`}
+                        >
+                          <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          <span className="hidden sm:inline">{tCommon("delete")}</span>
+                        </button>
                       </div>
                     </div>
                   </div>

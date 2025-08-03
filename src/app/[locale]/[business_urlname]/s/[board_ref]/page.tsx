@@ -10,6 +10,7 @@ import { useTranslations } from 'next-intl';
 import ContactModal from '@/components/modals/ContactModal';
 import PaymentsModal from '@/components/modals/PaymentsModal';
 import AddActionModal from '@/components/modals/AddActionModal';
+import ActionSubmissionModal from '@/components/modals/ActionSubmissionModal';
 import ShareModal from '@/components/modals/ShareModal';
 import { getPlatformIcon } from '@/lib/platform-icons';
 import { QRCodeSVG } from 'qrcode.react';
@@ -335,6 +336,18 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
   const [customReason, setCustomReason] = useState('');
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   
+  // Action submission modal state
+  const [showSubmissionModal, setShowSubmissionModal] = useState(false);
+  const [submissionResult, setSubmissionResult] = useState<{
+    isSuccess: boolean;
+    message: string;
+    technicalDetails?: string;
+  } | null>(null);
+  const [submissionModalCopied, setSubmissionModalCopied] = useState(false);
+  
+  // Animation state for new actions
+  const [newlyAddedActionId, setNewlyAddedActionId] = useState<string | null>(null);
+  
   const { board_ref } = params;
   const { 
     businessData, 
@@ -520,6 +533,111 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
     window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
   };
 
+  // Submission modal helper functions
+  const copyToClipboardForSubmission = async () => {
+    try {
+      await navigator.clipboard.writeText(getCurrentBoardUrl());
+      setSubmissionModalCopied(true);
+      setTimeout(() => setSubmissionModalCopied(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error);
+    }
+  };
+
+  const shareViaWhatsAppForSubmission = () => {
+    const url = encodeURIComponent(getCurrentBoardUrl());
+    const text = encodeURIComponent('Check out this service board: ');
+    window.open(`https://wa.me/?text=${text}${url}`, '_blank');
+  };
+
+  const shareViaEmailForSubmission = () => {
+    const url = getCurrentBoardUrl();
+    const subject = encodeURIComponent('Service Board Link');
+    const body = encodeURIComponent(`Check out this service board: ${url}`);
+    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+  };
+
+  const handleShareForSubmission = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: 'Service Board',
+        text: 'Check out this service board',
+        url: getCurrentBoardUrl(),
+      });
+    } else {
+      // Fallback to WhatsApp
+      shareViaWhatsAppForSubmission();
+    }
+  };
+
+  const handleSubmissionModalClose = () => {
+    setShowSubmissionModal(false);
+    setSubmissionResult(null);
+    setSubmissionModalCopied(false);
+    
+    // No need to refresh actions since they're already added immediately
+    // The silent refresh is no longer needed
+  };
+
+  // Add new action to timeline with animation
+  const addNewActionToTimeline = (newAction: any) => {
+    // Transform the new action to match the ServiceBoardAction format
+    const transformedAction: ServiceBoardAction = {
+      action_id: newAction.action_id,
+      board_id: newAction.board_id,
+      customer_id: newAction.customer_id,
+      action_type: newAction.action_type,
+      action_title: newAction.action_title,
+      action_description: newAction.action_description,
+      action_details: newAction.action_details,
+      action_status: newAction.action_status,
+      is_customer_action_required: newAction.is_customer_action_required,
+      is_archived: newAction.is_archived,
+      created_at: newAction.created_at,
+      updated_at: newAction.updated_at,
+      due_date: newAction.due_date,
+      tags: [] // New actions won't have tags initially
+    };
+
+    // Add the new action to the beginning of the actions array
+    setActions(prevActions => [transformedAction, ...prevActions]);
+    
+    // Set animation state for the new action
+    setNewlyAddedActionId(transformedAction.action_id);
+    
+    // Clear animation state after animation completes
+    setTimeout(() => {
+      setNewlyAddedActionId(null);
+    }, 800);
+  };
+
+  // Silent refresh function that doesn't show loading state
+  const refreshActionsSilently = async () => {
+    try {
+      const response = await fetch(`/api/businesses/${businessData.business_id}/service-boards/${board_ref}/actions`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 401 && data.requiresPassword) {
+          setRequiresPassword(true);
+          return;
+        }
+        throw new Error(data.error || 'Failed to fetch service board actions');
+      }
+      
+      // Sort actions by created_at date, most recent first
+      const sortedActions = data.sort((a: ServiceBoardAction, b: ServiceBoardAction) => 
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+      
+      setActions(sortedActions);
+      setRequiresPassword(false);
+    } catch (err) {
+      console.error('Error silently refreshing actions:', err);
+      // Don't show error to user for silent refresh
+    }
+  };
+
   const getButtonContentColor = (bgColor: string) => {
     if (!bgColor) return 'white';
     const hex = bgColor.replace('#', '');
@@ -585,7 +703,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
       </div>
 
       {/* Top Navbar */}
-      <div className="bg-gray-800 text-white px-6 py-5">
+      <div className="px-8 py-4 lg:py-8 pb-0">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           {/* Left Column - Board Info */}
           <div className="flex-1">
@@ -596,16 +714,16 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                   <div className="flex items-center flex-wrap gap-y-1 gap-x-2 mt-1">
                   {boardData.service && (
                        <div className="text-sm">
-                            <p className="text-sm text-gray-100 font-bold">{boardData.service.service_name}</p>
+                            <p className="text-sm opacity-80 font-bold">{boardData.service.service_name}</p>
                        </div>
                   )}
                   {boardData.board_description && (
-                    <p className="text-xs line-clamp-1 text-gray-300">{boardData.board_description}</p>
+                    <p className="text-xs line-clamp-1 opacity-80">{boardData.board_description}</p>
                   )}
                 </div>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-gray-300">
-                  <span className={`rounded-lg p-2 font-medium ${
+                <div className="flex items-center gap-2">
+                  <span className={`rounded-lg p-2 font-medium whitespace-nowrap ${
                     boardData.status === 'active' ? 'bg-green-100 text-green-800 border border-green-200' :
                     boardData.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
                     boardData.status === 'completed' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
@@ -621,9 +739,9 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                     </svg>
                     Share
                   </button>
-                  <span className='border-2 border-gray-200 rounded px-2 py-1 text-xs'>Ref: {params.board_ref}</span>
+                  <span className='border-2 border-gray-200 rounded px-2 py-1 text-xs whitespace-nowrap'>Ref: {params.board_ref}</span>
                   <span>•</span>
-                  <span>Created {getRelativeTime(boardData.created_at, tServiceBoard)}</span>
+                  <span className='text-xs whitespace-nowrap'>Created {getRelativeTime(boardData.created_at, tServiceBoard)}</span>
                 </div>
               </div>
             )}
@@ -637,7 +755,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
               <div className={`flex items-center justify-between gap-2 px-4 py-2 rounded-full border-2 transition-all duration-300 ${
                 isCopied 
                   ? 'bg-green-800 border-green-400 shadow-lg' 
-                  : 'bg-gray-700 border-gray-600 hover:border-gray-500'
+                  : 'bg-gray-600 border-gray-500 hover:border-gray-400'
               }`}>
                 <div className='flex items-center gap-2'>
                 {/* Globe Icon */}
@@ -690,9 +808,9 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
             {/* Add Action Button on right of the Share Menu Container - Hidden on xs to md, visible on lg+ */}
             <button
               onClick={() => setShowAddActionModal(true)}
-              className="hidden lg:flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="hidden lg:flex items-center gap-2 px-5 py-3 bg-black text-white border border-white rounded-lg hover:bg-gray-900 transition-colors"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
               <span className="font-medium">{tServiceBoard('addAction')}</span>
@@ -1048,8 +1166,17 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
             <div className="space-y-2 lg:space-y-4">
               {/* Other timeline actions */}
               {actions.map((action) => (
-                <div key={action.action_id} className="relative pl-1 lg:pl-10">
-                  <div className={`absolute left-[-7px] lg:left-[20px] -translate-x-1/2 w-4 h-4 md:w-5 md:h-5 rounded-full border-2 ${getTimelineDotColor(action)}`}></div>
+                <div 
+                  key={action.action_id} 
+                  className={`relative pl-1 lg:pl-10 transition-all duration-500 ease-out ${
+                    newlyAddedActionId === action.action_id 
+                      ? 'animate-slideInFromTop opacity-100 scale-100' 
+                      : 'opacity-100 scale-100'
+                  }`}
+                >
+                  <div className={`absolute left-[-7px] lg:left-[20px] -translate-x-1/2 w-4 h-4 md:w-5 md:h-5 rounded-full border-2 ${getTimelineDotColor(action)} transition-all duration-500 ${
+                    newlyAddedActionId === action.action_id ? 'animate-pulse scale-110' : ''
+                  }`}></div>
                   <ServiceBoardActionCard 
                     action={action}
                     onActionUpdate={fetchServiceBoardActions}
@@ -1305,7 +1432,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="w-20 h-20 lg:w-20 lg:h-20 -mt-8 z-10 rounded-full overflow-hidden bg-gray-100 border-2 border-white">
+              <div className="w-20 h-20 lg:w-20 lg:h-20 -mt-8 z-10 rounded-full overflow-hidden bg-gray-100">
                 {businessData.business_public_uuid ? (
                   <img
                     src={`/uploads/business/${businessData.business_public_uuid}/profile.webp`}
@@ -1481,7 +1608,13 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
         <AddActionModal
           show={showAddActionModal}
           onClose={() => setShowAddActionModal(false)}
-          onActionAdded={fetchServiceBoardActions}
+          onShowSubmissionModal={(result) => {
+            setSubmissionResult(result);
+            setShowSubmissionModal(true);
+          }}
+          onActionCreated={(newAction) => {
+            addNewActionToTimeline(newAction);
+          }}
           businessId={businessData.business_id}
           boardRef={board_ref}
           themeColorText={themeColorText || '#000000'}
@@ -1489,6 +1622,19 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
           themeColorButton={themeColorButton || '#000000'}
         />
       )}
+
+      {/* Action Submission Modal */}
+      <ActionSubmissionModal
+        show={showSubmissionModal}
+        onClose={handleSubmissionModalClose}
+        isSuccess={submissionResult?.isSuccess || false}
+        message={submissionResult?.message || ''}
+        technicalDetails={submissionResult?.technicalDetails}
+        boardUrl={submissionResult?.isSuccess ? getCurrentBoardUrl() : undefined}
+        onCopyLink={copyToClipboardForSubmission}
+        isCopied={submissionModalCopied}
+        onShare={handleShareForSubmission}
+      />
 
       {/* Share Modal */}
       <ShareModal

@@ -6,6 +6,7 @@ import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation'; // For handling unsupported locales
 import { routing } from '@/i18n/routing'; // Import your routing config for locales
 import { ToasterProvider } from '@/components/ui/ToasterProvider';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 export const metadata = {
   title: 'Quevo App',
@@ -50,9 +51,11 @@ export default async function RootLayout({
         {/* The messages and locale are automatically provided to the client context
             by the next-intl plugin configured in next.config.js pointing to src/i18n/request.js */}
         <NextIntlClientProvider>
-          <ToasterProvider>
-          {children}
-          </ToasterProvider>
+          <ThemeProvider>
+            <ToasterProvider>
+              {children}
+            </ToasterProvider>
+          </ThemeProvider>
         </NextIntlClientProvider>
       </body>
     </html>

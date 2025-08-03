@@ -2,12 +2,14 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import LocaleSwitcherButton from '@/components/ui/LocaleSwitcherButton';
 import LocaleSelectModal from '@/components/ui/LocaleSelectModal';
 import { useLocaleSwitcher } from '@/hooks/useLocaleSwitcher';
 
 export default function Footer() {
   const { isModalOpen, setIsModalOpen, currentLocale, availableLocales, switchLocale } = useLocaleSwitcher();
+  const tFooter = useTranslations('Footer');
 
   return (
     <footer className="bg-gray-900 text-white">
@@ -16,19 +18,19 @@ export default function Footer() {
         <div className="flex flex-col justify-between items-center gap-4">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <span className="text-lg font-bold">Quevo</span>
+            <span className="text-lg font-bold">{tFooter('brandName')}</span>
           </div>
 
           {/* Links */}
           <div className="flex flex-wrap justify-center gap-6">
             <Link href="/features" className="text-gray-400 hover:text-white transition-colors text-sm">
-              Features
+              {tFooter('features')}
             </Link>
             <Link href="/pricing" className="text-gray-400 hover:text-white transition-colors text-sm">
-              Pricing
+              {tFooter('pricing')}
             </Link>
             <Link href="/contact" className="text-gray-400 hover:text-white transition-colors text-sm">
-              Contact
+              {tFooter('contact')}
             </Link>
           </div>
 
@@ -44,14 +46,14 @@ export default function Footer() {
           />
           <div className="flex space-x-4">
             <Link href="/privacy" className="text-gray-400 hover:text-white text-xs transition-colors">
-              Privacy Policy
+              {tFooter('privacyPolicy')}
             </Link>
             <Link href="/terms" className="text-gray-400 hover:text-white text-xs transition-colors">
-              Terms of Service
+              {tFooter('termsOfService')}
             </Link>
           </div>
           <p className="text-gray-400 text-xs">
-            © 2025 Quevo. All rights reserved.
+            {tFooter('copyright')}
           </p>
         </div>
       </div>

@@ -1,4 +1,23 @@
 {
+  "Header": {
+    "brandName": "Quevo",
+    "logoAlt": "Quevo Logo",
+    "toggleMobileMenu": "Toggle mobile menu",
+    "closeMobileMenu": "Close mobile menu",
+    "features": "Features",
+    "pricing": "Pricing",
+    "support": "Support",
+    "signIn": "Sign In"
+  },
+  "Footer": {
+    "brandName": "Quevo",
+    "features": "Features",
+    "pricing": "Pricing",
+    "contact": "Contact",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "copyright": "© 2025 Quevo. All rights reserved."
+  },
   "Common": {
     "coverPhotoAlt": "Business Cover Photo",
     "errorBusinessNotFoundTitle": "Business Not Found",
@@ -779,6 +798,14 @@
     "enterYourResponse": "Enter your response",
     "availablePaymentMethods": "Available Payment Methods",
     "onlinePaymentViaStripe": "Online payment via Stripe",
+    "actionSubmitted": "Action Submitted Successfully",
+    "actionSubmissionError": "Action Submission Error",
+    "technicalDetails": "Technical Details",
+    "shareBoardLink": "Share Board Link",
+    "share": "Share",
+    "copyLink": "Copy Link",
+    "copied": "Copied!",
+    "close": "Close",
     "cashPaymentOnDelivery": "Cash payment on delivery/service",
     "paymentReason": "Payment Reason",
     "paymentConfirmed": "Payment Confirmed",
@@ -975,7 +1002,7 @@
           "description": "Keep customers informed. Key updates trigger instant email alerts, no manual effort needed."
         },
         "secureAccess": {
-          "title": "Secure & Shareable Access",
+          "title": "Reserved & Secure Access",
           "description": "Unique, secure links for every service. Share effortlessly, with optional password protection."
         },
         "problemSolving": {

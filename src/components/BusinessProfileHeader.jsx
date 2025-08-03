@@ -111,7 +111,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
         <header className="profile-header relative h-full z-50">
             {/* Desktop Navbar - Only visible on lg+ devices */}
             <nav className="profile-navbar hidden lg:block fixed top-0 left-0 right-0 z-50 shadow-sm" style={{ borderBottom: `1px solid ${isDarkBackground ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}` }}>
-                <div className="container mx-auto px-4">
+                <div className="container mx-auto py-2 px-6">
                     <div className="flex items-center justify-between h-16">
                         {/* Left side - Profile image, business name, and navigation links */}
                         <div className="flex items-center space-x-8">
@@ -407,11 +407,28 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
             </div>
 
             {/* Desktop Hero Layout (lg+) */}
-            <div className="hidden lg:flex flex-col justify-center h-screen max-h-screen overflow-y-auto">
-                <div className="container mx-auto px-4">
+            <div className="hidden lg:flex flex-col justify-center h-screen max-h-screen overflow-y-auto relative">
+                {/* Cover Image Background - Only for desktop layout */}
+                {businessData.business_img_cover && (
+                    <div className="absolute inset-0 z-0 my-8 rounded-lg">
+                        <div className="relative h-full w-full rounded-lg">
+                            <Image
+                                src={businessData.business_img_cover}
+                                alt="Cover Background"
+                                fill
+                                sizes="100vw"
+                                className="object-cover rounded-2xl"
+                                priority
+                            />
+                            {/* Overlay for better text readability */}
+                            <div className="absolute inset-0 bg-black/20 rounded-2xl"></div>
+                        </div>
+                    </div>
+                )}
+                
+                <div className="container mx-auto px-10 relative z-10">
                     <div className="text-left transition-opacity duration-300" style={{ color: 'white', opacity: scrollOpacity }}>
                         <div className="mb-6">
-                            <p className="text-xl font-bold mb-2" style={{ textShadow: '1px 1px 4px rgba(0, 0, 0, 0.5)' }}>{businessData.business_name}</p>
                             {businessData.business_descr && <p className="font-bold text-2xl md:text-4xl lg:text-5xl max-w-2xl mb-4" style={{ textShadow: '1px 1px 4px rgba(0, 0, 0, 0.5)' }}>{businessData.business_descr}</p>}
                             <div className="flex flex-wrap items-center gap-3 mb-6">
                                 {(businessSettings.show_address && businessData.business_address) && (

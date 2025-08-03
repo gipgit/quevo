@@ -88,9 +88,9 @@ export default function SectionFaqs() {
                             onClick={() => toggleAccordion(index)}
                             aria-expanded={openItemIndex === index ? "true" : "false"}
                         >
-                            <h3 className="text-lg font-medium text-gray-900 pr-4">
+                            <p className="text-lg text-gray-900 pr-4">
                                 {item.question}
-                            </h3>
+                            </p>
                             <div className="flex-shrink-0">
                                 <svg 
                                     className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
@@ -115,7 +115,7 @@ export default function SectionFaqs() {
                             }`}
                         >
                             <div className="pb-6 px-2">
-                                <p className="text-gray-600 leading-tight lg:leading-relaxed">{item.answer}</p>
+                                <p className="text-sm lg:text-base text-gray-600 leading-tight lg:leading-relaxed">{item.answer}</p>
                             </div>
                         </div>
                     </div>

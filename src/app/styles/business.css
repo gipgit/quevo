@@ -23,7 +23,7 @@
 }
 
 .profile-content-wrapper {
-  background-color: var(--theme-color-background-secondary) !important;
+  background-color: var(--theme-color-background) !important;
   color: var(--theme-color-text) !important;
 }
 

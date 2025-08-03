@@ -28,7 +28,12 @@ import { ACTION_TYPE_ICONS, ACTION_TYPE_COLORS } from '@/lib/action-templates';
 interface AddActionModalProps {
   show: boolean;
   onClose: () => void;
-  onActionAdded: () => void;
+  onShowSubmissionModal: (result: {
+    isSuccess: boolean;
+    message: string;
+    technicalDetails?: string;
+  }) => void;
+  onActionCreated: (newAction: any) => void;
   businessId: string;
   boardRef: string;
   themeColorText?: string;
@@ -39,7 +44,8 @@ interface AddActionModalProps {
 export default function AddActionModal({
   show,
   onClose,
-  onActionAdded,
+  onShowSubmissionModal,
+  onActionCreated,
   businessId,
   boardRef,
   themeColorText = '#000000',
@@ -59,6 +65,8 @@ export default function AddActionModal({
   
   // Mobile navigation state
   const [mobileStep, setMobileStep] = useState<'templates' | 'form' | 'calendar'>('templates');
+
+
 
   // Fetch action templates on component mount
   useEffect(() => {
@@ -171,6 +179,8 @@ export default function AddActionModal({
     setSelectedTimeSlot(null);
   };
 
+
+
   const generateTimeSlots = (date: Date) => {
     const slots = [];
     const startHour = 9; // 9 AM
@@ -264,14 +274,40 @@ export default function AddActionModal({
       });
 
       if (response.ok) {
-        onActionAdded();
+        const result = await response.json();
+        // Immediately add the new action to the timeline
+        onActionCreated(result);
+        // Close the add action modal first
         onClose();
+        // Delay to let user see the action being added to timeline with animation
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        onShowSubmissionModal({
+          isSuccess: true,
+          message: 'Action created successfully! The action has been added to the board.'
+        });
       } else {
-        alert('Errore durante la creazione dell\'azione');
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error occurred' }));
+        // Close the add action modal first
+        onClose();
+        // Delay to let user see any error state before showing submission modal
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        onShowSubmissionModal({
+          isSuccess: false,
+          message: errorData.error || 'Failed to create action. Please try again.',
+          technicalDetails: `Status: ${response.status}\nStatus Text: ${response.statusText}\nError: ${errorData.error || 'Unknown error'}`
+        });
       }
     } catch (error) {
       console.error('Error creating action:', error);
-      alert('Errore durante la creazione dell\'azione');
+      // Close the add action modal first
+      onClose();
+      // Delay to let user see any error state before showing submission modal
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      onShowSubmissionModal({
+        isSuccess: false,
+        message: 'An unexpected error occurred while creating the action.',
+        technicalDetails: error instanceof Error ? error.message : 'Unknown error occurred'
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -549,6 +585,8 @@ export default function AddActionModal({
           )}
         </div>
       </div>
+
+
     </div>
   );
 }
