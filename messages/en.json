@@ -176,8 +176,8 @@
     "errorFetchingServiceDetails": "Error fetching service details.",
     "priceNotAvailable": "Price not available",
     "additionalNotes": "Additional Notes",
-    "requirementsTitle": "Requirements for this service",
-    "questionsTitle": "Information for this service",
+    "requirementsTitle": "Requirements",
+    "questionsTitle": "Information",
     "mediaUploadPlaceholder": "Enter image or document URL",
     "allPersonalFieldsRequired": "All personal fields are required.",
     "allRequirementsMustBeConfirmed": "All requirements must be confirmed.",
@@ -204,7 +204,7 @@
     "optionalItemsTitle": "Services to include",
     "optionalItemsDescription": "This selection helps us provide an estimated price and better understand your needs. The final cost is subject to change based on an evaluation of all factors and your specific requirements.",
     "bookable": "Bookable",
-    "loggedInAsManager": "Logged in as Business Manager",
+    "loggedInAsManager": "Logged in as Manager",
     "loggedInAsCustomer": "Logged in as Customer",
     "formPrefilledWithAccountData": "Form has been pre-filled with your account data",
     "submittingServiceRequest": "Submitting your request...",
@@ -494,7 +494,6 @@
       "manage": "Manage"
     },
     "usage": {
-      "title": "Usage",
       "services": "Services",
       "service_requests": "Service Requests",
       "appointments": "Appointments",

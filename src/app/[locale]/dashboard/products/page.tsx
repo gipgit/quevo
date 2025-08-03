@@ -120,7 +120,7 @@ export default function ProductsPage() {
                 className={`px-4 py-2 md:px-4 md:py-2 text-sm md:text-lg rounded-lg transition-colors inline-flex items-center gap-2 ${
                   canCreateProduct()
                     ? "bg-blue-600 hover:bg-blue-700 text-white"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-zinc-300 text-gray-500 cursor-not-allowed"
                 }`}
                 disabled={!canCreateProduct()}
                 onClick={() => window.location.href = "/dashboard/products/create"}
@@ -149,7 +149,7 @@ export default function ProductsPage() {
                     key={product.item_id}
                     className={`rounded-xl shadow-sm border overflow-hidden ${
                       theme === 'dark' 
-                        ? 'bg-gray-800 border-gray-600' 
+                        ? 'bg-zinc-800 border-gray-600' 
                         : 'bg-white border-gray-200'
                     }`}
                   >
@@ -157,7 +157,7 @@ export default function ProductsPage() {
                       <div className="flex flex-col lg:flex-row lg:items-start gap-6">
                         {/* Product Image */}
                         <div className="flex-shrink-0">
-                          <div className="w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center">
+                          <div className="w-24 h-24 bg-zinc-100 rounded-lg flex items-center justify-center">
                             <div className="text-center">
                               <div className="text-gray-400 text-xs mb-1">No</div>
                               <div className="text-gray-400 text-xs">Immagine</div>
@@ -182,7 +182,7 @@ export default function ProductsPage() {
                             <div className="flex flex-wrap gap-2 lg:flex-col lg:items-end">
                               <button
                                 onClick={() => handleEdit(product.item_id)}
-                                className="px-3 py-1 text-sm bg-black text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2"
+                                className="px-3 py-1 text-sm bg-black text-white rounded-lg hover:bg-zinc-800 transition-colors flex items-center gap-2"
                               >
                                 {tCommon("edit")}
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

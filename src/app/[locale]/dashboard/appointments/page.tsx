@@ -146,11 +146,11 @@ export default function AppointmentsPage() {
       case 'cancelled':
         return 'bg-red-100 text-red-800';
       case 'completed':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-zinc-100 text-gray-800';
       case 'pending':
         return 'bg-yellow-100 text-yellow-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-zinc-100 text-gray-800';
     }
   };
 
@@ -279,14 +279,14 @@ export default function AppointmentsPage() {
           </h1>
           {/* Calendar/List View Tabs */}
           <div className={`flex space-x-1 p-1 rounded-lg ${
-            theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
+            theme === 'dark' ? 'bg-zinc-700' : 'bg-zinc-100'
           }`}>
             <button
               onClick={() => setViewMode('calendar')}
               className={`py-1.5 px-3 text-xs font-medium rounded-md transition-colors ${
                 viewMode === 'calendar'
                   ? theme === 'dark' 
-                    ? 'bg-gray-600 text-gray-100 shadow-sm' 
+                    ? 'bg-zinc-600 text-gray-100 shadow-sm' 
                     : 'bg-white text-gray-900 shadow-sm'
                   : theme === 'dark'
                     ? 'text-gray-300 hover:text-gray-100'
@@ -305,7 +305,7 @@ export default function AppointmentsPage() {
               className={`py-1.5 px-3 text-xs font-medium rounded-md transition-colors ${
                 viewMode === 'list'
                   ? theme === 'dark' 
-                    ? 'bg-gray-600 text-gray-100 shadow-sm' 
+                    ? 'bg-zinc-600 text-gray-100 shadow-sm' 
                     : 'bg-white text-gray-900 shadow-sm'
                   : theme === 'dark'
                     ? 'text-gray-300 hover:text-gray-100'
@@ -341,7 +341,7 @@ export default function AppointmentsPage() {
           className={`ml-2 px-4 py-2 md:px-4 md:py-2 text-sm md:text-lg rounded-lg transition-colors inline-flex items-center gap-2 ${
             canCreateAppointment()
               ? "bg-blue-600 hover:bg-blue-700 text-white"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-zinc-300 text-gray-500 cursor-not-allowed"
           }`}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -394,7 +394,7 @@ export default function AppointmentsPage() {
                         </span>
                       )}
                     </div>
-                    <div className="flex-1 h-px bg-gray-200"></div>
+                    <div className="flex-1 h-px bg-zinc-200"></div>
                     <span className={`text-sm ${
                       theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
                     }`}>
@@ -411,7 +411,7 @@ export default function AppointmentsPage() {
                           key={appointment.id}
                           className={`border rounded-lg p-4 sm:p-6 transition-colors ${
                             theme === 'dark' 
-                              ? 'border-gray-600 bg-gray-800' 
+                              ? 'border-gray-600 bg-zinc-800' 
                               : 'border-gray-200 bg-white'
                           }`}
                         >
@@ -420,8 +420,8 @@ export default function AppointmentsPage() {
                               {/* Date and Time Card */}
                               <div className={`border rounded-lg p-4 lg:p-6 ${
                                 theme === 'dark' 
-                                  ? 'border-gray-600 bg-gray-700' 
-                                  : 'border-gray-200 bg-gray-50'
+                                  ? 'border-gray-600 bg-zinc-700' 
+                                  : 'border-gray-200 bg-zinc-50'
                               }`}>
                                 <div className="flex flex-row lg:flex-col items-center gap-3">
                                   {/* Status Pill and Date - Top */}
@@ -553,8 +553,8 @@ export default function AppointmentsPage() {
                             <div className="w-full lg:w-64 flex-shrink-0">
                               <div className={`border rounded-lg p-4 lg:p-6 ${
                                 theme === 'dark' 
-                                  ? 'border-gray-600 bg-gray-700' 
-                                  : 'border-gray-200 bg-gray-50'
+                                  ? 'border-gray-600 bg-zinc-700' 
+                                  : 'border-gray-200 bg-zinc-50'
                               }`}>
                                 <div className="flex flex-col gap-1 lg:gap-2">
                                   {/* Customer Avatar and Name */}
@@ -864,7 +864,7 @@ export default function AppointmentsPage() {
                       {dayAppointments.map(appt => (
                         <div key={appt.id} className={`rounded-lg border p-4 shadow-sm ${
                           theme === 'dark' 
-                            ? 'bg-gray-800 border-gray-600' 
+                            ? 'bg-zinc-800 border-gray-600' 
                             : 'bg-white border-gray-200'
                         }`}>
                           <div className="flex items-start gap-4">

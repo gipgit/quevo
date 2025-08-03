@@ -316,7 +316,7 @@ export default function CreateServicePage() {
             <div className="flex justify-center gap-4">
               <button
                 onClick={() => router.push("/dashboard/services")}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                className="px-4 py-2 bg-zinc-600 text-white rounded-lg hover:bg-zinc-700 transition-colors"
               >
                 {t("cancel")}
               </button>
@@ -338,7 +338,7 @@ export default function CreateServicePage() {
       <div className="mx-auto">
         <div className="mb-8">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl lg:text-xl font-bold text-gray-900">{t("createService")}</h1>
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">{t("createService")}</h1>
             {planLimitServices && (
               <div className="ml-4 min-w-[220px]">
                 <UsageLimitBar
@@ -445,7 +445,7 @@ export default function CreateServicePage() {
                       type="button"
                       onClick={() => setDateSelection(!dateSelection)}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        dateSelection ? 'bg-blue-600' : 'bg-gray-200'
+                        dateSelection ? 'bg-blue-600' : 'bg-zinc-200'
                       }`}
                     >
                       <span
@@ -502,7 +502,7 @@ export default function CreateServicePage() {
             </div>
 
             {items.map((item, index) => (
-              <div key={index} className="border border-gray-300 rounded-lg p-4 mb-4 bg-gray-100 shadow-sm">
+              <div key={index} className="border border-gray-300 rounded-lg p-4 mb-4 bg-zinc-100 shadow-sm">
                 <div className="flex justify-between items-start mb-3">
                   <h3 className="font-medium text-gray-900">
                     {t("item")} {index + 1}
@@ -598,7 +598,7 @@ export default function CreateServicePage() {
             </div>
 
             {requirements.map((requirement, index) => (
-              <div key={index} className="border border-gray-300 rounded-lg p-4 mb-4 bg-gray-100 shadow-sm">
+              <div key={index} className="border border-gray-300 rounded-lg p-4 mb-4 bg-zinc-100 shadow-sm">
                 <div className="flex justify-between items-start mb-3">
                   <h3 className="font-medium text-gray-900">
                     {t("requirement")} {index + 1}
@@ -651,7 +651,7 @@ export default function CreateServicePage() {
             </div>
 
               {questions.map((question, index) => (
-                <div key={index} className="border border-gray-300 rounded-lg p-4 mb-4 bg-gray-100 shadow-sm">
+                <div key={index} className="border border-gray-300 rounded-lg p-4 mb-4 bg-zinc-100 shadow-sm">
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="font-medium text-gray-900">
                       {t("question")} {index + 1}
@@ -762,7 +762,7 @@ export default function CreateServicePage() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-zinc-50 transition-colors"
             >
               {t("cancel")}
             </button>

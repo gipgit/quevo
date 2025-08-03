@@ -626,7 +626,7 @@ export default function ProfilePage() {
               href={publicUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 font-medium transition-colors"
+              className="px-4 py-2 bg-zinc-900 text-white rounded-lg hover:bg-zinc-800 font-medium transition-colors"
             >
               {t("openProfile")}
             </a>
@@ -635,7 +635,7 @@ export default function ProfilePage() {
         
         {/* Tab Navigation */}
         <div className={`rounded-lg p-2 mb-8 ${
-          theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
+          theme === 'dark' ? 'bg-zinc-700' : 'bg-zinc-200'
         }`}>
           <nav className="flex justify-between overflow-x-auto">
             {tabs.map((tab) => {
@@ -647,8 +647,8 @@ export default function ProfilePage() {
                   className={`flex items-center space-x-2 py-3 px-4 rounded-md font-medium text-sm whitespace-nowrap transition-colors flex-1 ${
                     isActive
                       ? theme === 'dark' 
-                        ? "bg-gray-600 text-gray-100 shadow-sm" 
-                        : "bg-gray-200 text-gray-900 shadow-sm"
+                        ? "bg-zinc-600 text-gray-100 shadow-sm" 
+                        : "bg-zinc-200 text-gray-900 shadow-sm"
                       : theme === 'dark'
                         ? "text-gray-300"
                         : "text-gray-600"

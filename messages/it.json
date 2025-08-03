@@ -176,8 +176,8 @@
     "errorFetchingServiceDetails": "Errore nel recupero dei dettagli del servizio.",
     "priceNotAvailable": "Prezzo non disponibile",
     "additionalNotes": "Note aggiuntive",
-    "requirementsTitle": "Requisiti per il Servizio",
-    "questionsTitle": "Informazioni per il Servizio",
+    "requirementsTitle": "requisiti",
+    "questionsTitle": "Informazioni",
     "mediaUploadPlaceholder": "Inserisci l'URL di un'immagine o documento",
     "allPersonalFieldsRequired": "Tutti i campi personali sono obbligatori.",
     "allRequirementsMustBeConfirmed": "Tutti i requisiti devono essere confermati.",
@@ -205,7 +205,7 @@
     "optionalItemsTitle": "Servizi da includere",
     "optionalItemsDescription": "Questa selezione ci aiuta a fornire un prezzo stimato e a capire meglio le tue esigenze. Il costo finale è soggetto a modifiche in base a una valutazione di tutti i fattori e dei tuoi requisiti specifici.",
     "bookable": "Prenotabile",
-    "loggedInAsManager": "Accesso come Manager Aziendale",
+    "loggedInAsManager": "Accesso come Manager",
     "loggedInAsCustomer": "Accesso come Cliente",
     "formPrefilledWithAccountData": "Il modulo è stato pre-compilato con i dati del tuo account",
     "submittingServiceRequest": "Invio della tua richiesta...",
@@ -532,7 +532,6 @@
       "manage": "Gestisci"
     },
     "usage": {
-      "title": "Utilizzo",
       "services": "Servizi",
       "service_requests": "Richieste Servizi",
       "appointments": "Appuntamenti",

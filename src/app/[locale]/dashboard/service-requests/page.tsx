@@ -128,7 +128,7 @@ export default function ServiceRequestsPage() {
       case 'rescheduled':
         return 'bg-purple-100 text-purple-800'
       default:
-        return 'bg-gray-100 text-gray-800'
+        return 'bg-zinc-100 text-gray-800'
     }
   }
 
@@ -205,7 +205,7 @@ export default function ServiceRequestsPage() {
                 <div key={request.request_id}>
                   <div className={`rounded-xl shadow-sm border overflow-hidden grid grid-cols-1 lg:grid-cols-[12%_45%_28%_15%] ${
                     theme === 'dark' 
-                      ? 'bg-gray-800 border-gray-600' 
+                      ? 'bg-zinc-800 border-gray-600' 
                       : 'bg-white border-gray-200'
                   }`}>
                     {/* Status, Creation Date, and Request Reference - First Column */}
@@ -243,8 +243,8 @@ export default function ServiceRequestsPage() {
                         <div className="flex items-center gap-2">
                           <span className={`px-2 py-0.5 border-2 rounded-md text-sm ${
                             theme === 'dark' 
-                              ? 'border-gray-400 bg-gray-700 text-gray-300' 
-                              : 'border-gray-500 bg-gray-100 text-gray-700'
+                              ? 'border-gray-400 bg-zinc-700 text-gray-300' 
+                              : 'border-gray-500 bg-zinc-100 text-gray-700'
                           }`}>{request.request_reference}</span>
                         </div>
                       </div>
@@ -305,7 +305,7 @@ export default function ServiceRequestsPage() {
                                   </a>
                                   <button
                                     onClick={() => navigator.clipboard.writeText(request.usercustomer?.email || request.customer_email || '')}
-                                    className="p-0.5 hover:bg-gray-200 rounded transition-colors"
+                                    className="p-0.5 hover:bg-zinc-200 rounded transition-colors"
                                     title="Copy email"
                                   >
                                     <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -329,7 +329,7 @@ export default function ServiceRequestsPage() {
                                 <div className="flex items-center gap-1 ml-2">
                                   <button
                                     onClick={() => navigator.clipboard.writeText(request.usercustomer?.phone || request.customer_phone || '')}
-                                    className="p-0.5 hover:bg-gray-200 rounded transition-colors"
+                                    className="p-0.5 hover:bg-zinc-200 rounded transition-colors"
                                     title="Copy phone number"
                                   >
                                     <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -428,7 +428,7 @@ export default function ServiceRequestsPage() {
                            && !(request.question_responses_snapshot && request.question_responses_snapshot.length > 0)
                            && !(request.requirement_responses_snapshot && request.requirement_responses_snapshot.length > 0)
                            && (
-                           <div className="border border-dashed border-gray-200 rounded-lg p-3 text-xs text-gray-400 text-center bg-gray-50 min-w-0 w-full break-all">
+                           <div className="border border-dashed border-gray-200 rounded-lg p-3 text-xs text-gray-400 text-center bg-zinc-50 min-w-0 w-full break-all">
                              No details available
                            </div>
                          )}
@@ -442,7 +442,7 @@ export default function ServiceRequestsPage() {
                           href={`/${businessUrlName}/s/${request.request_reference}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2 font-medium"
+                          className="px-4 py-3 bg-zinc-600 hover:bg-zinc-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2 font-medium"
                         >
                           {t("openBoard")}
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -33,7 +33,8 @@ import {
   Cog6ToothIcon,
   SunIcon,
   MoonIcon,
-  BellIcon
+  BellIcon,
+  ShareIcon
 } from "@heroicons/react/24/outline"
 
 interface DashboardLayoutProps {
@@ -48,6 +49,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [showBusinessModal, setShowBusinessModal] = useState(false)
   const [copied, setCopied] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
+  const [showShareModal, setShowShareModal] = useState(false)
   const { currentBusiness, businesses, switchBusiness, loading, userPlan, userManager } = useBusiness()
   const { isModalOpen, setIsModalOpen, currentLocale, availableLocales, switchLocale } = useLocaleSwitcher()
   const { theme, toggleTheme } = useTheme()
@@ -77,7 +79,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   // If there are businesses but none selected, show the select business UI
   if (!currentBusiness && businesses && businesses.length > 0) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">{t("selectBusiness")}</h2>
           <Link
@@ -94,7 +96,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   // If no current business selected (and no businesses exist), show create business UI
   if (!currentBusiness) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">{t("noBusiness")}</h2>
           <Link
@@ -142,7 +144,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   // Domain constant for public link
   const DOMAIN = typeof window !== "undefined" && window.location.hostname.includes("localhost")
     ? "http://localhost:3000"
-    : "your-production-domain.com" // <-- Replace with your actual domain
+    : "quevo.vercel.app"
 
   // Public link format: DOMAIN/business_urlname
   const publicUrl = `${DOMAIN}/${currentBusiness?.business_urlname || ""}`
@@ -186,8 +188,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   return (
     <div className={`min-h-screen lg:px-6 lg:py-4 ${
       theme === 'dark' 
-        ? 'bg-gradient-to-t from-gray-950 to-gray-900' 
-        : 'bg-gradient-to-t from-gray-300 to-gray-100'
+        ? 'bg-gradient-to-t from-zinc-950 to-zinc-900' 
+        : 'bg-gradient-to-t from-zinc-300 to-zinc-100'
     }`}>
       {/* Desktop Sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-80 lg:flex-col rounded-xl">
@@ -196,11 +198,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           {/* Business Info Card */}
           <div className={`rounded-lg p-2 cursor-pointer transition-colors mb-2 ${
             theme === 'dark' 
-              ? 'hover:bg-gray-700' 
-              : 'hover:bg-gray-100'
+              ? 'hover:bg-zinc-700' 
+              : 'hover:bg-zinc-100'
           }`} onClick={() => setShowBusinessModal(true)}>
             <div className="flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-full bg-gray-600 flex items-center justify-center overflow-hidden">
+              <div className="h-10 w-10 rounded-full bg-zinc-600 flex items-center justify-center overflow-hidden">
                 {(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? (
                   <img
                     src={currentBusiness?.business_img_profile || `/uploads/business/${currentBusiness.business_public_uuid}/profile.webp`}
@@ -236,11 +238,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     className={`flex items-center gap-x-3 rounded-md p-2 text-sm md:text-base leading-6 transition-all ${
                       pathname === item.href
                         ? theme === 'dark' 
-                          ? "bg-gray-700 text-gray-100 shadow-sm" 
+                          ? "bg-zinc-700 text-gray-100 shadow-sm" 
                           : "bg-white text-gray-900 shadow-sm"
                         : theme === 'dark'
-                          ? "text-gray-300 hover:bg-gray-700"
-                          : "text-gray-700 hover:bg-gray-200"
+                          ? "text-gray-300 hover:bg-zinc-700"
+                          : "text-gray-700 hover:bg-zinc-200"
                     }`}
                   >
                         <IconComponent className="h-5 w-5" />
@@ -267,11 +269,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     className={`flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 transition-all ${
                       pathname === item.href
                         ? theme === 'dark' 
-                          ? "bg-gray-700 text-gray-100 shadow-sm" 
+                          ? "bg-zinc-700 text-gray-100 shadow-sm" 
                           : "bg-white text-gray-900 shadow-sm"
                         : theme === 'dark'
-                          ? "text-gray-400 hover:bg-gray-700"
-                          : "text-gray-600 hover:bg-gray-200"
+                          ? "text-gray-400 hover:bg-zinc-700"
+                          : "text-gray-600 hover:bg-zinc-200"
                     }`}
                   >
                         <IconComponent className="h-5 w-5" />
@@ -298,11 +300,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     className={`flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 transition-all ${
                       pathname === item.href
                         ? theme === 'dark' 
-                          ? "bg-gray-700 text-gray-100 shadow-sm" 
+                          ? "bg-zinc-700 text-gray-100 shadow-sm" 
                           : "bg-white text-gray-900 shadow-sm"
                         : theme === 'dark'
-                          ? "text-gray-400 hover:bg-gray-700"
-                          : "text-gray-600 hover:bg-gray-200"
+                          ? "text-gray-400 hover:bg-zinc-700"
+                          : "text-gray-600 hover:bg-zinc-200"
                     }`}
                   >
                         <IconComponent className="h-5 w-5" />
@@ -324,7 +326,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                     theme === 'dark' 
                       ? 'bg-blue-600' 
-                      : 'bg-gray-200'
+                      : 'bg-zinc-200'
                   }`}
                   title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
                 >
@@ -365,7 +367,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         }}
       >
         <div className={`flex h-full flex-col px-6 py-6 rounded-t-3xl ${
-          theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
+          theme === 'dark' ? 'bg-zinc-800' : 'bg-zinc-200'
         }`}>
           {/* Close Button */}
           <div className="flex justify-end mb-4 relative">
@@ -373,8 +375,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               onClick={() => setIsMobileMenuOpen(false)}
               className={`absolute top-0 right-0 p-2 rounded-lg transition-colors ${
                 theme === 'dark' 
-                  ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700' 
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  ? 'text-gray-400 hover:text-gray-200 hover:bg-zinc-700' 
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-zinc-100'
               }`}
             >
               <XMarkIcon className="h-6 w-6" />
@@ -386,14 +388,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           {/* Business Info Card */}
           <div className={`rounded-lg p-4 cursor-pointer transition-colors mb-4 ${
             theme === 'dark' 
-              ? 'bg-gray-700 hover:bg-gray-600' 
-              : 'bg-gray-50 hover:bg-gray-100'
+              ? 'bg-zinc-700 hover:bg-zinc-600' 
+              : 'bg-zinc-50 hover:bg-zinc-100'
           }`} onClick={() => {
             setShowBusinessModal(true)
             setIsMobileMenuOpen(false)
           }}>
             <div className="flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-full bg-gray-600 flex items-center justify-center overflow-hidden">
+              <div className="h-10 w-10 rounded-full bg-zinc-600 flex items-center justify-center overflow-hidden">
                 {(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? (
                   <img
                     src={currentBusiness?.business_img_profile || `/uploads/business/${currentBusiness.business_public_uuid}/profile.webp`}
@@ -430,11 +432,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     className={`flex items-center gap-x-3 rounded-md p-2 text-sm md:text-base leading-6 transition-all ${
                       pathname === item.href
                         ? theme === 'dark' 
-                          ? "bg-gray-700 text-gray-100 shadow-sm" 
+                          ? "bg-zinc-700 text-gray-100 shadow-sm" 
                           : "bg-white text-gray-900 shadow-sm"
                         : theme === 'dark'
-                          ? "text-gray-300 hover:bg-gray-700"
-                          : "text-gray-700 hover:bg-gray-200"
+                          ? "text-gray-300 hover:bg-zinc-700"
+                          : "text-gray-700 hover:bg-zinc-200"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -462,11 +464,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     className={`flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 transition-all ${
                       pathname === item.href
                         ? theme === 'dark' 
-                          ? "bg-gray-700 text-gray-100 shadow-sm" 
+                          ? "bg-zinc-700 text-gray-100 shadow-sm" 
                           : "bg-white text-gray-900 shadow-sm"
                         : theme === 'dark'
-                          ? "text-gray-400 hover:bg-gray-700"
-                          : "text-gray-600 hover:bg-gray-200"
+                          ? "text-gray-400 hover:bg-zinc-700"
+                          : "text-gray-600 hover:bg-zinc-200"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -494,11 +496,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     className={`flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 transition-all ${
                       pathname === item.href
                         ? theme === 'dark' 
-                          ? "bg-gray-700 text-gray-100 shadow-sm" 
+                          ? "bg-zinc-700 text-gray-100 shadow-sm" 
                           : "bg-white text-gray-900 shadow-sm"
                         : theme === 'dark'
-                          ? "text-gray-400 hover:bg-gray-700"
-                          : "text-gray-600 hover:bg-gray-200"
+                          ? "text-gray-400 hover:bg-zinc-700"
+                          : "text-gray-600 hover:bg-zinc-200"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -524,7 +526,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                     theme === 'dark' 
                       ? 'bg-blue-600' 
-                      : 'bg-gray-200'
+                      : 'bg-zinc-200'
                   }`}
                   title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
                 >
@@ -561,8 +563,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       {/* Bottom Navigation Bar (Mobile) */}
       <div className={`lg:hidden fixed bottom-0 left-0 right-0 z-30 rounded-t-3xl shadow-lg border-t ${
         theme === 'dark'
-          ? 'bg-gradient-to-t from-gray-800 to-gray-700 border-gray-600'
-          : 'bg-gradient-to-t from-gray-100 to-gray-200 border-gray-300'
+          ? 'bg-gradient-to-t from-zinc-800 to-zinc-700 border-gray-600'
+          : 'bg-gradient-to-t from-zinc-100 to-zinc-200 border-gray-300'
       }`}>
         <div className="flex items-center justify-around px-4 py-2">
           {/* Essential Navigation Items */}
@@ -574,8 +576,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   ? "text-blue-400 bg-blue-900/30"
                   : "text-blue-600 bg-blue-50"
                 : theme === 'dark'
-                  ? "text-gray-400 hover:text-gray-200 hover:bg-gray-700"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                  ? "text-gray-400 hover:text-gray-200 hover:bg-zinc-700"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-zinc-50"
             }`}
           >
             <HomeIcon className="h-5 w-5" />
@@ -590,8 +592,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   ? "text-blue-400 bg-blue-900/30"
                   : "text-blue-600 bg-blue-50"
                 : theme === 'dark'
-                  ? "text-gray-400 hover:text-gray-200 hover:bg-gray-700"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                  ? "text-gray-400 hover:text-gray-200 hover:bg-zinc-700"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-zinc-50"
             }`}
           >
             <CalendarIcon className="h-5 w-5" />
@@ -606,8 +608,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   ? "text-blue-400 bg-blue-900/30"
                   : "text-blue-600 bg-blue-50"
                 : theme === 'dark'
-                  ? "text-gray-400 hover:text-gray-200 hover:bg-gray-700"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                  ? "text-gray-400 hover:text-gray-200 hover:bg-zinc-700"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-zinc-50"
             }`}
           >
             <WrenchScrewdriverIcon className="h-5 w-5" />
@@ -622,8 +624,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   ? "text-blue-400 bg-blue-900/30"
                   : "text-blue-600 bg-blue-50"
                 : theme === 'dark'
-                  ? "text-gray-400 hover:text-gray-200 hover:bg-gray-700"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                  ? "text-gray-400 hover:text-gray-200 hover:bg-zinc-700"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-zinc-50"
             }`}
           >
             <ClipboardDocumentIcon className="h-5 w-5" />
@@ -638,8 +640,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   ? "text-blue-400 bg-blue-900/30"
                   : "text-blue-600 bg-blue-50"
                 : theme === 'dark'
-                  ? "text-gray-400 hover:text-gray-200 hover:bg-gray-700"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                  ? "text-gray-400 hover:text-gray-200 hover:bg-zinc-700"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-zinc-50"
             }`}
           >
             <UserIcon className="h-5 w-5" />
@@ -651,8 +653,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             onClick={() => setIsMobileMenuOpen(true)}
             className={`flex flex-col items-center p-1.5 rounded-lg transition-colors ${
               theme === 'dark'
-                ? "text-gray-400 hover:text-gray-200 hover:bg-gray-700"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                ? "text-gray-400 hover:text-gray-200 hover:bg-zinc-700"
+                : "text-gray-500 hover:text-gray-700 hover:bg-zinc-50"
             }`}
           >
             <Bars3Icon className="h-5 w-5" />
@@ -664,7 +666,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       {/* Main Content */}
       <div className="lg:pl-80">
         <div className={`px-6 py-4 lg:py-2 rounded-2xl lg:sticky top-0 z-10 mb-2 ${
-          theme === 'dark' ? 'lg:bg-gray-800' : 'lg:bg-gray-50'
+          theme === 'dark' ? 'lg:bg-zinc-800' : 'lg:bg-zinc-50'
         }`}>
             {/* Top Navbar Dashboard*/}
             <div className="flex flex-row justify-between gap-4">
@@ -672,20 +674,24 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               <div className="flex items-center">
                 {currentBusiness && (
                   <div className="flex items-center gap-2">
-                    <div className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm border transition-all duration-300 max-w-[150px] relative overflow-hidden ${
+                    {/* Collapsed pill for xs to md, full pill for lg+ */}
+                    <div className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm border transition-all duration-300 relative overflow-hidden ${
                       theme === 'dark' 
-                        ? 'bg-gray-700 text-gray-300 border-gray-600' 
-                        : 'bg-gray-100 text-gray-700 border-gray-200'
-                    } ${isAnimating ? 'animate-pill-shine' : ''}`}>
+                        ? 'bg-zinc-700 text-gray-300 border-gray-600' 
+                        : 'bg-zinc-100 text-gray-700 border-gray-200'
+                    } ${isAnimating ? 'animate-pill-shine' : ''} ${
+                      // Collapsed on xs to md, full on lg+
+                      'max-w-[40px] md:max-w-[40px] lg:max-w-[250px]'
+                    }`}>
                       <GlobeAltIcon className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                      <span className="text-xs truncate">{publicUrl}</span>
+                      <span className="text-xs truncate hidden lg:block">{publicUrl}</span>
                     </div>
                     <button
                       onClick={handleCopy}
                       className={`px-2 py-2 rounded-lg border transition-all duration-300 flex items-center justify-center ${
                         theme === 'dark' 
-                          ? 'bg-gray-700 text-gray-300 border-gray-600 hover:bg-gray-600 hover:text-gray-200' 
-                          : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:text-gray-800'
+                          ? 'bg-zinc-700 text-gray-300 border-gray-600 hover:bg-zinc-600 hover:text-gray-200' 
+                          : 'bg-white text-gray-600 border-gray-200 hover:bg-zinc-50 hover:text-gray-800'
                       } ${copied ? 'text-green-600 border-green-200 bg-green-50' : ''}`}
                       title={copied ? t("publicLink.copied") : t("publicLink.copy")}
                     >
@@ -701,17 +707,28 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     </button>
                     <button
                       onClick={handleOpen}
-                      className={`px-3 py-2 rounded-lg border transition-colors flex items-center gap-1 ${
+                      className={`px-2 py-2 rounded-lg border transition-colors flex items-center gap-1 ${
                         theme === 'dark' 
-                          ? 'bg-gray-700 text-gray-300 border-gray-600 hover:bg-gray-600 hover:text-gray-200' 
-                          : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:text-gray-800'
+                          ? 'bg-zinc-700 text-gray-300 border-gray-600 hover:bg-zinc-600 hover:text-gray-200' 
+                          : 'bg-white text-gray-600 border-gray-200 hover:bg-zinc-50 hover:text-gray-800'
                       }`}
                       title={t("publicLink.open")}
                     >
                       <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                       </svg>
-                      <span className="text-xs">Open</span>
+                      <span className="text-xs hidden sm:block">Open</span>
+                    </button>
+                    <button
+                      onClick={() => setShowShareModal(true)}
+                      className={`px-2 py-2 rounded-lg border transition-colors flex items-center justify-center ${
+                        theme === 'dark' 
+                          ? 'bg-zinc-700 text-gray-300 border-gray-600 hover:bg-zinc-600 hover:text-gray-200' 
+                          : 'bg-white text-gray-600 border-gray-200 hover:bg-zinc-50 hover:text-gray-800'
+                      }`}
+                      title="Share Link"
+                    >
+                      <ShareIcon className="w-3 h-3" />
                     </button>
                   </div>
                 )}
@@ -745,8 +762,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                         href="/dashboard/plan" 
                         className={`px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
                           theme === 'dark'
-                            ? 'bg-gray-700 text-gray-100 hover:bg-gray-600'
-                            : 'bg-gray-300 text-gray-700 hover:bg-gray-500'
+                            ? 'bg-zinc-700 text-gray-100 hover:bg-zinc-600'
+                            : 'bg-zinc-300 text-gray-700 hover:bg-zinc-500'
                         }`}
                       >
                         Manage your plan
@@ -754,7 +771,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                       {userPlan.plan_name === 'FREE' && (
                         <Link 
                           href="/dashboard/plan" 
-                          className="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-gradient-to-r from-black to-yellow-600 text-white hover:from-gray-900 hover:to-yellow-700 shadow-lg"
+                          className="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-gradient-to-r from-black to-yellow-600 text-white hover:from-zinc-900 hover:to-yellow-700 shadow-lg"
                         >
                           Upgrade Plan
                         </Link>
@@ -768,8 +785,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   href="/dashboard/notifications" 
                   className={`p-2 rounded-lg transition-colors ${
                     theme === 'dark' 
-                      ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700' 
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                      ? 'text-gray-400 hover:text-gray-200 hover:bg-zinc-700' 
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-zinc-100'
                   }`}
                   title="Notifications"
                 >
@@ -786,8 +803,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                       onClick={handleLogout}
                       className={`ml-auto flex items-center gap-x-1 rounded-md border px-2 py-1 text-xs transition-all ${
                         theme === 'dark' 
-                          ? 'border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600' 
-                          : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                          ? 'border-gray-600 bg-zinc-700 text-gray-300 hover:bg-zinc-600' 
+                          : 'border-gray-300 bg-white text-gray-700 hover:bg-zinc-50'
                       }`}
                     >
                       <ArrowRightOnRectangleIcon className="h-3 w-3" />
@@ -803,10 +820,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               </div>
             </div>
         </div>
-        <div className={`border-[1px] px-4 py-8 sm:px-6 md:px-10 lg:px-12 pb-20 lg:pb-6 rounded-2xl min-h-screen ${
+        <div className={`border-t-[1px] lg:border-[1px] px-4 py-8 sm:px-6 md:px-10 lg:px-12 pb-20 lg:pb-6 rounded-2xl min-h-screen ${
           theme === 'dark' 
-            ? 'bg-[#19202f] border-gray-600 text-white' 
-            : 'bg-gray-50 border-gray-200 text-gray-900'
+            ? 'bg-[#1d1d21] border-gray-600 text-white' 
+            : 'bg-zinc-50 border-gray-200 text-gray-900'
         }`}>
           {children}
         </div>
@@ -826,6 +843,78 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         availableLocales={availableLocales}
         onLocaleSelect={switchLocale}
       />
+
+      {/* Share Link Modal */}
+      {showShareModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className={`max-w-md w-full rounded-lg shadow-xl ${
+            theme === 'dark' ? 'bg-zinc-800 text-white' : 'bg-white text-gray-900'
+          }`}>
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold">Share Your Business Link</h3>
+              <button
+                onClick={() => setShowShareModal(false)}
+                className={`p-1 rounded-lg transition-colors ${
+                  theme === 'dark' 
+                    ? 'text-gray-400 hover:text-gray-200 hover:bg-zinc-700' 
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-zinc-100'
+                }`}
+              >
+                <XMarkIcon className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="p-6">
+              <div className={`px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-3 shadow-sm border mb-4 ${
+                theme === 'dark' 
+                  ? 'bg-zinc-700 text-gray-300 border-gray-600' 
+                  : 'bg-zinc-100 text-gray-700 border-gray-200'
+              }`}>
+                <GlobeAltIcon className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                <span className="text-sm break-all">{publicUrl}</span>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleCopy}
+                  className={`flex-1 px-4 py-2 rounded-lg border transition-all duration-300 flex items-center justify-center gap-2 ${
+                    theme === 'dark' 
+                      ? 'bg-zinc-700 text-gray-300 border-gray-600 hover:bg-zinc-600 hover:text-gray-200' 
+                      : 'bg-white text-gray-600 border-gray-200 hover:bg-zinc-50 hover:text-gray-800'
+                  } ${copied ? 'text-green-600 border-green-200 bg-green-50' : ''}`}
+                >
+                  {copied ? (
+                    <>
+                      <svg className="w-4 h-4 animate-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span>Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      <span>Copy Link</span>
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={handleOpen}
+                  className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 ${
+                    theme === 'dark' 
+                      ? 'bg-zinc-700 text-gray-300 border-gray-600 hover:bg-zinc-600 hover:text-gray-200' 
+                      : 'bg-white text-gray-600 border-gray-200 hover:bg-zinc-50 hover:text-gray-800'
+                  }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  <span>Open</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

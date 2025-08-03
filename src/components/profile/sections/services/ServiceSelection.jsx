@@ -46,16 +46,18 @@ export default function ServiceSelection({
                                     onClick={() => onServiceSelect(service)}
                                 >
                                     <div>
-                                        <p className="font-bold text-lg md:text-xl">{service.service_name}</p>
+                                        <p className="font-bold text-base md:text-xl leading-tight">{service.service_name}</p>
                                         {service.description && (
                                             <p className="mt-1 text-xs md:text-sm opacity-70">{service.description}</p>
                                         )}
                                         {service.date_selection && (
                                             <>
-                                            <p className="text-xs opacity-70 mt-1">
-                                                {t('duration')}: {service.duration_minutes} {t('minutes', { count: service.duration_minutes })}
-                                            </p>
-                                            <p className="text-sm opacity-80">{t('bookable')}</p>
+                                            <div className="flex flex-row items-center gap-2 mt-1">
+                                                <p className="text-xs opacity-70">
+                                                    {t('duration')}: {service.duration_minutes} {t('minutes', { count: service.duration_minutes })}
+                                                </p>
+                                                <p className="text-xs opacity-80 leading-none ">{t('bookable')}</p>
+                                            </div>
                                             </>
                                         )}
                                     </div>

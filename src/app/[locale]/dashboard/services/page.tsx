@@ -263,7 +263,7 @@ export default function ServicesPage() {
                 className={`px-4 py-2 md:px-4 md:py-2 text-sm md:text-lg rounded-lg transition-colors inline-flex items-center gap-2 ${
                   canCreateService()
                     ? "bg-blue-600 hover:bg-blue-700 text-white"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-zinc-300 text-gray-500 cursor-not-allowed"
                 }`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -293,7 +293,7 @@ export default function ServicesPage() {
                   key={service.service_id}
                   className={`rounded-xl shadow-sm border overflow-hidden ${
                     theme === 'dark' 
-                      ? 'bg-gray-800 border-gray-600' 
+                      ? 'bg-zinc-800 border-gray-600' 
                       : 'bg-white border-gray-200'
                   }`}
                 >
@@ -422,8 +422,8 @@ export default function ServicesPage() {
                           onClick={() => handleEdit(service.service_id)}
                           className={`px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm font-medium border ${
                             theme === 'dark' 
-                              ? 'border-gray-400 text-gray-300 hover:bg-gray-700' 
-                              : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                              ? 'border-gray-400 text-gray-300 hover:bg-zinc-700' 
+                              : 'border-gray-300 text-gray-700 hover:bg-zinc-50'
                           }`}
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -435,8 +435,8 @@ export default function ServicesPage() {
                           onClick={() => handleDeleteClick(service)}
                           className={`px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm font-medium border ${
                             theme === 'dark' 
-                              ? 'border-gray-400 text-red-400 hover:bg-gray-700' 
-                              : 'border-gray-300 text-red-600 hover:bg-gray-50'
+                              ? 'border-gray-400 text-red-400 hover:bg-zinc-700' 
+                              : 'border-gray-300 text-red-600 hover:bg-zinc-50'
                           }`}
                         >
                           <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -469,7 +469,7 @@ export default function ServicesPage() {
 
       {/* Delete Confirmation Modal */}
       {deleteModalOpen && serviceToDelete && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-zinc-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
           <div className="relative p-8 border w-96 shadow-lg rounded-md bg-white">
             <div className="text-center">
               <h3 className="text-lg font-bold text-gray-900 mb-4">
@@ -488,7 +488,7 @@ export default function ServicesPage() {
                 </button>
                 <button
                   onClick={handleDeleteCancel}
-                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+                  className="px-4 py-2 bg-zinc-300 text-gray-700 rounded-lg hover:bg-zinc-400 transition-colors"
                 >
                   {t("cancel")}
                 </button>

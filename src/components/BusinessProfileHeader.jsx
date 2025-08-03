@@ -13,6 +13,7 @@ import { parseContacts, hasValidContacts } from '@/lib/utils/contacts';
 
 const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggleMenuOverlay }) => {
     const [scrollOpacity, setScrollOpacity] = useState(1);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     
     const {
         businessData,
@@ -61,6 +62,27 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    // Close mobile menu when clicking outside or pressing escape
+    useEffect(() => {
+        const handleEscape = (e) => {
+            if (e.key === 'Escape') {
+                setIsMobileMenuOpen(false);
+            }
+        };
+
+        if (isMobileMenuOpen) {
+            document.addEventListener('keydown', handleEscape);
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleEscape);
+            document.body.style.overflow = 'unset';
+        };
+    }, [isMobileMenuOpen]);
 
     if (!businessData) {
         return <div className="text-center py-4" style={{ color: themeColorText || 'gray' }}>{t('loadingHeader')}</div>;
@@ -259,7 +281,207 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                 ) : (
                     <div className="cover-photo-placeholder w-full h-full" style={{ backgroundColor: themeVariables['--lighter-theme-color-background'] }}></div>
                 )}
+                
+                {/* Mobile Menu Button */}
+                <button
+                    onClick={() => setIsMobileMenuOpen(true)}
+                    className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:bg-white/95 z-20"
+                    style={{ color: themeColorText }}
+                >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <circle cx="6" cy="12" r="2" />
+                        <circle cx="12" cy="12" r="2" />
+                        <circle cx="18" cy="12" r="2" />
+                    </svg>
+                </button>
             </div>
+
+            {/* Mobile Menu Overlay */}
+            {isMobileMenuOpen && (
+                <div className="lg:hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end">
+                    <div className="bg-white rounded-t-3xl w-full max-h-[85vh] overflow-y-auto">
+                        <div className="p-6">
+                            {/* Close Button */}
+                            <div className="flex justify-end mb-4">
+                                <button
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center transition-colors hover:bg-gray-200"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            {/* Profile Picture and Business Name */}
+                            <div className="flex items-center space-x-4 mb-6">
+                                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                                    {businessData.business_img_profile ? (
+                                        <Image
+                                            src={businessData.business_img_profile}
+                                            alt={logoAltText}
+                                            width={64}
+                                            height={64}
+                                            className="object-cover w-full h-full"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full" style={{ backgroundColor: themeVariables['--lighter-theme-color-background'] }}></div>
+                                    )}
+                                </div>
+                                <div>
+                                    <h2 className="text-xl font-semibold" style={{ color: themeColorText }}>
+                                        {businessData.business_name}
+                                    </h2>
+                                </div>
+                            </div>
+
+                            {/* Navigation Links - Vertical Stack */}
+                            <div className="space-y-3 mb-6">
+                                <Link
+                                    href={`/${businessUrlnameInPath}/services`}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className={`block py-4 px-4 rounded-lg transition-colors duration-200 text-lg ${activeSection === 'services' ? 'font-semibold' : 'font-normal'}`}
+                                    style={activeSection === 'services' ? { backgroundColor: themeColorButton + '20', color: themeColorText } : { color: themeColorText }}
+                                >
+                                    {t('services')}
+                                </Link>
+                                <Link
+                                    href={`/${businessUrlnameInPath}/products`}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className={`block py-4 px-4 rounded-lg transition-colors duration-200 text-lg ${activeSection === 'products' ? 'font-semibold' : 'font-normal'}`}
+                                    style={activeSection === 'products' ? { backgroundColor: themeColorButton + '20', color: themeColorText } : { color: themeColorText }}
+                                >
+                                    {t('products')}
+                                </Link>
+                                <Link
+                                    href={`/${businessUrlnameInPath}/promotions`}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className={`block py-4 px-4 rounded-lg transition-colors duration-200 text-lg ${activeSection === 'promotions' ? 'font-semibold' : 'font-normal'}`}
+                                    style={activeSection === 'promotions' ? { backgroundColor: themeColorButton + '20', color: themeColorText } : { color: themeColorText }}
+                                >
+                                    {t('promotions')}
+                                </Link>
+                                <Link
+                                    href={`/${businessUrlnameInPath}/rewards`}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className={`block py-4 px-4 rounded-lg transition-colors duration-200 text-lg ${activeSection === 'rewards' ? 'font-semibold' : 'font-normal'}`}
+                                    style={activeSection === 'rewards' ? { backgroundColor: themeColorButton + '20', color: themeColorText } : { color: themeColorText }}
+                                >
+                                    {t('rewards')}
+                                </Link>
+                            </div>
+
+                            {/* Google Review Button */}
+                            {businessSettings.show_btn_review && googleReviewLinkUrl && (
+                                <div className="mb-6">
+                                    <Link 
+                                        href={googleReviewLinkUrl} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        className="flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-medium transition-colors duration-200 w-full"
+                                        style={secondaryButtonStyle}
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        Recensione
+                                        <Image
+                                            src="/icons/google.png"
+                                            alt="Google"
+                                            width={16}
+                                            height={16}
+                                        />
+                                    </Link>
+                                </div>
+                            )}
+
+                            {/* Action Buttons */}
+                            <div className="space-y-3">
+                                {businessSettings.show_btn_payments && businessPaymentMethods && businessPaymentMethods.length > 0 && (
+                                    <button 
+                                        onClick={() => {
+                                            togglePaymentsModal();
+                                            setIsMobileMenuOpen(false);
+                                        }} 
+                                        className="w-full py-3 px-4 rounded-lg text-sm font-medium transition-colors duration-200"
+                                        style={primaryButtonStyle}
+                                    >
+                                        Pagamenti
+                                    </button>
+                                )}
+
+                                {/* Phone and Email buttons in same row */}
+                                {(businessSettings.show_btn_phone && hasPhones) || (businessSettings.show_btn_email && hasEmails) ? (
+                                    <div className="flex gap-3">
+                                        {businessSettings.show_btn_phone && hasPhones && (
+                                            <button 
+                                                onClick={() => {
+                                                    toggleContactModal('phone');
+                                                    setIsMobileMenuOpen(false);
+                                                }} 
+                                                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-medium transition-colors duration-200"
+                                                style={primaryButtonStyle}
+                                            >
+                                                <Image
+                                                    src="/icons/iconsax/phone.svg"
+                                                    alt={t('call')}
+                                                    width={18}
+                                                    height={18}
+                                                    style={getButtonIconStyle()}
+                                                />
+                                                <span className="text-base font-medium">{t('call')}</span>
+                                            </button>
+                                        )}
+
+                                        {businessSettings.show_btn_email && hasEmails && (
+                                            <button 
+                                                onClick={() => {
+                                                    toggleContactModal('email');
+                                                    setIsMobileMenuOpen(false);
+                                                }} 
+                                                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-medium transition-colors duration-200"
+                                                style={primaryButtonStyle}
+                                            >
+                                                <Image
+                                                    src="/icons/iconsax/email.svg"
+                                                    alt={t('email')}
+                                                    width={18}
+                                                    height={18}
+                                                    style={getButtonIconStyle()}
+                                                />
+                                                <span className="text-base font-medium">{t('email')}</span>
+                                            </button>
+                                        )}
+                                    </div>
+                                ) : null}
+
+                                {/* Page URL with Copy Button */}
+                                <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-xs text-gray-500 mb-1">Link della pagina</p>
+                                            <p className="text-sm font-medium truncate" style={{ color: themeColorText }}>
+                                                {typeof window !== 'undefined' ? window.location.href : ''}
+                                            </p>
+                                        </div>
+                                        <button
+                                            onClick={() => {
+                                                if (typeof window !== 'undefined') {
+                                                    navigator.clipboard.writeText(window.location.href);
+                                                    // You could add a toast notification here
+                                                }
+                                            }}
+                                            className="ml-3 p-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 transition-colors flex-shrink-0"
+                                        >
+                                            <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
                          {/* Mobile/Tablet Profile Image - Hidden on desktop */}
              <div className="lg:hidden container-profile-pic pic-lg relative z-10 ml-4 -translate-y-1/2 rounded-full overflow-hidden bg-gray-100"
@@ -297,7 +519,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                 )}
 
                                 {businessSettings.show_website && websiteLinkUrl && (
-                                    <Link href={websiteLinkUrl} target="_blank" rel="noopener noreferrer" className="text-sm underline" style={{ color: themeColorText }}>
+                                    <Link href={websiteLinkUrl} target="_blank" rel="noopener noreferrer" className="text-sm underline opacity-50" style={{ color: themeColorText }}>
                                         {websiteLinkUrl.replace(/^https?:\/\/(www\.)?/, '')}
                                     </Link>
                                 )}
@@ -308,13 +530,13 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                              {businessSettings.show_socials && filteredSocialLinks.map((link, index) => (
                                  <div key={index} className="text-center">
                                      <Link href={link.link_url} target="_blank" rel="noopener noreferrer" className={circularButtonBaseClass}>
-                                         <div className="link-icon-wrapper w-10 h-10 flex items-center justify-center rounded-full">
+                                         <div className="link-icon-wrapper w-8 h-8 flex items-center justify-center rounded-full">
                                              {link.icon && (
                                                  <Image
                                                      src={link.icon}
                                                      alt={link.label}
-                                                     width={24}
-                                                     height={24}
+                                                     width={22}
+                                                     height={22}
                                                  />
                                              )}
                                          </div>
@@ -323,17 +545,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                              ))}
                          </div>
 
-                         {businessSettings.show_btn_review && googleReviewLinkUrl && (
-                             <Link href={googleReviewLinkUrl} target="_blank" rel="noopener noreferrer" className="text-sm underline flex items-center gap-1 mt-2 transition-colors duration-200 hover:opacity-80" style={{ color: themeColorText }}>
-                                 Recensione
-                                 <Image
-                                     src="/icons/google.png"
-                                     alt="Google"
-                                     width={16}
-                                     height={16}
-                                 />
-                             </Link>
-                         )}
+
                      </div>
 
                      {/* Right Column: Action Buttons */}

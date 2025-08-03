@@ -339,7 +339,7 @@ export default function ServiceDetailsForm({
                     {/* Service Information Column */}
                     <div className="flex-1">
                         <div className="mb-2">
-                            <p className="font-bold text-xl md:text-2xl lg:text-3xl">
+                            <p className="font-bold text-xl md:text-2xl lg:text-3xl leading-tight">
                                 {selectedService?.service_name}
                                 {selectedService?.description && (
                                     <button
@@ -348,7 +348,7 @@ export default function ServiceDetailsForm({
                                         className="p-1 rounded-full hover:bg-gray-100 transition-colors ml-2"
                                         aria-label={showDescription ? 'Hide description' : 'Show description'}
                                     >
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                     </button>
@@ -404,7 +404,7 @@ export default function ServiceDetailsForm({
                                             style={isSelected ? { backgroundColor: themeColorBackgroundCard, color: themeColorText, borderColor: themeColorButton } : { backgroundColor: themeColorBackgroundCard, color: themeColorText, borderColor: themeColorBorder }}
                                         >
                                             <div className="text-base">
-                                                <p className="font-medium">{item.item_name}</p>
+                                                <p className="text-sm md:text-base font-medium">{item.item_name}</p>
                                                 {item.item_description && <p className="text-xs opacity-65">{item.item_description}</p>}
                                                 <p className="text-sm">{parseFloat(item.price_base).toFixed(2)}€
                                                    {item.price_type === 'per_unit' && ` / ${item.price_unit}`}
