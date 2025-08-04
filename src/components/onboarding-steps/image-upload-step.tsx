@@ -16,7 +16,7 @@ interface ImageUploadStepProps {
 }
 
 export default function ImageUploadStep({ formData, updateFormData, onValidationChange }: ImageUploadStepProps) {
-  const t = useTranslations()
+  const t = useTranslations("BusinessOnboarding")
   const [profilePreview, setProfilePreview] = useState<string | null>(null)
   const [coverPreview, setCoverPreview] = useState<string | null>(null)
   const [cropperOpen, setCropperOpen] = useState<null | "profile" | "cover">(null)
@@ -83,7 +83,7 @@ export default function ImageUploadStep({ formData, updateFormData, onValidation
     <div className="space-y-8">
       {/* Profile Image */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-4">Foto Profilo</label>
+        <label className="block text-sm font-medium text-gray-700 mb-4">{t("profilePhoto")}</label>
         <div className="flex items-center space-x-6">
           <div className="relative">
             <div className="w-24 h-24 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
@@ -102,15 +102,15 @@ export default function ImageUploadStep({ formData, updateFormData, onValidation
           <div>
             <input type="file" id="profile-image" accept="image/*" onChange={(e) => handleImageChange("profile", e.target.files?.[0] || null)} className="hidden" />
             <label htmlFor="profile-image" className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-              Carica Foto Profilo
+              {t("uploadProfilePhoto")}
             </label>
-            <p className="text-xs text-gray-500 mt-1">PNG, JPG fino a 5MB</p>
+            <p className="text-xs text-gray-500 mt-1">{t("imageFormatInfo")}</p>
           </div>
         </div>
       </div>
       {/* Cover Image */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-4">Immagine di Copertina</label>
+        <label className="block text-sm font-medium text-gray-700 mb-4">{t("coverImage")}</label>
         <div className="space-y-4">
           <div className="relative">
             <div className="w-full h-32 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden">
@@ -119,7 +119,7 @@ export default function ImageUploadStep({ formData, updateFormData, onValidation
               ) : (
                 <div className="text-center">
                   <PhotoIcon className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                  <p className="text-sm text-gray-500">Immagine di copertina</p>
+                  <p className="text-sm text-gray-500">{t("coverImagePlaceholder")}</p>
                 </div>
               )}
             </div>
@@ -132,9 +132,9 @@ export default function ImageUploadStep({ formData, updateFormData, onValidation
           <div>
             <input type="file" id="cover-image" accept="image/*" onChange={(e) => handleImageChange("cover", e.target.files?.[0] || null)} className="hidden" />
             <label htmlFor="cover-image" className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-              Carica Immagine di Copertina
+              {t("uploadCoverImage")}
             </label>
-            <p className="text-xs text-gray-500 mt-1">PNG, JPG fino a 5MB. Dimensioni consigliate: 1200x400px</p>
+            <p className="text-xs text-gray-500 mt-1">{t("coverImageFormatInfo")}</p>
           </div>
         </div>
       </div>
@@ -154,7 +154,7 @@ export default function ImageUploadStep({ formData, updateFormData, onValidation
                 triggerCrop={triggerCrop}
               />
               <div className="mt-4 flex justify-center gap-3">
-                <button className="px-4 py-2 bg-gray-200 rounded" onClick={() => { setCropperOpen(null); setCropImageSrc(null); }}>Annulla</button>
+                <button className="px-4 py-2 bg-gray-200 rounded" onClick={() => { setCropperOpen(null); setCropImageSrc(null); }}>{t("cancel")}</button>
                 <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={handleCropClick}>{t("Common.confirm")}</button>
               </div>
             </div>

@@ -54,6 +54,8 @@ interface BusinessContextType {
   usage: UsageData | null
   planLimits: any[] | null // changed from PlanLimits | null
   switchBusiness: (businessId: string) => void
+  addBusiness: (business: Business) => void
+  refreshBusinesses: () => Promise<void>
   refreshUsage: () => Promise<void>
   refreshUsageForFeature: (feature: keyof UsageData) => Promise<void>
   loading: boolean
@@ -255,6 +257,10 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
     }
   }, [currentBusiness, planLimits, fetchUsage])
 
+  const refreshBusinesses = async () => {
+    await fetchManagerDashboard()
+  }
+
   const refreshUsage = async () => {
     await fetchUsage()
   }
@@ -272,6 +278,12 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       console.error(`Error refreshing usage for ${feature}:`, err)
     }
+  }
+
+  const addBusiness = (business: Business) => {
+    setBusinesses(prev => [...prev, business])
+    setCurrentBusiness(business)
+    sessionStorage.setItem("currentBusinessId", business.business_id)
   }
 
   const switchBusiness = (businessId: string) => {
@@ -292,6 +304,8 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
         usage,
         planLimits,
         switchBusiness,
+        addBusiness,
+        refreshBusinesses,
         refreshUsage,
         refreshUsageForFeature,
         loading,

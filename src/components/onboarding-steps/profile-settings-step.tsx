@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
+import { useTranslations } from "next-intl"
 import type { BusinessFormData } from "../business-onboarding-form"
 
 interface ProfileSettingsStepProps {
@@ -10,10 +11,10 @@ interface ProfileSettingsStepProps {
 }
 
 const DEFAULT_PAGES = [
-  { value: "services", label: "Servizi" },
-  { value: "promotions", label: "Promozioni" },
-  { value: "bookings", label: "Prenotazioni" },
-  { value: "products", label: "Prodotti" },
+  { value: "services", label: "services" },
+  { value: "promotions", label: "promotions" },
+  { value: "bookings", label: "bookings" },
+  { value: "products", label: "products" },
 ]
 
 export default function ProfileSettingsStep({
@@ -21,6 +22,8 @@ export default function ProfileSettingsStep({
   updateFormData,
   onValidationChange,
 }: ProfileSettingsStepProps) {
+  const t = useTranslations("BusinessOnboarding")
+  
   useEffect(() => {
     // This step is always valid since all settings have defaults
     onValidationChange(true)
@@ -56,7 +59,7 @@ export default function ProfileSettingsStep({
     
       {/* Default Page */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">Pagina Predefinita</label>
+        <label className="block text-sm font-medium text-gray-700 mb-3">{t("defaultPage")}</label>
         <select
           value={formData.settings.default_page}
           onChange={(e) => updateSetting("default_page", e.target.value)}
@@ -64,7 +67,7 @@ export default function ProfileSettingsStep({
         >
           {DEFAULT_PAGES.map((page) => (
             <option key={page.value} value={page.value}>
-              {page.label}
+              {t(page.label)}
             </option>
           ))}
         </select>
@@ -72,16 +75,16 @@ export default function ProfileSettingsStep({
 
       {/* Visibility Settings */}
       <div className="space-y-4">
-        <h4 className="text-sm font-medium text-gray-700">Elementi Visibili</h4>
+        <h4 className="text-sm font-medium text-gray-700">{t("visibleElements")}</h4>
 
         <div className="space-y-3">
           {[
-            { key: "show_address", label: "Mostra Indirizzo" },
-            { key: "show_website", label: "Mostra Sito Web" },
-            { key: "show_socials", label: "Mostra Social Links" },
+            { key: "show_address", label: "showAddress" },
+            { key: "show_website", label: "showWebsite" },
+            { key: "show_socials", label: "showSocialLinks" },
           ].map((item) => (
             <div key={item.key} className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">{item.label}</span>
+              <span className="text-sm text-gray-700">{t(item.label)}</span>
               <ToggleSwitch
                 enabled={formData.settings[item.key as keyof BusinessFormData["settings"]] as boolean}
                 onChange={(enabled) => updateSetting(item.key as keyof BusinessFormData["settings"], enabled)}
@@ -93,19 +96,19 @@ export default function ProfileSettingsStep({
 
       {/* Button Settings */}
       <div className="space-y-4">
-        <h4 className="text-sm font-medium text-gray-700">Pulsanti di Azione</h4>
+        <h4 className="text-sm font-medium text-gray-700">{t("actionButtons")}</h4>
 
         <div className="space-y-3">
           {[
-            { key: "show_btn_booking", label: "Pulsante Prenotazioni" },
-            { key: "show_btn_payments", label: "Pulsante Pagamenti" },
-            { key: "show_btn_review", label: "Pulsante Recensioni" },
-            { key: "show_btn_phone", label: "Pulsante Telefono" },
-            { key: "show_btn_email", label: "Pulsante Email" },
-            { key: "show_btn_order", label: "Pulsante Ordini" },
+            { key: "show_btn_booking", label: "bookingButton" },
+            { key: "show_btn_payments", label: "paymentsButton" },
+            { key: "show_btn_review", label: "reviewButton" },
+            { key: "show_btn_phone", label: "phoneButton" },
+            { key: "show_btn_email", label: "emailButton" },
+            { key: "show_btn_order", label: "orderButton" },
           ].map((item) => (
             <div key={item.key} className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">{item.label}</span>
+              <span className="text-sm text-gray-700">{t(item.label)}</span>
               <ToggleSwitch
                 enabled={formData.settings[item.key as keyof BusinessFormData["settings"]] as boolean}
                 onChange={(enabled) => updateSetting(item.key as keyof BusinessFormData["settings"], enabled)}

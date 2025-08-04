@@ -12,12 +12,12 @@ const AnimatedLoadingBackground: React.FC<AnimatedLoadingBackgroundProps> = ({
   return (
     <div className={`w-full h-screen relative overflow-hidden ${className}`}>
       {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-100 via-blue-100 to-indigo-100">
+      <div className="absolute inset-0 bg-gray-800">
         {/* Moving Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/40 to-transparent animate-shimmer"></div>
         
         {/* Shine Effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent transform -skew-x-12 animate-shine"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-sky-300/60 to-transparent transform -skew-x-12 animate-shine"></div>
       </div>
       
       {/* Content */}

@@ -29,7 +29,7 @@ import {
 // Domain constant for public link
 const DOMAIN = typeof window !== "undefined" && window.location.hostname.includes("localhost")
   ? "http://localhost:3000"
-  : "your-production-domain.com" // <-- Replace with your actual domain
+  : "https://quevo.vercel.app"
 
 interface SocialLink {
   url: string;

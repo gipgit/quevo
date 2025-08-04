@@ -8,11 +8,15 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline"
 import { BusinessOnboardingForm } from "@/components/business-onboarding-form"
 import ProfilePreview from "@/components/dashboard/profile/ProfilePreview"
 import { LocaleSwitcherButton } from "@/components/ui/LocaleSwitcherButton"
+import { LocaleSelectModal } from "@/components/ui/LocaleSelectModal"
+import { useLocale } from "next-intl"
 
 export default function OnboardingPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const t = useTranslations("onboarding")
+  const locale = useLocale()
+  const [isLocaleModalOpen, setIsLocaleModalOpen] = useState(false)
   const [formData, setFormData] = useState<any>({
     business_name: "",
     business_urlname: "",
@@ -39,6 +43,25 @@ export default function OnboardingPage() {
       show_btn_order: false,
     },
   })
+
+  // Locale switching functions
+  const handleLocaleButtonClick = () => {
+    setIsLocaleModalOpen(true)
+  }
+
+  const handleLocaleSelect = (newLocale: string) => {
+    setIsLocaleModalOpen(false)
+    // Navigate to the new locale
+    const currentPath = window.location.pathname
+    const newPath = currentPath.replace(`/${locale}`, `/${newLocale}`)
+    router.push(newPath)
+  }
+
+  const availableLocales = [
+    { code: 'it', label: 'Italiano' },
+    { code: 'en', label: 'English' },
+    { code: 'es', label: 'Español' }
+  ]
 
   // Create object URLs for image previews
   const [profileImgUrl, setProfileImgUrl] = useState<string | undefined>()
@@ -117,7 +140,7 @@ export default function OnboardingPage() {
             </div>
           </div>
           <div className="hidden lg:block">
-            Supporto
+            <LocaleSwitcherButton onClick={handleLocaleButtonClick} />
           </div>
         </div>
       </div>
@@ -150,6 +173,15 @@ export default function OnboardingPage() {
           </div>
         </div>
       </div>
+
+      {/* Locale Select Modal */}
+      <LocaleSelectModal
+        isOpen={isLocaleModalOpen}
+        onClose={() => setIsLocaleModalOpen(false)}
+        currentLocale={locale}
+        availableLocales={availableLocales}
+        onLocaleSelect={handleLocaleSelect}
+      />
     </div>
   )
 }

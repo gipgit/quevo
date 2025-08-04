@@ -23,7 +23,7 @@ import { getPlanColors, capitalizePlanName } from "@/lib/plan-colors"
 // Domain constant for public link
 const DOMAIN = typeof window !== "undefined" && window.location.hostname.includes("localhost")
   ? "http://localhost:3000"
-  : "your-production-domain.com" // <-- Replace with your actual domain
+  : "https://quevo.vercel.app"
 
 export default function DashboardPage() {
   const t = useTranslations("dashboard")

@@ -39,7 +39,7 @@ export function BusinessInfoStep({ formData, updateFormData, onValidationChange 
     <div className="space-y-4">
       <div>
         <label htmlFor="business_name" className="block text-sm font-medium text-gray-700 mb-1">
-          Nome Business *
+          {t("businessName")} *
         </label>
         <input
           id="business_name"
@@ -47,14 +47,14 @@ export function BusinessInfoStep({ formData, updateFormData, onValidationChange 
           value={formData.business_name || ''}
           onChange={(e) => handleChange("business_name", e.target.value)}
           className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Es. Ristorante Da Mario"
+          placeholder={t("businessNamePlaceholder")}
           required
         />
       </div>
 
       <div>
         <label htmlFor="business_country" className="block text-sm font-medium text-gray-700 mb-1">
-          Paese *
+          {t("country")} *
         </label>
         <input
           id="business_country"
@@ -62,38 +62,12 @@ export function BusinessInfoStep({ formData, updateFormData, onValidationChange 
           value={formData.business_country || ''}
           onChange={(e) => handleChange("business_country", e.target.value)}
           className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Es. Italia"
+          placeholder={t("countryPlaceholder")}
           required
         />
       </div>
 
-      <div>
-        <label htmlFor="business_region" className="block text-sm font-medium text-gray-700 mb-1">
-          Regione
-        </label>
-        <input
-          id="business_region"
-          type="text"
-          value={formData.business_region || ''}
-          onChange={(e) => handleChange("business_region", e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Es. Lazio"
-        />
-      </div>
 
-      <div>
-        <label htmlFor="business_address" className="block text-sm font-medium text-gray-700 mb-1">
-          Indirizzo
-        </label>
-        <input
-          id="business_address"
-          type="text"
-          value={formData.business_address || ''}
-          onChange={(e) => handleChange("business_address", e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Es. Via Roma 123, Roma"
-        />
-      </div>
     </div>
   )
 }

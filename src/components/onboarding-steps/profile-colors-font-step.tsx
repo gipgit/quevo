@@ -2,6 +2,7 @@
 
 import type { BusinessFormData } from "../business-onboarding-form"
 import { useEffect } from "react"
+import { useTranslations } from "next-intl"
 
 interface ProfileColorsFontStepProps {
   formData: BusinessFormData
@@ -22,6 +23,8 @@ export default function ProfileColorsFontStep({
   updateFormData,
   onValidationChange,
 }: ProfileColorsFontStepProps) {
+  const t = useTranslations("BusinessOnboarding")
+  
   useEffect(() => {
     onValidationChange(true)
   }, [onValidationChange])
@@ -42,7 +45,7 @@ export default function ProfileColorsFontStep({
         <div className="grid grid-cols-3 gap-4">
           {/* Sfondo */}
           <div className="space-y-2">
-            <span className="text-xs text-gray-600">Sfondo</span>
+            <span className="text-xs text-gray-600">{t("background")}</span>
             <input 
               type="color" 
               value={formData.settings.theme_color_background} 
@@ -59,7 +62,7 @@ export default function ProfileColorsFontStep({
           </div>
           {/* Testo */}
           <div className="space-y-2">
-            <span className="text-xs text-gray-600">Testo</span>
+            <span className="text-xs text-gray-600">{t("text")}</span>
             <input 
               type="color" 
               value={formData.settings.theme_color_text} 
@@ -76,7 +79,7 @@ export default function ProfileColorsFontStep({
           </div>
           {/* Pulsanti */}
           <div className="space-y-2">
-            <span className="text-xs text-gray-600">Pulsanti</span>
+            <span className="text-xs text-gray-600">{t("buttons")}</span>
             <input 
               type="color" 
               value={formData.settings.theme_color_button} 
@@ -96,7 +99,7 @@ export default function ProfileColorsFontStep({
 
       {/* Font Selection */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">Font</label>
+        <label className="block text-sm font-medium text-gray-700 mb-3">{t("font")}</label>
         <div className="flex flex-row lg:flex-col gap-2 overflow-x-scroll">
           {FONT_OPTIONS.map((font) => (
             <button

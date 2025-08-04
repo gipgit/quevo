@@ -6,37 +6,39 @@ import { useTranslations } from "next-intl"
 import { ArrowLeftIcon, ArrowRightIcon, CheckIcon, ArrowPathIcon, XMarkIcon, ClipboardDocumentIcon } from "@heroicons/react/24/outline"
 import { BusinessInfoStep } from "./onboarding-steps/business-info-step"
 import { BusinessUrlStep } from "./onboarding-steps/business-url-step"
+import { BusinessLocationStep } from "./onboarding-steps/business-location-step"
 import { ContactInfoStep } from "./onboarding-steps/contact-info-step"
 import ImageUploadStep from "./onboarding-steps/image-upload-step"
 import SocialLinksStep from "./onboarding-steps/social-links-step"
 import LinkUrlsStep from "./onboarding-steps/link-urls-step"
 import ProfileSettingsStep from "./onboarding-steps/profile-settings-step"
 import ProfileColorsFontStep from "./onboarding-steps/profile-colors-font-step"
+import { ConfirmationStep } from "./onboarding-steps/confirmation-step"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
+import { useBusiness } from "@/lib/business-context"
 
 export interface BusinessFormData {
   // Step 1: Business Info
   business_name: string
   business_country: string
-  business_region: string
-  business_address: string
 
   // Step 2: URL
   business_urlname: string
 
-  // Step 3: Contact
+  // Step 3: Location
+  business_region: string
+  business_city: string
+  business_address: string
+
+  // Step 4: Contact
   business_phone: string
   business_email: string
 
-  // Step 4: Images
+  // Step 5: Images
   profile_image: File | null
   cover_image: File | null
 
-  // Step 5 & 6: Social Links
-  selected_links: string[]
-  link_urls: Record<string, string>
-
-  // Step 7: Settings
+  // Step 6 & 7: Settings & Colors
   settings: {
     default_page: string
     theme_color_background: string
@@ -53,6 +55,10 @@ export interface BusinessFormData {
     show_btn_email: boolean
     show_btn_order: boolean
   }
+
+  // Step 8 & 9: Social Links
+  selected_links: string[]
+  link_urls: Record<string, string>
 }
 
 interface BusinessOnboardingFormProps {
@@ -61,19 +67,22 @@ interface BusinessOnboardingFormProps {
 }
 
 const STEPS = [
-  { id: 1, name: "Informazioni Business", description: "" },
-  { id: 2, name: "Link Profilo", description: "Scegli il tuo link personalizzato" },
-  { id: 3, name: "Contatti", description: "" },
-  { id: 4, name: "Immagini", description: "" },
-  { id: 5, name: "Socials", description: "Seleziona i tuoi social" },
-  { id: 6, name: "Links Social", description: "Inserisci i link" },
-  { id: 7, name: "Impostazioni Profilo", description: "" },
-  { id: 8, name: "Colori e Font", description: "" },
+  { id: 1, name: "businessInfo", description: "" },
+  { id: 2, name: "profileLink", description: "profileLinkDescription" },
+  { id: 3, name: "location", description: "" },
+  { id: 4, name: "contacts", description: "" },
+  { id: 5, name: "images", description: "" },
+  { id: 6, name: "profileSettings", description: "" },
+  { id: 7, name: "colorsAndFont", description: "" },
+  { id: 8, name: "socials", description: "selectSocials" },
+  { id: 9, name: "socialLinks", description: "enterLinks" },
+  { id: 10, name: "confirm", description: "reviewAndCreate" },
 ]
 
 export function BusinessOnboardingForm({ onFormDataChange, formData: externalFormData }: BusinessOnboardingFormProps) {
   const router = useRouter()
   const t = useTranslations("BusinessOnboarding")
+  const { addBusiness } = useBusiness()
   const [currentStep, setCurrentStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [canProceed, setCanProceed] = useState(false)
@@ -86,6 +95,7 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
     business_name: "",
     business_country: "",
     business_region: "",
+    business_city: "",
     business_address: "",
     business_urlname: "",
     business_phone: "",
@@ -128,11 +138,9 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
   }, [onFormDataChange])
 
   const handleNext = () => {
-    if (currentStep === 5 && formData.selected_links.length === 0) {
-      // Skip step 6 if no social links selected
-      setCurrentStep(7)
-    } else if (currentStep === 7) {
-      setCurrentStep(8)
+    if (currentStep === 8 && formData.selected_links.length === 0) {
+      // Skip step 9 if no social links selected
+      setCurrentStep(10)
     } else if (currentStep < STEPS.length) {
       setCurrentStep(currentStep + 1)
     }
@@ -140,9 +148,9 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
   }
 
   const handlePrevious = () => {
-    if (currentStep === 7 && formData.selected_links.length === 0) {
-      // Skip step 6 when going back if no social links selected
-      setCurrentStep(5)
+    if (currentStep === 10 && formData.selected_links.length === 0) {
+      // Skip step 9 when going back if no social links selected
+      setCurrentStep(8)
     } else if (currentStep > 1) {
       setCurrentStep(currentStep - 1)
     }
@@ -195,6 +203,36 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
       if (response.ok) {
         const data = await response.json()
         setSubmissionSuccess(true)
+        
+        // Switch to the newly created business if successful
+        if (data.business?.business_id) {
+          try {
+            // Create a business object from the API response
+            const newBusiness = {
+              business_id: data.business.business_id,
+              business_name: data.business.business_name,
+              business_urlname: data.business.business_urlname,
+              business_country: formData.business_country,
+              business_region: formData.business_region,
+              business_address: formData.business_address,
+              business_email: formData.business_email,
+              business_phone: formData.business_phone,
+              business_descr: "",
+              business_img_profile: null,
+              business_img_cover: null,
+              business_public_uuid: data.business.business_id, // Using business_id as UUID for now
+              date_created: new Date().toISOString(),
+            }
+            
+            // Add the new business to the context and set it as current
+            addBusiness(newBusiness)
+            console.log("Successfully added new business to context:", data.business.business_id)
+          } catch (error) {
+            console.error("Error adding new business to context:", error)
+            // Continue with redirect even if context update fails
+          }
+        }
+        
         // Wait a moment to show success state, then redirect
         setTimeout(() => {
           router.push(`/dashboard/`)
@@ -274,17 +312,21 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
       case 2:
         return <BusinessUrlStep formData={formData} updateFormData={updateFormData} onValidationChange={setCanProceed} />
       case 3:
-        return <ContactInfoStep formData={formData} updateFormData={updateFormData} onValidationChange={setCanProceed} />
+        return <BusinessLocationStep formData={formData} updateFormData={updateFormData} onValidationChange={setCanProceed} />
       case 4:
-        return <ImageUploadStep formData={formData} updateFormData={updateFormData} onValidationChange={setCanProceed} />
+        return <ContactInfoStep formData={formData} updateFormData={updateFormData} onValidationChange={setCanProceed} />
       case 5:
-        return <SocialLinksStep formData={formData} updateFormData={updateFormData} onValidationChange={setCanProceed} />
+        return <ImageUploadStep formData={formData} updateFormData={updateFormData} onValidationChange={setCanProceed} />
       case 6:
-        return <LinkUrlsStep formData={formData} updateFormData={updateFormData} onValidationChange={setCanProceed} />
-      case 7:
         return <ProfileSettingsStep formData={formData} updateFormData={updateFormData} onValidationChange={setCanProceed} />
-      case 8:
+      case 7:
         return <ProfileColorsFontStep formData={formData} updateFormData={updateFormData} onValidationChange={setCanProceed} />
+      case 8:
+        return <SocialLinksStep formData={formData} updateFormData={updateFormData} onValidationChange={setCanProceed} />
+      case 9:
+        return <LinkUrlsStep formData={formData} updateFormData={updateFormData} onValidationChange={setCanProceed} />
+      case 10:
+        return <ConfirmationStep formData={formData} updateFormData={updateFormData} onValidationChange={setCanProceed} />
       default:
         return null
     }
@@ -294,8 +336,8 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
     <>
       {/* Step Header */}
       <div className="mb-8 text-center lg:text-left">
-        <h2 className="text-3xl font-semibold text-gray-900">{STEPS[currentStep - 1].name}</h2>
-        <p className="text-sm text-gray-500">{STEPS[currentStep - 1].description}</p>
+        <h2 className="text-3xl font-semibold text-gray-900">{t(STEPS[currentStep - 1].name)}</h2>
+        <p className="text-sm text-gray-500">{STEPS[currentStep - 1].description ? t(STEPS[currentStep - 1].description) : ""}</p>
       </div>
 
       {/* Step Content */}
@@ -312,7 +354,7 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
               className="flex items-center px-3 lg:px-6 py-2 lg:py-3 text-sm lg:text-base text-gray-700 bg-gray-50 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
             >
               <ArrowLeftIcon className="w-4 h-4 lg:w-5 lg:h-5 mr-1 lg:mr-2" />
-              Indietro
+              {t("back")}
             </button>
 
             {/* Progress Bar */}
@@ -328,7 +370,7 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
             <div className="flex space-x-2 lg:space-x-3 flex-shrink-0">
               {(currentStep === 3 || currentStep === 4 || currentStep === 5) && (
                 <button onClick={handleSkip} className="px-3 lg:px-6 py-2 lg:py-3 text-sm lg:text-base text-white bg-gray-900 rounded-md hover:bg-gray-200">
-                  Salta
+                  {t("skip")}
                 </button>
               )}
 
@@ -336,16 +378,16 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
                 <button
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="flex items-center px-4 lg:px-8 py-2 lg:py-3 text-sm lg:text-base bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center px-4 lg:px-8 py-2 lg:py-3 text-sm lg:text-base bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <div className="flex items-center">
                       <ArrowPathIcon className="w-4 h-4 lg:w-5 lg:h-5 mr-1 lg:mr-2 animate-spin" />
-                      Creazione...
+                      {t("creating")}
                     </div>
                   ) : (
                     <div className="flex items-center">
-                      Crea Business
+                      {t("createAndStart")}
                     </div>
                   )}
                 </button>
@@ -356,7 +398,7 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
                   className="flex items-center px-3 lg:px-6 py-2 lg:py-3 text-sm lg:text-base bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <div className="flex items-center">
-                    Avanti
+                    {t("next")}
                     <ArrowRightIcon className="w-4 h-4 lg:w-5 lg:h-5 ml-1 lg:ml-2" />
                   </div>
                 </button>
@@ -368,8 +410,8 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
 
              {/* Submission Modal */}
        {submissionModalOpen && (
-         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
-           <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+         <div className="fixed inset-0 bg-white flex items-center justify-center z-[9999] p-4">
+           <div className="p-6 w-full max-w-[700px] overflow-y-auto">
                          {loading && !submissionError && !submissionSuccess ? (
                // Loading state
                <div className="text-center py-4">
@@ -482,10 +524,10 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
                 )}
                 
                                  {!loading && (
-                   <div className="flex justify-end">
+                   <div className="flex justify-center">
                      <button
                        onClick={closeSubmissionModal}
-                       className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                       className="px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800"
                      >
                        Chiudi
                      </button>

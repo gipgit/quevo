@@ -144,7 +144,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   // Domain constant for public link
   const DOMAIN = typeof window !== "undefined" && window.location.hostname.includes("localhost")
     ? "http://localhost:3000"
-    : "quevo.vercel.app"
+    : "https://quevo.vercel.app"
 
   // Public link format: DOMAIN/business_urlname
   const publicUrl = `${DOMAIN}/${currentBusiness?.business_urlname || ""}`

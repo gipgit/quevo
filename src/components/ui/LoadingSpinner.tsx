@@ -32,7 +32,12 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
         {/* Spinning ring */}
         <div className={`absolute inset-0 rounded-full border-2 border-transparent border-t-current ${colorClasses[color]} animate-spin`}></div>
         {/* Inner dot */}
-        <div className={`absolute inset-2 rounded-full bg-current ${colorClasses[color]} opacity-60 animate-pulse`}></div>
+        <div 
+          className={`absolute inset-3 rounded-full blur-sm animate-pulse`}
+          style={{
+            background: 'radial-gradient(circle, #fbbf24 0%, #f97316 50%, #ef4444 100%)'
+          }}
+        ></div>
       </div>
     </div>
   );

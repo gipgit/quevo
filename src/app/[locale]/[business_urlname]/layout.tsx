@@ -137,8 +137,17 @@ export default async function BusinessProfileLayout({
             if (link.link_type === 'google_review') { googleReviewLinkUrl = link.link_url; }
         });
 
-        const profileImageUrl = `/uploads/business/${businessData.business_public_uuid}/profile.webp`;
-        const coverImageUrl = `/uploads/business/${businessData.business_public_uuid}/cover.webp`;
+        // R2 domain for maintainability
+        const R2_PUBLIC_DOMAIN = "https://pub-eac238aed876421982e277e0221feebc.r2.dev";
+        
+        // Use local path if business_img_profile is empty/undefined, otherwise use R2 predefined path
+        const profileImageUrl = !businessData.business_img_profile 
+            ? `/uploads/business/${businessData.business_public_uuid}/profile.webp`
+            : `${R2_PUBLIC_DOMAIN}/business/${businessData.business_public_uuid}/profile.webp`;
+            
+        const coverImageUrl = !businessData.business_img_cover
+            ? `/uploads/business/${businessData.business_public_uuid}/cover.webp`
+            : `${R2_PUBLIC_DOMAIN}/business/${businessData.business_public_uuid}/cover.webp`;
 
 
         data = {

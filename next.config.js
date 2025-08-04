@@ -5,6 +5,17 @@ const createNextIntlPlugin = require('next-intl/plugin');
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.js');
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'pub-eac238aed876421982e277e0221feebc.r2.dev',
+        port: '',
+        pathname: '/business/**',
+      },
+    ],
+  },
+};
 
 module.exports = withNextIntl(nextConfig);

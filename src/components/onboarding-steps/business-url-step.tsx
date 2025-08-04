@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { useTranslations } from "next-intl"
 import { CheckIcon, XMarkIcon, ArrowPathIcon, GlobeAltIcon } from "@heroicons/react/24/outline"
 import type { BusinessFormData } from "../business-onboarding-form"
 
@@ -16,6 +17,8 @@ interface UrlValidation {
 }
 
 export function BusinessUrlStep({ formData, updateFormData, onValidationChange }: BusinessUrlStepProps) {
+  const t = useTranslations("BusinessOnboarding")
+  
   const [urlValidation, setUrlValidation] = useState<UrlValidation>({
     status: "idle",
     message: "",
@@ -29,7 +32,7 @@ export function BusinessUrlStep({ formData, updateFormData, onValidationChange }
       return false // Indicate that validation did not occur or failed length check
     }
 
-    setUrlValidation({ status: "checking", message: "Verifica disponibilità..." })
+    setUrlValidation({ status: "checking", message: t("checkingAvailability") })
 
     try {
       const response = await fetch("/api/business/check-urlname", {
@@ -48,7 +51,7 @@ export function BusinessUrlStep({ formData, updateFormData, onValidationChange }
     } catch (error) {
       setUrlValidation({
         status: "error",
-        message: "Errore durante la verifica",
+        message: t("verificationError"),
       })
       return false // Indicate an error occurred
     }
@@ -116,7 +119,7 @@ export function BusinessUrlStep({ formData, updateFormData, onValidationChange }
       <div>
        
          <p className="mb-2 text-center lg:text-left text-xs text-gray-500">
-          Deve contenere solo lettere minuscole, numeri e trattini.
+          {t("urlRequirements")}
         </p>
         {/* Custom style for the flex container */}
         <div className="flex items-center rounded-full shadow-sm overflow-hidden bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200">
@@ -140,7 +143,7 @@ export function BusinessUrlStep({ formData, updateFormData, onValidationChange }
                     ? "text-red-800 placeholder-red-400" // More distinct error styling
                     : "text-gray-900 placeholder-gray-400" // Default styling
               }`}
-              placeholder="il-mio-business"
+              placeholder={t("urlPlaceholder")}
               required
             />
             <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">

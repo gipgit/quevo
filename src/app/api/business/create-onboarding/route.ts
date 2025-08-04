@@ -2,8 +2,6 @@ import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import prisma from "@/lib/prisma"
 import { z } from "zod"
-import { mkdir } from "fs/promises"
-import { join } from "path"
 import { processAndSaveImage } from "@/lib/imageUpload"
 import { parseContacts, hasValidContacts, isValidEmail, isValidPhone } from "@/lib/utils/contacts"
 
@@ -11,6 +9,7 @@ const createBusinessSchema = z.object({
   business_name: z.string().min(2).max(50),
   business_country: z.string().min(2).max(50),
   business_region: z.string().optional(),
+  business_city: z.string().optional(),
   business_address: z.string().optional(),
   business_urlname: z.string().min(3).max(30),
   business_phone: z.string().optional(),
@@ -68,6 +67,7 @@ export async function POST(request: Request) {
       business_name: formData.get("business_name") as string,
       business_country: formData.get("business_country") as string,
       business_region: formData.get("business_region") as string,
+      business_city: formData.get("business_city") as string || "",
       business_address: formData.get("business_address") as string,
       business_urlname: formData.get("business_urlname") as string,
       business_phone: formData.get("business_phone") as string,
@@ -186,28 +186,20 @@ export async function POST(request: Request) {
     const profileImage = formData.get("profile_image") as File
     const coverImage = formData.get("cover_image") as File
 
-    // Use a business-specific directory for images
-    const businessDir = join(process.cwd(), "public", "uploads", "business", businessPublicUuid)
-    try {
-      await mkdir(businessDir, { recursive: true })
-    } catch (dirError) {
-      console.error("Error creating directory:", dirError)
-      // Continue without images if directory creation fails
-    }
-
     if (profileImage && profileImage.size > 0) {
       try {
         const bytes = await profileImage.arrayBuffer()
         const buffer = Buffer.from(bytes)
         const result = await processAndSaveImage({
           buffer,
-          uploadDir: businessDir,
           filename: "profile.webp",
           width: 400,
           height: 400,
           quality: 80,
           fit: "cover",
           maxSizeBytes: 1024 * 1024,
+          businessId: businessPublicUuid,
+          uploadType: "business",
         })
         profileImagePath = result.publicPath
       } catch (imageError) {
@@ -222,13 +214,14 @@ export async function POST(request: Request) {
         const buffer = Buffer.from(bytes)
         const result = await processAndSaveImage({
           buffer,
-          uploadDir: businessDir,
           filename: "cover.webp",
           width: 1200,
           height: 400,
           quality: 80,
           fit: "cover",
           maxSizeBytes: 2 * 1024 * 1024,
+          businessId: businessPublicUuid,
+          uploadType: "business",
         })
         coverImagePath = result.publicPath
       } catch (imageError) {
@@ -248,7 +241,7 @@ export async function POST(request: Request) {
             business_urlname: validatedData.business_urlname,
             business_country: validatedData.business_country,
             business_region: validatedData.business_region || "N/A",
-            business_city: "N/A", // You might want to add this to the form
+            business_city: validatedData.business_city || "N/A",
             business_address: validatedData.business_address || "N/A",
             business_phone: phoneData,
             business_email: emailData,
@@ -256,7 +249,7 @@ export async function POST(request: Request) {
             company_name: validatedData.business_name, // Using business name as company name for now
             company_country: validatedData.business_country,
             company_region: validatedData.business_region || "N/A",
-            company_city: "N/A", // You might want to add this to the form
+            company_city: validatedData.business_city || "N/A",
             company_address: validatedData.business_address || "N/A",
             company_vat: "N/A", // You might want to add this to the form
             company_contact: `${user.name_first} ${user.name_last}`.trim() || "N/A",
