@@ -2,20 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { processAndSaveImage } from "@/lib/imageUpload";
-import path from "path";
-import fs from "fs/promises";
 
 export const runtime = "nodejs";
 
-export async function POST(req: NextRequest, { params }: { params: { businessId: string } }) {
+export async function POST(req: NextRequest, { params }: { params: { business_id: string } }) {
   const session = await auth();
   if (!session || !session.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const businessId = params.businessId;
+  const business_id = params.business_id;
   // Check ownership
   const business = await prisma.business.findUnique({
-    where: { business_id: businessId },
+    where: { business_id: business_id },
   });
   if (!business || business.manager_id !== session.user.id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -28,31 +26,22 @@ export async function POST(req: NextRequest, { params }: { params: { businessId:
   let profileImgPath = null;
   let coverImgPath = null;
 
-  // Get business_public_uuid for correct upload path
-  const businessPublicUuid = business.business_public_uuid;
-  if (!businessPublicUuid) {
-    return NextResponse.json({ error: "Business public UUID not set" }, { status: 400 });
-  }
-
-  // Directory to save images (e.g. public/uploads/business/{business_public_uuid}/)
-  const saveDir = path.join(process.cwd(), "public", "uploads", "business", businessPublicUuid);
-  await fs.mkdir(saveDir, { recursive: true });
-
   // Profile image
   if (profileImg) {
     const arrayBuffer = await profileImg.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     const result = await processAndSaveImage({
       buffer,
-      uploadDir: saveDir,
       filename: "profile.webp",
       width: 400,
       height: 400,
       quality: 80,
       fit: "cover",
       maxSizeBytes: 1024 * 1024, // 1MB
+      businessId: business_id,
+      uploadType: "business",
     });
-    profileImgPath = `/uploads/business/${businessPublicUuid}/profile.webp`;
+    profileImgPath = result.publicPath || result.path;
   }
   // Cover image
   if (coverImg) {
@@ -60,20 +49,21 @@ export async function POST(req: NextRequest, { params }: { params: { businessId:
     const buffer = Buffer.from(arrayBuffer);
     const result = await processAndSaveImage({
       buffer,
-      uploadDir: saveDir,
       filename: "cover.webp",
       width: 1200,
       height: 400,
       quality: 80,
       fit: "cover",
       maxSizeBytes: 2 * 1024 * 1024, // 2MB
+      businessId: business_id,
+      uploadType: "business",
     });
-    coverImgPath = `/uploads/business/${businessPublicUuid}/cover.webp`;
+    coverImgPath = result.publicPath || result.path;
   }
 
   // Update business record
   await prisma.business.update({
-    where: { business_id: businessId },
+    where: { business_id: business_id },
     data: {
       ...(profileImgPath && { business_img_profile: profileImgPath }),
       ...(coverImgPath && { business_img_cover: coverImgPath }),
