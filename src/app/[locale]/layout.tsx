@@ -53,7 +53,7 @@ export default async function RootLayout({
         <NextIntlClientProvider>
           <ThemeProvider>
             <ToasterProvider>
-              {children}
+            {children}
             </ToasterProvider>
           </ThemeProvider>
         </NextIntlClientProvider>

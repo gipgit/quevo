@@ -25,30 +25,56 @@ interface ThemeProviderProps {
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>('light')
+  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
-    // Check for saved theme preference or default to light mode
-    const savedTheme = localStorage.getItem('theme') as Theme
-    if (savedTheme) {
-      setTheme(savedTheme)
-    } else {
-      // Check system preference
-      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        setTheme('dark')
+    // OPTIMIZED: Lazy theme detection to avoid blocking initial render
+    const detectTheme = () => {
+      try {
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme') as Theme
+        if (savedTheme) {
+          setTheme(savedTheme)
+        } else {
+          // Check system preference (non-blocking)
+          const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+          setTheme(mediaQuery.matches ? 'dark' : 'light')
+        }
+      } catch (error) {
+        // Fallback to light theme if localStorage fails
+        setTheme('light')
+      } finally {
+        setIsLoaded(true)
       }
+    }
+
+    // Use requestIdleCallback for non-critical theme detection
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(detectTheme)
+    } else {
+      // Fallback for older browsers
+      setTimeout(detectTheme, 0)
     }
   }, [])
 
   useEffect(() => {
-    // Apply theme to document
+    if (!isLoaded) return
+
+    // OPTIMIZED: Batch DOM updates
+    const root = document.documentElement
     if (theme === 'dark') {
-      document.documentElement.classList.add('dark')
+      root.classList.add('dark')
     } else {
-      document.documentElement.classList.remove('dark')
+      root.classList.remove('dark')
     }
-    // Save theme preference
-    localStorage.setItem('theme', theme)
-  }, [theme])
+    
+    // Save theme preference (non-blocking)
+    try {
+      localStorage.setItem('theme', theme)
+    } catch (error) {
+      // Ignore localStorage errors
+    }
+  }, [theme, isLoaded])
 
   const toggleTheme = () => {
     setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light')

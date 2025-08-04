@@ -110,11 +110,15 @@ export async function generateMetadata({ params }: { params: { business_urlname:
     return {
         title: business.business_name,
         description: business.business_descr || t('defaultBusinessDescription', { businessName: business.business_name }),
+        // OPTIMIZED: Add critical resource hints for better performance
+        alternates: {
+            canonical: `https://quevo.vercel.app/${business_urlname}`,
+        },
         openGraph: {
             title: business.business_name,
             description: business.business_descr || t('defaultBusinessDescription', { businessName: business.business_name }),
-            url: `https://your-app-domain.com/${business_urlname}`,
-            siteName: 'Your App Name',
+            url: `https://quevo.vercel.app/${business_urlname}`,
+            siteName: 'Quevo',
             images: [{ url: profileImageUrl, width: 800, height: 600, alt: `${business.business_name} Profile` }],
             type: 'website',
         },
@@ -128,8 +132,12 @@ export async function generateMetadata({ params }: { params: { business_urlname:
     };
 }
 
-// Set revalidation time for this layout's data (e.g., every hour, as it's common data)
-export const revalidate = 3600; // 1 hour
+// OPTIMIZED: Add caching for better performance
+export const revalidate = 300; // 5 minutes - business data doesn't change often
+
+// OPTIMIZED: Add ISR for better performance on free tier
+export const dynamic = 'force-static';
+export const fetchCache = 'force-cache';
 
 export default async function BusinessProfileLayout({
     children,
@@ -151,12 +159,11 @@ export default async function BusinessProfileLayout({
     let error: string | null = null;
 
     try {
-        // OPTIMIZED: Single efficient query for layout data
-        // Only fetch what's needed for layout: business + settings + links
-        const businessData = await prisma.business.findUnique({
+        // OPTIMIZED: Single efficient query for layout data with timeout
+        const queryPromise = prisma.business.findUnique({
             where: { business_urlname: business_urlname },
             select: {
-                // Core business data
+                // Core business data - only essential fields
                 business_id: true,
                 business_name: true,
                 business_descr: true,
@@ -168,11 +175,9 @@ export default async function BusinessProfileLayout({
                 business_email: true,
                 business_public_uuid: true,
                 business_urlname: true,
-                business_urlname_last_edited: true,
-                date_created: true,
                 business_img_profile: true,
                 business_img_cover: true,
-                // Settings for theme and layout
+                // Settings for theme and layout - only essential fields
                 businessprofilesettings: {
                     select: {
                         default_page: true,
@@ -189,20 +194,27 @@ export default async function BusinessProfileLayout({
                         show_btn_phone: true,
                         show_btn_email: true,
                         show_btn_order: true,
-                        last_updated: true,
                     }
                 },
-                // Links for header/footer
+                // Links for header/footer - only essential fields
                 businesslink: {
                     select: {
-                        business_link_id: true,
                         link_type: true,
                         link_url: true,
-                        visible: true,
+                    },
+                    where: {
+                        visible: true, // Only visible links
                     }
                 },
             },
         }) as any; // Type assertion to handle complex Prisma types
+
+        // Add timeout for free tier limitations
+        const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Database query timeout')), 5000)
+        );
+
+        const businessData = await Promise.race([queryPromise, timeoutPromise]);
 
         console.log(`[${new Date().toISOString()}] Server Layout - Optimized query result for ${business_urlname}:`, businessData ? 'FOUND' : 'NOT FOUND', businessData?.business_name || '');
 

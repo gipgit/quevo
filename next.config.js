@@ -6,7 +6,15 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.js');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Bundle optimization
+  experimental: {
+    optimizePackageImports: ['@heroicons/react', 'lucide-react'],
+  },
+  
+  // Image optimization
   images: {
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
     remotePatterns: [
       {
         protocol: 'https',
@@ -16,6 +24,20 @@ const nextConfig = {
       },
     ],
   },
+  
+  // Compression
+  compress: true,
+  
+  // Bundle analyzer (optional - for debugging)
+  // webpack: (config, { isServer }) => {
+  //   if (!isServer) {
+  //     config.resolve.fallback = {
+  //       ...config.resolve.fallback,
+  //       fs: false,
+  //     };
+  //   }
+  //   return config;
+  // },
 };
 
 module.exports = withNextIntl(nextConfig);
