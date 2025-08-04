@@ -1,31 +1,22 @@
 // C:\Users\Utente\Desktop\quevo\quevo-app\src\lib\prisma.ts
 import { PrismaClient } from '@prisma/client';
 
-// OPTIMIZED: Add connection pooling for better performance on free tier
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
+let prisma: PrismaClient;
 
-const prisma = globalForPrisma.prisma ?? new PrismaClient({
-  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  // OPTIMIZED: Connection pooling for free tier limitations
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL,
-    },
-  },
-  // Add connection pool settings for better performance
-  __internal: {
-    engine: {
-      connectionLimit: 1, // Conservative for free tier
-      pool: {
-        min: 0,
-        max: 1,
-      },
-    },
-  },
-});
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+// This is necessary to prevent multiple PrismaClient instances during development
+// (due to Next.js hot-reloading). In production, a new instance is created directly.
+if (process.env.NODE_ENV === 'production') {
+  prisma = new PrismaClient();
+} else {
+  // @ts-ignore
+  // We attach the PrismaClient instance to the global object
+  // to reuse it across hot-reloads in development.
+  if (!global.prisma) {
+    // @ts-ignore
+    global.prisma = new PrismaClient();
+  }
+  // @ts-ignore
+  prisma = global.prisma;
+}
 
 export default prisma;
