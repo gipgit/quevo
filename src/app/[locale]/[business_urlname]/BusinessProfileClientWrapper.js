@@ -21,6 +21,10 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
     const [activeContactTab, setActiveContactTab] = useState('phone');
     const [showPaymentsModal, setShowPaymentsModal] = useState(false);
     const [showMenuOverlay, setShowMenuOverlay] = useState(false);
+    
+    // OPTIMIZED: Add state for payment methods loading
+    const [businessPaymentMethods, setBusinessPaymentMethods] = useState(initialServerData.businessPaymentMethods || []);
+    const [isLoadingPaymentMethods, setIsLoadingPaymentMethods] = useState(false);
 
     const t = useTranslations('Common'); // Initialize translations
 
@@ -40,13 +44,13 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
     const isBookingConfirmationPage = pathname.startsWith(`/${locale}/${business_urlname}/booking/`) && pathSegments.length === 4;
     const isServiceBoardPage = pathname.startsWith(`/${locale}/${business_urlname}/s/`) && pathSegments.length === 4;
 
-    // Memoize the context value to prevent unnecessary re-renders of consumers
+    // OPTIMIZED: Memoize the context value to prevent unnecessary re-renders of consumers
     const contextValue = useMemo(() => {
         return {
             businessData: initialServerData.businessData,
             businessSettings: initialServerData.businessSettings,
             businessLinks: initialServerData.businessLinks,
-            businessPaymentMethods: initialServerData.businessPaymentMethods,
+            businessPaymentMethods: businessPaymentMethods, // Use the state instead of initial data
             websiteLinkUrl: initialServerData.websiteLinkUrl,
             googleReviewLinkUrl: initialServerData.googleReviewLinkUrl,
             bookingLinkUrl: initialServerData.bookingLinkUrl,
@@ -58,10 +62,11 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
             themeColorBackgroundCard: initialServerData.themeColorBackgroundCard,
             themeColorButton: initialServerData.themeColorButton,
             themeColorBorder: initialServerData.themeColorBorder,
+            buttonContentColor: initialServerData.buttonContentColor, // Add the server-calculated button text color
 
             currentPathSection: currentSectionSlug,
         };
-    }, [initialServerData, currentSectionSlug]);
+    }, [initialServerData, currentSectionSlug, businessPaymentMethods]);
 
     // Modal open/close handlers (remain unchanged)
     const openContactModal = useCallback((tab = 'phone') => {
@@ -74,10 +79,30 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
         setShowContactModal(false);
     }, []);
 
-    const openPaymentsModal = useCallback(() => {
+    const openPaymentsModal = useCallback(async () => {
+        // OPTIMIZED: Load payment methods when modal opens
+        console.log('Opening payments modal, loading payment methods...');
+        setIsLoadingPaymentMethods(true);
         setShowPaymentsModal(true);
         setShowMenuOverlay(false);
-    }, []);
+        
+        try {
+            const response = await fetch(`/api/business/${initialServerData.businessData.business_id}/payment-methods`);
+            console.log('Payment methods API response:', response.status);
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Payment methods data:', data);
+                setBusinessPaymentMethods(data.paymentMethods || []);
+            } else {
+                console.error('Failed to load payment methods, status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error loading payment methods:', error);
+        } finally {
+            setIsLoadingPaymentMethods(false);
+            console.log('Payment methods loading completed');
+        }
+    }, [initialServerData.businessData.business_id]);
 
     const closePaymentsModal = useCallback(() => {
         setShowPaymentsModal(false);
@@ -148,7 +173,7 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
                         businessData={initialServerData.businessData}
                         businessSettings={initialServerData.businessSettings}
                         businessLinks={initialServerData.businessLinks}
-                        businessPaymentMethods={initialServerData.businessPaymentMethods}
+                        businessPaymentMethods={businessPaymentMethods}
                         themeColorText={initialServerData.themeColorText}
                         themeColorBackground={initialServerData.themeColorBackground}
                         themeColorButton={initialServerData.themeColorButton}
@@ -175,7 +200,8 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
                     <PaymentsModal
                         show={showPaymentsModal}
                         onClose={closePaymentsModal}
-                        businessPaymentMethods={initialServerData.businessPaymentMethods}
+                        businessPaymentMethods={businessPaymentMethods}
+                        isLoading={isLoadingPaymentMethods}
                         themeColorText={initialServerData.themeColorText}
                         themeColorBackground={initialServerData.themeColorBackground}
                         themeColorButton={initialServerData.themeColorButton}

@@ -9,6 +9,7 @@ export default function PaymentsModal({
   show, // Keep the show prop
   onClose,
   businessPaymentMethods,
+  isLoading = false, // Add loading prop
   themeColorText,
   themeColorBackground,
   themeColorButton,
@@ -63,7 +64,13 @@ export default function PaymentsModal({
 
         <p className="text-md font-bold mb-2" style={{ color: themeColorText }}>Modalità di Pagamento</p>
 
-        {businessPaymentMethods && businessPaymentMethods.length > 0 ? (
+        {/* OPTIMIZED: Show loading state */}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: themeColorText }}></div>
+            <span className="ml-3 text-sm" style={{ color: themeColorText }}>Caricamento metodi di pagamento...</span>
+          </div>
+        ) : businessPaymentMethods && businessPaymentMethods.length > 0 ? (
           <div className="flex flex-col gap-3">
             {businessPaymentMethods.map((method, index) => {
               // Find iconPath from config by label or id
@@ -98,100 +105,38 @@ export default function PaymentsModal({
                        </>
                      )}
                      {method.label === 'Satispay' && method.details.phone_number && (
-                       <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Numero di telefono: {method.details.phone_number}</p>
-                     )}
-                     {method.label === 'Klarna' && method.details.merchant_id && (
-                       <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Klarna (ID Commerciante: {method.details.merchant_id})</p>
-                     )}
-                     {method.label === 'Stripe' && (
-                       <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Accetta pagamenti online tramite Stripe.</p>
+                       <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Telefono: {method.details.phone_number}</p>
                      )}
                      {method.label === 'Cash' && (
-                       <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Pagamento in contanti alla consegna/servizio.</p>
+                       <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Pagamento in contanti</p>
                      )}
-                     {Object.keys(method.details).length > 0 && !['PayPal', 'Bank Transfer', 'Klarna', 'Satispay', 'Stripe', 'Cash'].includes(method.label) && (
-                       <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Dettagli: {JSON.stringify(method.details)}</p>
+                     {method.label === 'Card' && (
+                       <p className="text-sm" style={{ color: themeColorText + 'C0' }}>Pagamento con carta</p>
                      )}
-                     
-
-                     {/* Action Buttons */}
-                     {(method.label === 'PayPal' && method.details.paypal_email) ||
-                      (method.label === 'Bank Transfer' && method.details.iban) ||
-                      (method.label === 'Satispay' && method.details.phone_number) ? (
-                       <div className="flex gap-2 mt-3 justify-center">
-                      {method.label === 'PayPal' && method.details.paypal_email && (
-                        <>
-                          <a
-                            href={`mailto:${method.details.paypal_email}?subject=Pagamento`}
-                            className="button btn-sm paypal-button px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
-                            style={{ backgroundColor: 'rgb(15, 107, 255)', color: '#fff' }}
-                          >
-                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-                            </svg>
-                            Invia Pagamento
-                          </a>
-                          <button
-                            className="button btn-sm copy-button px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
-                            style={{ backgroundColor: '#6c757d', color: '#fff' }}
-                            onClick={() => handleCopy(method.details.paypal_email, 'Email Copiata!')}
-                          >
-                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                            </svg>
-                            Copia Email
-                          </button>
-                        </>
-                      )}
-                      {method.label === 'Bank Transfer' && method.details.iban && (
-                        <>
-                          <button
-                            className="button btn-sm iban-copy-button px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
-                            style={{ backgroundColor: '#6c757d', color: '#fff' }}
-                            onClick={() => handleCopy(method.details.iban, 'IBAN Copiato!')}
-                          >
-                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                            </svg>
-                            Copia IBAN
-                          </button>
-                          {method.details.account_holder && (
-                            <button
-                              className="button btn-sm account-holder-copy-button px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
-                              style={{ backgroundColor: '#6c757d', color: '#fff' }}
-                              onClick={() => handleCopy(method.details.account_holder, 'Beneficiario Copiato!')}
-                            >
-                              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                              </svg>
-                              Copia Beneficiario
-                            </button>
-                          )}
-                        </>
-                      )}
-                      {method.label === 'Satispay' && method.details.phone_number && (
-                        <button
-                          className="button btn-sm copy-button px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
-                          style={{ backgroundColor: '#6c757d', color: '#fff' }}
-                          onClick={() => handleCopy(method.details.phone_number, 'Numero Copiato!')}
-                        >
-                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                          </svg>
-                          Copia Numero
-                        </button>
-                                             )}
-                     </div>
-                   ) : null}
                    </div>
+
+                   {/* Copy button for bank transfer IBAN */}
+                   {method.label === 'Bank Transfer' && method.details.iban && (
+                     <button
+                       onClick={() => handleCopy(method.details.iban, 'IBAN copiato negli appunti!')}
+                       className="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                       style={{ color: themeColorText }}
+                     >
+                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                       </svg>
+                     </button>
+                   )}
                  </div>
                );
              })}
            </div>
-        ) : (
-          <p className="text-gray-600" style={{ color: themeColorText + 'A0' }}>Nessun metodo di pagamento disponibile per questa attività.</p>
-        )}
-      </div>
-    </div>
-  );
-}
+         ) : (
+           <div className="text-center py-8">
+             <p className="text-sm" style={{ color: themeColorText + '80' }}>Nessun metodo di pagamento disponibile</p>
+           </div>
+         )}
+       </div>
+     </div>
+   );
+ }

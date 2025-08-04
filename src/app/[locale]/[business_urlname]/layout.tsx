@@ -31,6 +31,65 @@ const AVAILABLE_FONTS_PUBLIC = [
     { font_id: 5, font_name: 'Font5', font_css_stack: "Font5, Arial, serif" }
 ];
 
+// Server-side function to calculate theme variables
+const calculateThemeVariables = (businessSettings: any) => {
+    const themeColorText = businessSettings.theme_color_text || '#000000';
+    const themeColorBackground = businessSettings.theme_color_background || '#FFFFFF';
+    const themeColorButton = businessSettings.theme_color_button || '#000000';
+    
+    const themeColorTextRgb = hexToRgb(themeColorText);
+    const borderColorOpacity = 0.1;
+    const themeColorBorder = `rgba(${themeColorTextRgb}, ${borderColorOpacity})`;
+    
+    // Generate new background colors based on luminance
+    const themeColorBackgroundSecondary = adjustColor(themeColorBackground, 0.18, 0.025);
+    const themeColorBackgroundCard = adjustColor(themeColorBackground, 0.18, 0.135); 
+    
+    const isDarkBackground = parseInt(themeColorBackground.replace('#', ''), 16) < (0xFFFFFF / 2);
+
+    // Calculate button text color using proper luminance formula
+    const getButtonContentColor = (bgColor: string) => {
+        if (!bgColor) return 'white';
+        const hex = bgColor.replace('#', '');
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        return luminance > 0.5 ? 'black' : 'white';
+    };
+    
+    const buttonContentColor = getButtonContentColor(themeColorButton);
+
+    return {
+        themeColorText,
+        themeColorBackground,
+        themeColorButton,
+        themeColorBackgroundSecondary,
+        themeColorBackgroundCard,
+        themeColorBorder,
+        isDarkBackground,
+        buttonContentColor, // Add the calculated button text color
+        themeVariables: {
+            '--theme-font': businessSettings.theme_font_css_stack || 'Arial, sans-serif',
+            '--theme-color-background': themeColorBackground,
+            '--theme-color-background-secondary': themeColorBackgroundSecondary,
+            '--theme-color-background-card': themeColorBackgroundCard,
+            '--theme-color-text': themeColorText,
+            '--theme-color-button': themeColorButton,
+            '--theme-color-text-rgb': themeColorTextRgb ? themeColorTextRgb.join(',') : '0,0,0',
+            '--border-color-opacity': borderColorOpacity,
+            '--profile-nav-border-color': isDarkBackground ? 'rgba(255, 255, 255, 0.19)' : 'rgba(0, 0, 0, 0.18)',
+            '--section-active-border-color': isDarkBackground ? 'rgb(255, 255, 255)' : 'rgb(14, 14, 14)',
+            '--category-pills-wrapper-background': isDarkBackground ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.075)',
+            '--category-pill-border-color': isDarkBackground ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+            '--accordion-item-border-color': isDarkBackground ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+            '--card-item-background': isDarkBackground ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.025)',
+            '--card-item-box-shadow': isDarkBackground ? '0 1px 5px rgba(255, 255, 255, 0.2)' : '0 1px 5px #03030308',
+            '--order-bar-box-shadow': isDarkBackground ? '0 -2px 10px rgba(255,255,255,0.1)' : '0 -2px 10px rgba(0,0,0,0.1)',
+            '--is-dark-background': isDarkBackground ? '1' : '0',
+        }
+    };
+};
 
 export async function generateMetadata({ params }: { params: { business_urlname: string } }) {
     const { business_urlname } = params;
@@ -92,12 +151,12 @@ export default async function BusinessProfileLayout({
     let error: string | null = null;
 
     try {
+        // OPTIMIZED: Remove businesspaymentmethod from main query - it will be loaded on-demand
         const businessData = await prisma.business.findUnique({
             where: { business_urlname: business_urlname },
             include: {
                 businessprofilesettings: true, // Keep this for general settings and default_page
                 businesslink: true,          // Keep for universally displayed links (website, social icons in header/footer)
-                businesspaymentmethod: { include: { paymentmethod: true } }, // Keep if payment methods are always visible
             },
         });
 
@@ -149,6 +208,11 @@ export default async function BusinessProfileLayout({
             ? `/uploads/business/${businessData.business_public_uuid}/cover.webp`
             : `${R2_PUBLIC_DOMAIN}/business/${businessData.business_public_uuid}/cover.webp`;
 
+        // OPTIMIZED: Calculate theme variables on server-side
+        const themeData = calculateThemeVariables({
+            ...businessSettings,
+            theme_font_css_stack: themeFontCssStack
+        });
 
         data = {
             businessData: {
@@ -173,70 +237,17 @@ export default async function BusinessProfileLayout({
             websiteLinkUrl: websiteLinkUrl,
             googleReviewLinkUrl: googleReviewLinkUrl,
             bookingLinkUrl: bookingLinkUrl,
-            businessPaymentMethods: businessData.businesspaymentmethod.map((bpm: any) => {
-                let details = {};
-                if (bpm.method_details_json) {
-                    try {
-                        details = typeof bpm.method_details_json === 'string' ? JSON.parse(bpm.method_details_json) : bpm.method_details_json;
-                    } catch (e) {
-                        console.error("Error processing method_details_json:", e);
-                    }
-                }
-                return {
-                    ...bpm,
-                    details: details,
-                    label: bpm.paymentmethod.method_name,
-                    icon: `/icons/payment_icons/${bpm.paymentmethod.method_name.toLowerCase().replace(/\s/g, '_')}.svg`
-                };
-            }),
+            // OPTIMIZED: Remove businessPaymentMethods from here - will be loaded on-demand
+            businessPaymentMethods: [], // Empty array - will be populated when modal opens
         };
 
-        const themeColorText = data.businessSettings.theme_color_text || '#000000';
-        const themeColorBackground = data.businessSettings.theme_color_background || '#FFFFFF';
-        const themeColorButton = data.businessSettings.theme_color_button || '#000000';
-        const themeFont = data.businessSettings.theme_font_css_stack;
-
-        const themeColorTextRgb = hexToRgb(themeColorText);
-        const borderColorOpacity = 0.1;
-        const themeColorBorder = `rgba(${themeColorTextRgb}, ${borderColorOpacity})`;
-        
-        // Generate new background colors based on luminance
-        const themeColorBackgroundSecondary = adjustColor(themeColorBackground, 0.18, 0.025);
-        const themeColorBackgroundCard = adjustColor(themeColorBackground, 0.18, 0.135); 
-        
-        const isDarkBackground = parseInt(themeColorBackground.replace('#', ''), 16) < (0xFFFFFF / 2);
-
-        data.themeVariables = {
-            '--theme-font': themeFont,
-            '--theme-color-background': themeColorBackground,
-            '--theme-color-background-secondary': themeColorBackgroundSecondary, // New variable
-            '--theme-color-background-card': themeColorBackgroundCard,       // New variable
-            '--theme-color-text': themeColorText,
-            '--theme-color-button': themeColorButton,
-            '--theme-color-text-rgb': themeColorTextRgb ? themeColorTextRgb.join(',') : '0,0,0',
-            '--border-color-opacity': borderColorOpacity,
-            '--profile-nav-border-color': isDarkBackground ? 'rgba(255, 255, 255, 0.19)' : 'rgba(0, 0, 0, 0.18)',
-            '--section-active-border-color': isDarkBackground ? 'rgb(255, 255, 255)' : 'rgb(14, 14, 14)',
-            '--category-pills-wrapper-background': isDarkBackground ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.075)',
-            '--category-pill-border-color': isDarkBackground ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
-            '--accordion-item-border-color': isDarkBackground ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
-            '--card-item-background': isDarkBackground ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.025)',
-            '--card-item-box-shadow': isDarkBackground ? '0 1px 5px rgba(255, 255, 255, 0.2)' : '0 1px 5px #03030308',
-            '--order-bar-box-shadow': isDarkBackground ? '0 -2px 10px rgba(255,255,255,0.1)' : '0 -2px 10px rgba(0,0,0,0.1)',
-            '--is-dark-background': isDarkBackground ? '1' : '0',
-        };
-        data.themeColorText = themeColorText;
-        data.themeColorBackground = themeColorBackground;
-        data.themeColorButton = themeColorButton;
-        data.themeColorBackgroundSecondary = themeColorBackgroundSecondary; 
-        data.themeColorBackgroundCard = themeColorBackgroundCard;   
-        data.themeColorBorder = themeColorBorder;   
+        // OPTIMIZED: Add all theme data to the main data object
+        Object.assign(data, themeData);
 
     } catch (e: any) {
         console.error(`[${new Date().toISOString()}] BusinessProfileLayout: Caught error fetching or processing business data for ${business_urlname}:`, e.message, e.stack);
         error = t('errorFetchingBusinessData', { error: e.message });
     }
-
 
     if (error) {
         return <div className="text-center py-10 text-red-500">{t('error')}: {error}</div>;

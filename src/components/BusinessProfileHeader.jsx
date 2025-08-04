@@ -23,10 +23,10 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
         googleReviewLinkUrl,
         bookingLinkUrl,
         businessPaymentMethods,
-        themeVariables,
         isDarkBackground,
         themeColorText,
         themeColorButton,
+        buttonContentColor, // Use server-calculated button text color
     } = useBusinessProfile();
 
     const t = useTranslations('Common');
@@ -90,17 +90,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
 
     const logoAltText = `${businessData.business_name} Logo`;
 
-    const getButtonContentColor = useCallback((bgColor) => {
-        if (!bgColor) return 'white';
-        const hex = bgColor.replace('#', '');
-        const r = parseInt(hex.substring(0, 2), 16);
-        const g = parseInt(hex.substring(2, 4), 16);
-        const b = parseInt(hex.substring(4, 6), 16);
-        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-        return luminance > 0.5 ? 'black' : 'white';
-    }, []);
-    const buttonContentColor = getButtonContentColor(themeColorButton);
-
+    // OPTIMIZED: Use server-calculated button text color
     const phones = parseContacts(businessData.business_phone);
     const emails = parseContacts(businessData.business_email);
     const hasPhones = hasValidContacts(phones);
@@ -154,7 +144,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                             className="object-cover w-full h-full"
                                         />
                                     ) : (
-                                        <div className="w-full h-full" style={{ backgroundColor: themeVariables['--lighter-theme-color-background'] }}></div>
+                                        <div className="w-full h-full" style={{ backgroundColor: themeColorText + '20' }}></div>
                                     )}
                                 </div>
                                 <div>
@@ -218,7 +208,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                             </div>
                             
                             {/* Action Buttons */}
-                            {businessSettings.show_btn_payments && businessPaymentMethods && businessPaymentMethods.length > 0 && (
+                            {businessSettings.show_btn_payments && (
                                 <button onClick={togglePaymentsModal} className="px-2 py-1 rounded-lg text-sm font-medium transition-colors duration-200" style={secondaryButtonStyle}>
                                     Pagamenti
                                 </button>
@@ -266,7 +256,6 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                 </div>
             </nav>
 
-
             {/* Mobile/Tablet Cover Image */}
             <div className="lg:hidden profile-cover w-full relative bg-gray-200 h-40 sm:h-40 md:h-40">
                 {businessData.business_img_cover ? (
@@ -279,7 +268,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                         priority
                     />
                 ) : (
-                    <div className="cover-photo-placeholder w-full h-full" style={{ backgroundColor: themeVariables['--lighter-theme-color-background'] }}></div>
+                    <div className="cover-photo-placeholder w-full h-full" style={{ backgroundColor: themeColorText + '20' }}></div>
                 )}
                 
                 {/* Mobile Menu Button */}
@@ -325,7 +314,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                             className="object-cover w-full h-full"
                                         />
                                     ) : (
-                                        <div className="w-full h-full" style={{ backgroundColor: themeVariables['--lighter-theme-color-background'] }}></div>
+                                        <div className="w-full h-full" style={{ backgroundColor: themeColorText + '20' }}></div>
                                     )}
                                 </div>
                                 <div>
@@ -395,7 +384,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
 
                             {/* Action Buttons */}
                             <div className="space-y-3">
-                                {businessSettings.show_btn_payments && businessPaymentMethods && businessPaymentMethods.length > 0 && (
+                                {businessSettings.show_btn_payments && (
                                     <button 
                                         onClick={() => {
                                             togglePaymentsModal();
@@ -499,7 +488,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                          priority
                      />
                  ) : (
-                     <div className="profile-image-placeholder w-full h-full" style={{ backgroundColor: themeVariables['--lighter-theme-color-background'] }}></div>
+                     <div className="profile-image-placeholder w-full h-full" style={{ backgroundColor: themeColorText + '20' }}></div>
                  )}
              </div>
 
@@ -550,7 +539,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
 
                      {/* Right Column: Action Buttons */}
                      <div className="flex flex-col gap-2">
-                         {businessSettings.show_btn_payments && businessPaymentMethods && businessPaymentMethods.length > 0 && (
+                         {businessSettings.show_btn_payments && (
                              <button onClick={togglePaymentsModal} className="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200" style={primaryButtonStyle}>
                                  Pagamenti
                              </button>

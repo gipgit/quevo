@@ -159,13 +159,26 @@ export async function getRewardsData(businessId) {
 
 
 /**
- * Fetches booking services and their categories for a given business_id.
- * @param {string} businessId The UUID of the business.
+ * Fetches booking services and their categories for a given business_urlname.
+ * @param {string} businessUrlname The business_urlname of the business.
  * @returns {Promise<{services: Array<Object>, categories: Array<Object>}>} A list of services and categories.
  */
-export async function getServiceRequestServicesData(businessId) {
-    console.log(`[getServiceRequestServicesData] Fetching data for businessId: ${businessId}`);
+export async function getServiceRequestServicesData(businessUrlname) {
+    console.log(`[getServiceRequestServicesData] Fetching data for businessUrlname: ${businessUrlname}`);
     try {
+        // First get the business_id from business_urlname
+        const business = await prisma.business.findUnique({
+            where: { business_urlname: businessUrlname },
+            select: { business_id: true }
+        });
+
+        if (!business) {
+            console.error(`[getServiceRequestServicesData] Business not found for URL: ${businessUrlname}`);
+            return { services: [], categories: [] };
+        }
+
+        const businessId = business.business_id;
+
         const services = await prisma.service.findMany({
             where: {
                 business_id: businessId,
@@ -220,7 +233,7 @@ export async function getServiceRequestServicesData(businessId) {
 
         return { services: serializedServices, categories };
     } catch (error) {
-        console.error(`[getServiceRequestServicesData] Error fetching service request services for business ID ${businessId}:`, error);
+        console.error(`[getServiceRequestServicesData] Error fetching service request services for business URL ${businessUrlname}:`, error);
         return { services: [], categories: [] };
     }
 }
