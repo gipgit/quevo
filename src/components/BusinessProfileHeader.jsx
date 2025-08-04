@@ -288,48 +288,73 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
             {/* Mobile Menu Overlay */}
             {isMobileMenuOpen && (
                 <div className="lg:hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end">
-                    <div className="bg-white rounded-t-3xl w-full max-h-[85vh] overflow-y-auto">
-                        <div className="p-6">
-                            {/* Close Button */}
-                            <div className="flex justify-end mb-4">
-                                <button
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center transition-colors hover:bg-gray-200"
-                                >
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
+                    <div className="bg-white rounded-t-3xl w-full max-h-[85vh] overflow-y-auto relative">
+                        {/* Close Button - Absolute positioned */}
+                        <button
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center transition-colors hover:bg-gray-200 z-10"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
 
-                            {/* Profile Picture and Business Name */}
-                            <div className="flex items-center space-x-4 mb-6">
-                                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
-                                    {businessData.business_img_profile ? (
-                                        <Image
-                                            src={businessData.business_img_profile}
-                                            alt={logoAltText}
-                                            width={64}
-                                            height={64}
-                                            className="object-cover w-full h-full"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full" style={{ backgroundColor: themeColorText + '20' }}></div>
-                                    )}
-                                </div>
-                                <div>
-                                    <h2 className="text-xl font-semibold" style={{ color: themeColorText }}>
+                        <div className="p-6 pt-16">
+                            {/* Unified Profile Card with Page Link */}
+                            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                                <div className="flex items-center space-x-3 mb-3">
+                                    {/* Profile Image */}
+                                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                                        {businessData.business_img_profile ? (
+                                            <Image
+                                                src={businessData.business_img_profile}
+                                                alt={logoAltText}
+                                                width={48}
+                                                height={48}
+                                                className="object-cover w-full h-full"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full" style={{ backgroundColor: themeColorText + '20' }}></div>
+                                        )}
+                                    </div>
+                                    
+                                    {/* Business Name */}
+                                    <h2 className="text-lg font-semibold" style={{ color: themeColorText }}>
                                         {businessData.business_name}
                                     </h2>
                                 </div>
+                                
+                                {/* Page URL with Copy Button */}
+                                <div className="w-full">
+                                    <div className="flex items-center justify-between bg-white rounded-full p-1.5 border border-gray-200">
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-xs font-medium truncate" style={{ color: themeColorText }}>
+                                                {typeof window !== 'undefined' ? window.location.href : ''}
+                                            </p>
+                                        </div>
+                                        <button
+                                            onClick={() => {
+                                                if (typeof window !== 'undefined') {
+                                                    navigator.clipboard.writeText(window.location.href);
+                                                    // You could add a toast notification here
+                                                }
+                                            }}
+                                            className="ml-2 p-1 rounded-full bg-gray-50 hover:bg-gray-100 transition-colors flex-shrink-0"
+                                        >
+                                            <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 2z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
-                            {/* Navigation Links - Vertical Stack */}
-                            <div className="space-y-3 mb-6">
+                            {/* Navigation Links - With borders to separate */}
+                            <div className="space-y-0 mb-4">
                                 <Link
                                     href={`/${businessUrlnameInPath}/services`}
                                     onClick={() => setIsMobileMenuOpen(false)}
-                                    className={`block py-4 px-4 rounded-lg transition-colors duration-200 text-lg ${activeSection === 'services' ? 'font-semibold' : 'font-normal'}`}
+                                    className={`block py-3 px-4 transition-colors duration-200 text-lg border-b border-gray-200 ${activeSection === 'services' ? 'font-semibold' : 'font-normal'}`}
                                     style={activeSection === 'services' ? { backgroundColor: themeColorButton + '20', color: themeColorText } : { color: themeColorText }}
                                 >
                                     {t('services')}
@@ -337,7 +362,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                 <Link
                                     href={`/${businessUrlnameInPath}/products`}
                                     onClick={() => setIsMobileMenuOpen(false)}
-                                    className={`block py-4 px-4 rounded-lg transition-colors duration-200 text-lg ${activeSection === 'products' ? 'font-semibold' : 'font-normal'}`}
+                                    className={`block py-3 px-4 transition-colors duration-200 text-lg border-b border-gray-200 ${activeSection === 'products' ? 'font-semibold' : 'font-normal'}`}
                                     style={activeSection === 'products' ? { backgroundColor: themeColorButton + '20', color: themeColorText } : { color: themeColorText }}
                                 >
                                     {t('products')}
@@ -345,7 +370,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                 <Link
                                     href={`/${businessUrlnameInPath}/promotions`}
                                     onClick={() => setIsMobileMenuOpen(false)}
-                                    className={`block py-4 px-4 rounded-lg transition-colors duration-200 text-lg ${activeSection === 'promotions' ? 'font-semibold' : 'font-normal'}`}
+                                    className={`block py-3 px-4 transition-colors duration-200 text-lg border-b border-gray-200 ${activeSection === 'promotions' ? 'font-semibold' : 'font-normal'}`}
                                     style={activeSection === 'promotions' ? { backgroundColor: themeColorButton + '20', color: themeColorText } : { color: themeColorText }}
                                 >
                                     {t('promotions')}
@@ -353,7 +378,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                 <Link
                                     href={`/${businessUrlnameInPath}/rewards`}
                                     onClick={() => setIsMobileMenuOpen(false)}
-                                    className={`block py-4 px-4 rounded-lg transition-colors duration-200 text-lg ${activeSection === 'rewards' ? 'font-semibold' : 'font-normal'}`}
+                                    className={`block py-3 px-4 transition-colors duration-200 text-lg ${activeSection === 'rewards' ? 'font-semibold' : 'font-normal'}`}
                                     style={activeSection === 'rewards' ? { backgroundColor: themeColorButton + '20', color: themeColorText } : { color: themeColorText }}
                                 >
                                     {t('rewards')}
@@ -362,7 +387,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
 
                             {/* Google Review Button */}
                             {businessSettings.show_btn_review && googleReviewLinkUrl && (
-                                <div className="mb-6">
+                                <div className="mb-3">
                                     <Link 
                                         href={googleReviewLinkUrl} 
                                         target="_blank" 
@@ -441,31 +466,6 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                         )}
                                     </div>
                                 ) : null}
-
-                                {/* Page URL with Copy Button */}
-                                <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-xs text-gray-500 mb-1">Link della pagina</p>
-                                            <p className="text-sm font-medium truncate" style={{ color: themeColorText }}>
-                                                {typeof window !== 'undefined' ? window.location.href : ''}
-                                            </p>
-                                        </div>
-                                        <button
-                                            onClick={() => {
-                                                if (typeof window !== 'undefined') {
-                                                    navigator.clipboard.writeText(window.location.href);
-                                                    // You could add a toast notification here
-                                                }
-                                            }}
-                                            className="ml-3 p-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 transition-colors flex-shrink-0"
-                                        >
-                                            <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>

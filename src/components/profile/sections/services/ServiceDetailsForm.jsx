@@ -405,8 +405,8 @@ export default function ServiceDetailsForm({
                                         >
                                             <div className="text-base">
                                                 <p className="text-sm md:text-base font-medium">{item.item_name}</p>
-                                                {item.item_description && <p className="text-xs opacity-65">{item.item_description}</p>}
-                                                <p className="text-sm">{parseFloat(item.price_base).toFixed(2)}€
+                                                {item.item_description && <p className="text-xs opacity-60 leading-tight">{item.item_description}</p>}
+                                                <p className="text-xs md:text-sm">{parseFloat(item.price_base).toFixed(2)}€
                                                    {item.price_type === 'per_unit' && ` / ${item.price_unit}`}
                                                 </p>
                                             </div>
@@ -551,9 +551,9 @@ export default function ServiceDetailsForm({
                         </div>
                     )}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 border-b pb-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 lg:gap-4 mb-6 border-b pb-4">
                     <div>
-                        <label htmlFor="customerName" className="block text-sm font-medium">{tCommon('name')}</label>
+                        <label htmlFor="customerName" className="block text-xs md:text-sm font-medium">{tCommon('name')}</label>
                         <input
                             type="text"
                             id="customerName"
@@ -565,7 +565,7 @@ export default function ServiceDetailsForm({
                         />
                     </div>
                     <div>
-                        <label htmlFor="customerEmail" className="block text-sm font-medium">{tCommon('email')}</label>
+                        <label htmlFor="customerEmail" className="block text-xs md:text-sm font-medium">{tCommon('email')}</label>
                         <input
                             type="email"
                             id="customerEmail"
@@ -577,7 +577,7 @@ export default function ServiceDetailsForm({
                         />
                     </div>
                     <div className="md:col-span-2">
-                        <label htmlFor="customerPhone" className="block text-sm font-medium">{tCommon('phone')}</label>
+                        <label htmlFor="customerPhone" className="block text-xs md:text-sm font-medium">{tCommon('phone')}</label>
                         <input
                             type="tel"
                             id="customerPhone"
@@ -589,10 +589,10 @@ export default function ServiceDetailsForm({
                         />
                     </div>
                     <div className="md:col-span-2">
-                        <label htmlFor="customerNotes" className="block text-sm font-medium">{t('additionalNotes')}</label>
+                        <label htmlFor="customerNotes" className="block text-xs md:text-sm font-medium">{t('additionalNotes')}</label>
                         <textarea
                             id="customerNotes"
-                            rows="3"
+                            rows="2"
                             className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2"
                             style={{ backgroundColor: themeColorBackgroundCard, color: themeColorText, borderColor: themeColorBorder}}
                             value={customerNotes}

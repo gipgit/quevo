@@ -102,10 +102,10 @@ export default function ContactModal({
                       {phone.value || 'Telefono non disponibile'}
                     </p>
                     {phone.value && (
-                      <div className="flex gap-2 mt-1 justify-center">
+                      <div className="flex gap-1 md:gap-2 mt-1 justify-center">
                         <a
                           href={`tel:${phone.value}`}
-                          className="button btn-sm call-button px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
+                          className="button btn-sm call-button px-2 md:px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
                           style={{ backgroundColor: 'rgb(45, 205, 82)', color: '#fff' }}
                         >
                           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
@@ -117,7 +117,7 @@ export default function ContactModal({
                           href={whatsappLink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="button btn-sm whatsapp-button px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
+                          className="button btn-sm whatsapp-button px-2 md:px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
                           style={{ backgroundColor: '#25d366', color: '#fff' }}
                         >
                           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
@@ -126,7 +126,7 @@ export default function ContactModal({
                           WhatsApp
                         </a>
                         <button
-                          className="button btn-sm copy-button px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
+                          className="button btn-sm copy-button px-2 md:px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
                           style={{ backgroundColor: '#6c757d', color: '#fff' }}
                           onClick={() => handleCopy(phone.value, 'Telefono Copiato!')}
                         >
@@ -165,10 +165,10 @@ export default function ContactModal({
                     {email.value || 'Email non disponibile'}
                   </p>
                   {email.value && (
-                    <div className="flex gap-2 mt-1 justify-center">
+                    <div className="flex gap-1 md:gap-2 mt-1 justify-center">
                       <a
                         href={`mailto:${email.value}`}
-                        className="button btn-sm email-button px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
+                        className="button btn-sm email-button px-2 md:px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
                         style={{ backgroundColor: 'rgb(15, 107, 255)', color: '#fff' }}
                       >
                         <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
@@ -177,7 +177,7 @@ export default function ContactModal({
                         Invia Email
                       </a>
                       <button
-                        className="button btn-sm copy-button px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
+                        className="button btn-sm copy-button px-2 md:px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
                         style={{ backgroundColor: '#6c757d', color: '#fff' }}
                         onClick={() => handleCopy(email.value, 'Email Copiata!')}
                       >
