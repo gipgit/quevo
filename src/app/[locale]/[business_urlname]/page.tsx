@@ -25,10 +25,11 @@ export default async function BusinessRootPage({ params }: { params: ServiceRequ
         notFound();
     }
 
-    // Get the business and its default page setting
+    // OPTIMIZED: Get only the default_page setting first
     const business = await prisma.business.findUnique({
         where: { business_urlname },
-        include: {
+        select: {
+            business_id: true,
             businessprofilesettings: {
                 select: { default_page: true }
             }
@@ -41,7 +42,7 @@ export default async function BusinessRootPage({ params }: { params: ServiceRequ
 
     const defaultPage = business.businessprofilesettings?.default_page || 'services';
 
-    // OPTIMIZED: Render the appropriate section content directly based on default_page
+    // OPTIMIZED: Conditionally fetch section data based on default_page
     switch (defaultPage) {
         case 'services':
             const { services, categories } = await getServiceRequestServicesData(business_urlname);

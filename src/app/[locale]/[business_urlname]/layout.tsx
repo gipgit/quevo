@@ -151,16 +151,60 @@ export default async function BusinessProfileLayout({
     let error: string | null = null;
 
     try {
-        // OPTIMIZED: Remove businesspaymentmethod from main query - it will be loaded on-demand
+        // OPTIMIZED: Single efficient query for layout data
+        // Only fetch what's needed for layout: business + settings + links
         const businessData = await prisma.business.findUnique({
             where: { business_urlname: business_urlname },
-            include: {
-                businessprofilesettings: true, // Keep this for general settings and default_page
-                businesslink: true,          // Keep for universally displayed links (website, social icons in header/footer)
+            select: {
+                // Core business data
+                business_id: true,
+                business_name: true,
+                business_descr: true,
+                business_city: true,
+                business_country: true,
+                business_region: true,
+                business_address: true,
+                business_phone: true,
+                business_email: true,
+                business_public_uuid: true,
+                business_urlname: true,
+                business_urlname_last_edited: true,
+                date_created: true,
+                business_img_profile: true,
+                business_img_cover: true,
+                // Settings for theme and layout
+                businessprofilesettings: {
+                    select: {
+                        default_page: true,
+                        theme_color_background: true,
+                        theme_color_text: true,
+                        theme_color_button: true,
+                        theme_font: true,
+                        show_address: true,
+                        show_website: true,
+                        show_socials: true,
+                        show_btn_booking: true,
+                        show_btn_payments: true,
+                        show_btn_review: true,
+                        show_btn_phone: true,
+                        show_btn_email: true,
+                        show_btn_order: true,
+                        last_updated: true,
+                    }
+                },
+                // Links for header/footer
+                businesslink: {
+                    select: {
+                        business_link_id: true,
+                        link_type: true,
+                        link_url: true,
+                        visible: true,
+                    }
+                },
             },
-        });
+        }) as any; // Type assertion to handle complex Prisma types
 
-        console.log(`[${new Date().toISOString()}] Server Layout - Prisma findUnique result for ${business_urlname}:`, businessData ? 'FOUND' : 'NOT FOUND', businessData?.business_name || '');
+        console.log(`[${new Date().toISOString()}] Server Layout - Optimized query result for ${business_urlname}:`, businessData ? 'FOUND' : 'NOT FOUND', businessData?.business_name || '');
 
         if (!businessData) {
             notFound();
@@ -180,10 +224,10 @@ export default async function BusinessProfileLayout({
         );
         const themeFontCssStack = selectedFont ? selectedFont.font_css_stack : 'Arial, sans-serif';
 
-        const processedBusinessLinks = businessData.businesslink.map(link => {
+        const processedBusinessLinks = businessData.businesslink.map((link: any) => {
             return {
                 ...link,
-                label: link.link_type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+                label: link.link_type.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()),
                 icon: getSocialIconPath(link.link_type)
             };
         });
@@ -191,7 +235,7 @@ export default async function BusinessProfileLayout({
         let websiteLinkUrl: string | null = null;
         let googleReviewLinkUrl: string | null = null;
         let bookingLinkUrl = `/${business_urlname}/booking`;
-        businessData.businesslink.forEach(link => {
+        businessData.businesslink.forEach((link: any) => {
             if (link.link_type === 'website') { websiteLinkUrl = link.link_url; }
             if (link.link_type === 'google_review') { googleReviewLinkUrl = link.link_url; }
         });
