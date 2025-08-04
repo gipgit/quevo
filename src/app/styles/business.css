@@ -119,9 +119,7 @@
 .category-pills-section {
   background: var(--theme-color-background);
 }
-.category-pills-section .category-pills-wrapper {
-  background: var(--category-pills-section-background);
-}
+
 .category-pill {
   border-color: var(--category-pill-border-color);
   color: var(--theme-color-text);
@@ -253,9 +251,7 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
+           
     }
 
         .contact-modal-overlay.active {
@@ -263,35 +259,8 @@
             visibility: visible;
         }
 
-        .contact-modal-content {
-            background-color: #f4f4f4;
-            color: #000!important;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            gap: 1em;
-            padding: 3.5rem 1.25rem;
-            border-radius: 2rem 2rem 0 0;
-            width: 100%;
-            max-width: 500px;
-        }
 
-      
-
-          
-        @media (min-width: 1024px) {
-             .contact-modal-overlay {
-                align-items: center;
-             }
-            .contact-modal-content {
-                padding: 3rem;
-                border-radius: 2rem;
-                max-width: 550px;
-            }
-
-        }
+   
 
 
         .contact-modal-close {

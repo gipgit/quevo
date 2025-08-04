@@ -155,26 +155,26 @@ export default function ProductsPageClientContent({ businessMenuItems }) {
         <>
             <section id="category-pills-section" className="category-pills-section sticky top-0 z-20 w-full shadow-sm" style={{ background: 'var(--theme-color-background)' }}>
                 <div
-                    className="category-pills-wrapper w-full"
-                    style={{ background: 'var(--category-pills-wrapper-background)' }}
+                    className="category-pills-wrapper w-full bg-[var(--category-pills-wrapper-background)] lg:bg-transparent"
                 >
                     <div
                         className="pills-darken-overlay w-full py-4"
                         style={{ background: 'rgba(0,0,0,0.05)' }}
                     >
                         <div
-                            className="flex space-x-2 px-4 overflow-x-auto scrollbar-hide container mx-auto max-w-3xl"
+                            className="flex space-x-2 px-4 lg:px-8 overflow-x-auto scrollbar-hide container mx-auto max-w-3xl"
                         >
                             {businessMenuItems.map(category => (
                                 <button
                                     key={category.category_id}
-                                    className={`category-pill flex-shrink-0 px-4 py-2 rounded-full border text-sm font-medium transition-colors duration-200 mr-2
+                                    className={`category-pill flex-shrink-0 px-3 lg:px-4 py-2 rounded-full border-[1px] text-xs lg:text-sm font-medium transition-colors duration-200 mr-2
                                         ${activeCategory === category.category_id ? 'active' : ''}`}
                                     onClick={() => scrollToCategory(category.category_id)}
                                     style={{
-                                        borderColor: activeCategory === category.category_id ? themeColorButton : themeColorText,
-                                        color: activeCategory === category.category_id ? themeColorBackground : themeColorText,
-                                        backgroundColor: activeCategory === category.category_id ? themeColorButton : 'transparent',
+                                        borderWidth: activeCategory === category.category_id ? '2px' : '2px',
+                                        borderColor: activeCategory === category.category_id ? themeColorButton : 'transparent',
+                                        color: activeCategory === category.category_id ? themeColorText : themeColorText,
+                                        backgroundColor: activeCategory === category.category_id ? 'transparent' : 'transparent',
                                     }}
                                 >
                                     {category.category_name}

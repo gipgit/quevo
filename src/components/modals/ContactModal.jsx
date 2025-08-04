@@ -57,11 +57,11 @@ export default function ContactModal({
     // Apply the 'active' class based on the 'show' prop
     <div
       id="contactModalOverlay"
-      className={`contact-modal-overlay fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center ${show ? 'active' : ''}`}
+      className={`contact-modal-overlay fixed inset-0 bg-black bg-opacity-75 z-50 flex items-end lg:items-center justify-center ${show ? 'active' : ''}`}
       onClick={onClose}
     >
       <div
-        className="contact-modal-content w-full max-w-md p-6 rounded-lg shadow-lg relative"
+        className="contact-modal-content w-full max-w-[500px] px-4 lg:px-6 py-6 lg:py-6 rounded-t-[2rem] lg:rounded-b-[2rem] shadow-lg relative text-center"
         onClick={(e) => e.stopPropagation()}
         style={{
           backgroundColor: themeColorBackground,
@@ -161,7 +161,7 @@ export default function ContactModal({
                       {email.title}
                     </p>
                   )}
-                  <p className="text-lg font-medium break-all md:text-2xl" style={{ color: themeColorText }}>
+                  <p className="text-base lg:text-lg font-medium break-all md:text-2xl" style={{ color: themeColorText }}>
                     {email.value || 'Email non disponibile'}
                   </p>
                   {email.value && (

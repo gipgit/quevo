@@ -21,7 +21,7 @@ export default function ServiceSelection({
 
     return (
         <div className="x" style={{ color: themeColorText}}>
-            <p className="text-lg lg:text-xl mb-4">{t('chooseService')}</p>
+            <p className="text-lg lg:text-2xl mb-2 lg:mb-2">{t('chooseService')}</p>
 
             {/* Render categorized services */}
             {servicesByCategory && Array.isArray(servicesByCategory) && servicesByCategory.length > 0 && (
@@ -30,40 +30,40 @@ export default function ServiceSelection({
 
                     return (
                         <div key={categoryGroup.category_name} className="mb-6">
-                            <p className="text-sm font-medium mb-3 border-b pb-1" style={{ borderColor: themeColorText + '50' }}>{categoryGroup.category_name}</p>
+                            <p className="text-xs lg:text-sm opacity-60 font-medium mb-3 border-b pb-0 lg:pb-1" style={{ borderColor: themeColorText + '50' }}>{categoryGroup.category_name}</p>
                             {categoryGroup.services.map(service => (
                                 <div
                                     key={service.service_id}
-                                    className={`flex flex-col md:flex-row justify-between md:items-center gap-3 md:gap-5 p-4 md:p-5 mb-2 rounded-2xl cursor-pointer transition-colors border ${
+                                    className={`flex flex-col lg:flex-row justify-between lg:items-start gap-3 md:gap-5 p-4 md:p-5 mb-2 rounded-2xl cursor-pointer transition-colors border ${
                                         selectedService?.service_id === service.service_id ? 'ring-2 ring-offset-2' : ''
                                     }`}
                                     style={{
                                         backgroundColor: selectedService?.service_id === service.service_id ? themeColorButton + '20' : themeColorBackgroundCard, 
                                         borderColor: selectedService?.service_id === service.service_id ? themeColorButton : themeColorBorder,
                                         color: themeColorText,
-                                        boxShadow: selectedService?.service_id === service.service_id ? `0 1px 5px ${themeColorButton}` : `0 1px 5px rgba(0,0,0,.075)`
+                                        boxShadow: selectedService?.service_id === service.service_id ? `0 1px 2px ${themeColorButton}` : `0 1px 2px rgba(0,0,0,.075)`
                                     }}
                                     onClick={() => onServiceSelect(service)}
                                 >
-                                    <div>
+                                    <div className="flex-1">
                                         <p className="font-bold text-base md:text-xl leading-tight">{service.service_name}</p>
                                         {service.description && (
                                             <p className="mt-1 text-xs md:text-sm opacity-70">{service.description}</p>
                                         )}
+                                    </div>
+                                    <div className="flex flex-row lg:flex-col lg:items-end gap-3 lg:gap-1">
+                                        <span className="font-medium text-md md:text-lg">
+                                            {service.price_base.toLocaleString(locale, { style: 'currency', currency: 'EUR' })}
+                                        </span>
                                         {service.date_selection && (
-                                            <>
-                                            <div className="flex flex-row items-center gap-2 mt-1">
+                                            <div className="flex flex-row items-center gap-3">
                                                 <p className="text-xs opacity-70">
                                                     {t('duration')}: {service.duration_minutes} {t('minutes', { count: service.duration_minutes })}
                                                 </p>
-                                                <p className="text-xs opacity-80 leading-none ">{t('bookable')}</p>
+                                                <p className="text-xs opacity-80 leading-none">{t('bookable')}</p>
                                             </div>
-                                            </>
                                         )}
                                     </div>
-                                    <span className="font-medium text-md md:text-lg">
-                                        {service.price_base.toLocaleString(locale, { style: 'currency', currency: 'EUR' })}
-                                    </span>
                                 </div>
                             ))}
                         </div>
@@ -81,7 +81,7 @@ export default function ServiceSelection({
                     {uncategorizedServices.map(service => (
                         <div
                             key={service.service_id}
-                            className={`flex justify-between items-center p-3 mb-2 rounded-md cursor-pointer transition-colors ${
+                            className={`flex flex-col lg:flex-row justify-between lg:items-start gap-3 p-3 mb-2 rounded-md cursor-pointer transition-colors ${
                                 selectedService?.service_id === service.service_id ? 'ring-2 ring-offset-2' : ''
                             }`}
                             style={{
@@ -92,19 +92,25 @@ export default function ServiceSelection({
                             }}
                             onClick={() => onServiceSelect(service)}
                         >
-                            <div>
+                            <div className="flex-1">
                                 <p className="font-medium md:text-lg">{service.service_name}</p>
                                 {service.description && (
                                     <p className="mt-1 text-xs md:text-sm opacity-70">{service.description}</p>
                                 )}
-                                {/* Updated pluralization for minutes */}
-                                <p className="text-xs opacity-70 mt-1">
-                                    {t('duration')}: {service.duration_minutes} {t('minutes', { count: service.duration_minutes })}
-                                </p>
                             </div>
-                            <span className="font-bold text-lg">
-                                {service.price_base.toLocaleString(locale, { style: 'currency', currency: 'EUR' })}
-                            </span>
+                            <div className="flex flex-row lg:flex-col lg:items-end gap-3">
+                                <span className="font-bold text-lg">
+                                    {service.price_base.toLocaleString(locale, { style: 'currency', currency: 'EUR' })}
+                                </span>
+                                {service.date_selection && (
+                                    <div className="flex flex-row items-center gap-3">
+                                        <p className="text-xs opacity-70">
+                                            {t('duration')}: {service.duration_minutes} {t('minutes', { count: service.duration_minutes })}
+                                        </p>
+                                        <p className="text-xs opacity-80 leading-none">{t('bookable')}</p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     ))}
                 </div>

@@ -17,7 +17,7 @@ const MenuItemCard = ({ item, themeColorTextRgb, borderColorOpacity, themeColorB
     const itemBorderColor = `rgba(${themeColorTextRgb}, ${borderColorOpacity})`;
 
     return (
-        <div className="rounded-xl p-4 mb-4" style={{ backgroundColor: themeColorBackgroundCard, borderColor: itemBorderColor }}>
+        <div className="rounded-xl p-4 mb-4 border-[1px] shadow-sm" style={{ backgroundColor: themeColorBackgroundCard, borderColor: themeColorTextRgb}}>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center cursor-pointer" onClick={toggleAccordion}>
                 <div className="flex flex-col md:flex-row items-start md:items-center w-full md:w-auto md:flex-grow">
                     {item.item_img && (
@@ -33,7 +33,7 @@ const MenuItemCard = ({ item, themeColorTextRgb, borderColorOpacity, themeColorB
                         </div>
                     )}
                     <div className="flex-grow">
-                        <h4 className="font-medium text-lg md:text-lg">{item.item_name}</h4>
+                        <h4 className="font-medium text-base md:text-lg">{item.item_name}</h4>
                         {item.item_description && <p className="text-xs md:text-sm opacity-80 mt-1">{item.item_description}</p>}
                     </div>
                 </div>
@@ -41,7 +41,7 @@ const MenuItemCard = ({ item, themeColorTextRgb, borderColorOpacity, themeColorB
                 <div className="flex items-center mt-4 md:mt-0 md:ml-4 flex-shrink-0">
                     {item.productvariation.length > 0 && (
                         <>
-                            <span className="font-bold text-lg mr-2">
+                            <span className="text-base md:text-lg mr-2">
                                 {item.productvariation.length === 1 ?
                                     `€${parseFloat(item.productvariation[0].calculated_variation_price).toFixed(2)}` :
                                     tBooking('fromPrice', { minPrice: Math.min(...item.productvariation.map(v => parseFloat(v.calculated_variation_price || '0'))).toFixed(2) })
@@ -59,7 +59,7 @@ const MenuItemCard = ({ item, themeColorTextRgb, borderColorOpacity, themeColorB
                         </>
                     )}
                     {item.productvariation.length === 0 && item.price && (
-                        <span className="font-bold text-md md:text-lg">€{parseFloat(item.price).toFixed(2)}</span>
+                        <span className="font-semibold text-md md:text-lg">€{parseFloat(item.price).toFixed(2)}</span>
                     )}
                 </div>
             </div>

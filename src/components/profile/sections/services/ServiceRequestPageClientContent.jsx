@@ -177,7 +177,7 @@ export default function ServiceRequestPageClientContent({
 
 
     return (
-        <div className="container max-w-3xl mx-auto py-8 px-4 lg:px-8">
+        <div className="container max-w-3xl mx-auto min-h-[80vh] py-6 px-4 lg:px-8">
             {/* Full Screen Submitting Overlay */}
             {isSubmitting && (
                 <div className="fixed inset-0  bg-white flex justify-center items-center z-50">
