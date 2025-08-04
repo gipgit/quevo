@@ -237,3 +237,123 @@ export async function getServiceRequestServicesData(businessUrlname) {
         return { services: [], categories: [] };
     }
 }
+
+/**
+ * Fetches products/menu data for a given business.
+ * @param {string} businessUrlname The URL name of the business.
+ * @returns {Promise<Object>} Processed menu items organized by categories.
+ */
+export async function getProductsData(businessUrlname) {
+    try {
+        // First get the business_id from business_urlname
+        const business = await prisma.business.findUnique({
+            where: { business_urlname: businessUrlname },
+            select: { business_id: true, business_public_uuid: true }
+        });
+
+        if (!business) {
+            return { businessMenuItems: [] };
+        }
+
+        // Fetch the products data
+        const businessData = await prisma.business.findUnique({
+            where: { business_urlname: businessUrlname },
+            select: {
+                business_public_uuid: true,
+                product: {
+                    include: { 
+                        productvariation: { orderBy: { variation_name: 'asc' } }, 
+                        productcategory: true 
+                    },
+                    orderBy: { display_order: 'asc' }
+                },
+                productcategory: { orderBy: { display_order: 'asc' } },
+            },
+        });
+
+        if (!businessData) {
+            return { businessMenuItems: [] };
+        }
+
+        // Process Menu Items (Products) - Same logic as in products/page.tsx
+        const menuItemsByCategory = {};
+        const allMenuCategories = businessData.productcategory || [];
+        allMenuCategories.forEach(cat => {
+            menuItemsByCategory[cat.category_id] = {
+                category_id: cat.category_id,
+                category_name: cat.category_name,
+                display_order: cat.display_order,
+                items: []
+            };
+        });
+
+        const UNCAT_MENU_CATEGORY_ID = -1;
+        if (!menuItemsByCategory[UNCAT_MENU_CATEGORY_ID]) {
+            menuItemsByCategory[UNCAT_MENU_CATEGORY_ID] = {
+                category_id: UNCAT_MENU_CATEGORY_ID,
+                category_name: 'Uncategorized', // Will be translated in the component
+                display_order: Infinity,
+                items: []
+            };
+        }
+
+        businessData.product?.forEach(item => {
+            let itemImageUrl = null;
+            if (item.image_available) {
+                itemImageUrl = `/uploads/menu/${businessData.business_public_uuid}/item_${item.item_id}.webp`;
+            }
+            const processedItem = {
+                ...item,
+                price: item.price?.toString() || null,
+                item_img: itemImageUrl,
+                date_created: item.date_created?.toISOString() || null,
+                date_update: item.date_update?.toISOString() || null,
+                productcategory: item.productcategory ? {
+                    ...item.productcategory,
+                    date_created: item.productcategory.date_created?.toISOString() || null,
+                    date_update: item.productcategory.date_update?.toISOString() || null,
+                } : null,
+                productvariation: item.productvariation?.map((variation) => {
+                    let calculatedVariationPrice;
+                    if (variation.price_override !== null && variation.price_override !== undefined) {
+                        calculatedVariationPrice = parseFloat(variation.price_override.toString());
+                    } else if (variation.price_modifier !== null && variation.price_modifier !== undefined) {
+                        calculatedVariationPrice = (parseFloat(item.price?.toString() || '0') + parseFloat(variation.price_modifier?.toString() || '0'));
+                    } else {
+                        calculatedVariationPrice = parseFloat(item.price?.toString() || '0');
+                    }
+                    return {
+                        ...variation,
+                        calculated_variation_price: calculatedVariationPrice?.toString() || null,
+                        price_override: variation.price_override?.toString() || null,
+                        price_modifier: variation.price_modifier?.toString() || null,
+                        date_created: variation.date_created?.toISOString() || null,
+                        date_update: variation.date_update?.toISOString() || null,
+                    };
+                }) || [],
+            };
+            const targetCategoryId = processedItem.category_id || UNCAT_MENU_CATEGORY_ID;
+            if (menuItemsByCategory[targetCategoryId]) {
+                menuItemsByCategory[targetCategoryId].items.push(processedItem);
+            } else {
+                menuItemsByCategory[UNCAT_MENU_CATEGORY_ID].items.push(processedItem);
+            }
+        });
+
+        const sortedMenuCategoriesWithItems = Object.values(menuItemsByCategory)
+            .filter(cat => cat.items.length > 0)
+            .sort((a, b) => {
+                if (a.category_id === UNCAT_MENU_CATEGORY_ID) return 1;
+                if (b.category_id === UNCAT_MENU_CATEGORY_ID) return -1;
+                if (a.display_order !== b.display_order) {
+                    return a.display_order - b.display_order;
+                }
+                return a.category_name.localeCompare(b.category_name);
+            });
+
+        return { businessMenuItems: sortedMenuCategoriesWithItems };
+    } catch (error) {
+        console.error('Error fetching products data:', error);
+        return { businessMenuItems: [] };
+    }
+}

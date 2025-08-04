@@ -1,61 +1,83 @@
 // src/app/[locale]/[business_urlname]/page.tsx
-// This is a Server Component, responsible for redirecting to the default section.
+// This page renders the default section content directly based on user settings
 
-import { redirect } from 'next/navigation';
-import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
+import { getServiceRequestServicesData, getPromotionsData, getRewardsData, getProductsData } from '@/lib/data/business-profile';
+import ServiceRequestWrapper from '@/components/profile/sections/services/ServiceRequestWrapper';
+import prisma from '@/lib/prisma';
 
-// This page doesn't need frequent revalidation as its main job is a redirect based on settings.
-// The revalidation will happen on the target section's page.
-export const revalidate = 3600; // Revalidate settings every hour to check for default_page changes
+interface ServiceRequestPageParams {
+  locale: string;
+  business_urlname: string;
+}
 
-export default async function BusinessRootPage({ params }: { params: { business_urlname: string; locale: string } }) {
-    const { business_urlname, locale } = params;
+export async function generateMetadata({ params }: { params: ServiceRequestPageParams }) {
+    return {
+        title: "Quevo",
+        description: "Quevo",
+    };
+}
+
+export default async function BusinessRootPage({ params }: { params: ServiceRequestPageParams }) {
+    const { locale, business_urlname } = params;
 
     if (!business_urlname) {
-        notFound(); // Should ideally be caught by parent layout, but good to have
-    }
-
-    // Fetch only the default_page setting from businessprofilesettings
-    const businessSettingsData = await prisma.business.findUnique({
-        where: { business_urlname: business_urlname },
-        select: {
-            businessprofilesettings: {
-                select: { default_page: true }
-            }
-        },
-    });
-
-    if (!businessSettingsData) {
-        // If business not found or settings not available, redirect to a generic not found or a fixed default
         notFound();
     }
 
-    const defaultPageSetting = businessSettingsData.businessprofilesettings?.default_page;
+    // Get the business and its default page setting
+    const business = await prisma.business.findUnique({
+        where: { business_urlname },
+        include: {
+            businessprofilesettings: {
+                select: { default_page: true }
+            }
+        }
+    });
 
-    // Map the default_page setting from your database to a URL segment.
-    // Make sure these segments match the folder names you'll create under `(sections)/`
-    let redirectToSegment: string;
-    switch (defaultPageSetting) {
-        case 'services':
-            redirectToSegment = 'services';
-            break;
-        case 'products':
-            redirectToSegment = 'products';
-            break;
-        case 'promotions':
-            redirectToSegment = 'promotions';
-            break;
-        case 'rewards':
-            redirectToSegment = 'rewards';
-            break;
-        // Add more cases here if you define other section types in your `default_page` setting.
-        default:
-            // Fallback to 'products' if the setting is null, undefined, or an unrecognized value.
-            redirectToSegment = 'services';
-            break;
+    if (!business) {
+        notFound();
     }
 
-    // Perform the server-side redirect to the default section's URL
-    redirect(`/${locale}/${business_urlname}/${redirectToSegment}`);
+    const defaultPage = business.businessprofilesettings?.default_page || 'services';
+
+    // OPTIMIZED: Render the appropriate section content directly based on default_page
+    switch (defaultPage) {
+        case 'services':
+            const { services, categories } = await getServiceRequestServicesData(business_urlname);
+            return (
+                <ServiceRequestWrapper
+                    services={services}
+                    categories={categories}
+                />
+            );
+            
+        case 'promotions':
+            const promotions = await getPromotionsData(business.business_id);
+            // Import and render promotions component
+            const PromotionsPageClientContent = (await import('@/components/profile/sections/promotions/PromotionsPageClientContent')).default;
+            return <PromotionsPageClientContent initialPromotionsData={{ businessData: business, promotions }} />;
+            
+        case 'rewards':
+            const rewards = await getRewardsData(business.business_id);
+            // Import and render rewards component
+            const RewardsPageClientContent = (await import('@/components/profile/sections/rewards/RewardsPageClientContent')).default;
+            return <RewardsPageClientContent initialRewardsData={{ businessData: business, rewards }} />;
+            
+        case 'products':
+            const productsData = await getProductsData(business_urlname) as { businessMenuItems: any[] };
+            // Import and render products component
+            const ProductsPageClientContent = (await import('@/components/profile/sections/products/ProductsPageClientContent')).default;
+            return <ProductsPageClientContent businessMenuItems={productsData.businessMenuItems} />;
+            
+        default:
+            // For any other default page type, fallback to services
+            const { services: fallbackServices, categories: fallbackCategories } = await getServiceRequestServicesData(business_urlname);
+            return (
+                <ServiceRequestWrapper
+                    services={fallbackServices}
+                    categories={fallbackCategories}
+                />
+            );
+    }
 }
