@@ -730,7 +730,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                   )}
                 </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className={`rounded-lg p-2 font-medium whitespace-nowrap ${
                     boardData.status === 'active' ? 'bg-green-100 text-green-800 border border-green-200' :
                     boardData.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
