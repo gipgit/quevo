@@ -8,6 +8,7 @@ import dynamic from "next/dynamic"
 import type { ImageCropperRef } from "@/components/dashboard/profile/ImageCropper"
 
 const ImageCropper = dynamic(() => import("@/components/dashboard/profile/ImageCropper").then(mod => ({ default: mod.default })), { ssr: false })
+const DualCoverCropper = dynamic(() => import("./dual-cover-cropper").then(mod => ({ default: mod.default })), { ssr: false })
 
 interface ImageUploadStepProps {
   formData: BusinessFormData
@@ -22,6 +23,7 @@ export default function ImageUploadStep({ formData, updateFormData, onValidation
   const [cropperOpen, setCropperOpen] = useState<null | "profile" | "cover">(null)
   const [cropImageSrc, setCropImageSrc] = useState<string | null>(null)
   const [triggerCrop, setTriggerCrop] = useState(false)
+  const [dualCoverCropperOpen, setDualCoverCropperOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
@@ -34,7 +36,11 @@ export default function ImageUploadStep({ formData, updateFormData, onValidation
       const reader = new FileReader()
       reader.onload = (e) => {
         setCropImageSrc(e.target?.result as string)
-        setCropperOpen(type)
+        if (type === "cover") {
+          setDualCoverCropperOpen(true)
+        } else {
+          setCropperOpen(type)
+        }
       }
       reader.readAsDataURL(file)
       // Save the file temporarily for cropping
@@ -43,7 +49,7 @@ export default function ImageUploadStep({ formData, updateFormData, onValidation
         updateFormData({ profile_image: null })
         setProfilePreview(null)
       } else {
-        updateFormData({ cover_image: null })
+        updateFormData({ cover_image_mobile: null, cover_image_desktop: null })
         setCoverPreview(null)
       }
     }
@@ -54,13 +60,28 @@ export default function ImageUploadStep({ formData, updateFormData, onValidation
     if (type === "profile") {
       updateFormData({ profile_image: croppedFile })
       setProfilePreview(previewUrl)
-    } else {
-      updateFormData({ cover_image: croppedFile })
-      setCoverPreview(previewUrl)
+      setCropperOpen(null)
+      setCropImageSrc(null)
+      setTriggerCrop(false)
     }
-    setCropperOpen(null)
+  }
+
+  const handleDualCoverCropComplete = (mobileBlob: Blob, desktopBlob: Blob, mobilePreview: string, desktopPreview: string) => {
+    const mobileFile = new File([mobileBlob], "cover-mobile.webp", { type: "image/webp" })
+    const desktopFile = new File([desktopBlob], "cover-desktop.webp", { type: "image/webp" })
+    
+    updateFormData({ 
+      cover_image_mobile: mobileFile,
+      cover_image_desktop: desktopFile 
+    })
+    setCoverPreview(mobilePreview) // Use mobile preview as main preview
+    setDualCoverCropperOpen(false)
     setCropImageSrc(null)
-    setTriggerCrop(false)
+  }
+
+  const handleDualCoverCancel = () => {
+    setDualCoverCropperOpen(false)
+    setCropImageSrc(null)
   }
 
   const removeImage = (type: "profile" | "cover") => {
@@ -160,6 +181,15 @@ export default function ImageUploadStep({ formData, updateFormData, onValidation
             </div>
           </div>
         </div>
+      )}
+
+      {/* Dual Cover Cropper Modal */}
+      {dualCoverCropperOpen && cropImageSrc && (
+        <DualCoverCropper
+          imageSrc={cropImageSrc}
+          onCropComplete={handleDualCoverCropComplete}
+          onCancel={handleDualCoverCancel}
+        />
       )}
     </div>
   )

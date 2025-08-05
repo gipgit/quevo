@@ -4,6 +4,7 @@
 
 import React, { useEffect } from 'react'; // Import useEffect for logging
 import { useTranslations } from 'next-intl';
+import EmptyState from '@/components/ui/EmptyState';
 
 export default function ServiceSelection({
     servicesByCategory, // Services pre-filtered by category (array of { category_name, services: [] })
@@ -19,9 +20,15 @@ export default function ServiceSelection({
     const t = useTranslations('ServiceRequest');
 
 
+    // Check if there are any services available
+    const hasServices = (servicesByCategory && Array.isArray(servicesByCategory) && servicesByCategory.some(category => category.services.length > 0)) || 
+                       (uncategorizedServices && uncategorizedServices.length > 0);
+
     return (
         <div className="x" style={{ color: themeColorText}}>
-            <p className="text-lg lg:text-2xl mb-2 lg:mb-2">{t('chooseService')}</p>
+            {hasServices && (
+                <p className="text-lg lg:text-2xl mb-2 lg:mb-2">{t('chooseService')}</p>
+            )}
 
             {/* Render categorized services */}
             {servicesByCategory && Array.isArray(servicesByCategory) && servicesByCategory.length > 0 && (
@@ -71,7 +78,12 @@ export default function ServiceSelection({
                 })
             )}
             {!servicesByCategory || servicesByCategory.length === 0 && uncategorizedServices.length === 0 && (
-                   <p className="p-3 rounded-lg bg-white/50 text-sm opacity-50">{t('noServicesAvailable')}</p>
+                <EmptyState 
+                    primaryTitle={t('noServicesAvailable')}
+                    textColor="text-gray-600"
+                    backgroundColor="bg-gray-50"
+                    borderColor="border-gray-200"
+                />
             )}
 
             {/* Render uncategorized services if any */}

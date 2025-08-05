@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl';
 import { format, parseISO } from 'date-fns';
 import { useBusinessProfile } from '@/contexts/BusinessProfileContext';
 import { useRouter } from 'next/navigation'; // Import useRouter
+import Image from 'next/image'; // Import Next.js Image component
 // import { useSession } from 'next-auth/react'; // Uncomment and import if using NextAuth.js or similar
 
 export default function ServiceRequestPageClientContent({
@@ -16,7 +17,7 @@ export default function ServiceRequestPageClientContent({
     services: rawServices,
     categories: rawCategories
 }) {
-    const { locale, themeColorText, themeColorButton, themeColorBackgroundCard, themeColorBorder  } = useBusinessProfile();
+    const { locale, themeColorText, themeColorButton, themeColorBackgroundCard, themeColorBorder, themeColorBackground  } = useBusinessProfile();
     const t = useTranslations('ServiceRequest');
     const router = useRouter(); // Initialize useRouter
     // const { data: session } = useSession(); // Uncomment if using NextAuth.js
@@ -139,7 +140,19 @@ export default function ServiceRequestPageClientContent({
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.error || t('serviceRequestFailed'));
+                let errorMessage = errorData.error || t('serviceRequestFailed');
+                
+                // Add detailed error information if available
+                if (errorData.details) {
+                    errorMessage += `\n\n${errorData.details}`;
+                }
+                
+                // Add usage information for limit errors
+                if (errorData.errorType === 'MONTHLY_LIMIT_REACHED' && errorData.usage) {
+                    errorMessage += `\n\nUsage: ${errorData.usage.current}/${errorData.usage.limit} (${errorData.usage.remaining} remaining)`;
+                }
+                
+                throw new Error(errorMessage);
             }
 
             const result = await response.json();
@@ -180,38 +193,78 @@ export default function ServiceRequestPageClientContent({
         <div className="container max-w-3xl mx-auto min-h-[80vh] py-6 px-4 lg:px-8">
             {/* Full Screen Submitting Overlay */}
             {isSubmitting && (
-                <div className="fixed inset-0  bg-white flex justify-center items-center z-50">
+                <div 
+                    className="fixed inset-0 flex justify-center items-center z-50"
+                    style={{ backgroundColor: themeColorBackground }}
+                >
                     <div className="p-8 max-w-md w-full text-center">
                         <div className="relative mb-6">
-                            <img 
-                                src={business.business_img_profile || '/default-profile.png'} 
-                                alt="Business Profile" 
-                                className="w-24 h-24 rounded-full mx-auto object-cover border-4 border-gray-200"
-                            />
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                            </div>
+                            {business.business_img_profile && (
+                                <div className="w-24 h-24 rounded-full mx-auto overflow-hidden relative flex items-center justify-center">
+                                    <div className="w-20 h-20 rounded-full overflow-hidden">
+                                        <Image
+                                            src={business.business_img_profile}
+                                            alt="Business Profile"
+                                            width={80}
+                                            height={80}
+                                            className="object-cover w-full h-full"
+                                        />
+                                    </div>
+                                    <div 
+                                        className="absolute inset-0 rounded-full border-2 border-transparent"
+                                        style={{ 
+                                            borderTopColor: themeColorButton,
+                                            animation: 'spin 1s linear infinite'
+                                        }}
+                                    ></div>
+                                </div>
+                            )}
                         </div>
-                        <h3 className="text-xl font-semibold">{t('submittingServiceRequest')}</h3>
+                        <h3 
+                            className="text-xl font-semibold"
+                            style={{ color: themeColorText }}
+                        >
+                            {t('submittingServiceRequest')}
+                        </h3>
                     </div>
                 </div>
             )}
 
             {/* Full Screen Redirecting Overlay */}
             {isRedirecting && (
-                <div className="fixed inset-0 bg-white flex justify-center items-center z-50">
+                <div 
+                    className="fixed inset-0 flex justify-center items-center z-50"
+                    style={{ backgroundColor: themeColorBackground }}
+                >
                     <div className="p-8 max-w-md w-full text-center">
                         <div className="relative mb-6">
-                            <img 
-                                src={business.business_img_profile || '/default-profile.png'} 
-                                alt="Business Profile" 
-                                className="w-24 h-24 rounded-full mx-auto object-cover border-4 border-gray-200"
-                            />
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
-                            </div>
+                            {business.business_img_profile && (
+                                <div className="w-24 h-24 rounded-full mx-auto overflow-hidden relative flex items-center justify-center">
+                                    <div className="w-20 h-20 rounded-full overflow-hidden">
+                                        <Image
+                                            src={business.business_img_profile}
+                                            alt="Business Profile"
+                                            width={80}
+                                            height={80}
+                                            className="object-cover w-full h-full"
+                                        />
+                                    </div>
+                                    <div 
+                                        className="absolute inset-0 rounded-full border-2 border-transparent"
+                                        style={{ 
+                                            borderTopColor: themeColorButton,
+                                            animation: 'spin 1s linear infinite'
+                                        }}
+                                    ></div>
+                                </div>
+                            )}
                         </div>
-                        <h3 className="text-xl font-semibold">{t('redirectingToConfirmation')}</h3>
+                        <h3 
+                            className="text-xl font-semibold"
+                            style={{ color: themeColorText }}
+                        >
+                            {t('redirectingToConfirmation')}
+                        </h3>
                     </div>
                 </div>
             )}
@@ -232,7 +285,7 @@ export default function ServiceRequestPageClientContent({
                         <div className="flex justify-center">
                             <button
                                 onClick={() => setShowErrorModal(false)}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                                className="px-4 py-2 bg-gray-600 text-white rounded-md"
                             >
                                 {t('ok')}
                             </button>

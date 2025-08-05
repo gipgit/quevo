@@ -28,7 +28,7 @@ export function BusinessLocationStep({ formData, updateFormData, onValidationCha
         <input
           type="text"
           id="business_region"
-          value={formData.business_region}
+          value={formData.business_region || ''}
           onChange={(e) => updateFormData({ business_region: e.target.value })}
           className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder={t("regionPlaceholder")}
@@ -44,7 +44,7 @@ export function BusinessLocationStep({ formData, updateFormData, onValidationCha
         <input
           type="text"
           id="business_city"
-          value={formData.business_city}
+          value={formData.business_city || ''}
           onChange={(e) => updateFormData({ business_city: e.target.value })}
           className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder={t("cityPlaceholder")}
@@ -59,7 +59,7 @@ export function BusinessLocationStep({ formData, updateFormData, onValidationCha
         </label>
         <textarea
           id="business_address"
-          value={formData.business_address}
+          value={formData.business_address || ''}
           onChange={(e) => updateFormData({ business_address: e.target.value })}
           className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder={t("addressPlaceholder")}

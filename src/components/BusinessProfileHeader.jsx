@@ -88,7 +88,6 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
         return <div className="text-center py-4" style={{ color: themeColorText || 'gray' }}>{t('loadingHeader')}</div>;
     }
 
-    const logoAltText = `${businessData.business_name} Logo`;
 
     // OPTIMIZED: Use server-calculated button text color
     const phones = parseContacts(businessData.business_phone);
@@ -134,11 +133,11 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                         {/* Left side - Profile image, business name, and navigation links */}
                         <div className="flex items-center space-x-8">
                             <div className="flex items-center space-x-4">
-                                <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                                <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0" style={{ boxShadow: '0.5px 0.5px 3px rgba(0, 0, 0, 0.4)' }}>
                                     {businessData.business_img_profile ? (
                                         <Image
                                             src={businessData.business_img_profile}
-                                            alt={logoAltText}
+                                            alt=""
                                             width={40}
                                             height={40}
                                             className="object-cover w-full h-full"
@@ -206,7 +205,20 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                     </div>
                                 ))}
                             </div>
-                            
+
+                            <div className="flex flex-col items-end gap-x-3">
+                            {(businessSettings.show_address && businessData.business_address) && (
+                                <p className="text-sm opacity-90">
+                                        {businessData.business_city} / {businessData.business_address}
+                                </p>
+                            )}
+                            {businessSettings.show_website && websiteLinkUrl && (
+                                        <Link href={websiteLinkUrl} target="_blank" rel="noopener noreferrer" className="text-xs underline opacity-60 hover:opacity-100 transition-opacity">
+                                            {websiteLinkUrl.replace(/^https?:\/\/(www\.)?/, '')}
+                                        </Link>
+                            )}
+                            </div>
+                                
                             {/* Action Buttons */}
                             {businessSettings.show_btn_payments && (
                                 <button onClick={togglePaymentsModal} className="px-2 py-1 rounded-lg text-sm font-medium transition-colors duration-200" style={secondaryButtonStyle}>
@@ -225,6 +237,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                     />
                                 </Link>
                             )}
+
 
                             {businessSettings.show_btn_phone && hasPhones && (
                                 <button onClick={() => toggleContactModal('phone')} className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200" style={primaryButtonStyle}>
@@ -258,10 +271,10 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
 
             {/* Mobile/Tablet Cover Image */}
             <div className="lg:hidden profile-cover w-full relative bg-gray-200 h-40 sm:h-40 md:h-40">
-                {businessData.business_img_cover ? (
+                {businessData.business_img_cover_mobile ? (
                     <Image
-                        src={businessData.business_img_cover}
-                        alt={t('coverPhotoAlt')}
+                        src={businessData.business_img_cover_mobile}
+                        alt=""
                         fill
                         sizes="100vw"
                         className="object-cover"
@@ -308,7 +321,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                         {businessData.business_img_profile ? (
                                             <Image
                                                 src={businessData.business_img_profile}
-                                                alt={logoAltText}
+                                                alt=""
                                                 width={48}
                                                 height={48}
                                                 className="object-cover w-full h-full"
@@ -481,7 +494,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                  {businessData.business_img_profile ? (
                      <Image
                          src={businessData.business_img_profile}
-                         alt={logoAltText}
+                         alt=""
                          fill
                          sizes="80px"
                          className="object-cover"
@@ -620,44 +633,28 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
             {/* Desktop Hero Layout (lg+) */}
             <div className="hidden lg:flex flex-col justify-center h-screen max-h-screen overflow-y-auto relative">
                 {/* Cover Image Background - Only for desktop layout */}
-                {businessData.business_img_cover && (
+                {businessData.business_img_cover_desktop && (
                     <div className="absolute inset-0 z-0 my-8 rounded-lg">
                         <div className="relative h-full w-full rounded-lg">
                             <Image
-                                src={businessData.business_img_cover}
-                                alt="Cover Background"
+                                src={businessData.business_img_cover_desktop}
+                                alt=""
                                 fill
-                                sizes="100vw"
-                                className="object-cover rounded-2xl"
+                                sizes="100%"
+                                className="object-cover rounded-xl"
                                 priority
                             />
                             {/* Overlay for better text readability */}
-                            <div className="absolute inset-0 bg-black/20 rounded-2xl"></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-2xl"></div>
                         </div>
                     </div>
                 )}
                 
                 <div className="container mx-auto px-10 relative z-10">
                     <div className="text-left transition-opacity duration-300" style={{ color: 'white', opacity: scrollOpacity }}>
-                        <div className="mb-6">
+                        <div className="mb-0">
                             {businessData.business_descr && <p className="font-bold text-2xl md:text-4xl lg:text-5xl max-w-2xl mb-4" style={{ textShadow: '1px 1px 4px rgba(0, 0, 0, 0.5)' }}>{businessData.business_descr}</p>}
-                            <div className="flex flex-wrap items-center gap-3 mb-6">
-                                {(businessSettings.show_address && businessData.business_address) && (
-                                    <p className="text-lg opacity-90" style={{ textShadow: '0.5px 0.5px 3px rgba(0, 0, 0, 0.4)' }}>
-                                        {businessData.business_city} / {businessData.business_address}
-                                    </p>
-                                )}
-
-                                {businessSettings.show_website && websiteLinkUrl && (
-                                    <Link href={websiteLinkUrl} target="_blank" rel="noopener noreferrer" className="text-lg underline opacity-90 hover:opacity-100 transition-opacity" style={{ textShadow: '0.5px 0.5px 3px rgba(0, 0, 0, 0.4)' }}>
-                                        {websiteLinkUrl.replace(/^https?:\/\/(www\.)?/, '')}
-                                    </Link>
-                                )}
-                            </div>
                         </div>
-
-
-
                     </div>
                 </div>
             </div>

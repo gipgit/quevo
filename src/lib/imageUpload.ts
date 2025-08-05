@@ -83,10 +83,12 @@ export async function processAndSaveImage({
     .webp({ quality })
     .toBuffer();
 
-  // If >1MB, reduce quality and re-encode
+  // If >maxSizeBytes, reduce quality and re-encode more gradually
   let currentQuality = quality;
-  while (outputBuffer.length > maxSizeBytes && currentQuality > 40) {
-    currentQuality -= 10;
+  while (outputBuffer.length > maxSizeBytes && currentQuality > 50) {
+    // More gradual reduction for higher quality images
+    const reduction = currentQuality >= 90 ? 2 : currentQuality >= 80 ? 3 : 5;
+    currentQuality -= reduction;
     outputBuffer = await sharp(buffer)
       .resize(width, height, { fit })
       .webp({ quality: currentQuality })
@@ -182,9 +184,49 @@ export async function uploadBusinessImage(
     filename,
     width: 400,
     height: 400,
-    quality: 80,
+    quality: 90,
     fit: 'cover',
     maxSizeBytes: 1024 * 1024,
+    businessId,
+    uploadType: 'business',
+    ...options,
+  });
+}
+
+export async function uploadBusinessCoverMobile(
+  buffer: Buffer,
+  businessId: string,
+  filename: string,
+  options: Partial<ProcessAndSaveImageOptions> = {}
+): Promise<UploadResult> {
+  return processAndSaveImage({
+    buffer,
+    filename,
+    width: 1200,
+    height: 400,
+    quality: 85,
+    fit: 'cover',
+    maxSizeBytes: 2 * 1024 * 1024,
+    businessId,
+    uploadType: 'business',
+    ...options,
+  });
+}
+
+export async function uploadBusinessCoverDesktop(
+  buffer: Buffer,
+  businessId: string,
+  filename: string,
+  options: Partial<ProcessAndSaveImageOptions> = {}
+): Promise<UploadResult> {
+  return processAndSaveImage({
+    buffer,
+    filename,
+    width: 1200,
+    height: 1200,
+    quality: 95,
+    fit: 'cover',
+    maxSizeBytes: 3 * 1024 * 1024, // Increased to 3MB to allow for higher quality
     businessId,
     uploadType: 'business',
     ...options,

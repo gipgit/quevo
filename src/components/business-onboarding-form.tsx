@@ -36,7 +36,8 @@ export interface BusinessFormData {
 
   // Step 5: Images
   profile_image: File | null
-  cover_image: File | null
+  cover_image_mobile: File | null
+  cover_image_desktop: File | null
 
   // Step 6 & 7: Settings & Colors
   settings: {
@@ -101,7 +102,8 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
     business_phone: "",
     business_email: "",
     profile_image: null,
-    cover_image: null,
+    cover_image_mobile: null,
+    cover_image_desktop: null,
     selected_links: [],
     link_urls: {},
     settings: {
@@ -174,9 +176,12 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
       // Add business data
       submitData.append("business_name", formData.business_name)
       submitData.append("business_country", formData.business_country)
-      submitData.append("business_region", formData.business_region)
-      submitData.append("business_address", formData.business_address)
+      submitData.append("business_region", formData.business_region || "")
+      submitData.append("business_city", formData.business_city || "")
+      submitData.append("business_address", formData.business_address || "")
       submitData.append("business_urlname", formData.business_urlname)
+      
+
       submitData.append("business_phone", formData.business_phone || "[]")
       submitData.append("business_email", formData.business_email || "[]")
 
@@ -184,9 +189,12 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
       if (formData.profile_image) {
         submitData.append("profile_image", formData.profile_image)
       }
-      if (formData.cover_image) {
-        submitData.append("cover_image", formData.cover_image)
-      }
+          if (formData.cover_image_mobile) {
+      submitData.append("cover_image_mobile", formData.cover_image_mobile)
+    }
+    if (formData.cover_image_desktop) {
+      submitData.append("cover_image_desktop", formData.cover_image_desktop)
+    }
 
       // Add social links
       submitData.append("selected_links", JSON.stringify(formData.selected_links))
@@ -213,8 +221,9 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
               business_name: data.business.business_name,
               business_urlname: data.business.business_urlname,
               business_country: formData.business_country,
-              business_region: formData.business_region,
-              business_address: formData.business_address,
+              business_region: formData.business_region || "",
+              business_city: formData.business_city || "",
+              business_address: formData.business_address || "",
               business_email: formData.business_email,
               business_phone: formData.business_phone,
               business_descr: "",
@@ -426,19 +435,14 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
                            ) : (
                  // Success or Error state
                  <div className="py-2 text-center">
-                   <div className="flex justify-between items-center mb-4">
-                     <h3 className="text-xl font-semibold text-gray-900">
-                       {submissionSuccess ? "Business Creato!" : `Errore ${submissionErrorDetails?.status ? `(${submissionErrorDetails.status})` : ''}`}
-                     </h3>
                      {!loading && (
-                       <button onClick={closeSubmissionModal} className="text-gray-500 hover:text-gray-700">
+                       <button onClick={closeSubmissionModal} className="absolute right-0 top-0 text-gray-500 hover:text-gray-700">
                          <XMarkIcon className="h-6 w-6" />
                        </button>
                      )}
-                   </div>
                 
                 {submissionError && (
-                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                  <div className="px-4 py-3 rounded relative mb-4" role="alert">
                     <strong className="font-bold">Errore!</strong>
                     <span className="block sm:inline"> {submissionError}</span>
                     
@@ -455,7 +459,7 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
                     
                     {/* Show detailed error information */}
                     {submissionErrorDetails && (
-                      <div className="mt-3 pt-3 border-t border-red-300">
+                      <div className="mt-3 pt-3 bg-red-100 border  text-red-700 border-t border-red-300">
                         <details className="text-sm">
                           <summary className="cursor-pointer font-medium hover:text-red-800">
                             Dettagli tecnici (clicca per espandere)
@@ -517,9 +521,8 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
                 )}
                 
                 {submissionSuccess && (
-                  <div className="text-centerbg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    <strong className="font-bold">Successo!</strong>
-                    <span className="block sm:inline"> Il tuo business è stato creato con successo!</span>
+                  <div className="text-center rounded relative mb-4" role="alert">
+                    <span className="text-xl"> Il tuo business è stato creato!</span>
                   </div>
                 )}
                 

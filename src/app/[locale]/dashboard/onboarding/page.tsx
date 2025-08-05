@@ -23,7 +23,8 @@ export default function OnboardingPage() {
     business_phone: "",
     business_email: "",
     profile_image: null,
-    cover_image: null,
+    cover_image_mobile: null,
+    cover_image_desktop: null,
     selected_links: [],
     link_urls: {},
     settings: {
@@ -78,14 +79,14 @@ export default function OnboardingPage() {
   }, [formData.profile_image])
 
   useEffect(() => {
-    if (formData.cover_image) {
-      const url = URL.createObjectURL(formData.cover_image)
+    if (formData.cover_image_mobile) {
+      const url = URL.createObjectURL(formData.cover_image_mobile)
       setCoverImgUrl(url)
       return () => URL.revokeObjectURL(url)
     } else {
       setCoverImgUrl(undefined)
     }
-  }, [formData.cover_image])
+  }, [formData.cover_image_mobile])
 
   useEffect(() => {
     if (status === "loading") return

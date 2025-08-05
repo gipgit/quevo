@@ -11,6 +11,43 @@ import { getUsage, incrementUsage, canCreateMore } from '@/lib/usage-utils';
 
 const BUSINESS_TIMEZONE = 'Europe/Rome';
 
+// Helper function to get localized board description
+function getLocalizedBoardDescription(locale: string, customerName: string): string {
+  const localeMap: Record<string, string> = {
+    // English
+    'en': `Service Board for ${customerName}`,
+    'en-US': `Service Board for ${customerName}`,
+    'en-GB': `Service Board for ${customerName}`,
+    
+    // Italian
+    'it': `Bacheca Servizio per ${customerName}`,
+    'it-IT': `Bacheca Servizio per ${customerName}`,
+    
+    // Spanish
+    'es': `Tablero de Servicio para ${customerName}`,
+    'es-ES': `Tablero de Servicio para ${customerName}`,
+    
+    // German
+    'de': `Service-Board für ${customerName}`,
+    'de-DE': `Service-Board für ${customerName}`,
+    
+    // French
+    'fr': `Tableau de Service pour ${customerName}`,
+    'fr-FR': `Tableau de Service pour ${customerName}`,
+    
+    // Arabic
+    'ar': `لوحة الخدمة لـ ${customerName}`,
+    'ar-SA': `لوحة الخدمة لـ ${customerName}`,
+    
+    // Chinese
+    'zh': `${customerName}的服务板`,
+    'zh-CN': `${customerName}的服务板`,
+    'zh-TW': `${customerName}的服務板`
+  };
+  
+  return localeMap[locale] || localeMap['en-US'];
+}
+
 // Helper function to sanitize and capitalize customer name
 function sanitizeAndCapitalizeName(name: string): string {
   if (!name || typeof name !== 'string') {
@@ -76,6 +113,9 @@ export async function POST(
 
     const business_id = params.business_id;
     const body = await request.json();
+    
+    // Get request locale early so it can be used throughout the function
+    const requestLocale = request.headers.get('x-next-intl-locale') || 'en-US';
 
     const {
       serviceId,
@@ -91,7 +131,17 @@ export async function POST(
 
     // Input Validation
     if (!serviceId || !customerName || !customerEmail || totalPrice === undefined) {
-      return NextResponse.json({ error: 'Missing required service request fields.' }, { status: 400 });
+      const missingFields = [];
+      if (!serviceId) missingFields.push('serviceId');
+      if (!customerName) missingFields.push('customerName');
+      if (!customerEmail) missingFields.push('customerEmail');
+      if (totalPrice === undefined) missingFields.push('totalPrice');
+      
+      return NextResponse.json({ 
+        error: 'Missing required service request fields.',
+        details: `Missing fields: ${missingFields.join(', ')}`,
+        errorType: 'VALIDATION_ERROR'
+      }, { status: 400 });
     }
 
     // Sanitize and capitalize customer name
@@ -103,7 +153,11 @@ export async function POST(
     });
 
     if (!business) {
-      return NextResponse.json({ error: 'Business not found.' }, { status: 404 });
+      return NextResponse.json({ 
+        error: 'Business not found.',
+        details: `Business with ID '${business_id}' does not exist.`,
+        errorType: 'BUSINESS_NOT_FOUND'
+      }, { status: 404 });
     }
 
     // Verify service exists and belongs to business
@@ -115,7 +169,11 @@ export async function POST(
     });
 
     if (!service) {
-      return NextResponse.json({ error: 'Service not found or does not belong to this business.' }, { status: 404 });
+      return NextResponse.json({ 
+        error: 'Service not found or does not belong to this business.',
+        details: `Service with ID '${serviceId}' not found for business '${business_id}'.`,
+        errorType: 'SERVICE_NOT_FOUND'
+      }, { status: 404 });
     }
 
     let requestStart: Date | null = null;
@@ -139,19 +197,38 @@ export async function POST(
     });
     const planId = businessWithManager?.usermanager?.plan_id;
     if (!planId) {
-      return NextResponse.json({ error: 'Plan ID not found for business manager.' }, { status: 500 });
+      return NextResponse.json({ 
+        error: 'Plan ID not found for business manager.',
+        details: 'The business manager does not have an associated plan. Please contact support.',
+        errorType: 'PLAN_NOT_FOUND'
+      }, { status: 500 });
     }
     const planLimits = await getPlanLimits(planId);
     const planLimitRequests = planLimits.find(l => l.feature === 'service_requests' && l.limit_type === 'count' && l.scope === 'per_month');
     if (!planLimitRequests) {
-      return NextResponse.json({ error: 'Service request plan limit not found' }, { status: 403 });
+      return NextResponse.json({ 
+        error: 'Service request plan limit not found',
+        details: 'Your current plan does not include service request functionality. Please upgrade your plan.',
+        errorType: 'PLAN_LIMIT_NOT_FOUND'
+      }, { status: 403 });
     }
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth() + 1;
     const currentUsage = await getUsage({ business_id, feature: 'service_requests', year, month });
     if (!canCreateMore(currentUsage, planLimitRequests)) {
-      return NextResponse.json({ error: 'Monthly service request limit reached for your plan.' }, { status: 403 });
+      const currentCount = currentUsage;
+      const maxAllowed = planLimitRequests.value || 0;
+      return NextResponse.json({ 
+        error: 'This business has reached monthly service request limit.',
+        details: `Usage: ${currentCount} out of ${maxAllowed}. Please contact the business owner for more information.`,
+        errorType: 'MONTHLY_LIMIT_REACHED',
+        usage: {
+          current: currentCount,
+          limit: maxAllowed,
+          remaining: Math.max(0, maxAllowed - currentCount)
+        }
+      }, { status: 403 });
     }
 
     // Create service request and service board with transaction
@@ -424,50 +501,12 @@ export async function POST(
       return { serviceRequest, serviceBoard };
     });
 
-    // Get business URL name for confirmation page URL
-    const businessUrlName = business.business_urlname;
+         // Get business URL name for confirmation page URL
+     const businessUrlName = business.business_urlname;
 
-         // Prepare for Email Sending
-     const host = request.headers.get('host');
-     const appBaseUrl = `http${process.env.NODE_ENV === 'production' ? 's' : ''}://${host}`;
-     const requestLocale = request.headers.get('x-next-intl-locale') || 'en-US';
-
-           // Helper function to get localized board description
-      const getLocalizedBoardDescription = (locale: string, customerName: string): string => {
-        const localeMap: Record<string, string> = {
-          // English
-          'en': `Service Board for ${customerName}`,
-          'en-US': `Service Board for ${customerName}`,
-          'en-GB': `Service Board for ${customerName}`,
-          
-          // Italian
-          'it': `Bacheca Servizio per ${customerName}`,
-          'it-IT': `Bacheca Servizio per ${customerName}`,
-          
-          // Spanish
-          'es': `Tablero de Servicio para ${customerName}`,
-          'es-ES': `Tablero de Servicio para ${customerName}`,
-          
-          // German
-          'de': `Service-Board für ${customerName}`,
-          'de-DE': `Service-Board für ${customerName}`,
-          
-          // French
-          'fr': `Tableau de Service pour ${customerName}`,
-          'fr-FR': `Tableau de Service pour ${customerName}`,
-          
-          // Arabic
-          'ar': `لوحة الخدمة لـ ${customerName}`,
-          'ar-SA': `لوحة الخدمة لـ ${customerName}`,
-          
-          // Chinese
-          'zh': `${customerName}的服务板`,
-          'zh-CN': `${customerName}的服务板`,
-          'zh-TW': `${customerName}的服務板`
-        };
-        
-        return localeMap[locale] || localeMap['en-US'];
-      };
+          // Prepare for Email Sending
+      const host = request.headers.get('host');
+      const appBaseUrl = `http${process.env.NODE_ENV === 'production' ? 's' : ''}://${host}`;
 
     // Format date for emails
     const formattedRequestDate = result.serviceRequest.request_date ? format(new Date(result.serviceRequest.request_date), 'PPPP') : 'N/A';

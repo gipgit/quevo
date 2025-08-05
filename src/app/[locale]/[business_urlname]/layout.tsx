@@ -106,7 +106,8 @@ export async function generateMetadata({ params }: { params: { business_urlname:
             description: t('errorBusinessNotFoundDescription'),
         };
     }
-    const profileImageUrl = `/uploads/business/profile/${business.business_public_uuid}.webp`;
+    const R2_PUBLIC_DOMAIN = "https://pub-eac238aed876421982e277e0221feebc.r2.dev";
+    const profileImageUrl = `${R2_PUBLIC_DOMAIN}/business/${business.business_public_uuid}/profile.webp`;
     return {
         title: business.business_name,
         description: business.business_descr || t('defaultBusinessDescription', { businessName: business.business_name }),
@@ -252,7 +253,7 @@ export default async function BusinessProfileLayout({
             if (link.link_type === 'google_review') { googleReviewLinkUrl = link.link_url; }
         });
 
-        // R2 domain for maintainability
+        // IMAGES PATHS - R2
         const R2_PUBLIC_DOMAIN = "https://pub-eac238aed876421982e277e0221feebc.r2.dev";
         
         // Use local path if business_img_profile is empty/undefined, otherwise use R2 predefined path
@@ -260,9 +261,14 @@ export default async function BusinessProfileLayout({
             ? `/uploads/business/${businessData.business_public_uuid}/profile.webp`
             : `${R2_PUBLIC_DOMAIN}/business/${businessData.business_public_uuid}/profile.webp`;
             
-        const coverImageUrl = !businessData.business_img_cover
-            ? `/uploads/business/${businessData.business_public_uuid}/cover.webp`
-            : `${R2_PUBLIC_DOMAIN}/business/${businessData.business_public_uuid}/cover.webp`;
+        // Handle dual cover images (mobile and desktop)
+        const coverImageMobileUrl = !businessData.business_img_cover
+            ? `/uploads/business/${businessData.business_public_uuid}/cover-mobile.webp`
+            : `${R2_PUBLIC_DOMAIN}/business/${businessData.business_public_uuid}/cover-mobile.webp`;
+            
+        const coverImageDesktopUrl = !businessData.business_img_cover
+            ? `/uploads/business/${businessData.business_public_uuid}/cover-desktop.webp`
+            : `${R2_PUBLIC_DOMAIN}/business/${businessData.business_public_uuid}/cover-desktop.webp`;
 
         // OPTIMIZED: Calculate theme variables on server-side
         const themeData = calculateThemeVariables({
@@ -286,7 +292,8 @@ export default async function BusinessProfileLayout({
                 business_urlname_last_edited: businessData.business_urlname_last_edited?.toISOString() || null,
                 date_created: businessData.date_created?.toISOString() || null,
                 business_img_profile: profileImageUrl,
-                business_img_cover: coverImageUrl,
+                business_img_cover_mobile: coverImageMobileUrl,
+                business_img_cover_desktop: coverImageDesktopUrl,
             },
             businessSettings: { ...businessSettings, theme_font_css_stack: themeFontCssStack },
             businessLinks: processedBusinessLinks,

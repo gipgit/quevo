@@ -2,15 +2,15 @@ import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import prisma from "@/lib/prisma"
 import { z } from "zod"
-import { processAndSaveImage } from "@/lib/imageUpload"
+import { processAndSaveImage, uploadBusinessCoverMobile, uploadBusinessCoverDesktop } from "@/lib/imageUpload"
 import { parseContacts, hasValidContacts, isValidEmail, isValidPhone } from "@/lib/utils/contacts"
 
 const createBusinessSchema = z.object({
   business_name: z.string().min(2).max(50),
   business_country: z.string().min(2).max(50),
-  business_region: z.string().optional(),
-  business_city: z.string().optional(),
-  business_address: z.string().optional(),
+  business_region: z.string().max(50).optional(),
+  business_city: z.string().max(50).optional(),
+  business_address: z.string().max(80).optional(),
   business_urlname: z.string().min(3).max(30),
   business_phone: z.string().optional(),
   business_email: z.string().optional(),
@@ -66,9 +66,9 @@ export async function POST(request: Request) {
     const businessData = {
       business_name: formData.get("business_name") as string,
       business_country: formData.get("business_country") as string,
-      business_region: formData.get("business_region") as string,
-      business_city: formData.get("business_city") as string || "",
-      business_address: formData.get("business_address") as string,
+      business_region: (formData.get("business_region") as string) || "",
+      business_city: (formData.get("business_city") as string) || "",
+      business_address: (formData.get("business_address") as string) || "",
       business_urlname: formData.get("business_urlname") as string,
       business_phone: formData.get("business_phone") as string,
       business_email: formData.get("business_email") as string,
@@ -76,6 +76,8 @@ export async function POST(request: Request) {
       link_urls: JSON.parse((formData.get("link_urls") as string) || "{}"),
       settings: JSON.parse(formData.get("settings") as string),
     }
+
+
 
     const validatedData = createBusinessSchema.parse(businessData)
 
@@ -92,26 +94,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Nome URL business richiesto" }, { status: 400 })
     }
 
-    // Check length constraints
-    if (validatedData.business_name.length > 50) {
-      return NextResponse.json({ message: "Nome business troppo lungo (max 50 caratteri)" }, { status: 400 })
-    }
 
-    if (validatedData.business_urlname.length > 30) {
-      return NextResponse.json({ message: "Nome URL business troppo lungo (max 30 caratteri)" }, { status: 400 })
-    }
 
-    if (validatedData.business_country.length > 50) {
-      return NextResponse.json({ message: "Nome paese troppo lungo (max 50 caratteri)" }, { status: 400 })
-    }
 
-    if (validatedData.business_region && validatedData.business_region.length > 50) {
-      return NextResponse.json({ message: "Nome regione troppo lungo (max 50 caratteri)" }, { status: 400 })
-    }
-
-    if (validatedData.business_address && validatedData.business_address.length > 80) {
-      return NextResponse.json({ message: "Indirizzo troppo lungo (max 80 caratteri)" }, { status: 400 })
-    }
 
     // Validate JSON structure for phone and email
     let phoneData: any[] | undefined = undefined
@@ -180,11 +165,12 @@ export async function POST(request: Request) {
     const businessPublicUuid = crypto.randomUUID()
 
     // Handle image uploads
-    let profileImagePath = null
-    let coverImagePath = null
+    let hasProfileImage = false
+    let hasCoverImage = false
 
     const profileImage = formData.get("profile_image") as File
-    const coverImage = formData.get("cover_image") as File
+    const coverImageMobile = formData.get("cover_image_mobile") as File
+    const coverImageDesktop = formData.get("cover_image_desktop") as File
 
     if (profileImage && profileImage.size > 0) {
       try {
@@ -195,38 +181,40 @@ export async function POST(request: Request) {
           filename: "profile.webp",
           width: 400,
           height: 400,
-          quality: 80,
+          quality: 90,
           fit: "cover",
           maxSizeBytes: 1024 * 1024,
           businessId: businessPublicUuid,
           uploadType: "business",
         })
-        profileImagePath = result.publicPath
+        hasProfileImage = true
       } catch (imageError) {
         console.error("Error processing profile image:", imageError)
         // Continue without profile image
       }
     }
 
-    if (coverImage && coverImage.size > 0) {
+    if (coverImageMobile && coverImageMobile.size > 0) {
       try {
-        const bytes = await coverImage.arrayBuffer()
+        const bytes = await coverImageMobile.arrayBuffer()
         const buffer = Buffer.from(bytes)
-        const result = await processAndSaveImage({
-          buffer,
-          filename: "cover.webp",
-          width: 1200,
-          height: 400,
-          quality: 80,
-          fit: "cover",
-          maxSizeBytes: 2 * 1024 * 1024,
-          businessId: businessPublicUuid,
-          uploadType: "business",
-        })
-        coverImagePath = result.publicPath
+        const result = await uploadBusinessCoverMobile(buffer, businessPublicUuid, "cover-mobile.webp")
+        hasCoverImage = true
       } catch (imageError) {
-        console.error("Error processing cover image:", imageError)
-        // Continue without cover image
+        console.error("Error processing mobile cover image:", imageError)
+        // Continue without mobile cover image
+      }
+    }
+
+    if (coverImageDesktop && coverImageDesktop.size > 0) {
+      try {
+        const bytes = await coverImageDesktop.arrayBuffer()
+        const buffer = Buffer.from(bytes)
+        const result = await uploadBusinessCoverDesktop(buffer, businessPublicUuid, "cover-desktop.webp")
+        hasCoverImage = true
+      } catch (imageError) {
+        console.error("Error processing desktop cover image:", imageError)
+        // Continue without desktop cover image
       }
     }
 
@@ -234,29 +222,31 @@ export async function POST(request: Request) {
     let result
     try {
       result = await prisma.$transaction(async (tx) => {
+
+
         // Create the business
         const business = await tx.business.create({
           data: {
             business_name: validatedData.business_name,
             business_urlname: validatedData.business_urlname,
             business_country: validatedData.business_country,
-            business_region: validatedData.business_region || "N/A",
-            business_city: validatedData.business_city || "N/A",
-            business_address: validatedData.business_address || "N/A",
+            business_region: validatedData.business_region && validatedData.business_region.trim() !== "" ? validatedData.business_region : "",
+            business_city: validatedData.business_city && validatedData.business_city.trim() !== "" ? validatedData.business_city : "",
+            business_address: validatedData.business_address && validatedData.business_address.trim() !== "" ? validatedData.business_address : "",
             business_phone: phoneData,
             business_email: emailData,
             business_descr: null,
-            company_name: validatedData.business_name, // Using business name as company name for now
-            company_country: validatedData.business_country,
-            company_region: validatedData.business_region || "N/A",
-            company_city: validatedData.business_city || "N/A",
-            company_address: validatedData.business_address || "N/A",
-            company_vat: "N/A", // You might want to add this to the form
-            company_contact: `${user.name_first} ${user.name_last}`.trim() || "N/A",
+            company_name: "",
+            company_country: "",
+            company_region: "",
+            company_city: "",
+            company_address: "",
+            company_vat: "",
+            company_contact: "",
             manager_id: session.user.id,
             business_public_uuid: businessPublicUuid,
-            business_img_profile: profileImagePath,
-            business_img_cover: coverImagePath,
+            business_img_profile: hasProfileImage ? "1" : null,
+            business_img_cover: hasCoverImage ? "1" : null,
           },
         })
 

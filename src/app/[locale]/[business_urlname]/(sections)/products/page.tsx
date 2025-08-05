@@ -5,6 +5,7 @@ import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import ProductsPageClientContent from '@/components/profile/sections/products/ProductsPageClientContent'; // Adjust import path if you moved the file
+import EmptyState from '@/components/ui/EmptyState';
 
 // Set revalidation time for products data (e.g., every 5 minutes, or based on how often products change)
 export const revalidate = 300; // 5 minutes
@@ -109,9 +110,12 @@ export default async function ProductsSectionPage({ params }: { params: { busine
     if (sortedMenuCategoriesWithItems.length === 0) {
         return (
             <section className="business-menu-items px-4 mx-auto max-w-3xl mt-4 pb-20">
-                <p className="text-center text-sm mt-10" /* style={{ color: businessProfile?.themeColorText || 'black' }} */ >
-                    {t('noProductsAvailable')}
-                </p>
+                <EmptyState 
+                    primaryTitle={t('noProductsAvailable')}
+                    textColor="text-gray-600"
+                    backgroundColor="bg-gray-50"
+                    borderColor="border-gray-200"
+                />
             </section>
         );
     }

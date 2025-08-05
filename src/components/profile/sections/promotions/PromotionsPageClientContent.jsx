@@ -6,6 +6,7 @@ import React from 'react';
 import { useBusinessProfile } from '@/contexts/BusinessProfileContext';
 import { useTranslations } from 'next-intl';
 import PromotionCard from './PromotionCard'; // Import the new PromotionCard component
+import EmptyState from '@/components/ui/EmptyState';
 
 export default function PromotionsPageClientContent({ initialPromotionsData }) {
     const { themeColorText, themeColorBackground, themeColorButton, locale } = useBusinessProfile(); // Get locale from context if available, otherwise pass it down.
@@ -34,10 +35,13 @@ export default function PromotionsPageClientContent({ initialPromotionsData }) {
                     ))}
                 </div>
             ) : (
-                <div className="text-center py-10" style={{ color: themeColorText }}>
-                    <p className="text-lg">{t('noPromotionsYet')}</p>
-                    <p className="text-sm opacity-75 mt-2">{t('checkBackLater')}</p>
-                </div>
+                <EmptyState 
+                    primaryTitle={t('noPromotionsYet')}
+                    secondaryTitle={t('checkBackLater')}
+                    textColor="text-gray-600"
+                    backgroundColor="bg-gray-50"
+                    borderColor="border-gray-200"
+                />
             )}
         </div>
     );

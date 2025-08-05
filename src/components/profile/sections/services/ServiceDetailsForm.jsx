@@ -603,7 +603,7 @@ export default function ServiceDetailsForm({
                 {/* --- End Your Details Section --- */}
 
                 {submissionError && (
-                    <div className="bg-red-100 text-red-800 p-3 rounded-md mb-4 text-center">
+                    <div className="bg-red-100 text-red-800 p-3 text-sm rounded-md mb-4 text-center">
                         {submissionError}
                     </div>
                 )}

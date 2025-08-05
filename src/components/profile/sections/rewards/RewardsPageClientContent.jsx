@@ -6,6 +6,7 @@ import React from 'react';
 import { useBusinessProfile } from '@/contexts/BusinessProfileContext';
 import { useTranslations } from 'next-intl';
 import RewardCard from './RewardCard'; // Import the new RewardCard component
+import EmptyState from '@/components/ui/EmptyState';
 
 export default function RewardsPageClientContent({ initialRewardsData }) {
     const { themeColorText, themeColorBackground, themeColorButton, locale } = useBusinessProfile();
@@ -34,10 +35,13 @@ export default function RewardsPageClientContent({ initialRewardsData }) {
                     ))}
                 </div>
             ) : (
-                <div className="text-center py-10" style={{ color: themeColorText }}>
-                    <p className="text-lg">{t('noRewardsYet')}</p>
-                    <p className="text-sm opacity-75 mt-2">{t('checkBackLater')}</p>
-                </div>
+                <EmptyState 
+                    primaryTitle={t('noRewardsYet')}
+                    secondaryTitle={t('checkBackLater')}
+                    textColor="text-gray-600"
+                    backgroundColor="bg-gray-50"
+                    borderColor="border-gray-200"
+                />
             )}
         </div>
     );

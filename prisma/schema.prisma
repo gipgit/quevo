@@ -14,20 +14,20 @@ model business {
   business_urlname_last_edited   DateTime?                        @db.Timestamp(6)
   business_name                  String                           @db.VarChar(50)
   business_country               String                           @db.VarChar(50)
-  business_region                String                           @db.VarChar(50)
-  business_city                  String                           @db.VarChar(50)
-  business_address               String                           @db.VarChar(80)
+  business_region                String?                          @db.VarChar(50)
+  business_city                  String?                          @db.VarChar(50)
+  business_address               String?                          @db.VarChar(80)
   business_phone                 Json?
   business_email                 Json?
   business_descr                 String?
   date_created                   DateTime?                        @default(now()) @db.Timestamp(6)
-  company_name                   String                           @db.VarChar(50)
-  company_country                String                           @db.VarChar(50)
-  company_region                 String                           @db.VarChar(50)
-  company_city                   String                           @db.VarChar(50)
-  company_address                String                           @db.VarChar(80)
-  company_vat                    String                           @db.VarChar(50)
-  company_contact                String                           @db.VarChar(50)
+  company_name                   String?                          @db.VarChar(50)
+  company_country                String?                          @db.VarChar(50)
+  company_region                 String?                          @db.VarChar(50)
+  company_city                   String?                          @db.VarChar(50)
+  company_address                String?                          @db.VarChar(80)
+  company_vat                    String?                          @db.VarChar(50)
+  company_contact                String?                          @db.VarChar(50)
   sponsored                      Boolean?                         @default(false)
   sponsored_level                Int?                             @default(0)
   business_public_uuid           String?                          @unique @db.VarChar(36)
@@ -55,6 +55,9 @@ model business {
   servicerequestavailability     servicerequestavailability[]
   surveyquestionprebuiltfavorite surveyquestionprebuiltfavorite[]
   userdefinedtag                 userdefinedtag[]
+
+  @@index([manager_id], map: "idx_business_manager_id")
+  @@index([business_urlname], map: "idx_business_urlname")
 }
 
 model businessad {
@@ -91,6 +94,7 @@ model businesslink {
   business         business @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
 
   @@unique([business_id, link_type])
+  @@index([business_id], map: "idx_businesslink_business_id")
 }
 
 model businesspaymentmethod {
@@ -103,6 +107,7 @@ model businesspaymentmethod {
   paymentmethod              paymentmethod @relation(fields: [payment_method_id], references: [payment_method_id], onDelete: Cascade)
 
   @@unique([business_id, payment_method_id])
+  @@index([business_id], map: "idx_businesspaymentmethod_business_id")
 }
 
 model businesspoints {
@@ -134,6 +139,8 @@ model businessprofilesettings {
   show_btn_order         Boolean?  @default(false)
   last_updated           DateTime? @default(now()) @db.Timestamp(6)
   business               business  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+
+  @@index([business_id], map: "idx_businessprofilesettings_business_id")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -146,6 +153,8 @@ model businessreward {
   reward_end_date    DateTime? @db.Date
   quantity_available Int?
   business           business  @relation(fields: [business_id], references: [business_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([business_id], map: "idx_businessreward_business_id")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -230,6 +239,8 @@ model promo {
   usercustomerredemption usercustomerredemption[]
   userguest              userguest[]
   userguestredemption    userguestredemption[]
+
+  @@index([business_id], map: "idx_promo_business_id")
 }
 
 model promochallenge {
@@ -528,6 +539,10 @@ model product {
   business         business           @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
   productcategory  productcategory?   @relation(fields: [category_id], references: [category_id])
   productvariation productvariation[]
+
+  @@index([business_id, category_id], map: "idx_product_business_category")
+  @@index([business_id], map: "idx_product_business_id")
+  @@index([category_id], map: "idx_product_category_id")
 }
 
 model productcategory {
@@ -541,6 +556,7 @@ model productcategory {
   business      business  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
 
   @@unique([business_id, category_name])
+  @@index([business_id], map: "idx_productcategory_business_id")
 }
 
 model productvariation {
@@ -557,6 +573,7 @@ model productvariation {
   product                product   @relation(fields: [item_id], references: [item_id], onDelete: Cascade)
 
   @@unique([item_id, variation_name])
+  @@index([item_id], map: "idx_productvariation_item_id")
 }
 
 model service {
@@ -583,6 +600,10 @@ model service {
   servicequestion         servicequestion[]
   servicerequest          servicerequest[]
   servicerequirementblock servicerequirementblock[]
+
+  @@index([business_id, category_id], map: "idx_service_business_category")
+  @@index([business_id], map: "idx_service_business_id")
+  @@index([category_id], map: "idx_service_category_id")
 }
 
 model serviceitem {
@@ -692,6 +713,7 @@ model servicecategory {
   business      business  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
 
   @@unique([business_id, category_name], map: "uq_servicecategory_name_business")
+  @@index([business_id], map: "idx_servicecategory_business_id")
 }
 
 model appointment {
