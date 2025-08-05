@@ -17,6 +17,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import ShareButtons from '@/components/service-board/ShareButtons';
 import MapButtons from '@/components/service-board/MapButtons';
 import RescheduleCancelButton from '@/components/service-board/RescheduleCancelButton';
+import RichTextDisplay from '@/components/ui/RichTextDisplay';
 
 
 interface BusinessData {
@@ -1458,7 +1459,13 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
               <div className="text-center mt-2">
                 <h2 className="text-xl lg:text-xl font-semibold">{businessData.business_name}</h2>
                 {businessData.business_description && (
-                  <p className="text-gray-600 text-sm mt-1">{businessData.business_description}</p>
+                  <div className="mt-1">
+                    <RichTextDisplay
+                      content={businessData.business_description}
+                      className="text-sm text-gray-600"
+                      theme="light"
+                    />
+                  </div>
                 )}
               </div>
 

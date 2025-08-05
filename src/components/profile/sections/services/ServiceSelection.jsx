@@ -5,6 +5,7 @@
 import React, { useEffect } from 'react'; // Import useEffect for logging
 import { useTranslations } from 'next-intl';
 import EmptyState from '@/components/ui/EmptyState';
+import RichTextDisplay from '@/components/ui/RichTextDisplay';
 
 export default function ServiceSelection({
     servicesByCategory, // Services pre-filtered by category (array of { category_name, services: [] })
@@ -55,7 +56,13 @@ export default function ServiceSelection({
                                     <div className="flex-1">
                                         <p className="font-bold text-base md:text-xl leading-tight">{service.service_name}</p>
                                         {service.description && (
-                                            <p className="mt-1 text-xs md:text-sm opacity-70">{service.description}</p>
+                                            <div className="mt-1 text-xs md:text-sm opacity-70">
+                                                <RichTextDisplay 
+                                                    content={service.description}
+                                                    className="text-xs md:text-sm"
+                                                    theme="light"
+                                                />
+                                            </div>
                                         )}
                                     </div>
                                     <div className="flex flex-row lg:flex-col lg:items-end gap-3 lg:gap-1">
@@ -107,7 +114,13 @@ export default function ServiceSelection({
                             <div className="flex-1">
                                 <p className="font-medium md:text-lg">{service.service_name}</p>
                                 {service.description && (
-                                    <p className="mt-1 text-xs md:text-sm opacity-70">{service.description}</p>
+                                    <div className="mt-1 text-xs md:text-sm opacity-70">
+                                        <RichTextDisplay 
+                                            content={service.description}
+                                            className="text-xs md:text-sm"
+                                            theme="light"
+                                        />
+                                    </div>
                                 )}
                             </div>
                             <div className="flex flex-row lg:flex-col lg:items-end gap-3">

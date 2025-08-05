@@ -28,7 +28,7 @@ export default function OnboardingPage() {
     selected_links: [],
     link_urls: {},
     settings: {
-      default_page: "bookings",
+      default_page: "services",
       theme_color_background: "#FFFFFF",
       theme_color_text: "#000000",
       theme_color_button: "#000000",
@@ -133,14 +133,14 @@ export default function OnboardingPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Top Navbar */}
       <div className="px-4 lg:px-6 py-4">
-        <div className="flex items-center justify-center lg:justify-between">
-          <div className="flex items-center space-x-3">
+        <div className="flex items-center justify-between">
+          <div className="flex-1 opacity-50">
             <h1 className="text-md lg:text-2xl font-bold text-gray-900">Quevo</h1>
-            <div className="text-sm text-gray-500">
-              {t("createBusinessTitle")}
-            </div>
           </div>
-          <div className="hidden lg:block">
+          <div className="flex-1 text-sm text-gray-800 text-center">
+              {t("createBusinessTitle")}
+          </div>
+          <div className="flex-1 opacity-50 text-right">
             <LocaleSwitcherButton onClick={handleLocaleButtonClick} />
           </div>
         </div>

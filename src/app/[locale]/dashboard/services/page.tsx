@@ -11,6 +11,7 @@ import { UsageLimitBar } from "@/components/dashboard/UsageLimitBar"
 import { useToaster } from "@/components/ui/ToasterProvider"
 import EmptyState from "@/components/EmptyState"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
+import RichTextDisplay from "@/components/ui/RichTextDisplay"
 
 interface ServiceQuestion {
   question_id: number
@@ -317,9 +318,13 @@ export default function ServicesPage() {
                           </div>
                           {/* Service Description */}
                           {service.description && (
-                            <p className={`text-sm mb-3 ${
-                              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                            }`}>{service.description}</p>
+                            <div className="mb-3">
+                              <RichTextDisplay 
+                                content={service.description}
+                                className="text-sm"
+                                theme={theme === 'dark' ? 'dark' : 'light'}
+                              />
+                            </div>
                           )}
                         </div>
                         {/* Service Items */}

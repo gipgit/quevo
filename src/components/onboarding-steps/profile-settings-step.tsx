@@ -13,7 +13,6 @@ interface ProfileSettingsStepProps {
 const DEFAULT_PAGES = [
   { value: "services", label: "services" },
   { value: "promotions", label: "promotions" },
-  { value: "bookings", label: "bookings" },
   { value: "products", label: "products" },
 ]
 
@@ -77,13 +76,13 @@ export default function ProfileSettingsStep({
       <div className="space-y-4">
         <h4 className="text-sm font-medium text-gray-700">{t("visibleElements")}</h4>
 
-        <div className="space-y-3">
+        <div className="space-y-0">
           {[
             { key: "show_address", label: "showAddress" },
             { key: "show_website", label: "showWebsite" },
             { key: "show_socials", label: "showSocialLinks" },
-          ].map((item) => (
-            <div key={item.key} className="flex items-center justify-between">
+          ].map((item, index, array) => (
+            <div key={item.key} className={`flex items-center justify-between py-2 ${index < array.length - 1 ? 'border-b border-gray-200' : ''}`}>
               <span className="text-sm text-gray-700">{t(item.label)}</span>
               <ToggleSwitch
                 enabled={formData.settings[item.key as keyof BusinessFormData["settings"]] as boolean}
@@ -98,7 +97,7 @@ export default function ProfileSettingsStep({
       <div className="space-y-4">
         <h4 className="text-sm font-medium text-gray-700">{t("actionButtons")}</h4>
 
-        <div className="space-y-3">
+        <div className="space-y-0">
           {[
             { key: "show_btn_booking", label: "bookingButton" },
             { key: "show_btn_payments", label: "paymentsButton" },
@@ -106,8 +105,8 @@ export default function ProfileSettingsStep({
             { key: "show_btn_phone", label: "phoneButton" },
             { key: "show_btn_email", label: "emailButton" },
             { key: "show_btn_order", label: "orderButton" },
-          ].map((item) => (
-            <div key={item.key} className="flex items-center justify-between">
+          ].map((item, index, array) => (
+            <div key={item.key} className={`flex items-center justify-between py-2 ${index < array.length - 1 ? 'border-b border-gray-200' : ''}`}>
               <span className="text-sm text-gray-700">{t(item.label)}</span>
               <ToggleSwitch
                 enabled={formData.settings[item.key as keyof BusinessFormData["settings"]] as boolean}

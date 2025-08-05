@@ -12,7 +12,7 @@ const AnimatedLoadingBackground: React.FC<AnimatedLoadingBackgroundProps> = ({
   return (
     <div className={`w-full h-screen relative overflow-hidden ${className}`}>
       {/* Animated Background */}
-      <div className="absolute inset-0 bg-gray-800">
+      <div className="absolute inset-0 bg-zinc-100">
         {/* Moving Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/40 to-transparent animate-shimmer"></div>
         

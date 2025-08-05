@@ -4,33 +4,71 @@ export const getPlanColors = (planName: string) => {
   
   if (planNameLower.includes('free')) {
     return {
-      gradient: 'bg-gray-100 border border-gray-200',
+      gradient: 'bg-gray-200',
       textColor: 'text-gray-900',
-      showStar: false
+      showStar: false,
+      style: {
+        background: '#f3f4f6',
+        border: '2px solid #9ca3af'
+      }
     };
   } else if (planNameLower.includes('starter')) {
     return {
-      gradient: 'bg-gradient-to-r from-blue-500 to-purple-600',
+      gradient: 'bg-green-500',
       textColor: 'text-white',
-      showStar: false
+      showStar: false,
+      style: {
+        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+        border: '2px solid #047857'
+      }
+    };
+  } else if (planNameLower.includes('growth')) {
+    return {
+      gradient: 'bg-blue-500',
+      textColor: 'text-white',
+      showStar: false,
+      style: {
+        background: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 25%, #2563eb 50%, #1d4ed8 75%, #1e40af 100%)',
+        border: '2px solid #2563eb',
+        boxShadow: '0 4px 15px rgba(59, 130, 246, 0.4), 0 0 30px rgba(59, 130, 246, 0.2)',
+        textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+        position: 'relative',
+        overflow: 'hidden'
+      }
     };
   } else if (planNameLower.includes('pro')) {
     return {
-      gradient: 'bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500',
+      gradient: 'bg-yellow-500',
       textColor: 'text-white',
-      showStar: true
+      showStar: true,
+      style: {
+        background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 25%, #f97316 50%, #ea580c 75%, #dc2626 100%)',
+        border: '2px solid #f59e0b',
+        boxShadow: '0 4px 15px rgba(251, 191, 36, 0.4), 0 0 30px rgba(251, 191, 36, 0.2)',
+        textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+        position: 'relative',
+        overflow: 'hidden'
+      }
     };
   } else if (planNameLower.includes('premium')) {
     return {
-      gradient: 'bg-gradient-to-r from-purple-400 via-pink-500 to-red-500',
+      gradient: 'bg-purple-500',
       textColor: 'text-white',
-      showStar: false
+      showStar: false,
+      style: {
+        background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #ef4444 100%)',
+        border: '2px solid #9333ea'
+      }
     };
   } else {
     return {
-      gradient: 'bg-gradient-to-r from-gray-500 to-gray-600',
+      gradient: 'bg-gray-500',
       textColor: 'text-white',
-      showStar: false
+      showStar: false,
+      style: {
+        background: 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)',
+        border: '2px solid #6b7280'
+      }
     };
   }
 };

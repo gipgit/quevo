@@ -107,7 +107,7 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
     selected_links: [],
     link_urls: {},
     settings: {
-      default_page: "bookings",
+      default_page: "services",
       theme_color_background: "#FFFFFF",
       theme_color_text: "#000000",
       theme_color_button: "#000000",
@@ -353,21 +353,31 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
       <div className="mb-8">{renderStep()}</div>
 
       {/* Fixed Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 lg:px-6 py-4 z-50">
-        <div>
-          {/* Navigation Buttons */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+        {/* Progress Bar for xs to md - attached to bottom edge */}
+        <div className="lg:hidden">
+          <div className="w-full bg-gray-200 h-1">
+            <div
+              className="bg-blue-600 h-1 transition-all duration-300"
+              style={{ width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Navigation Buttons */}
+        <div className="px-4 lg:px-6 py-4">
           <div className="flex justify-between items-center min-w-0">
             <button
               onClick={handlePrevious}
               disabled={currentStep === 1}
-              className="flex items-center px-3 lg:px-6 py-2 lg:py-3 text-sm lg:text-base text-gray-700 bg-gray-50 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+              className="flex items-center px-3 lg:px-6 py-2.5 lg:py-3 text-base lg:text-base text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
             >
               <ArrowLeftIcon className="w-4 h-4 lg:w-5 lg:h-5 mr-1 lg:mr-2" />
               {t("back")}
             </button>
 
-            {/* Progress Bar */}
-            <div className="flex-1 mx-4 flex justify-center min-w-0">
+            {/* Progress Bar for lg+ - in the middle of navigation buttons */}
+            <div className="hidden lg:flex flex-1 mx-4 justify-center min-w-0">
               <div className="w-full max-w-4xl bg-gray-200 rounded-full h-1">
                 <div
                   className="bg-blue-600 h-1 rounded-full transition-all duration-300"
@@ -377,8 +387,8 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
             </div>
 
             <div className="flex space-x-2 lg:space-x-3 flex-shrink-0">
-              {(currentStep === 3 || currentStep === 4 || currentStep === 5) && (
-                <button onClick={handleSkip} className="px-3 lg:px-6 py-2 lg:py-3 text-sm lg:text-base text-white bg-gray-900 rounded-md hover:bg-gray-200">
+              {(currentStep === 3 || currentStep === 4 || currentStep === 5 || currentStep === 6 || currentStep === 7 || currentStep === 8 || currentStep === 9) && (
+                <button onClick={handleSkip} className="px-3 lg:px-6 py-2 lg:py-3 text-sm lg:text-base text-white bg-gray-900 rounded-lg hover:bg-gray-200">
                   {t("skip")}
                 </button>
               )}
@@ -387,7 +397,7 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
                 <button
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="flex items-center px-4 lg:px-8 py-2 lg:py-3 text-sm lg:text-base bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center px-4 lg:px-8 py-2.5 lg:py-3 text-base lg:text-base bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <div className="flex items-center">
@@ -404,7 +414,7 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
                 <button
                   onClick={handleNext}
                   disabled={!canProceed && currentStep !== 5}
-                  className="flex items-center px-3 lg:px-6 py-2 lg:py-3 text-sm lg:text-base bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center px-3 lg:px-6 py-2.5 lg:py-3 text-base lg:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <div className="flex items-center">
                     {t("next")}
