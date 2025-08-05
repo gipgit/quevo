@@ -26,6 +26,9 @@ interface BusinessData {
   business_description?: string;
   business_phone?: any;
   business_email?: any;
+  business_img_cover_mobile?: string;
+  business_img_cover_desktop?: string;
+  business_img_profile?: string;
 }
 
 interface ServiceBoardData {
@@ -89,6 +92,7 @@ interface BusinessProfileContextValue {
   isDarkBackground: boolean;
   themeColorText: string;
   themeColorButton: string;
+  themeColorBackground: string;
 }
 
 interface ServiceBoardPageProps {
@@ -360,16 +364,15 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
     themeVariables, 
     isDarkBackground, 
     themeColorText, 
-    themeColorButton 
+    themeColorButton,
+    themeColorBackground
   } = useBusinessProfile() as BusinessProfileContextValue;
 
   const t = useTranslations('Common');
   const tBooking = useTranslations('Booking');
   const tServiceBoard = useTranslations('ServiceBoard');
 
-  const businessCoverImageUrl = businessData.business_public_uuid
-? `/uploads/business/${businessData.business_public_uuid}/cover.webp`
-: 'https://placehold.co/1200x300/e0e0e0/ffffff?text=Business+Cover';
+  const businessCoverImageUrl = businessData.business_img_cover_mobile || 'https://placehold.co/1200x300/e0e0e0/ffffff?text=Business+Cover';
 
   const fetchServiceBoardData = async () => {
     try {
@@ -682,7 +685,12 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
             className="w-full h-full object-cover"
           />
           {/* Gradient mask for fade effect from bottom to navbar */}
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-800 via-gray-800/80 to-transparent"></div>
+          <div 
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(to top, ${themeColorBackground}, ${themeColorBackground}80, transparent)`
+            }}
+          ></div>
         </div>
         {/* Profile image positioned to align with navbar content */}
         <div className="absolute bottom-2 left-6 w-16 h-16 rounded-full overflow-hidden bg-gray-100 border-3 border-white shadow-lg">
@@ -1205,13 +1213,13 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                       <div>
                         <h2 className="text-xl md:text-2xl font-bold">{tServiceBoard('customerSentRequest', { customerName: boardData.servicerequest.customer_name || 'Customer' })}</h2>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex items-center gap-2">
                             <span className={`text-sm px-3 py-1 rounded-lg whitespace-nowrap ${getStatusColor(boardData.servicerequest.status)}`}>
                               {getStatusText(boardData.servicerequest.status, tServiceBoard)}
                             </span>
-                            <div className={`text-sm px-3 py-1 rounded-lg bg-gray-50 border-2 border-gray-400 whitespace-nowrap`}>
-                            <span className="text-sm text-gray-500 mr-1">{tServiceBoard('reference')}:</span>
-                            <span className="text-sm font-medium ">{boardData.servicerequest.request_reference}</span>
+                            <div className={`text-xs lg:text-sm px-3 py-1 rounded-lg bg-gray-50 border-2 border-gray-400 whitespace-nowrap`}>
+                            <span className="text-xs lg:text-sm text-gray-500 mr-1">{tServiceBoard('reference')}:</span>
+                            <span className="text-xs lg:text-sm font-medium ">{boardData.servicerequest.request_reference}</span>
                             </div>
                       </div>
                     </div>
@@ -1333,9 +1341,9 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                         <h4 className="text-sm font-medium text-gray-900 mb-3">{tServiceBoard('selectedServiceItems')}</h4>
                         <div className="space-y-3">
                           {boardData.servicerequest.selected_service_items_snapshot.map((item, index) => (
-                            <div key={index} className="bg-gray-50 p-3 border-2 border-gray-300 rounded-md">
-                              <div className="flex justify-between items-center">
-                                  <h5 className="text-md font-medium text-gray-900">{item.item_name}</h5>
+                            <div key={index} className="bg-gray-50 p-3 border-1 border-gray-300 rounded-md">
+                              <div className="flex flex-col lg:flex-row justify-between lg:items-center">
+                                  <h5 className="text-sm lg:text-md font-medium text-gray-900">{item.item_name}</h5>
                                   <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
                                     <span>{tServiceBoard('quantity')}: {item.quantity}</span>
                                     <span>{tServiceBoard('price')}: €{parseFloat(item.price_at_request.toString()).toFixed(2)}</span>
