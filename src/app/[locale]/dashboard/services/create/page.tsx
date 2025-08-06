@@ -348,7 +348,7 @@ export default function CreateServicePage() {
   return (
     <DashboardLayout>
       <div className="mx-auto">
-        <div className="mb-8">
+        <div className="mb-4 lg:mb-6">
           <div className="flex items-center justify-between">
             <h1 className={`text-2xl lg:text-3xl font-bold ${
               theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
@@ -368,16 +368,11 @@ export default function CreateServicePage() {
             )}
           </div>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="">
           {/* Basic Information */}
-          <div className={`border-b ${
-            theme === 'dark' ? 'border-gray-600' : 'border-gray-500'
-          } p-6`}>
-            <h2 className={`text-lg font-semibold mb-4 ${
-              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-            }`}>{t("basicInformation")}</h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="pb-4 lg:pb-6">
+          
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-1 lg:gap-2">
               <div>
                 <label className={`block text-sm font-medium mb-2 ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
@@ -567,7 +562,7 @@ export default function CreateServicePage() {
               <button
                 type="button"
                 onClick={addItem}
-                className="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
+                className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
               >
                 {t("addItem")}
               </button>
@@ -703,7 +698,7 @@ export default function CreateServicePage() {
               <button
                 type="button"
                 onClick={addRequirement}
-                className="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
+                className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
               >
                 {t("addRequirement")}
               </button>
@@ -778,7 +773,7 @@ export default function CreateServicePage() {
               <button
                 type="button"
                 onClick={addQuestion}
-                className="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
+                className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
               >
                 {t("addQuestion")}
               </button>
@@ -932,7 +927,7 @@ export default function CreateServicePage() {
             </div>
 
           {/* Submit Button */}
-          <div className="flex justify-end gap-4">
+          <div className="mt-8 flex justify-end gap-2 lg:gap-4">
             <button
               type="button"
               onClick={() => router.back()}

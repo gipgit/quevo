@@ -322,9 +322,9 @@ export default function AppointmentsPage() {
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 lg:gap-4">
         {planLimitAppointments && (
-          <div className="min-w-[220px]">
+          <div className="min-w-[150px]">
             <UsageLimitBar
               current={currentUsage}
               max={planLimitAppointments.value}
@@ -338,7 +338,7 @@ export default function AppointmentsPage() {
         )}
         <Link
           href="/dashboard/appointments/create"
-          className={`ml-2 px-4 py-2 md:px-4 md:py-2 text-sm md:text-lg rounded-lg transition-colors inline-flex items-center gap-2 ${
+          className={`ml-2 px-2 lg:px-4 py-2 md:px-4 md:py-2 text-xs lg:text-sm md:text-lg rounded-lg transition-colors inline-flex items-center gap-1 lg:gap-2 whitespace-nowrap ${
             canCreateAppointment()
               ? "bg-blue-600 hover:bg-blue-700 text-white"
               : "bg-zinc-300 text-gray-500 cursor-not-allowed"

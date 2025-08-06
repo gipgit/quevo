@@ -247,6 +247,7 @@ export default function ServicesPage() {
           <div className="flex items-center gap-6">
             <div className="flex flex-col items-end gap-2">
               {planLimitServices && (
+                <div className="min-w-[100px]">
                 <UsageLimitBar
                   current={currentUsage}
                   max={planLimitServices.value}
@@ -256,12 +257,13 @@ export default function ServicesPage() {
                   upgradeText={t("upgradePlan")}
                   unlimitedText={t("unlimited")}
                 />
+                </div>
               )}
             </div>
             <div>
               <Link
                 href="/dashboard/services/create"
-                className={`px-4 py-2 md:px-4 md:py-2 text-sm md:text-lg rounded-lg transition-colors inline-flex items-center gap-2 ${
+                className={`px-2 py-2 md:px-4 md:py-2 text-xs md:text-lg rounded-lg transition-colors inline-flex items-center gap-1 lg:gap-2 ${
                   canCreateService()
                     ? "bg-blue-600 hover:bg-blue-700 text-white"
                     : "bg-zinc-300 text-gray-500 cursor-not-allowed"
@@ -284,9 +286,9 @@ export default function ServicesPage() {
             {/* Services by Category */}
             {Object.entries(servicesByCategory).map(([categoryName, categoryServices]) => (
           <div key={categoryName} className="mb-8">
-            <h2 className={`text-lg mb-2 ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-            }`}>{categoryName}</h2>
+            <p className={`text-xs lg:text-base mb-2 border-b border-gray-200 pb-2 ${
+              theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
+            }`}>{categoryName}</p>
 
             <div className="space-y-6">
               {categoryServices.map((service) => (
@@ -298,19 +300,19 @@ export default function ServicesPage() {
                       : 'bg-white border-gray-200'
                   }`}
                 >
-                  <div className="p-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr_auto] gap-6">
+                  <div className="p-5 lg:p-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr_auto] gap-2 lg:gap-6">
                       {/* Column 1: Service Main Details + Service Items */}
                       <div className="min-h-[120px]">
                         <div className="mb-4">
                           {/* Service Title, Price, Duration, Status - All on same line on lg+ */}
-                          <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4 mb-2">
-                            <span className={`text-xl font-bold ${
+                          <div className="flex flex-col lg:flex-row lg:items-center flex-wrap lg:gap-2 mb-2 lg:mb-4">
+                            <span className={`text-lg lg:text-xl font-bold ${
                               theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
                             }`}>{service.service_name}</span>
                             <div className="flex flex-wrap items-center gap-4 mt-2 lg:mt-0">
-                              <span className="text-xl font-semibold text-blue-700">{formatPrice(service.price_base)}</span>
-                              <span className={`text-sm ${
+                              <span className="text-base lg:text-lg font-semibold text-blue-700">{formatPrice(service.price_base)}</span>
+                              <span className={`text-xs lg:text-sm ${
                                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                               }`}>{formatDuration(service.duration_minutes)}</span>
                               <span className={`px-3 py-1 rounded-full text-xs font-medium ${service.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{service.is_active ? t('active') : t('inactive')}</span>
@@ -321,7 +323,7 @@ export default function ServicesPage() {
                             <div className="mb-3">
                               <RichTextDisplay 
                                 content={service.description}
-                                className="text-sm"
+                                className="text-xs lg:text-sm leading-tight"
                                 theme={theme === 'dark' ? 'dark' : 'light'}
                               />
                             </div>
@@ -334,13 +336,13 @@ export default function ServicesPage() {
                             <div className="flex flex-wrap gap-2">
                               {/* First 2 items always shown */}
                               {service.serviceitem.slice(0, 2).map(item => (
-                                <span key={item.service_item_id} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0">
+                                <span key={item.service_item_id} className="px-3 py-1 bg-zinc-300 text-zinc-700 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0">
                                   {item.item_name}
                                 </span>
                               ))}
                               {/* Additional items when expanded */}
                               {expandedItems.has(service.service_id) && service.serviceitem.slice(2).map(item => (
-                                <span key={item.service_item_id} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                                <span key={item.service_item_id} className="px-3 py-1 bg-zinc-300 text-zinc-700 rounded-full text-xs font-medium">
                                   {item.item_name}
                                 </span>
                               ))}
@@ -364,7 +366,7 @@ export default function ServicesPage() {
                       </div>
 
                       {/* Column 2: Questions and Requirements */}
-                      <div className="space-y-4 min-h-[120px]">
+                      <div className="space-y-4 lg:min-h-[120px]">
                         {/* Service Questions */}
                         {service.servicequestion.length > 0 && (
                           <div>
@@ -422,7 +424,7 @@ export default function ServicesPage() {
                       </div>
 
                       {/* Column 3: Action Buttons */}
-                      <div className="flex flex-row lg:flex-col gap-2 lg:min-h-[120px] lg:justify-center">
+                      <div className="flex flex-row lg:flex-col gap-2 lg:min-h-[120px] justify-end lg:justify-normal">
                         <button
                           onClick={() => handleEdit(service.service_id)}
                           className={`px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm font-medium border ${

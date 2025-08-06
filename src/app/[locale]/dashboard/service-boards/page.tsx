@@ -164,7 +164,7 @@ export default function ServiceBoardsPage() {
             <div>
               <Link
                 href="/dashboard/service-boards/create"
-                className={`px-4 py-2 md:px-4 md:py-2 text-sm md:text-lg rounded-lg transition-colors inline-flex items-center gap-2 ${
+                className={`px-2 py-2 md:px-4 md:py-2 text-xs md:text-lg rounded-lg transition-colors inline-flex items-center gap-1 lg:gap-2 ${
                   canCreateBoard()
                     ? "bg-blue-600 hover:bg-blue-700 text-white"
                     : "bg-zinc-300 text-gray-500 cursor-not-allowed"
@@ -190,7 +190,7 @@ export default function ServiceBoardsPage() {
               {serviceBoards.map((board) => {
                 return (
                   <div key={board.board_id}>
-                    <div className={`rounded-xl shadow-sm border overflow-hidden grid grid-cols-1 lg:grid-cols-[10%_42%_30%_18%] gap-x-4 gap-y-2 p-4 lg:p-6 ${
+                    <div className={`rounded-xl shadow-sm border grid grid-cols-1 lg:grid-cols-[10%_42%_30%_18%] gap-x-4 gap-y-2 p-4 lg:p-6 ${
                       theme === 'dark' 
                         ? 'bg-zinc-800 border-gray-600' 
                         : 'bg-white border-gray-200'
@@ -200,17 +200,17 @@ export default function ServiceBoardsPage() {
                         <div className="flex flex-row lg:flex-col gap-4">
                           {/* Status */}
                           <div className="flex items-center gap-2">
-                            <span className={`px-3 py-1.5 rounded-full text-sm font-medium ${getStatusColor(board.status)}`}>
+                            <span className={`px-3 py-1.5 rounded-full text-xs lg:text-sm font-medium ${getStatusColor(board.status)}`}>
                               {getStatusText(board.status)}
                             </span>
                           </div>
                           {/* Creation Date */}
                           <div className="flex flex-col items-start lg:gap-1">
                             <div className="flex items-center gap-1">
-                              <span className={`text-xl font-semibold ${
+                              <span className={`text-sm lg:text-xl font-semibold ${
                                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                               }`}>{formatDate(board.created_at).day}</span>
-                              <span className={`text-xl font-semibold ${
+                              <span className={`text-sm lg:text-xl font-semibold ${
                                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                               }`}>{formatDate(board.created_at).month}</span>
                             </div>
@@ -220,7 +220,7 @@ export default function ServiceBoardsPage() {
                           </div>
                           {/* Board Reference */}
                           <div className="flex items-center gap-2 ml-auto lg:ml-0">
-                            <span className={`px-2 py-0.5 border-2 rounded-md text-xs whitespace-nowrap${
+                            <span className={`px-2 py-0.5 border-[1px] rounded-md text-xs whitespace-nowrap${
                               theme === 'dark' 
                                 ? 'border-gray-400 bg-zinc-700 text-gray-300' 
                                 : 'border-gray-500 bg-zinc-100 text-gray-700'

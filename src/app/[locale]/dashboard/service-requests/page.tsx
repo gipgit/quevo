@@ -178,6 +178,7 @@ export default function ServiceRequestsPage() {
           <div className="flex items-center gap-6">
             <div className="flex flex-col items-end gap-2">
               {planLimitRequests && (
+                <div className="min-w-[100px]">
                 <UsageLimitBar
                   current={currentUsage}
                   max={planLimitRequests.value}
@@ -187,6 +188,7 @@ export default function ServiceRequestsPage() {
                   upgradeText={t("upgradePlan")}
                   unlimitedText={t("unlimited")}
                 />
+                </div>
               )}
             </div>
 
