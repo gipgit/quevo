@@ -676,10 +676,10 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
   );
 
   return (
-    <div className="container mx-auto max-w-none">
+    <div className="container mx-auto max-w-none" style={{backgroundColor: themeColorBackground}}>
       {/* Business Cover for xs to md devices */}
       <div className="lg:hidden w-full relative">
-        <div className="relative w-full h-48 overflow-hidden bg-gray-100">
+        <div className="relative w-full h-[150px] overflow-hidden bg-gray-100">
           <img
             src={businessCoverImageUrl}
             alt={businessData.business_name || 'Business cover'}
@@ -689,7 +689,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
           <div 
             className="absolute inset-0"
             style={{
-              background: `linear-gradient(to top, ${themeColorBackground}, ${themeColorBackground}80, transparent)`
+              background: `linear-gradient(to top, ${themeColorBackground} 20%, ${themeColorBackground}90, transparent)`
             }}
           ></div>
         </div>
@@ -719,7 +719,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
             {boardData && (
               <div className="flex flex-col sm:flex-row sm:items-center gap-y-3 gap-x-8">
                 <div>
-                  <h1 className="text-3xl md:text-3xl font-bold">{boardData.board_title}</h1>
+                  <h1 className="text-2xl md:text-3xl font-bold">{boardData.board_title}</h1>
                   <div className="flex items-center flex-wrap gap-y-1 gap-x-2 mt-1">
                   {boardData.service && (
                        <div className="text-sm">
@@ -834,8 +834,8 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
 
         {/* Appointments section */}
         {appointments && appointments.length > 0 && (
-                <div className="pb-2 mb-5 lg:w-[25%] lg:order-2 p-5 md:p-6">
-                  <div className="space-y-4 sticky top-0 pt-2">
+                <div className="mb-5 lg:w-[25%] lg:order-2 p-5 md:p-6 bg-black/5 lg:bg-transparent">
+                  <div className="space-y-4 sticky top-0 lg:pt-2">
                     {appointments.map((appointment) => (
                       <div key={appointment.id} className="text-gray-900 bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
                         <div className="flex flex-col gap-4">
@@ -857,7 +857,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                               </svg>
                               <div className="flex flex-col -space-y-1">
-                                <span className="text-xl font-medium text-gray-900">
+                                <span className="text-lg lg:text-xl font-medium text-gray-900">
                                   {formatAppointmentDate(appointment.appointment_datetime, params.locale)}
                                 </span>
                               </div>
@@ -866,7 +866,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                               <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
-                              <span className="text-xl font-medium text-gray-900">
+                              <span className="text-lg lg:text-xl font-medium text-gray-900">
                                 {formatAppointmentTime(appointment.appointment_datetime, params.locale)}
                               </span>
                             </div>
@@ -1671,7 +1671,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex-1"></div>
-                <h2 className="text-base font-medium text-gray-900 text-center flex-1 whitespace-nowrap">{tServiceBoard('upcomingAppointment')}</h2>
+                <h2 className="text-sm lg:text-base font-medium text-gray-900 text-center flex-1 whitespace-nowrap">{tServiceBoard('upcomingAppointment')}</h2>
                 <div className="flex-1 flex justify-end">
                   <button
                     onClick={() => setShowUpcomingAppointmentModal(false)}
@@ -1705,7 +1705,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                       <div className="flex flex-col text-center -space-y-1">
-                        <span className="text-lg font-medium text-gray-900">
+                        <span className="text-base lg:text-lg font-medium text-gray-900">
                           {formatAppointmentDate(nextAppointment.appointment_datetime, params.locale)}
                         </span>
                         {/* Removed the time here, as it is already shown in the next column */}
@@ -1716,7 +1716,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                       <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-lg font-medium text-gray-900">
+                      <span className="text-base lg:text-lg font-medium text-gray-900">
                         {formatAppointmentTime(nextAppointment.appointment_datetime, params.locale)}
                       </span>
                     </div>
@@ -1765,7 +1765,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
               </div>
               {/* QR Code - Now shown after appointment details */}
               <div className="text-center">
-                <h3 className="text-sm font-medium text-gray-900 mb-3">{tServiceBoard('scanToAccessBoard')}</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-3">{tServiceBoard('scanToAccessBoard')}</h3>
                 <div className="flex justify-center mb-4">
                   <div className="bg-white p-4 rounded-lg border border-gray-200">
                     <QRCodeSVG
@@ -1776,7 +1776,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                     />
                   </div>
                 </div>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs text-gray-600">
                   {tServiceBoard('scanQrDescription')}
                 </p>
               </div>

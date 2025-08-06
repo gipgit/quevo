@@ -377,5 +377,5 @@
 }
 
 .board-cover::before{
-  background: var(--theme-color-background-secondary);
+  background: var(--theme-color-background);
 }

@@ -19,7 +19,7 @@ export function BusinessLocationStep({ formData, updateFormData, onValidationCha
   }, [onValidationChange])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3 lg:space-y-6">
       {/* Region */}
       <div>
         <label htmlFor="business_region" className="block text-sm font-medium text-gray-700 mb-2">
@@ -63,7 +63,7 @@ export function BusinessLocationStep({ formData, updateFormData, onValidationCha
           onChange={(e) => updateFormData({ business_address: e.target.value })}
           className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder={t("addressPlaceholder")}
-          rows={3}
+          rows={2}
           maxLength={80}
         />
       </div>

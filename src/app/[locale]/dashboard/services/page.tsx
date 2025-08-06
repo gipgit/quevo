@@ -247,7 +247,7 @@ export default function ServicesPage() {
           <div className="flex items-center gap-6">
             <div className="flex flex-col items-end gap-2">
               {planLimitServices && (
-                <div className="min-w-[100px]">
+                <div className="w-[60px] lg:w-[150px]">
                 <UsageLimitBar
                   current={currentUsage}
                   max={planLimitServices.value}

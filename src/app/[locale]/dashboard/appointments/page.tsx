@@ -269,9 +269,9 @@ export default function AppointmentsPage() {
   };
 
   const renderHeader = () => (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <div className="flex justify-between gap-4 mb-6">
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-4">
           <h1 className={`text-xl lg:text-2xl font-bold ${
             theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
           }`}>
@@ -322,9 +322,9 @@ export default function AppointmentsPage() {
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-2 lg:gap-4">
+      <div className="flex flex-col-reverse items-end lg:flex-row lg:items-center gap-1 lg:gap-4">
         {planLimitAppointments && (
-          <div className="min-w-[150px]">
+          <div className="w-[60px] lg:w-[150px]">
             <UsageLimitBar
               current={currentUsage}
               max={planLimitAppointments.value}

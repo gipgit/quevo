@@ -123,9 +123,9 @@ export function BusinessUrlStep({ formData, updateFormData, onValidationChange }
         </p>
         {/* Custom style for the flex container */}
         <div className="flex items-center rounded-full shadow-sm overflow-hidden bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200">
-          <div className="flex items-center px-4 py-3 bg-gradient-to-r from-gray-100 to-gray-200 border-r border-gray-300">
-            <GlobeAltIcon className="w-5 h-5 text-gray-600 mr-2" />
-            <span className="font-medium text-gray-700">
+          <div className="flex items-center px-4 py-3 bg-gradient-to-r from-gray-200 to-gray-100 border-r border-gray-100">
+            <GlobeAltIcon className="w-4 h-4 lg:w-5 lg:h-5 text-gray-600 mr-1 lg:mr-2" />
+            <span className="text-sm lg:text-base font-medium text-gray-700">
               quevo.app/
             </span>
           </div>
