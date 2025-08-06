@@ -712,7 +712,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
       </div>
 
       {/* Top Navbar */}
-      <div className="px-8 py-4 lg:py-8 pb-0">
+      <div className="px-6 lg:px-8 py-2 lg:py-4 pb-0">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           {/* Left Column - Board Info */}
           <div className="flex-1">
