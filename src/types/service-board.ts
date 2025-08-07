@@ -211,19 +211,7 @@ export interface ServiceBoardActionTag {
   tag_id: string;
 }
 
-export interface ServiceBoardActionTemplate {
-  template_id: string;
-  template_name_key: string;
-  action_type: string;
-  default_action_details: any;
-  required_fields: any; // JSON structure defining required fields
-  is_active: boolean;
-  is_available_plan_1: boolean;
-  is_available_plan_2: boolean;
-  is_available_plan_3: boolean;
-  created_at: string;
-  updated_at: string;
-}
+// ServiceBoardActionTemplate interface removed - now handled by action-configs.ts
 
 // Service Board Action with Tags
 export interface ServiceBoardAction {

@@ -292,17 +292,6 @@
       "customerSupport": "Supporto clienti 24/7"
     }
   },
-  "UserManagerActivation": {
-    "subject": "Attiva il tuo account Quevo Business",
-    "logo_url": "https://quevo.com/logo.png",
-    "welcome_heading": "Ciao {recipientName}!",
-    "confirm_email_prompt": "Grazie per esserti registrato su Quevo Business. Per completare la registrazione, conferma il tuo indirizzo email cliccando sul pulsante qui sotto.",
-    "after_confirmation_note": "Una volta confermato, potrai accedere a tutte le funzionalità di Quevo Business e iniziare a gestire la tua attività.",
-    "confirm_button_text": "Conferma Email",
-    "fallback_link_instruction": "Se il pulsante non funziona, copia e incolla questo link nel tuo browser:",
-    "closing_salutation": "Cordiali saluti,",
-    "team_name": "Il team di Quevo"
-  },
   "SignupConfirmation": {
     "title": "Conferma la tua email per iniziare",
     "emailSentTo": "Abbiamo inviato un link di conferma a {email}",
@@ -371,8 +360,8 @@
   "UserManagerActivation": {
     "subject": "Attiva il tuo account Business Quevo",
     "welcome_heading": "Benvenuto su Quevo, {recipientName}!",
-    "confirm_email_prompt": "Conferma la tua email per iniziare subito a gestire il tuo profilo Business.",
-    "after_confirmation_note": "Dopo la conferma, il tuo profilo sarà subito online e potrai fare tutto.",
+    "confirm_email_prompt": "Conferma la tua email per iniziare.",
+    "after_confirmation_note": "Dopo la conferma, potrai già configurare e gestire il tuo profilo online.",
     "confirm_button_text": "Conferma e inizia",
     "fallback_link_instruction": "Se il pulsante non funziona, puoi anche copiare e incollare questo link nel tuo browser:",
     "closing_salutation": "A presto,",

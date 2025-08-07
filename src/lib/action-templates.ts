@@ -504,6 +504,29 @@ export function getActionTemplateTranslation(templateNameKey: string, locale: st
   return template[locale as keyof typeof template] || template.it;
 }
 
+// Unified function to get action templates for AddActionModal
+export function getActionTemplatesForModal(plan: number = 1, locale: string = 'it') {
+  const { getAvailableActionsForPlan, getPlanLimits } = require('./action-configs');
+  
+  const availableActions = getAvailableActionsForPlan(plan);
+  
+  return availableActions.map((config: any) => {
+    const translation = getActionTemplateTranslation(config.actionType, locale);
+    return {
+      template_id: config.actionType,
+      template_name_key: config.actionType,
+      action_type: config.actionType,
+      translated_title: translation.title,
+      translated_description: translation.description,
+      icon: config.icon,
+      color: config.color,
+      is_available_for_current_plan: true,
+      plan_limits: getPlanLimits(config.actionType, plan),
+      display_order: 0
+    };
+  });
+}
+
 // Helper function for SectionActions - LONGER descriptions with metadata
 export function getFeatureData(featureKey: string, locale: string = 'it') {
   const translation = landingPageTranslations[featureKey as keyof typeof landingPageTranslations];
@@ -522,5 +545,69 @@ export function getFeatureData(featureKey: string, locale: string = 'it') {
   return {
     ...localeTranslation,
     ...metadata
+  };
+}
+
+// Form field placeholders - Messages from business to customer
+export const formFieldPlaceholders = {
+  'generic_message': {
+    action_title: 'Messaggio per il cliente',
+    action_description: 'Gentile Cliente, Le comunichiamo che...'
+  },
+  'payment_request': {
+    action_title: 'Richiesta di pagamento',
+    action_description: 'Gentile Cliente, Le richiediamo il pagamento per...'
+  },
+  'information_request': {
+    action_title: 'Richiesta di informazioni',
+    action_description: 'Gentile Cliente, Le chiediamo di fornirci...'
+  },
+  'document_download': {
+    action_title: 'Download documento',
+    action_description: 'Gentile Cliente, Le forniamo il documento...'
+  },
+  'signature_request': {
+    action_title: 'Richiesta di firma',
+    action_description: 'Gentile Cliente, Le richiediamo la firma sul documento...'
+  },
+  'resource_link': {
+    action_title: 'Condivisione risorsa',
+    action_description: 'Gentile Cliente, Le condividiamo questa risorsa...'
+  },
+  'checklist': {
+    action_title: 'Checklist da completare',
+    action_description: 'Gentile Cliente, Le forniamo questa checklist per...'
+  },
+  'feedback_request': {
+    action_title: 'Richiesta di feedback',
+    action_description: 'Gentile Cliente, Le chiediamo il suo feedback su...'
+  },
+  'approval_request': {
+    action_title: 'Richiesta di approvazione',
+    action_description: 'Gentile Cliente, Le richiediamo l\'approvazione per...'
+  },
+  'milestone_update': {
+    action_title: 'Aggiornamento milestone',
+    action_description: 'Gentile Cliente, Le comunichiamo l\'aggiornamento del milestone...'
+  },
+  'share_video': {
+    action_title: 'Condivisione video',
+    action_description: 'Gentile Cliente, Le condividiamo questo video...'
+  },
+  'appointment_scheduling': {
+    action_title: 'Proposta appuntamento',
+    action_description: 'Gentile Cliente, Le proponiamo un appuntamento per...'
+  },
+  'media_upload': {
+    action_title: 'Richiesta di caricamento',
+    action_description: 'Gentile Cliente, Le chiediamo di caricare...'
+  }
+};
+
+// Helper function to get form field placeholders
+export function getFormFieldPlaceholders(actionType: string) {
+  return formFieldPlaceholders[actionType as keyof typeof formFieldPlaceholders] || {
+    action_title: 'Messaggio per il cliente',
+    action_description: 'Gentile Cliente, Le comunichiamo che...'
   };
 } 

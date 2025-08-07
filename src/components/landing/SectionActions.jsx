@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { features, getFeatureData, getActionIconAndColor } from '@/lib/action-templates';
+import { features, getFeatureData, getActionIconAndColor } from '@/lib/unified-action-system';
 
 export default function SectionActions({ locale }) {
   const t = useTranslations('Landing');

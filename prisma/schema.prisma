@@ -753,20 +753,7 @@ model planlimit {
   @@unique([plan_id, feature])
 }
 
-model serviceboardactiontemplate {
-  template_id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  template_name_key      String   @unique @db.VarChar(255)
-  action_type            String   @unique @db.VarChar(50)
-  default_action_details Json?
-  required_fields        Json?
-  display_order          Int      @default(0)
-  is_active              Boolean  @default(true)
-  is_available_plan_1    Boolean  @default(false)
-  is_available_plan_2    Boolean  @default(true)
-  is_available_plan_3    Boolean  @default(true)
-  created_at             DateTime @default(now()) @db.Timestamptz(6)
-  updated_at             DateTime @default(now()) @db.Timestamptz(6)
-}
+// ServiceBoardActionTemplate model removed - now handled in app configuration
 
 model userdefinedtag {
   tag_id                String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid

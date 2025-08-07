@@ -1632,6 +1632,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
           }}
           businessId={businessData.business_id}
           boardRef={board_ref}
+          locale={params.locale}
           themeColorText={themeColorText || '#000000'}
           themeColorBackground={themeVariables?.['--lighter-theme-color-background'] || '#ffffff'}
           themeColorButton={themeColorButton || '#000000'}
