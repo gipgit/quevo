@@ -6,11 +6,9 @@ import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import ProductsPageClientContent from '@/components/profile/sections/products/ProductsPageClientContent'; // Adjust import path if you moved the file
 import EmptyState from '@/components/ui/EmptyState';
-import { getCachingSettings } from '@/lib/config/caching';
-
 // Set revalidation time for products data (e.g., every 5 minutes, or based on how often products change)
-const cachingSettings = getCachingSettings();
-export const revalidate = cachingSettings.revalidate;
+// Caching disabled for development - change ENABLE_CACHING in /lib/config/caching.ts to enable
+export const revalidate = 0; // No caching
 
 export default async function ProductsSectionPage({ params }: { params: { business_urlname: string; locale: string } }) {
     const { business_urlname, locale } = params;

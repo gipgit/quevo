@@ -6,13 +6,11 @@ import { getServiceRequestServicesData, getPromotionsData, getRewardsData, getPr
 import ServiceRequestWrapper from '@/components/profile/sections/services/ServiceRequestWrapper';
 import prisma from '@/lib/prisma';
 
-import { getCachingSettings } from '@/lib/config/caching';
-
 // OPTIMIZED: Add ISR for better performance on free tier
-const cachingSettings = getCachingSettings();
-export const revalidate = cachingSettings.revalidate;
-export const dynamic = cachingSettings.dynamic;
-export const fetchCache = cachingSettings.fetchCache;
+// Caching disabled for development - change ENABLE_CACHING in /lib/config/caching.ts to enable
+export const revalidate = 0; // No caching
+export const dynamic = 'auto' as const; // Dynamic rendering
+export const fetchCache = 'default' as const; // No fetch caching
 
 interface ServiceRequestPageParams {
   locale: string;
