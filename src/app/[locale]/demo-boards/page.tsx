@@ -53,22 +53,24 @@ export default async function DemoBoardsPage() {
           {serviceBoards.map((board) => (
             <div
               key={board.board_id}
-              className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden"
+              className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden"
             >
               {/* Card Header */}
               <div className="p-6 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">
                   {board.board_title}
                 </h3>
-                {board.board_description && (
-                  <p className="text-sm text-gray-600 mb-3">
-                    {board.board_description}
-                  </p>
-                )}
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
-                    {board.status}
-                  </span>
+                
+                {/* Status and Board Ref in same row */}
+                <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
+                      {board.status}
+                    </span>
+                    <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs font-medium font-mono">
+                      {board.board_ref}
+                    </span>
+                  </div>
                   <span>
                     {new Date(board.created_at).toLocaleDateString()}
                   </span>
@@ -78,19 +80,30 @@ export default async function DemoBoardsPage() {
               {/* Card Content */}
               <div className="p-6">
                 <div className="space-y-3 mb-4">
-                  <div>
-                    <span className="text-sm font-medium text-gray-700">Business:</span>
-                    <p className="text-sm text-gray-900">{board.business_name}</p>
+                  {/* Business and Customer in same row */}
+                  <div className="flex justify-between">
+                    <div>
+                      <span className="text-sm font-medium text-gray-700">Business:</span>
+                      <p className="text-sm text-gray-900">{board.business_name}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-gray-700">Customer:</span>
+                      <p className="text-sm text-gray-900">
+                        {board.name_first || 'N/A'} {board.name_last || ''}
+                      </p>
+                    </div>
                   </div>
+                  
+                  {/* Business link */}
                   <div>
-                    <span className="text-sm font-medium text-gray-700">Customer:</span>
-                    <p className="text-sm text-gray-900">
-                      {board.name_first || 'N/A'} {board.name_last || ''}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-sm font-medium text-gray-700">Board Ref:</span>
-                    <p className="text-sm text-gray-900 font-mono">{board.board_ref}</p>
+                    <Link
+                      href={`https://quevo.vercel.app/${board.business_urlname}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-200"
+                    >
+                      Apri Pagina Business
+                    </Link>
                   </div>
                 </div>
 
