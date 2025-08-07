@@ -10,7 +10,7 @@ import prisma from '@/lib/prisma';
 // Caching disabled for development - change ENABLE_CACHING in /lib/config/caching.ts to enable
 export const revalidate = 0; // No caching
 export const dynamic = 'auto'; // Dynamic rendering
-export const fetchCache = 'default'; // No fetch caching
+export const fetchCache = 'force-no-store'; // No fetch caching
 
 interface ServiceRequestPageParams {
   locale: string;
