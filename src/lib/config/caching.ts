@@ -18,14 +18,14 @@ export const getCachingSettings = () => {
   if (!CACHING_CONFIG.ENABLE_CACHING) {
     return {
       revalidate: 0, // No caching
-      dynamic: 'auto', // Dynamic rendering
-      fetchCache: 'default', // No fetch caching
+      dynamic: 'auto' as const, // Dynamic rendering
+      fetchCache: 'default' as const, // No fetch caching
     };
   }
   
   return {
     revalidate: CACHING_CONFIG.REVALIDATE_TIME,
-    dynamic: CACHING_CONFIG.DYNAMIC_STRATEGY,
-    fetchCache: CACHING_CONFIG.FETCH_CACHE_STRATEGY,
+    dynamic: CACHING_CONFIG.DYNAMIC_STRATEGY as const,
+    fetchCache: CACHING_CONFIG.FETCH_CACHE_STRATEGY as const,
   };
 }; 
