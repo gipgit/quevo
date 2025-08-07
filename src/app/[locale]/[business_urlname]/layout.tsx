@@ -133,12 +133,11 @@ export async function generateMetadata({ params }: { params: { business_urlname:
     };
 }
 
-// OPTIMIZED: Add caching for better performance
-export const revalidate = 300; // 5 minutes - business data doesn't change often
+import { getCachingSettings } from '@/lib/config/caching';
 
-// OPTIMIZED: Add ISR for better performance on free tier
-export const dynamic = 'force-static';
-export const fetchCache = 'force-cache';
+// OPTIMIZED: Add caching for better performance
+const { revalidate, dynamic, fetchCache } = getCachingSettings();
+export { revalidate, dynamic, fetchCache };
 
 export default async function BusinessProfileLayout({
     children,

@@ -6,10 +6,11 @@ import { getServiceRequestServicesData, getPromotionsData, getRewardsData, getPr
 import ServiceRequestWrapper from '@/components/profile/sections/services/ServiceRequestWrapper';
 import prisma from '@/lib/prisma';
 
+import { getCachingSettings } from '@/lib/config/caching';
+
 // OPTIMIZED: Add ISR for better performance on free tier
-export const revalidate = 300; // 5 minutes
-export const dynamic = 'force-static';
-export const fetchCache = 'force-cache';
+const { revalidate, dynamic, fetchCache } = getCachingSettings();
+export { revalidate, dynamic, fetchCache };
 
 interface ServiceRequestPageParams {
   locale: string;
