@@ -9,8 +9,10 @@ import prisma from '@/lib/prisma';
 import { getCachingSettings } from '@/lib/config/caching';
 
 // OPTIMIZED: Add ISR for better performance on free tier
-const { revalidate, dynamic, fetchCache } = getCachingSettings();
-export { revalidate, dynamic, fetchCache };
+const cachingSettings = getCachingSettings();
+export const revalidate = cachingSettings.revalidate;
+export const dynamic = cachingSettings.dynamic;
+export const fetchCache = cachingSettings.fetchCache;
 
 interface ServiceRequestPageParams {
   locale: string;

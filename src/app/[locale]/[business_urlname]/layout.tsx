@@ -136,8 +136,10 @@ export async function generateMetadata({ params }: { params: { business_urlname:
 import { getCachingSettings } from '@/lib/config/caching';
 
 // OPTIMIZED: Add caching for better performance
-const { revalidate, dynamic, fetchCache } = getCachingSettings();
-export { revalidate, dynamic, fetchCache };
+const cachingSettings = getCachingSettings();
+export const revalidate = cachingSettings.revalidate;
+export const dynamic = cachingSettings.dynamic;
+export const fetchCache = cachingSettings.fetchCache;
 
 export default async function BusinessProfileLayout({
     children,
