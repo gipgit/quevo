@@ -7,11 +7,15 @@ import { routing } from './routing'; // Import routing config from the same dire
 import itMessages from '../../messages/it.json';
 import enMessages from '../../messages/en.json';
 import esMessages from '../../messages/es.json';
+import deMessages from '../../messages/de.json';
+import frMessages from '../../messages/fr.json';
 
 const messages = {
   it: itMessages,
   en: enMessages,
-  es: esMessages
+  es: esMessages,
+  de: deMessages,
+  fr: frMessages
 };
 
 export default getRequestConfig(async ({ requestLocale }) => {

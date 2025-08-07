@@ -61,7 +61,9 @@ export default function OnboardingPage() {
   const availableLocales = [
     { code: 'it', label: 'Italiano' },
     { code: 'en', label: 'English' },
-    { code: 'es', label: 'Español' }
+    { code: 'es', label: 'Español' },
+    { code: 'de', label: 'Deutsch' },
+    { code: 'fr', label: 'Français' }
   ]
 
   // Create object URLs for image previews

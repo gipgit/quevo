@@ -420,7 +420,7 @@ export default function ServiceDetailsForm({
                                                     >
                                                         -
                                                     </button>
-                                                    <span className="font-bold text-white text-center text-xs md:text-base">
+                                                    <span className="font-bold text-center text-xs md:text-base">
                                                         {selectedServiceItems[item.service_item_id]?.quantity || 0}
                                                         {item.price_type === 'per_unit' && ` ${item.price_unit}`}
                                                     </span>

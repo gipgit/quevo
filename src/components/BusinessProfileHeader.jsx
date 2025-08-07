@@ -552,11 +552,6 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
 
                      {/* Right Column: Action Buttons */}
                      <div className="flex flex-col gap-2">
-                         {businessSettings.show_btn_payments && (
-                             <button onClick={togglePaymentsModal} className="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200" style={primaryButtonStyle}>
-                                 Pagamenti
-                             </button>
-                         )}
 
                          {businessSettings.show_btn_phone && hasPhones && (
                              <button onClick={() => toggleContactModal('phone')} className={circularButtonBaseClass} style={primaryButtonStyle}>
@@ -583,6 +578,11 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                          style={getButtonIconStyle()}
                                      />
                                  </div>
+                             </button>
+                         )}
+                          {businessSettings.show_btn_payments && (
+                             <button onClick={togglePaymentsModal} className="px-3 py-2 rounded-2xl text-xs font-medium transition-colors duration-200" style={primaryButtonStyle}>
+                                 Pagamenti
                              </button>
                          )}
                      </div>
@@ -650,7 +650,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                     </div>
                 )}
                 
-                <div className="container mx-auto px-10 relative z-10">
+                <div className="container mx-auto px-16 relative z-10">
                     <div className="text-left transition-opacity duration-300" style={{ color: 'white', opacity: scrollOpacity }}>
                         <div className="mb-0">
                             {businessData.business_descr && <p className="font-bold text-2xl md:text-4xl lg:text-5xl max-w-2xl mb-4" style={{ textShadow: '1px 1px 4px rgba(0, 0, 0, 0.5)' }}>{businessData.business_descr}</p>}

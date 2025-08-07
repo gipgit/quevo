@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     const requestLocale = acceptLanguage?.split(",")[0].split("-")[0] || "it"
     
     // Validate locale is supported
-    const supportedLocales = ["it", "en", "es"]
+    const supportedLocales = ["it", "en", "es", "de", "fr"]
     const finalLocale = supportedLocales.includes(requestLocale) ? requestLocale : "it"
     
     console.log(`[signup-manager] Request locale: ${requestLocale}, Final locale: ${finalLocale}`)

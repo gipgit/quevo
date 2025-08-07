@@ -14,7 +14,9 @@ const FlagIcon = ({ locale }: { locale: string }) => {
   const flags: { [key: string]: string } = {
     it: '🇮🇹',
     en: '🇺🇸',
-    es: '🇪🇸'
+    es: '🇪🇸',
+    de: '🇩🇪',
+    fr: '🇫🇷'
   };
   
   return (

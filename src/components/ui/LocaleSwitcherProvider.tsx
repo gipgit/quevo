@@ -56,13 +56,17 @@ export const LocaleSwitcherProvider: React.FC<LocaleSwitcherProviderProps> = ({ 
     const localeLabels = {
       it: 'Italiano',
       en: 'English', 
-      es: 'Español'
+      es: 'Español',
+      de: 'Deutsch',
+      fr: 'Français'
     };
     
     return [
       { code: 'it', label: localeLabels.it },
       { code: 'en', label: localeLabels.en },
-      { code: 'es', label: localeLabels.es }
+      { code: 'es', label: localeLabels.es },
+      { code: 'de', label: localeLabels.de },
+      { code: 'fr', label: localeLabels.fr }
     ];
   };
 

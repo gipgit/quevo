@@ -143,7 +143,7 @@ export default function SectionHero({ locale }) {
     const [timeRemaining, setTimeRemaining] = useState(3000); // 3 seconds in milliseconds
     
     // Use the passed locale prop instead of detecting from URL
-    const currentLocale = ['it', 'en', 'es'].includes(locale) ? locale : 'it';
+    const currentLocale = ['it', 'en', 'es', 'de', 'fr'].includes(locale) ? locale : 'it';
     const businesses = exampleBusinesses[currentLocale] || exampleBusinesses.it;
 
     const renderTextWithItalic = (text) => {

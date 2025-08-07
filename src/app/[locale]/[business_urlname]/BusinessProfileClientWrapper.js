@@ -124,7 +124,7 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
                 {/* --- CONDITIONAL RENDERING OF BusinessProfileHeader --- */}
                 {!isBookingConfirmationPage && !isServiceBoardPage && (
                  
-                    <div className="flex flex-col lg:flex-row lg:items-start relative z-10 lg:p-8 lg:mt-12">
+                    <div className="flex flex-col lg:flex-row-reverse lg:items-start relative z-10 lg:p-8 lg:mt-12">
                         <div className="w-full lg:w-1/2 lg:sticky lg:top-0 lg:overflow-y-hidden">
                             <BusinessProfileHeader
                                 toggleContactModal={openContactModal}

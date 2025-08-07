@@ -12,7 +12,7 @@ export default function SectionSteps({ locale }) {
   const [timeRemaining, setTimeRemaining] = useState(3000); // 3 seconds per step
 
   // Use the passed locale prop instead of detecting from URL
-  const currentLocale = ['it', 'en', 'es'].includes(locale) ? locale : 'it';
+  const currentLocale = ['it', 'en', 'es', 'de', 'fr'].includes(locale) ? locale : 'it';
   const steps = getStepsData(currentLocale);
 
   // Auto-play slideshow

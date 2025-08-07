@@ -28,7 +28,7 @@ export default function ServiceSelection({
     return (
         <div className="x" style={{ color: themeColorText}}>
             {hasServices && (
-                <p className="text-lg lg:text-2xl mb-2 lg:mb-2">{t('chooseService')}</p>
+                <p className="text-xs lg:text-sm mb-2 lg:mb-2">{t('chooseService')}</p>
             )}
 
             {/* Render categorized services */}
@@ -37,12 +37,12 @@ export default function ServiceSelection({
                     if (categoryGroup.services.length === 0) return null; // Only show category if it has services
 
                     return (
-                        <div key={categoryGroup.category_name} className="mb-6">
+                        <div key={categoryGroup.category_name} className="mb-2 lg:mb-4">
                             <p className="text-xs lg:text-sm opacity-60 font-medium mb-3 border-b pb-0 lg:pb-1" style={{ borderColor: themeColorText + '50' }}>{categoryGroup.category_name}</p>
                             {categoryGroup.services.map(service => (
                                 <div
                                     key={service.service_id}
-                                    className={`flex flex-col lg:flex-row justify-between lg:items-start gap-3 md:gap-5 p-4 md:p-5 mb-2 rounded-2xl cursor-pointer transition-colors border ${
+                                    className={`flex flex-col lg:flex-row justify-between lg:items-start gap-3 md:gap-5 p-4 md:p-5 lg:p-6 mb-2 rounded-2xl cursor-pointer transition-colors border ${
                                         selectedService?.service_id === service.service_id ? 'ring-2 ring-offset-2' : ''
                                     }`}
                                     style={{
@@ -54,19 +54,18 @@ export default function ServiceSelection({
                                     onClick={() => onServiceSelect(service)}
                                 >
                                     <div className="flex-1">
-                                        <p className="font-bold text-base md:text-xl leading-tight">{service.service_name}</p>
+                                        <p className="font-bold text-base md:text-xl lg:text-2xl leading-tight">{service.service_name}</p>
                                         {service.description && (
                                             <div className="mt-1 text-xs md:text-sm opacity-70">
                                                 <RichTextDisplay 
                                                     content={service.description}
                                                     className="text-xs md:text-sm"
-                                                    theme="light"
                                                 />
                                             </div>
                                         )}
                                     </div>
                                     <div className="flex flex-row lg:flex-col lg:items-end gap-3 lg:gap-1">
-                                        <span className="font-medium text-md md:text-lg">
+                                        <span className="font-medium text-base md:text-lg">
                                             {service.price_base.toLocaleString(locale, { style: 'currency', currency: 'EUR' })}
                                         </span>
                                         {service.date_selection && (
@@ -95,36 +94,35 @@ export default function ServiceSelection({
 
             {/* Render uncategorized services if any */}
             {uncategorizedServices && uncategorizedServices.length > 0 && (
-                <div className="mb-6">
-                    <h3 className="text-sm font-semibold mb-3 border-b pb-1" style={{ borderColor: themeColorText + '40' }}>{t('uncategorizedServices')}</h3>
+                <div className="mb-2 lg:mb-4">
+                    <h3 className="text-xs lg:text-sm font-medium mb-2 border-b pb-1 opacity-50" style={{ borderColor: themeColorText + '40' }}>{t('uncategorizedServices')}</h3>
                     {uncategorizedServices.map(service => (
                         <div
                             key={service.service_id}
-                            className={`flex flex-col lg:flex-row justify-between lg:items-start gap-3 p-3 mb-2 rounded-md cursor-pointer transition-colors ${
+                            className={`flex flex-col lg:flex-row justify-between lg:items-start gap-3 p-4 md:p-5 lg:p-6 mb-2 rounded-2xl cursor-pointer border transition-colors ${
                                 selectedService?.service_id === service.service_id ? 'ring-2 ring-offset-2' : ''
                             }`}
                             style={{
-                                backgroundColor: selectedService?.service_id === service.service_id ? themeColorButton + '20' : themeColorBackgroundCard,
-                                borderColor: selectedService?.service_id === service.service_id ? themeColorButton : 'transparent',
+                                backgroundColor: selectedService?.service_id === service.service_id ? themeColorButton + '20' : themeColorBackgroundCard, 
+                                borderColor: selectedService?.service_id === service.service_id ? themeColorButton : themeColorBorder,
                                 color: themeColorText,
-                                boxShadow: selectedService?.service_id === service.service_id ? `0 0 0 2px ${themeColorButton}` : 'none'
+                                boxShadow: selectedService?.service_id === service.service_id ? `0 1px 2px ${themeColorButton}` : `0 1px 2px rgba(0,0,0,.075)`
                             }}
                             onClick={() => onServiceSelect(service)}
                         >
                             <div className="flex-1">
-                                <p className="font-medium md:text-lg">{service.service_name}</p>
+                                <p className="font-bold text-base md:text-xl lg:text-2xl leading-tight">{service.service_name}</p>
                                 {service.description && (
-                                    <div className="mt-1 text-xs md:text-sm opacity-70">
+                                    <div className="mt-1 text-xs md:text-sm opacity-90">
                                         <RichTextDisplay 
                                             content={service.description}
                                             className="text-xs md:text-sm"
-                                            theme="light"
                                         />
                                     </div>
                                 )}
                             </div>
                             <div className="flex flex-row lg:flex-col lg:items-end gap-3">
-                                <span className="font-bold text-lg">
+                                <span className="font-medium text-base md:text-lg">
                                     {service.price_base.toLocaleString(locale, { style: 'currency', currency: 'EUR' })}
                                 </span>
                                 {service.date_selection && (

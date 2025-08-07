@@ -1,4 +1,23 @@
 {
+  "Header": {
+    "brandName": "Quevo",
+    "logoAlt": "Logo de Quevo",
+    "toggleMobileMenu": "Alternar menú móvil",
+    "closeMobileMenu": "Cerrar menú móvil",
+    "features": "Funcionalidades",
+    "pricing": "Precios",
+    "support": "Soporte",
+    "signIn": "Iniciar Sesión"
+  },
+  "Footer": {
+    "brandName": "Quevo",
+    "features": "Funcionalidades",
+    "pricing": "Precios",
+    "contact": "Contacto",
+    "privacyPolicy": "Política de Privacidad",
+    "termsOfService": "Términos de Servicio",
+    "copyright": "© 2025 Quevo. Todos los derechos reservados."
+  },
   "Common": {
     "coverPhotoAlt": "Foto de Portada del Negocio",
     "errorBusinessNotFoundTitle": "Negocio No Encontrado",
@@ -55,6 +74,65 @@
     "loginButton": "Iniciar Sesión",
     "createAccountLink": "Crear Cuenta"
   },
+  "FAQ": {
+    "title": "Preguntas Frecuentes",
+    "subtitle": "Todo lo que necesitas saber sobre Queva",
+    "showMore": "Mostrar más preguntas",
+    "showLess": "Mostrar menos preguntas",
+    "questions": {
+      "accountCreation": {
+        "question": "¿Cómo puedo crear una cuenta?",
+        "answer": "Puedes crear tu cuenta haciendo clic en el enlace \"Crea tu cuenta\" en la sección principal o visitando la página de registro. El proceso es simple y rápido, solo toma unos minutos para completar el registro."
+      },
+      "freePlan": {
+        "question": "¿Queva es gratuito?",
+        "answer": "Sí, ofrecemos un plan gratuito que te permite probar las funciones básicas. También puedes probar Queva Premium gratis durante un mes sin compromiso. El plan gratuito incluye todas las funciones esenciales para comenzar."
+      },
+      "pointsSystem": {
+        "question": "¿Cómo funciona el sistema de puntos y recompensas?",
+        "answer": "Tus clientes ganan puntos cada vez que visitan tu establecimiento y escanean su código QR personal. Puedes definir las recompensas que pueden canjear una vez que alcancen ciertos puntos. El sistema es completamente personalizable y te permite crear programas de fidelización a medida."
+      },
+      "mobileMenu": {
+        "question": "¿Puedo gestionar el menú digital desde mi teléfono?",
+        "answer": "¡Absolutamente sí! Tu menú digital es completamente personalizable y se puede gestionar cómodamente desde tu teléfono o tablet, actualizándose en tiempo real para tus clientes. Puedes modificar precios, agregar nuevos platos y gestionar la disponibilidad desde cualquier lugar."
+      },
+      "profileSupport": {
+        "question": "¿Ofrecen soporte para la creación del perfil?",
+        "answer": "¡Por supuesto! Si necesitas ayuda, podemos crear tu perfil, subir el menú y configurar las promociones iniciales para ti. También ofrecemos formación para asegurar que seas autónomo en la gestión. Nuestro equipo de soporte siempre está disponible para ayudarte."
+      },
+      "dataSecurity": {
+        "question": "¿Mis datos están seguros?",
+        "answer": "Absolutamente sí. Utilizamos las tecnologías de seguridad más avanzadas para proteger tus datos y los de tus clientes. Toda la información está encriptada y cumplimos estrictamente con las normativas de privacidad, incluyendo el GDPR."
+      },
+      "customerSupport": {
+        "question": "¿Cómo puedo contactar al soporte al cliente?",
+        "answer": "Nuestro equipo de soporte está disponible 24/7 a través de email, chat en vivo y teléfono. Te responderemos en pocas horas y siempre estamos listos para ayudarte con cualquier pregunta o problema técnico que puedas tener."
+      },
+      "integration": {
+        "question": "¿Queva se integra con otros sistemas?",
+        "answer": "Sí, Queva se integra perfectamente con los principales sistemas de gestión de restaurantes, POS y plataformas de delivery. Ofrecemos APIs abiertas e integraciones nativas para garantizar una transición fluida sin interrumpir tu flujo de trabajo."
+      },
+      "pricing": {
+        "question": "¿Cuáles son los costos de los planes premium?",
+        "answer": "Nuestros planes premium comienzan desde €29/mes e incluyen funciones avanzadas como análisis detallados, marketing automatizado, soporte prioritario y personalizaciones avanzadas. También ofrecemos descuentos para pagos anuales y planes personalizados para grandes empresas."
+      },
+      "technicalRequirements": {
+        "question": "¿Cuáles son los requisitos técnicos?",
+        "answer": "Queva funciona en cualquier dispositivo con un navegador web moderno. No se requieren instalaciones de software complejas. Para los clientes, solo un smartphone con cámara para escanear códigos QR. El sistema está optimizado para funcionar incluso con conexiones de internet lentas."
+      }
+    }
+  },
+  "Pricing": {
+    "title": "Planes de Precios",
+    "subtitle": "Elige el plan perfecto para tu negocio",
+    "month": "mes",
+    "getStarted": "Comenzar",
+    "contactSales": "Contactar Ventas",
+    "needHelp": "¿Necesitas ayuda?",
+    "needHelpDescription": "¿No estás seguro de qué plan elegir? Nuestro equipo está aquí para ayudarte a encontrar la solución perfecta para tu negocio.",
+    "contactSupport": "Contactar Soporte",
+    "viewDemo": "Ver Demo"
+  },
   "ServiceRequest": {
     "loadingCalendar": "Cargando calendario",
     "selectDate": "Selecciona una fecha",
@@ -62,6 +140,7 @@
     "availableDayIndicator": "Días disponibles",
     "selectTime": "Selecciona una hora",
     "chooseService": "Selecciona un servicio",
+    "uncategorizedServices": "Otros servicios",
     "booking": "Solicitud",
     "pageTitle": "Reservar - {businessName}",
     "headerTitle": "Reservas",
@@ -135,6 +214,30 @@
     "failedToLoadAvailability": "No se pudo cargar la disponibilidad",
     "cannotSelectPastDate": "No se puede seleccionar una fecha pasada",
     "serviceDurationInvalid": "Duración del servicio no válida"
+  },
+  "Promotions": {
+    "loading": "Cargando promociones...",
+    "expires": "Expira",
+    "validUntil": "Válido hasta",
+    "viewDetails": "Ver Detalles",
+    "conditions": "Condiciones",
+    "noPromotionsYet": "No hay promociones disponibles aún.",
+    "checkBackLater": "¡Vuelve más tarde para nuevas ofertas emocionantes!",
+    "notFoundTitle": "Promociones No Encontradas",
+    "notFoundDescription": "La página de promociones no se pudo encontrar."
+  },
+  "Rewards": {
+    "loading": "Cargando recompensas...",
+    "requiredPoints": "Puntos Requeridos",
+    "points": "puntos",
+    "quantityAvailable": "Disponibles",
+    "outOfStock": "Agotado",
+    "validUntil": "Válido hasta",
+    "redeem": "Canjear Ahora",
+    "noRewardsYet": "No hay recompensas disponibles aún.",
+    "checkBackLater": "¡Vuelve más tarde para nuevas recompensas emocionantes!",
+    "notFoundTitle": "Recompensas No Encontradas",
+    "notFoundDescription": "La página de recompensas no se pudo encontrar."
   },
   "Landing": {
     "Hero": {
@@ -361,6 +464,27 @@
     "unexpectedError": "Se produjo un error inesperado. Inténtalo de nuevo.",
     "connectionError": "Error de conexión. Verifica tu conexión a internet e inténtalo de nuevo."
   },
+  "SignIn": {
+    "brandTitle": "Quevo Business",
+    "pageTitle": "Iniciar Sesión",
+    "emailPlaceholder": "tu@email.com",
+    "passwordPlaceholder": "••••••••",
+    "signInButton": "Iniciar Sesión",
+    "signingIn": "Iniciando sesión...",
+    "invalidCredentials": "Credenciales inválidas",
+    "connectionError": "Error de conexión",
+    "createBusinessAccount": "Crear una Cuenta de Negocio",
+    "generalAccess": "Acceso General",
+    "discoverQuevo": "Descubrir Quevo"
+  },
+  "Validation": {
+    "emailManagerExists": "Ya existe una cuenta de manager con este email",
+    "emailSupabaseExists": "Este email ya está registrado en el sistema",
+    "emailAvailable": "Email disponible",
+    "emailChecking": "Verificando disponibilidad...",
+    "emailCheckError": "Error al verificar email",
+    "emailInvalid": "Formato de email inválido"
+  },
   "BusinessSignup": {
     "pageTitle": "Crea tu cuenta",
     "brandTitle": "Quevo Business",
@@ -435,6 +559,16 @@
     "closing_salutation": "Saludos,",
     "team_name": "El equipo de Quevo"
   },
+  "UserCustomerActivation": {
+    "subject": "Activa tu cuenta de Cliente Quevo",
+    "welcome_heading": "¡Bienvenido a Quevo, {recipientName}!",
+    "confirm_email_prompt": "Confirma tu email para acceder a todas las funciones.",
+    "confirm_button_text": "Activar mi cuenta",
+    "fallback_link_instruction": "Si el botón no funciona, también puedes copiar y pegar este enlace en tu navegador:",
+    "closing_salutation": "Saludos,",
+    "team_name": "El equipo de Quevo",
+    "logo_url": "https://yourwebsite.com/logo.png"
+  },
   "BusinessActivationPage": {
     "invalidLinkMissingInfo": "El enlace de activación no es válido o faltan información del token/email.",
     "activatingAccount": "Activando tu cuenta...",
@@ -455,6 +589,115 @@
     "trySignupAgain": "Intentar Registro Nuevamente",
     "unexpectedError": "Se produjo un error inesperado.",
     "autoLoginInProgress": "Iniciando sesión automáticamente..."
+  },
+  "products": {
+    "title": "Productos",
+    "noProducts": "No hay productos aún",
+    "noProductsDescription": "Crea tu primer producto para comenzar.",
+    "addElement": "Agregar Producto",
+    "planInfo": "{current} de {max} productos usados",
+    "upgradePlan": "Actualizar Plan",
+    "unlimited": "Ilimitado",
+    "productLimitReached": "Has alcanzado el número máximo de productos para tu plan.",
+    "createProduct": "Crear Producto",
+    "createProductDescription": "Agrega un nuevo producto a tu negocio.",
+    "productNameRequired": "El nombre del producto es requerido.",
+    "createError": "Error al crear producto.",
+    "noVariations": "No hay variaciones agregadas.",
+    "addVariation": "Agregar Variación",
+    "variation": "Variación",
+    "variationName": "Nombre de Variación",
+    "priceModifier": "Modificador de Precio",
+    "additionalDescription": "Descripción Adicional",
+    "remove": "Eliminar",
+    "cancel": "Cancelar",
+    "creating": "Creando...",
+    "uncategorized": "Sin categorizar"
+  },
+  "services": {
+    "planInfo": "{current} de {max} servicios usados",
+    "upgradePlan": "Actualizar Plan",
+    "serviceLimitReached": "Has alcanzado el número máximo de servicios para tu plan.",
+    "maxQuestionsReached": "Has alcanzado el número máximo de preguntas para este servicio.",
+    "createService": "Crear Servicio",
+    "serviceNameRequired": "El nombre del servicio es requerido.",
+    "createError": "Error al crear servicio.",
+    "cancel": "Cancelar",
+    "creating": "Creando...",
+    "additionalItems": "Elementos Adicionales",
+    "addItem": "Agregar Elemento",
+    "item": "Elemento",
+    "itemName": "Nombre del Elemento",
+    "itemPrice": "Precio del Elemento",
+    "itemDescription": "Descripción del Elemento",
+    "priceType": "Tipo de Precio",
+    "fixed": "Fijo",
+    "perUnit": "Por Unidad",
+    "perHour": "Por Hora",
+    "priceUnit": "Unidad de Precio",
+    "hasAdditionalItems": "Tiene Elementos Adicionales",
+    "requiresDateSelection": "Requiere Selección de Fecha",
+    "category": "Categoría",
+    "selectCategory": "Seleccionar Categoría",
+    "serviceName": "Título del Servicio",
+    "description": "Descripción",
+    "duration": "Duración",
+    "minutes": "Minutos",
+    "bufferTime": "Tiempo de Buffer",
+    "basePrice": "Precio Base",
+    "questions": "Preguntas",
+    "addQuestion": "Agregar Pregunta",
+    "question": "Pregunta",
+    "questionText": "Texto de Pregunta",
+    "questionType": "Tipo de Pregunta",
+    "text": "Texto",
+    "longText": "Texto Largo",
+    "number": "Número",
+    "email": "Email",
+    "phone": "Teléfono",
+    "singleChoice": "Opción Única",
+    "multipleChoice": "Opción Múltiple",
+    "options": "Opciones",
+    "addOption": "Agregar Opción",
+    "option": "Opción",
+    "required": "Requerido",
+    "maxLength": "Longitud Máxima",
+    "requirements": "Requisitos",
+    "addRequirement": "Agregar Requisito",
+    "requirement": "Requisito",
+    "requirementTitle": "Título del Requisito",
+    "requirementText": "Texto del Requisito",
+    "remove": "Eliminar",
+    "serviceUsage": "{count} de {limit} servicios usados",
+    "maxServicesReached": "Has alcanzado el número máximo de servicios para tu plan.",
+    "serviceCreatedSuccessfully": "¡Servicio creado exitosamente!",
+    "error": "Error",
+    "success": "Éxito",
+    "serviceDeleted": "Servicio eliminado",
+    "serviceDeletedDescription": "El servicio '{serviceName}' fue eliminado exitosamente.",
+    "deleteFailed": "Eliminación fallida",
+    "deleteFailedDescription": "Ocurrió un error al eliminar el servicio.",
+    "confirmDeleteTitle": "Confirmar Eliminación",
+    "confirmDeleteMessage": "¿Estás seguro de que quieres eliminar el servicio \"{serviceName}\"? Esta acción no se puede deshacer.",
+    "deleting": "Eliminando...",
+    "confirm": "Confirmar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "title": "Servicios",
+    "noServices": "No hay servicios aún",
+    "noServicesDescription": "Crea tu primer servicio para comenzar.",
+    "price": "Precio",
+    "status": "Estado",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "dateSelection": "Selección de Fecha",
+    "hasItems": "Tiene Elementos",
+    "hasQuestions": "{count} Preguntas",
+    "hasRequirements": "{count} Requisitos",
+    "noDuration": "Sin duración",
+    "priceOnRequest": "Precio a consultar",
+    "uncategorized": "Sin categorizar",
+    "noElementsConfigured": "No hay elementos configurados"
   },
   "onboarding": {
     "loading": "Cargando...",
@@ -506,6 +749,7 @@
     "coverImagePlaceholder": "Imagen de portada",
     "uploadCoverImage": "Subir Imagen de Portada",
     "coverImageFormatInfo": "PNG, JPG hasta 5MB. Tamaño recomendado: 1200x400px",
+    "cropImage": "Recortar Imagen",
     "cropForMobile": "Recortar para Móvil",
     "cropForDesktop": "Recortar para Escritorio",
     "mobileCropDescription": "Recorta tu imagen para dispositivos móviles (proporción 3:1)",
@@ -516,6 +760,8 @@
     "finishCrop": "Finalizar",
     "useMobileCrop": "Usar Recorte Móvil",
     "preview": "Vista Previa",
+    "desktopPreview": "Vista Previa de Escritorio",
+    "switchingToDesktop": "Cambiando al recorte de escritorio...",
     "cancel": "Cancelar",
     "defaultPage": "Página Predeterminada",
     "visibleElements": "Elementos Visibles",
@@ -542,6 +788,221 @@
     "skip": "Saltar",
     "creating": "Creando...",
     "createAndStart": "Crear y Comenzar"
+  },
+  "dashboard": {
+    "welcome": "Bienvenido {name}",
+    "changeLocale": "Cambiar idioma",
+    "loading": "Cargando dashboard...",
+    "currentBusiness": {
+      "label": "Negocio Actual",
+      "change": "Cambiar",
+      "selectBusiness": "Seleccionar un negocio"
+    },
+    "plan": {
+      "label": "Plan",
+      "manage": "Gestionar"
+    },
+    "usage": {
+      "services": "Servicios",
+      "service_requests": "Solicitudes de Servicio",
+      "appointments": "Citas",
+      "active_boards": "Tableros Activos",
+      "products": "Productos",
+      "promos": "Promociones",
+      "bookings": "Reservas",
+      "per_month": "/ mes"
+    },
+    "publicLink": {
+      "label": "Enlace Público",
+      "copy": "Copiar",
+      "copied": "¡Copiado!",
+      "open": "Abrir"
+    },
+    "cards": {
+      "profile": { "title": "Perfil", "description": "Edita el perfil de tu negocio, enlaces, configuraciones y apariencia." },
+      "services": { "title": "Servicios", "description": "Gestiona tus servicios." },
+      "serviceRequests": { "title": "Solicitudes de Servicio", "description": "Ver y gestionar solicitudes de servicio." },
+      "serviceBoards": { "title": "Tableros de Servicio", "description": "Gestiona tus tableros de servicio." },
+      "appointments": { "title": "Citas", "description": "Ver y gestionar citas." },
+      "products": { "title": "Productos", "description": "Gestiona tus productos." },
+      "promotions": { "title": "Promociones", "description": "Crear y gestionar promociones." }
+    },
+    "noBusiness": "Ningún negocio seleccionado.",
+    "createBusiness": "Crear Negocio",
+    "nav": {
+      "home": "Inicio",
+      "profile": "Perfil",
+      "services": "Servicios",
+      "products": "Productos",
+      "serviceRequests": "Solicitudes de Servicio",
+      "serviceBoards": "Tableros de Servicio",
+      "appointments": "Citas",
+      "bookings": "Reservas",
+      "promotions": "Promociones",
+      "surveys": "Encuestas",
+      "plans": "Planes",
+      "surveyReports": "Reportes de Encuestas",
+      "scanReports": "Reportes de Escaneo",
+      "reports": "Reportes",
+      "logout": "Cerrar Sesión",
+      "manageAccount": "Gestionar Cuenta"
+    }
+  },
+  "plan": {
+    "title": "Tu Plan",
+    "currentPlan": "Plan Actual",
+    "planId": "ID del Plan",
+    "manager": "Manager",
+    "limits": "Límites del Plan",
+    "unlimited": "Ilimitado",
+    "upgradePlan": "Actualizar Plan",
+    "upgradeInfo": "Contacta soporte para actualizar tu plan.",
+    "noPlan": "Ningún plan asignado.",
+    "paymentMethod": "Método de Pago",
+    "noPaymentMethod": "Ningún método de pago",
+    "subscriptionStatus": "Estado de Suscripción",
+    "noStatus": "Sin estado",
+    "currentPeriodEnd": "Fin del Período Actual",
+    "nextInvoice": "Próxima Factura"
+  },
+  "profile": {
+    "title": "Perfil del Negocio",
+    "noBusinessSelected": "Ningún negocio seleccionado.",
+    "openProfile": "Abrir Perfil",
+    "tabs": {
+      "information": "Información",
+      "images": "Imágenes",
+      "links": "Enlaces",
+      "paymentMethods": "Métodos de Pago",
+      "settings": "Configuraciones",
+      "appearance": "Apariencia"
+    },
+    "businessName": "Nombre del Negocio",
+    "businessUrlName": "URL del Negocio",
+    "businessAddress": "Dirección del Negocio",
+    "businessEmail": "Email del Negocio",
+    "businessPhone": "Teléfono del Negocio",
+    "businessRegion": "Región",
+    "businessCountry": "País",
+    "businessDescr": "Descripción",
+    "addEmail": "Agregar Email",
+    "addPhone": "Agregar Teléfono",
+    "emailPlaceholder": "email@ejemplo.com",
+    "phonePlaceholder": "+39 123 456 7890",
+    "emailTitlePlaceholder": "Título (opcional)",
+    "phoneTitlePlaceholder": "Título (opcional)",
+    "remove": "Eliminar",
+    "links": {
+      "googleReviews": "Reseñas de Google",
+      "googleReviewsTitle": "Enlace de Reseñas de Google",
+      "socialMedia": "Enlaces de Redes Sociales",
+      "noLink": "Sin enlace",
+      "insert": "Insertar",
+      "modify": "Modificar"
+    },
+    "settings": {
+      "general": "Configuraciones Generales",
+      "defaultPage": "Página Predeterminada",
+      "visibility": "Configuraciones de Visibilidad",
+      "showAddress": "Mostrar Dirección",
+      "showWebsite": "Mostrar Sitio Web",
+      "showSocials": "Mostrar Redes Sociales",
+      "showBookingButton": "Mostrar Botón de Reserva",
+      "showPaymentButton": "Mostrar Botón de Pago"
+    },
+    "appearance": {
+      "colors": "Colores",
+      "backgroundColor": "Color de Fondo",
+      "textColor": "Color de Texto",
+      "buttonColor": "Color de Botón",
+      "fonts": "Fuente",
+      "saveChanges": "Guardar Cambios",
+      "exampleButton": "Botón de Ejemplo"
+    }
+  },
+  "serviceRequests": {
+    "title": "Solicitudes de Servicio",
+    "noServiceRequests": "No hay solicitudes de servicio aún",
+    "noServiceRequestsDescription": "Las solicitudes de servicio de los clientes aparecerán aquí.",
+    "planInfo": "{current} de {max} solicitudes de servicio usadas",
+    "upgradePlan": "Actualizar Plan",
+    "unlimited": "Ilimitado",
+    "serviceRequestLimitReached": "Has alcanzado el número máximo de solicitudes de servicio para tu plan.",
+    "reference": "Referencia",
+    "customer": "Cliente",
+    "service": "Servicio",
+    "status": "Estado",
+    "date": "Fecha",
+    "price": "Precio",
+    "pending": "Pendiente",
+    "confirmed": "Confirmado",
+    "cancelled": "Cancelado",
+    "completed": "Completado",
+    "rescheduled": "Reprogramado",
+    "viewDetails": "Ver Detalles",
+    "openBoard": "Abrir Tablero",
+    "notes": "Notas"
+  },
+  "serviceBoards": {
+    "title": "Tableros de Servicio",
+    "noServiceBoards": "No hay tableros de servicio aún",
+    "noServiceBoardsDescription": "Los tableros para gestionar solicitudes de clientes aparecerán aquí.",
+    "planInfo": "{current} de {max} tableros usados",
+    "upgradePlan": "Actualizar Plan",
+    "unlimited": "Ilimitado",
+    "boardLimitReached": "Has alcanzado el número máximo de tableros para tu plan.",
+    "boardRef": "Ref. del Tablero",
+    "customer": "Cliente",
+    "service": "Servicio",
+    "status": "Estado",
+    "created": "Creado",
+    "actions": "Acciones",
+    "pending": "Pendiente",
+    "active": "Activo",
+    "completed": "Completado",
+    "archived": "Archivado",
+    "openBoard": "Abrir Tablero",
+    "viewDetails": "Ver Detalles",
+    "totalActions": "acciones totales",
+    "recentOnesAre": "las recientes son"
+  },
+  "appointments": {
+    "title": "Citas",
+    "noAppointments": "No hay citas aún",
+    "noAppointmentsDescription": "Tus citas aparecerán aquí en el calendario.",
+    "planInfo": "{current} de {max} citas usadas",
+    "upgradePlan": "Actualizar Plan",
+    "unlimited": "Ilimitado",
+    "appointmentLimitReached": "Has alcanzado el número máximo de citas para tu plan.",
+    "today": "Hoy",
+    "week": "Semana",
+    "month": "Mes",
+    "agenda": "Agenda",
+    "noEvents": "No hay eventos",
+    "customer": "Cliente",
+    "service": "Servicio",
+    "location": "Ubicación",
+    "platform": "Plataforma",
+    "notes": "Notas",
+    "scheduled": "Programado",
+    "confirmed": "Confirmado",
+    "cancelled": "Cancelado",
+    "completed": "Completado",
+    "addNew": "Agregar Cita",
+    "addFirst": "Agregar Primera Cita",
+    "fetchError": "Error al obtener citas",
+    "empty": {
+      "title": "No hay citas aún",
+      "description": "Comienza agregando tu primera cita para verla en la vista de calendario."
+    },
+    "allDay": "Todo el día",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "date": "Fecha",
+    "time": "Hora",
+    "event": "Evento",
+    "noEventsInRange": "No hay eventos en este rango",
+    "showMore": "Mostrar {total} más"
   },
   "ServiceBoard": {
     "passwordProtected": "Tablero Protegido con Contraseña",
@@ -679,5 +1140,31 @@
     "cancelWarning": "El negocio verá la cita como cancelada y podría contactarte para aclaraciones.",
     "confirmCancel": "Confirmar Cancelación",
     "optionalReasonPrompt": "Si quieres, puedes proporcionar un motivo para tu solicitud:"
+  },
+  "HowPoints": {
+    "title": "Cómo Funciona",
+    "subtitle": "Obtén tu sitio web profesional para tu negocio en solo unos simples pasos."
+  },
+  "Actions": {
+    "title": "Funciones Potentes para Tu Negocio",
+    "subtitle": "Todo lo que necesitas para crear una presencia online profesional y hacer crecer tu negocio.",
+    "domainLink": "domain.com/tunegocio/s/board"
+  },
+  "Board": {
+    "title": "Comunicación clara y fluida, transformando procesos complejos en experiencias claras y guiada.",
+    "Benefits": {
+      "effortlessManagement": "Gestión de Acciones Sin Esfuerzo",
+      "effortlessManagementDescription": "Desde un panel, envía solicitudes de pago, programa citas, solicita información o comparte documentos. Simplifica cada interacción.",
+      "automatedNotifications": "Notificaciones Automatizadas",
+      "automatedNotificationsDescription": "Mantén a los clientes informados. Las actualizaciones clave activan alertas de email instantáneas, sin esfuerzo manual requerido.",
+      "secureAccess": "Acceso Seguro y Compartible",
+      "secureAccessDescription": "Enlaces únicos y seguros para cada servicio. Comparte sin esfuerzo, con protección de contraseña opcional.",
+      "unifiedView": "Vista Unificada del Cliente",
+      "unifiedViewDescription": "Los clientes ven exactamente qué se necesita y el estado actual del servicio de un vistazo. No más confusión, solo claridad.",
+      "problemSolving": "Poder de Resolución de Problemas",
+      "problemSolvingDescription": "Termina malentendidos y disputas. Un registro cronológico compartido mantiene a todos alineados.",
+      "mobileReady": "Experiencia Lista para Móvil",
+      "mobileReadyDescription": "Accede y gestiona desde cualquier dispositivo. Tus clientes obtienen una experiencia fluida, donde sea que estén."
+    }
   }
 }

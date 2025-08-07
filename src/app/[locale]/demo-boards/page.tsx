@@ -37,7 +37,7 @@ export default async function DemoBoardsPage() {
     FROM serviceboard sb
     INNER JOIN business b ON sb.business_id = b.business_id
     INNER JOIN usercustomer uc ON sb.customer_id = uc.user_id
-    ORDER BY sb.created_at DESC
+    ORDER BY sb.created_at ASC
   `;
 
   return (

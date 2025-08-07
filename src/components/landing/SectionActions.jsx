@@ -13,7 +13,7 @@ export default function SectionActions({ locale }) {
   const [timeRemaining, setTimeRemaining] = useState(4000); // 4 seconds per action
 
   // Use the passed locale prop instead of detecting from URL
-  const currentLocale = ['it', 'en', 'es'].includes(locale) ? locale : 'it';
+  const currentLocale = ['it', 'en', 'es', 'de', 'fr'].includes(locale) ? locale : 'it';
 
   // Auto-play slideshow
   useEffect(() => {
