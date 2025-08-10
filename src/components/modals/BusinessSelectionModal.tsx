@@ -10,6 +10,16 @@ interface BusinessSelectionModalProps {
   onClose: () => void
 }
 
+// Utility function to get profile image URL following the same pattern as business layout
+const getProfileImageUrl = (business: any) => {
+  const R2_PUBLIC_DOMAIN = "https://pub-eac238aed876421982e277e0221feebc.r2.dev";
+  
+  // Use local path if business_img_profile is empty/undefined, otherwise use R2 predefined path
+  return !business?.business_img_profile 
+    ? `/uploads/business/${business?.business_public_uuid}/profile.webp`
+    : `${R2_PUBLIC_DOMAIN}/business/${business?.business_public_uuid}/profile.webp`;
+};
+
 export default function BusinessSelectionModal({ isOpen, onClose }: BusinessSelectionModalProps) {
   const t = useTranslations("dashboard")
   const { businesses, currentBusiness, switchBusiness } = useBusiness()
@@ -24,9 +34,6 @@ export default function BusinessSelectionModal({ isOpen, onClose }: BusinessSele
 
   // Determine modal width based on number of businesses
   const modalWidthClass = businesses.length > 4 ? "w-[99%] max-w-[99%]" : "max-w-4xl"
-
-  // Helper to get avatar URL
-  const getAvatarUrl = (business: any) => `/uploads/business/${business.business_public_uuid}/profile.webp`
 
   // Helper to get initial letter
   const getInitial = (name: string) => name?.charAt(0)?.toUpperCase() || "?"
@@ -57,7 +64,7 @@ export default function BusinessSelectionModal({ isOpen, onClose }: BusinessSele
                <div className="absolute left-2 lg:relative lg:left-auto flex items-center justify-center lg:mb-2 lg:mr-0">
                  {!avatarError[b.business_id] ? (
                    <img
-                     src={getAvatarUrl(b)}
+                     src={getProfileImageUrl(b)}
                      alt={b.business_name}
                      className="w-8 h-8 lg:w-16 lg:h-16 rounded-full object-cover bg-zinc-100"
                      onError={() => setAvatarError(errs => ({ ...errs, [b.business_id]: true }))}

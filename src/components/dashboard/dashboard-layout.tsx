@@ -41,6 +41,16 @@ interface DashboardLayoutProps {
   children: React.ReactNode
 }
 
+// Utility function to get profile image URL following the same pattern as business layout
+const getProfileImageUrl = (business: any) => {
+  const R2_PUBLIC_DOMAIN = "https://pub-eac238aed876421982e277e0221feebc.r2.dev";
+  
+  // Use local path if business_img_profile is empty/undefined, otherwise use R2 predefined path
+  return !business?.business_img_profile 
+    ? `/uploads/business/${business?.business_public_uuid}/profile.webp`
+    : `${R2_PUBLIC_DOMAIN}/business/${business?.business_public_uuid}/profile.webp`;
+};
+
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const pathname = usePathname()
   const router = useRouter()
@@ -205,7 +215,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               <div className="h-10 w-10 rounded-full bg-zinc-600 flex items-center justify-center overflow-hidden">
                 {(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? (
                   <img
-                    src={currentBusiness?.business_img_profile || `/uploads/business/${currentBusiness.business_public_uuid}/profile.webp`}
+                    src={getProfileImageUrl(currentBusiness)}
                     alt={businessName}
                     className="h-full w-full object-cover"
                     onError={(e) => {
@@ -398,7 +408,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               <div className="h-10 w-10 rounded-full bg-zinc-600 flex items-center justify-center overflow-hidden">
                 {(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? (
                   <img
-                    src={currentBusiness?.business_img_profile || `/uploads/business/${currentBusiness.business_public_uuid}/profile.webp`}
+                    src={getProfileImageUrl(currentBusiness)}
                     alt={businessName}
                     className="h-full w-full object-cover"
                     onError={(e) => {
