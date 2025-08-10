@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { processAndSaveDocument } from '@/lib/documentUpload';
+import { processAndSaveDocument, DocumentUploadType } from '@/lib/documentUpload';
 
 export async function POST(
   request: NextRequest,
@@ -26,11 +26,17 @@ export async function POST(
 
     const formData = await request.formData();
     const file = formData.get('file') as File;
-    const actionType = formData.get('actionType') as string;
+    const actionTypeRaw = formData.get('actionType') as string;
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
+
+    // Validate actionType
+    const validActionTypes: DocumentUploadType[] = ['signature_request', 'document_download', 'contract'];
+    const actionType: DocumentUploadType = validActionTypes.includes(actionTypeRaw as DocumentUploadType) 
+      ? (actionTypeRaw as DocumentUploadType) 
+      : 'signature_request';
 
     // Validate file type
     const allowedTypes = [
@@ -63,7 +69,7 @@ export async function POST(
       buffer,
       filename: file.name,
       businessId: serviceBoard.business_id,
-      actionType: actionType || 'signature_request',
+      actionType: actionType,
       boardRef: board_ref
       // Note: actionId is not available in this context as action hasn't been created yet
     });
