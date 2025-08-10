@@ -36,8 +36,9 @@ export async function POST(req: NextRequest, { params }: { params: { actionId: s
       }
     }
 
+    const baseDetailsAny: any = (current.action_details && typeof current.action_details === 'object') ? current.action_details : {}
     const mergedDetails = {
-      ...(current.action_details || {}),
+      ...baseDetailsAny,
       payment_declared_confirmed: true,
       payment_confirmation: confirmation,
     }
