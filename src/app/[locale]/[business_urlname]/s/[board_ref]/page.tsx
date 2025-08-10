@@ -755,9 +755,9 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
           {/* Left Column - Board Info */}
           <div className="flex-1 flex items-center gap-x-4">
             <div className="hidden lg:block w-14 h-14 lg:w-20 lg:h-20 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
-                  {businessData.business_public_uuid ? (
+                  {businessData.business_img_profile ? (
                     <Image
-                      src={`/uploads/business/${businessData.business_public_uuid}/profile.webp`}
+                      src={businessData.business_img_profile}
                       alt={businessData.business_name}
                       width={80}
                       height={80}
@@ -1520,9 +1520,9 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                 />
               </div>
               <div className="w-20 h-20 lg:w-20 lg:h-20 -mt-8 z-10 rounded-full overflow-hidden bg-gray-100">
-                {businessData.business_public_uuid ? (
+                {businessData.business_img_profile ? (
                   <Image
-                    src={`/uploads/business/${businessData.business_public_uuid}/profile.webp`}
+                    src={businessData.business_img_profile}
                     alt={businessData.business_name}
                     width={80}
                     height={80}
