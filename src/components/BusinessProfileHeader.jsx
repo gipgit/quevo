@@ -270,7 +270,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
             </nav>
 
             {/* Mobile/Tablet Cover Image */}
-            <div className="lg:hidden profile-cover w-full relative bg-gray-200 h-36 sm:h-40 md:h-40">
+            <div className="lg:hidden profile-cover w-full relative bg-gray-200 h-32 sm:h-40 md:h-40">
                 {businessData.business_img_cover_mobile ? (
                     <Image
                         src={businessData.business_img_cover_mobile}
@@ -486,10 +486,10 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
             )}
 
              {/* Mobile/Tablet Profile Image - Hidden on desktop */}
-             <div className="lg:hidden container-profile-pic pic-lg relative z-10 ml-4 -translate-y-1/2 rounded-full overflow-hidden bg-gray-100"
+             <div className="lg:hidden container-profile-pic pic-lg relative z-10 ml-4 -translate-y-[45px] rounded-full overflow-hidden bg-gray-100"
                  style={{
-                     width: '75px',
-                     height: '75px',
+                     width: '70px',
+                     height: '70px',
                  }}>
                  {businessData.business_img_profile ? (
                      <Image
@@ -507,11 +507,11 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
 
             {/* Mobile/Tablet Layout (up to lg) */}
             <div className="lg:hidden container flex flex-col mx-auto max-w-3xl relative px-4 mt-[-50px]">
-                <div className="flex gap-4 mt-4">
+                <div className="flex flex-col gap-2 mt-4">
                     {/* Left Column: Business Info */}
                     <div className="flex-1">
                         <div className="text-left" style={{ color: themeColorText }}>
-                            <p className="text-xl md:text-2xl font-bold">{businessData.business_name}</p>
+                            <p className="text-2xl md:text-2xl font-bold">{businessData.business_name}</p>
                             {businessData.business_descr && <p className="d-none text-sm opacity-80 mt-1 max-w-lg">{businessData.business_descr}</p>}
                             <div className="flex flex-col gap-1 mt-1">
                                 {(businessSettings.show_address && businessData.business_address) && (
@@ -532,7 +532,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                              {businessSettings.show_socials && filteredSocialLinks.map((link, index) => (
                                  <div key={index} className="text-center">
                                      <Link href={link.link_url} target="_blank" rel="noopener noreferrer" className={circularButtonBaseClass}>
-                                         <div className="link-icon-wrapper w-8 h-8 flex items-center justify-center rounded-full">
+                                         <div className="link-icon-wrapper w-7 h-7 flex items-center justify-center rounded-full">
                                              {link.icon && (
                                                  <Image
                                                      src={link.icon}
@@ -551,7 +551,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                      </div>
 
                      {/* Right Column: Action Buttons */}
-                     <div className="flex flex-col gap-2">
+                     <div className="flex flex-row gap-2">
 
                          {businessSettings.show_btn_phone && hasPhones && (
                              <button onClick={() => toggleContactModal('phone')} className={circularButtonBaseClass} style={primaryButtonStyle}>
