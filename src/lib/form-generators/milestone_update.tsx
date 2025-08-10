@@ -144,10 +144,9 @@ export function MilestoneUpdateForm({
 
         {/* Render dynamic fields from action config */}
         {actionConfig.fields
-          .filter(field => !['action_title', 'action_description'].includes(field.name))
+          .filter((field: { name: string }) => !['action_title', 'action_description'].includes(field.name))
           .filter(shouldShowField)
-          .map(field => renderField(field))
-        }
+          .map((field: { name: string }) => renderField(field))}
 
         {/* Submit button */}
         <SubmitButton isSubmitting={isSubmitting} disabled={disabled} />
