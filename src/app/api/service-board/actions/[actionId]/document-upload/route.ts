@@ -67,11 +67,12 @@ export async function POST(req: NextRequest, { params }: { params: { actionId: s
     })
     if (!current) return NextResponse.json({ error: 'Action not found' }, { status: 404 })
 
+    const baseDetailsAny: any = (current.action_details && typeof current.action_details === 'object') ? current.action_details : {}
     const details: any = {
-      ...(current.action_details || {}),
-      document_name: (current.action_details?.document_title || current.action_details?.document_name || file.name),
+      ...baseDetailsAny,
+      document_name: (baseDetailsAny.document_title || baseDetailsAny.document_name || file.name),
       document_file: downloadUrl,
-      file_type: file.type.includes('pdf') ? 'pdf' : file.type.includes('word') ? 'docx' : file.type.includes('sheet') || file.type.includes('excel') ? 'xlsx' : 'file',
+      file_type: file.type.includes('pdf') ? 'pdf' : file.type.includes('word') ? 'docx' : (file.type.includes('sheet') || file.type.includes('excel')) ? 'xlsx' : 'file',
       download_url: downloadUrl,
     }
     if (downloadPassword) {
