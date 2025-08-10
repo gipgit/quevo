@@ -418,7 +418,7 @@ export function AppointmentSchedulingForm({
                <div>
                  {suggestedDatetimes.length > 0 ? (
                    <div className="space-y-2">
-                     {suggestedDatetimes.map((datetime, index) => (
+                     {suggestedDatetimes.map((datetime: string, index: number) => (
                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg">
                          <div className="flex items-center gap-3">
                      <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

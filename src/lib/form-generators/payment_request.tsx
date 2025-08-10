@@ -200,7 +200,7 @@ export function PaymentRequestForm({
                     onClick={() => {
                       const prev: string[] = Array.isArray(formData.payment_methods) ? formData.payment_methods : [];
                       if (prev.includes(key)) {
-                        handleFieldChange('payment_methods', prev.filter((m) => m !== key));
+                        handleFieldChange('payment_methods', prev.filter((m: string) => m !== key));
                         // remove from available_payment_methods
                         const currentAvail = Array.isArray((formData as any).available_payment_methods) ? (formData as any).available_payment_methods : [];
                         const updatedAvail = currentAvail.filter((m: any) => m?.id !== key);
