@@ -270,7 +270,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
             </nav>
 
             {/* Mobile/Tablet Cover Image */}
-            <div className="lg:hidden profile-cover w-full relative bg-gray-200 h-40 sm:h-40 md:h-40">
+            <div className="lg:hidden profile-cover w-full relative bg-gray-200 h-36 sm:h-40 md:h-40">
                 {businessData.business_img_cover_mobile ? (
                     <Image
                         src={businessData.business_img_cover_mobile}
@@ -485,11 +485,11 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                 </div>
             )}
 
-                         {/* Mobile/Tablet Profile Image - Hidden on desktop */}
+             {/* Mobile/Tablet Profile Image - Hidden on desktop */}
              <div className="lg:hidden container-profile-pic pic-lg relative z-10 ml-4 -translate-y-1/2 rounded-full overflow-hidden bg-gray-100"
                  style={{
-                     width: '80px',
-                     height: '80px',
+                     width: '75px',
+                     height: '75px',
                  }}>
                  {businessData.business_img_profile ? (
                      <Image
@@ -537,8 +537,8 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                                  <Image
                                                      src={link.icon}
                                                      alt={link.label}
-                                                     width={22}
-                                                     height={22}
+                                                     width={20}
+                                                     height={20}
                                                  />
                                              )}
                                          </div>
