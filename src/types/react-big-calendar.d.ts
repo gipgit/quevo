@@ -7,6 +7,9 @@ declare module 'react-big-calendar' {
     startAccessor: string;
     endAccessor: string;
     style?: React.CSSProperties;
+    date?: Date;
+    defaultDate?: Date;
+    onNavigate?: (newDate: Date) => void;
     onSelectEvent?: (event: any) => void;
     onSelectSlot?: (slotInfo: { start: Date; end: Date }) => void;
     selectable?: boolean;
@@ -17,6 +20,7 @@ declare module 'react-big-calendar' {
     step?: number;
     timeslots?: number;
     className?: string;
+    components?: any;
   }
   
   export const Calendar: ComponentType<CalendarProps>;

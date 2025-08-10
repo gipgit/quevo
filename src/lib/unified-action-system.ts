@@ -1,12 +1,13 @@
 // Unified Action System
 // Combines action templates, configurations, and utilities in one place
 
-import { ActionConfig, getActionConfig, getAvailableActionsForPlan, getPlanLimits, getAllActionConfigs } from './action-configs';
+import { ActionConfig } from './form-generators/shared/types';
+import { getActionConfig, getAvailableActionsForPlan, getPlanLimits, getAllActionConfigs } from './form-generators/shared/config';
 
 // Action type to icon mapping
 export const ACTION_TYPE_ICONS: Record<string, string> = {
   'generic_message': '/icons/sanity/info-outline.svg',
-  'payment_request': '/icons/payments/credit-card.svg',
+  'payment_request': '/icons/payments/pos.svg',
   'appointment_scheduling': '/icons/sanity/calendar.svg',
   'information_request': '/icons/sanity/help-circle.svg',
   'document_download': '/icons/sanity/download.svg',
@@ -26,13 +27,14 @@ export const ACTION_TYPE_COLORS: Record<string, string> = {
   'payment_request': 'bg-green-100',
   'appointment_scheduling': 'bg-purple-100',
   'information_request': 'bg-yellow-100',
-  'document_download': 'bg-indigo-100',
+  // Use commonly referenced colors to avoid purge issues
+  'document_download': 'bg-blue-50',
   'signature_request': 'bg-red-100',
   'approval_request': 'bg-orange-100',
   'feedback_request': 'bg-blue-100',
   'milestone_update': 'bg-green-100',
   'resource_link': 'bg-cyan-100',
-  'checklist': 'bg-pink-100',
+  'checklist': 'bg-blue-50',
 
   'opt_in_request': 'bg-lime-100'
 };
@@ -65,7 +67,7 @@ export const actionTemplateTranslations = {
     es: { title: 'Carga de Medios', description: 'Solicita a los clientes que suban fotos o videos para documentar el servicio.' }
   },
   'milestone_update': {
-    it: { title: 'Aggiornamento Milestone', description: 'Comunica i progressi del progetto ai tuoi clienti.' },
+    it: { title: 'Aggiornamento Traguardo', description: 'Comunica i progressi del progetto ai tuoi clienti.' },
     en: { title: 'Milestone Update', description: 'Communicate project progress to your clients.' },
     es: { title: 'Actualización de Hito', description: 'Comunica el progreso del proyecto a tus clientes.' }
   },
@@ -232,8 +234,8 @@ export const formFieldPlaceholders = {
   },
   'milestone_update': {
     it: {
-      action_title: 'Aggiornamento milestone',
-      action_description: 'Gentile Cliente, Le comunichiamo l\'aggiornamento del milestone...'
+      action_title: 'Aggiornamento Traguardo',
+      action_description: 'Gentile Cliente, Le comunichiamo l\'aggiornamento...'
     },
     en: {
       action_title: 'Milestone update',
@@ -393,7 +395,7 @@ export const landingPageTranslations = {
   },
   'milestone_update': {
     it: {
-      title: 'Aggiornamento Milestone',
+      title: 'Aggiornamento Traguardo',
       description: 'Mantieni i tuoi clienti informati sui progressi del progetto con aggiornamenti sui milestone. Celebra i successi insieme.'
     },
     en: {
@@ -597,5 +599,6 @@ export function getFeatureData(featureKey: string, locale: string = 'it') {
   };
 }
 
-// Export everything from action-configs for backward compatibility
-export * from './action-configs'; 
+// Export everything from the new modular system for backward compatibility
+export * from './form-generators/shared/config';
+export * from './form-generators/shared/types'; 

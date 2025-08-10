@@ -7,7 +7,14 @@ interface Props {
 
 export default function ResourceLink({ details }: Props) {
   const t = useTranslations("ServiceBoard")
-  const getResourceIcon = (type: string) => {
+  const getResourceIcon = (type?: string) => {
+    if (!type || typeof type !== 'string') {
+      return (
+        <svg className="h-6 w-6 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
+        </svg>
+      )
+    }
     switch (type.toLowerCase()) {
       case 'pdf':
         return (
@@ -33,6 +40,14 @@ export default function ResourceLink({ details }: Props) {
             <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
           </svg>
         )
+      case 'website':
+      case 'link':
+      case 'url':
+        return (
+          <svg className="h-6 w-6 text-indigo-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-1.414 1.414a1 1 0 11-1.414-1.414l1.414-1.414a2 2 0 10-2.828-2.828l-3 3a2 2 0 000 2.828 1 1 0 11-1.414 1.414 4 4 0 010-5.656l3-3zm-5 5a2 2 0 012.828 0l1.414 1.414a1 1 0 01-1.414 1.414L9 11.414a2 2 0 11-2.828-2.828l1.414-1.414z" clipRule="evenodd" />
+          </svg>
+        )
       default:
         return (
           <svg className="h-6 w-6 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
@@ -50,7 +65,7 @@ export default function ResourceLink({ details }: Props) {
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="text-lg font-medium text-gray-900">
-            {details.resource_title}
+            {details.resource_title || t('resource')}
           </h3>
           {details.description && (
             <p className="mt-1 text-sm text-gray-500">
@@ -62,7 +77,7 @@ export default function ResourceLink({ details }: Props) {
 
       <div>
         <a
-          href={details.resource_url}
+          href={details.resource_url || '#'}
           target="_blank"
           rel="noopener noreferrer"
           className={`

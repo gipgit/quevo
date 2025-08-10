@@ -2,29 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-// @ts-ignore
-import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
-import { format, parse, startOfWeek, getDay, addHours, setHours, setMinutes } from 'date-fns';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { addHours, setHours, setMinutes } from 'date-fns';
 
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import { DynamicFormGenerator } from '@/lib/dynamic-form-generator';
+import { DynamicFormGenerator } from '@/lib/form-generators';
 import { getActionTemplatesForModal } from '@/lib/unified-action-system';
-
-// Calendar localizer
-const locales = {
-  'it-IT': require('date-fns/locale/it'),
-  'en-US': require('date-fns/locale/en-US'),
-};
-
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales,
-});
-
+import { transformActionDetailsForRendering } from '@/lib/action-data-transformer';
 import { ACTION_TYPE_ICONS, ACTION_TYPE_COLORS } from '@/lib/unified-action-system';
 
 interface AddActionModalProps {
@@ -68,7 +51,10 @@ export default function AddActionModal({
   const [appointmentMode, setAppointmentMode] = useState<string>('multiple_choice');
   
   // Mobile navigation state
-  const [mobileStep, setMobileStep] = useState<'templates' | 'form' | 'calendar'>('templates');
+  const [mobileStep, setMobileStep] = useState<'templates' | 'form'>('templates');
+  
+  // Calendar visibility state
+  const [showCalendar, setShowCalendar] = useState(false);
 
   // Load action templates from config files on component mount
   useEffect(() => {
@@ -81,14 +67,8 @@ export default function AddActionModal({
   const loadTemplates = async () => {
     try {
       setLoadingTemplates(true);
-      
-      // Get business plan (you'll need to implement this based on your business logic)
-      // For now, we'll assume plan 1 (free plan)
       const businessPlan = 1; // TODO: Fetch from business settings
-      
-      // Get templates using the unified function with current locale
       const templates = getActionTemplatesForModal(businessPlan, locale);
-      
       setTemplates(templates);
     } catch (error) {
       console.error('Error loading templates:', error);
@@ -110,13 +90,10 @@ export default function AddActionModal({
   };
 
   const handleTemplateSelect = (template: any) => {
-    // Allow all templates to be selected for testing (including premium ones)
     setSelectedTemplate(template);
-    // Reset form state when selecting a new template
     setSelectedDate(null);
     setSelectedTimeSlot(null);
     setSuggestedDatetimes([]);
-    // On mobile, move to form step
     setMobileStep('form');
   };
 
@@ -128,29 +105,20 @@ export default function AddActionModal({
 
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
-    setSelectedTimeSlot(null); // Clear time slot when date changes
+    setSelectedTimeSlot(null);
     
-    // If we have a selected template and it's a fixed date mode, set the fixed appointment date
-    if (selectedTemplate?.action_type === 'appointment_scheduling') {
-      if (appointmentMode === 'fixed_confirmed' || appointmentMode === 'fixed_pending_confirmation') {
-        setFixedAppointmentDate(date);
-      }
-    }
+    // If we're in confirmed status or fixed_date mode, update fixedAppointmentDate when time is also selected
   };
 
   const handleTimeSlotSelect = (time: Date) => {
     setSelectedTimeSlot(time);
     
-    // For fixed date modes, automatically set the appointment date when time is selected
-    if (selectedTemplate?.action_type === 'appointment_scheduling' && 
-        (appointmentMode === 'fixed_confirmed' || appointmentMode === 'fixed_pending_confirmation') &&
-        selectedDate) {
-      // Combine the selected date with the selected time
+    if (selectedTemplate?.action_type === 'appointment_scheduling' && selectedDate) {
       const combinedDateTime = new Date(selectedDate);
       combinedDateTime.setHours(time.getHours(), time.getMinutes(), 0, 0);
       setFixedAppointmentDate(combinedDateTime);
-      setSelectedTimeSlot(null); // Clear selection after setting
-      setSelectedDate(null); // Clear selected date
+      // In confirmed status or fixed_date, we treat the picked datetime as the only accepted one
+      setSuggestedDatetimes(prev => prev);
     }
   };
 
@@ -160,7 +128,7 @@ export default function AddActionModal({
       if (!suggestedDatetimes.includes(newDateTime)) {
         setSuggestedDatetimes(prev => [...prev, newDateTime]);
       }
-      setSelectedTimeSlot(null); // Clear selection after adding
+      setSelectedTimeSlot(null);
     }
   };
 
@@ -170,7 +138,6 @@ export default function AddActionModal({
 
   const handleAppointmentModeChange = (mode: string) => {
     setAppointmentMode(mode);
-    // Clear fixed appointment date when switching modes
     if (mode === 'multiple_choice') {
       setFixedAppointmentDate(null);
       setSelectedDate(null);
@@ -184,24 +151,30 @@ export default function AddActionModal({
     setSelectedTimeSlot(null);
   };
 
+  const handleShowCalendar = () => {
+    setShowCalendar(true);
+  };
+
+  const handleHideCalendar = () => {
+    setShowCalendar(false);
+  };
+
   const generateTimeSlots = (date: Date) => {
     const slots = [];
-    const startHour = 9; // 9 AM
-    const endHour = 18; // 6 PM
+    const startHour = 9;
+    const endHour = 18;
     
     for (let hour = startHour; hour < endHour; hour++) {
       for (let minute = 0; minute < 60; minute += 30) {
         const slotTime = setMinutes(setHours(date, hour), minute);
         const endTime = addHours(slotTime, 1);
         
-        // Check if this time slot conflicts with existing appointments
         const isOccupied = existingAppointments.some(appointment => {
           const appointmentStart = new Date(appointment.appointment_datetime);
           const appointmentEnd = addHours(appointmentStart, appointment.duration_minutes || 60);
           return slotTime < appointmentEnd && endTime > appointmentStart;
         });
         
-        // Check if this time slot is already in suggested datetimes
         const isAlreadySuggested = suggestedDatetimes.some(dt => 
           new Date(dt).toISOString() === slotTime.toISOString()
         );
@@ -220,49 +193,177 @@ export default function AddActionModal({
   const handleSubmit = async (formData: any) => {
     setIsSubmitting(true);
     try {
-      // Create proper action_details based on template
-      let actionDetails: any = {};
+      const actionDetails = transformActionDetailsForRendering(formData, selectedTemplate.action_type);
 
-      // Use template's default_action_details as base
-      if (selectedTemplate?.default_action_details) {
-        actionDetails = { ...selectedTemplate.default_action_details };
-      }
-
-      // Override with form data
-      Object.keys(formData).forEach(key => {
-        if (formData[key] !== undefined && formData[key] !== '') {
-          actionDetails[key] = formData[key];
-        }
-      });
-
-      // Add suggested datetimes if this is an appointment scheduling action
       if (selectedTemplate?.action_type === 'appointment_scheduling' && suggestedDatetimes.length > 0) {
         actionDetails.datetimes_options = suggestedDatetimes;
       }
 
-      // Set default appointment mode if not provided
       if (selectedTemplate?.action_type === 'appointment_scheduling' && !actionDetails.appointment_mode) {
-        actionDetails.appointment_mode = 'multiple_choice'; // Default to multiple choice
+        actionDetails.appointment_mode = 'multiple_choice';
       }
 
-      // Ensure appointment_mode is always set for appointment scheduling
       if (selectedTemplate?.action_type === 'appointment_scheduling') {
         actionDetails.appointment_mode = actionDetails.appointment_mode || 'multiple_choice';
+        // If appointment_status is confirmed or mode is fixed_date, prioritize confirmed datetime
+        if (formData.appointment_status === 'confirmed' || actionDetails.appointment_mode === 'fixed_date') {
+          if (fixedAppointmentDate) {
+            actionDetails.datetime_confirmed = fixedAppointmentDate.toISOString();
+            actionDetails.datetimes_options = [];
+          }
+        }
       }
 
-      // Add fixed appointment date if this is a fixed date mode
-      if (selectedTemplate?.action_type === 'appointment_scheduling' && 
-          (actionDetails.appointment_mode === 'fixed_confirmed' || actionDetails.appointment_mode === 'fixed_pending_confirmation') &&
-          fixedAppointmentDate) {
+      // Only set confirmed datetime when status is confirmed or mode is fixed_date
+      if (
+        selectedTemplate?.action_type === 'appointment_scheduling' &&
+        fixedAppointmentDate &&
+        (formData.appointment_status === 'confirmed' || actionDetails.appointment_mode === 'fixed_date')
+      ) {
         actionDetails.datetime_confirmed = fixedAppointmentDate.toISOString();
       }
 
-      // Ensure address is set for appointment scheduling (required field)
       if (selectedTemplate?.action_type === 'appointment_scheduling') {
         actionDetails.address = actionDetails.address || null;
       }
 
-      // Create the action
+      if (selectedTemplate?.action_type === 'appointment_scheduling' && formData.appointment_status === 'confirmed') {
+        if (!fixedAppointmentDate) {
+          throw new Error('Per appuntamenti confermati è necessario selezionare una data e ora');
+        }
+
+        const actionResponse = await fetch(`/api/businesses/${businessId}/service-boards/${boardRef}/actions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            action_type: selectedTemplate.action_type,
+            action_details: {
+              ...actionDetails,
+              confirmation_status: 'confirmed',
+              datetime_confirmed: fixedAppointmentDate.toISOString(),
+              platform_confirmed: formData.platform_confirmed || null,
+              appointment_mode: 'fixed_confirmed'
+            },
+            action_title: formData.action_title || selectedTemplate.translated_title,
+            action_description: formData.action_description || selectedTemplate.translated_description
+          }),
+        });
+
+        if (!actionResponse.ok) {
+          const errorData = await actionResponse.json().catch(() => ({ error: 'Unknown error occurred' }));
+          throw new Error(errorData.error || 'Failed to create action');
+        }
+
+        const actionResult = await actionResponse.json();
+
+        const appointmentResponse = await fetch(`/api/businesses/${businessId}/appointments/create-confirmed`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            action_id: actionResult.action_id,
+            appointment_datetime: fixedAppointmentDate.toISOString(),
+            appointment_title: formData.appointment_title,
+            appointment_type: formData.appointment_type,
+            appointment_location: formData.appointment_type === 'online' ? 'Online' : (formData.address || 'TBD'),
+            platform_name: formData.platform_confirmed ? formData.platform_confirmed : null,
+            platform_link: formData.platform_link || null,
+            business_id: businessId,
+            service_board_id: boardRef
+          }),
+        });
+
+        if (!appointmentResponse.ok) {
+          const errorData = await appointmentResponse.json().catch(() => ({ error: 'Unknown error occurred' }));
+          throw new Error(errorData.error || 'Failed to create appointment');
+        }
+
+        const appointmentResult = await appointmentResponse.json();
+
+        const updateResponse = await fetch(`/api/businesses/${businessId}/service-boards/${boardRef}/actions/${actionResult.action_id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            action_details: {
+              ...actionResult.action_details,
+              appointment_id: appointmentResult.appointment.id
+            }
+          }),
+        });
+
+        if (!updateResponse.ok) {
+          console.warn('Failed to update action with appointment ID');
+        }
+
+        onActionCreated(actionResult);
+        onClose();
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        onShowSubmissionModal({
+          isSuccess: true,
+          message: 'Appuntamento confermato creato con successo! L\'azione è stata aggiunta alla board.'
+        });
+        return;
+      }
+
+      // Special flow: document_upload requires an action_id to attach the file
+      if (selectedTemplate?.action_type === 'document_download') {
+        // Create placeholder action first
+        const initialDetails = {
+          document_name: formData.document_title || 'Documento',
+        }
+        const createResp = await fetch(`/api/businesses/${businessId}/service-boards/${boardRef}/actions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action_type: selectedTemplate.action_type,
+            action_details: initialDetails,
+            action_title: formData.action_title || selectedTemplate.translated_title,
+            action_description: formData.action_description || selectedTemplate.translated_description
+          }),
+        })
+        if (!createResp.ok) {
+          const err = await createResp.json().catch(() => ({}))
+          throw new Error(err.error || 'Failed to create action for document upload')
+        }
+        const created = await createResp.json()
+
+        // Upload the file to R2 and update action details
+        const files: File[] = Array.isArray(formData.document_file) ? formData.document_file : []
+        if (!files.length) throw new Error('Nessun file selezionato')
+        const fd = new FormData()
+        fd.append('file', files[0])
+        fd.append('board_ref', boardRef)
+        if (formData.download_password) fd.append('download_password', formData.download_password)
+
+        const uploadResp = await fetch(`/api/service-board/actions/${created.action_id}/document-upload`, {
+          method: 'POST',
+          body: fd,
+        })
+        const uploadText = await uploadResp.text()
+        let uploadData: any = {}
+        try { uploadData = JSON.parse(uploadText) } catch {}
+        if (!uploadResp.ok || !uploadData?.action_details?.download_url) {
+          const technical = `Status: ${uploadResp.status}\nResponse: ${uploadText || 'N/A'}`
+          onClose()
+          await new Promise(r => setTimeout(r, 300))
+          onShowSubmissionModal({ isSuccess: false, message: 'Upload del documento non riuscito', technicalDetails: technical })
+          return
+        }
+
+        // Emit final action (merge updated details)
+        const finalAction = { ...created, action_details: uploadData.action_details }
+        onActionCreated(finalAction)
+        onClose()
+        await new Promise(resolve => setTimeout(resolve, 500))
+        onShowSubmissionModal({ isSuccess: true, message: 'Documento caricato e azione aggiunta alla board.' })
+        return
+      }
+
       const response = await fetch(`/api/businesses/${businessId}/service-boards/${boardRef}/actions`, {
         method: 'POST',
         headers: {
@@ -278,21 +379,16 @@ export default function AddActionModal({
 
       if (response.ok) {
         const result = await response.json();
-        // Immediately add the new action to the timeline
         onActionCreated(result);
-        // Close the add action modal first
         onClose();
-        // Delay to let user see the action being added to timeline with animation
         await new Promise(resolve => setTimeout(resolve, 1000));
         onShowSubmissionModal({
           isSuccess: true,
-          message: 'Action created successfully! The action has been added to the board.'
+          message: 'The action has been added to the board.'
         });
       } else {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error occurred' }));
-        // Close the add action modal first
         onClose();
-        // Delay to let user see any error state before showing submission modal
         await new Promise(resolve => setTimeout(resolve, 1000));
         onShowSubmissionModal({
           isSuccess: false,
@@ -302,13 +398,11 @@ export default function AddActionModal({
       }
     } catch (error) {
       console.error('Error creating action:', error);
-      // Close the add action modal first
       onClose();
-      // Delay to let user see any error state before showing submission modal
       await new Promise(resolve => setTimeout(resolve, 1000));
       onShowSubmissionModal({
         isSuccess: false,
-        message: 'An unexpected error occurred while creating the action.',
+        message: error instanceof Error ? error.message : 'An unexpected error occurred while creating the action.',
         technicalDetails: error instanceof Error ? error.message : 'Unknown error occurred'
       });
     } finally {
@@ -319,68 +413,75 @@ export default function AddActionModal({
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4" onClick={handleModalClick}>
-      <div className={`w-full h-full max-h-[95vh] lg:max-h-[85vh] bg-white text-gray-900 rounded-2xl lg:rounded-3xl shadow-2xl flex flex-col ${
-        selectedTemplate?.action_type === 'appointment_scheduling' 
-          ? 'max-w-7xl' 
-          : 'max-w-4xl'
+    <div className="fixed inset-0 z-50 flex items-stretch justify-end" onClick={handleModalClick}>
+      {/* Gradient overlay with backdrop blur */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/70 to-black/70 backdrop-blur-md backdrop-saturate-150" />
+      {/* Modal content */}
+      <div className={`h-full flex flex-col lg:max-w-[1400px] w-full transition-all duration-300 relative z-10 ${
+        selectedTemplate?.action_type === 'appointment_scheduling' && showCalendar 
+          ? 'lg:max-w-[1600px]' 
+          : ''
       }`}>
-
-
         {/* Main Content */}
-        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-          {/* Left Sidebar - Action Type Selection */}
-          <div className={`w-full lg:w-72 xl:w-80 bg-gray-50 border-r border-gray-200 overflow-y-auto lg:rounded-l-2xl ${
-            mobileStep === 'templates' ? 'block' : 'hidden lg:block'
+        <div className="flex-1 flex flex-col lg:flex-row-reverse overflow-hidden lg:p-6 lg:gap-8">
+          {/* Left - Actions list (single column) */}
+          <div className={`w-full lg:w-80 xl:w-96 overflow-y-auto h-full flex-col justify-center items-center ${
+            mobileStep === 'templates' ? 'flex' : 'hidden lg:block'
           }`}>
-            <div className="p-6 lg:p-4">
+            <div className="p-4 lg:p-4">
               {loadingTemplates ? (
-                <div className="flex items-center justify-center h-full min-h-[400px]">
+                <div className="flex items-center justify-center h-full min-h-[300px]">
                   <div className="text-center">
-                    <LoadingSpinner size="lg" color="gray" className="mb-4" />
-                    <p className="text-gray-600">Caricamento...</p>
+                    <LoadingSpinner size="lg" color="white" className="mb-4" />
+                    <p className="text-white">Caricamento...</p>
                   </div>
                 </div>
               ) : (
-                <div className="space-y-1">
-                  {templates.map((template) => (
+                <div className="flex flex-col gap-1">
+                  {templates.map((template, index) => (
                     <button
                       key={template.template_id}
                       onClick={() => handleTemplateSelect(template)}
                       disabled={!template.is_available_for_current_plan}
-                      className={`w-full p-3 rounded-lg border-2 transition-all duration-200 text-left relative ${
-                        selectedTemplate?.template_id === template.template_id
-                          ? 'border-gray-500 bg-gray-200 shadow-md'
-                          : template.is_available_for_current_plan
-                          ? 'bg-gray-50 border-gray-200 hover:bg-gray-100'
-                          : 'bg-gray-50 border-gray-200 opacity-60 cursor-not-allowed'
+                      style={{ animationDelay: `${index * 0.05}s`, opacity: 0 }}
+                      className={`w-full py-1.5 px-2 rounded-md border border-transparent transition-all duration-200 text-left relative group animate-[slideDown_0.3s_ease-out_forwards] ${
+                        template.is_available_for_current_plan ? '' : 'opacity-40 cursor-not-allowed'
                       }`}
                     >
-                      <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 flex items-center justify-center rounded-lg shadow-sm ${
+                      <div className="flex items-start gap-3">
+                        <div className={`w-6 h-6 lg:w-7 lg:h-7 flex items-center justify-center rounded-full shadow-sm mt-0.5 flex-shrink-0 transition-all duration-200 ${
                           ACTION_TYPE_COLORS[template.action_type] || 'bg-blue-50'
+                        } ${
+                          selectedTemplate?.template_id === template.template_id
+                            ? 'ring-2 ring-white/50 scale-110'
+                            : 'group-hover:ring-2 group-hover:ring-white/30 group-hover:scale-110'
                         }`}>
                           <Image
                             src={ACTION_TYPE_ICONS[template.action_type] || '/icons/sanity/info-outline.svg'}
                             alt={template.translated_title}
                             width={24}
                             height={24}
-                            className="w-5 h-5"
+                            className={`w-4 h-4 lg:w-4 lg:h-4 transition-transform duration-200 group-hover:scale-110 ${
+                              selectedTemplate?.template_id === template.template_id ? 'scale-110' : 'scale-100'
+                            }`}
                           />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-gray-900 text-sm lg:text-base truncate">{template.translated_title}</h4>
-                          {/* Show description on lg+ - gray by default, blue when selected */}
-                          <p className="hidden lg:block text-xs mt-0 line-clamp-2 ${
-                            selectedTemplate?.template_id === template.template_id 
-                              ? 'text-blue-600' 
-                              : 'text-gray-400'
-                          }">{template.translated_description}</p>
+                          <h4 className={`text-sm lg:text-base truncate transition-colors ${
+                            selectedTemplate?.template_id === template.template_id
+                              ? 'text-white font-semibold'
+                              : 'text-white/80 group-hover:text-white'
+                          }`}>{template.translated_title}</h4>
+                          {selectedTemplate?.template_id === template.template_id && (
+                            <p className="text-[10px] leading-tight mt-0.5 text-white/60">
+                              {template.translated_description}
+                            </p>
+                          )}
                         </div>
                       </div>
                       {template.is_premium && template.premium_label && (
                         <div className="absolute top-1/2 right-2 transform -translate-y-1/2">
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-700 text-white">
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-white/20 text-white">
                             <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                             </svg>
@@ -395,13 +496,13 @@ export default function AddActionModal({
             </div>
           </div>
 
-          {/* Center - Form Fields */}
-          <div className={`flex-1 overflow-y-auto ${
+          {/* Right - Form Fields */}
+          <div className={`flex-1 overflow-y-auto rounded-3xl bg-white/95 backdrop-blur-sm lg:my-auto lg:max-h-[85vh] ${
             selectedTemplate ? 'block' : 'hidden lg:block'
           }`}>
             {selectedTemplate ? (
-              <div className="p-6 lg:p-6">
-                <div className="flex items-center justify-between mb-6">
+              <div className="p-6 lg:p-6 animate-[slideDown_0.3s_ease-out_0.1s_both]">
+                <div className="flex items-center justify-between mb-6 animate-[slideDown_0.3s_ease-out_0.2s_both]">
                   <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-lg ${
                       ACTION_TYPE_COLORS[selectedTemplate.action_type] || 'bg-blue-50'
@@ -438,148 +539,66 @@ export default function AddActionModal({
                       </svg>
                     </button>
                   </div>
+
+                  {/* Desktop close button */}
+                  <div className="hidden lg:flex items-center">
+                    <button
+                      onClick={onClose}
+                      className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 rounded-lg transition-colors"
+                      aria-label="Close"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
                 
                 {/* Dynamic Form Generator */}
-                <DynamicFormGenerator
-                  actionType={selectedTemplate.action_type}
-                  businessId={businessId}
-                  currentPlan={1} // TODO: Get from business settings
-                  locale={locale}
-                  onSubmit={handleSubmit}
-                  isSubmitting={isSubmitting}
-                  disabled={isSubmitting}
-                  className="space-y-4"
-                  suggestedDatetimes={suggestedDatetimes}
-                  onRemoveDateTime={handleRemoveDateTime}
-                  onAppointmentModeChange={handleAppointmentModeChange}
-                  fixedAppointmentDate={fixedAppointmentDate}
-                  onClearFixedDate={handleClearFixedDate}
-                  existingAppointments={existingAppointments}
-                  selectedDate={selectedDate}
-                  selectedTimeSlot={selectedTimeSlot}
-                  onDateSelect={handleDateSelect}
-                  onTimeSlotSelect={handleTimeSlotSelect}
-                  onAddDateTime={handleAddDateTime}
-                  generateTimeSlots={generateTimeSlots}
-                  appointmentMode={appointmentMode}
-                />
+                <div className="animate-[slideDown_0.3s_ease-out_0.3s_both]">
+                  <DynamicFormGenerator
+                    className="text-gray-900"
+                    actionType={selectedTemplate.action_type}
+                    businessId={businessId}
+                    currentPlan={1}
+                    locale={locale}
+                    onSubmit={handleSubmit}
+                    isSubmitting={isSubmitting}
+                    disabled={isSubmitting}
+                    suggestedDatetimes={suggestedDatetimes}
+                    onRemoveDateTime={handleRemoveDateTime}
+                    onAppointmentModeChange={handleAppointmentModeChange}
+                    fixedAppointmentDate={fixedAppointmentDate}
+                    onClearFixedDate={handleClearFixedDate}
+                    existingAppointments={existingAppointments}
+                    selectedDate={selectedDate}
+                    selectedTimeSlot={selectedTimeSlot}
+                    onDateSelect={handleDateSelect}
+                    onTimeSlotSelect={handleTimeSlotSelect}
+                    onAddDateTime={handleAddDateTime}
+                    generateTimeSlots={generateTimeSlots}
+                    appointmentMode={appointmentMode}
+                    showCalendar={showCalendar}
+                    onShowCalendar={handleShowCalendar}
+                    onHideCalendar={handleHideCalendar}
+                  />
+                </div>
               </div>
             ) : (
-              <div className="flex items-center justify-center h-full p-4">
+              <div className="flex flex-col items-center justify-center h-full p-4 min-h-[300px]">
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Seleziona un tipo di azione</h3>
                   <p className="text-gray-600 text-sm">Scegli un tipo di azione dalla lista per iniziare a creare la tua azione.</p>
                 </div>
               </div>
             )}
           </div>
-
-          {/* Right Sidebar - Calendar (only for appointment scheduling on desktop) */}
-          {selectedTemplate?.action_type === 'appointment_scheduling' && (
-            <div className={`w-full lg:w-80 xl:w-96 bg-gray-50 border-l border-gray-200 overflow-y-auto lg:rounded-r-2xl ${
-              mobileStep === 'calendar' ? 'block' : 'hidden lg:block'
-            }`}>
-              <div className="p-6 lg:p-4">
-                
-                {/* Calendar Instructions */}
-                <div className="mb-4">
-                  <h4 className="font-medium text-gray-900 mb-2 text-sm lg:text-base">
-                    {appointmentMode === 'fixed_confirmed' || appointmentMode === 'fixed_pending_confirmation' 
-                      ? 'Seleziona data e orario per l\'appuntamento fisso'
-                      : ''
-                    }
-                  </h4>
-                  <p className="text-xs lg:text-sm text-gray-600">
-                    {appointmentMode === 'fixed_confirmed' || appointmentMode === 'fixed_pending_confirmation'
-                      ? 'Clicca su una data, poi seleziona un orario. L\'appuntamento verrà impostato automaticamente.'
-                      : 'Clicca su una data per vedere gli orari disponibili e aggiungerli ai suggerimenti'
-                    }
-                  </p>
-                </div>
-                
-                {/* Calendar and Time Slots Layout */}
-                <div className="space-y-2">
-                  {/* Calendar */}
-                  <div>
-                    <Calendar
-                      localizer={localizer}
-                      events={existingAppointments.map(appointment => ({
-                        title: appointment.appointment_title || 'Appuntamento',
-                        start: new Date(appointment.appointment_datetime),
-                        end: addHours(new Date(appointment.appointment_datetime), appointment.duration_minutes || 60)
-                      }))}
-                      startAccessor="start"
-                      endAccessor="end"
-                      style={{ height: 250, fontSize: '12px' }}
-                      onSelectSlot={({ start }: { start: Date }) => handleDateSelect(start)}
-                      selectable
-                      views={['month']}
-                      defaultView="month"
-                      className="text-xs lg:text-sm"
-                    />
-                  </div>
-                  
-                  {/* Selected Date and Time Slots */}
-                  {selectedDate && (
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-2 text-sm">
-                        Data selezionata: {format(selectedDate, 'dd/MM/yyyy')}
-                      </h4>
-                      <h5 className="text-xs lg:text-sm font-medium text-gray-700 mb-2">Orari disponibili:</h5>
-                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 max-h-48 overflow-y-auto">
-                        {generateTimeSlots(selectedDate).map((slot, index) => {
-                          const isSelected = selectedTimeSlot && 
-                            selectedTimeSlot.toISOString() === slot.time.toISOString();
-                          return (
-                            <button
-                              key={index}
-                              disabled={slot.isOccupied || slot.isAlreadySuggested}
-                              onClick={() => !slot.isOccupied && !slot.isAlreadySuggested && handleTimeSlotSelect(slot.time)}
-                              className={`text-xs p-2 rounded border transition-colors ${
-                                slot.isOccupied
-                                  ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-                                  : slot.isAlreadySuggested
-                                  ? 'bg-green-100 text-green-700 border-green-300 cursor-not-allowed'
-                                  : isSelected
-                                  ? 'bg-blue-600 text-white border-blue-600'
-                                  : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'
-                              }`}
-                            >
-                              {format(slot.time, 'HH:mm')}
-                              {slot.isOccupied && ' (O)'}
-                              {slot.isAlreadySuggested && ' ✓'}
-                              {isSelected && ' ✓'}
-                            </button>
-                          );
-                        })}
-                      </div>
-                      
-                      {/* Add selected time slot button - Only for multiple choice mode */}
-                      {selectedTimeSlot && appointmentMode === 'multiple_choice' && (
-                        <div className="mt-3 pt-3 border-t border-gray-200">
-                          <button
-                            type="button"
-                            onClick={handleAddDateTime}
-                            className="w-full py-2 px-3 bg-green-600 text-white text-xs lg:text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
-                          >
-                            Aggiungi {format(selectedTimeSlot, 'dd/MM/yyyy HH:mm')} ai suggerimenti
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
   );
-}  
+}

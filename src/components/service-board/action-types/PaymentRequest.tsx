@@ -2,8 +2,7 @@
 
 import React, { useState } from 'react';
 import { PaymentRequestDetails } from '@/types/service-board';
-import { paymentRequestConfig } from './renderers/configs/payment-request';
-import PaymentRequestRenderer from './renderers/PaymentRequestRenderer';
+import { useMemo } from 'react';
 import PaymentConfirmationModal from './PaymentConfirmationModal';
 import { useBusinessProfile } from '@/contexts/BusinessProfileContext';
 import Image from 'next/image';
@@ -19,17 +18,36 @@ interface BusinessPaymentMethod {
 interface Props {
   details: PaymentRequestDetails;
   onUpdate?: (details: PaymentRequestDetails) => void;
+  action_id?: string;
 }
 
-export default function PaymentRequest({ details, onUpdate }: Props) {
+export default function PaymentRequest({ details, onUpdate, action_id }: Props) {
+  const statusStyles = useMemo(() => ({
+    pending: 'bg-yellow-100 text-yellow-800',
+    completed: 'bg-green-100 text-green-800',
+    failed: 'bg-red-100 text-red-800',
+    cancelled: 'bg-gray-100 text-gray-800',
+  } as Record<string, string>), []);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const { businessPaymentMethods } = useBusinessProfile() as { businessPaymentMethods: BusinessPaymentMethod[] };
   const [copiedText, setCopiedText] = useState<string | null>(null);
   const t = useTranslations('ServiceBoard');
 
-  // Filter out payment methods that are hidden for this action
-  const visiblePaymentMethods = businessPaymentMethods?.filter((method: BusinessPaymentMethod) => 
-    !details.hidden_payment_methods?.includes(method.id)
+  // Determine visible methods using allowed list if present; fallback to hidden list for backward compatibility
+  const allowedSet = new Set((details.allowed_payment_methods || []).map((m) => m.toLowerCase()))
+  // Prefer rendering directly from persisted available_payment_methods with details, if present
+  const persistedAvailable = Array.isArray(details.available_payment_methods) ? details.available_payment_methods : []
+  const visiblePaymentMethods = (persistedAvailable.length > 0
+    ? persistedAvailable.map((m) => ({ id: m.id, label: m.label, details: m.details || {} }))
+    : businessPaymentMethods?.filter((method: BusinessPaymentMethod) => {
+        // Derive key consistent with form/transformer logic
+        const config = ALLOWED_PAYMENT_METHODS.find((pm: PaymentMethodConfig) => pm.id === method.id || pm.name.toLowerCase() === (method.label || '').toLowerCase())
+        const key = (config?.id || (method.label ? method.label.toLowerCase().replace(/\s+/g, '_') : method.id)).toString().toLowerCase()
+        if (allowedSet.size > 0) {
+          return allowedSet.has(key)
+        }
+        return true
+      })
   ) || [];
 
   const handleCopy = async (text: string, label: string) => {
@@ -42,7 +60,7 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
     }
   };
 
-  const handlePaymentConfirm = async (methodUsed: string, note: string) => {
+  const handlePaymentConfirm = async (methodUsed: string, note: string, paidAt?: string) => {
     if (!onUpdate) return;
 
     const updatedDetails: PaymentRequestDetails = {
@@ -56,7 +74,9 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
 
     try {
       // First update the service board action
-      await fetch(`/api/service-board/actions/${details.action_id}/payment-confirmation`, {
+      const id = details.action_id || action_id;
+      if (!id) throw new Error('Missing action_id for payment confirmation');
+      const resp = await fetch(`/api/service-board/actions/${id}/payment-confirmation`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,11 +84,26 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
         body: JSON.stringify({
           method_used: methodUsed,
           note: note || undefined,
+          confirmed_at: paidAt || undefined,
         }),
       });
-
-      // Then update the local state
-      onUpdate(updatedDetails);
+      if (resp.ok) {
+        const data = await resp.json();
+        // Prefer server-returned details if provided
+        const merged = {
+          ...details,
+          ...(data?.action_details || {}),
+          payment_declared_confirmed: true,
+          payment_confirmation: {
+            confirmed_at: paidAt || new Date().toISOString(),
+            method_used: methodUsed,
+            note: note || undefined,
+          },
+        } as PaymentRequestDetails;
+        onUpdate(merged);
+      } else {
+        onUpdate(updatedDetails);
+      }
     } catch (error) {
       console.error('Failed to confirm payment:', error);
       // You might want to show an error message to the user here
@@ -79,24 +114,29 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
     <div className="space-y-4">
       {/* Payment Details */}
       <div className="mb-2">
-        {paymentRequestConfig.map((field) => {
-          if (field.shouldRender && !field.shouldRender(details)) return null;
-          return (
-            <div key={field.key} className="space-y-2">
-          <PaymentRequestRenderer
-                field={field}
-                value={details[field.key as keyof PaymentRequestDetails]}
-                details={details}
-              />
+        <div className="flex items-center gap-2">
+          {/* Amount */}
+          {typeof details.amount === 'number' && details.currency && (
+            <div className="text-2xl lg:text-3xl font-bold text-gray-900">
+              {details.currency === 'EUR' ? '€' : details.currency === 'USD' ? '$' : details.currency === 'GBP' ? '£' : details.currency}
+              {` ${details.amount.toFixed(2)}`}
             </div>
-          );
-        })}
+          )}
+          {/* Status pill only (no label) */}
+          {details.payment_status && (
+            <div className="inline-flex items-center text-xs font-medium capitalize">
+              <span className={`px-2 py-1 rounded-full ${statusStyles[details.payment_status] || 'bg-gray-100 text-gray-800'}`}>
+                {details.payment_status}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Payment Methods */}
       {visiblePaymentMethods.length > 0 && (
         <div className="mt-8">
-          <h3 className="text-md font-medium text-gray-900 mb-4">{t('availablePaymentMethods')}</h3>
+          <h3 className="text-xs lg:text-sm text-gray-600 mb-2">{t('availablePaymentMethods')}</h3>
           <div className="space-y-2">
             {visiblePaymentMethods.map((method: BusinessPaymentMethod, index: number) => {
               const config = ALLOWED_PAYMENT_METHODS.find(
@@ -107,11 +147,18 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
               return (
                 <div key={index} className="relative p-4 border-[1px] border-gray-300 rounded-lg">
                   <div className="flex items-start gap-x-4 md:gap-x-6 gap-y-2">
-                    {/* Icon */}
+                    {/* Icon (responsive): absolute on xs–md, inline on lg+ */}
                     {iconPath && (
-                      <div className="flex-shrink-0">
-                        <Image src={iconPath} width={40} height={40} alt={`-`} className="w-8 sm:w-10 md:w-10 lg:w-10"/>
-                      </div>
+                      <>
+                        {/* Small screens: absolute top-right, does not consume layout space */}
+                        <div className="lg:hidden absolute top-2 right-2">
+                          <Image src={iconPath} width={28} height={28} alt={`-`} className="w-7 h-7"/>
+                        </div>
+                        {/* Large screens: inline at left */}
+                        <div className="hidden lg:block flex-shrink-0">
+                          <Image src={iconPath} width={40} height={40} alt={`-`} className="w-10 h-10"/>
+                        </div>
+                      </>
                     )}
 
                     {/* Details */}
@@ -231,42 +278,41 @@ export default function PaymentRequest({ details, onUpdate }: Props) {
         </div>
       )}
 
-      {/* Payment Reason - Display once after payment methods */}
+      {/* Payment Reason - label Causale, plain text, gray copy button */}
       {details.payment_reason && (
         <div className="mt-6">
-          <h3 className="text-md font-medium text-gray-900 mb-3">{t('paymentReason')}</h3>
-          <div className="flex items-center gap-x-3">
-            <div className="px-4 py-3 w-full rounded-xl bg-purple-100 border border-purple-200 flex items-center justify-between gap-x-3">
-              <span className="text-base font-italic text-purple-800 italic">
-                {details.payment_reason}
-              </span>
-              <button
-                onClick={() => handleCopy(details.payment_reason!, t('paymentReason'))}
-                className="text-purple-600 hover:text-purple-800 text-sm font-medium px-2 py-1 rounded-md hover:bg-purple-50 transition-colors"
-              >
-                {copiedText === t('paymentReason') ? t('copied') : t('copy')}
-              </button>
-            </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs text-gray-500">Causale</span>
+            <span className="text-sm text-gray-700">{details.payment_reason}</span>
+            <button
+              onClick={() => handleCopy(details.payment_reason!, t('paymentReason'))}
+              className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors"
+            >
+              {copiedText === t('paymentReason') ? t('copied') : t('copy')}
+            </button>
           </div>
         </div>
       )}
 
-      {/* Show confirmation status if payment is confirmed */}
-      {details.payment_confirmation ? (
+      {/* Declared confirmation states */}
+      {(details.payment_declared_confirmed || (details.payment_confirmation && (details.payment_confirmation.method_used || details.payment_confirmation.confirmed_at || details.payment_confirmation.paid_date))) ? (
         <div className="mt-4 p-4 bg-green-50 rounded-md">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-green-800">{t('paymentConfirmed')}</h3>
-              <div className="mt-2 text-sm text-green-700">
-                <p>{t('methodUsed')}: {details.payment_confirmation.method_used}</p>
-                <p>{t('confirmedAt')}: {new Date(details.payment_confirmation.confirmed_at).toLocaleString()}</p>
-                {details.payment_confirmation.note && (
-                                      <p className="mt-1">{t('note')}: {details.payment_confirmation.note}</p>
+          <div className="flex items-start gap-2">
+            <svg className="h-5 w-5 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <div>
+              <div className="text-sm font-medium text-green-800">{t('customerDeclaredPayment')}</div>
+              <div className="mt-1 text-sm text-green-700 space-y-0.5">
+                <div>{t('methodUsed')}: {details.payment_confirmation?.method_used || '-'}</div>
+                {details.payment_confirmation?.paid_date && (
+                  <div>{t('paidOn')}: {details.payment_confirmation.paid_date}</div>
+                )}
+                {details.payment_confirmation?.confirmed_at && (
+                  <div>{t('declaredAt')}: {new Date(details.payment_confirmation.confirmed_at).toLocaleString()}</div>
+                )}
+                {details.payment_confirmation?.note && (
+                  <div>{t('note')}: {details.payment_confirmation.note}</div>
                 )}
               </div>
             </div>

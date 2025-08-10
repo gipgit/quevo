@@ -28,11 +28,20 @@ export interface PaymentRequestDetails extends BaseActionDetails {
   currency: string;
   payment_status: 'pending' | 'completed' | 'failed' | 'cancelled';
   payment_reason?: string; // Reason for the payment
-  hidden_payment_methods?: string[]; // Array of payment method IDs to hide
+  hidden_payment_methods?: string[]; // Array of payment method IDs to hide (legacy)
+  allowed_payment_methods?: string[]; // Array of payment method keys to show (preferred)
+  available_payment_methods?: {
+    id: string;
+    label: string;
+    details?: Record<string, any>;
+  }[]; // Explicitly stored selected methods with details
+  payment_declared_confirmed?: boolean; // Customer declared payment done
   payment_confirmation?: {
     confirmed_at: string;
     method_used: string;
     note?: string;
+    paid_date?: string; // YYYY-MM-DD when user declared only a date
+    declared_at?: string; // when the declaration was submitted
   };
 }
 
@@ -108,7 +117,7 @@ export interface MilestoneUpdateDetails {
 export interface ResourceLinkDetails {
   resource_url: string;
   resource_title: string;
-  resource_type: 'pdf' | 'video' | 'image' | 'document' | 'other';
+  resource_type: 'pdf' | 'video' | 'image' | 'document' | 'other' | 'website' | 'link' | 'url';
   description?: string;
   requires_login?: boolean;
   is_external?: boolean;
@@ -410,9 +419,13 @@ export function isResourceLinkDetails(details: any): details is ResourceLinkDeta
     details &&
     typeof details === 'object' &&
     typeof details.resource_url === 'string' &&
+    // title may be empty string; still a valid string
     typeof details.resource_title === 'string' &&
     typeof details.resource_type === 'string' &&
-    ['pdf', 'PDF', 'video', 'VIDEO', 'image', 'IMAGE', 'document', 'DOCUMENT', 'other', 'OTHER'].includes(details.resource_type) &&
+    ((): boolean => {
+      const allowed = ['pdf','video','image','document','other','website','link','url']
+      return allowed.includes(String(details.resource_type).toLowerCase())
+    })() &&
     (details.description === undefined || typeof details.description === 'string') &&
     (details.requires_login === undefined || typeof details.requires_login === 'boolean') &&
     (details.is_external === undefined || typeof details.is_external === 'boolean') &&

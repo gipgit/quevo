@@ -9,7 +9,14 @@ module.exports = {
     // Add any other specific directories if you're using Tailwind classes elsewhere in your project
   ],
   theme: {
-    extend: {},
+    extend: {
+      keyframes: {
+        slideDown: {
+          'from': { transform: 'translateY(-10px)', opacity: '0' },
+          'to': { transform: 'translateY(0)', opacity: '1' }
+        }
+      }
+    },
   },
   plugins: [],
 };

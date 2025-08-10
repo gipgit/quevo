@@ -1,12 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import PropertyRenderer from '@/components/service-board/action-types/renderers/PropertyRenderer';
-import { approvalRequestConfig } from '@/components/service-board/action-types/renderers/configs/approval-request';
-import { checklistConfig } from '@/components/service-board/action-types/renderers/configs/checklist';
-import { videoMessageConfig } from '@/components/service-board/action-types/renderers/configs/video-message';
-import { optInRequestConfig } from '@/components/service-board/action-types/renderers/configs/opt-in-request';
 import { ServiceBoardAction, isApprovalRequestDetails, isChecklistDetails, isVideoMessageDetails, isOptInRequestDetails } from '@/types/service-board';
+import { ApprovalRequest, Checklist, VideoMessage, OptInRequest } from '@/components/service-board/action-types';
 
 export default function ActionsPage() {
   const [actions, setActions] = useState<ServiceBoardAction[]>([]);
@@ -21,13 +17,10 @@ export default function ActionsPage() {
     try {
       setIsLoading(true);
       setError(null);
-      
-      // Replace this with your actual API endpoint
       const response = await fetch('/api/service-board/actions');
       if (!response.ok) {
         throw new Error('Failed to fetch service board actions');
       }
-      
       const data = await response.json();
       setActions(data);
     } catch (err) {
@@ -59,10 +52,7 @@ export default function ActionsPage() {
             <h3 className="text-sm font-medium text-red-800">Error loading actions</h3>
           </div>
           <div className="mt-2 text-sm text-red-700">{error}</div>
-          <button
-            onClick={fetchServiceBoardActions}
-            className="mt-3 text-sm font-medium text-red-600 hover:text-red-500"
-          >
+          <button onClick={fetchServiceBoardActions} className="mt-3 text-sm font-medium text-red-600 hover:text-red-500">
             Try again
           </button>
         </div>
@@ -70,21 +60,10 @@ export default function ActionsPage() {
     );
   }
 
-  const approvalRequests = actions.filter(action => 
-    action.action_type === 'approval_request' && isApprovalRequestDetails(action.action_details)
-  );
-
-  const checklists = actions.filter(action => 
-    action.action_type === 'checklist' && isChecklistDetails(action.action_details)
-  );
-
-  const videoMessages = actions.filter(action => 
-    action.action_type === 'video_message' && isVideoMessageDetails(action.action_details)
-  );
-
-  const optInRequests = actions.filter(action => 
-    action.action_type === 'opt_in_request' && isOptInRequestDetails(action.action_details)
-  );
+  const approvalRequests = actions.filter(action => action.action_type === 'approval_request' && isApprovalRequestDetails(action.action_details));
+  const checklists = actions.filter(action => action.action_type === 'checklist' && isChecklistDetails(action.action_details));
+  const videoMessages = actions.filter(action => action.action_type === 'video_message' && isVideoMessageDetails(action.action_details));
+  const optInRequests = actions.filter(action => action.action_type === 'opt_in_request' && isOptInRequestDetails(action.action_details));
 
   return (
     <div className="container mx-auto p-6 space-y-8">
@@ -101,10 +80,7 @@ export default function ActionsPage() {
                     <h3 className="text-lg font-medium">{action.action_title}</h3>
                     <p className="text-sm text-gray-600">{action.action_description}</p>
                   </div>
-                  <PropertyRenderer
-                    config={approvalRequestConfig}
-                    data={action.action_details}
-                  />
+                  <ApprovalRequest details={action.action_details} onUpdate={fetchServiceBoardActions} />
                 </div>
               ))}
             </div>
@@ -121,10 +97,7 @@ export default function ActionsPage() {
                     <h3 className="text-lg font-medium">{action.action_title}</h3>
                     <p className="text-sm text-gray-600">{action.action_description}</p>
                   </div>
-                  <PropertyRenderer
-                    config={checklistConfig}
-                    data={action.action_details}
-                  />
+                  <Checklist details={action.action_details} onUpdate={fetchServiceBoardActions} />
                 </div>
               ))}
             </div>
@@ -141,10 +114,7 @@ export default function ActionsPage() {
                     <h3 className="text-lg font-medium">{action.action_title}</h3>
                     <p className="text-sm text-gray-600">{action.action_description}</p>
                   </div>
-                  <PropertyRenderer
-                    config={videoMessageConfig}
-                    data={action.action_details}
-                  />
+                  <VideoMessage details={action.action_details} onUpdate={fetchServiceBoardActions} />
                 </div>
               ))}
             </div>
@@ -161,10 +131,7 @@ export default function ActionsPage() {
                     <h3 className="text-lg font-medium">{action.action_title}</h3>
                     <p className="text-sm text-gray-600">{action.action_description}</p>
                   </div>
-                  <PropertyRenderer
-                    config={optInRequestConfig}
-                    data={action.action_details}
-                  />
+                  <OptInRequest details={action.action_details} onUpdate={fetchServiceBoardActions} />
                 </div>
               ))}
             </div>

@@ -75,11 +75,11 @@ export default function OptInRequest({ details, onUpdate }: Props) {
               Opted In Successfully
             </h3>
             <div className="mt-2 text-sm text-green-700">
-              <p>You have opted in to {details.service}</p>
+              <p>You have opted in to {details.service || ''}</p>
             </div>
             {details.accepted_at && (
               <div className="mt-1 text-xs text-green-700">
-                Accepted on {new Date(details.accepted_at).toLocaleDateString()}
+                Accepted on {details.accepted_at ? new Date(details.accepted_at).toLocaleDateString() : ''}
               </div>
             )}
           </div>
@@ -102,11 +102,11 @@ export default function OptInRequest({ details, onUpdate }: Props) {
               Opted Out
             </h3>
             <div className="mt-2 text-sm text-gray-700">
-              <p>You have opted out of {details.service}</p>
+              <p>You have opted out of {details.service || ''}</p>
             </div>
             {details.declined_at && (
               <div className="mt-1 text-xs text-gray-700">
-                Declined on {new Date(details.declined_at).toLocaleDateString()}
+                Declined on {details.declined_at ? new Date(details.declined_at).toLocaleDateString() : ''}
               </div>
             )}
           </div>

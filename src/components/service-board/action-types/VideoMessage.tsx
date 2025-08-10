@@ -10,7 +10,7 @@ interface Props {
 export default function VideoMessage({ details, onUpdate }: Props) {
   const t = useTranslations("ServiceBoard")
   const [isPlaying, setIsPlaying] = useState(false)
-  const [hasWatched, setHasWatched] = useState(details.is_watched)
+  const [hasWatched, setHasWatched] = useState(!!details.is_watched)
 
   const handleVideoEnd = async () => {
     if (!hasWatched) {
@@ -40,9 +40,11 @@ export default function VideoMessage({ details, onUpdate }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900">
-          {details.title}
-        </h3>
+        {details.title && (
+          <h3 className="text-lg font-medium text-gray-900">
+            {details.title}
+          </h3>
+        )}
         {details.description && (
           <p className="mt-1 text-sm text-gray-600">
             {details.description}
@@ -52,7 +54,7 @@ export default function VideoMessage({ details, onUpdate }: Props) {
 
       <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
         <video
-          src={details.video_url}
+          src={details.video_url || ''}
           poster={details.thumbnail_url}
           controls
           className="w-full h-full"
@@ -99,9 +101,11 @@ export default function VideoMessage({ details, onUpdate }: Props) {
           </svg>
           {hasWatched ? t('watched') : t('notWatchedYet')}
         </div>
-        <div className="text-gray-500">
-          {t('duration')}: {new Date(details.length_seconds * 1000).toISOString().substr(11, 8)}
-        </div>
+        {typeof details.length_seconds === 'number' && (
+          <div className="text-gray-500">
+            {t('duration')}: {new Date(details.length_seconds * 1000).toISOString().substr(11, 8)}
+          </div>
+        )}
       </div>
 
       {details.transcription && (

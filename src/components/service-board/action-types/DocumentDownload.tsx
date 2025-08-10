@@ -1,6 +1,7 @@
 "use client"
 
 import { useTranslations } from "next-intl"
+import { useState } from 'react'
 
 interface DocumentDownloadDetails {
   document_name: string
@@ -10,41 +11,97 @@ interface DocumentDownloadDetails {
 
 interface Props {
   details: DocumentDownloadDetails
+  action_id: string
 }
 
-export default function DocumentDownload({ details }: Props) {
+export default function DocumentDownload({ details, action_id }: Props) {
   const t = useTranslations("ServiceBoard")
+  const [password, setPassword] = useState('')
+  const [isDownloading, setIsDownloading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const typeLower = (details.file_type || 'file').toLowerCase()
+  const typeLabel = (details.file_type || 'file').toUpperCase()
+  const typeClasses = (() => {
+    if (typeLower.includes('pdf')) return 'bg-red-100 text-red-800'
+    if (typeLower.includes('word') || typeLower.includes('doc')) return 'bg-blue-100 text-blue-800'
+    if (typeLower.includes('sheet') || typeLower.includes('excel') || typeLower.includes('xls')) return 'bg-green-100 text-green-800'
+    return 'bg-gray-200 text-gray-800'
+  })()
+
+  const handleSecureDownload = async () => {
+    setIsDownloading(true)
+    setError(null)
+    try {
+      const resp = await fetch(`/api/service-board/actions/${action_id}/document-download`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: password || undefined }),
+      })
+      if (!resp.ok) {
+        const data = await resp.json().catch(() => ({}))
+        throw new Error(data.error || 'Download failed')
+      }
+      const blob = await resp.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = details.document_name || 'document'
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      window.URL.revokeObjectURL(url)
+    } catch (e: any) {
+      setError(e.message)
+    } finally {
+      setIsDownloading(false)
+    }
+  }
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <div>
-          <h4 className="font-medium">{details.document_name}</h4>
-          <p className="text-sm text-gray-500">
-            {t("fileType")}: {details.file_type}
-          </p>
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ${typeClasses}`}>
+            {typeLabel}
+          </span>
+          <h4 className="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900 truncate">
+            {details.document_name || t('document')}
+          </h4>
         </div>
-        <a
-          href={details.download_url}
-          download
-          className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
-        >
-          <svg
-            className="w-5 h-5 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+        <div className="flex items-center gap-2">
+          {Boolean((details as any).download_password_hash) && (
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={t('enterPassword')}
+              className="px-2 py-1 text-sm border border-gray-300 rounded"
             />
-          </svg>
-          {t("download")}
-        </a>
+          )}
+          <button
+            onClick={handleSecureDownload}
+            disabled={isDownloading}
+            className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50"
+          >
+            <svg
+              className="w-5 h-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+              />
+            </svg>
+            {isDownloading ? t('downloading') : t("download")}
+          </button>
+        </div>
       </div>
+      {error && <p className="text-sm text-red-600">{error}</p>}
     </div>
   )
 } 

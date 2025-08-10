@@ -68,10 +68,10 @@ export default function ActionSubmissionModal({
 
           {/* Message */}
           <div className="text-center mb-6">
-            <h2 className="text-xl  text-gray-900 text-center flex-1 mb-2">
+            <h2 className="text-xl lg:text-2xl text-gray-900 text-center flex-1 mb-2">
               {isSuccess ? t('actionSubmitted') : t('actionSubmissionError')}
             </h2>
-            <p className={`text-sm lg:text-base ${isSuccess ? 'text-green-700' : 'text-red-700'}`}>
+            <p className={`text-sm  text-center ${isSuccess ? 'text-green-700' : 'text-red-700'}`}>
               {message}
             </p>
           </div>

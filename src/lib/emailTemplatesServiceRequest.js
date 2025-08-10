@@ -84,11 +84,11 @@ export const customerServiceRequestConfirmationEmail = `<!DOCTYPE html>
 </head>
 <body style="line-height: 1.4;">
     <div class="email-container" style="margin: 0 auto; padding: 35px 15px; text-align: center;">
-        <h1 style="margin-bottom: 10px; line-height: 1.2;">Grazie, {{customer_name}}!</h1>
-        <p style="font-size: 16px; margin-bottom: 20px;">Ecco il riepilogo della tua richiesta servizio per <strong>{{service_name}}</strong> da <strong>{{business_name}}</strong>.</p>
-        <div class="email-body" style="max-width: 580px; background-color: #ffffff; padding: 35px 20px; border-radius: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px;">
-            <p style="font-size: 14px;"><strong>Dettagli Richiesta:</strong></p>
-            <ul style="list-style: none; padding-left: 0; margin-left: 0;">
+        <p style="font-size: 15px; margin-bottom: 10px; line-height: 1.2;">Grazie, {{customer_name}}!</p>
+        <p style="font-size: 14px; margin-bottom: 20px;">Ecco il riepilogo della tua richiesta servizio per <strong>{{service_name}}</strong> da <strong>{{business_name}}</strong>.</p>
+        <div style="margin: 0 auto; max-width: 580px; background-color: #ffffff; border: 1px solid gray; padding: 35px 20px; border-radius: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px;">
+            <p style="font-size: 12px;"><strong>Dettagli Richiesta:</strong></p>
+            <ul style="font-size: 14px; list-style: none; padding-left: 0; margin-left: 0;">
                 <li><strong>N. Richiesta:</strong> {{request_reference}}</li>
                 <li><strong>Servizio:</strong> {{service_name}}</li>
                 <li><strong>Data Richiesta:</strong> {{request_date}}</li>
@@ -96,7 +96,7 @@ export const customerServiceRequestConfirmationEmail = `<!DOCTYPE html>
                 <li><strong>Note:</strong> {{customer_notes}}</li>
             </ul>
             <p style="margin-top: 20px">Puoi visualizzare i dettagli e lo stato della tua richiesta servizio qui:</p>
-            <a href="{{request_link}}" style=" display: inline-block; padding: 15px 35px; border: 1px solid #fff; background-color: #0d0d0e; color: white; font-size: 14px; border-radius: 25px; text-decoration: none; margin-top: 10px; margin-bottom: 10px;">Visualizza Richiesta</a>
+            <a href="{{request_link}}" style=" display: inline-block; padding: 15px 25px; border: 1px solid #fff; background-color: #0d0d0e; color: white; font-size: 13px; border-radius: 25px; text-decoration: none; margin-top: 10px; margin-bottom: 10px;">Visualizza Richiesta</a>
         </div>
         <p style="margin-top: 20px">Grazie,<br/>Il Team di {{business_name}}</p>
     </div>

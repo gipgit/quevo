@@ -20,6 +20,7 @@ import {
   VideoMessage,
   OptInRequest
 } from "./action-types"
+import FallbackRenderer from "./action-types/FallbackRenderer"
 import { 
   ServiceBoardAction,
   isDocumentDownloadDetails,
@@ -36,6 +37,7 @@ import {
   isVideoMessageDetails,
   isOptInRequestDetails
 } from "@/types/service-board"
+import { transformActionDetailsForRendering, validateActionDetails, getMissingFields } from "@/lib/action-data-transformer"
 
 interface Props {
   action: ServiceBoardAction
@@ -83,93 +85,52 @@ export default function ServiceBoardActionCard({ action, onActionUpdate, onAppoi
   const [isExpanded, setIsExpanded] = useState(true) // Always start expanded
 
   const renderActionContent = () => {
-    const details = action.action_details
+    // Transform action details to ensure compatibility with renderers
+    const details = transformActionDetailsForRendering(action.action_details, action.action_type)
+    
+    // Validate the transformed details
+    const isValid = validateActionDetails(details, action.action_type)
+    const missingFields = getMissingFields(details, action.action_type)
+    
+    // If validation fails, show fallback renderer
+    if (!isValid) {
+      return <FallbackRenderer 
+        actionType={action.action_type} 
+        details={action.action_details} 
+        missingFields={missingFields}
+      />
+    }
 
-    switch (action.action_type) {
-      case "document_download":
-        if (isDocumentDownloadDetails(details)) {
-          return <DocumentDownload details={details} />
-        }
-        break
-      case "payment_request":
-        if (isPaymentRequestDetails(details)) {
-          return <PaymentRequest details={details} onUpdate={onActionUpdate} />
-        }
-        break
-      case "appointment-scheduling":
-      case "appointment_scheduling":
-        if (isAppointmentSchedulingDetails(details)) {
-          return <AppointmentScheduling 
-            details={details} 
-            onUpdate={onActionUpdate} 
-            action_id={action.action_id}
-            onAppointmentConfirmed={onAppointmentConfirmed}
-          />
-        }
-        break
-      default:
-        // Check if it's an appointment scheduling action with different casing or formatting
-        if (action.action_type && action.action_type.toLowerCase().includes('appointment') && action.action_type.toLowerCase().includes('scheduling')) {
-          if (isAppointmentSchedulingDetails(details)) {
-            return <AppointmentScheduling 
-              details={details} 
-              onUpdate={onActionUpdate} 
-              action_id={action.action_id}
-              onAppointmentConfirmed={onAppointmentConfirmed}
-            />
-          }
-        }
-        break
-      case "information_request":
-        if (isInformationRequestDetails(details)) {
-          return <InformationRequest details={details} onUpdate={onActionUpdate} />
-        }
-        break
-      case "generic_message":
-        if (isGenericMessageDetails(details)) {
-          return <GenericMessage details={details} />
-        }
-        break
-      case "feedback_request":
-        if (isFeedbackRequestDetails(details)) {
-          return <FeedbackRequest details={details} onUpdate={onActionUpdate} />
-        }
-        break
-      case "milestone_update":
-        if (isMilestoneUpdateDetails(details)) {
-          return <MilestoneUpdate details={details} />
-        }
-        break
-      case "resource_link":
-        if (isResourceLinkDetails(details)) {
-          return <ResourceLink details={details} />
-        }
-        break
-      case "signature_request":
-        if (isSignatureRequestDetails(details)) {
-          return <SignatureRequest details={details} onUpdate={onActionUpdate} />
-        }
-        break
-      case "approval_request":
-        if (isApprovalRequestDetails(details)) {
-          return <ApprovalRequest details={details} onUpdate={onActionUpdate} />
-        }
-        break
-      case "checklist":
-        if (isChecklistDetails(details)) {
-          return <Checklist details={details} onUpdate={onActionUpdate} />
-        }
-        break
-      case "video_message":
-        if (isVideoMessageDetails(details)) {
-          return <VideoMessage details={details} onUpdate={onActionUpdate} />
-        }
-        break
-      case "opt_in_request":
-        if (isOptInRequestDetails(details)) {
-          return <OptInRequest details={details} onUpdate={onActionUpdate} />
-        }
-        break
+    // Centralized renderer registry for maintainability
+    const normalizeType = (type: string) => (type || '').toLowerCase().replace(/-/g, '_').trim()
+    const normalizedType = normalizeType(action.action_type)
+    const rendererMap: Record<string, () => JSX.Element | null> = {
+      'document_download': () => isDocumentDownloadDetails(details) ? <DocumentDownload details={details} action_id={action.action_id} /> : null,
+      'payment_request': () => isPaymentRequestDetails(details) ? <PaymentRequest details={details} onUpdate={onActionUpdate} action_id={action.action_id} /> : null,
+      'appointment_scheduling': () => isAppointmentSchedulingDetails(details) ? (
+        <AppointmentScheduling
+          details={details}
+          onUpdate={onActionUpdate}
+          action_id={action.action_id}
+          onAppointmentConfirmed={onAppointmentConfirmed}
+        />
+      ) : null,
+      'information_request': () => isInformationRequestDetails(details) ? <InformationRequest details={details} onUpdate={onActionUpdate} /> : null,
+      'generic_message': () => isGenericMessageDetails(details) ? <GenericMessage details={details} /> : null,
+      'feedback_request': () => isFeedbackRequestDetails(details) ? <FeedbackRequest details={details} onUpdate={onActionUpdate} /> : null,
+      'milestone_update': () => isMilestoneUpdateDetails(details) ? <MilestoneUpdate details={details} /> : null,
+      'resource_link': () => isResourceLinkDetails(details) ? <ResourceLink details={details} /> : null,
+      'signature_request': () => isSignatureRequestDetails(details) ? <SignatureRequest details={details} onUpdate={onActionUpdate} /> : null,
+      'approval_request': () => isApprovalRequestDetails(details) ? <ApprovalRequest details={details} onUpdate={onActionUpdate} /> : null,
+      'checklist': () => isChecklistDetails(details) ? <Checklist details={details} onUpdate={onActionUpdate} action_id={action.action_id} /> : null,
+      'video_message': () => isVideoMessageDetails(details) ? <VideoMessage details={details} onUpdate={onActionUpdate} /> : null,
+      'opt_in_request': () => isOptInRequestDetails(details) ? <OptInRequest details={details} onUpdate={onActionUpdate} /> : null,
+    }
+
+    const renderer = rendererMap[normalizedType] || (normalizedType.includes('appointment') && normalizedType.includes('scheduling') ? rendererMap['appointment_scheduling'] : undefined)
+    if (renderer) {
+      const node = renderer()
+      if (node) return node
     }
 
     return (

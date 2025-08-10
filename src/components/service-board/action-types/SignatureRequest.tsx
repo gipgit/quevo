@@ -9,7 +9,7 @@ interface Props {
 
 export default function SignatureRequest({ details, onUpdate }: Props) {
   const t = useTranslations("ServiceBoard")
-  const [signatureMethod, setSignatureMethod] = useState<'draw' | 'type' | 'upload'>(details.signature_method)
+  const [signatureMethod, setSignatureMethod] = useState<'draw' | 'type' | 'upload'>(details.signature_method || 'draw')
   const [signatureData, setSignatureData] = useState("")
   const [rejectionReason, setRejectionReason] = useState("")
 
@@ -87,7 +87,7 @@ export default function SignatureRequest({ details, onUpdate }: Props) {
           <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
           </svg>
-          <span className="font-medium">Rejected</span>
+          <span className="font-medium">{t('rejected')}</span>
         </div>
         {details.rejection_reason && (
           <div className="mt-2 text-sm text-gray-600">
@@ -104,7 +104,7 @@ export default function SignatureRequest({ details, onUpdate }: Props) {
         <h4 className="text-sm font-medium text-gray-900">Document to Sign</h4>
         <div className="mt-2">
           <a
-            href={details.document_url}
+            href={details.document_url || '#'}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
@@ -112,7 +112,7 @@ export default function SignatureRequest({ details, onUpdate }: Props) {
             <svg className="mr-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
             </svg>
-            {t('viewDocument', { documentName: details.document_name })}
+            {t('viewDocument', { documentName: details.document_name || t('document') })}
           </a>
         </div>
       </div>

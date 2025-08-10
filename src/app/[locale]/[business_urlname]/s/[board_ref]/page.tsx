@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useBusinessProfile } from '@/contexts/BusinessProfileContext';
 import PasswordVerification from '@/components/service-board/PasswordVerification';
 import ServiceBoardActionCard from '@/components/service-board/ServiceBoardActionCard';
@@ -118,6 +118,30 @@ interface Appointment {
 
 
 // Helper function to get relative time
+const platformLabelMap: Record<string, string> = {
+  google_meet: 'Google Meet',
+  microsoft_teams: 'Microsoft Teams',
+  zoom: 'Zoom',
+  skype: 'Skype'
+};
+
+const humanizePlatformName = (name?: string): string => {
+  if (!name) return '';
+  const lower = name.toLowerCase();
+  if (platformLabelMap[lower as keyof typeof platformLabelMap]) {
+    return platformLabelMap[lower as keyof typeof platformLabelMap];
+  }
+  // if snake_case like microsoft_teams
+  if (name.includes('_')) {
+    return name
+      .split('_')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+  }
+  // default: capitalize words
+  return name.replace(/\b\w/g, c => c.toUpperCase());
+};
+
 const getRelativeTime = (dateString: string, t: any) => {
   const date = new Date(dateString);
   const now = new Date();
@@ -324,6 +348,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
   const [showShareModal, setShowShareModal] = useState(false);
   const [showUpcomingAppointmentModal, setShowUpcomingAppointmentModal] = useState(false);
   const [nextAppointment, setNextAppointment] = useState<Appointment | null>(null);
+  const hasShownUpcomingRef = useRef(false);
   const [contactType, setContactType] = useState<'phone' | 'email'>('phone');
   const [isCopied, setIsCopied] = useState(false);
   const [showRescheduleCancelModal, setShowRescheduleCancelModal] = useState<string | null>(null); // appointment id or null
@@ -457,6 +482,14 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
       fetchAppointments();
     }
   }, [businessData.business_id, board_ref]);
+
+  // Safety: if nextAppointment arrives later from any source, open the modal once
+  useEffect(() => {
+    if (nextAppointment && !hasShownUpcomingRef.current) {
+      setShowUpcomingAppointmentModal(true);
+      hasShownUpcomingRef.current = true;
+    }
+  }, [nextAppointment]);
 
 
 
@@ -712,27 +745,43 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
       </div>
 
       {/* Top Navbar */}
-      <div className="px-6 lg:px-8 py-2 lg:py-4 pb-0">
+      <div className="px-6 lg:px-8 py-2 lg:py-5 pb-0">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           {/* Left Column - Board Info */}
-          <div className="flex-1">
+          <div className="flex-1 flex items-center gap-x-4">
+            <div className="hidden lg:block w-14 h-14 lg:w-20 lg:h-20 rounded-full overflow-hidden bg-gray-100">
+                  {businessData.business_public_uuid ? (
+                    <img
+                      src={`/uploads/business/${businessData.business_public_uuid}/profile.webp`}
+                      alt={businessData.business_name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center bg-gray-200">
+                      <span className="text-2xl font-medium text-gray-500">
+                        {businessData.business_name.charAt(0)}
+                      </span>
+                    </div>
+                  )}
+            </div>
             {boardData && (
-              <div className="flex flex-col sm:flex-row sm:items-center gap-y-3 gap-x-8">
+              <div className="flex flex-col gap-y-3 gap-x-8">
                 <div>
                   <h1 className="text-2xl md:text-3xl font-bold">{boardData.board_title}</h1>
                   <div className="flex items-center flex-wrap gap-y-1 gap-x-2 mt-1">
+                  <p className="font-semibold">{businessData.business_name}</p>
                   {boardData.service && (
                        <div className="text-sm">
                             <p className="text-sm opacity-80 font-bold">{boardData.service.service_name}</p>
                        </div>
                   )}
                   {boardData.board_description && (
-                    <p className="text-xs line-clamp-1 opacity-80">{boardData.board_description}</p>
+                    <p className="hidden text-xs line-clamp-1 opacity-80">{boardData.board_description}</p>
                   )}
                 </div>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className={`rounded-lg p-2 font-medium whitespace-nowrap ${
+                  <span className={`rounded-lg p-1 lg:px-2 lg:py-1 font-medium whitespace-nowrap ${
                     boardData.status === 'active' ? 'bg-green-100 text-green-800 border border-green-200' :
                     boardData.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
                     boardData.status === 'completed' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
@@ -761,10 +810,10 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
             {/* Share Menu Container - Hidden on xs to md, visible on lg+ */}
             <div className="relative share-menu-container hidden lg:block">
               {/* Pill Link Container */}
-              <div className={`flex items-center justify-between gap-2 px-4 py-2 rounded-full border-2 transition-all duration-300 ${
+              <div className={`flex items-center justify-between gap-2 px-4 py-2 rounded-xl border-2 transition-all duration-300 ${
                 isCopied 
                   ? 'bg-green-800 border-green-400 shadow-lg' 
-                  : 'bg-gray-600 border-gray-500 hover:border-gray-400'
+                  : 'bg-zinc-600 border-gray-500 hover:border-gray-400'
               }`}>
                 <div className='flex items-center gap-2'>
                 {/* Globe Icon */}
@@ -772,7 +821,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                 </svg>
                 {/* URL Text */}
-                <span className="text-sm text-gray-200 font-medium truncate max-w-[200px]">
+                <span className="text-sm text-gray-200 font-medium truncate max-w-[250px]">
                   {getCurrentBoardUrl().replace(/^https?:\/\//, '')}
                 </span>
                 </div>
@@ -825,6 +874,15 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
               <span className="font-medium">{tServiceBoard('addAction')}</span>
             </button>
 
+             {/* Support Button */}
+             <button
+              className="hidden lg:flex items-center gap-2 px-5 py-3 bg-black text-white border border-white rounded-lg hover:bg-gray-900 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              <span className="font-medium">Support Request</span>
+            </button>
 
           </div>
         </div>
@@ -916,14 +974,14 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                                       <div className="flex items-center gap-2">
                                         <div className="w-6 h-6 flex items-center justify-center">
                                           <Image
-                                            src={getPlatformIcon(appointment.platform_name)}
-                                            alt={appointment.platform_name}
+                                            src={getPlatformIcon(humanizePlatformName(appointment.platform_name))}
+                                            alt={humanizePlatformName(appointment.platform_name)}
                                             width={24}
                                             height={24}
                                             className="w-4 h-4 lg:w-4 lg:h-4"
                                           />
                                         </div>
-                                        <span className="text-sm text-gray-600">{appointment.platform_name}</span>
+                                        <span className="text-sm text-gray-600">{humanizePlatformName(appointment.platform_name)}</span>
                                       </div>
                                     )}
                                     {appointment.platform_link && (
@@ -1684,7 +1742,8 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                   </button>
                 </div>
               </div>
-              {/* Appointment Details - Now centered without card wrapper */}
+                {/* Appointment Details - Now centered without card wrapper */
+                }
               <div className="mb-6">
                 {/* Status - Now shown first */}
                 <div className="flex justify-center mb-3">
@@ -1734,6 +1793,20 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                         </div>
                   </>
                 )}
+                {/* Platform (for online) */}
+                {nextAppointment.appointment_type === 'online' && nextAppointment.platform_name && (
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Image
+                      src={getPlatformIcon(humanizePlatformName(nextAppointment.platform_name))}
+                      alt={humanizePlatformName(nextAppointment.platform_name)}
+                      width={20}
+                      height={20}
+                      className="w-5 h-5"
+                    />
+                    <span className="text-sm text-gray-700">{humanizePlatformName(nextAppointment.platform_name)}</span>
+                  </div>
+                )}
+
                 {/* Notes */}
                 {nextAppointment.notes && (
                   <div className="flex items-start justify-center gap-2 mt-3">

@@ -910,7 +910,7 @@
     "enterYourResponse": "Inserisci la tua risposta",
     "availablePaymentMethods": "Metodi di Pagamento Disponibili",
     "onlinePaymentViaStripe": "Pagamento online tramite Stripe",
-    "actionSubmitted": "Azione Inviata con Successo",
+    "actionSubmitted": "Azione Inviata",
     "actionSubmissionError": "Errore nell'Invio dell'Azione",
     "technicalDetails": "Dettagli Tecnici",
     "shareBoardLink": "Condividi Link del Board",

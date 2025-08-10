@@ -44,7 +44,7 @@ export default function FeedbackRequest({ details, onUpdate }: Props) {
   if (details.submission_status === 'submitted') {
     return (
       <div className="text-sm text-gray-500">
-        {t('thankYouForFeedback')} {new Date(details.submitted_date!).toLocaleDateString()}
+        {t('thankYouForFeedback')} {details.submitted_date ? new Date(details.submitted_date).toLocaleDateString() : ''}
       </div>
     )
   }
@@ -57,9 +57,12 @@ export default function FeedbackRequest({ details, onUpdate }: Props) {
           href={details.survey_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="inline-flex items-center text-blue-600 hover:text-blue-800 underline font-medium text-sm transition-colors"
         >
           {t('openSurvey')}
+          <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
         </a>
       </div>
     )
