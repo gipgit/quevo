@@ -208,8 +208,8 @@
     "loggedInAsManager": "Logged in as Manager",
     "loggedInAsCustomer": "Logged in as Customer",
     "formPrefilledWithAccountData": "Form has been pre-filled with your account data",
-    "submittingServiceRequest": "Submitting your request...",
-    "redirectingToConfirmation": "Redirecting to confirmation...",
+    "submittingServiceRequest": "Submitting service request...",
+    "redirectingToConfirmation": "Creating Board...",
     "failedToLoadAvailability": "Failed to load availability",
     "cannotSelectPastDate": "Cannot select a past date",
     "serviceDurationInvalid": "Service duration is invalid"

@@ -209,8 +209,8 @@
     "loggedInAsManager": "Conectado como Manager",
     "loggedInAsCustomer": "Conectado como Cliente",
     "formPrefilledWithAccountData": "El formulario ha sido pre-completado con los datos de tu cuenta",
-    "submittingServiceRequest": "Enviando tu solicitud...",
-    "redirectingToConfirmation": "Redirigiendo a la confirmación...",
+    "submittingServiceRequest": "Enviando solicitud de servicio...",
+    "redirectingToConfirmation": "Creando Board...",
     "failedToLoadAvailability": "No se pudo cargar la disponibilidad",
     "cannotSelectPastDate": "No se puede seleccionar una fecha pasada",
     "serviceDurationInvalid": "Duración del servicio no válida"

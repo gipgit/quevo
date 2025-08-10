@@ -638,8 +638,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
       is_archived: newAction.is_archived,
       created_at: newAction.created_at,
       updated_at: newAction.updated_at,
-      due_date: newAction.due_date,
-      tags: [] // New actions won't have tags initially
+      due_date: newAction.due_date
     };
 
     // Add the new action to the beginning of the actions array
@@ -755,11 +754,13 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           {/* Left Column - Board Info */}
           <div className="flex-1 flex items-center gap-x-4">
-            <div className="hidden lg:block w-14 h-14 lg:w-20 lg:h-20 rounded-full overflow-hidden bg-gray-100">
+            <div className="hidden lg:block w-14 h-14 lg:w-20 lg:h-20 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
                   {businessData.business_public_uuid ? (
-                    <img
+                    <Image
                       src={`/uploads/business/${businessData.business_public_uuid}/profile.webp`}
                       alt={businessData.business_name}
+                      width={80}
+                      height={80}
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -1510,17 +1511,21 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
           <div className="sticky top-0 p-6">
             <div className="flex flex-col items-center">
               <div className="board-cover relative w-full h-[180px] lg:h-[200px] overflow-hidden rounded-t-2xl">
-                <img
+                <Image
                   src={businessCoverImageUrl}
                   alt={businessData.business_name || 'Business cover'}
+                  width={800}
+                  height={200}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="w-20 h-20 lg:w-20 lg:h-20 -mt-8 z-10 rounded-full overflow-hidden bg-gray-100">
                 {businessData.business_public_uuid ? (
-                  <img
+                  <Image
                     src={`/uploads/business/${businessData.business_public_uuid}/profile.webp`}
                     alt={businessData.business_name}
+                    width={80}
+                    height={80}
                     className="h-full w-full object-cover"
                   />
                 ) : (

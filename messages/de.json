@@ -208,8 +208,8 @@
     "loggedInAsManager": "Als Manager angemeldet",
     "loggedInAsCustomer": "Als Kunde angemeldet",
     "formPrefilledWithAccountData": "Formular wurde mit Ihren Kontodaten vorausgefüllt",
-    "submittingServiceRequest": "Ihre Anfrage wird gesendet...",
-    "redirectingToConfirmation": "Weiterleitung zur Bestätigung...",
+    "submittingServiceRequest": "Serviceanfrage wird gesendet...",
+    "redirectingToConfirmation": "Board wird erstellt...",
     "failedToLoadAvailability": "Fehler beim Laden der Verfügbarkeit",
     "cannotSelectPastDate": "Vergangenes Datum kann nicht ausgewählt werden",
     "serviceDurationInvalid": "Dienstleistungsdauer ist ungültig"
