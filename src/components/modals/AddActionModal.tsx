@@ -305,7 +305,7 @@ export default function AddActionModal({
         await new Promise(resolve => setTimeout(resolve, 1000));
         onShowSubmissionModal({
           isSuccess: true,
-          message: 'Appuntamento confermato creato con successo! L\'azione è stata aggiunta alla board.'
+          message: 'Appuntamento creato. Azione aggiunta.'
         });
         return;
       }
@@ -360,8 +360,51 @@ export default function AddActionModal({
         onActionCreated(finalAction)
         onClose()
         await new Promise(resolve => setTimeout(resolve, 500))
-        onShowSubmissionModal({ isSuccess: true, message: 'Documento caricato e azione aggiunta alla board.' })
+        onShowSubmissionModal({ isSuccess: true, message: 'Documento caricato. Azione aggiunta.' })
         return
+      }
+
+      // Special flow: signature_request with file upload (action already created by form)
+      if (selectedTemplate?.action_type === 'signature_request' && formData.action_id) {
+        // The form has already created the action and uploaded the file
+        // We need to fetch the complete action from the database to get all fields
+        try {
+          const actionResponse = await fetch(`/api/businesses/${businessId}/service-boards/${boardRef}/actions/${formData.action_id}`);
+          if (actionResponse.ok) {
+            const completeAction = await actionResponse.json();
+            onActionCreated(completeAction);
+          } else {
+            // Fallback: create a minimal action object with required fields
+            const finalAction = {
+              action_id: formData.action_id,
+              action_type: 'signature_request',
+              action_title: formData.action_title || selectedTemplate.translated_title,
+              action_description: formData.action_description || selectedTemplate.translated_description,
+              action_details: formData.action_details,
+              action_status: 'pending', // Default status for signature requests
+              is_customer_action_required: true
+            };
+            onActionCreated(finalAction);
+          }
+        } catch (error) {
+          console.error('Error fetching complete action:', error);
+          // Fallback: create a minimal action object with required fields
+          const finalAction = {
+            action_id: formData.action_id,
+            action_type: 'signature_request',
+            action_title: formData.action_title || selectedTemplate.translated_title,
+            action_description: formData.action_description || selectedTemplate.translated_description,
+            action_details: formData.action_details,
+            action_status: 'pending', // Default status for signature requests
+            is_customer_action_required: true
+          };
+          onActionCreated(finalAction);
+        }
+        
+        onClose();
+        await new Promise(resolve => setTimeout(resolve, 500));
+        onShowSubmissionModal({ isSuccess: true, message: 'Documento caricato. Azione aggiunta.' });
+        return;
       }
 
       const response = await fetch(`/api/businesses/${businessId}/service-boards/${boardRef}/actions`, {
@@ -417,7 +460,7 @@ export default function AddActionModal({
       {/* Gradient overlay with backdrop blur */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/70 to-black/70 backdrop-blur-md backdrop-saturate-150" />
       {/* Modal content */}
-      <div className={`h-full flex flex-col lg:max-w-[1400px] w-full transition-all duration-300 relative z-10 ${
+      <div className={`h-full flex flex-col lg:max-w-[1400px] w-full transition-all duration-300 relative z-10 p-2 lg:p-0 ${
         selectedTemplate?.action_type === 'appointment_scheduling' && showCalendar 
           ? 'lg:max-w-[1600px]' 
           : ''
@@ -497,7 +540,7 @@ export default function AddActionModal({
           </div>
 
           {/* Right - Form Fields */}
-          <div className={`flex-1 overflow-y-auto rounded-3xl bg-white/95 backdrop-blur-sm lg:my-auto lg:max-h-[85vh] ${
+          <div className={`flex-1 overflow-y-auto rounded-2xl lg:rounded-3xl bg-white/95 backdrop-blur-sm lg:my-auto lg:max-h-[85vh] ${
             selectedTemplate ? 'block' : 'hidden lg:block'
           }`}>
             {selectedTemplate ? (
@@ -560,6 +603,7 @@ export default function AddActionModal({
                     className="text-gray-900"
                     actionType={selectedTemplate.action_type}
                     businessId={businessId}
+                    boardRef={boardRef}
                     currentPlan={1}
                     locale={locale}
                     onSubmit={handleSubmit}

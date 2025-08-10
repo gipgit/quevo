@@ -44,10 +44,10 @@ export default function InformationRequest({ details, onUpdate }: Props) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {details.request_fields.map((field, index) => (
-        <div key={index} className="space-y-2">
+        <div key={index} className="space-y-1 lg:space-y-2">
           <label 
             htmlFor={`field-${index}`}
-            className="block text-sm font-medium text-gray-700"
+            className="block text-xs lg:text-sm font-medium text-gray-700"
           >
             {field.field_name}
             {field.is_required && <span className="text-red-500 ml-1">*</span>}

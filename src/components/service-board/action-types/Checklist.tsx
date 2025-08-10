@@ -95,7 +95,7 @@ export default function Checklist({ details, onUpdate, action_id }: Props) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
         <h3 className="text-lg font-medium text-gray-900">
           {details.title}
@@ -107,10 +107,10 @@ export default function Checklist({ details, onUpdate, action_id }: Props) {
         )}
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1 lg:space-y-2">
         {Array.isArray(localItems) && localItems.map((item, index) => (
-          <div key={item.id} className={`bg-white rounded-lg border p-3 ${item.is_completed ? 'border-green-300 bg-green-50/40' : 'border-gray-200'}`}>
-            <div className="flex items-start space-x-3">
+          <div key={item.id} className={`bg-white rounded-lg border p-2 lg:p-3 ${item.is_completed ? 'border-green-300 bg-green-50/40' : 'border-gray-200'}`}>
+            <div className="flex items-center space-x-3">
               <div className="flex-shrink-0">
                 <input
                   type="checkbox"
@@ -203,7 +203,7 @@ export default function Checklist({ details, onUpdate, action_id }: Props) {
         <button
           type="button"
           onClick={handleSubmitChanges}
-          className="w-full md:w-auto px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+          className="w-full md:w-auto text-blue-600 hover:text-blue-700"
         >
           Save checklist changes
         </button>

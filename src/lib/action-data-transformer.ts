@@ -243,13 +243,13 @@ class ActionDataTransformerImpl implements ActionDataTransformer {
 
   private transformSignatureRequest(formData: any): SignatureRequestDetails {
     return {
-      document_url: formData.document_url || '',
-      document_name: formData.document_name || '',
+      document_url: formData.document_method === 'upload' ? (formData.document_file || formData.document_url || '') : undefined,
+      document_name: formData.document_title || formData.document_name || '',
+      document_method: formData.document_method || 'upload',
+      email_address: formData.document_method === 'email' ? formData.email_address : undefined,
+      email_date: formData.document_method === 'email' ? formData.email_date : undefined,
       signature_status: 'pending',
-      signature_method: formData.signature_method || 'draw',
-      signature_date: formData.signature_date,
-      signature_image_url: formData.signature_image_url,
-      rejection_reason: formData.rejection_reason
+      urgency_level: formData.add_urgency ? (formData.urgency_level || 'medium') : undefined
     };
   }
 
@@ -462,12 +462,31 @@ class ActionDataTransformerImpl implements ActionDataTransformer {
   }
 
   private validateSignatureRequest(details: any): boolean {
-    return (
-      typeof details.document_url === 'string' &&
-      typeof details.document_name === 'string' &&
-      typeof details.signature_status === 'string' &&
-      typeof details.signature_method === 'string'
-    );
+    console.log('🔍 Validating signature request:', details);
+    
+    const hasDocumentName = typeof details.document_name === 'string';
+    const hasSignatureStatus = typeof details.signature_status === 'string';
+    const hasDocumentMethod = typeof details.document_method === 'string';
+    
+    let hasValidMethod = false;
+    if (details.document_method === 'upload') {
+      hasValidMethod = typeof details.document_url === 'string';
+    } else if (details.document_method === 'email') {
+      hasValidMethod = typeof details.email_address === 'string' && typeof details.email_date === 'string';
+    }
+    
+    const isValid = hasDocumentName && hasSignatureStatus && hasDocumentMethod && hasValidMethod;
+    
+    console.log('🔍 Validation breakdown:', {
+      hasDocumentName,
+      hasSignatureStatus,
+      hasDocumentMethod,
+      hasValidMethod,
+      isValid,
+      documentMethod: details.document_method
+    });
+    
+    return isValid;
   }
 
   private validateApprovalRequest(details: any): boolean {

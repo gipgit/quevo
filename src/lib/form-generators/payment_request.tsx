@@ -21,14 +21,17 @@ const paymentRequestFields = [
       min: 0
     }
   }),
-  createFieldConfig('currency', 'select_cards', true, {
+  createFieldConfig('currency', 'select', true, {
     label: 'Valuta',
     placeholder: 'Seleziona la valuta',
-    ui: { gridClass: 'grid grid-cols-3 gap-2' },
-    cardOptions: [
-      { key: 'EUR', label: '€', color: 'bg-blue-50 hover:bg-blue-100' },
-      { key: 'USD', label: '$', color: 'bg-green-50 hover:bg-green-100' },
-      { key: 'GBP', label: '£', color: 'bg-purple-50 hover:bg-purple-100' }
+    options: [
+      { key: 'EUR', label: 'EUR' },
+      { key: 'USD', label: 'USD' },
+      { key: 'GBP', label: 'GBP' },
+      { key: 'CHF', label: 'CHF' },
+      { key: 'CAD', label: 'CAD' },
+      { key: 'AUD', label: 'AUD' },
+      { key: 'JPY', label: 'JPY' }
     ]
   }),
   createFieldConfig('payment_reason', 'text', false, {
@@ -87,7 +90,7 @@ export function PaymentRequestForm({
     renderField,
     actionConfig,
     formPlaceholders
-  } = useBaseForm(actionType, locale);
+  } = useBaseForm(actionType, locale, { currency: 'EUR' });
 
   // Fetch business payment methods to present as selectable cards
   const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
@@ -147,28 +150,57 @@ export function PaymentRequestForm({
           disabled={disabled}
         />
 
-        {/* Currency + Amount in same row on lg+ */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div>
-            <FieldRenderer
-              fieldName="currency"
-              config={actionConfig.fields.find((f: any) => f.name === 'currency')}
-              value={formData.currency || ''}
-              onChange={(value) => handleFieldChange('currency', value)}
-              error={errors.currency}
-              disabled={false}
-            />
+        {/* Amount and Currency - Visual Single Field */}
+        <div className="space-y-2">
+          <label className="block text-xs lg:text-sm font-medium text-gray-700">
+            {actionConfig.fields.find((f: any) => f.name === 'amount')?.label || 'Importo'}
+          </label>
+          
+          {/* Wrapper with all styling applied */}
+          <div className={`flex border rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-colors overflow-hidden ${
+            errors.amount || errors.currency ? 'border-red-300' : 'border-gray-300'
+          } ${disabled ? 'bg-gray-100' : 'bg-white'}`}>
+            
+            {/* Amount Input - Custom without FieldRenderer */}
+            <div className="flex-1">
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.amount || ''}
+                onChange={(e) => handleFieldChange('amount', e.target.value)}
+                placeholder={actionConfig.fields.find((f: any) => f.name === 'amount')?.placeholder || '0.00'}
+                disabled={disabled}
+                className="w-full px-3 py-2 border-0 focus:outline-none focus:ring-0 bg-transparent text-sm lg:text-base"
+              />
+            </div>
+            
+            {/* Currency Selector - Custom select */}
+            <div className="flex-shrink-0 border-l border-gray-300">
+              <select
+                value={formData.currency || 'EUR'}
+                onChange={(e) => handleFieldChange('currency', e.target.value)}
+                disabled={disabled}
+                className="px-3 py-2 border-0 focus:outline-none focus:ring-0 bg-transparent text-sm lg:text-base cursor-pointer"
+              >
+                <option value="EUR">EUR</option>
+                <option value="USD">USD</option>
+                <option value="GBP">GBP</option>
+                <option value="CHF">CHF</option>
+                <option value="CAD">CAD</option>
+                <option value="AUD">AUD</option>
+                <option value="JPY">JPY</option>
+              </select>
+            </div>
           </div>
-          <div>
-            <FieldRenderer
-              fieldName="amount"
-              config={actionConfig.fields.find((f: any) => f.name === 'amount')}
-              value={formData.amount || ''}
-              onChange={(value) => handleFieldChange('amount', value)}
-              error={errors.amount}
-              disabled={false}
-            />
-          </div>
+          
+          {/* Error messages */}
+          {errors.amount && (
+            <p className="text-sm text-red-600">{errors.amount}</p>
+          )}
+          {errors.currency && (
+            <p className="text-sm text-red-600">{errors.currency}</p>
+          )}
         </div>
 
         {/* Payment Methods as selectable cards fetched from DB */}
@@ -179,7 +211,17 @@ export function PaymentRequestForm({
           ) : methodsError ? (
             <div className="text-sm text-red-600">{methodsError}</div>
           ) : paymentMethods.length === 0 ? (
-            <div className="text-sm text-gray-500">Nessun metodo disponibile</div>
+            <div className="text-sm text-gray-500">
+              You haven't set payment information yet.{' '}
+              <a 
+                href="/dashboard/profile/payments" 
+                className="text-blue-600 hover:text-blue-800 underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Add your payment info
+              </a>
+            </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               {paymentMethods.map((method: any) => {
@@ -200,7 +242,7 @@ export function PaymentRequestForm({
                     onClick={() => {
                       const prev: string[] = Array.isArray(formData.payment_methods) ? formData.payment_methods : [];
                       if (prev.includes(key)) {
-                        handleFieldChange('payment_methods', prev.filter((m: string) => m !== key));
+                        handleFieldChange('payment_methods', prev.filter((m) => m !== key));
                         // remove from available_payment_methods
                         const currentAvail = Array.isArray((formData as any).available_payment_methods) ? (formData as any).available_payment_methods : [];
                         const updatedAvail = currentAvail.filter((m: any) => m?.id !== key);
@@ -230,8 +272,33 @@ export function PaymentRequestForm({
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-gray-900 truncate">{methodLabel || methodId}</div>
-                      {method.details && methodLabel === 'Bank Transfer' && method.details.iban && (
-                        <div className="text-xs text-gray-500 truncate">IBAN: {method.details.iban}</div>
+                      {/* Show method-specific details */}
+                      {method.details && (
+                        <>
+                          {/* PayPal Email */}
+                          {methodLabel === 'PayPal' && method.details.paypal_email && (
+                            <div className="text-xs text-gray-500 truncate">Email: {method.details.paypal_email}</div>
+                          )}
+                          {/* Bank Transfer Details */}
+                          {methodLabel === 'Bank Transfer' && method.details.iban && (
+                            <div className="text-xs text-gray-500 truncate">IBAN: {method.details.iban}</div>
+                          )}
+                          {methodLabel === 'Bank Transfer' && method.details.account_holder && (
+                            <div className="text-xs text-gray-500 truncate">Beneficiario: {method.details.account_holder}</div>
+                          )}
+                          {/* Stripe Link */}
+                          {methodLabel === 'Stripe' && method.details.stripe_link && (
+                            <div className="text-xs text-gray-500 truncate">Link: {method.details.stripe_link}</div>
+                          )}
+                          {/* Cash Note */}
+                          {methodLabel === 'Cash' && method.details.cash_note && (
+                            <div className="text-xs text-gray-500 truncate">Nota: {method.details.cash_note}</div>
+                          )}
+                          {/* POS Note */}
+                          {methodLabel === 'POS' && method.details.pos_note && (
+                            <div className="text-xs text-gray-500 truncate">Nota: {method.details.pos_note}</div>
+                          )}
+                        </>
                       )}
                     </div>
                     <div className={`w-5 h-5 rounded-full border ${isSelected ? 'bg-blue-600 border-blue-600' : 'bg-white border-gray-300'}`}></div>

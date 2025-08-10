@@ -32,7 +32,7 @@ export function FieldRenderer({
       case 'text':
         return (
           <input
-            type="text"
+            type={config.inputType || "text"}
             id={fieldName}
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}

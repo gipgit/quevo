@@ -120,7 +120,7 @@ export default function ServiceBoardActionCard({ action, onActionUpdate, onAppoi
       'feedback_request': () => isFeedbackRequestDetails(details) ? <FeedbackRequest details={details} onUpdate={onActionUpdate} /> : null,
       'milestone_update': () => isMilestoneUpdateDetails(details) ? <MilestoneUpdate details={details} /> : null,
       'resource_link': () => isResourceLinkDetails(details) ? <ResourceLink details={details} /> : null,
-      'signature_request': () => isSignatureRequestDetails(details) ? <SignatureRequest details={details} onUpdate={onActionUpdate} /> : null,
+      'signature_request': () => isSignatureRequestDetails(details) ? <SignatureRequest details={details} onUpdate={onActionUpdate} action_id={action.action_id} /> : null,
       'approval_request': () => isApprovalRequestDetails(details) ? <ApprovalRequest details={details} onUpdate={onActionUpdate} /> : null,
       'checklist': () => isChecklistDetails(details) ? <Checklist details={details} onUpdate={onActionUpdate} action_id={action.action_id} /> : null,
       'video_message': () => isVideoMessageDetails(details) ? <VideoMessage details={details} onUpdate={onActionUpdate} /> : null,
@@ -133,16 +133,12 @@ export default function ServiceBoardActionCard({ action, onActionUpdate, onAppoi
       if (node) return node
     }
 
-    return (
-      <div className="text-red-600">
-        <div>{t('invalidActionDetails')} {action.action_type}</div>
-        <div className="text-xs mt-2">
-          <pre className="bg-gray-100 p-2 rounded text-xs overflow-auto">
-            {JSON.stringify(details, null, 2)}
-          </pre>
-        </div>
-      </div>
-    )
+    // If no renderer found, show fallback renderer
+    return <FallbackRenderer 
+      actionType={action.action_type} 
+      details={action.action_details} 
+      missingFields={missingFields}
+    />
   }
 
   const shouldShowExpandButton = action.action_status === 'completed'
@@ -158,7 +154,7 @@ export default function ServiceBoardActionCard({ action, onActionUpdate, onAppoi
                 {format(new Date(action.created_at), "PPP", { locale: locale === 'it' ? it : enUS })}
               </span>
               <span className={`
-                px-3 py-1 rounded-full text-xs md:text-md
+                px-2 py-1 lg:px-3 lg:py-1 rounded-full text-xs md:text-md
                 ${getStatusColor(action.action_status)}
               `}>
                 {getStatusText(action.action_status, t)}
@@ -200,7 +196,7 @@ export default function ServiceBoardActionCard({ action, onActionUpdate, onAppoi
       </div>
 
       {isExpanded && (
-        <div className="mt-1 pt-4 border-t">
+        <div className="mt-1 pt-2 lg:pt-3 border-t">
           {renderActionContent()}
         </div>
       )}

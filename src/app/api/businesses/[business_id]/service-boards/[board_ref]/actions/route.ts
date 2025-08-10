@@ -1,9 +1,98 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { PrismaClient } from '@prisma/client';
 import { cookies } from 'next/headers';
-import { auth } from '@/lib/auth';
 import { getPlanLimits } from '@/lib/plan-limit';
 import { canCreateMore } from '@/lib/usage-utils';
+
+const prisma = new PrismaClient();
+
+// Action types that inherently require customer action
+const ACTION_TYPES_REQUIRING_CUSTOMER_ACTION = [
+  'payment_request',
+  'signature_request', 
+  'information_request',
+  'feedback_request',
+  'approval_request',
+  'checklist',
+  'opt_in_request'
+] as const;
+
+// Action types that never require customer action
+const ACTION_TYPES_NEVER_REQUIRING_CUSTOMER_ACTION = [
+  'generic_message',
+  'milestone_update',
+  'resource_link',
+  'document_download'
+] as const;
+
+// Action types that don't need status tracking (they are informational only)
+const ACTION_TYPES_NO_STATUS_NEEDED = [
+  'generic_message',
+  'milestone_update',
+  'resource_link',
+  'document_download'
+] as const;
+
+/**
+ * Determines if an action requires customer action based on action type and form data
+ */
+function determineCustomerActionRequired(actionType: string, actionDetails: any): boolean {
+  // Check if action type inherently requires customer action
+  if (ACTION_TYPES_REQUIRING_CUSTOMER_ACTION.includes(actionType as any)) {
+    return true;
+  }
+  
+  // Check if action type never requires customer action
+  if (ACTION_TYPES_NEVER_REQUIRING_CUSTOMER_ACTION.includes(actionType as any)) {
+    return false;
+  }
+  
+  // Check form-specific logic
+  switch (actionType) {
+    case 'appointment_scheduling':
+      return actionDetails.appointment_mode === 'multiple_choice' || 
+             actionDetails.appointment_mode === 'fixed_pending_confirmation';
+    case 'video_message':
+      return actionDetails.requires_acknowledgment === true;
+    default:
+      return false; // Default to false for unknown types
+  }
+}
+
+/**
+ * Determines the appropriate action status based on action type and form data
+ */
+function determineActionStatus(actionType: string, actionDetails: any): string {
+  // Check if action type doesn't need status tracking
+  if (ACTION_TYPES_NO_STATUS_NEEDED.includes(actionType as any)) {
+    return 'completed'; // These are informational actions that are "completed" by default
+  }
+  
+  // Check form-specific logic for status
+  switch (actionType) {
+    case 'appointment_scheduling':
+      // If appointment is already confirmed, mark as completed
+      if (actionDetails.confirmation_status === 'confirmed' || 
+          actionDetails.appointment_mode === 'fixed_confirmed') {
+        return 'completed';
+      }
+      return 'pending';
+    case 'video_message':
+      // If no acknowledgment required, mark as completed
+      if (!actionDetails.requires_acknowledgment) {
+        return 'completed';
+      }
+      return 'pending';
+    case 'milestone_update':
+      // If milestone is already completed, mark as completed
+      if (actionDetails.is_completed || actionDetails.progress_percentage === 100) {
+        return 'completed';
+      }
+      return 'completed'; // Milestone updates are informational, so default to completed
+    default:
+      return 'pending'; // Default to pending for action types that need tracking
+  }
+}
 
 export const dynamic = 'force-dynamic';
 
@@ -50,26 +139,14 @@ export async function GET(
         board_id: serviceBoard.board_id,
         is_archived: false,
       },
-      include: {
-        serviceboardactiontag: {
-          include: {
-            userdefinedtag: true,
-          },
-        },
-      },
+
       orderBy: [
         { due_date: 'asc' },
         { created_at: 'desc' }
       ],
     });
 
-    // Transform the data to include tags directly on each action
-    const actionsWithTags = actions.map(action => ({
-      ...action,
-      tags: action.serviceboardactiontag.map(sat => sat.userdefinedtag),
-    }));
-
-    return NextResponse.json(actionsWithTags);
+    return NextResponse.json(actions);
   } catch (error) {
     console.error('Error fetching service board actions:', error);
     return NextResponse.json(
@@ -150,8 +227,8 @@ export async function POST(
         action_title: action_title || 'Nuova azione',
         action_description: action_description || 'Descrizione azione',
         action_details: action_details,
-        action_status: 'pending',
-        is_customer_action_required: true,
+        action_status: determineActionStatus(action_type, action_details),
+        is_customer_action_required: determineCustomerActionRequired(action_type, action_details),
         is_archived: false,
       },
     });

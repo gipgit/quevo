@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { processAndSaveDocument } from '@/lib/documentUpload'
 
 // Cloudflare R2 S3-compatible
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
@@ -41,33 +42,39 @@ export async function POST(req: NextRequest, { params }: { params: { actionId: s
       return NextResponse.json({ error: 'File too large' }, { status: 400 })
     }
 
-    // Create object key: {board_ref}/{action_id}/{filename}
-    const safeName = file.name.replace(/[^a-zA-Z0-9_.-]/g, '_')
-    const key = `${boardRef}/${actionId}/${Date.now()}_${safeName}`
-    const bucket = process.env.CLOUDFLARE_R2_BUCKET_SERVICE_BOARD_PRIVATE as string
+    // Get the action to find the business_id
+    const action = await prisma.serviceboardaction.findUnique({
+      where: { action_id: actionId },
+      select: { 
+        action_details: true,
+        serviceboard: {
+          select: { business_id: true }
+        }
+      },
+    })
+    if (!action) return NextResponse.json({ error: 'Action not found' }, { status: 404 })
 
-    const arrayBuffer = await file.arrayBuffer()
-    const Body = Buffer.from(arrayBuffer)
+    // Convert file to buffer
+    const buffer = Buffer.from(await file.arrayBuffer())
 
-    const putResult = await r2.send(new PutObjectCommand({
-      Bucket: bucket,
-      Key: key,
-      Body,
-      ContentType: file.type,
-    }))
-    console.log('R2 PutObject result', { bucket, key, etag: (putResult as any)?.ETag })
+    // Get the action type from the action details or determine it from the action
+    const actionType = (action.action_details as any)?.document_method === 'upload' ? 'signature_request' : 'document_download';
+    
+    // Upload document using the new structure with business_id, boardRef, and actionId
+    const uploadResult = await processAndSaveDocument({
+      buffer,
+      filename: file.name,
+      businessId: action.serviceboard.business_id,
+      actionType: actionType,
+      actionId: actionId,
+      boardRef: boardRef
+    })
 
     // Build a private URL reference (served later via signed URL or proxy route)
-    const downloadUrl = `r2://${bucket}/${key}`
+    const downloadUrl = `r2://${process.env.CLOUDFLARE_R2_BUCKET_SERVICE_BOARD_PRIVATE}/${uploadResult.path}`
 
     // Merge into action_details: document_file -> download_url, file_type, document_name
-    const current = await prisma.serviceboardaction.findUnique({
-      where: { action_id: actionId },
-      select: { action_details: true },
-    })
-    if (!current) return NextResponse.json({ error: 'Action not found' }, { status: 404 })
-
-    const baseDetailsAny: any = (current.action_details && typeof current.action_details === 'object') ? current.action_details : {}
+    const baseDetailsAny: any = (action.action_details && typeof action.action_details === 'object') ? action.action_details : {}
     const details: any = {
       ...baseDetailsAny,
       document_name: (baseDetailsAny.document_title || baseDetailsAny.document_name || file.name),

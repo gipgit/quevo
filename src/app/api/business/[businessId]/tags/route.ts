@@ -148,7 +148,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Tag not found' }, { status: 404 });
     }
 
-    // Delete tag (this will cascade to ServiceBoardActionTag)
+    // Delete tag
     await prisma.userdefinedtag.delete({
       where: { tag_id: tagId },
     });

@@ -297,11 +297,27 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
             );
           }
 
+          if (field.key === 'datetime_confirmed' && typeof value === 'string') {
+            // Guard: show confirmed datetime only when confirmation_status is confirmed
+            if (details.confirmation_status !== 'confirmed') return null;
+            const { formattedDate, formattedTime } = formatDateTime(value);
+            return (
+              <div key={field.key} className="space-y-1">
+                <label className="text-xs lg:text-sm font-medium text-gray-500">Confirmed date and time</label>
+                <div className="flex items-center gap-2">
+                    <p className="text-sm md:text-base font-medium text-gray-900">{formattedDate}, 
+                      <span className="text-md md:text-md font-medium text-gray-900 ml-1"> {formattedTime}</span>
+                    </p>
+                </div>
+              </div>
+            );
+          }
+
           if (field.key === 'address' && value) {
             return (
               <div key={field.key} className="space-y-0">
                 <label className="text-xs lg:text-sm font-medium text-gray-500">{field.label}</label>
-                <div className="text-md lg:text-lg font-bold text-gray-700">{value}</div>
+                <div className="text-sm lg:text-base font-medium text-gray-900">{value}</div>
               </div>
             );
           }
@@ -316,22 +332,7 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
               </div>
             );
           }
-
-          if (field.key === 'datetime_confirmed' && typeof value === 'string') {
-            // Guard: show confirmed datetime only when confirmation_status is confirmed
-            if (details.confirmation_status !== 'confirmed') return null;
-            const { formattedDate, formattedTime } = formatDateTime(value);
-            return (
-              <div key={field.key} className="space-y-1">
-                <label className="text-sm font-medium text-gray-800">Confirmed date and time</label>
-                <div className="flex items-center gap-2">
-                  <div className="text-md md:text-lg font-medium text-gray-900">{formattedDate}</div>
-                  <div className="text-gray-400">•</div>
-                  <div className="text-md md:text-lg font-medium text-gray-900">{formattedTime}</div>
-                </div>
-              </div>
-            );
-          }
+  
 
           if (field.key === 'datetimes_options' && Array.isArray(value)) {
             // Hide selection once confirmed or not pending
@@ -341,30 +342,30 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
             const label = 'Select a date and time';
             return (
               <div key={field.key} className="space-y-1">
-                <label className="text-sm font-medium text-gray-800">{label}</label>
+                <label className="text-base lg:text-lg font-bold text-gray-800">{label}</label>
                 <div className="space-y-2">
                   {value.map((datetime: string, index: number) => {
                     const { formattedDate, formattedTime } = formatDateTime(datetime);
                     const isSelected = datetime === selectedDatetime;
                     return (
-                      <div key={index} className={`p-4 rounded-lg cursor-pointer flex justify-between items-center ${isSelected ? 'border-[1px] border-green-500 bg-green-50' : 'border-[1px] border-gray-300 bg-gray-50 hover:bg-gray-50'}`} onClick={() => handleDatetimeSelect(datetime)}>
-                        <div className="flex flex-col gap-1">
-                          <div className="flex items-center gap-2">
-                            <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div key={index} className={`p-3 lg:px-4 lg:py-3 rounded-lg cursor-pointer flex justify-between items-center ${isSelected ? 'border-[1px] border-green-500 bg-green-50' : 'border-[1px] border-gray-300 bg-gray-50 hover:bg-gray-50'}`} onClick={() => handleDatetimeSelect(datetime)}>
+                        <div className="flex flex-col gap-0 lg:gap-1">
+                          <div className="flex items-center gap-1 lg:gap-2">
+                            <svg className="w-4 h-4 lg:w-5 lg:h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            <div className="text-md md:text-lg font-medium text-gray-900">{formattedDate}</div>
+                            <div className="text-sm lg:text-lg font-medium text-gray-900">{formattedDate}</div>
                           </div>
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="flex items-center gap-1 lg:gap-2 text-sm text-gray-500">
+                            <svg className="w-4 h-4 lg:w-5 lg:h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <span>{formattedTime}</span>
                           </div>
                         </div>
-                        <button className={`inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full shadow-sm ${isSelected ? 'text-white bg-green-600 hover:bg-green-700 w-8 h-8 p-0 flex items-center justify-center' : 'bg-gray-200'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`} onClick={(e) => { e.stopPropagation(); handleDatetimeSelect(datetime); }}>
+                        <button className={`inline-flex items-center px-2 py-1 lg:px-3 lg:py-1.5 text-xs font-medium shadow-sm ${isSelected ? 'rounded-full text-white bg-green-600 hover:bg-green-700 w-6 h-6 lg:w-7 lg:h-7 p-0 flex items-center justify-center' : 'rounded-lg bg-gray-200'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`} onClick={(e) => { e.stopPropagation(); handleDatetimeSelect(datetime); }}>
                           {isSelected ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                           ) : 'Select'}
                         </button>
                       </div>
@@ -393,9 +394,9 @@ export default function AppointmentScheduling({ details, onUpdate, action_id, on
                           <img src={getPlatformIcon(humanizePlatform(platform))} alt={humanizePlatform(platform)} className="w-5 h-5" />
                           <div className="text-sm md:text-md font-medium text-gray-900">{humanizePlatform(platform)}</div>
                         </div>
-                        <button className={`inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full shadow-sm ${isSelected ? 'text-white bg-green-600 hover:bg-green-700 w-8 h-8 p-0 flex items-center justify-center' : 'bg-gray-200'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`} onClick={(e) => { e.stopPropagation(); handlePlatformSelect(platform); }}>
+                        <button className={`inline-flex items-center px-2 py-1 lg:px-3 lg:py-1.5 text-xs font-medium shadow-sm ${isSelected ? 'rounded-full text-white bg-green-600 hover:bg-green-700 w-6 h-6 lg:w-8 lg:h-8 p-0 flex items-center justify-center' : 'rounded-lg bg-gray-200'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`} onClick={(e) => { e.stopPropagation(); handlePlatformSelect(platform); }}>
                           {isSelected ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                           ) : 'Select'}
                         </button>
                       </div>

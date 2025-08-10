@@ -58,13 +58,13 @@ export default function ResourceLink({ details }: Props) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-start space-x-4">
+    <div className="space-y-2 lg:space-y-4">
+      <div className="flex items-start space-x-2 lg:space-x-4">
         <div className="flex-shrink-0">
           {getResourceIcon(details.resource_type)}
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-medium text-gray-900">
+          <h3 className="text-sm lg:text-lg font-medium text-gray-900">
             {details.resource_title || t('resource')}
           </h3>
           {details.description && (
@@ -81,10 +81,10 @@ export default function ResourceLink({ details }: Props) {
           target="_blank"
           rel="noopener noreferrer"
           className={`
-            inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm
+            inline-flex items-center px-2 py-1 lg:px-4 lg:py-2 text-xs lg:text-sm font-medium
             ${details.requires_login
-              ? 'text-white bg-blue-600 hover:bg-blue-700'
-              : 'text-gray-700 bg-gray-100 hover:bg-gray-200'
+              ? 'text-blue-600 hover:text-blue-700'
+              : 'text-blue-800  hover:text-blue-900'
             }
             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
           `}

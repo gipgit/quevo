@@ -28,6 +28,7 @@ export interface FieldConfig {
   required: boolean;
   label?: string;
   placeholder?: string;
+  inputType?: string; // HTML input type (e.g., 'date', 'email', 'tel', etc.)
   options?: Array<{ key: string; label: string; icon?: string; description?: string }>;
   cardOptions?: Array<{ key: string; label: string; icon?: string; description?: string; color?: string }>;
   min?: number;

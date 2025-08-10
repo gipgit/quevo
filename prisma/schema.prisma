@@ -53,8 +53,8 @@ model business {
   servicecategory                servicecategory[]
   servicerequest                 servicerequest[]
   servicerequestavailability     servicerequestavailability[]
+  supportrequest                 supportrequest[]
   surveyquestionprebuiltfavorite surveyquestionprebuiltfavorite[]
-  userdefinedtag                 userdefinedtag[]
 
   @@index([manager_id], map: "idx_business_manager_id")
   @@index([business_urlname], map: "idx_business_urlname")
@@ -365,6 +365,7 @@ model usercustomer {
   serviceboard            serviceboard[]
   serviceboardaction      serviceboardaction[]
   servicerequest          servicerequest[]
+  supportrequest          supportrequest[]
   surveyanswer            surveyanswer[]
   userchallengecompletion userchallengecompletion[]
   usercustomerredemption  usercustomerredemption[]
@@ -462,6 +463,7 @@ model usermanager {
   token_activation            String?                          @unique @db.VarChar(255)
   updated_at                  DateTime                         @default(now()) @db.Timestamptz(6)
   business                    business[]
+  supportrequest              supportrequest[]
   usercustomerredemption      usercustomerredemption[]
   userguestredemption         userguestredemption[]
   plan                        plan                             @relation(fields: [plan_id], references: [plan_id], onUpdate: NoAction)
@@ -753,30 +755,6 @@ model planlimit {
   @@unique([plan_id, feature])
 }
 
-// ServiceBoardActionTemplate model removed - now handled in app configuration
-
-model userdefinedtag {
-  tag_id                String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  business_id           String                  @db.Uuid
-  tag_name              String                  @db.VarChar(255)
-  tag_type              String                  @db.VarChar(50)
-  created_at            DateTime                @default(now()) @db.Timestamptz(6)
-  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
-  serviceboardactiontag serviceboardactiontag[]
-  business              business                @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_udt_business")
-
-  @@unique([business_id, tag_type, tag_name], map: "unique_tag_per_business_type_name")
-}
-
-model serviceboardactiontag {
-  action_id          String             @db.Uuid
-  tag_id             String             @db.Uuid
-  serviceboardaction serviceboardaction @relation(fields: [action_id], references: [action_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sbat_service_board_action_jt")
-  userdefinedtag     userdefinedtag     @relation(fields: [tag_id], references: [tag_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sbat_user_defined_tag_jt")
-
-  @@id([action_id, tag_id])
-}
-
 model serviceboard {
   board_id              String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   business_id           String               @db.Uuid
@@ -801,24 +779,24 @@ model serviceboard {
 }
 
 model serviceboardaction {
-  action_id                   String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  board_id                    String                  @db.Uuid
-  customer_id                 String                  @db.Uuid
-  action_type                 String                  @db.VarChar(50)
-  action_title                String                  @db.VarChar(255)
+  action_id                   String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  board_id                    String           @db.Uuid
+  customer_id                 String           @db.Uuid
+  action_type                 String           @db.VarChar(50)
+  action_title                String           @db.VarChar(255)
   action_description          String?
   action_details              Json?
-  action_status               String                  @default("pending") @db.VarChar(50)
-  action_priority             String?                 @default("medium") @db.VarChar(20)
-  created_at                  DateTime                @default(now()) @db.Timestamptz(6)
-  updated_at                  DateTime                @default(now()) @db.Timestamptz(6)
-  due_date                    DateTime?               @db.Timestamptz(6)
-  is_customer_action_required Boolean                 @default(false)
-  is_archived                 Boolean                 @default(false)
+  action_status               String           @default("pending") @db.VarChar(50)
+  action_priority             String?          @default("medium") @db.VarChar(20)
+  created_at                  DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at                  DateTime         @default(now()) @db.Timestamptz(6)
+  due_date                    DateTime?        @db.Timestamptz(6)
+  is_customer_action_required Boolean          @default(false)
+  is_archived                 Boolean          @default(false)
   appointment                 appointment[]
-  serviceboard                serviceboard            @relation(fields: [board_id], references: [board_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sba_service_board")
-  usercustomer                usercustomer            @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_sba_user_customer")
-  serviceboardactiontag       serviceboardactiontag[]
+  serviceboard                serviceboard     @relation(fields: [board_id], references: [board_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sba_service_board")
+  usercustomer                usercustomer     @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_sba_user_customer")
+  supportrequest              supportrequest[]
 }
 
 model usagecounter {
@@ -843,6 +821,39 @@ model usagecountermonthly {
 
   @@unique([business_id, feature, year, month])
   @@index([business_id, feature, year, month], map: "idx_usagecountermonthly_business_feature_month")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model supportrequest {
+  support_request_id String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  business_id        String                    @db.Uuid
+  board_ref          String                    @db.VarChar(255)
+  customer_id        String?                   @db.Uuid
+  message            String
+  related_action_id  String?                   @db.Uuid
+  email              String?                   @db.VarChar(255)
+  priority           support_request_priority?
+  category           support_request_category  @default(general)
+  status             support_request_status    @default(open)
+  assigned_to        String?                   @db.Uuid
+  resolution_notes   String?
+  created_at         DateTime?                 @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime?                 @default(now()) @db.Timestamptz(6)
+  usermanager        usermanager?              @relation(fields: [assigned_to], references: [user_id], onUpdate: NoAction, map: "fk_sr_assigned_to")
+  business           business                  @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sr_business")
+  usercustomer       usercustomer?             @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_sr_customer")
+  serviceboardaction serviceboardaction?       @relation(fields: [related_action_id], references: [action_id], onUpdate: NoAction, map: "fk_sr_related_action")
+
+  @@index([board_ref], map: "idx_supportrequest_board_ref")
+  @@index([business_id, board_ref], map: "idx_supportrequest_business_board")
+  @@index([business_id], map: "idx_supportrequest_business_id")
+  @@index([business_id, status], map: "idx_supportrequest_business_status")
+  @@index([category], map: "idx_supportrequest_category")
+  @@index([created_at], map: "idx_supportrequest_created_at")
+  @@index([customer_id], map: "idx_supportrequest_customer_id")
+  @@index([priority], map: "idx_supportrequest_priority")
+  @@index([related_action_id], map: "idx_supportrequest_related_action_id")
+  @@index([status], map: "idx_supportrequest_status")
 }
 
 enum business_sponsorship_level {
@@ -913,4 +924,24 @@ enum request_status_type {
   cancelled
   completed
   rescheduled
+}
+
+enum support_request_category {
+  general
+  technical
+  account
+}
+
+enum support_request_priority {
+  low
+  medium
+  high
+  urgent
+}
+
+enum support_request_status {
+  open
+  in_progress
+  resolved
+  closed
 }

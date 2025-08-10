@@ -1,60 +1,71 @@
-import { useState } from "react"
 import { useTranslations } from "next-intl"
+import { useState } from 'react'
 import { SignatureRequestDetails } from "@/types/service-board"
 
 interface Props {
   details: SignatureRequestDetails
   onUpdate: () => void
+  action_id: string
 }
 
-export default function SignatureRequest({ details, onUpdate }: Props) {
+export default function SignatureRequest({ details, onUpdate, action_id }: Props) {
   const t = useTranslations("ServiceBoard")
-  const [signatureMethod, setSignatureMethod] = useState<'draw' | 'type' | 'upload'>(details.signature_method || 'draw')
-  const [signatureData, setSignatureData] = useState("")
-  const [rejectionReason, setRejectionReason] = useState("")
+  const [isViewing, setIsViewing] = useState(false)
+  const [isDownloading, setIsDownloading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSign = async () => {
+  const handleSecureView = async () => {
+    setIsViewing(true)
+    setError(null)
     try {
-      const response = await fetch(`/api/service-board/signature-request/sign`, {
+      const resp = await fetch(`/api/service-board/actions/${action_id}/document-download`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          signatureMethod,
-          signatureData,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
       })
-
-      if (!response.ok) {
-        throw new Error('Failed to submit signature')
+      if (!resp.ok) {
+        const data = await resp.json().catch(() => ({}))
+        throw new Error(data.error || 'View failed')
       }
-
-      onUpdate()
-    } catch (error) {
-      console.error('Error submitting signature:', error)
+      const blob = await resp.blob()
+      const url = window.URL.createObjectURL(blob)
+      // Open in new tab for viewing
+      window.open(url, '_blank')
+      // Clean up the URL after a delay
+      setTimeout(() => window.URL.revokeObjectURL(url), 1000)
+    } catch (e: any) {
+      setError(e.message)
+    } finally {
+      setIsViewing(false)
     }
   }
 
-  const handleReject = async () => {
+  const handleSecureDownload = async () => {
+    setIsDownloading(true)
+    setError(null)
     try {
-      const response = await fetch(`/api/service-board/signature-request/reject`, {
+      const resp = await fetch(`/api/service-board/actions/${action_id}/document-download`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          rejectionReason,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
       })
-
-      if (!response.ok) {
-        throw new Error('Failed to reject signature request')
+      if (!resp.ok) {
+        const data = await resp.json().catch(() => ({}))
+        throw new Error(data.error || 'Download failed')
       }
-
-      onUpdate()
-    } catch (error) {
-      console.error('Error rejecting signature request:', error)
+      const blob = await resp.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = details.document_name || 'document'
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      window.URL.revokeObjectURL(url)
+    } catch (e: any) {
+      setError(e.message)
+    } finally {
+      setIsDownloading(false)
     }
   }
 
@@ -100,188 +111,112 @@ export default function SignatureRequest({ details, onUpdate }: Props) {
 
   return (
     <div className="space-y-6">
+      {/* Urgency Level Display */}
+      {details.urgency_level && (
+        <div className="flex items-center space-x-2">
+          <span className="text-sm font-medium text-gray-700">Urgency:</span>
+          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            details.urgency_level === 'high' 
+              ? 'bg-red-100 text-red-800' 
+              : details.urgency_level === 'medium'
+              ? 'bg-yellow-100 text-yellow-800'
+              : 'bg-green-100 text-green-800'
+          }`}>
+            {details.urgency_level === 'high' ? 'High' : 
+             details.urgency_level === 'medium' ? 'Medium' : 'Low'}
+          </span>
+        </div>
+      )}
+
       <div>
-        <h4 className="text-sm font-medium text-gray-900">Document to Sign</h4>
+        <h4 className="text-sm font-medium text-gray-900 mb-3">Document to Sign</h4>
         <div className="mt-2">
-          <a
-            href={details.document_url || '#'}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-          >
-            <svg className="mr-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
-            </svg>
-            {t('viewDocument', { documentName: details.document_name || t('document') })}
-          </a>
+          {details.document_method === 'email' ? (
+                                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4">
+               <div className="flex items-center space-x-2 md:space-x-3">
+                 <div className="flex-shrink-0">
+                   <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                     <svg className="h-4 w-4 md:h-5 md:w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+                       <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                       <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                     </svg>
+                   </div>
+                 </div>
+                 <div className="flex-1 min-w-0">
+                   <div className="text-blue-900">
+                     <p className="text-sm md:text-base font-medium">
+                       Documento inviato a <span className="font-semibold">{details.email_address}</span> il giorno <span className="font-medium">{details.email_date ? new Date(details.email_date).toLocaleDateString('it-IT') : 'data non specificata'}</span>
+                     </p>
+                     {details.document_name && (
+                       <p className="text-xs text-blue-700 mt-1">
+                         <span className="font-medium">Titolo:</span> {details.document_name}
+                       </p>
+                     )}
+                   </div>
+                 </div>
+               </div>
+             </div>
+                     ) : (
+                                         <div className="bg-gradient-to-t from-blue-50 to-white border-2 border-blue-200 rounded-lg p-3 md:p-4">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0">
+                  <div className="flex items-center space-x-2 md:space-x-3">
+                                         {/* Edit Icon */}
+                     <div className="p-1.5 md:p-2 bg-blue-100 text-blue-600 rounded-lg">
+                       <img src="/icons/sanity/edit.svg" alt="Edit" className="w-5 h-5 md:w-7 md:h-7" />
+                     </div>
+                    {/* File Type Icon */}
+                    <div className="flex items-center justify-center">
+                      <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    {/* Document Title */}
+                    <div className="flex-1 min-w-0">
+                      <h5 className="text-sm md:text-base font-medium text-gray-900 truncate">
+                        {details.document_name || t('document')}
+                      </h5>
+                    </div>
+                  </div>
+                  {/* Action Buttons */}
+                  <div className="flex items-center gap-1.5 md:gap-2">
+                    <button
+                      onClick={handleSecureView}
+                      disabled={isViewing}
+                      className="inline-flex items-center px-2 py-1.5 md:px-3 md:py-2 border border-gray-300 text-xs md:text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                    >
+                      <svg className="mr-1.5 md:mr-2 h-3 w-3 md:h-4 md:w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                      </svg>
+                      {isViewing ? t('loading') : t('view')}
+                    </button>
+                    <button
+                      onClick={handleSecureDownload}
+                      disabled={isDownloading}
+                      className="inline-flex items-center px-2 py-1.5 md:px-3 md:py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50 text-xs md:text-sm font-medium"
+                    >
+                      <svg
+                        className="w-3 h-3 md:w-4 md:h-4 mr-1.5 md:mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                        />
+                      </svg>
+                      {isDownloading ? t('downloading') : t("download")}
+                    </button>
+                  </div>
+                </div>
+               {error && <p className="text-sm text-red-600 mt-3">{error}</p>}
+             </div>
+           )}
         </div>
       </div>
-
-      <div>
-        <label className="text-sm font-medium text-gray-900">Signature Method</label>
-        <div className="mt-2 space-y-4">
-          <div className="flex items-center space-x-4">
-            <button
-              type="button"
-              onClick={() => setSignatureMethod('draw')}
-              className={`px-4 py-2 text-sm font-medium rounded-md ${
-                signatureMethod === 'draw'
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              Draw
-            </button>
-            <button
-              type="button"
-              onClick={() => setSignatureMethod('type')}
-              className={`px-4 py-2 text-sm font-medium rounded-md ${
-                signatureMethod === 'type'
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              Type
-            </button>
-            <button
-              type="button"
-              onClick={() => setSignatureMethod('upload')}
-              className={`px-4 py-2 text-sm font-medium rounded-md ${
-                signatureMethod === 'upload'
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              Upload
-            </button>
-          </div>
-
-          {signatureMethod === 'draw' && (
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
-              <div className="text-sm text-gray-500 text-center">
-                Drawing pad will be implemented here
-              </div>
-            </div>
-          )}
-
-          {signatureMethod === 'type' && (
-            <input
-              type="text"
-              value={signatureData}
-              onChange={(e) => setSignatureData(e.target.value)}
-              placeholder="Type your full name"
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-            />
-          )}
-
-          {signatureMethod === 'upload' && (
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
-              <div className="text-center">
-                <svg className="mx-auto h-12 w-12 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                </svg>
-                <p className="mt-1 text-sm text-gray-600">Upload a signature image</p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0]
-                    if (file) {
-                      const reader = new FileReader()
-                      reader.onloadend = () => {
-                        setSignatureData(reader.result as string)
-                      }
-                      reader.readAsDataURL(file)
-                    }
-                  }}
-                  className="mt-2 block w-full text-sm text-gray-500
-                    file:mr-4 file:py-2 file:px-4
-                    file:rounded-md file:border-0
-                    file:text-sm file:font-medium
-                    file:bg-blue-50 file:text-blue-700
-                    hover:file:bg-blue-100"
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-
-
-      <div className="flex items-center justify-between space-x-4">
-        <button
-          type="button"
-          onClick={() => {
-            const rejectDialog = document.getElementById('reject-dialog')
-            if (rejectDialog instanceof HTMLDialogElement) {
-              rejectDialog.showModal()
-            }
-          }}
-          className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-        >
-          Reject
-        </button>
-        <button
-          type="button"
-          onClick={handleSign}
-          disabled={!signatureData}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-        >
-          Sign Document
-        </button>
-      </div>
-
-      <dialog
-        id="reject-dialog"
-        className="rounded-lg shadow-xl p-6 max-w-sm w-full"
-      >
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
-          Reject Document
-        </h3>
-        <div className="space-y-4">
-          <div>
-            <label htmlFor="rejection-reason" className="block text-sm font-medium text-gray-700">
-              Reason for Rejection
-            </label>
-            <textarea
-              id="rejection-reason"
-              value={rejectionReason}
-              onChange={(e) => setRejectionReason(e.target.value)}
-              rows={3}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-              placeholder="Please provide a reason for rejecting this document"
-            />
-          </div>
-          <div className="flex justify-end space-x-3">
-            <button
-              type="button"
-              onClick={() => {
-                const rejectDialog = document.getElementById('reject-dialog')
-                if (rejectDialog instanceof HTMLDialogElement) {
-                  rejectDialog.close()
-                }
-              }}
-              className="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                handleReject()
-                const rejectDialog = document.getElementById('reject-dialog')
-                if (rejectDialog instanceof HTMLDialogElement) {
-                  rejectDialog.close()
-                }
-              }}
-              className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-            >
-              Reject
-            </button>
-          </div>
-        </div>
-      </dialog>
     </div>
   )
 } 

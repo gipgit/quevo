@@ -126,13 +126,17 @@ export interface ResourceLinkDetails {
 
 // Signature Request
 export interface SignatureRequestDetails {
-  document_url: string;
+  document_url?: string;
   document_name: string;
+  document_method?: 'upload' | 'email';
+  email_address?: string;
+  email_date?: string;
   signature_status: 'pending' | 'signed' | 'rejected';
-  signature_method: 'draw' | 'type' | 'upload';
+  signature_method?: 'draw' | 'type' | 'upload';
   signature_date?: string;
   signature_image_url?: string;
   rejection_reason?: string;
+  urgency_level?: 'low' | 'medium' | 'high';
 }
 
 // Approval Request
@@ -215,10 +219,7 @@ export interface UserDefinedTag {
   updated_at: string;
 }
 
-export interface ServiceBoardActionTag {
-  action_id: string;
-  tag_id: string;
-}
+
 
 // ServiceBoardActionTemplate interface removed - now handled by action-configs.ts
 
@@ -238,7 +239,6 @@ export interface ServiceBoardAction {
   due_date?: string;
   is_customer_action_required: boolean;
   is_archived: boolean;
-  tags?: UserDefinedTag[]; // Associated tags
 }
 
 // Type Guards
@@ -437,12 +437,20 @@ export function isSignatureRequestDetails(details: any): details is SignatureReq
   return (
     details &&
     typeof details === 'object' &&
-    typeof details.document_url === 'string' &&
     typeof details.document_name === 'string' &&
     typeof details.signature_status === 'string' &&
     ['pending', 'signed', 'rejected'].includes(details.signature_status) &&
-    typeof details.signature_method === 'string' &&
-    ['draw', 'type', 'upload'].includes(details.signature_method)
+    // Check document_method if present
+    (details.document_method === undefined || 
+     (typeof details.document_method === 'string' && ['upload', 'email'].includes(details.document_method))) &&
+    // For upload method, document_url should be present
+    (details.document_method !== 'upload' || typeof details.document_url === 'string') &&
+    // For email method, email_address and email_date should be present
+    (details.document_method !== 'email' || 
+     (typeof details.email_address === 'string' && typeof details.email_date === 'string')) &&
+    // signature_method is optional now
+    (details.signature_method === undefined || 
+     (typeof details.signature_method === 'string' && ['draw', 'type', 'upload'].includes(details.signature_method)))
   );
 }
 

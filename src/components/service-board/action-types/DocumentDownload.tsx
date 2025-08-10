@@ -61,11 +61,11 @@ export default function DocumentDownload({ details, action_id }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex items-center gap-3 min-w-0">
-          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ${typeClasses}`}>
+        <div className="flex items-center gap-2 lg:gap-3 min-w-0">
+          <span className={`inline-flex items-center px-2 py-1 lg:px-2.5 lg:py-1 rounded-lg text-xs font-medium flex-shrink-0 ${typeClasses}`}>
             {typeLabel}
           </span>
-          <h4 className="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900 truncate">
+          <h4 className="text-sm lg:text-xl font-medium text-gray-900 truncate">
             {details.document_name || t('document')}
           </h4>
         </div>
