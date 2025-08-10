@@ -144,16 +144,17 @@ export async function GET(request: NextRequest) {
       orderBy: [
         { priority: 'desc' },
         { created_at: 'desc' }
-      ],
-      include: {
-        related_action: {
-          select: {
-            action_id: true,
-            action_title: true,
-            action_type: true
-          }
-        }
-      }
+      ]
+      // TODO: Uncomment after Prisma client is regenerated
+      // include: {
+      //   serviceboardaction: {
+      //     select: {
+      //       action_id: true,
+      //       action_title: true,
+      //       action_type: true
+      //     }
+      //   }
+      // }
     });
 
     return NextResponse.json({
