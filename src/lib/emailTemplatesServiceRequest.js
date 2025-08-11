@@ -84,15 +84,14 @@ export const customerServiceRequestConfirmationEmail = `<!DOCTYPE html>
 </head>
 <body style="line-height: 1.4;">
     <div class="email-container" style="margin: 0 auto; padding: 35px 15px; text-align: center;">
-        <p style="font-size: 15px; margin-bottom: 10px; line-height: 1.2;">Grazie, {{customer_name}}!</p>
-        <p style="font-size: 14px; margin-bottom: 20px;">Ecco il riepilogo della tua richiesta servizio per <strong>{{service_name}}</strong> da <strong>{{business_name}}</strong>.</p>
+        <p style="font-size: 18px; margin-bottom: 10px; line-height: 1.2;">Grazie, {{customer_name}}!</p>
+        <p style="font-size: 14px; margin-bottom: 20px;">Ecco il link per controllare lo stato del tuo servizio per <strong>{{service_name}}</strong> da <strong>{{business_name}}</strong>.</p>
         <div style="margin: 0 auto; max-width: 580px; background-color: #ffffff; border: 1px solid gray; padding: 35px 20px; border-radius: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px;">
-            <p style="font-size: 12px;"><strong>Dettagli Richiesta:</strong></p>
-            <ul style="font-size: 14px; list-style: none; padding-left: 0; margin-left: 0;">
-                <li><strong>N. Richiesta:</strong> {{request_reference}}</li>
-                <li><strong>Servizio:</strong> {{service_name}}</li>
-                <li><strong>Data Richiesta:</strong> {{request_date}}</li>
-                <li><strong>Prezzo:</strong> {{price_subtotal}}</li>
+            <ul style="list-style: none; padding-left: 0; margin-left: 0;">
+                <li style="font-size: 16px;"><strong>Servizio:</strong> {{service_name}}</li>
+                <li style="font-size: 14px;"><strong>Data Richiesta:</strong> {{request_date}}</li>
+                <li style="font-size: 13px;"><strong>Prezzo:</strong> {{price_subtotal}}</li>
+                <li style="font-size: 12px;"><strong>N. Richiesta:</strong> {{request_reference}}</li>
                 <li><strong>Note:</strong> {{customer_notes}}</li>
             </ul>
             <p style="margin-top: 20px">Puoi visualizzare i dettagli e lo stato della tua richiesta servizio qui:</p>

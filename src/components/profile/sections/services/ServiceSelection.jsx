@@ -28,7 +28,7 @@ export default function ServiceSelection({
     return (
         <div className="x" style={{ color: themeColorText}}>
             {hasServices && (
-                <p className="text-xs lg:text-sm mb-2 lg:mb-2">{t('chooseService')}</p>
+                <p className="text-xs lg:text-2xl lg:font-bold mb-2 lg:mb-2">{t('chooseService')}</p>
             )}
 
             {/* Render categorized services */}
@@ -38,7 +38,7 @@ export default function ServiceSelection({
 
                     return (
                         <div key={categoryGroup.category_name} className="mb-2 lg:mb-4">
-                            <p className="text-xs lg:text-sm opacity-60 font-medium mb-3 border-b pb-0 lg:pb-1" style={{ borderColor: themeColorText + '50' }}>{categoryGroup.category_name}</p>
+                            <p className="text-xs lg:text-sm opacity-60 font-medium mb-1 pb-0 lg:pb-1" style={{ borderColor: themeColorText + '50' }}>{categoryGroup.category_name}</p>
                             {categoryGroup.services.map(service => (
                                 <div
                                     key={service.service_id}

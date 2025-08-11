@@ -779,7 +779,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                   <p className="font-semibold">{businessData.business_name}</p>
                   {boardData.service && (
                        <div className="text-sm">
-                            <p className="text-sm opacity-80 font-bold">{boardData.service.service_name}</p>
+                            <p className="text-sm opacity-80 font-medium">{boardData.service.service_name}</p>
                        </div>
                   )}
                   {boardData.board_description && (
@@ -788,7 +788,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                 </div>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className={`rounded-lg p-1 lg:px-2 lg:py-1 font-medium whitespace-nowrap ${
+                  <span className={`rounded-lg px-2 py-1 lg:px-2 lg:py-1 font-medium whitespace-nowrap ${
                     boardData.status === 'active' ? 'bg-green-100 text-green-800 border border-green-200' :
                     boardData.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
                     boardData.status === 'completed' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
@@ -797,16 +797,15 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                   }`}>{getStatusText(boardData.status, tServiceBoard)}</span>
                   <button
                     onClick={() => setShowShareModal(true)}
-                    className="lg:hidden flex items-center gap-1 px-2 py-1 bg-gray-600 text-white rounded text-xs hover:bg-gray-700 transition-colors"
+                    className="lg:hidden flex items-center gap-1 px-2 py-1 bg-gray-600 text-white rounded-lg text-xs hover:bg-gray-700 transition-colors"
                   >
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
                     </svg>
                     Share
                   </button>
-                  <span className='border-2 border-gray-200 rounded px-2 py-1 text-xs whitespace-nowrap'>Ref: {params.board_ref}</span>
-                  <span>•</span>
-                  <span className='text-xs whitespace-nowrap'>Created {getRelativeTime(boardData.created_at, tServiceBoard)}</span>
+                  <span className='border-1 border-gray-400 rounded-lg px-2 py-1 text-xs whitespace-nowrap'>Ref: {params.board_ref}</span>
+                  <span className='text-xs whitespace-nowrap'>{getRelativeTime(boardData.created_at, tServiceBoard)}</span>
                 </div>
               </div>
             )}
@@ -1273,7 +1272,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                 </div>
               ))}
 
-              {/* Service Request as the oldest/most recent step (at the bottom) */}
+              {/* Service Request - First Step (at the bottom) */}
               {boardData?.servicerequest && (
                 <div className="relative pl-1 lg:pl-10">
                   <div className="absolute left-[-7px] lg:left-[20px] -translate-x-1/2 w-4 h-4 md:w-5 md:h-5 rounded-full border-2 bg-blue-500 border-blue-600"></div>
@@ -1415,15 +1414,15 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                     {/* Selected Service Items */}
                     {boardData.servicerequest.selected_service_items_snapshot && boardData.servicerequest.selected_service_items_snapshot.length > 0 && (
                       <div className="mt-6 pt-4 border-t border-gray-200">
-                        <h4 className="text-sm font-medium text-gray-900 mb-3">{tServiceBoard('selectedServiceItems')}</h4>
-                        <div className="space-y-3">
+                        <h4 className="text-sm font-bold text-gray-900 mb-3">{tServiceBoard('selectedServiceItems')}</h4>
+                        <div className="space-y-2">
                           {boardData.servicerequest.selected_service_items_snapshot.map((item, index) => (
-                            <div key={index} className="bg-gray-50 p-3 border-1 border-gray-300 rounded-md">
+                            <div key={index} className="border-1 border-b border-gray-300">
                               <div className="flex flex-col lg:flex-row justify-between lg:items-center">
-                                  <h5 className="text-sm lg:text-md font-medium text-gray-900">{item.item_name}</h5>
-                                  <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
-                                    <span>{tServiceBoard('quantity')}: {item.quantity}</span>
-                                    <span>{tServiceBoard('price')}: €{parseFloat(item.price_at_request.toString()).toFixed(2)}</span>
+                                  <h5 className="text-xs lg:text-sm font-medium text-gray-900">{item.item_name}</h5>
+                                  <div className="flex items-center gap-2 lg:gap-4 mt-1 lg:mt-2 text-xs text-gray-500">
+                                    <span>x {item.quantity}</span>
+                                    <span>( €{parseFloat(item.price_at_request.toString()).toFixed(2)} )</span>
                                   </div>
                               </div>
                             </div>
@@ -1444,7 +1443,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                     {/* Question Responses */}
                     {boardData.servicerequest.question_responses_snapshot && boardData.servicerequest.question_responses_snapshot.length > 0 && (
                       <div className="mt-6 pt-4 border-t border-gray-200">
-                        <h4 className="text-sm font-medium text-gray-900 mb-3">{tServiceBoard('questionResponses')}</h4>
+                        <h4 className="text-sm font-bold text-gray-900 mb-3">{tServiceBoard('questionResponses')}</h4>
                         <div className="space-y-3">
                           {boardData.servicerequest.question_responses_snapshot.map((response, index) => (
                             <div key={index} className="border-b-2">
@@ -1473,14 +1472,14 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                     {/* Requirement Responses */}
                     {boardData.servicerequest.requirement_responses_snapshot && boardData.servicerequest.requirement_responses_snapshot.length > 0 && (
                       <div className="mt-6 pt-4 border-t border-gray-200">
-                        <h4 className="text-sm font-medium text-gray-900 mb-3">{tServiceBoard('requirementsConfirmation')}</h4>
+                        <h4 className="text-sm font-bold text-gray-900 mb-3">{tServiceBoard('requirementsConfirmation')}</h4>
                         <div className="space-y-3">
                           {boardData.servicerequest.requirement_responses_snapshot.map((response, index) => (
                             <div key={index} className="border-b-2">
-                              <div className="flex items-center justify-between">
+                              <div className="flex flex-col lg:flex-row lg:items-center justify-between">
                                 <div className="flex-1">
                                   {response.title && (
-                                    <h5 className="text-sm font-medium text-gray-900">{response.title}</h5>
+                                    <h5 className="text-xs font-medium text-gray-900">{response.title}</h5>
                                   )}
                                   <p className="text-xs text-gray-500 mb-1">{response.requirements_text}</p>
                                 </div>
@@ -1566,32 +1565,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                   </div>
                 )}
 
-                {/* Social Links */}
-                {businessSettings?.show_socials && filteredSocialLinks.length > 0 && (
-                  <div className="flex flex-wrap justify-center gap-1 mb-4">
-                    {filteredSocialLinks.map((link, index) => (
-                      <div key={index} className="text-center">
-                        <a 
-                          href={link.link_url} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          style={primaryButtonStyle}
-                        >
-                          <div className="link-icon-wrapper w-10 h-10 flex items-center justify-center rounded-full">
-                            {link.icon && (
-                              <Image
-                                src={link.icon}
-                                alt={link.label}
-                                width={24}
-                                height={24}
-                              />
-                            )}
-                          </div>
-                        </a>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                
 
                 {/* Contact and Payment Buttons */}
                 <div className="flex flex-wrap justify-center items-center gap-2 mb-4">
@@ -1601,12 +1575,12 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                       className={circularButtonBaseClass} 
                       style={primaryButtonStyle}
                     >
-                      <div className="link-icon-wrapper w-12 h-12 flex items-center justify-center rounded-full">
+                      <div className="link-icon-wrapper w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-full">
                         <Image
                           src="/icons/iconsax/phone.svg"
                           alt={t('call')}
-                          width={24}
-                          height={24}
+                          width={22}
+                          height={22}
                           style={getButtonIconStyle()}
                         />
                       </div>
@@ -1619,12 +1593,12 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                       className={circularButtonBaseClass} 
                       style={primaryButtonStyle}
                     >
-                      <div className="link-icon-wrapper w-12 h-12 flex items-center justify-center rounded-full">
+                      <div className="link-icon-wrapper w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-full">
                         <Image
                           src="/icons/iconsax/email.svg"
                           alt={t('email')}
-                          width={24}
-                          height={24}
+                          width={22}
+                          height={22}
                           style={getButtonIconStyle()}
                         />
                       </div>
@@ -1652,8 +1626,12 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                       href={googleReviewLinkUrl} 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="btn-google-review hover:underline font-semibold text-sm flex items-center justify-center mx-auto" 
-                      style={{ color: themeColorText || '#000000' }}
+                      className="px-2 py-1 rounded-lg w-fit font-semibold text-sm flex items-center justify-center mx-auto" 
+                      style={{
+                        backgroundColor: themeColorBackgroundCard || '#ffffff',
+                        color: themeColorText || '#000000',
+                        border: `2px solid ${themeColorText || '#000000'}`
+                      }}
                     >
                       {t('leaveReview')}
                       <Image
@@ -1664,6 +1642,33 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                         className="inline-block ml-1"
                       />
                     </a>
+                  </div>
+                )}
+
+                {/* Social Links */}
+                {businessSettings?.show_socials && filteredSocialLinks.length > 0 && (
+                  <div className="flex flex-wrap justify-center gap-1 mb-4">
+                    {filteredSocialLinks.map((link, index) => (
+                      <div key={index} className="text-center">
+                        <a 
+                          href={link.link_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          style={primaryButtonStyle}
+                        >
+                          <div className="link-icon-wrapper w-8 h-8 flex items-center justify-center rounded-full">
+                            {link.icon && (
+                              <Image
+                                src={link.icon}
+                                alt={link.label}
+                                width={22}
+                                height={22}
+                              />
+                            )}
+                          </div>
+                        </a>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>

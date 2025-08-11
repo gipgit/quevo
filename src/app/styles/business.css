@@ -144,24 +144,7 @@
   color: inherit;
   text-decoration: underline;
 }
-.btn-google-review {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border-radius: 9999px;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-  font-size: .9em;
-}
-.btn-google-review img {
-  width: 24px;
-  height: 24px;
-  vertical-align: middle;
-}
 
- 
 .profile-cover{
     background: #666;
     overflow: hidden;
