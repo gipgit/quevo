@@ -34,7 +34,8 @@ import {
   SunIcon,
   MoonIcon,
   BellIcon,
-  ShareIcon
+  ShareIcon,
+  UsersIcon
 } from "@heroicons/react/24/outline"
 
 interface DashboardLayoutProps {
@@ -60,9 +61,20 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [copied, setCopied] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
-  const { currentBusiness, businesses, switchBusiness, loading, userPlan, userManager } = useBusiness()
+  const { currentBusiness, businesses, switchBusiness, loading, userPlan, userManager, businessSwitchKey } = useBusiness()
   const { isModalOpen, setIsModalOpen, currentLocale, availableLocales, switchLocale } = useLocaleSwitcher()
   const { theme, toggleTheme } = useTheme()
+  
+  // Domain state to avoid hydration mismatch
+  const [DOMAIN, setDOMAIN] = useState("https://quevo.vercel.app")
+  
+  // Set the correct domain after component mounts
+  useEffect(() => {
+    const isLocalhost = window.location.hostname.includes("localhost")
+    setDOMAIN(isLocalhost ? "http://localhost:3000" : "https://quevo.vercel.app")
+  }, [])
+
+
 
   useEffect(() => {
     // If we have userManager but no businesses, redirect to onboarding
@@ -132,6 +144,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     { href: "/dashboard/service-requests", label: t("nav.serviceRequests") || "Richieste Servizi", icon: ClipboardDocumentListIcon },
     { href: "/dashboard/service-boards", label: t("nav.serviceBoards") || "Bacheche Servizi", icon: ClipboardDocumentIcon },
     { href: "/dashboard/appointments", label: t("nav.appointments") || "Appuntamenti", icon: CalendarIcon },
+    { href: "/dashboard/clients", label: t("nav.clients") || "Clients", icon: UsersIcon },
+    { href: "/dashboard/marketing", label: t("nav.marketing") || "Marketing", icon: ShareIcon },
   ]
 
   const reportItems = [
@@ -151,10 +165,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     console.log("Support request clicked")
   }
 
-  // Domain constant for public link
-  const DOMAIN = typeof window !== "undefined" && window.location.hostname.includes("localhost")
-    ? "http://localhost:3000"
-    : "https://quevo.vercel.app"
+  // Domain constant for public link - will be set after component mounts to avoid hydration mismatch
 
   // Public link format: DOMAIN/business_urlname
   const publicUrl = `${DOMAIN}/${currentBusiness?.business_urlname || ""}`
@@ -844,6 +855,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         isOpen={showBusinessModal} 
         onClose={() => setShowBusinessModal(false)}
       />
+
+
 
       {/* Locale Selection Modal */}
       <LocaleSelectModal

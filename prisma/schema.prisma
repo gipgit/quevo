@@ -51,13 +51,10 @@ model business {
   service                        service[]
   serviceboard                   serviceboard[]
   servicecategory                servicecategory[]
+  serviceeventavailability       serviceeventavailability[]
   servicerequest                 servicerequest[]
-  servicerequestavailability     servicerequestavailability[]
   supportrequest                 supportrequest[]
   surveyquestionprebuiltfavorite surveyquestionprebuiltfavorite[]
-
-  @@index([manager_id], map: "idx_business_manager_id")
-  @@index([business_urlname], map: "idx_business_urlname")
 }
 
 model businessad {
@@ -94,7 +91,6 @@ model businesslink {
   business         business @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
 
   @@unique([business_id, link_type])
-  @@index([business_id], map: "idx_businesslink_business_id")
 }
 
 model businesspaymentmethod {
@@ -107,7 +103,6 @@ model businesspaymentmethod {
   paymentmethod              paymentmethod @relation(fields: [payment_method_id], references: [payment_method_id], onDelete: Cascade)
 
   @@unique([business_id, payment_method_id])
-  @@index([business_id], map: "idx_businesspaymentmethod_business_id")
 }
 
 model businesspoints {
@@ -139,8 +134,6 @@ model businessprofilesettings {
   show_btn_order         Boolean?  @default(false)
   last_updated           DateTime? @default(now()) @db.Timestamp(6)
   business               business  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
-
-  @@index([business_id], map: "idx_businessprofilesettings_business_id")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -153,8 +146,6 @@ model businessreward {
   reward_end_date    DateTime? @db.Date
   quantity_available Int?
   business           business  @relation(fields: [business_id], references: [business_id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([business_id], map: "idx_businessreward_business_id")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -239,8 +230,6 @@ model promo {
   usercustomerredemption usercustomerredemption[]
   userguest              userguest[]
   userguestredemption    userguestredemption[]
-
-  @@index([business_id], map: "idx_promo_business_id")
 }
 
 model promochallenge {
@@ -541,10 +530,6 @@ model product {
   business         business           @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
   productcategory  productcategory?   @relation(fields: [category_id], references: [category_id])
   productvariation productvariation[]
-
-  @@index([business_id, category_id], map: "idx_product_business_category")
-  @@index([business_id], map: "idx_product_business_id")
-  @@index([category_id], map: "idx_product_category_id")
 }
 
 model productcategory {
@@ -558,7 +543,6 @@ model productcategory {
   business      business  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
 
   @@unique([business_id, category_name])
-  @@index([business_id], map: "idx_productcategory_business_id")
 }
 
 model productvariation {
@@ -575,7 +559,6 @@ model productvariation {
   product                product   @relation(fields: [item_id], references: [item_id], onDelete: Cascade)
 
   @@unique([item_id, variation_name])
-  @@index([item_id], map: "idx_productvariation_item_id")
 }
 
 model service {
@@ -591,6 +574,7 @@ model service {
   price_unit              String?                   @db.VarChar(50)
   has_items               Boolean?                  @default(false)
   date_selection          Boolean?                  @default(false)
+  quotation_available     Boolean?                  @default(false)
   is_active               Boolean?                  @default(true)
   display_order           Int?                      @default(0)
   date_created            DateTime?                 @default(now()) @db.Timestamp(6)
@@ -598,14 +582,11 @@ model service {
   business                business                  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
   servicecategory         servicecategory?          @relation(fields: [category_id], references: [category_id])
   serviceboard            serviceboard[]
+  serviceevent            serviceevent[]
   serviceitem             serviceitem[]
   servicequestion         servicequestion[]
   servicerequest          servicerequest[]
   servicerequirementblock servicerequirementblock[]
-
-  @@index([business_id, category_id], map: "idx_service_business_category")
-  @@index([business_id], map: "idx_service_business_id")
-  @@index([category_id], map: "idx_service_category_id")
 }
 
 model serviceitem {
@@ -633,10 +614,8 @@ model servicerequest {
   customer_user_id                  String?                             @db.Uuid
   customer_name                     String?                             @db.VarChar(50)
   customer_phone                    String?                             @db.VarChar(50)
-  staff_id                          Int?
-  request_date                      DateTime?                           @db.Date
-  request_time_start                DateTime?                           @db.Time(6)
-  request_time_end                  DateTime?                           @db.Time(6)
+  event_id                          Int?
+  request_datetimes                 Json?
   status                            request_status_type                 @default(pending)
   customer_notes                    String?
   internal_notes                    String?                             @db.VarChar(200)
@@ -644,31 +623,17 @@ model servicerequest {
   selected_service_items_snapshot   Json?
   question_responses_snapshot       Json?
   requirement_responses_snapshot    Json?
+  staff_id                          Int?
   date_created                      DateTime?                           @default(now()) @db.Timestamp(6)
   date_updated                      DateTime?                           @default(now()) @db.Timestamp(6)
   serviceboard                      serviceboard[]
   business                          business                            @relation(fields: [business_id], references: [business_id])
   usercustomer                      usercustomer?                       @relation(fields: [customer_user_id], references: [user_id], onDelete: Restrict)
+  serviceevent                      serviceevent?                       @relation(fields: [event_id], references: [event_id])
   service                           service                             @relation(fields: [service_id], references: [service_id])
   servicerequestmessage             servicerequestmessage[]
   servicerequestselectedserviceitem servicerequestselectedserviceitem[]
   servicerequeststatushistory       servicerequeststatushistory[]
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model servicerequestavailability {
-  availability_id     Int       @id @default(autoincrement())
-  business_id         String    @db.Uuid
-  staff_id            Int?
-  day_of_week         Int       @db.SmallInt
-  time_start          DateTime  @db.Time(6)
-  time_end            DateTime  @db.Time(6)
-  is_recurring        Boolean?  @default(true)
-  date_effective_from DateTime? @db.Date
-  date_effective_to   DateTime? @db.Date
-  date_created        DateTime? @default(now()) @db.Timestamp(6)
-  date_updated        DateTime? @default(now()) @db.Timestamp(6)
-  business            business  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
 }
 
 model servicerequestmessage {
@@ -715,7 +680,6 @@ model servicecategory {
   business      business  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
 
   @@unique([business_id, category_name], map: "uq_servicecategory_name_business")
-  @@index([business_id], map: "idx_servicecategory_business_id")
 }
 
 model appointment {
@@ -856,6 +820,202 @@ model supportrequest {
   @@index([status], map: "idx_supportrequest_status")
 }
 
+model emailratelimit {
+  id               Int       @id @default(autoincrement())
+  business_id      String    @unique @db.Uuid
+  tokens_available Int       @default(0)
+  tokens_capacity  Int       @default(0)
+  fill_rate        Int       @default(0)
+  last_refill      DateTime? @default(now()) @db.Timestamptz(6)
+  created_at       DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@index([business_id], map: "idx_emailratelimit_business")
+}
+
+model emailcampaign {
+  id                     Int                      @id @default(autoincrement())
+  business_id            String                   @db.Uuid
+  campaign_name          String                   @db.VarChar(255)
+  subject                String                   @db.VarChar(255)
+  content                String
+  from_name              String                   @db.VarChar(255)
+  from_email             String                   @db.VarChar(255)
+  reply_to               String?                  @db.VarChar(255)
+  recipient_count        Int                      @default(0)
+  sent_count             Int                      @default(0)
+  failed_count           Int                      @default(0)
+  status                 String                   @default("draft") @db.VarChar(50)
+  scheduled_at           DateTime?                @db.Timestamptz(6)
+  sent_at                DateTime?                @db.Timestamptz(6)
+  created_at             DateTime?                @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime?                @default(now()) @db.Timestamptz(6)
+  emailcampaignrecipient emailcampaignrecipient[]
+
+  @@index([status], map: "idx_emailcampaign_status")
+  @@index([business_id], map: "idx_emailcampaign_business")
+}
+
+model emailcampaignrecipient {
+  id            Int            @id @default(autoincrement())
+  campaign_id   Int?
+  customer_id   String         @db.Uuid
+  email         String         @db.VarChar(255)
+  status        String         @default("pending") @db.VarChar(50)
+  sent_at       DateTime?      @db.Timestamptz(6)
+  error_message String?
+  created_at    DateTime?      @default(now()) @db.Timestamptz(6)
+  emailcampaign emailcampaign? @relation(fields: [campaign_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([status], map: "idx_emailcampaignrecipient_status")
+  @@index([campaign_id], map: "idx_emailcampaignrecipient_campaign")
+}
+
+model quotationtemplate {
+  id            Int       @id @default(autoincrement())
+  business_id   String    @db.Uuid
+  template_name String    @db.VarChar(255)
+  template_data Json
+  is_default    Boolean?  @default(false)
+  created_at    DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@unique([business_id, template_name])
+  @@index([business_id], map: "idx_quotationtemplate_business")
+}
+
+model quotation {
+  id               Int       @id @default(autoincrement())
+  business_id      String    @db.Uuid
+  request_id       String    @db.Uuid
+  quotation_number String    @unique @db.VarChar(50)
+  quotation_data   Json
+  status           String?   @default("draft") @db.VarChar(50)
+  sent_at          DateTime? @db.Timestamptz(6)
+  expires_at       DateTime? @db.Timestamptz(6)
+  created_at       DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@index([status], map: "idx_quotation_status")
+  @@index([business_id], map: "idx_quotation_business")
+  @@index([request_id], map: "idx_quotation_request")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model attachments {
+  id                 BigInt            @id @default(autoincrement())
+  file_path          String            @db.VarChar(255)
+  file_name          String?           @db.VarChar(255)
+  feedback_id        BigInt?
+  support_request_id BigInt?
+  user_id            String?           @db.Uuid
+  created_at         DateTime          @default(now()) @db.Timestamptz(6)
+  feedback           feedback?         @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  support_requests   support_requests? @relation(fields: [support_request_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model feedback {
+  id                         BigInt                      @id @default(autoincrement())
+  user_id                    String?                     @db.Uuid
+  feedback_type              feedback_type_enum
+  message                    String
+  status                     feedback_status_enum        @default(new)
+  is_anonymous               Boolean                     @default(false)
+  created_at                 DateTime                    @default(now()) @db.Timestamptz(6)
+  updated_at                 DateTime                    @default(now()) @db.Timestamptz(6)
+  attachments                attachments[]
+  feedback_bug_reports       feedback_bug_reports?
+  feedback_feature_requests  feedback_feature_requests?
+  feedback_language_requests feedback_language_requests?
+  feedback_suggestions       feedback_suggestions?
+}
+
+model feedback_bug_reports {
+  id                 BigInt             @id @default(autoincrement())
+  feedback_id        BigInt             @unique
+  steps_to_reproduce String?
+  app_version        String?            @db.VarChar(50)
+  device_info        String?
+  expected_vs_actual String?
+  severity           bug_severity_enum?
+  created_at         DateTime           @default(now()) @db.Timestamptz(6)
+  feedback           feedback           @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model feedback_feature_requests {
+  id          BigInt   @id @default(autoincrement())
+  feedback_id BigInt   @unique
+  use_case    String?
+  impact      String?  @db.VarChar(20)
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  feedback    feedback @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model feedback_language_requests {
+  id            BigInt   @id @default(autoincrement())
+  feedback_id   BigInt   @unique
+  language_code String   @db.VarChar(10)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  feedback      feedback @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model feedback_suggestions {
+  id          BigInt   @id @default(autoincrement())
+  feedback_id BigInt   @unique
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  feedback    feedback @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model support_requests {
+  id                  BigInt                  @id @default(autoincrement())
+  user_id             String?                 @db.Uuid
+  subject             String                  @db.VarChar(255)
+  message             String
+  issue_type          support_issue_type_enum
+  priority            support_priority_enum   @default(medium)
+  status              support_status_enum     @default(open)
+  assigned_to_user_id String?                 @db.Uuid
+  created_at          DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime                @default(now()) @db.Timestamptz(6)
+  attachments         attachments[]
+}
+
+model serviceevent {
+  event_id                 Int                        @id @default(autoincrement())
+  service_id               Int
+  event_name               String                     @db.VarChar(255)
+  event_description        String?
+  event_type               String                     @default("appointment") @db.VarChar(50)
+  duration_minutes         Int?                       @default(60)
+  buffer_minutes           Int?                       @default(0)
+  is_required              Boolean?                   @default(true)
+  display_order            Int?                       @default(0)
+  is_active                Boolean?                   @default(true)
+  date_created             DateTime?                  @default(now()) @db.Timestamp(6)
+  date_updated             DateTime?                  @default(now()) @db.Timestamp(6)
+  service                  service                    @relation(fields: [service_id], references: [service_id], onDelete: Cascade)
+  serviceeventavailability serviceeventavailability[]
+  servicerequest           servicerequest[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model serviceeventavailability {
+  availability_id     Int           @id @default(autoincrement())
+  event_id            Int?
+  business_id         String        @db.Uuid
+  staff_id            Int?
+  day_of_week         Int           @db.SmallInt
+  time_start          DateTime      @db.Time(6)
+  time_end            DateTime      @db.Time(6)
+  is_recurring        Boolean?      @default(true)
+  date_effective_from DateTime?     @db.Date
+  date_effective_to   DateTime?     @db.Date
+  date_created        DateTime?     @default(now()) @db.Timestamp(6)
+  date_updated        DateTime?     @default(now()) @db.Timestamp(6)
+  business            business      @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  serviceevent        serviceevent? @relation(fields: [event_id], references: [event_id], onDelete: Cascade)
+}
+
 enum business_sponsorship_level {
   basic
   premium
@@ -940,6 +1100,48 @@ enum support_request_priority {
 }
 
 enum support_request_status {
+  open
+  in_progress
+  resolved
+  closed
+}
+
+enum bug_severity_enum {
+  low
+  medium
+  high
+  critical
+}
+
+enum feedback_status_enum {
+  new
+  in_progress
+  resolved
+  closed
+}
+
+enum feedback_type_enum {
+  bug_report
+  feature_request
+  suggestion
+  language_request
+}
+
+enum support_issue_type_enum {
+  billing
+  account
+  technical
+  other
+}
+
+enum support_priority_enum {
+  low
+  medium
+  high
+  urgent
+}
+
+enum support_status_enum {
   open
   in_progress
   resolved

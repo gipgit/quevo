@@ -58,11 +58,11 @@ export async function GET(request, { params }) {
     console.log("Booking date is not in the past.");
 
     try {
-        // Get business working hours from ServiceRequestAvailability table
+        // Get business working hours from serviceeventavailability table
         const dayOfWeek = bookingDate.getDay();
         console.log("Day of week for bookingDate:", dayOfWeek);
 
-        const availabilitiesForDay = await prisma.servicerequestavailability.findMany({
+        const availabilitiesForDay = await prisma.serviceeventavailability.findMany({
             where: {
                 business_id: businessId, // Use UUID string directly
                 OR: [

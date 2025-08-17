@@ -25,25 +25,21 @@ export async function POST(
     }
 
     // Verify business ownership and appointment exists
-    const appointment = await prisma.servicerequest.findFirst({
+    const appointment = await prisma.appointment.findFirst({
       where: {
-        request_reference: appointment_id,
-        business: {
-          business_id: business_id,
-          OR: [
-            { manager_id: session.user.id },
-            {
-              servicerequest: {
-                some: {
-                  customer_user_id: session.user.id
-                }
-              }
-            }
-          ]
-        }
+        id: appointment_id,
+        business_id: business_id,
+        OR: [
+          { business: { manager_id: session.user.id } },
+          { customer_id: session.user.id }
+        ]
       },
       include: {
-        service: true
+        serviceboard: {
+          include: {
+            service: true
+          }
+        }
       }
     });
 
@@ -56,25 +52,25 @@ export async function POST(
     const newBookingStart = toZonedTime(parseISO(fullBookingDateTimeStr), BUSINESS_TIMEZONE);
     const newBookingEnd = addMinutes(
       newBookingStart, 
-      (appointment.service.duration_minutes || 60) + (appointment.service.buffer_minutes || 0)
+      (appointment.serviceboard.service?.duration_minutes || 60) + (appointment.serviceboard.service?.buffer_minutes || 0)
     );
 
     // Check for time slot availability
-    const existingBookings = await prisma.servicerequest.findMany({
+    const existingBookings = await prisma.appointment.findMany({
       where: {
         business_id: business_id,
-        request_date: new Date(newDate),
-        status: { in: ['pending', 'confirmed'] },
-        request_reference: { not: appointment_id }, // Exclude current appointment
-        request_time_start: { not: null },
-        request_time_end: { not: null }
+        appointment_datetime: {
+          gte: new Date(newDate),
+          lt: new Date(new Date(newDate).getTime() + 24 * 60 * 60 * 1000) // Next day
+        },
+        status: { in: ['scheduled', 'confirmed'] },
+        id: { not: appointment_id } // Exclude current appointment
       }
     });
 
     const isOverlapping = existingBookings.some(existing => {
-      if (!existing.request_time_start || !existing.request_time_end) return false;
-      const existingStart = new Date(existing.request_time_start);
-      const existingEnd = new Date(existing.request_time_end);
+      const existingStart = new Date(existing.appointment_datetime);
+      const existingEnd = addMinutes(existingStart, existing.duration_minutes || 60);
       return (newBookingStart < existingEnd && newBookingEnd > existingStart);
     });
 
@@ -83,13 +79,11 @@ export async function POST(
     }
 
     // Update appointment with new time
-    const updatedAppointment = await prisma.servicerequest.update({
-      where: { request_reference: appointment_id },
+    const updatedAppointment = await prisma.appointment.update({
+      where: { id: appointment_id },
       data: {
-        request_date: new Date(newDate),
-        request_time_start: newBookingStart,
-        request_time_end: newBookingEnd,
-        status: 'confirmed'
+        appointment_datetime: newBookingStart,
+        status: 'scheduled'
       }
     });
 

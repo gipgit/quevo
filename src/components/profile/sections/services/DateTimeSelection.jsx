@@ -29,7 +29,7 @@ const localizer = dateFnsLocalizer({
 
 export default function DateTimeSelection({
     businessId, totalOccupancyDuration, onDateTimeSelect, selectedDateTime,
-    themeColorText, themeColorBackgroundCard, themeColorButton, themeColorBorder, locale, onBack
+    themeColorText, themeColorBackgroundCard, themeColorButton, themeColorBorder, locale, onBack, onSkip, selectedEvent
 }) {
     const t = useTranslations('ServiceRequest');
     const tCommon = useTranslations('Common');
@@ -44,20 +44,21 @@ export default function DateTimeSelection({
     const [loadingSlots, setLoadingSlots] = useState(false);
     const [slotsError, setSlotsError] = useState(null);
 
-    // console.log("Available Days Overview:", availableDaysOverview); // Keep this for debugging!
+    console.log("Available Days Overview:", availableDaysOverview); // Keep this for debugging!
 
     const fetchAvailabilityOverview = useCallback(async (start, end) => {
         setLoadingOverview(true);
         setOverviewError(null);
         try {
-            const response = await fetch(
-                `/api/businesses/${businessId}/availability/overview?startDate=${start.toISOString()}&endDate=${end.toISOString()}`
-            );
+                    const response = await fetch(
+            `/api/businesses/${businessId}/availability/overview?startDate=${start.toISOString()}&endDate=${end.toISOString()}&duration=${totalOccupancyDuration}&eventId=${selectedEvent?.event_id || ''}`
+        );
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || t('failedToLoadAvailability'));
             }
             const data = await response.json();
+            console.log("API Response for availability overview:", data);
             setAvailableDaysOverview(data.availableDates || []);
         } catch (err) {
             console.error("Error fetching availability overview:", err);
@@ -135,25 +136,26 @@ export default function DateTimeSelection({
         onDateTimeSelect({ date: selectedDate, time });
     };
 
-    const dayPropGetter = useCallback((date) => {
-        const dayString = format(date, 'yyyy-MM-dd');
-        const isAvailable = availableDaysOverview.includes(dayString);
-        const today = startOfDay(new Date());
-        const isPastDate = isBefore(date, today);
+    const handleSkip = useCallback(() => {
+        if (onSkip) {
+            onSkip();
+        }
+    }, [onSkip]);
 
+    const dayPropGetter = useCallback((date) => {
+        // Return empty props to let CustomDateCellWrapper handle all styling
         return {
-            // You can still keep this class if you want to apply any other background/border style
-            // to the entire cell for available days, in addition to the circle.
-            // If the circle is the only highlight, this class isn't strictly necessary.
-            className: `${isAvailable && !isPastDate ? 'has-availability' : ''}`,
+            className: '',
             style: {},
         };
-    }, [availableDaysOverview]);
+    }, []);
 
 
     return (
-        <div className="" style={{ color: themeColorText}}>
-            <h3 className="text-sm lg:text-xl font-semibold mb-6 capitalize">{t('selectDate')} - {t('selectTime')}</h3>
+        <div className="flex flex-col h-full p-6" style={{ color: themeColorText}}>
+            <h3 className="text-sm lg:text-xl font-semibold mb-6 capitalize">
+                {t('selectDateAndTime')} {selectedEvent && `per ${selectedEvent.event_title}`}
+            </h3>
             <div className="flex flex-col md:flex-row gap-8">
                 <div className="md:w-3/5">
                     {loadingOverview && (
@@ -180,7 +182,7 @@ export default function DateTimeSelection({
                             min={startOfDay(new Date())}
                             dayPropGetter={dayPropGetter}
                             formats={{
-                                monthHeaderFormat: (date, culture, localizer) => localizer.format(date, 'MMMMPPPP', culture),
+                                monthHeaderFormat: (date, culture, localizer) => localizer.format(date, 'MMMM yyyy', culture),
                                 weekdayFormat: (date, culture, localizer) => localizer.format(date, 'EE', culture),
                                 dayFormat: (date, culture, localizer) => localizer.format(date, 'd', culture),
                             }}
@@ -253,14 +255,25 @@ export default function DateTimeSelection({
                 </div>
             </div>
 
-            <div className="flex justify-start mt-6">
-                <button
-                    onClick={onBack}
-                    className="py-2 px-4 rounded transition-colors"
-                    style={{ backgroundColor: 'transparent', color: themeColorText, border: `1px solid ${themeColorText}` }}
-                >
-                    {tCommon('back')}
-                </button>
+            <div className={`flex ${onBack ? 'justify-between' : 'justify-end'} pt-4 mt-auto sticky bottom-0 bg-gradient-to-t from-white via-white/95 to-transparent border-t border-gray-200 -mx-6 px-6 py-4`}>
+                {onBack && (
+                    <button
+                        onClick={onBack}
+                        className="py-2 px-4 rounded transition-colors"
+                        style={{ backgroundColor: 'transparent', color: themeColorText, border: `1px solid ${themeColorText}` }}
+                    >
+                        {tCommon('back')}
+                    </button>
+                )}
+                <div className="flex gap-2">
+                    <button
+                        onClick={handleSkip}
+                        className="px-4 py-2 rounded-md text-sm font-medium"
+                        style={{ backgroundColor: 'transparent', color: themeColorText, border: `1px solid ${themeColorBorder}` }}
+                    >
+                        {t('skip')}
+                    </button>
+                </div>
             </div>
         </div>
     );

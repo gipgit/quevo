@@ -14,12 +14,14 @@ import BusinessProfileHeader from '@/components/BusinessProfileHeader'; // Your 
 import ProfileMenuOverlay from '@/components/modals/ProfileMenuOverlay';
 import ContactModal from '@/components/modals/ContactModal';
 import PaymentsModal from '@/components/modals/PaymentsModal';
+import AddressModal from '@/components/modals/AddressModal';
 
 export function BusinessProfileClientWrapper({ initialServerData, children, cssVariables, bodyClass }) {
     // State for managing modal visibility
     const [showContactModal, setShowContactModal] = useState(false);
     const [activeContactTab, setActiveContactTab] = useState('phone');
     const [showPaymentsModal, setShowPaymentsModal] = useState(false);
+    const [showAddressModal, setShowAddressModal] = useState(false);
     const [showMenuOverlay, setShowMenuOverlay] = useState(false);
     
     // OPTIMIZED: Add state for payment methods loading
@@ -43,7 +45,7 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
     // --- NEW LOGIC: Determine if the header should be shown ---
     const isBookingConfirmationPage = pathname.startsWith(`/${locale}/${business_urlname}/booking/`) && pathSegments.length === 4;
     const isServiceBoardPage = pathname.startsWith(`/${locale}/${business_urlname}/s/`) && pathSegments.length === 4;
-
+    const isAIChatPage = pathname.startsWith(`/${locale}/${business_urlname}/ai`) && pathSegments.length === 3;
     // OPTIMIZED: Memoize the context value to prevent unnecessary re-renders of consumers
     const contextValue = useMemo(() => {
         return {
@@ -108,6 +110,15 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
         setShowPaymentsModal(false);
     }, []);
 
+    const openAddressModal = useCallback(() => {
+        setShowAddressModal(true);
+        setShowMenuOverlay(false);
+    }, []);
+
+    const closeAddressModal = useCallback(() => {
+        setShowAddressModal(false);
+    }, []);
+
     const toggleMenuOverlay = useCallback(() => setShowMenuOverlay(prev => !prev), []);
 
     if (!initialServerData || !initialServerData.businessData) {
@@ -118,32 +129,35 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
 
     return (
         <BusinessProfileProvider value={contextValue}>
-            <div style={cssVariables} className={`${bodyClass} profile-content-wrapper relative`}>
+            <div style={cssVariables} className={`${bodyClass} profile-content-wrapper`}>
                 
 
                 {/* --- CONDITIONAL RENDERING OF BusinessProfileHeader --- */}
-                {!isBookingConfirmationPage && !isServiceBoardPage && (
+                {!isBookingConfirmationPage && !isServiceBoardPage && !isAIChatPage && (
                  
-                    <div className="flex flex-col lg:flex-row-reverse lg:items-start relative z-10 lg:p-8 lg:mt-12">
-                        <div className="w-full lg:w-1/2 lg:sticky lg:top-0 lg:overflow-y-hidden">
+                    <div className="flex flex-col lg:items-start relative z-10 lg:gap-8 lg:p-8 lg:pt-20 mx-auto">
+                        <div className="w-full lg:order-1">
                             <BusinessProfileHeader
                                 toggleContactModal={openContactModal}
                                 togglePaymentsModal={openPaymentsModal}
+                                toggleAddressModal={openAddressModal}
                                 toggleMenuOverlay={toggleMenuOverlay}
                                 initialServerData={initialServerData}
                             />
                         </div>
                         
-                        <div className="w-full lg:w-1/2 lg:min-h-screen">
-                            <div className='profile-main lg:min-h-screen lg:rounded-2xl'>
+                        <div className="w-full lg:order-2">
+                            <div className='profile-main lg:rounded-2xl lg:px-8'>
+                                <div className='block mx-auto max-w-[1400px]'>
                                 {children} {/* This is where the specific section's page.tsx content will render */}
+                                </div>
                             </div>
                         </div>
                     </div>
                 )}
 
                 {/* For booking confirmation and service board pages, keep single column layout */}
-                {(isBookingConfirmationPage || isServiceBoardPage) && (
+                {(isBookingConfirmationPage || isServiceBoardPage || isAIChatPage) && (
                     <div className='profile-main min-h-screen'>
                         {children}
                     </div>
@@ -202,6 +216,19 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
                         onClose={closePaymentsModal}
                         businessPaymentMethods={businessPaymentMethods}
                         isLoading={isLoadingPaymentMethods}
+                        themeColorText={initialServerData.themeColorText}
+                        themeColorBackground={initialServerData.themeColorBackground}
+                        themeColorButton={initialServerData.themeColorButton}
+                        isDarkBackground={initialServerData.isDarkBackground}
+                    />
+                )}
+
+                {showAddressModal && (
+                    <AddressModal
+                        show={showAddressModal}
+                        onClose={closeAddressModal}
+                        businessData={initialServerData.businessData}
+                        businessSettings={initialServerData.businessSettings}
                         themeColorText={initialServerData.themeColorText}
                         themeColorBackground={initialServerData.themeColorBackground}
                         themeColorButton={initialServerData.themeColorButton}

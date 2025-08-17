@@ -11,9 +11,14 @@ import { useBusinessProfile } from '@/contexts/BusinessProfileContext';
 import { useTranslations } from 'next-intl';
 import { parseContacts, hasValidContacts } from '@/lib/utils/contacts';
 
-const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggleMenuOverlay }) => {
-    const [scrollOpacity, setScrollOpacity] = useState(1);
+const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggleMenuOverlay, toggleAddressModal }) => {
+    const [overlayOpacity, setOverlayOpacity] = useState(0.3); // Start with light overlay
+    const [imageTranslateY, setImageTranslateY] = useState(0); // Start with no translation
+    const [imageHeight, setImageHeight] = useState(50); // Start with 50vh height
+    const [imageOpacity, setImageOpacity] = useState(0); // Start with transparent image
+    const [titleOpacity, setTitleOpacity] = useState(1); // Start with fully visible title
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [hasLoaded, setHasLoaded] = useState(false);
     
     const {
         businessData,
@@ -26,6 +31,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
         isDarkBackground,
         themeColorText,
         themeColorButton,
+        themeColorBackground,
         buttonContentColor, // Use server-calculated button text color
     } = useBusinessProfile();
 
@@ -39,23 +45,61 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
 
     const activeSection = currentSectionSlug || businessSettings.default_page;
 
-    // Scroll effect for desktop hero
+    // Initial load effect - fade in and set image to normal height
+    useEffect(() => {
+        if (businessData && !hasLoaded) {
+            const timer = setTimeout(() => {
+                setImageHeight(50); // Set to normal height (50vh)
+                setImageOpacity(1); // Fade in to full opacity
+                setTitleOpacity(1); // Set title to fully visible
+                setHasLoaded(true);
+            }, 100); // Small delay to ensure smooth animation
+
+            return () => clearTimeout(timer);
+        }
+    }, [businessData, hasLoaded]);
+
+    // Scroll effect for desktop hero - make overlay darker, translate image up, reduce height, and fade out title on scroll
     useEffect(() => {
         const handleScroll = () => {
             const scrollY = window.scrollY;
             const windowHeight = window.innerHeight;
-            const fadeStart = 0;
-            const fadeEnd = windowHeight * 0.8; // Start fading after 80% of viewport height
+            const scrollThreshold = windowHeight * 0.3; // Start effects after 30% of viewport height
             
-            if (scrollY <= fadeStart) {
-                setScrollOpacity(1);
-            } else if (scrollY >= fadeEnd) {
-                setScrollOpacity(0);
+            if (scrollY <= 0) {
+                setOverlayOpacity(0.3); // Light overlay at top
+                setImageTranslateY(0); // No translation at top
+                setImageHeight(50); // Normal height at top (50vh)
+                setTitleOpacity(1); // Fully visible title at top
+            } else if (scrollY >= scrollThreshold) {
+                setOverlayOpacity(0.7); // Dark overlay at bottom
+                setImageTranslateY(-20); // Maximum translation up
+                setImageHeight(30); // Reduced height at bottom (30vh)
+                setTitleOpacity(0); // Fully faded out title at bottom
             } else {
-                const fadeRange = fadeEnd - fadeStart;
-                const currentFade = scrollY - fadeStart;
-                const opacity = 1 - (currentFade / fadeRange);
-                setScrollOpacity(Math.max(0, opacity));
+                const scrollRange = scrollThreshold;
+                const currentScroll = scrollY;
+                const progress = currentScroll / scrollRange; // 0 to 1
+                
+                // Overlay opacity: 0.3 to 0.7
+                const opacityRange = 0.7 - 0.3;
+                const newOpacity = 0.3 + (progress * opacityRange);
+                setOverlayOpacity(Math.min(0.7, Math.max(0.3, newOpacity)));
+                
+                // Image translation: 0 to -20px
+                const translateRange = -20;
+                const newTranslateY = progress * translateRange;
+                setImageTranslateY(newTranslateY);
+                
+                // Image height: 50vh to 30vh (reduce height from normal size)
+                const heightRange = 30 - 50;
+                const newHeight = 50 + (progress * heightRange);
+                setImageHeight(Math.min(50, Math.max(30, newHeight)));
+                
+                // Title opacity: 1 to 0 (fade out title)
+                const titleOpacityRange = 0 - 1;
+                const newTitleOpacity = 1 + (progress * titleOpacityRange);
+                setTitleOpacity(Math.min(1, Math.max(0, newTitleOpacity)));
             }
         };
 
@@ -127,13 +171,13 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
     return (
         <header className="profile-header relative h-full z-50">
             {/* Desktop Navbar - Only visible on lg+ devices */}
-            <nav className="profile-navbar hidden lg:block fixed top-0 left-0 right-0 z-50 shadow-sm" style={{ borderBottom: `1px solid ${isDarkBackground ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}` }}>
-                <div className="container mx-auto py-2 px-6">
-                    <div className="flex items-center justify-between h-16">
+            <nav className="profile-navbar hidden lg:block fixed top-0 left-0 right-0 z-50 " style={{ borderBottom: `0px solid ${isDarkBackground ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}` }}>
+                <div className="container mx-auto py-3 px-5">
+                    <div className="flex items-center justify-between">
                         {/* Left side - Profile image, business name, and navigation links */}
-                        <div className="flex items-center space-x-8">
-                            <div className="flex items-center space-x-4">
-                                <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0" style={{ boxShadow: '0.5px 0.5px 3px rgba(0, 0, 0, 0.4)' }}>
+                        <div className="flex items-center space-x-6">
+                            <div className="flex items-center space-x-3">
+                                <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
                                     {businessData.business_img_profile ? (
                                         <Image
                                             src={businessData.business_img_profile}
@@ -152,42 +196,50 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                     </h1>
                                 </div>
                             </div>
-
                             {/* Navigation links */}
-                            <div className="flex items-center space-x-6">
+                        <div className="flex items-center space-x-3">
                                 <Link
                                     href={`/${businessUrlnameInPath}/services`}
-                                    className={`text-sm font-medium transition-colors duration-200 ${activeSection === 'services' ? 'border-b-2' : ''}`}
+                                    className={`text-sm py-1 font-medium transition-colors duration-200 ${activeSection === 'services' ? 'border-b-2' : ''}`}
                                     style={activeSection === 'services' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
                                 >
                                     {t('services')}
                                 </Link>
                                 <Link
                                     href={`/${businessUrlnameInPath}/products`}
-                                    className={`text-sm font-medium transition-colors duration-200 ${activeSection === 'products' ? 'border-b-2' : ''}`}
+                                    className={`text-sm py-1 font-medium transition-colors duration-200 ${activeSection === 'products' ? 'border-b-2' : ''}`}
                                     style={activeSection === 'products' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
                                 >
                                     {t('products')}
                                 </Link>
                                 <Link
                                     href={`/${businessUrlnameInPath}/promotions`}
-                                    className={`text-sm font-medium transition-colors duration-200 ${activeSection === 'promotions' ? 'border-b-2' : ''}`}
+                                    className={`text-sm py-1 font-medium transition-colors duration-200 ${activeSection === 'promotions' ? 'border-b-2' : ''}`}
                                     style={activeSection === 'promotions' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
                                 >
                                     {t('promotions')}
                                 </Link>
                                 <Link
                                     href={`/${businessUrlnameInPath}/rewards`}
-                                    className={`text-sm font-medium transition-colors duration-200 ${activeSection === 'rewards' ? 'border-b-2' : ''}`}
+                                    className={`text-sm py-1 font-medium transition-colors duration-200 ${activeSection === 'rewards' ? 'border-b-2' : ''}`}
                                     style={activeSection === 'rewards' ? { borderColor: themeColorText, color: themeColorText } : { color: themeColorText }}
                                 >
                                     {t('rewards')}
                                 </Link>
+                                {/* Action Buttons */}
+                                    {businessSettings.show_btn_payments && (
+                                        <button onClick={togglePaymentsModal} className="py-1 text-sm font-medium transition-colors duration-200">
+                                            Pagamenti
+                                        </button>
+                                )}
                             </div>
+                           
+                            
                         </div>
 
-                        {/* Right side - Social links and action buttons */}
+                        {/* Right side - action buttons */}
                         <div className="flex items-center gap-x-3">
+                           
                             {/* Social Links */}
                             <div className="flex items-center gap-1">
                                 {businessSettings.show_socials && filteredSocialLinks.map((link, index) => (
@@ -205,26 +257,10 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                     </div>
                                 ))}
                             </div>
+                            
 
-                            <div className="flex flex-col items-end gap-x-3">
-                            {(businessSettings.show_address && businessData.business_address) && (
-                                <p className="text-sm opacity-90">
-                                        {businessData.business_city} / {businessData.business_address}
-                                </p>
-                            )}
-                            {businessSettings.show_website && websiteLinkUrl && (
-                                        <Link href={websiteLinkUrl} target="_blank" rel="noopener noreferrer" className="text-xs underline opacity-60 hover:opacity-100 transition-opacity">
-                                            {websiteLinkUrl.replace(/^https?:\/\/(www\.)?/, '')}
-                                        </Link>
-                            )}
-                            </div>
-                                
-                            {/* Action Buttons */}
-                            {businessSettings.show_btn_payments && (
-                                <button onClick={togglePaymentsModal} className="px-2 py-1 rounded-lg text-sm font-medium transition-colors duration-200" style={secondaryButtonStyle}>
-                                    Pagamenti
-                                </button>
-                            )}
+                           
+         
 
                             {businessSettings.show_btn_review && googleReviewLinkUrl && (
                                 <Link href={googleReviewLinkUrl} target="_blank" rel="noopener noreferrer" className="px-2 py-1 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center gap-1" style={secondaryButtonStyle}>
@@ -262,6 +298,19 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                         style={getButtonIconStyle()}
                                     />
                                     <span className="text-base font-medium">{t('email')}</span>
+                                </button>
+                            )}
+
+                            {businessSettings.show_address && businessData.business_address && (
+                                <button onClick={toggleAddressModal} className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200" style={primaryButtonStyle}>
+                                    <Image
+                                        src="/icons/iconsax/location.svg"
+                                        alt="Indirizzo"
+                                        width={18}
+                                        height={18}
+                                        style={getButtonIconStyle()}
+                                    />
+                                    <span className="text-base font-medium">Indirizzo</span>
                                 </button>
                             )}
                         </div>
@@ -435,8 +484,8 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                     </button>
                                 )}
 
-                                {/* Phone and Email buttons in same row */}
-                                {(businessSettings.show_btn_phone && hasPhones) || (businessSettings.show_btn_email && hasEmails) ? (
+                                {/* Phone, Email, and Address buttons in same row */}
+                                {(businessSettings.show_btn_phone && hasPhones) || (businessSettings.show_btn_email && hasEmails) || (businessSettings.show_address && businessData.business_address) ? (
                                     <div className="flex gap-3">
                                         {businessSettings.show_btn_phone && hasPhones && (
                                             <button 
@@ -477,6 +526,26 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                                 <span className="text-base font-medium">{t('email')}</span>
                                             </button>
                                         )}
+
+                                        {businessSettings.show_address && businessData.business_address && (
+                                            <button 
+                                                onClick={() => {
+                                                    toggleAddressModal();
+                                                    setIsMobileMenuOpen(false);
+                                                }} 
+                                                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-medium transition-colors duration-200"
+                                                style={primaryButtonStyle}
+                                            >
+                                                <Image
+                                                    src="/icons/iconsax/location.svg"
+                                                    alt="Indirizzo"
+                                                    width={18}
+                                                    height={18}
+                                                    style={getButtonIconStyle()}
+                                                />
+                                                <span className="text-base font-medium">Indirizzo</span>
+                                            </button>
+                                        )}
                                     </div>
                                 ) : null}
                             </div>
@@ -486,7 +555,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
             )}
 
              {/* Mobile/Tablet Profile Image - Hidden on desktop */}
-             <div className="lg:hidden container-profile-pic pic-lg relative z-10 ml-4 -translate-y-[45px] rounded-full overflow-hidden bg-gray-100"
+             <div className="lg:hidden container-profile-pic pic-lg relative z-10 mx-auto -translate-y-[45px] rounded-full overflow-hidden bg-gray-100"
                  style={{
                      width: '70px',
                      height: '70px',
@@ -507,10 +576,10 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
 
             {/* Mobile/Tablet Layout (up to lg) */}
             <div className="lg:hidden container flex flex-col mx-auto max-w-3xl relative px-4 mt-[-50px]">
-                <div className="flex flex-col gap-2 mt-4">
+                <div className="flex flex-col justify-center items-center gap-2 mt-4">
                     {/* Left Column: Business Info */}
                     <div className="flex-1">
-                        <div className="text-left" style={{ color: themeColorText }}>
+                        <div className="text-center" style={{ color: themeColorText }}>
                             <p className="text-2xl md:text-2xl font-bold">{businessData.business_name}</p>
                             {businessData.business_descr && <p className="d-none text-sm opacity-80 mt-1 max-w-lg">{businessData.business_descr}</p>}
                             <div className="flex flex-col gap-1 mt-1">
@@ -528,7 +597,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                             </div>
                         </div>
 
-                                                 <div className="flex flex-wrap gap-1 mt-2">
+                                           <div className="flex justify-center flex-wrap gap-1 mt-2">
                              {businessSettings.show_socials && filteredSocialLinks.map((link, index) => (
                                  <div key={index} className="text-center">
                                      <Link href={link.link_url} target="_blank" rel="noopener noreferrer" className={circularButtonBaseClass}>
@@ -573,6 +642,20 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                      <Image
                                          src="/icons/iconsax/email.svg"
                                          alt={t('email')}
+                                         width={16}
+                                         height={16}
+                                         style={getButtonIconStyle()}
+                                     />
+                                 </div>
+                             </button>
+                         )}
+
+                         {businessSettings.show_address && businessData.business_address && (
+                             <button onClick={toggleAddressModal} className={circularButtonBaseClass} style={primaryButtonStyle}>
+                                 <div className="link-icon-wrapper w-8 h-8 flex items-center justify-center rounded-full">
+                                     <Image
+                                         src="/icons/iconsax/location.svg"
+                                         alt="Indirizzo"
                                          width={16}
                                          height={16}
                                          style={getButtonIconStyle()}
@@ -630,33 +713,43 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                 </nav>
             </div>
 
-            {/* Desktop Hero Layout (lg+) */}
-            <div className="hidden lg:flex flex-col justify-center h-screen max-h-screen overflow-y-auto relative">
+            {/* Desktop Hero Container (lg+) */}
+            <div className="max-w-[1600px] mx-auto hidden lg:flex rounded-2xl lg:flex-col justify-end overflow-y-auto relative">
                 {/* Cover Image Background - Only for desktop layout */}
                 {businessData.business_img_cover_desktop && (
-                    <div className="absolute inset-0 z-0 my-8 rounded-lg">
-                        <div className="relative h-full w-full rounded-lg">
+                    <div className="w-full z-0 rounded-2xl">
+                        <div className="relative w-full rounded-2xl transition-all duration-700 ease-out" style={{ height: `${imageHeight}vh` }}>
                             <Image
                                 src={businessData.business_img_cover_desktop}
                                 alt=""
                                 fill
                                 sizes="100%"
-                                className="object-cover rounded-xl"
+                                className="object-cover h-full rounded-2xl transition-all duration-300 ease-out"
+                                style={{
+                                    transform: `translateY(${imageTranslateY}px)`,
+                                    opacity: imageOpacity
+                                }}
                                 priority
                             />
-                            {/* Overlay for better text readability */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-2xl"></div>
+                            {/* Overlay for Hero Content*/}
+                            <div 
+                                className="absolute inset-0 rounded-2xl flex flex-col p-12 items-start justify-end transition-all duration-300 ease-out"
+                                style={{
+                                    background: `linear-gradient(to top, rgba(0, 0, 0, ${overlayOpacity}), transparent 25%)`,
+                                    transform: `translateY(${imageTranslateY}px)`,
+                                    opacity: imageOpacity
+                                }}
+                            >
+                                 <div className="mb-0 text-center transition-opacity duration-300 ease-out" style={{ opacity: titleOpacity }}>
+                                    {businessData.business_name && <p className="font-bold text-3xl md:text-4xl lg:text-6xl max-4-3xl mb-2 text-white" style={{ textShadow: '1px 1px 4px rgba(0, 0, 0, 0.5)' }}>{businessData.business_name}</p>}
+                                    {businessData.business_descr && <p className="font-bold text-xl md:text-xl lg:text-2xl max-4-3xl text-white" style={{ textShadow: '1px 1px 4px rgba(0, 0, 0, 0.5)' }}>{businessData.business_descr}</p>}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )}
                 
-                <div className="container mx-auto px-16 relative z-10">
-                    <div className="text-left transition-opacity duration-300" style={{ color: 'white', opacity: scrollOpacity }}>
-                        <div className="mb-0">
-                            {businessData.business_descr && <p className="font-bold text-2xl md:text-4xl lg:text-5xl max-w-2xl mb-4" style={{ textShadow: '1px 1px 4px rgba(0, 0, 0, 0.5)' }}>{businessData.business_descr}</p>}
-                        </div>
-                    </div>
-                </div>
+                
             </div>
         </header>
     );

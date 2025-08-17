@@ -52,9 +52,17 @@ interface ServiceBoardData {
     customer_notes?: string;
     status: string;
     price_subtotal?: number;
-    request_date?: string;
-    request_time_start?: string;
-    request_time_end?: string;
+    request_datetimes?: Array<{
+      date: string;
+      time: string;
+      timestamp: string;
+    }>;
+    event_id?: number;
+    serviceevent?: {
+      event_id: number;
+      event_name: string;
+      event_description?: string;
+    };
     date_created: string;
     date_updated?: string;
     selected_service_items_snapshot?: Array<{
@@ -1378,24 +1386,24 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                       </div>
                       <div>
                         <div className="space-y-2">
-                          {boardData.servicerequest.request_date && (
-                            <div className="flex gap-x-2">
-                              <span className="text-sm text-gray-600">{tServiceBoard('preferredDate')}:</span>
-                              <span className="text-sm font-medium">
-                                {new Date(boardData.servicerequest.request_date).toLocaleDateString()}
-                              </span>
-                            </div>
-                          )}
-                          {boardData.servicerequest.request_time_start && (
-                            <div className="flex gap-x-2">
-                              <span className="text-sm text-gray-600">{tServiceBoard('time')}:</span>
-                              <span className="text-sm font-medium">
-                                {new Date(boardData.servicerequest.request_time_start).toLocaleTimeString([], { 
-                                  hour: '2-digit', 
-                                  minute: '2-digit' 
-                                })}
-                              </span>
-                            </div>
+                          {boardData.servicerequest.request_datetimes && boardData.servicerequest.request_datetimes.length > 0 && (
+                            <>
+                              {boardData.servicerequest.request_datetimes.map((datetime, index) => (
+                                <div key={index} className="space-y-1">
+                                  <div className="flex gap-x-2">
+                                    <span className="text-sm text-gray-600">
+                                      {boardData.servicerequest?.serviceevent 
+                                        ? `${tServiceBoard('preferredDate')} per ${boardData.servicerequest.serviceevent.event_name}:`
+                                        : `${tServiceBoard('preferredDate')}:`
+                                      }
+                                    </span>
+                                    <span className="text-sm font-medium">
+                                      {new Date(datetime.date).toLocaleDateString()} - {datetime.time}
+                                    </span>
+                                  </div>
+                                </div>
+                              ))}
+                            </>
                           )}
                         </div>
                       </div>

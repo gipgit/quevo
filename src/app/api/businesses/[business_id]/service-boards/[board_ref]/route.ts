@@ -52,14 +52,20 @@ export async function GET(
             customer_notes: true,
             status: true,
             price_subtotal: true,
-            request_date: true,
-            request_time_start: true,
-            request_time_end: true,
+            request_datetimes: true,
             date_created: true,
             date_updated: true,
             selected_service_items_snapshot: true,
             question_responses_snapshot: true,
-            requirement_responses_snapshot: true
+            requirement_responses_snapshot: true,
+            event_id: true,
+            serviceevent: {
+              select: {
+                event_id: true,
+                event_name: true,
+                event_description: true
+              }
+            }
           }
         }
       }

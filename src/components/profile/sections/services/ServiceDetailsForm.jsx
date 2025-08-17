@@ -439,13 +439,13 @@ export default function ServiceDetailsForm({
                                 })}
                             </div>
                             {/* --- Quotation Summary Card --- */}
-                            <div className={`p-4 w-full text-white flex flex-col lg:flex-row lg:items-center`} style={{backgroundColor: themeColorButton}}>
-                                <div className="lg:w-1/3">
-                                <p className="text-xs">{t('totalPrice')}:</p>
-                                <p className="font-bold text-2xl">€ {totalQuotationPrice.toFixed(2)}</p>
+                            <div className={`w-full flex flex-col xlg:items-center`}>
+                                <div className="">
+                                <p className="text-xs" >{t('totalPrice')}:</p>
+                                <p className="font-bold text-2xl" style={{color: themeColorButton}}>€ {totalQuotationPrice.toFixed(2)}</p>
                                 </div>
-                                <div className="lg:w-2/3">
-                                <p className="text-xs leading-none opacity-80">{t('optionalItemsDescription')}</p>
+                                <div className="">
+                                <p className="text-xs leading-none opacity-50">{t('optionalItemsDescription')}</p>
                                 </div>
                             </div>
                         </div>

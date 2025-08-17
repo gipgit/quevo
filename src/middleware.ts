@@ -83,6 +83,8 @@ export function middleware(req: NextRequest) {
 
   // Redirect to detected locale
   const newUrl = new URL(`/${detectedLocale}${pathname}`, req.url)
+  // Preserve search parameters (query string)
+  newUrl.search = req.nextUrl.search
   return NextResponse.redirect(newUrl)
 }
 

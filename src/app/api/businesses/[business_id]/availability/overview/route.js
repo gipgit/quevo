@@ -38,6 +38,8 @@ export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url);
     const startDateParam = searchParams.get('startDate');
     const endDateParam = searchParams.get('endDate');
+    const durationParam = searchParams.get('duration');
+    const eventIdParam = searchParams.get('eventId');
 
     if (!businessId) {
         console.error('Validation Error: Invalid businessId', { businessId });
@@ -49,7 +51,31 @@ export async function GET(request, { params }) {
     }
 
     try {
-        console.log(`[Overview API] Received request for businessId: ${businessId}, startDate: ${startDateParam}, endDate: ${endDateParam}`);
+        console.log(`[Overview API] Received request for businessId: ${businessId}, startDate: ${startDateParam}, endDate: ${endDateParam}, eventId: ${eventIdParam}, duration: ${durationParam}`);
+
+        // If eventId is provided, fetch the event details to get the correct duration and buffer
+        let eventDuration = durationParam ? parseInt(durationParam) : 30;
+        let eventBuffer = 0;
+        
+        if (eventIdParam) {
+            try {
+                const event = await prisma.serviceevent.findUnique({
+                    where: { event_id: parseInt(eventIdParam) },
+                    select: { duration_minutes: true, buffer_minutes: true }
+                });
+                
+                if (event) {
+                    eventDuration = event.duration_minutes || eventDuration;
+                    eventBuffer = event.buffer_minutes || 0;
+                    console.log(`[Overview API] Event details - duration: ${eventDuration}, buffer: ${eventBuffer}`);
+                }
+            } catch (error) {
+                console.error('[Overview API] Error fetching event details:', error);
+            }
+        }
+        
+        const totalRequiredDuration = eventDuration + eventBuffer;
+        console.log(`[Overview API] Total required duration (duration + buffer): ${totalRequiredDuration} minutes`);
 
         const startDateUTC = new Date(startDateParam);
         const endDateUTC = new Date(endDateParam);
@@ -75,7 +101,7 @@ export async function GET(request, { params }) {
         console.log(`[Overview API] Total days in interval:`, daysInMonth.length);
 
         console.log('[Overview API] Fetching bookingavailability...');
-        const availableAvailabilities = await prisma.servicerequestavailability.findMany({
+        const availableAvailabilities = await prisma.serviceeventavailability.findMany({
             where: {
                 business_id: businessId, // Use UUID string directly
                 OR: [
@@ -178,12 +204,11 @@ export async function GET(request, { params }) {
 
                 console.log(`    - Checking availability block: ${format(availabilityStart, 'HH:mm')} - ${format(availabilityEnd, 'HH:mm')}`);
 
-                // Check if there's at least 30 minutes of free time in this block
-                const minimumSlotDuration = 30; // minutes
-                const potentialSlotEnd = addMinutes(availabilityStart, minimumSlotDuration);
+                // Check if there's enough time for the total required duration (duration + buffer)
+                const potentialSlotEnd = addMinutes(availabilityStart, totalRequiredDuration);
 
                 if (isAfter(potentialSlotEnd, availabilityEnd)) {
-                    console.log(`    - Block too short for minimum slot duration (${minimumSlotDuration} min).`);
+                    console.log(`    - Block too short for total required duration (${totalRequiredDuration} min).`);
                     return false;
                 }
 
@@ -234,13 +259,19 @@ export async function GET(request, { params }) {
 
         console.log(`[Overview API] Available dates:`, availableDates.map(d => format(d, 'yyyy-MM-dd (EEEE)')));
 
+        // Filter out past dates
+        const today = startOfDay(toZonedTime(new Date(), BUSINESS_TIMEZONE));
+        const futureAvailableDates = availableDates.filter(day => !isBefore(day, today));
+        
+        console.log(`[Overview API] Future available dates:`, futureAvailableDates.map(d => format(d, 'yyyy-MM-dd (EEEE)')));
+
         const result = {
-            availableDates: availableDates.map(date => format(date, 'yyyy-MM-dd')),
+            availableDates: futureAvailableDates.map(date => format(date, 'yyyy-MM-dd')),
             businessId: businessId,
             startDate: startDateParam,
             endDate: endDateParam,
             totalDays: daysInMonth.length,
-            availableDays: availableDates.length
+            availableDays: futureAvailableDates.length
         };
 
         console.log(`[Overview API] Final result:`, result);

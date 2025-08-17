@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
+import { setCurrentBusinessIdCookie } from "./business-utils"
 
 interface Business {
   business_id: string
@@ -60,23 +61,40 @@ interface BusinessContextType {
   refreshUsageForFeature: (feature: keyof UsageData) => Promise<void>
   loading: boolean
   error: string | null
+  businessSwitchKey: number // Add this to track business switches
+}
+
+interface InitialData {
+  userManager: UserManager
+  userPlan: Plan
+  businesses: Business[]
+  currentBusiness: Business
+  usage?: UsageData
+  planLimits?: any[]
 }
 
 const BusinessContext = createContext<BusinessContextType | undefined>(undefined)
 
-export function BusinessProvider({ children }: { children: ReactNode }) {
+export function BusinessProvider({ 
+  children, 
+  initialData 
+}: { 
+  children: ReactNode
+  initialData?: InitialData
+}) {
   const router = useRouter()
-  const [userManager, setUserManager] = useState<UserManager | null>(null)
-  const [userPlan, setUserPlan] = useState<Plan | null>(null)
-  const [businesses, setBusinesses] = useState<Business[]>([])
-  const [currentBusiness, setCurrentBusiness] = useState<Business | null>(null)
-  const [usage, setUsage] = useState<UsageData | null>(null)
-  const [planLimits, setPlanLimits] = useState<any[] | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [userManager, setUserManager] = useState<UserManager | null>(initialData?.userManager || null)
+  const [userPlan, setUserPlan] = useState<Plan | null>(initialData?.userPlan || null)
+  const [businesses, setBusinesses] = useState<Business[]>(initialData?.businesses || [])
+  const [currentBusiness, setCurrentBusiness] = useState<Business | null>(initialData?.currentBusiness || null)
+  const [usage, setUsage] = useState<UsageData | null>(initialData?.usage || null)
+  const [planLimits, setPlanLimits] = useState<any[] | null>(initialData?.planLimits || null)
+  const [loading, setLoading] = useState(!initialData) // If we have initial data, we're not loading
   const [error, setError] = useState<string | null>(null)
+  const [businessSwitchKey, setBusinessSwitchKey] = useState(0) // Force re-render key
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  const fetchManagerDashboard = async (retryCount = 0) => {
+  const fetchManagerDashboard = useCallback(async (retryCount = 0) => {
     try {
       console.log("BusinessContext: Starting fetchManagerDashboard, retry:", retryCount)
       setLoading(true)
@@ -151,6 +169,7 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
       console.log("BusinessContext: setCurrentBusiness", business)
       if (business) {
         sessionStorage.setItem("currentBusinessId", business.business_id)
+        setCurrentBusinessIdCookie(business.business_id) // Set cookie for server-side access
       }
     } catch (err) {
       console.error("BusinessContext: Error in fetchManagerDashboard:", err)
@@ -172,7 +191,7 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
       }
       setLoading(false)
     }
-  }
+  }, [])
 
   const fetchPlanLimits = useCallback(async () => {
     try {
@@ -203,6 +222,17 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
   }, [currentBusiness?.business_id, planLimits])
 
   useEffect(() => {
+    // Only fetch if we don't have initial data
+    if (initialData) {
+      console.log("BusinessContext: Using initial data from server")
+      // Set the cookie for the current business to ensure it's available for server-side requests
+      if (initialData.currentBusiness) {
+        sessionStorage.setItem("currentBusinessId", initialData.currentBusiness.business_id)
+        setCurrentBusinessIdCookie(initialData.currentBusiness.business_id)
+      }
+      return
+    }
+
     console.log("BusinessContext: useEffect - fetchManagerDashboard triggered")
     
     // Clear any existing timeout
@@ -224,7 +254,7 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
         clearTimeout(timeoutRef.current)
       }
     }
-  }, [])
+  }, [initialData, fetchManagerDashboard])
 
   useEffect(() => {
     console.log("BusinessContext: useEffect - checking redirect conditions:", {
@@ -245,7 +275,7 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
     if (userPlan?.plan_id) {
       fetchPlanLimits()
     }
-  }, [userPlan, fetchPlanLimits])
+  }, [userPlan?.plan_id, fetchPlanLimits])
 
   useEffect(() => {
     console.log("BusinessContext: useEffect - fetchUsage trigger", {
@@ -255,17 +285,17 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
     if (currentBusiness?.business_id && planLimits) {
       fetchUsage()
     }
-  }, [currentBusiness, planLimits, fetchUsage])
+  }, [currentBusiness?.business_id, planLimits, fetchUsage])
 
-  const refreshBusinesses = async () => {
+  const refreshBusinesses = useCallback(async () => {
     await fetchManagerDashboard()
-  }
+  }, [fetchManagerDashboard])
 
-  const refreshUsage = async () => {
+  const refreshUsage = useCallback(async () => {
     await fetchUsage()
-  }
+  }, [fetchUsage])
 
-  const refreshUsageForFeature = async (feature: keyof UsageData) => {
+  const refreshUsageForFeature = useCallback(async (feature: keyof UsageData) => {
     try {
       if (!currentBusiness?.business_id) return
       
@@ -278,21 +308,33 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       console.error(`Error refreshing usage for ${feature}:`, err)
     }
-  }
+  }, [currentBusiness?.business_id])
 
-  const addBusiness = (business: Business) => {
+  const addBusiness = useCallback((business: Business) => {
     setBusinesses(prev => [...prev, business])
     setCurrentBusiness(business)
     sessionStorage.setItem("currentBusinessId", business.business_id)
-  }
+    setCurrentBusinessIdCookie(business.business_id) // Set cookie for server-side access
+  }, [])
 
-  const switchBusiness = (businessId: string) => {
+  const switchBusiness = useCallback((businessId: string) => {
     const business = businesses.find((b) => b.business_id === businessId)
-    setCurrentBusiness(business || null)
+    
     if (business) {
+      setCurrentBusiness(business)
       sessionStorage.setItem("currentBusinessId", business.business_id)
+      setCurrentBusinessIdCookie(business.business_id)
+      setBusinessSwitchKey(prev => prev + 1)
+      
+      // Instead of window.location.reload(), use router.push to navigate
+      // This prevents the infinite loop while still ensuring fresh data
+      console.log("BusinessContext: Switched to business:", business.business_name, "- navigating to dashboard")
+      router.push("/dashboard")
+    } else {
+      setCurrentBusiness(null)
+      setBusinessSwitchKey(prev => prev + 1)
     }
-  }
+  }, [businesses, router])
 
   return (
     <BusinessContext.Provider
@@ -310,6 +352,7 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
         refreshUsageForFeature,
         loading,
         error,
+        businessSwitchKey,
       }}
     >
       {children}

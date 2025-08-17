@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl"
 import { XMarkIcon } from "@heroicons/react/24/outline"
 import { useBusiness } from "@/lib/business-context"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 interface BusinessSelectionModalProps {
   isOpen: boolean
@@ -22,8 +22,10 @@ const getProfileImageUrl = (business: any) => {
 
 export default function BusinessSelectionModal({ isOpen, onClose }: BusinessSelectionModalProps) {
   const t = useTranslations("dashboard")
-  const { businesses, currentBusiness, switchBusiness } = useBusiness()
+  const { businesses, currentBusiness, switchBusiness, businessSwitchKey } = useBusiness()
   const [avatarError, setAvatarError] = useState<{ [id: string]: boolean }>({})
+
+
 
   if (!isOpen) return null
 

@@ -126,7 +126,8 @@ export async function POST(
       requestDate,
       requestTimeStart,
       totalPrice,
-      serviceResponses
+      serviceResponses,
+      eventId
     } = body;
 
     // Input Validation
@@ -321,25 +322,29 @@ export async function POST(
       console.log("Creating service request with customer ID:", finalCustomerUserId);
       console.log("Customer user object:", userCustomer);
 
-      // Create service request
-      const serviceRequest = await prisma.servicerequest.create({
-        data: {
-          business_id: business_id,
-          service_id: serviceId,
-          customer_user_id: finalCustomerUserId,
-          customer_name: sanitizedCustomerName,
-          customer_email: customerEmail,
-          customer_phone: customerPhone || undefined,
-          customer_notes: customerNotes || null,
-          request_date: requestDate ? new Date(requestDate) : null,
-          // Skip time fields for now to isolate the issue
-          request_time_start: null,
-          request_time_end: null,
-          price_subtotal: new Decimal(totalPrice.toString()),
-          status: 'pending',
-          request_reference: requestReference
-        },
-      });
+             // Create service request
+       const serviceRequest = await prisma.servicerequest.create({
+         data: {
+           business_id: business_id,
+           service_id: serviceId,
+           event_id: eventId || null,
+           customer_user_id: finalCustomerUserId,
+           customer_name: sanitizedCustomerName,
+           customer_email: customerEmail,
+           customer_phone: customerPhone || undefined,
+           customer_notes: customerNotes || null,
+           request_datetimes: requestDate && requestTimeStart ? [
+             {
+               date: requestDate,
+               time: requestTimeStart,
+               timestamp: new Date(`${requestDate}T${requestTimeStart}`).toISOString()
+             }
+           ] : undefined,
+           price_subtotal: new Decimal(totalPrice.toString()),
+           status: 'pending',
+           request_reference: requestReference
+         },
+       });
 
       console.log("Service request created with ID:", serviceRequest.request_id);
 
@@ -509,7 +514,7 @@ export async function POST(
       const appBaseUrl = `http${process.env.NODE_ENV === 'production' ? 's' : ''}://${host}`;
 
     // Format date for emails
-    const formattedRequestDate = result.serviceRequest.request_date ? format(new Date(result.serviceRequest.request_date), 'PPPP') : 'N/A';
+    const formattedRequestDate = result.serviceRequest.date_created ? format(new Date(result.serviceRequest.date_created), 'PPPP') : 'N/A';
 
     // Create email links
     const customerRequestLink = `${appBaseUrl}/${businessUrlName}/s/${result.serviceBoard?.board_ref}?locale=${requestLocale}`;
@@ -648,7 +653,7 @@ export async function GET(
         customer_name: true,
         customer_email: true,
         customer_phone: true,
-        request_date: true,
+        request_datetimes: true,
         status: true,
         price_subtotal: true,
         customer_notes: true,

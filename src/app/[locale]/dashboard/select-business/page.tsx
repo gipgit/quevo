@@ -5,14 +5,27 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
 import Image from "next/image"
-import { ArrowPathIcon } from "@heroicons/react/24/outline"
+import LoadingSpinner from "@/components/ui/LoadingSpinner"
 
 interface Business {
   business_id: string
   business_name: string
-  business_city: string
   business_img_profile?: string
+  business_public_uuid: string
 }
+
+// Utility function to get profile image URL following the same pattern as business layout
+const getProfileImageUrl = (business: Business) => {
+  const R2_PUBLIC_DOMAIN = "https://pub-eac238aed876421982e277e0221feebc.r2.dev";
+  
+  // Use local path if business_img_profile is empty/undefined, otherwise use R2 predefined path
+  return !business?.business_img_profile 
+    ? `/uploads/business/${business?.business_public_uuid}/profile.webp`
+    : `${R2_PUBLIC_DOMAIN}/business/${business?.business_public_uuid}/profile.webp`;
+};
+
+// Helper to get initial letter
+const getInitial = (name: string) => name?.charAt(0)?.toUpperCase() || "?"
 
 export default function BusinessSelectionPage() {
   const { data: session, status } = useSession()
@@ -20,6 +33,7 @@ export default function BusinessSelectionPage() {
   const t = useTranslations("Dashboard")
   const [businesses, setBusinesses] = useState<Business[]>([])
   const [loading, setLoading] = useState(true)
+  const [avatarError, setAvatarError] = useState<{ [id: string]: boolean }>({})
 
   useEffect(() => {
     if (status === "loading") return
@@ -49,10 +63,7 @@ export default function BusinessSelectionPage() {
   if (status === "loading" || loading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="flex items-center text-white">
-          <ArrowPathIcon className="w-6 h-6 mr-2 animate-spin" />
-          {t("loading")}
-        </div>
+        <LoadingSpinner size="lg" color="white" />
       </div>
     )
   }
@@ -84,16 +95,22 @@ export default function BusinessSelectionPage() {
             >
               <div className="flex flex-col items-center text-center">
                 <div className="w-16 h-16 rounded-full bg-gray-200 mb-4 overflow-hidden">
-                  <Image
-                    src={business.business_img_profile || "/placeholder.svg?height=64&width=64"}
-                    alt={business.business_name}
-                    width={64}
-                    height={64}
-                    className="w-full h-full object-cover"
-                  />
+                  {!avatarError[business.business_id] ? (
+                    <Image
+                      src={getProfileImageUrl(business)}
+                      alt={business.business_name}
+                      width={64}
+                      height={64}
+                      className="w-full h-full object-cover"
+                      onError={() => setAvatarError(errs => ({ ...errs, [business.business_id]: true }))}
+                    />
+                  ) : (
+                    <div className="w-full h-full rounded-full bg-blue-200 text-blue-700 flex items-center justify-center font-bold text-lg">
+                      {getInitial(business.business_name)}
+                    </div>
+                  )}
                 </div>
                 <h3 className="font-medium text-sm leading-tight">{business.business_name}</h3>
-                <p className="text-xs text-gray-500 mt-1">{business.business_city}</p>
               </div>
             </button>
           ))}

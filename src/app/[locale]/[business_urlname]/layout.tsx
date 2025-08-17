@@ -38,7 +38,7 @@ const calculateThemeVariables = (businessSettings: any) => {
     const themeColorButton = businessSettings.theme_color_button || '#000000';
     
     const themeColorTextRgb = hexToRgb(themeColorText);
-    const borderColorOpacity = 0.1;
+    const borderColorOpacity = 0.2;
     const themeColorBorder = `rgba(${themeColorTextRgb}, ${borderColorOpacity})`;
     
     // Generate new background colors based on luminance

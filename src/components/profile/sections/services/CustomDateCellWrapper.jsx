@@ -25,6 +25,11 @@ const CustomDateCellWrapper = ({ children, value, onDateCellClick, availableDays
   const today = startOfDay(new Date());
   const isPastDate = isBefore(value, today);
   const dayNumber = format(value, 'd');
+  
+  // Debug logging for the first few days to see what's happening
+  if (dayNumber <= '5') {
+    console.log(`Date cell debug - Date: ${dayString}, isAvailable: ${isAvailable}, isPastDate: ${isPastDate}`);
+  }
 
   return (
     <div
