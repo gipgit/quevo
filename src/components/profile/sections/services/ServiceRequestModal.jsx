@@ -398,11 +398,11 @@ export default function ServiceRequestModal({
     }
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50 p-3 lg:p-4">
             <div className="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
                 {/* Modal Header */}
                 <div className="flex justify-between items-center py-4 px-6 border-b border-gray-200">
-                    <h2 className="text-xl lg:text-2xl font-semibold" style={{ color: themeColorText }}>
+                    <h2 className="text-lg lg:text-2xl font-semibold" style={{ color: themeColorText }}>
                         {selectedService.service_name}
                     </h2>
                     <button
@@ -419,7 +419,7 @@ export default function ServiceRequestModal({
                 <div className="flex flex-col lg:flex-row h-full max-h-[calc(90vh-80px)]">
                     {/* Left Column - Service Image (Always Visible) */}
                     <div className="lg:w-1/3 p-0 lg:p-6">
-                        <div className="w-full h-[120px] lg:h-[500px] lg:rounded-2xl overflow-hidden bg-gray-100 relative">
+                        <div className="w-full h-[100px] lg:h-[500px] lg:rounded-2xl overflow-hidden bg-gray-100 relative">
                             <ServiceImage 
                                 serviceId={selectedService.service_id} 
                                 serviceName={selectedService.service_name}

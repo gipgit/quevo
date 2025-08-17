@@ -10,6 +10,7 @@ import { Link } from '@/i18n/navigation';
 import { useBusinessProfile } from '@/contexts/BusinessProfileContext';
 import { useTranslations } from 'next-intl';
 import { parseContacts, hasValidContacts } from '@/lib/utils/contacts';
+import MobileMenuOverlay from './MobileMenuOverlay';
 
 const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggleMenuOverlay, toggleAddressModal }) => {
     const [overlayOpacity, setOverlayOpacity] = useState(0.3); // Start with light overlay
@@ -319,7 +320,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
             </nav>
 
             {/* Mobile/Tablet Cover Image */}
-            <div className="lg:hidden profile-cover w-full relative bg-gray-200 h-32 sm:h-40 md:h-40">
+            <div className="lg:hidden profile-cover w-full relative bg-gray-200 h-40 sm:h-40 md:h-40">
                 {businessData.business_img_cover_mobile ? (
                     <Image
                         src={businessData.business_img_cover_mobile}
@@ -348,211 +349,25 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
             </div>
 
             {/* Mobile Menu Overlay */}
-            {isMobileMenuOpen && (
-                <div className="lg:hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end">
-                    <div className="bg-white rounded-t-3xl w-full max-h-[85vh] overflow-y-auto relative">
-                        {/* Close Button - Absolute positioned */}
-                        <button
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center transition-colors hover:bg-gray-200 z-10"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-
-                        <div className="p-6 pt-16">
-                            {/* Unified Profile Card with Page Link */}
-                            <div className="bg-gray-50 rounded-xl p-4 mb-6">
-                                <div className="flex items-center space-x-3 mb-3">
-                                    {/* Profile Image */}
-                                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
-                                        {businessData.business_img_profile ? (
-                                            <Image
-                                                src={businessData.business_img_profile}
-                                                alt=""
-                                                width={48}
-                                                height={48}
-                                                className="object-cover w-full h-full"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full" style={{ backgroundColor: themeColorText + '20' }}></div>
-                                        )}
-                                    </div>
-                                    
-                                    {/* Business Name */}
-                                    <h2 className="text-lg font-semibold" style={{ color: themeColorText }}>
-                                        {businessData.business_name}
-                                    </h2>
-                                </div>
-                                
-                                {/* Page URL with Copy Button */}
-                                <div className="w-full">
-                                    <div className="flex items-center justify-between bg-white rounded-full p-1.5 border border-gray-200">
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-xs font-medium truncate" style={{ color: themeColorText }}>
-                                                {typeof window !== 'undefined' ? window.location.href : ''}
-                                            </p>
-                                        </div>
-                                        <button
-                                            onClick={() => {
-                                                if (typeof window !== 'undefined') {
-                                                    navigator.clipboard.writeText(window.location.href);
-                                                    // You could add a toast notification here
-                                                }
-                                            }}
-                                            className="ml-2 p-1 rounded-full bg-gray-50 hover:bg-gray-100 transition-colors flex-shrink-0"
-                                        >
-                                            <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 2z" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Navigation Links - With borders to separate */}
-                            <div className="space-y-0 mb-4">
-                                <Link
-                                    href={`/${businessUrlnameInPath}/services`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className={`block py-3 px-4 transition-colors duration-200 text-lg border-b border-gray-200 ${activeSection === 'services' ? 'font-semibold' : 'font-normal'}`}
-                                    style={activeSection === 'services' ? { backgroundColor: themeColorButton + '20', color: themeColorText } : { color: themeColorText }}
-                                >
-                                    {t('services')}
-                                </Link>
-                                <Link
-                                    href={`/${businessUrlnameInPath}/products`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className={`block py-3 px-4 transition-colors duration-200 text-lg border-b border-gray-200 ${activeSection === 'products' ? 'font-semibold' : 'font-normal'}`}
-                                    style={activeSection === 'products' ? { backgroundColor: themeColorButton + '20', color: themeColorText } : { color: themeColorText }}
-                                >
-                                    {t('products')}
-                                </Link>
-                                <Link
-                                    href={`/${businessUrlnameInPath}/promotions`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className={`block py-3 px-4 transition-colors duration-200 text-lg border-b border-gray-200 ${activeSection === 'promotions' ? 'font-semibold' : 'font-normal'}`}
-                                    style={activeSection === 'promotions' ? { backgroundColor: themeColorButton + '20', color: themeColorText } : { color: themeColorText }}
-                                >
-                                    {t('promotions')}
-                                </Link>
-                                <Link
-                                    href={`/${businessUrlnameInPath}/rewards`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className={`block py-3 px-4 transition-colors duration-200 text-lg ${activeSection === 'rewards' ? 'font-semibold' : 'font-normal'}`}
-                                    style={activeSection === 'rewards' ? { backgroundColor: themeColorButton + '20', color: themeColorText } : { color: themeColorText }}
-                                >
-                                    {t('rewards')}
-                                </Link>
-                            </div>
-
-                            {/* Google Review Button */}
-                            {businessSettings.show_btn_review && googleReviewLinkUrl && (
-                                <div className="mb-3">
-                                    <Link 
-                                        href={googleReviewLinkUrl} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer" 
-                                        className="flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-medium transition-colors duration-200 w-full"
-                                        style={secondaryButtonStyle}
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                    >
-                                        Recensione
-                                        <Image
-                                            src="/icons/google.png"
-                                            alt="Google"
-                                            width={16}
-                                            height={16}
-                                        />
-                                    </Link>
-                                </div>
-                            )}
-
-                            {/* Action Buttons */}
-                            <div className="space-y-3">
-                                {businessSettings.show_btn_payments && (
-                                    <button 
-                                        onClick={() => {
-                                            togglePaymentsModal();
-                                            setIsMobileMenuOpen(false);
-                                        }} 
-                                        className="w-full py-3 px-4 rounded-lg text-sm font-medium transition-colors duration-200"
-                                        style={primaryButtonStyle}
-                                    >
-                                        Pagamenti
-                                    </button>
-                                )}
-
-                                {/* Phone, Email, and Address buttons in same row */}
-                                {(businessSettings.show_btn_phone && hasPhones) || (businessSettings.show_btn_email && hasEmails) || (businessSettings.show_address && businessData.business_address) ? (
-                                    <div className="flex gap-3">
-                                        {businessSettings.show_btn_phone && hasPhones && (
-                                            <button 
-                                                onClick={() => {
-                                                    toggleContactModal('phone');
-                                                    setIsMobileMenuOpen(false);
-                                                }} 
-                                                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-medium transition-colors duration-200"
-                                                style={primaryButtonStyle}
-                                            >
-                                                <Image
-                                                    src="/icons/iconsax/phone.svg"
-                                                    alt={t('call')}
-                                                    width={18}
-                                                    height={18}
-                                                    style={getButtonIconStyle()}
-                                                />
-                                                <span className="text-base font-medium">{t('call')}</span>
-                                            </button>
-                                        )}
-
-                                        {businessSettings.show_btn_email && hasEmails && (
-                                            <button 
-                                                onClick={() => {
-                                                    toggleContactModal('email');
-                                                    setIsMobileMenuOpen(false);
-                                                }} 
-                                                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-medium transition-colors duration-200"
-                                                style={primaryButtonStyle}
-                                            >
-                                                <Image
-                                                    src="/icons/iconsax/email.svg"
-                                                    alt={t('email')}
-                                                    width={18}
-                                                    height={18}
-                                                    style={getButtonIconStyle()}
-                                                />
-                                                <span className="text-base font-medium">{t('email')}</span>
-                                            </button>
-                                        )}
-
-                                        {businessSettings.show_address && businessData.business_address && (
-                                            <button 
-                                                onClick={() => {
-                                                    toggleAddressModal();
-                                                    setIsMobileMenuOpen(false);
-                                                }} 
-                                                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-medium transition-colors duration-200"
-                                                style={primaryButtonStyle}
-                                            >
-                                                <Image
-                                                    src="/icons/iconsax/location.svg"
-                                                    alt="Indirizzo"
-                                                    width={18}
-                                                    height={18}
-                                                    style={getButtonIconStyle()}
-                                                />
-                                                <span className="text-base font-medium">Indirizzo</span>
-                                            </button>
-                                        )}
-                                    </div>
-                                ) : null}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <MobileMenuOverlay
+                isOpen={isMobileMenuOpen}
+                onClose={() => setIsMobileMenuOpen(false)}
+                businessData={businessData}
+                businessSettings={businessSettings}
+                businessUrlnameInPath={businessUrlnameInPath}
+                activeSection={activeSection}
+                themeColorText={themeColorText}
+                themeColorButton={themeColorButton}
+                googleReviewLinkUrl={googleReviewLinkUrl}
+                hasPhones={hasPhones}
+                hasEmails={hasEmails}
+                togglePaymentsModal={togglePaymentsModal}
+                toggleContactModal={toggleContactModal}
+                toggleAddressModal={toggleAddressModal}
+                primaryButtonStyle={primaryButtonStyle}
+                secondaryButtonStyle={secondaryButtonStyle}
+                getButtonIconStyle={getButtonIconStyle}
+            />
 
              {/* Mobile/Tablet Profile Image - Hidden on desktop */}
              <div className="lg:hidden container-profile-pic pic-lg relative z-10 mx-auto -translate-y-[45px] rounded-full overflow-hidden bg-gray-100"
@@ -577,14 +392,15 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
             {/* Mobile/Tablet Layout (up to lg) */}
             <div className="lg:hidden container flex flex-col mx-auto max-w-3xl relative px-4 mt-[-50px]">
                 <div className="flex flex-col justify-center items-center gap-2 mt-4">
-                    {/* Left Column: Business Info */}
+                    {/* Top Column: Business Info */}
                     <div className="flex-1">
                         <div className="text-center" style={{ color: themeColorText }}>
                             <p className="text-2xl md:text-2xl font-bold">{businessData.business_name}</p>
                             {businessData.business_descr && <p className="d-none text-sm opacity-80 mt-1 max-w-lg">{businessData.business_descr}</p>}
                             <div className="flex flex-col gap-1 mt-1">
+
                                 {(businessSettings.show_address && businessData.business_address) && (
-                                    <p className="text-sm opacity-70" style={{ color: themeColorText }}>
+                                    <p className="hidden text-sm opacity-70" style={{ color: themeColorText }}>
                                         {businessData.business_city} / {businessData.business_address}
                                     </p>
                                 )}
@@ -597,29 +413,12 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                             </div>
                         </div>
 
-                                           <div className="flex justify-center flex-wrap gap-1 mt-2">
-                             {businessSettings.show_socials && filteredSocialLinks.map((link, index) => (
-                                 <div key={index} className="text-center">
-                                     <Link href={link.link_url} target="_blank" rel="noopener noreferrer" className={circularButtonBaseClass}>
-                                         <div className="link-icon-wrapper w-7 h-7 flex items-center justify-center rounded-full">
-                                             {link.icon && (
-                                                 <Image
-                                                     src={link.icon}
-                                                     alt={link.label}
-                                                     width={20}
-                                                     height={20}
-                                                 />
-                                             )}
-                                         </div>
-                                     </Link>
-                                 </div>
-                             ))}
-                         </div>
+                         
 
 
                      </div>
 
-                     {/* Right Column: Action Buttons */}
+                     {/* Bottom Column: Action Buttons */}
                      <div className="flex flex-row gap-2">
 
                          {businessSettings.show_btn_phone && hasPhones && (
@@ -668,6 +467,25 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                  Pagamenti
                              </button>
                          )}
+                     </div>
+
+                     <div className="flex justify-center flex-wrap gap-1 mt-2">
+                             {businessSettings.show_socials && filteredSocialLinks.map((link, index) => (
+                                 <div key={index} className="text-center">
+                                     <Link href={link.link_url} target="_blank" rel="noopener noreferrer" className={circularButtonBaseClass}>
+                                         <div className="link-icon-wrapper w-7 h-7 flex items-center justify-center rounded-full">
+                                             {link.icon && (
+                                                 <Image
+                                                     src={link.icon}
+                                                     alt={link.label}
+                                                     width={20}
+                                                     height={20}
+                                                 />
+                                             )}
+                                         </div>
+                                     </Link>
+                                 </div>
+                             ))}
                      </div>
                 </div>
 
@@ -740,7 +558,7 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                                     opacity: imageOpacity
                                 }}
                             >
-                                 <div className="mb-0 text-center transition-opacity duration-300 ease-out" style={{ opacity: titleOpacity }}>
+                                 <div className="mb-0 transition-opacity duration-300 ease-out" style={{ opacity: titleOpacity }}>
                                     {businessData.business_name && <p className="font-bold text-3xl md:text-4xl lg:text-6xl max-4-3xl mb-2 text-white" style={{ textShadow: '1px 1px 4px rgba(0, 0, 0, 0.5)' }}>{businessData.business_name}</p>}
                                     {businessData.business_descr && <p className="font-bold text-xl md:text-xl lg:text-2xl max-4-3xl text-white" style={{ textShadow: '1px 1px 4px rgba(0, 0, 0, 0.5)' }}>{businessData.business_descr}</p>}
                                 </div>

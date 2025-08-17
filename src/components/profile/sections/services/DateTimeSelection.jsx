@@ -153,7 +153,7 @@ export default function DateTimeSelection({
 
     return (
         <div className="flex flex-col h-full p-6" style={{ color: themeColorText}}>
-            <h3 className="text-sm lg:text-xl font-semibold mb-6 capitalize">
+            <h3 className="text-base lg:text-xl font-semibold mb-6 capitalize">
                 {t('selectDateAndTime')} {selectedEvent && `per ${selectedEvent.event_title}`}
             </h3>
             <div className="flex flex-col md:flex-row gap-8">

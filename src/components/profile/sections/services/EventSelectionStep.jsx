@@ -41,7 +41,7 @@ export default function EventSelectionStep({
                                     {event.event_title}
                                 </h3>
                                 {event.event_description && (
-                                    <p className="text-sm opacity-70" style={{ color: themeColorText }}>
+                                    <p className="text-xs lg:text-sm opacity-70" style={{ color: themeColorText }}>
                                         {event.event_description}
                                     </p>
                                 )}
