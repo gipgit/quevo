@@ -185,17 +185,45 @@ export default function RequirementsStep({
         );
     }
 
-    // If no requirements and no questions, automatically skip
+    // If no requirements and no questions, show a message and allow continue
     if (requirements.length === 0 && questions.length === 0) {
-        // Auto-skip after a brief delay
-        setTimeout(() => {
-            onNext({
-                confirmedRequirements: {},
-                questionResponses: {},
-                checkboxResponses: {}
-            });
-        }, 100);
-        return null;
+        return (
+            <div className="space-y-6 flex flex-col h-full p-6">
+                <div>
+                    <h2 className="text-xl lg:text-2xl font-bold mb-2" style={{ color: themeColorText }}>
+                        {t('requirementsAndQuestionsTitle')}
+                    </h2>
+                </div>
+                
+                <div className="flex-1 flex items-center justify-center">
+                    <div className="text-center">
+                        <p className="text-gray-500 mb-4">{t('noRequirementsOrQuestions')}</p>
+                    </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex justify-end pt-4 mt-auto sticky bottom-0 bg-gradient-to-t from-white via-white/95 to-transparent border-t border-gray-200 -mx-6 px-6 py-4">
+                    <button
+                        onClick={handleBack}
+                        className="px-4 py-2 rounded-md text-sm font-medium mr-2"
+                        style={{ backgroundColor: 'transparent', color: themeColorText, border: `1px solid ${themeColorText}` }}
+                    >
+                        {t('back')}
+                    </button>
+                    <button
+                        onClick={() => onNext({
+                            confirmedRequirements: {},
+                            questionResponses: {},
+                            checkboxResponses: {}
+                        })}
+                        className="px-4 py-2 rounded-md text-sm font-medium"
+                        style={{ color: "#FFF", backgroundColor: themeColorButton }}
+                    >
+                        {t('continue')}
+                    </button>
+                </div>
+            </div>
+        );
     }
 
     return (

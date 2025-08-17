@@ -48,16 +48,16 @@ export default function AIChatSuggestions({ onSuggestionClick, themeColors }: AI
   ];
 
   return (
-    <div className="p-4 border-t" style={{ borderColor: themeColors.text + '20' }}>
+    <div className="p-4 border-t relative z-10" style={{ borderColor: themeColors.text + '20' }}>
       
-      <div className="flex flex-wrap gap-2 justify-center">
+      <div className="flex flex-wrap gap-2 justify-center relative z-10">
         {suggestions.map((suggestion, index) => (
           <button
             key={index}
             onClick={() => onSuggestionClick(suggestion.text)}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-3xl transition-all whitespace-nowrap"
+            className="inline-flex items-center gap-2 px-2 py-1 lg:px-3 lg:py-2 rounded-3xl transition-all whitespace-nowrap"
             style={{
-              backgroundColor: themeColors.text + '5',
+              backgroundColor: themeColors.background,
               border: `1px solid ${themeColors.text + '40'}`,
             }}
           >

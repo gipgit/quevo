@@ -385,7 +385,7 @@ export default function AIChatClientWrapper({ initialData }: AIChatClientWrapper
       >
                  {/* Moving Shine Effects */}
          <div 
-           className="absolute inset-0 opacity-30"
+           className="absolute inset-0 opacity-30 z-0"
            style={{
              background: `
                radial-gradient(circle at 30% 20%, ${initialData.themeColors.text}15 0%, transparent 50%),
@@ -398,7 +398,7 @@ export default function AIChatClientWrapper({ initialData }: AIChatClientWrapper
         
                  {/* Fixed Grid Lines */}
          <div 
-           className="absolute inset-0 opacity-10"
+           className="absolute inset-0 opacity-5 z-0"
            style={{
              backgroundImage: `
                linear-gradient(${initialData.themeColors.text} 1px, transparent 1px),
@@ -409,7 +409,7 @@ export default function AIChatClientWrapper({ initialData }: AIChatClientWrapper
          />
         
                  {/* Floating Particles */}
-         <div className="absolute inset-0 overflow-hidden">
+         <div className="absolute inset-0 overflow-hidden z-0">
            {[...Array(8)].map((_, i) => (
              <div
                key={i}
@@ -470,7 +470,7 @@ export default function AIChatClientWrapper({ initialData }: AIChatClientWrapper
          `}</style>
               {/* Header */}
         <div 
-          className="grid grid-cols-3 items-center p-4 border-b"
+          className="grid grid-cols-3 items-center p-4 border-b relative z-10"
           style={{ 
             borderColor: initialData.themeColors.text + '20',
             color: initialData.themeColors.text 
@@ -559,7 +559,7 @@ export default function AIChatClientWrapper({ initialData }: AIChatClientWrapper
              {/* Chat Container - Centered at start, fixed bottom when chat begins */}
        {messages.length === 1 ? (
          // Welcome layout
-         <div className="max-w-[800px] mx-auto flex-1 flex items-center justify-center relative z-20">
+         <div className="max-w-[800px] mx-auto flex-1 flex items-center justify-center relative z-10">
            <div className="w-full max-w-xl mx-auto px-4">
                            <div className="text-center mb-4">
                 <h2 
@@ -585,7 +585,7 @@ export default function AIChatClientWrapper({ initialData }: AIChatClientWrapper
          </div>
        ) : (
          // Regular chat layout with sticky input
-         <div className="max-w-[1200px] mx-auto flex-1 flex flex-col relative z-20">
+         <div className="max-w-[1200px] mx-auto flex-1 flex flex-col relative z-10">
            {/* Messages Container - Scrollable */}
            <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-0">
                                                        {messages.map((message) => (
@@ -641,7 +641,7 @@ export default function AIChatClientWrapper({ initialData }: AIChatClientWrapper
            
                        {/* Sticky Input at bottom */}
             <div 
-              className="sticky bottom-0 border-t shadow-2xl" 
+              className="sticky bottom-0 border-t shadow-2xl relative z-10" 
               style={{ 
                 borderColor: initialData.themeColors.text + '20',
                 background: `linear-gradient(to top, ${initialData.themeColors.background}, ${initialData.themeColors.background}dd)`,

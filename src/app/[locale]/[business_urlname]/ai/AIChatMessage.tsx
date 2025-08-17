@@ -50,8 +50,8 @@ export default function AIChatMessage({ message, themeColors, businessProfileIma
   };
 
      return (
-     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} w-full`}>
-       <div className={`flex ${isUser ? 'flex-col items-end' : 'flex-col items-start'} w-full ${message.data?.type === 'services' ? '' : 'max-w-lg lg:max-w-2xl'}`}>
+     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} w-full relative z-10`}>
+       <div className={`flex ${isUser ? 'flex-col items-end' : 'flex-col items-start'} w-full ${message.data?.type === 'services' ? '' : 'max-w-lg lg:max-w-2xl'} relative z-10`}>
                  {/* Profile Image for Assistant - Above message */}
          {!isUser && (
            <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 mb-2">
@@ -80,15 +80,16 @@ export default function AIChatMessage({ message, themeColors, businessProfileIma
         
         {/* Message Content */}
                  <div 
-           className={`rounded-2xl px-4 py-3 ${
+           className={`rounded-2xl px-4 py-3 relative z-10 ${
              isUser 
                ? 'rounded-br-md' 
                : 'rounded-bl-md'
            } ${message.data?.type === 'services' ? 'w-full lg:max-w-2xl xl:max-w-3xl' : ''}`}
-           style={{
-             backgroundColor: isUser ? themeColors.button : themeColors.text + '10',
-             color: isUser ? '#FFFFFF' : themeColors.text,
-           }}
+                       style={{
+              backgroundColor: isUser ? themeColors.button : themeColors.background,
+              color: isUser ? '#FFFFFF' : themeColors.text,
+              border: isUser ? 'none' : `1px solid ${themeColors.text + '20'}`,
+            }}
          >
           {/* Message content with line breaks */}
           <div className="whitespace-pre-wrap text-sm leading-relaxed">

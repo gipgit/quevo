@@ -81,33 +81,6 @@ export default function ServiceRequestModal({
     const [showErrorModal, setShowErrorModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
-    // Reset state when modal opens
-    useEffect(() => {
-        if (isOpen && selectedService) {
-            setStep(1);
-            setSelectedDateTime(null);
-            setTotalOccupancyDuration(0); // Don't set based on service, wait for event selection
-            setSelectedEvent(null);
-            setServiceEvents([]);
-            
-            // Reset form data
-            setSelectedServiceItems({});
-            setTotalQuotationPrice(0);
-            setConfirmedRequirements({});
-            setQuestionResponses({});
-            setCheckboxResponses({});
-            setCustomerDetails(null);
-            
-            setShowErrorModal(false);
-            setErrorMessage('');
-            
-            // If service has date_selection, fetch events immediately
-            if (selectedService.date_selection) {
-                handleServiceSelect(selectedService);
-            }
-        }
-    }, [isOpen, selectedService]);
-
     const fetchServiceEvents = useCallback(async (serviceId) => {
         setIsLoadingEvents(true);
         try {
@@ -128,46 +101,74 @@ export default function ServiceRequestModal({
         }
     }, [business.business_id]);
 
-    const handleServiceSelect = useCallback(async (service) => {
-        console.log("handleServiceSelect called with service:", service);
-        
-        // If service has date_selection, fetch events first
+    // Function to determine the correct initial step based on service configuration
+    const determineInitialStep = useCallback(async (service) => {
+        // If service has date_selection, we need to check events first
         if (service.date_selection) {
             const result = await fetchServiceEvents(service.service_id);
             
             if (!result.success) {
-                // API error occurred, show error and stay on current step
                 setErrorMessage(result.error || t('failedToLoadEvents'));
                 setShowErrorModal(true);
-                return; // Don't proceed to next step
+                return 1; // Stay on loading step
             }
             
             const events = result.events;
             setServiceEvents(events);
             
-                         if (events.length === 0) {
-                 // No events with availability found, skip to service items step
-                 setSelectedDateTime(null);
-                 setStep(4);
-             } else if (events.length === 1) {
-                 // One event found, set it as selected and go to date time selection
-                 const singleEvent = events[0];
-                 setSelectedEvent(singleEvent);
-                 // Update totalOccupancyDuration based on the selected event's duration and buffer only
-                 const eventDuration = singleEvent.duration_minutes || 0;
-                 const eventBuffer = singleEvent.buffer_minutes || 0;
-                 setTotalOccupancyDuration(eventDuration + eventBuffer);
-                 setStep(3);
-             } else {
-                 // Multiple events found, go to event selection step
-                 setStep(2);
-             }
-         } else {
-             // No date selection required, go directly to service items step
-             setSelectedDateTime(null);
-             setStep(4);
-         }
+            if (events.length === 0) {
+                // No events available, check if we can skip to requirements
+                return await checkServiceItemsAndRequirements(service);
+            } else if (events.length === 1) {
+                // One event found, set it as selected and go to date time selection
+                const singleEvent = events[0];
+                setSelectedEvent(singleEvent);
+                const eventDuration = singleEvent.duration_minutes || 0;
+                const eventBuffer = singleEvent.buffer_minutes || 0;
+                setTotalOccupancyDuration(eventDuration + eventBuffer);
+                return 3; // Date time selection
+            } else {
+                // Multiple events found, go to event selection step
+                return 2; // Event selection
+            }
+        } else {
+            // No date selection required, check if we can skip to requirements
+            return await checkServiceItemsAndRequirements(service);
+        }
     }, [fetchServiceEvents, t]);
+
+    // Function to check if service items and requirements exist
+    const checkServiceItemsAndRequirements = useCallback(async (service) => {
+        try {
+            const response = await fetch(`/api/businesses/${service.business_id}/services/${service.service_id}/details`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch service details');
+            }
+            const data = await response.json();
+            
+            const hasServiceItems = (data.serviceItems || []).length > 0;
+            const hasRequirements = (data.requirements || []).length > 0;
+            const hasQuestions = (data.questions || []).length > 0;
+            
+            if (hasServiceItems) {
+                return 4; // Service items step
+            } else if (hasRequirements || hasQuestions) {
+                return 5; // Requirements step
+            } else {
+                return 6; // Customer details step
+            }
+        } catch (error) {
+            console.error('Error checking service details:', error);
+            return 4; // Default to service items step
+        }
+    }, []);
+
+    const handleServiceSelect = useCallback(async (service) => {
+        console.log("handleServiceSelect called with service:", service);
+        
+        const initialStep = await determineInitialStep(service);
+        setStep(initialStep);
+    }, [determineInitialStep]);
 
     const handleEventSelect = useCallback((event) => {
         setSelectedEvent(event);
@@ -364,6 +365,33 @@ export default function ServiceRequestModal({
         setIsSubmitting(false);
         setIsRedirecting(false);
     }, [onClose]);
+
+    // Reset state when modal opens - moved after all function definitions
+    useEffect(() => {
+        if (isOpen && selectedService) {
+            setStep(1); // Start with loading step
+            setSelectedDateTime(null);
+            setTotalOccupancyDuration(0);
+            setSelectedEvent(null);
+            setServiceEvents([]);
+            
+            // Reset form data
+            setSelectedServiceItems({});
+            setTotalQuotationPrice(0);
+            setConfirmedRequirements({});
+            setQuestionResponses({});
+            setCheckboxResponses({});
+            setCustomerDetails(null);
+            
+            setShowErrorModal(false);
+            setErrorMessage('');
+            
+            // Determine the correct initial step based on service configuration
+            determineInitialStep(selectedService).then(initialStep => {
+                setStep(initialStep);
+            });
+        }
+    }, [isOpen, selectedService, determineInitialStep]);
 
     if (!isOpen || !selectedService) {
         return null;

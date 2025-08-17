@@ -57,7 +57,7 @@ export default function AIChatInput({ onSendMessage, isLoading, themeColors }: A
       />
       
       <div className="relative z-10">
-        <form onSubmit={handleSubmit} className="flex items-end">
+        <form onSubmit={handleSubmit} className="flex items-end relative z-10">
           <div className="flex-1 relative">
             <textarea
               ref={textareaRef}
@@ -66,15 +66,15 @@ export default function AIChatInput({ onSendMessage, isLoading, themeColors }: A
               onKeyPress={handleKeyPress}
               placeholder="Scrivi un messaggio..."
               disabled={isLoading}
-              className={`w-full resize-none rounded-2xl pr-16 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all shadow-lg ${!message.trim() ? 'pt-12 pb-3' : 'py-3'} px-4`}
-              style={{
-                backgroundColor: themeColors.text + '10',
-                color: themeColors.text,
-                border: `1px solid ${themeColors.text + '20'}`,
-                minHeight: '64px',
-                maxHeight: '160px',
-                boxShadow: `0 4px 20px ${themeColors.text + '15'}`,
-              }}
+              className={`w-full resize-none rounded-2xl pr-16 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all shadow-lg relative z-10 ${!message.trim() ? 'pt-12 pb-3' : 'py-3'} px-4`}
+                             style={{
+                 backgroundColor: themeColors.background,
+                 color: themeColors.text,
+                 border: `1px solid ${themeColors.text + '20'}`,
+                 minHeight: '64px',
+                 maxHeight: '160px',
+                 boxShadow: `0 4px 20px ${themeColors.text + '15'}`,
+               }}
               rows={1}
             />
             
@@ -82,7 +82,7 @@ export default function AIChatInput({ onSendMessage, isLoading, themeColors }: A
             <button
               type="submit"
               disabled={!message.trim() || isLoading}
-              className="absolute right-3 bottom-3 flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:scale-105"
+              className="absolute right-3 bottom-3 flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:scale-105 relative z-10"
               style={{
                 backgroundColor: message.trim() && !isLoading ? themeColors.button : themeColors.text + '30',
                 color: '#FFFFFF',
@@ -101,54 +101,54 @@ export default function AIChatInput({ onSendMessage, isLoading, themeColors }: A
             {/* Quick action pills inside textarea - only when no message */}
             {!message.trim() && (
               <div className="absolute top-3 left-4 flex gap-2 pointer-events-none">
-                <button
-                  onClick={() => onSendMessage('Mostrami i servizi')}
-                  disabled={isLoading}
-                  className="text-xs px-3 py-1 rounded-full transition-all disabled:opacity-50 pointer-events-auto hover:scale-105"
-                  style={{
-                    backgroundColor: themeColors.text + '20',
-                    color: themeColors.text,
-                    backdropFilter: 'blur(10px)',
-                  }}
-                >
-                  Servizi
-                </button>
-                <button
-                  onClick={() => onSendMessage('Voglio un preventivo')}
-                  disabled={isLoading}
-                  className="text-xs px-3 py-1 rounded-full transition-all disabled:opacity-50 pointer-events-auto hover:scale-105"
-                  style={{
-                    backgroundColor: themeColors.text + '20',
-                    color: themeColors.text,
-                    backdropFilter: 'blur(10px)',
-                  }}
-                >
-                  Preventivo
-                </button>
-                <button
-                  onClick={() => onSendMessage('Contatti')}
-                  disabled={isLoading}
-                  className="text-xs px-3 py-1 rounded-full transition-all disabled:opacity-50 pointer-events-auto hover:scale-105"
-                  style={{
-                    backgroundColor: themeColors.text + '20',
-                    color: themeColors.text,
-                    backdropFilter: 'blur(10px)',
-                  }}
-                >
-                  Contatti
-                </button>
-                <button
-                  onClick={() => onSendMessage('Controlla disponibilità')}
-                  disabled={isLoading}
-                  className="text-xs px-3 py-1 rounded-full transition-all disabled:opacity-50 pointer-events-auto hover:scale-105"
-                  style={{
-                    backgroundColor: themeColors.text + '20',
-                    color: themeColors.text,
-                    backdropFilter: 'blur(10px)',
-                  }}
-                >
-                  Disponibilità
-                </button>
+                                 <button
+                   onClick={() => onSendMessage('Mostrami i servizi')}
+                   disabled={isLoading}
+                   className="text-xs px-3 py-1 rounded-full transition-all disabled:opacity-50 pointer-events-auto hover:scale-105"
+                   style={{
+                     backgroundColor: themeColors.background,
+                     color: themeColors.text,
+                     border: `1px solid ${themeColors.text + '30'}`,
+                   }}
+                 >
+                   Servizi
+                 </button>
+                                 <button
+                   onClick={() => onSendMessage('Voglio un preventivo')}
+                   disabled={isLoading}
+                   className="text-xs px-3 py-1 rounded-full transition-all disabled:opacity-50 pointer-events-auto hover:scale-105"
+                   style={{
+                     backgroundColor: themeColors.background,
+                     color: themeColors.text,
+                     border: `1px solid ${themeColors.text + '30'}`,
+                   }}
+                 >
+                   Preventivo
+                 </button>
+                                 <button
+                   onClick={() => onSendMessage('Contatti')}
+                   disabled={isLoading}
+                   className="text-xs px-3 py-1 rounded-full transition-all disabled:opacity-50 pointer-events-auto hover:scale-105"
+                   style={{
+                     backgroundColor: themeColors.background,
+                     color: themeColors.text,
+                     border: `1px solid ${themeColors.text + '30'}`,
+                   }}
+                 >
+                   Contatti
+                 </button>
+                                 <button
+                   onClick={() => onSendMessage('Controlla disponibilità')}
+                   disabled={isLoading}
+                   className="text-xs px-3 py-1 rounded-full transition-all disabled:opacity-50 pointer-events-auto hover:scale-105"
+                   style={{
+                     backgroundColor: themeColors.background,
+                     color: themeColors.text,
+                     border: `1px solid ${themeColors.text + '30'}`,
+                   }}
+                 >
+                   Disponibilità
+                 </button>
               </div>
             )}
           </div>
