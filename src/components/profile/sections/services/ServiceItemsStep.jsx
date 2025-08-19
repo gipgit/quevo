@@ -200,16 +200,16 @@ export default function ServiceItemsStep({
     }
 
     return (
-        <div className="space-y-6 flex flex-col h-full p-6">
+        <div className="space-y-4 lg:space-y-6 flex flex-col h-full p-6">
             <div>
-                <h2 className="text-xl lg:text-2xl font-bold mb-2" style={{ color: themeColorText }}>
+                <h2 className="text-lg lg:text-2xl font-bold mb-1 lg:mb-2" style={{ color: themeColorText }}>
                     {t('serviceItemsTitle')}
                 </h2>
             </div>
 
             {/* Service Items Section */}
             <div className="space-y-4">
-                <div className="grid gap-3">
+                <div className="grid gap-2 lg:gap-3">
                     {serviceItems.map((item) => {
                         const isSelected = selectedServiceItems[item.service_item_id] && selectedServiceItems[item.service_item_id].quantity > 0;
                         
@@ -224,7 +224,7 @@ export default function ServiceItemsStep({
                             >
                                 <div className="text-base flex-1">
                                     <div className="flex items-center gap-2">
-                                        <p className="text-sm md:text-base font-medium">{item.item_name}</p>
+                                        <p className="text-sm md:text-base font-medium leading-none">{item.item_name}</p>
                                         {item.item_description && (
                                             <button
                                                 type="button"
@@ -238,7 +238,7 @@ export default function ServiceItemsStep({
                                         )}
                                     </div>
                                     {item.item_description && expandedDescriptions[item.service_item_id] && (
-                                        <p className="text-xs opacity-60 leading-tight mt-1">{item.item_description}</p>
+                                        <p className="text-xs opacity-60 leading-none mt-1">{item.item_description}</p>
                                     )}
                                 </div>
                                 
@@ -253,7 +253,7 @@ export default function ServiceItemsStep({
                                          <button
                                              type="button"
                                              onClick={() => handleServiceItemToggle(item)}
-                                             className="px-3 py-1 rounded-md text-sm font-medium"
+                                             className="px-2 py-1 lg:px-3 lg:py-1 rounded-md text-xs lg:text-sm font-medium"
                                              style={{ backgroundColor: 'transparent', color: themeColorText, border: `1px solid ${themeColorBorder}` }}
                                          >
                                              Add

@@ -4,7 +4,11 @@ import prisma from "@/lib/prisma"
 import MarketingWrapper from "./marketing-wrapper"
 import { getCurrentBusinessIdFromCookie } from "@/lib/server-business-utils"
 
-export default async function MarketingPage() {
+export default async function MarketingPage({
+  params
+}: {
+  params: { locale: string }
+}) {
   const session = await auth()
   
   if (!session?.user) {
@@ -92,6 +96,7 @@ export default async function MarketingPage() {
     <MarketingWrapper 
       services={transformedServices}
       business={currentBusiness}
+      locale={params.locale}
     />
   )
 }

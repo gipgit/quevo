@@ -540,13 +540,13 @@ export default function AddActionModal({
           </div>
 
           {/* Right - Form Fields */}
-          <div className={`flex-1 overflow-y-auto rounded-2xl lg:rounded-3xl bg-white/95 backdrop-blur-sm lg:my-auto lg:max-h-[85vh] ${
+          <div className={`flex-1 overflow-y-auto rounded-3xl lg:rounded-3xl bg-white/95 backdrop-blur-sm lg:my-auto lg:max-h-[85vh] ${
             selectedTemplate ? 'block' : 'hidden lg:block'
           }`}>
             {selectedTemplate ? (
-              <div className="p-6 lg:p-6 animate-[slideDown_0.3s_ease-out_0.1s_both]">
+              <div className="p-5 lg:p-6 animate-[slideDown_0.3s_ease-out_0.1s_both]">
                 <div className="flex items-center justify-between mb-6 animate-[slideDown_0.3s_ease-out_0.2s_both]">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 lg:gap-3">
                     <div className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-lg ${
                       ACTION_TYPE_COLORS[selectedTemplate.action_type] || 'bg-blue-50'
                     }`}>
@@ -559,25 +559,25 @@ export default function AddActionModal({
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-lg lg:text-xl font-semibold text-gray-900 truncate">{selectedTemplate.translated_title}</h3>
+                      <h3 className="text-base lg:text-xl font-semibold text-gray-900 truncate">{selectedTemplate.translated_title}</h3>
                     </div>
                   </div>
                   
                   {/* Mobile navigation buttons */}
-                  <div className="lg:hidden flex items-center gap-2">
+                  <div className="lg:hidden flex items-center gap-1 lg:gap-2">
                     <button
                       onClick={() => setMobileStep('templates')}
-                      className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 rounded-lg transition-colors"
+                      className="p-2 bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-800 rounded-lg transition-colors"
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                       </svg>
                     </button>
                     <button
                       onClick={onClose}
-                      className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 rounded-lg transition-colors"
+                      className="p-2 bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-800 rounded-lg transition-colors"
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     </button>

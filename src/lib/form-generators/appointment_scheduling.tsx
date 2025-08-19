@@ -356,7 +356,7 @@ export function AppointmentSchedulingForm({
 
           {/* Date Selection Area */}
           <div className="mt-6">
-            <h3 className="text-base font-medium text-gray-900 mb-2">
+            <h3 className="text-sm lg:text-base font-medium text-gray-900 mb-2">
               {!formData.appointment_status ? 'Seleziona uno stato appuntamento per iniziare' :
                (formData.appointment_status === 'confirmed' || formData.appointment_mode === 'fixed_date') ? 'Data Confermata' :
                'Date Suggerite'}
@@ -364,7 +364,7 @@ export function AppointmentSchedulingForm({
             
             {/* Placeholder when no status selected */}
             {!formData.appointment_status && (
-              <div className="text-gray-600 text-sm italic py-4">Seleziona una data dal calendario</div>
+              <div className="text-gray-600 text-xs lg:text-sm italic py-4">Seleziona una data dal calendario</div>
             )}
             
             {/* For confirmed appointments or fixed_date mode - show only one confirmed date card */}
@@ -403,12 +403,12 @@ export function AppointmentSchedulingForm({
 
             {/* When status is confirmed but no fixed date selected yet, show guidance */}
             {formData.appointment_status === 'confirmed' && !fixedAppointmentDate && (
-              <div className="text-sm text-gray-600 italic py-2">Seleziona una data dal calendario</div>
+              <div className="text-xs lg:text-sm text-gray-600 italic py-2">Seleziona una data dal calendario</div>
             )}
 
             {/* When status is to_schedule with fixed_date but no date selected yet, show guidance */}
             {formData.appointment_status === 'to_schedule' && formData.appointment_mode === 'fixed_date' && !fixedAppointmentDate && (
-              <div className="text-sm text-gray-600 italic py-2">Seleziona una data dal calendario</div>
+              <div className="text-xs lg:text-sm text-gray-600 italic py-2">Seleziona una data dal calendario</div>
             )}
 
             {/* For multiple_choice mode - show suggested dates list */}
@@ -514,15 +514,18 @@ export function AppointmentSchedulingForm({
             );
           })()}
 
-          {/* Submit button for appointment scheduling */}
-          <SubmitButton isSubmitting={isSubmitting} disabled={disabled} />
+          {/* Submit button for desktop (1-column layout) - visible only on lg+ */}
+          <div className="hidden lg:block">
+            <SubmitButton isSubmitting={isSubmitting} disabled={disabled} />
+          </div>
+
         </div>
 
         {/* Calendar Integration for Appointment Scheduling (right column) */}
-        <div className="w-80 p-4 rounded-lg bg-gray-200">
+        <div className="w-80 lg:p-4 rounded-lg lg:bg-gray-200 mt-6 lg:mt-0">
          {!formData.appointment_status && (
            <div className="mb-4">
-             <div className="text-sm text-gray-600">
+             <div className="text-xs lg:text-sm text-gray-600">
                Seleziona uno stato per abilitare
              </div>
            </div>
@@ -617,6 +620,11 @@ export function AppointmentSchedulingForm({
                  </button>
                </div>
              )}
+
+             {/* Submit button for mobile (2-column layout) - visible only on mobile */}
+             <div className="lg:hidden">
+               <SubmitButton isSubmitting={isSubmitting} disabled={disabled} />
+             </div>
          </div>
        </div>
      </div>

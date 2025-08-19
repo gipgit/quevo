@@ -140,7 +140,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     { href: "/dashboard", label: t("nav.home") || "Home", icon: HomeIcon },
     { href: "/dashboard/profile", label: t("nav.profile") || "Profilo", icon: UserIcon },
     { href: "/dashboard/services", label: t("nav.services") || "Servizi", icon: WrenchScrewdriverIcon },
-    { href: "/dashboard/products", label: t("nav.products") || "Prodotti", icon: CubeIcon },
     { href: "/dashboard/service-requests", label: t("nav.serviceRequests") || "Richieste Servizi", icon: ClipboardDocumentListIcon },
     { href: "/dashboard/service-boards", label: t("nav.serviceBoards") || "Bacheche Servizi", icon: ClipboardDocumentIcon },
     { href: "/dashboard/appointments", label: t("nav.appointments") || "Appuntamenti", icon: CalendarIcon },

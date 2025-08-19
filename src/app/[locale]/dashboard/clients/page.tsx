@@ -4,7 +4,11 @@ import prisma from "@/lib/prisma"
 import ClientsWrapper from "./clients-wrapper"
 import { getCurrentBusinessIdFromCookie } from "@/lib/server-business-utils"
 
-export default async function ClientsPage() {
+export default async function ClientsPage({
+  params
+}: {
+  params: { locale: string }
+}) {
   const session = await auth()
   
   if (!session?.user) {
@@ -110,6 +114,17 @@ export default async function ClientsPage() {
     userPlanId
   )
 
+  // Get AI content generation rate limit status
+  const { AIContentGenerationRateLimiter } = await import("@/lib/ai-content-generation-rate-limit")
+  const aiContentGenerationRateLimitStatus = await AIContentGenerationRateLimiter.getRateLimitStatus(
+    currentBusiness.business_id,
+    userPlanId
+  )
+
+  // Get AI generation history
+  const { getAIGenerationHistory } = await import("./actions")
+  const aiGenerationHistory = await getAIGenerationHistory()
+
   // Process customers data
   const customersMap = new Map()
 
@@ -190,6 +205,9 @@ export default async function ClientsPage() {
       usage={usage}
       planLimits={planLimits}
       rateLimitStatus={rateLimitStatus}
+      aiContentGenerationRateLimitStatus={aiContentGenerationRateLimitStatus}
+      aiGenerationHistory={aiGenerationHistory.success ? aiGenerationHistory.data || [] : []}
+      locale={params.locale}
     />
   )
 }

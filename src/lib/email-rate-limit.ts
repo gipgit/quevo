@@ -47,7 +47,6 @@ export class EmailRateLimiter {
         data: {
           business_id: businessId,
           tokens_available: capacity,
-          tokens_capacity: capacity,
           fill_rate: fillRate,
           last_refill: new Date()
         }
@@ -56,7 +55,7 @@ export class EmailRateLimiter {
 
     return {
       tokensAvailable: rateLimitRecord.tokens_available,
-      tokensCapacity: rateLimitRecord.tokens_capacity,
+      tokensCapacity: capacity, // Use the calculated capacity from plan limits
       fillRate: rateLimitRecord.fill_rate,
       lastRefill: rateLimitRecord.last_refill || new Date()
     }
@@ -113,7 +112,6 @@ export class EmailRateLimiter {
       create: {
         business_id: businessId,
         tokens_available: finalTokensAvailable,
-        tokens_capacity: config.tokensCapacity,
         fill_rate: config.fillRate,
         last_refill: newLastRefill
       }
@@ -168,7 +166,6 @@ export class EmailRateLimiter {
       create: {
         business_id: businessId,
         tokens_available: config.tokensCapacity,
-        tokens_capacity: config.tokensCapacity,
         fill_rate: config.fillRate,
         last_refill: new Date()
       }

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
-import MarketingContentDisplay from "./marketing-content-display"
+import SocialMediaContentGenerator from "./social-media-content-generator"
 
 interface ServiceQuestion {
   question_id: number
@@ -34,8 +34,10 @@ interface Service {
   duration_minutes: number | null
   buffer_minutes: number | null
   price_base: number | null
+  price_type: string
   has_items: boolean | null
   date_selection: boolean | null
+  quotation_available: boolean | null
   is_active: boolean | null
   display_order: number | null
   servicecategory: {
@@ -55,96 +57,33 @@ interface Business {
 interface MarketingWrapperProps {
   services: Service[]
   business: Business
+  locale: string
 }
 
-export default function MarketingWrapper({ services, business }: MarketingWrapperProps) {
+export default function MarketingWrapper({ services, business, locale }: MarketingWrapperProps) {
   const t = useTranslations("marketing")
-
-  const formatServicesForPrompt = (business: Business, services: Service[]): string => {
-    if (!business || services.length === 0) {
-      return "No services available for this business."
-    }
-
-    let text = `Business Name: ${business.business_name}\n\n`
-    text += `Business Description: ${business.business_descr || "No description available"}\n\n`
-    text += "Services:\n\n"
-
-    services.forEach((service, index) => {
-      text += `${index + 1}. ${service.service_name}\n`
-      
-      if (service.description) {
-        text += `   Description: ${service.description}\n`
-      }
-      
-      if (service.price_base !== null) {
-        text += `   Price: €${service.price_base}\n`
-      }
-      
-      if (service.duration_minutes) {
-        text += `   Duration: ${service.duration_minutes} minutes\n`
-      }
-      
-      if (service.servicecategory?.category_name) {
-        text += `   Category: ${service.servicecategory.category_name}\n`
-      }
-
-      // Add service items
-      if (service.serviceitem.length > 0) {
-        text += `   Items included:\n`
-        service.serviceitem.forEach(item => {
-          text += `     - ${item.item_name}`
-          if (item.item_description) {
-            text += `: ${item.item_description}`
-          }
-          if (item.price_base) {
-            text += ` (€${item.price_base})`
-          }
-          text += `\n`
-        })
-      }
-
-      // Add questions
-      if (service.servicequestion.length > 0) {
-        text += `   Questions asked to clients:\n`
-        service.servicequestion.forEach(question => {
-          text += `     - ${question.question_text}${question.is_required ? ' (Required)' : ''}\n`
-        })
-      }
-
-      // Add requirements
-      if (service.servicerequirementblock.length > 0) {
-        text += `   Requirements:\n`
-        service.servicerequirementblock.forEach(req => {
-          text += `     - ${req.title || req.requirements_text}\n`
-        })
-      }
-
-      text += "\n"
-    })
-
-    return text
-  }
-
-  const servicesText = formatServicesForPrompt(business, services)
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto p-4">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("title")}</h1>
-          <p className="text-sm mt-1 text-gray-600 dark:text-gray-400">{t("subtitle")}</p>
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100">
+                {t("title")}
+              </h1>
+              <p className="text-sm mt-1 text-gray-600 dark:text-gray-400">
+                {t("subtitle")}
+              </p>
+            </div>
+          </div>
         </div>
 
-        <MarketingContentDisplay
-          servicesText={servicesText}
-          emailContent=""
-          socialMediaTitle=""
-          socialMediaDescription=""
+        <SocialMediaContentGenerator
           business={business}
           services={services}
-          isGenerating={false}
-          hasServices={services.length > 0}
+          locale={locale}
         />
       </div>
     </DashboardLayout>

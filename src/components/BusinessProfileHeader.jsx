@@ -346,6 +346,45 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                         <circle cx="18" cy="12" r="2" />
                     </svg>
                 </button>
+
+                {/* Mobile Assistant Button */}
+                <Link
+                    href={`/${businessUrlnameInPath}/ai`}
+                    className="fixed bottom-6 right-6 z-50 group"
+                >
+                    <div className="relative">
+                        {/* Enhanced shadow for better contrast */}
+                        <div className="absolute inset-0 bg-black/20 rounded-full blur-md"></div>
+                        <div className="absolute inset-0 bg-black/10 rounded-full blur-sm"></div>
+                        
+                        {/* Animated gradient background */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 rounded-full opacity-75 blur-sm animate-pulse"></div>
+                        
+                        {/* Main button */}
+                        <div className="relative bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 rounded-full p-4 shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105 group-hover:shadow-cyan-500/50">
+                            {/* AI Typing Dots Icon */}
+                            <div className="w-6 h-6 relative flex items-center justify-center">
+                                {/* Three animated dots like typing indicator */}
+                                <div className="flex items-center space-x-1">
+                                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms', animationDuration: '1.4s' }}></div>
+                                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '160ms', animationDuration: '1.4s' }}></div>
+                                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '320ms', animationDuration: '1.4s' }}></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Floating text */}
+                        <div className="absolute -top-2 -right-2 bg-white text-gray-800 px-2 py-1 rounded-lg text-xs font-medium shadow-lg opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                            Help
+                        </div>
+                        
+                        {/* Enhanced glow effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 rounded-full opacity-0 group-hover:opacity-40 blur-xl transition-opacity duration-300"></div>
+                    </div>
+                </Link>
+                {/*    End Mobile Assistant Button   */ }
+
+
             </div>
 
             {/* Mobile Menu Overlay */}

@@ -33,6 +33,8 @@ model business {
   business_public_uuid           String?                          @unique @db.VarChar(36)
   business_img_profile           String?                          @db.VarChar(255)
   business_img_cover             String?                          @db.VarChar(255)
+  aicontentgenerationratelimit   aicontentgenerationratelimit?
+  aigenerationemail              aigenerationemail[]
   appointment                    appointment[]
   usermanager                    usermanager                      @relation(fields: [manager_id], references: [user_id], onDelete: Cascade)
   businessad                     businessad[]
@@ -45,6 +47,7 @@ model business {
   businesssponsorship            businesssponsorship[]
   cardscan                       cardscan[]
   cardscanauthorized             cardscanauthorized[]
+  emailratelimit                 emailratelimit?
   product                        product[]
   productcategory                productcategory[]
   promo                          promo[]
@@ -803,6 +806,7 @@ model supportrequest {
   resolution_notes   String?
   created_at         DateTime?                 @default(now()) @db.Timestamptz(6)
   updated_at         DateTime?                 @default(now()) @db.Timestamptz(6)
+  attachments        attachments[]
   usermanager        usermanager?              @relation(fields: [assigned_to], references: [user_id], onUpdate: NoAction, map: "fk_sr_assigned_to")
   business           business                  @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sr_business")
   usercustomer       usercustomer?             @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_sr_customer")
@@ -821,14 +825,14 @@ model supportrequest {
 }
 
 model emailratelimit {
-  id               Int       @id @default(autoincrement())
-  business_id      String    @unique @db.Uuid
-  tokens_available Int       @default(0)
-  tokens_capacity  Int       @default(0)
-  fill_rate        Int       @default(0)
-  last_refill      DateTime? @default(now()) @db.Timestamptz(6)
-  created_at       DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at       DateTime? @default(now()) @db.Timestamptz(6)
+  id               Int      @id @default(autoincrement())
+  business_id      String   @unique @db.Uuid
+  tokens_available Int      @default(0)
+  fill_rate        Int      @default(10)
+  last_refill      DateTime @default(now()) @db.Timestamptz(6)
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime @default(now()) @db.Timestamptz(6)
+  business         business @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([business_id], map: "idx_emailratelimit_business")
 }
@@ -903,81 +907,40 @@ model quotation {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model attachments {
-  id                 BigInt            @id @default(autoincrement())
-  file_path          String            @db.VarChar(255)
-  file_name          String?           @db.VarChar(255)
+  id                 BigInt          @id @default(autoincrement())
+  file_path          String          @db.VarChar(255)
+  file_name          String?         @db.VarChar(255)
+  support_request_id String?         @db.Uuid
+  user_id            String?         @db.Uuid
+  created_at         DateTime        @default(now()) @db.Timestamptz(6)
   feedback_id        BigInt?
-  support_request_id BigInt?
-  user_id            String?           @db.Uuid
-  created_at         DateTime          @default(now()) @db.Timestamptz(6)
-  feedback           feedback?         @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  support_requests   support_requests? @relation(fields: [support_request_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  feedback           feedback?       @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  support_requests   supportrequest? @relation(fields: [support_request_id], references: [support_request_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_attachments_support_request_id")
+
+  @@index([feedback_id], map: "idx_attachments_feedback_id")
+  @@index([support_request_id], map: "idx_attachments_support_request_id")
+  @@index([user_id], map: "idx_attachments_user_id")
 }
 
 model feedback {
-  id                         BigInt                      @id @default(autoincrement())
-  user_id                    String?                     @db.Uuid
-  feedback_type              feedback_type_enum
-  message                    String
-  status                     feedback_status_enum        @default(new)
-  is_anonymous               Boolean                     @default(false)
-  created_at                 DateTime                    @default(now()) @db.Timestamptz(6)
-  updated_at                 DateTime                    @default(now()) @db.Timestamptz(6)
-  attachments                attachments[]
-  feedback_bug_reports       feedback_bug_reports?
-  feedback_feature_requests  feedback_feature_requests?
-  feedback_language_requests feedback_language_requests?
-  feedback_suggestions       feedback_suggestions?
-}
+  id                       BigInt                    @id @default(autoincrement())
+  user_id                  String?                   @db.Uuid
+  feedback_type            feedback_type_enum
+  message                  String
+  status                   feedback_status_enum      @default(new)
+  is_anonymous             Boolean                   @default(false)
+  created_at               DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime                  @default(now()) @db.Timestamptz(6)
+  attachments              attachments[]
+  feedbackbugreports       feedbackbugreports?
+  feedbackfeaturerequests  feedbackfeaturerequests?
+  feedbacklanguagerequests feedbacklanguagerequests?
+  feedbacksuggestions      feedbacksuggestions?
 
-model feedback_bug_reports {
-  id                 BigInt             @id @default(autoincrement())
-  feedback_id        BigInt             @unique
-  steps_to_reproduce String?
-  app_version        String?            @db.VarChar(50)
-  device_info        String?
-  expected_vs_actual String?
-  severity           bug_severity_enum?
-  created_at         DateTime           @default(now()) @db.Timestamptz(6)
-  feedback           feedback           @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-}
-
-model feedback_feature_requests {
-  id          BigInt   @id @default(autoincrement())
-  feedback_id BigInt   @unique
-  use_case    String?
-  impact      String?  @db.VarChar(20)
-  created_at  DateTime @default(now()) @db.Timestamptz(6)
-  feedback    feedback @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-}
-
-model feedback_language_requests {
-  id            BigInt   @id @default(autoincrement())
-  feedback_id   BigInt   @unique
-  language_code String   @db.VarChar(10)
-  created_at    DateTime @default(now()) @db.Timestamptz(6)
-  feedback      feedback @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-}
-
-model feedback_suggestions {
-  id          BigInt   @id @default(autoincrement())
-  feedback_id BigInt   @unique
-  created_at  DateTime @default(now()) @db.Timestamptz(6)
-  feedback    feedback @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-}
-
-model support_requests {
-  id                  BigInt                  @id @default(autoincrement())
-  user_id             String?                 @db.Uuid
-  subject             String                  @db.VarChar(255)
-  message             String
-  issue_type          support_issue_type_enum
-  priority            support_priority_enum   @default(medium)
-  status              support_status_enum     @default(open)
-  assigned_to_user_id String?                 @db.Uuid
-  created_at          DateTime                @default(now()) @db.Timestamptz(6)
-  updated_at          DateTime                @default(now()) @db.Timestamptz(6)
-  attachments         attachments[]
+  @@index([created_at], map: "idx_feedback_created_at")
+  @@index([status], map: "idx_feedback_status")
+  @@index([feedback_type], map: "idx_feedback_type")
+  @@index([user_id], map: "idx_feedback_user_id")
 }
 
 model serviceevent {
@@ -1014,6 +977,81 @@ model serviceeventavailability {
   date_updated        DateTime?     @default(now()) @db.Timestamp(6)
   business            business      @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
   serviceevent        serviceevent? @relation(fields: [event_id], references: [event_id], onDelete: Cascade)
+}
+
+model aicontentgenerationratelimit {
+  id                    Int      @id @default(autoincrement())
+  business_id           String   @unique @db.Uuid
+  generations_available Int      @default(0)
+  fill_rate             Int      @default(1)
+  last_refill           DateTime @default(now()) @db.Timestamptz(6)
+  created_at            DateTime @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime @default(now()) @db.Timestamptz(6)
+  business              business @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([business_id], map: "idx_aicontentgenerationratelimit_business")
+}
+
+model feedbackbugreports {
+  id                 BigInt             @id @default(autoincrement())
+  feedback_id        BigInt             @unique
+  steps_to_reproduce String?
+  app_version        String?            @db.VarChar(50)
+  device_info        String?
+  expected_vs_actual String?
+  severity           bug_severity_enum?
+  created_at         DateTime           @default(now()) @db.Timestamptz(6)
+  feedback           feedback           @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([feedback_id], map: "idx_feedbackbugreports_feedback_id")
+}
+
+model feedbackfeaturerequests {
+  id          BigInt   @id @default(autoincrement())
+  feedback_id BigInt   @unique
+  use_case    String?
+  impact      String?  @db.VarChar(20)
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  feedback    feedback @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([feedback_id], map: "idx_feedbackfeaturerequests_feedback_id")
+}
+
+model feedbacklanguagerequests {
+  id            BigInt   @id @default(autoincrement())
+  feedback_id   BigInt   @unique
+  language_code String   @db.VarChar(10)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  feedback      feedback @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([feedback_id], map: "idx_feedbacklanguagerequests_feedback_id")
+}
+
+model feedbacksuggestions {
+  id          BigInt   @id @default(autoincrement())
+  feedback_id BigInt   @unique
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  feedback    feedback @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([feedback_id], map: "idx_feedbacksuggestions_feedback_id")
+}
+
+model aigenerationemail {
+  id                            Int      @id @default(autoincrement())
+  business_id                   String   @db.Uuid
+  generation_date               DateTime @default(now()) @db.Timestamptz(6)
+  past_customers_subject        String?
+  past_customers_body           String?
+  uncommitted_customers_subject String?
+  uncommitted_customers_body    String?
+  services_text                 String?
+  past_customers_text           String?
+  uncommitted_customers_text    String?
+  created_at                    DateTime @default(now()) @db.Timestamptz(6)
+  business                      business @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([business_id], map: "idx_aigenerationemail_business")
+  @@index([generation_date], map: "idx_aigenerationemail_date")
 }
 
 enum business_sponsorship_level {

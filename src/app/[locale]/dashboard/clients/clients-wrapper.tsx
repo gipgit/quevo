@@ -77,6 +77,21 @@ interface ClientsWrapperProps {
     tokensCapacity: number
     nextRefillTime?: Date
   }
+  aiContentGenerationRateLimitStatus: {
+    allowed: boolean
+    generationsAvailable: number
+    fillRate: number
+    nextRefillTime?: Date
+  }
+  aiGenerationHistory: Array<{
+    id: number
+    generation_date: Date
+    past_customers_subject: string | null
+    past_customers_body: string | null
+    uncommitted_customers_subject: string | null
+    uncommitted_customers_body: string | null
+  }>
+  locale: string
 }
 
 export default function ClientsWrapper({ 
@@ -86,16 +101,25 @@ export default function ClientsWrapper({
   uncommittedCustomers, 
   usage, 
   planLimits,
-  rateLimitStatus
+  rateLimitStatus,
+  aiContentGenerationRateLimitStatus,
+  aiGenerationHistory,
+  locale
 }: ClientsWrapperProps) {
   const t = useTranslations("clients")
   const { theme } = useTheme()
   
   // State for UI interactions
-  const [activeTab, setActiveTab] = useState<'active' | 'past' | 'uncommitted'>('active')
+  const [activeTab, setActiveTab] = useState<'active' | 'past' | 'uncommitted' | 'ai-history'>('active')
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCustomers, setSelectedCustomers] = useState<string[]>([])
   const [showCampaignModal, setShowCampaignModal] = useState(false)
+  const [showAIContentModal, setShowAIContentModal] = useState(false)
+  const [isGeneratingContent, setIsGeneratingContent] = useState(false)
+  const [generatedContent, setGeneratedContent] = useState<{
+    pastCustomersEmail?: { subject: string; body: string }
+    uncommittedCustomersEmail?: { subject: string; body: string }
+  } | null>(null)
   const [campaignData, setCampaignData] = useState({
     subject: '',
     content: '',
@@ -200,6 +224,49 @@ export default function ClientsWrapper({
   }
 
   // Campaign functions
+  const handleGenerateEmailContent = async () => {
+    console.log("🖱️ [handleGenerateEmailContent] Button clicked!")
+    console.log("📊 [handleGenerateEmailContent] Rate limit status:", aiContentGenerationRateLimitStatus)
+    
+    if (!aiContentGenerationRateLimitStatus.allowed) {
+      const nextRefill = aiContentGenerationRateLimitStatus.nextRefillTime 
+        ? new Date(aiContentGenerationRateLimitStatus.nextRefillTime).toLocaleDateString()
+        : 'soon'
+      console.log("❌ [handleGenerateEmailContent] Rate limit exceeded, next refill:", nextRefill)
+      alert(`AI content generation rate limit exceeded. You can generate ${aiContentGenerationRateLimitStatus.fillRate} content pieces per week. Next refill on ${nextRefill}`)
+      return
+    }
+
+    console.log("✅ [handleGenerateEmailContent] Rate limit check passed, starting generation...")
+    setIsGeneratingContent(true)
+    
+    try {
+      console.log("📡 [handleGenerateEmailContent] Importing and calling generateEmailContentAction...")
+      const { generateEmailContentAction } = await import('./actions')
+      
+      const result = await generateEmailContentAction(locale)
+      console.log("📨 [handleGenerateEmailContent] Server action result:", result)
+
+      if (result.success) {
+        console.log("✅ [handleGenerateEmailContent] Generation successful, setting content and showing modal")
+        setGeneratedContent({
+          pastCustomersEmail: result.pastCustomersEmail,
+          uncommittedCustomersEmail: result.uncommittedCustomersEmail
+        })
+        setShowAIContentModal(true)
+      } else {
+        console.log("❌ [handleGenerateEmailContent] Generation failed:", result.message)
+        alert(`Error: ${result.message}`)
+      }
+    } catch (error) {
+      console.error('❌ [handleGenerateEmailContent] Error generating email content:', error)
+      alert('Error generating email content')
+    } finally {
+      console.log("🏁 [handleGenerateEmailContent] Generation process completed")
+      setIsGeneratingContent(false)
+    }
+  }
+
   const handleSendCampaign = async () => {
     if (!campaignData.subject || !campaignData.content) {
       alert('Please fill in all required fields')
@@ -266,8 +333,8 @@ export default function ClientsWrapper({
               </p>
             </div>
             
-                         {/* Action Buttons */}
-             <div className="flex items-center gap-3">
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3">
                <button
                  onClick={() => exportToCSV(currentCustomers)}
                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
@@ -283,6 +350,30 @@ export default function ClientsWrapper({
                  Export TXT
                </button>
                <button
+                 onClick={handleGenerateEmailContent}
+                 disabled={!aiContentGenerationRateLimitStatus.allowed || isGeneratingContent}
+                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                   aiContentGenerationRateLimitStatus.allowed && !isGeneratingContent
+                     ? 'bg-orange-600 text-white hover:bg-orange-700' 
+                     : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                 }`}
+               >
+                 {isGeneratingContent ? (
+                   <>
+                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                     {t("aiContentGeneration.generating")}
+                   </>
+                 ) : (
+                   <>
+                     <PlusIcon className="w-4 h-4" />
+                     {t("aiContentGeneration.generateEmailContent")}
+                   </>
+                 )}
+                 {!aiContentGenerationRateLimitStatus.allowed && (
+                   <span className="text-xs">({t("aiContentGeneration.rateLimited")})</span>
+                 )}
+               </button>
+               <button
                  onClick={() => setShowCampaignModal(true)}
                  disabled={!rateLimitStatus.allowed}
                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
@@ -294,14 +385,14 @@ export default function ClientsWrapper({
                  <PaperAirplaneIcon className="w-4 h-4" />
                  Send Campaign
                  {!rateLimitStatus.allowed && (
-                   <span className="text-xs">(Rate Limited)</span>
+                   <span className="text-xs">({t("rateLimit.rateLimited")})</span>
                  )}
                </button>
              </div>
           </div>
 
-                     {/* Stats */}
-           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-6">
              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
                <div className="flex items-center gap-3">
                  <UserGroupIcon className="w-8 h-8 text-green-600" />
@@ -360,6 +451,20 @@ export default function ClientsWrapper({
                  </div>
                </div>
              </div>
+             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
+               <div className="flex items-center gap-3">
+                 <PlusIcon className={`w-8 h-8 ${aiContentGenerationRateLimitStatus.allowed ? 'text-green-600' : 'text-red-600'}`} />
+                 <div>
+                   <p className="text-sm text-gray-600 dark:text-gray-400">{t("aiContentGeneration.title")}</p>
+                   <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                     {aiContentGenerationRateLimitStatus.generationsAvailable}/{aiContentGenerationRateLimitStatus.fillRate}
+                   </p>
+                   <p className="text-xs text-gray-500 dark:text-gray-400">
+                     {aiContentGenerationRateLimitStatus.allowed ? t("rateLimit.available") : t("aiContentGeneration.rateLimited")}
+                   </p>
+                 </div>
+               </div>
+             </div>
            </div>
         </div>
 
@@ -387,16 +492,26 @@ export default function ClientsWrapper({
                >
                  Past Clients ({pastCustomers.length})
                </button>
-               <button
-                 onClick={() => setActiveTab('uncommitted')}
-                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                   activeTab === 'uncommitted'
-                     ? 'border-orange-500 text-orange-600 dark:text-orange-400'
-                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                 }`}
-               >
-                 Uncommitted ({uncommittedCustomers.length})
-               </button>
+                               <button
+                  onClick={() => setActiveTab('uncommitted')}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'uncommitted'
+                      ? 'border-orange-500 text-orange-600 dark:text-orange-400'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Uncommitted ({uncommittedCustomers.length})
+                </button>
+                <button
+                  onClick={() => setActiveTab('ai-history')}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'ai-history'
+                      ? 'border-purple-500 text-purple-600 dark:text-purple-400'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  {t("aiHistory.title")} ({aiGenerationHistory.length})
+                </button>
              </nav>
            </div>
          </div>
@@ -500,11 +615,78 @@ export default function ClientsWrapper({
             ))}
           </div>
 
-                     {currentCustomers.length === 0 && (
-             <div className="p-8 text-center text-gray-500 dark:text-gray-400">
-               No {activeTab === 'active' ? 'active' : activeTab === 'past' ? 'past' : 'uncommitted'} customers found.
-             </div>
-           )}
+            {currentCustomers.length === 0 && (
+              <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+                No {activeTab === 'active' ? 'active' : activeTab === 'past' ? 'past' : 'uncommitted'} customers found.
+              </div>
+            )}
+
+          {/* AI History Content */}
+          {activeTab === 'ai-history' && (
+            <div className="divide-y divide-gray-200 dark:divide-gray-700">
+              {aiGenerationHistory.length === 0 ? (
+                <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+                  {t("aiHistory.noHistory")}
+                </div>
+              ) : (
+                aiGenerationHistory.map((generation) => (
+                  <div key={generation.id} className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        {t("aiHistory.generatedOn")} {new Date(generation.generation_date).toLocaleDateString()} at {new Date(generation.generation_date).toLocaleTimeString()}
+                      </h3>
+                      <button
+                        onClick={() => {
+                          setGeneratedContent({
+                            pastCustomersEmail: {
+                              subject: generation.past_customers_subject || '',
+                              body: generation.past_customers_body || ''
+                            },
+                            uncommittedCustomersEmail: {
+                              subject: generation.uncommitted_customers_subject || '',
+                              body: generation.uncommitted_customers_body || ''
+                            }
+                          })
+                          setShowAIContentModal(true)
+                        }}
+                        className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                      >
+                        {t("aiHistory.viewContent")}
+                      </button>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Past Customers Email Preview */}
+                      {generation.past_customers_subject && (
+                        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                          <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">{t("aiHistory.pastCustomersEmail")}</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            <strong>{t("aiHistory.subject")}:</strong> {generation.past_customers_subject}
+                          </p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            <strong>{t("aiHistory.preview")}:</strong> {generation.past_customers_body?.substring(0, 100)}...
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Uncommitted Customers Email Preview */}
+                      {generation.uncommitted_customers_subject && (
+                        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                          <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">{t("aiHistory.uncommittedCustomersEmail")}</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            <strong>{t("aiHistory.subject")}:</strong> {generation.uncommitted_customers_subject}
+                          </p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            <strong>{t("aiHistory.preview")}:</strong> {generation.uncommitted_customers_body?.substring(0, 100)}...
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
         </div>
 
         {/* Campaign Modal */}
@@ -628,6 +810,144 @@ export default function ClientsWrapper({
                     >
                       <PaperAirplaneIcon className="w-4 h-4" />
                       Send Campaign
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* AI Content Generation Modal */}
+        {showAIContentModal && generatedContent && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                                     <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                     {t("aiContentGeneration.modalTitle")}
+                   </h2>
+                  <button
+                    onClick={() => setShowAIContentModal(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {/* Past Customers Email */}
+                  {generatedContent.pastCustomersEmail && (
+                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                                             <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">
+                         {t("aiContentGeneration.pastCustomersEmail")}
+                       </h3>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            {t("aiContentGeneration.subjectLine")}
+                          </label>
+                          <input
+                            type="text"
+                            value={generatedContent.pastCustomersEmail.subject}
+                            readOnly
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            {t("aiContentGeneration.emailBody")}
+                          </label>
+                          <textarea
+                            value={generatedContent.pastCustomersEmail.body}
+                            readOnly
+                            rows={8}
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                          />
+                        </div>
+                        <button
+                          onClick={() => {
+                            console.log("🖱️ [Use for Campaign - Past] Button clicked!")
+                            console.log("📧 [Use for Campaign - Past] Content:", {
+                              subject: generatedContent.pastCustomersEmail!.subject,
+                              bodyPreview: generatedContent.pastCustomersEmail!.body.substring(0, 100) + "..."
+                            })
+                            setCampaignData({
+                              ...campaignData,
+                              subject: generatedContent.pastCustomersEmail!.subject,
+                              content: generatedContent.pastCustomersEmail!.body
+                            })
+                            setShowAIContentModal(false)
+                            setShowCampaignModal(true)
+                            console.log("✅ [Use for Campaign - Past] Modal transition completed")
+                          }}
+                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        >
+                          {t("aiContentGeneration.useForCampaign")}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Uncommitted Customers Email */}
+                  {generatedContent.uncommittedCustomersEmail && (
+                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">
+                        {t("aiContentGeneration.uncommittedCustomersEmail")}
+                      </h3>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            {t("aiContentGeneration.subjectLine")}
+                          </label>
+                          <input
+                            type="text"
+                            value={generatedContent.uncommittedCustomersEmail.subject}
+                            readOnly
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            {t("aiContentGeneration.emailBody")}
+                          </label>
+                          <textarea
+                            value={generatedContent.uncommittedCustomersEmail.body}
+                            readOnly
+                            rows={8}
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                          />
+                        </div>
+                        <button
+                          onClick={() => {
+                            console.log("🖱️ [Use for Campaign - Uncommitted] Button clicked!")
+                            console.log("📧 [Use for Campaign - Uncommitted] Content:", {
+                              subject: generatedContent.uncommittedCustomersEmail!.subject,
+                              bodyPreview: generatedContent.uncommittedCustomersEmail!.body.substring(0, 100) + "..."
+                            })
+                            setCampaignData({
+                              ...campaignData,
+                              subject: generatedContent.uncommittedCustomersEmail!.subject,
+                              content: generatedContent.uncommittedCustomersEmail!.body
+                            })
+                            setShowAIContentModal(false)
+                            setShowCampaignModal(true)
+                            console.log("✅ [Use for Campaign - Uncommitted] Modal transition completed")
+                          }}
+                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        >
+                          {t("aiContentGeneration.useForCampaign")}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-end gap-3 pt-4">
+                    <button
+                      onClick={() => setShowAIContentModal(false)}
+                      className="px-4 py-2 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                    >
+                      {t("aiContentGeneration.close")}
                     </button>
                   </div>
                 </div>

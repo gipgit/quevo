@@ -148,9 +148,10 @@ export async function POST(
     // Sanitize and capitalize customer name
     const sanitizedCustomerName = sanitizeAndCapitalizeName(customerName);
 
-    // Verify business exists
+    // Verify business exists and get UserManager info
     const business = await prisma.business.findUnique({
       where: { business_id: business_id },
+      include: { usermanager: true }
     });
 
     if (!business) {
@@ -191,12 +192,7 @@ export async function POST(
 
     // ENFORCE PER-MONTH SERVICE REQUEST LIMIT
     // plan_id is on usermanager, not business
-    // Need to fetch usermanager for this business
-    const businessWithManager = await prisma.business.findUnique({
-      where: { business_id: business_id },
-      include: { usermanager: true }
-    });
-    const planId = businessWithManager?.usermanager?.plan_id;
+    const planId = business?.usermanager?.plan_id;
     if (!planId) {
       return NextResponse.json({ 
         error: 'Plan ID not found for business manager.',
@@ -521,6 +517,21 @@ export async function POST(
     const businessManageRequestLink = `${appBaseUrl}/dashboard/service-requests/${result.serviceRequest.request_id}`;
 
     // Prepare common email data
+    const R2_PUBLIC_DOMAIN = "https://pub-eac238aed876421982e277e0221feebc.r2.dev";
+    
+    // Determine business profile image URL
+    const businessProfileImageUrl = !business.business_img_profile 
+      ? `${appBaseUrl}/uploads/business/${business.business_public_uuid}/profile.webp`
+      : `${R2_PUBLIC_DOMAIN}/business/${business.business_public_uuid}/profile.webp`;
+
+    // Debug: Log the image URL being used
+    console.log('Business profile image URL:', businessProfileImageUrl);
+    console.log('Business img_profile value:', business.business_img_profile);
+    console.log('Business public UUID:', business.business_public_uuid);
+
+    // Get business name initial for fallback
+    const businessNameInitial = business.business_name ? business.business_name.charAt(0).toUpperCase() : 'Q';
+
     const commonEmailData = {
       request_reference: result.serviceRequest.request_reference,
       service_name: service.service_name,
@@ -531,6 +542,8 @@ export async function POST(
       customer_phone: customerPhone || 'N/A',
       customer_notes: customerNotes || 'N/A',
       business_name: business.business_name,
+      business_profile_image: businessProfileImageUrl,
+      business_name_initial: businessNameInitial,
     };
 
     // Helper function to fill template
@@ -570,18 +583,28 @@ export async function POST(
       await transporter.sendMail({
         from: process.env.EMAIL_FROM,
         to: customerEmail,
-        subject: `Conferma Richiesta Servizio da ${business.business_name}`,
-        html: customerEmailHtml
+        subject: `${business.business_name} - Conferma Richiesta Servizio`,
+        html: customerEmailHtml,
+        headers: {
+          'X-Entity-Ref-ID': 'my-id-123',
+          'X-Mailer': 'Quevo Email System'
+        }
       });
 
-      // Send business email
-      if (business.business_email) {
+      // Send business email to UserManager
+      if (business.usermanager?.email) {
         await transporter.sendMail({
           from: process.env.EMAIL_FROM,
-          to: business.business_email as string,
-          subject: `Nuova Richiesta Servizio per ${business.business_name}`,
-          html: businessEmailHtml
+          to: business.usermanager.email,
+          subject: `Nuova Richiesta Servizio da ${sanitizedCustomerName} - ${business.business_name}`,
+          html: businessEmailHtml,
+          headers: {
+            'X-Entity-Ref-ID': 'my-id-123',
+            'X-Mailer': 'Quevo Email System'
+          }
         });
+      } else {
+        console.warn(`No UserManager email found for business ${business.business_name} (ID: ${business_id})`);
       }
 
       console.log('Service request confirmation emails sent successfully');

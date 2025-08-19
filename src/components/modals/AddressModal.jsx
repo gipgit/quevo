@@ -88,49 +88,55 @@ export default function AddressModal({
                 <Image src="/icons/iconsax/location.svg" width={32} height={32} alt="Location" className="hidden md:block" />
               </div>
               <div className="text-center pl-6">
-                <p className="text-base lg:text-lg font-medium break-words md:text-2xl" style={{ color: themeColorText }}>
+                <p className="text-base lg:text-lg font-medium break-words md:text-2xl mb-1" style={{ color: themeColorText }}>
                   {fullAddress}
                 </p>
-                <div className="flex gap-1 md:gap-2 mt-1 justify-center">
+                <div className="flex gap-1 md:gap-2 lg:gap-2 justify-center">
                   <a
                     href={createNavigationUrl('google')}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="button btn-sm google-maps-button px-2 md:px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
-                    style={{ backgroundColor: '#4285f4', color: '#fff' }}
+                    className="button btn-sm google-maps-button px-2 md:px-3 py-1 md:py-1.5 lg:py-1.5 rounded-lg text-xs md:text-sm inline-flex items-center gap-1 md:gap-2 whitespace-nowrap border border-gray-200 hover:bg-gray-50 transition-colors"
+                    style={{ color: themeColorText }}
                   >
-                    <Image
-                      src="/icons/appointments/googlemaps.svg"
-                      alt="Google Maps"
-                      width={12}
-                      height={12}
-                    />
-                    Google Maps
+                    <div className="w-4 h-4 md:w-6 md:h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: '#4285f4' }}>
+                      <Image
+                        src="/icons/appointments/googlemaps.svg"
+                        alt="Google Maps"
+                        width={12}
+                        height={12}
+                      />
+                    </div>
+                    <span className="hidden lg:inline">Google Maps</span>
                   </a>
                   <a
                     href={createNavigationUrl('waze')}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="button btn-sm waze-button px-2 md:px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
-                    style={{ backgroundColor: '#33ccff', color: '#fff' }}
+                    className="button btn-sm waze-button px-2 md:px-3 py-1 md:py-1.5 lg:py-1.5 rounded-lg text-xs md:text-sm inline-flex items-center gap-1 md:gap-2 whitespace-nowrap border border-gray-200 hover:bg-gray-50 transition-colors"
+                    style={{ color: themeColorText }}
                   >
-                    <Image
-                      src="/icons/appointments/waze.svg"
-                      alt="Waze"
-                      width={12}
-                      height={12}
-                    />
-                    Waze
+                    <div className="w-4 h-4 md:w-6 md:h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: '#33ccff' }}>
+                      <Image
+                        src="/icons/appointments/waze.svg"
+                        alt="Waze"
+                        width={12}
+                        height={12}
+                      />
+                    </div>
+                    <span className="hidden lg:inline">Waze</span>
                   </a>
                   <button
-                    className="button btn-sm copy-button px-2 md:px-3 py-1 rounded-lg text-xs inline-flex items-center gap-1 whitespace-nowrap"
-                    style={{ backgroundColor: '#6c757d', color: '#fff' }}
+                    className="button btn-sm copy-button px-2 md:px-3 py-1 md:py-1.5 lg:py-1.5 rounded-lg text-xs md:text-sm inline-flex items-center gap-1 md:gap-2 whitespace-nowrap border border-gray-200 hover:bg-gray-50 transition-colors"
+                    style={{ color: themeColorText }}
                     onClick={() => handleCopy(fullAddress, 'Indirizzo Copiato!')}
                   >
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                    </svg>
-                    Copia
+                    <div className="w-4 h-4 md:w-6 md:h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: '#6c757d' }}>
+                      <svg className="w-2 h-2 md:w-3 md:h-3" fill="white" viewBox="0 0 24 24">
+                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                      </svg>
+                    </div>
+                    <span className="hidden lg:inline">Copia</span>
                   </button>
                 </div>
               </div>

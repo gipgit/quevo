@@ -227,7 +227,7 @@ export default function RequirementsStep({
     }
 
     return (
-        <div className="space-y-6 flex flex-col h-full p-6">
+        <div className="space-y-2 lg:space-y-6 flex flex-col h-full p-6">
             <div>
                 <h2 className="text-xl lg:text-2xl font-bold mb-2" style={{ color: themeColorText }}>
                     {t('requirementsAndQuestionsTitle')}
@@ -237,7 +237,7 @@ export default function RequirementsStep({
             {/* Requirements Section */}
             {requirements.length > 0 && (
                 <div className="space-y-4">
-                    <h3 className="text-lg font-semibold" style={{ color: themeColorText }}>
+                    <h3 className="text-xs lg:text-base font-semibold opacity-50 text-uppercase border-b border-gray-500 pb-1" style={{ color: themeColorText }}>
                         {t('requirementsTitle')}
                     </h3>
                     {requirements.map(req => (
@@ -249,7 +249,7 @@ export default function RequirementsStep({
                                     checked={confirmedRequirements[req.requirement_block_id] || false}
                                     onChange={(e) => handleRequirementChange(req.requirement_block_id, e.target.checked)}
                                 />
-                                <div className="text-sm">
+                                <div className="text-sm leading-tight">
                                     <span className="">{req.title}:</span>{' '}
                                     <span className="">{req.requirements_text}</span>
                                     {fieldErrors[`requirement-${req.requirement_block_id}`] && (
@@ -267,7 +267,7 @@ export default function RequirementsStep({
             {/* Questions Section */}
             {questions.length > 0 && (
                 <div className="space-y-4">
-                    <h3 className="text-lg font-semibold" style={{ color: themeColorText }}>
+                    <h3 className="text-xs lg:text-base font-semibold opacity-50 text-uppercase border-b border-gray-500 pb-1" style={{ color: themeColorText }}>
                         {t('questionsTitle')}
                     </h3>
                     {questions.sort((a, b) => a.display_order - b.display_order).map(q => (

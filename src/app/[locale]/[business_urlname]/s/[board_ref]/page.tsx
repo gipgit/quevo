@@ -813,7 +813,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                     Share
                   </button>
                   <span className='border-1 border-gray-400 rounded-lg px-2 py-1 text-xs whitespace-nowrap'>Ref: {params.board_ref}</span>
-                  <span className='text-xs whitespace-nowrap'>{getRelativeTime(boardData.created_at, tServiceBoard)}</span>
+                  <span className='hidden lg:block text-xs whitespace-nowrap'>{getRelativeTime(boardData.created_at, tServiceBoard)}</span>
                 </div>
               </div>
             )}

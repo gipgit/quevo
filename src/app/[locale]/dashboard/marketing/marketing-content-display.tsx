@@ -42,6 +42,8 @@ interface Service {
   duration_minutes: number | null
   buffer_minutes: number | null
   price_base: any | null
+  price_type: string
+  quotation_available: boolean | null
   has_items: boolean | null
   date_selection: boolean | null
   is_active: boolean | null

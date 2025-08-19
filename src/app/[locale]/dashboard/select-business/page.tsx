@@ -6,12 +6,23 @@ import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
 import Image from "next/image"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
+import { useBusiness } from "@/lib/business-context"
 
+// Define Business interface to match the one in business-context
 interface Business {
   business_id: string
   business_name: string
-  business_img_profile?: string
+  business_urlname: string
+  business_country: string
+  business_region: string
+  business_address: string
+  business_email: string
+  business_phone: string
+  business_descr: string
+  business_img_profile: string | null
+  business_img_cover: string | null
   business_public_uuid: string
+  date_created: string
 }
 
 // Utility function to get profile image URL following the same pattern as business layout
@@ -31,24 +42,31 @@ export default function BusinessSelectionPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const t = useTranslations("Dashboard")
-  const [businesses, setBusinesses] = useState<Business[]>([])
+  const { businesses, switchBusiness } = useBusiness()
   const [loading, setLoading] = useState(true)
   const [avatarError, setAvatarError] = useState<{ [id: string]: boolean }>({})
 
   useEffect(() => {
     if (status === "loading") return
     if (!session) {
-      router.push("/signin")
+      router.push("/signin/business")
       return
     }
 
-    // Fetch user's businesses
+    // If businesses are already loaded from context, we don't need to fetch them
+    if (businesses.length > 0) {
+      setLoading(false)
+      return
+    }
+
+    // Fetch user's businesses if not available in context
     const fetchBusinesses = async () => {
       try {
         const response = await fetch("/api/user/businesses")
         if (response.ok) {
           const data = await response.json()
-          setBusinesses(data.businesses)
+          // Note: We don't set businesses here as they should come from context
+          // This is just to ensure we have the data
         }
       } catch (error) {
         console.error("Error fetching businesses:", error)
@@ -58,7 +76,7 @@ export default function BusinessSelectionPage() {
     }
 
     fetchBusinesses()
-  }, [session, status, router])
+  }, [session, status, router, businesses.length])
 
   if (status === "loading" || loading) {
     return (
@@ -73,7 +91,8 @@ export default function BusinessSelectionPage() {
   }
 
   const handleBusinessSelect = (businessId: string) => {
-    router.push(`/dashboard/business/${businessId}`)
+    // Use the switchBusiness function from context which properly updates session and redirects
+    switchBusiness(businessId)
   }
 
   return (
@@ -86,7 +105,7 @@ export default function BusinessSelectionPage() {
           <h2 className="text-3xl font-bold mb-12">{t("whatToManage")}</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6 max-w-6xl mx-auto">
           {businesses.map((business) => (
             <button
               key={business.business_id}
@@ -117,7 +136,7 @@ export default function BusinessSelectionPage() {
         </div>
 
         <div className="text-center mt-16">
-          <div className="text-2xl font-bold">twenter</div>
+          <div className="text-2xl font-bold"></div>
         </div>
       </div>
     </div>

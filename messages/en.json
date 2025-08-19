@@ -581,8 +581,8 @@
     "nextInvoice": "Next Invoice"
   },
   "marketing": {
-    "title": "Marketing Content Generator",
-    "subtitle": "Generate AI-powered marketing content based on your services",
+    "title": "Social Media Marketing",
+    "subtitle": "Generate AI-powered social media content for your business",
     "generateContent": "Generate Content",
     "generating": "Generating...",
     "businessInfo": "Business & Services Information",
@@ -607,7 +607,14 @@
     "error": "Error",
     "errorMessage": "Failed to copy to clipboard",
     "generateError": "Failed to generate marketing content",
-    "fetchError": "Failed to fetch services"
+    "fetchError": "Failed to fetch services",
+    "selectPlatforms": "Select Social Media Platforms",
+    "generatedContent": "Generated Content",
+    "title": "Title",
+    "description": "Description",
+    "hashtags": "Hashtags",
+    "callToAction": "Call to Action",
+    "noServicesWarning": "No services available. Please add some services to your business to generate social media content."
   },
   "clients": {
     "title": "Client Management",
@@ -661,6 +668,30 @@
       "tokensRemaining": "{remaining}/{capacity}",
       "sendCampaign": "Send Campaign",
       "rateLimitedButton": "Send Campaign (Rate Limited)"
+    },
+    "aiContentGeneration": {
+      "title": "AI Content Generation",
+      "generateEmailContent": "Generate Email Content",
+      "generating": "Generating...",
+      "rateLimited": "Rate Limited",
+      "generationsRemaining": "{remaining}/{capacity}",
+      "modalTitle": "AI Generated Email Content",
+      "pastCustomersEmail": "Past Customers Email",
+      "uncommittedCustomersEmail": "Uncommitted Customers Email",
+      "subjectLine": "Subject Line",
+      "emailBody": "Email Body",
+      "useForCampaign": "Use This Content for Campaign",
+      "close": "Close"
+    },
+    "aiHistory": {
+      "title": "AI History",
+      "noHistory": "No AI-generated email content found. Generate your first email content using the \"Generate Email Content\" button above.",
+      "generatedOn": "Generated on",
+      "viewContent": "View Content",
+      "pastCustomersEmail": "Past Customers Email",
+      "uncommittedCustomersEmail": "Uncommitted Customers Email",
+      "subject": "Subject",
+      "preview": "Preview"
     }
   },
   "quotation": {

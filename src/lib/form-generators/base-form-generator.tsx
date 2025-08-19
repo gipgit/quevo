@@ -58,6 +58,10 @@ export function useBaseForm(
             case 'select_cards':
               initialData[field.name] = field.validation?.multiSelect ? [] : '';
               break;
+            case 'select':
+              // For select fields, use the first option value as default if not already set
+              initialData[field.name] = initialData[field.name] || (field.options && field.options.length > 0 ? field.options[0].key : '');
+              break;
             case 'number':
               initialData[field.name] = field.validation?.min || 0;
               break;
@@ -103,7 +107,12 @@ export function useBaseForm(
 
       let isEmpty = false;
       if (typeof value === 'string') {
-        isEmpty = value.trim().length === 0;
+        // For select fields, allow any non-empty string value
+        if (field.type === 'select') {
+          isEmpty = !value || value.trim().length === 0;
+        } else {
+          isEmpty = value.trim().length === 0;
+        }
       } else if (Array.isArray(value)) {
         isEmpty = value.length === 0;
       } else if (typeof value === 'number') {
@@ -216,7 +225,7 @@ export const ActionDescriptionField: React.FC<{
       value={value || ''}
       onChange={(e) => onChange(e.target.value)}
       rows={2}
-      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       placeholder={placeholder}
       disabled={disabled}
     />
@@ -235,7 +244,7 @@ export const SubmitButton: React.FC<{
     <button
       type="submit"
       disabled={isSubmitting || disabled}
-      className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      className="px-4 lg:px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
     >
       {isSubmitting ? 'Salvataggio...' : children}
     </button>

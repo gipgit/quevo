@@ -47,7 +47,7 @@ export default function EventSelectionStep({
                                 )}
                             </div>
                             <button
-                                className="px-4 py-2 rounded-lg font-medium transition-colors ml-4"
+                                className="px-2 py-1 lg:px-4 lg:py-2 text-xs lg:text-sm rounded-lg font-medium transition-colors ml-4"
                                 style={{
                                     backgroundColor: selectedEvent?.event_id === event.event_id ? themeColorButton : 'transparent',
                                     color: selectedEvent?.event_id === event.event_id ? 'white' : themeColorButton,
