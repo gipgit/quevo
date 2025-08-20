@@ -189,21 +189,23 @@ export default function ServiceSelection({
                                         <div className="flex flex-row items-center justify-between">
                                             <div className="flex flex-row items-center gap-3">
                                                 {/* Price */}
-                                                <p className="text-white text-sm lg:text-lg font-semibold" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
-                                                    {service.price_base.toLocaleString(locale, { style: 'currency', currency: 'EUR' })}
-                                                </p>
+                                                {service.price_base && (
+                                                    <p className="text-white text-sm lg:text-lg font-semibold" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
+                                                        {service.price_base.toLocaleString(locale, { style: 'currency', currency: 'EUR' })}
+                                                    </p>
+                                                )}
                                                 
                                                 {/* Service Pills */}
                                                 <div className="flex flex-row items-center gap-2">
                                                     {/* Bookable Pill */}
-                                                    {service.date_selection && (
+                                                    {service.available_booking && (
                                                         <span className="text-xs text-white/80" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
                                                             {t('bookable')}
                                                         </span>
                                                     )}
                                                     
                                                     {/* Quotation Pill */}
-                                                    {service.quotation_available && (
+                                                    {service.available_quotation && (
                                                         <span className="text-xs text-white/80" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
                                                             {t('quotationAvailable')}
                                                         </span>

@@ -64,7 +64,9 @@ export async function POST(req: NextRequest, { params }: { params: { business_id
           buffer_minutes: data.buffer_minutes || 0,
           price_base: data.price_base,
           has_items: data.has_items || false,
-          date_selection: data.date_selection || false,
+          available_booking: data.available_booking || false,
+          require_consent_newsletter: data.require_consent_newsletter || false,
+          available_quotation: data.available_quotation || false,
           is_active: true,
           display_order: data.display_order || 0,
         },
@@ -129,6 +131,25 @@ export async function POST(req: NextRequest, { params }: { params: { business_id
               price_unit: item.price_unit,
               is_active: true,
               display_order: i,
+            },
+          })
+        }
+      }
+      // Create service events
+      if (data.events && data.events.length > 0) {
+        for (let i = 0; i < data.events.length; i++) {
+          const event = data.events[i]
+          await tx.serviceevent.create({
+            data: {
+              service_id: service.service_id,
+              event_name: event.event_name,
+              event_description: event.event_description,
+              event_type: event.event_type,
+              duration_minutes: event.duration_minutes,
+              buffer_minutes: event.buffer_minutes,
+              is_required: event.is_required,
+              display_order: event.display_order,
+              is_active: event.is_active,
             },
           })
         }

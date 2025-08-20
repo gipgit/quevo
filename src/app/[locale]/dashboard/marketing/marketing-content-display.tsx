@@ -43,9 +43,9 @@ interface Service {
   buffer_minutes: number | null
   price_base: any | null
   price_type: string
-  quotation_available: boolean | null
+  available_quotation: boolean | null
   has_items: boolean | null
-  date_selection: boolean | null
+  available_booking: boolean | null
   is_active: boolean | null
   display_order: number | null
   servicecategory: {

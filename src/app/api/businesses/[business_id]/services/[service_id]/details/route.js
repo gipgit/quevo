@@ -36,7 +36,7 @@ export async function GET(request, { params }) {
             },
         });
 
-        // Fetch questions for the service
+        // Fetch questions for the service with the new question_options JSONB field
         const questions = await prisma.servicequestion.findMany({
             where: {
                 service_id: parsedServiceId,
@@ -46,6 +46,7 @@ export async function GET(request, { params }) {
                 question_id: true,
                 question_text: true,
                 question_type: true,
+                question_options: true, // Include the new JSONB field
                 max_length: true,
                 is_required: true,
                 display_order: true,
@@ -54,27 +55,6 @@ export async function GET(request, { params }) {
                 display_order: 'asc',
             },
         });
-
-        // For checkbox_multi questions, fetch their options
-        for (const question of questions) {
-            if (question.question_type === 'checkbox_multi') {
-                const options = await prisma.servicequestionoption.findMany({
-                    where: {
-                        question_id: question.question_id,
-                        is_active: true,
-                    },
-                    select: {
-                        option_id: true,
-                        option_text: true,
-                        display_order: true,
-                    },
-                    orderBy: {
-                        display_order: 'asc',
-                    },
-                });
-                question.options = options;
-            }
-        }
 
         // Fetch service items for the service, using 'service_item_id' and new price columns
         const serviceItems = await prisma.serviceitem.findMany({

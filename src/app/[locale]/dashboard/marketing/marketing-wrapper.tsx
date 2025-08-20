@@ -36,8 +36,8 @@ interface Service {
   price_base: number | null
   price_type: string
   has_items: boolean | null
-  date_selection: boolean | null
-  quotation_available: boolean | null
+  available_booking: boolean | null
+  available_quotation: boolean | null
   is_active: boolean | null
   display_order: number | null
   servicecategory: {

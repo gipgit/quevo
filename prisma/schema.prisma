@@ -467,6 +467,7 @@ model servicequestion {
   service_id            Int
   question_text         String                  @db.VarChar(500)
   question_type         String                  @db.VarChar(50)
+  question_options      Json?
   max_length            Int?
   is_required           Boolean?                @default(false)
   display_order         Int?                    @default(0)
@@ -565,31 +566,32 @@ model productvariation {
 }
 
 model service {
-  service_id              Int                       @id @default(autoincrement())
-  business_id             String                    @db.Uuid
-  category_id             Int?
-  service_name            String                    @db.VarChar(255)
-  description             String?
-  duration_minutes        Int?
-  buffer_minutes          Int?                      @default(0)
-  price_base              Decimal?                  @db.Decimal(10, 2)
-  price_type              String                    @default("fixed") @db.VarChar(50)
-  price_unit              String?                   @db.VarChar(50)
-  has_items               Boolean?                  @default(false)
-  date_selection          Boolean?                  @default(false)
-  quotation_available     Boolean?                  @default(false)
-  is_active               Boolean?                  @default(true)
-  display_order           Int?                      @default(0)
-  date_created            DateTime?                 @default(now()) @db.Timestamp(6)
-  date_updated            DateTime?                 @default(now()) @db.Timestamp(6)
-  business                business                  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
-  servicecategory         servicecategory?          @relation(fields: [category_id], references: [category_id])
-  serviceboard            serviceboard[]
-  serviceevent            serviceevent[]
-  serviceitem             serviceitem[]
-  servicequestion         servicequestion[]
-  servicerequest          servicerequest[]
-  servicerequirementblock servicerequirementblock[]
+  service_id                 Int                       @id @default(autoincrement())
+  business_id                String                    @db.Uuid
+  category_id                Int?
+  service_name               String                    @db.VarChar(255)
+  description                String?
+  duration_minutes           Int?
+  buffer_minutes             Int?                      @default(0)
+  price_base                 Decimal?                  @db.Decimal(10, 2)
+  price_type                 String                    @default("fixed") @db.VarChar(50)
+  price_unit                 String?                   @db.VarChar(50)
+  has_items                  Boolean?                  @default(false)
+  available_booking          Boolean?                  @default(false)
+  available_quotation        Boolean?                  @default(false)
+  require_consent_newsletter Boolean?                  @default(false)
+  is_active                  Boolean?                  @default(true)
+  display_order              Int?                      @default(0)
+  date_created               DateTime?                 @default(now()) @db.Timestamp(6)
+  date_updated               DateTime?                 @default(now()) @db.Timestamp(6)
+  business                   business                  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  servicecategory            servicecategory?          @relation(fields: [category_id], references: [category_id])
+  serviceboard               serviceboard[]
+  serviceevent               serviceevent[]
+  serviceitem                serviceitem[]
+  servicequestion            servicequestion[]
+  servicerequest             servicerequest[]
+  servicerequirementblock    servicerequirementblock[]
 }
 
 model serviceitem {

@@ -13,6 +13,8 @@ import { canCreateMore, formatUsageDisplay } from "@/lib/usage-utils"
 import { UsageLimitBar } from "@/components/dashboard/UsageLimitBar"
 import RichTextEditor from "@/components/ui/RichTextEditor"
 import { sanitizeHtmlContent } from "@/lib/utils/html-sanitizer"
+import ServiceImageUpload from "@/components/service/ServiceImageUpload"
+import SelectableCard from "@/components/ui/SelectableCard"
 
 interface Category {
   category_id: number
@@ -40,6 +42,17 @@ interface ServiceItem {
   price_unit?: string
 }
 
+interface ServiceEvent {
+  event_name: string
+  event_description: string
+  event_type: string
+  duration_minutes: number
+  buffer_minutes: number
+  is_required: boolean
+  display_order: number
+  is_active: boolean
+}
+
 export default function CreateServicePage() {
   const t = useTranslations("services")
   const tCommon = useTranslations("Common")
@@ -55,18 +68,22 @@ export default function CreateServicePage() {
   const [serviceName, setServiceName] = useState("")
   const [description, setDescription] = useState("")
   const [categoryId, setCategoryId] = useState<number | null>(null)
-  const [durationMinutes, setDurationMinutes] = useState<number | null>(null)
-  const [bufferMinutes, setBufferMinutes] = useState(0)
   const [priceBase, setPriceBase] = useState<number | null>(null)
   const [priceType, setPriceType] = useState("fixed")
   const [priceUnit, setPriceUnit] = useState("")
   const [hasItems, setHasItems] = useState(false)
-  const [dateSelection, setDateSelection] = useState(false)
+  const [availableBooking, setAvailableBooking] = useState(false)
+  const [requireConsentNewsletter, setRequireConsentNewsletter] = useState(false)
+  const [availableQuotation, setAvailableQuotation] = useState(false)
 
   // Dynamic sections
   const [questions, setQuestions] = useState<ServiceQuestion[]>([])
   const [requirements, setRequirements] = useState<ServiceRequirement[]>([])
   const [items, setItems] = useState<ServiceItem[]>([])
+  const [events, setEvents] = useState<ServiceEvent[]>([])
+
+  // Image upload
+  const [serviceImage, setServiceImage] = useState<File | null>(null)
 
   // Fetch categories
   useEffect(() => {
@@ -89,6 +106,43 @@ export default function CreateServicePage() {
       ])
     }
   }, [hasItems])
+
+  // Clear items when quotation is disabled, or add first item when enabled
+  useEffect(() => {
+    if (!availableQuotation) {
+      setItems([])
+    } else if (availableQuotation && items.length === 0) {
+      setItems([
+        {
+          item_name: "",
+          item_description: "",
+          price_base: 0,
+          price_type: "fixed",
+          price_unit: "",
+        },
+      ])
+    }
+  }, [availableQuotation])
+
+  // Automatically add first event when availableBooking is checked, or clear events when disabled
+  useEffect(() => {
+    if (availableBooking && events.length === 0) {
+      setEvents([
+        {
+          event_name: "",
+          event_description: "",
+          event_type: "appointment",
+          duration_minutes: 60,
+          buffer_minutes: 0,
+          is_required: true,
+          display_order: 0,
+          is_active: true,
+        },
+      ])
+    } else if (!availableBooking) {
+      setEvents([])
+    }
+  }, [availableBooking])
 
   const fetchCategories = async () => {
     try {
@@ -188,6 +242,32 @@ export default function CreateServicePage() {
     setItems(items.filter((_, i) => i !== index))
   }
 
+  const addEvent = () => {
+    setEvents([
+      ...events,
+      {
+        event_name: "",
+        event_description: "",
+        event_type: "appointment",
+        duration_minutes: 60,
+        buffer_minutes: 0,
+        is_required: true,
+        display_order: events.length,
+        is_active: true,
+      },
+    ])
+  }
+
+  const updateEvent = (index: number, field: keyof ServiceEvent, value: any) => {
+    const updated = [...events]
+    updated[index] = { ...updated[index], [field]: value }
+    setEvents(updated)
+  }
+
+  const removeEvent = (index: number) => {
+    setEvents(events.filter((_, i) => i !== index))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -215,21 +295,22 @@ export default function CreateServicePage() {
     setLoading(true)
 
     try {
-      const serviceData = {
-        service_name: serviceName,
-        description: description ? sanitizeHtmlContent(description) : null,
-        category_id: categoryId,
-        duration_minutes: durationMinutes,
-        buffer_minutes: bufferMinutes,
-        price_base: priceBase,
-        price_type: priceType,
-        price_unit: priceUnit,
-        has_items: hasItems,
-        date_selection: dateSelection,
-        questions: questions.filter((q) => q.question_text.trim()),
-        requirements: requirements.filter((r) => r.requirements_text.trim()),
-        items: items.filter((i) => i.item_name.trim()),
-      }
+             const serviceData = {
+         service_name: serviceName,
+         description: description ? sanitizeHtmlContent(description) : null,
+         category_id: categoryId,
+         price_base: priceBase,
+         price_type: priceType,
+         price_unit: priceUnit,
+         has_items: hasItems,
+         available_booking: availableBooking,
+         require_consent_newsletter: requireConsentNewsletter,
+         available_quotation: availableQuotation,
+         questions: questions.filter((q) => q.question_text.trim()),
+         requirements: requirements.filter((r) => r.requirements_text.trim()),
+         items: items.filter((i) => i.item_name.trim()),
+         events: events.filter((e) => e.event_name.trim()),
+       }
 
       const response = await fetch(`/api/businesses/${currentBusiness?.business_id}/services/create`, {
         method: "POST",
@@ -242,6 +323,24 @@ export default function CreateServicePage() {
       const responseData = await response.json()
 
       if (response.ok) {
+        const newService = responseData
+
+        // Upload image if provided
+        if (serviceImage && newService.service_id) {
+          const formData = new FormData()
+          formData.append("image", serviceImage)
+
+          const imageResponse = await fetch(`/api/businesses/${currentBusiness?.business_id}/services/${newService.service_id}/upload-image`, {
+            method: "POST",
+            body: formData,
+          })
+
+          if (!imageResponse.ok) {
+            console.error("Failed to upload service image")
+            // Don't fail the entire creation, just log the error
+          }
+        }
+
         showToast({
           type: "success",
           title: t("success"),
@@ -424,6 +523,14 @@ export default function CreateServicePage() {
                 />
               </div>
 
+              <div className="md:col-span-2">
+                <ServiceImageUpload
+                  onImageChange={setServiceImage}
+                  currentImage={serviceImage}
+                  theme={theme === 'dark' ? 'dark' : 'light'}
+                />
+              </div>
+
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${
@@ -477,215 +584,358 @@ export default function CreateServicePage() {
                     disabled={priceType === "fixed"}
                   />
                 </div>
-              </div>
+                             </div>
 
-              <div className="md:col-span-2">
-                <div className="flex justify-between items-center">
-                  <label className={`block text-sm font-medium ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>{t("requiresDateSelection")}</label>
-                  <div className="flex items-center">
-                    <span className={`text-sm mr-2 ${
-                      !dateSelection 
-                        ? (theme === 'dark' ? 'text-gray-400' : 'text-gray-500') 
-                        : (theme === 'dark' ? 'text-gray-300' : 'text-gray-700')
-                    }`}>
-                      {!dateSelection ? 'Off' : 'On'}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setDateSelection(!dateSelection)}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        dateSelection ? 'bg-blue-600' : 'bg-zinc-200'
-                      }`}
-                    >
-                      <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                          dateSelection ? 'translate-x-6' : 'translate-x-1'
-                        }`}
-                      />
-                    </button>
-                  </div>
-                </div>
-              </div>
+               {/* Service Options Section */}
+               <div className="md:col-span-2 space-y-6">
 
-              {dateSelection && (
-                <>
-                  <div>
-                    <label className={`block text-sm font-medium mb-2 ${
-                      theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                    }`}>
-                      {t("duration")} ({t("minutes")})
-                    </label>
-                    <input
-                      type="number"
-                      value={durationMinutes || ""}
-                      onChange={(e) => setDurationMinutes(e.target.value ? Number.parseInt(e.target.value) : null)}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                        theme === 'dark' 
-                          ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                          : 'border-gray-300 bg-white text-gray-900'
-                      }`}
-                    />
-                  </div>
-
-                  <div>
-                    <label className={`block text-sm font-medium mb-2 ${
-                      theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                    }`}>
-                      {t("bufferTime")} ({t("minutes")})
-                    </label>
-                    <input
-                      type="number"
-                      value={bufferMinutes}
-                      onChange={(e) => setBufferMinutes(Number.parseInt(e.target.value) || 0)}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                        theme === 'dark' 
-                          ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                          : 'border-gray-300 bg-white text-gray-900'
-                      }`}
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Additional Items Section */}
-          <div className={`border-bottom ${
-            theme === 'dark' ? 'border-gray-600' : 'border-gray-200'
-          }`}>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className={`text-lg font-semibold ${
-                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-              }`}>{t("additionalItems")}</h2>
-              <button
-                type="button"
-                onClick={addItem}
-                className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
-              >
-                {t("addItem")}
-              </button>
-            </div>
-
-            {items.map((item, index) => (
-              <div key={index} className={`border rounded-lg p-4 mb-4 shadow-sm ${
-                theme === 'dark' 
-                  ? 'border-gray-600 bg-zinc-800' 
-                  : 'border-gray-300 bg-zinc-100'
-              }`}>
-                <div className="flex justify-between items-start mb-3">
-                  <h3 className={`font-medium ${
-                    theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                  }`}>
-                    {t("item")} {index + 1}
-                  </h3>
-                  <button
-                    type="button"
-                    onClick={() => removeItem(index)}
-                    className="text-red-600 hover:text-red-700 text-sm"
-                  >
-                    {t("remove")}
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {/* Left Column - Title and Description */}
-                  <div className="space-y-4">
-                    <div>
-                      <label className={`block text-sm font-medium mb-1 ${
-                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                      }`}>{t("itemName")}</label>
-                      <input
-                        type="text"
-                        value={item.item_name}
-                        onChange={(e) => updateItem(index, "item_name", e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                          theme === 'dark' 
-                            ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                            : 'border-gray-300 bg-white text-gray-900'
-                        }`}
-                      />
-                    </div>
-
-                    <div>
-                      <label className={`block text-sm font-medium mb-1 ${
-                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                      }`}>{t("itemDescription")}</label>
-                      <input
-                        type="text"
-                        value={item.item_description}
-                        onChange={(e) => updateItem(index, "item_description", e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                          theme === 'dark' 
-                            ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                            : 'border-gray-300 bg-white text-gray-900'
-                        }`}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Right Column - Price fields */}
-                  <div className="space-y-4">
-                    <div>
-                      <label className={`block text-sm font-medium mb-1 ${
-                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                      }`}>{t("itemPrice")} (€)</label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={item.price_base}
-                        onChange={(e) => updateItem(index, "price_base", Number.parseFloat(e.target.value) || 0)}
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                          theme === 'dark' 
-                            ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                            : 'border-gray-300 bg-white text-gray-900'
-                        }`}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className={`block text-sm font-medium mb-1 ${
-                          theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                        }`}>{t("priceType")}</label>
-                        <select
-                          value={item.price_type}
-                          onChange={(e) => updateItem(index, "price_type", e.target.value)}
-                          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                            theme === 'dark' 
-                              ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                              : 'border-gray-300 bg-white text-gray-900'
-                          }`}
+                {/* Quotation Section with Conditional Content */}
+                <div className={`border rounded-lg p-4 ${
+                  theme === 'dark' 
+                    ? 'border-gray-600 bg-zinc-800/50' 
+                    : 'border-gray-300 bg-gray-50'
+                }`}>
+                  <SelectableCard
+                    title={t("availableQuotation")}
+                    description={t("availableQuotationDescription")}
+                    selected={availableQuotation}
+                    onSelect={setAvailableQuotation}
+                    theme={theme === 'dark' ? 'dark' : 'light'}
+                  />
+                  
+                  {/* Additional Items Section - Only show when quotation is active */}
+                  {availableQuotation && (
+                    <div className="mt-6 pt-6 border-t border-gray-300 dark:border-gray-600">
+                      <div className="flex justify-between items-center mb-4">
+                        <h2 className={`text-lg font-semibold ${
+                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                        }`}>{t("additionalItems")}</h2>
+                        <button
+                          type="button"
+                          onClick={addItem}
+                          className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
                         >
-                          <option value="fixed">{t("fixed")}</option>
-                          <option value="per_unit">{t("perUnit")}</option>
-                          <option value="per_hour">{t("perHour")}</option>
-                        </select>
+                          {t("addItem")}
+                        </button>
                       </div>
 
-                      <div>
-                        <label className={`block text-sm font-medium mb-1 ${
-                          theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                        }`}>{t("priceUnit")}</label>
-                        <input
-                          type="text"
-                          value={item.price_unit || ""}
-                          onChange={(e) => updateItem(index, "price_unit", e.target.value)}
-                          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                            theme === 'dark' 
-                              ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                              : 'border-gray-300 bg-white text-gray-900'
-                          }`}
-                          disabled={item.price_type === "fixed"}
-                        />
-                      </div>
+                      {items.map((item, index) => (
+                        <div key={index} className={`border rounded-lg p-4 mb-4 shadow-sm ${
+                          theme === 'dark' 
+                            ? 'border-gray-600 bg-zinc-800' 
+                            : 'border-gray-300 bg-zinc-100'
+                        }`}>
+                          <div className="flex justify-between items-start mb-3">
+                            <h3 className={`font-medium ${
+                              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                            }`}>
+                              {t("item")} {index + 1}
+                            </h3>
+                            <button
+                              type="button"
+                              onClick={() => removeItem(index)}
+                              className="text-red-600 hover:text-red-700 text-sm"
+                            >
+                              {t("remove")}
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            {/* Left Column - Title and Description */}
+                            <div className="space-y-4">
+                              <div>
+                                <label className={`block text-sm font-medium mb-1 ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                }`}>{t("itemName")}</label>
+                                <input
+                                  type="text"
+                                  value={item.item_name}
+                                  onChange={(e) => updateItem(index, "item_name", e.target.value)}
+                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                      : 'border-gray-300 bg-white text-gray-900'
+                                  }`}
+                                />
+                              </div>
+
+                              <div>
+                                <label className={`block text-sm font-medium mb-1 ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                }`}>{t("itemDescription")}</label>
+                                <textarea
+                                  value={item.item_description}
+                                  onChange={(e) => updateItem(index, "item_description", e.target.value)}
+                                  rows={3}
+                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                      : 'border-gray-300 bg-white text-gray-900'
+                                  }`}
+                                />
+                              </div>
+                            </div>
+
+                            {/* Right Column - Price Settings */}
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <label className={`block text-sm font-medium mb-1 ${
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                  }`}>{t("price")}</label>
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    value={item.price_base}
+                                    onChange={(e) => updateItem(index, "price_base", Number.parseFloat(e.target.value) || 0)}
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                      theme === 'dark' 
+                                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                        : 'border-gray-300 bg-white text-gray-900'
+                                    }`}
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className={`block text-sm font-medium mb-1 ${
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                  }`}>{t("priceType")}</label>
+                                  <select
+                                    value={item.price_type}
+                                    onChange={(e) => updateItem(index, "price_type", e.target.value)}
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                      theme === 'dark' 
+                                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                        : 'border-gray-300 bg-white text-gray-900'
+                                    }`}
+                                  >
+                                    <option value="fixed">{t("fixed")}</option>
+                                    <option value="percentage">{t("percentage")}</option>
+                                  </select>
+                                </div>
+                              </div>
+
+                              <div>
+                                <label className={`block text-sm font-medium mb-1 ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                }`}>{t("priceUnit")}</label>
+                                <input
+                                  type="text"
+                                  value={item.price_unit || ""}
+                                  onChange={(e) => updateItem(index, "price_unit", e.target.value)}
+                                  placeholder={t("priceUnitPlaceholder")}
+                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                      : 'border-gray-300 bg-white text-gray-900'
+                                  }`}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  </div>
+                  )}
+                </div>
+
+                {/* Booking Section with Conditional Content */}
+                <div className={`border rounded-lg p-4 ${
+                  theme === 'dark' 
+                    ? 'border-gray-600 bg-zinc-800/50' 
+                    : 'border-gray-300 bg-gray-50'
+                }`}>
+                  <SelectableCard
+                    title={t("availableBooking")}
+                    description={t("availableBookingDescription")}
+                    selected={availableBooking}
+                    onSelect={setAvailableBooking}
+                    theme={theme === 'dark' ? 'dark' : 'light'}
+                  />
+                  
+                  {/* Events Section - Only show when booking is active */}
+                  {availableBooking && (
+                    <div className="mt-6 pt-6 border-t border-gray-300 dark:border-gray-600">
+                      <div className="flex justify-between items-center mb-4">
+                        <h2 className={`text-lg font-semibold ${
+                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                        }`}>{t("events")}</h2>
+                        <button
+                          type="button"
+                          onClick={addEvent}
+                          className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
+                        >
+                          {t("addEvent")}
+                        </button>
+                      </div>
+
+                      {events.map((event, index) => (
+                        <div key={index} className={`border rounded-lg p-4 mb-4 shadow-sm ${
+                          theme === 'dark' 
+                            ? 'border-gray-600 bg-zinc-800' 
+                            : 'border-gray-300 bg-zinc-100'
+                        }`}>
+                          <div className="flex justify-between items-start mb-3">
+                            <h3 className={`font-medium ${
+                              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                            }`}>
+                              {t("event")} {index + 1}
+                            </h3>
+                            <button
+                              type="button"
+                              onClick={() => removeEvent(index)}
+                              className="text-red-600 hover:text-red-700 text-sm"
+                            >
+                              {t("remove")}
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            {/* Left Column - Name and Description */}
+                            <div className="space-y-4">
+                              <div>
+                                <label className={`block text-sm font-medium mb-1 ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                }`}>{t("eventName")}</label>
+                                <input
+                                  type="text"
+                                  value={event.event_name}
+                                  onChange={(e) => updateEvent(index, "event_name", e.target.value)}
+                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                      : 'border-gray-300 bg-white text-gray-900'
+                                  }`}
+                                />
+                              </div>
+
+                              <div>
+                                <label className={`block text-sm font-medium mb-1 ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                }`}>{t("eventDescription")}</label>
+                                <textarea
+                                  value={event.event_description}
+                                  onChange={(e) => updateEvent(index, "event_description", e.target.value)}
+                                  rows={3}
+                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                      : 'border-gray-300 bg-white text-gray-900'
+                                  }`}
+                                />
+                              </div>
+
+                              <div>
+                                <label className={`block text-sm font-medium mb-1 ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                }`}>{t("eventType")}</label>
+                                <select
+                                  value={event.event_type}
+                                  onChange={(e) => updateEvent(index, "event_type", e.target.value)}
+                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                      : 'border-gray-300 bg-white text-gray-900'
+                                  }`}
+                                >
+                                  <option value="appointment">{t("appointment")}</option>
+                                  <option value="consultation">{t("consultation")}</option>
+                                  <option value="session">{t("session")}</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            {/* Right Column - Duration, Buffer, and Settings */}
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <label className={`block text-sm font-medium mb-1 ${
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                  }`}>{t("duration")} ({t("minutes")})</label>
+                                  <input
+                                    type="number"
+                                    value={event.duration_minutes}
+                                    onChange={(e) => updateEvent(index, "duration_minutes", Number.parseInt(e.target.value) || 60)}
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                      theme === 'dark' 
+                                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                        : 'border-gray-300 bg-white text-gray-900'
+                                    }`}
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className={`block text-sm font-medium mb-1 ${
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                  }`}>{t("bufferTime")} ({t("minutes")})</label>
+                                  <input
+                                    type="number"
+                                    value={event.buffer_minutes}
+                                    onChange={(e) => updateEvent(index, "buffer_minutes", Number.parseInt(e.target.value) || 0)}
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                      theme === 'dark' 
+                                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                        : 'border-gray-300 bg-white text-gray-900'
+                                    }`}
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-4">
+                                <label className="flex items-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={event.is_required}
+                                    onChange={(e) => updateEvent(index, "is_required", e.target.checked)}
+                                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                  />
+                                  <span className={`ml-2 text-sm ${
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                  }`}>{t("required")}</span>
+                                </label>
+
+                                <label className="flex items-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={event.is_active}
+                                    onChange={(e) => updateEvent(index, "is_active", e.target.checked)}
+                                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                  />
+                                  <span className={`ml-2 text-sm ${
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                  }`}>{t("active")}</span>
+                                </label>
+                              </div>
+
+                              <div>
+                                <label className={`block text-sm font-medium mb-1 ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                }`}>{t("displayOrder")}</label>
+                                <input
+                                  type="number"
+                                  value={event.display_order}
+                                  onChange={(e) => updateEvent(index, "display_order", Number.parseInt(e.target.value) || 0)}
+                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                      : 'border-gray-300 bg-white text-gray-900'
+                                  }`}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
-            ))}
+            </div>
           </div>
+
+
+
+
 
           {/* Requirements Section */}
           <div className={`border-bottom ${
@@ -926,27 +1176,44 @@ export default function CreateServicePage() {
               ))}
             </div>
 
-          {/* Submit Button */}
-          <div className="mt-8 flex justify-end gap-2 lg:gap-4">
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className={`px-6 py-2 border rounded-lg transition-colors ${
-                theme === 'dark' 
-                  ? 'border-gray-600 text-gray-300 hover:bg-zinc-700' 
-                  : 'border-gray-300 text-gray-700 hover:bg-zinc-50'
-              }`}
-            >
-              {t("cancel")}
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-            >
-              {loading ? t("creating") : t("createService")}
-            </button>
-          </div>
+                     {/* Newsletter Consent Section */}
+           <div className="mt-8 pb-4 lg:pb-6">
+             <div className="md:col-span-2">
+               <label className={`block text-sm font-medium mb-3 ${
+                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+               }`}>Additional Options</label>
+               
+               <SelectableCard
+                 title={t("requireConsentNewsletter")}
+                 description={t("requireConsentNewsletterDescription")}
+                 selected={requireConsentNewsletter}
+                 onSelect={setRequireConsentNewsletter}
+                 theme={theme === 'dark' ? 'dark' : 'light'}
+               />
+             </div>
+           </div>
+
+           {/* Submit Button */}
+           <div className="mt-8 flex justify-end gap-2 lg:gap-4">
+             <button
+               type="button"
+               onClick={() => router.back()}
+               className={`px-6 py-2 border rounded-lg transition-colors ${
+                 theme === 'dark' 
+                   ? 'border-gray-600 text-gray-300 hover:bg-zinc-700' 
+                   : 'border-gray-300 text-gray-700 hover:bg-zinc-50'
+               }`}
+             >
+               {t("cancel")}
+             </button>
+             <button
+               type="submit"
+               disabled={loading}
+               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+             >
+               {loading ? t("creating") : t("createService")}
+             </button>
+           </div>
         </form>
       </div>
     </DashboardLayout>

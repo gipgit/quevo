@@ -372,7 +372,7 @@ export default function ServiceDetailsForm({
                     </div>
 
                     {/* Date Selection Column */}
-                    {selectedService?.date_selection && (
+                    {selectedService?.available_booking && (
                         <div className="flex-shrink-0 mt-4 lg:mt-0 lg:max-w-[30%]">
                             <p className="text-lg md:text-2xl lg:text-xl">{formattedDate}, {formattedTime}</p>
                         </div>

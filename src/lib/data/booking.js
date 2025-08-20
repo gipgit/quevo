@@ -33,7 +33,7 @@ export async function getBookingByReference(bookingReference) {
                         service_name: true,
                         duration_minutes: true,
                         price_base: true,
-                        date_selection: true, // <--- ADDED: Include date_selection
+                        available_booking: true, // <--- ADDED: Include available_booking
                     },
                 },
                 business: {

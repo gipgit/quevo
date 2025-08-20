@@ -39,8 +39,8 @@ interface Service {
   price_base: any | null
   price_type: string
   has_items: boolean | null
-  date_selection: boolean | null
-  quotation_available: boolean | null
+  available_booking: boolean | null
+  available_quotation: boolean | null
   is_active: boolean | null
   display_order: number | null
   servicecategory: {
@@ -60,6 +60,9 @@ export async function generateSocialMediaContentAction(
   services: Service[], 
   platforms: string[],
   qualities: string[],
+  postTypes: string[],
+  frequency: string,
+  totalPostsNeeded: number,
   locale: string = 'en'
 ) {
   console.log("🚀 [generateSocialMediaContentAction] Starting social media content generation...")
@@ -68,11 +71,14 @@ export async function generateSocialMediaContentAction(
     servicesCount: services.length,
     platforms: platforms,
     qualities: qualities,
+    postTypes: postTypes,
+    frequency: frequency,
+    totalPostsNeeded: totalPostsNeeded,
     locale: locale
   })
   
   try {
-    const result = await generateSocialMediaContent(business, services, platforms, qualities, locale)
+    const result = await generateSocialMediaContent(business, services, platforms, qualities, postTypes, frequency, totalPostsNeeded, locale)
     
     console.log("✅ [generateSocialMediaContentAction] Successfully generated content for platforms:", 
       result.content.map(content => content.platform))
@@ -81,6 +87,7 @@ export async function generateSocialMediaContentAction(
       success: true,
       data: result.content,
       rawResponse: result.rawResponse,
+      tokenUsage: result.tokenUsage,
       message: "Social media content generated successfully!"
     }
   } catch (error) {
@@ -89,6 +96,7 @@ export async function generateSocialMediaContentAction(
       success: false,
       data: [],
       rawResponse: '',
+      tokenUsage: { inputTokens: 0, outputTokens: 0, totalTokens: 0, estimatedCost: 0 },
       message: error instanceof Error ? error.message : "An unexpected error occurred"
     }
   }

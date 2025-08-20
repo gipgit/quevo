@@ -103,8 +103,8 @@ export default function ServiceRequestModal({
 
     // Function to determine the correct initial step based on service configuration
     const determineInitialStep = useCallback(async (service) => {
-        // If service has date_selection, we need to check events first
-        if (service.date_selection) {
+        // If service has available_booking, we need to check events first
+        if (service.available_booking) {
             const result = await fetchServiceEvents(service.service_id);
             
             if (!result.success) {
@@ -212,8 +212,8 @@ export default function ServiceRequestModal({
             return;
         }
 
-        // If date_selection is true, ensure selectedDateTime is not null
-        if (selectedService.date_selection && !selectedDateTime) {
+        // If available_booking is true, ensure selectedDateTime is not null
+        if (selectedService.available_booking && !selectedDateTime) {
             console.error("Date and time selection is required for this service.");
             throw new Error(t('dateTimeRequired'));
         }
@@ -326,8 +326,8 @@ export default function ServiceRequestModal({
                 setServiceEvents([]);
             }
         } else if (step === 4) {
-            // Going back from service items to date time selection (if date_selection) or service selection
-            if (selectedService && selectedService.date_selection) {
+            // Going back from service items to date time selection (if available_booking) or service selection
+            if (selectedService && selectedService.available_booking) {
                 setStep(3);
                 setSelectedDateTime(null);
             } else {
@@ -452,7 +452,7 @@ export default function ServiceRequestModal({
                         )}
 
                                                  {/* Date Time Selection Step */}
-                         {step === 3 && selectedService && selectedService.date_selection && selectedEvent && (
+                         {step === 3 && selectedService && selectedService.available_booking && selectedEvent && (
                              <DateTimeSelection
                                  businessId={business.business_id}
                                  totalOccupancyDuration={totalOccupancyDuration}

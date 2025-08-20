@@ -3,6 +3,7 @@
 import { generateText } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { Decimal } from "@prisma/client/runtime/library"
+import { calculateTokenUsageAndCost } from './token-utils'
 
 interface ServiceQuestion {
   question_id: number
@@ -35,8 +36,8 @@ interface Service {
   price_base: Decimal | null
   price_type: string
   has_items: boolean | null
-  date_selection: boolean | null
-  quotation_available: boolean | null
+  available_booking: boolean | null
+  available_quotation: boolean | null
   is_active: boolean | null
   display_order: number | null
   servicecategory: {
@@ -86,12 +87,12 @@ function formatServicesForPrompt(business: Business, services: Service[]): strin
     text += `   Price Type: ${service.price_type}\n`
     
     // Include booking and quotation availability
-    if (service.date_selection) {
+    if (service.available_booking) {
       text += `   Bookable: Yes (customers can book appointments online)\n`
     }
     
     // Include quotation availability
-    if (service.quotation_available) {
+    if (service.available_quotation) {
       text += `   Quotation Available: Yes (customers can get online quotes)\n`
     } else {
       text += `   Quotation Available: No\n`
@@ -138,7 +139,10 @@ function getQualityDescriptions(qualities: string[]): string {
     'technology': 'Modern Technology - Latest technology and innovative solutions',
     'innovation': 'Innovation - Creative and innovative approaches',
     'delivery': 'Fast Delivery - Quick delivery and logistics',
-    'local': 'Local Business - Local expertise and community support'
+    'local': 'Local Business - Local expertise and community support',
+    'certification': 'Certified & Licensed - Professional certifications and licenses',
+    'sustainability': 'Eco-Friendly - Environmentally conscious practices',
+    'flexibility': 'Flexible Solutions - Adaptable and customizable services'
   }
   
   if (qualities.length === 0) {
@@ -231,32 +235,73 @@ export async function generateSocialMediaContent(
   services: Service[], 
   platforms: string[],
   qualities: string[],
+  postTypes: string[],
+  frequency: string,
+  totalPostsNeeded: number,
   locale: string = 'en'
-): Promise<{ content: SocialMediaContent[], rawResponse: string }> {
-  console.log("🤖 [generateSocialMediaContent] Starting OpenAI API call...")
-  console.log("📊 [generateSocialMediaContent] Input data:", {
-    businessName: business.business_name,
-    servicesCount: services.length,
-    platforms: platforms,
-    qualities: qualities,
-    locale: locale
-  })
+): Promise<{ content: SocialMediaContent[], rawResponse: string, tokenUsage: { inputTokens: number; outputTokens: number; totalTokens: number; estimatedCost: number } }> {
+  // Filter out any legacy facebook/instagram entries and ensure unique platforms
+  const filteredPlatforms = platforms.filter(p => p !== 'facebook/instagram')
+  const uniquePlatforms = Array.from(new Set(filteredPlatforms))
+  
+  console.log("📱 Generating content for platforms:", uniquePlatforms)
+  console.log("📊 Total posts needed:", totalPostsNeeded)
+  console.log("📝 Post types:", postTypes)
+  console.log("⏰ Frequency:", frequency)
   
   try {
     // Format the data into text strings
-    console.log("🔧 [generateSocialMediaContent] Formatting data for prompt...")
     const servicesText = formatServicesForPrompt(business, services)
-    
-    console.log("📝 [generateSocialMediaContent] Formatted data lengths:", {
-      servicesTextLength: servicesText.length
-    })
     
          // Get locale-specific language instruction and quality descriptions
      const localeLanguage = getLocaleLanguage(locale)
      const qualityDescriptions = getQualityDescriptions(qualities)
      
-     // Construct the prompt
-     const prompt = `Based on the following business information and services, generate engaging social media content for the specified platforms.
+     // Build platform-specific specifications based on selected platforms
+     const platformSpecs = uniquePlatforms.map(platform => {
+       const specs: { [key: string]: string } = {
+         'facebook': '1. FACEBOOK:\n   - Engaging title (max 60 characters)\n   - Compelling description (150-200 words)\n   - Relevant hashtags (5-8 hashtags)\n   - Clear call-to-action',
+         'instagram': '2. INSTAGRAM:\n   - Visual-focused title (max 60 characters)\n   - Engaging description (150-200 words)\n   - Trendy hashtags (5-8 hashtags)\n   - Creative call-to-action',
+         'linkedin': '3. LINKEDIN:\n   - Professional title (max 60 characters)\n   - Business-focused description (200-250 words)\n   - Professional hashtags (3-5 hashtags)\n   - Professional call-to-action',
+         'twitter/x': '4. TWITTER/X:\n   - Concise title (max 50 characters)\n   - Brief description (max 280 characters)\n   - Trending hashtags (3-5 hashtags)\n   - Short call-to-action',
+         'tiktok': '5. TIKTOK:\n   - Catchy title (max 50 characters)\n   - Trendy description (100-150 words)\n   - Viral hashtags (5-8 hashtags)\n   - Engaging call-to-action'
+       }
+       return specs[platform] || ''
+     }).filter(spec => spec !== '').join('\n\n')
+
+                       // Build JSON response format for structured parsing
+       const responseFormat = `CRITICAL: You MUST generate EXACTLY ${totalPostsNeeded} posts - no more, no less.
+
+RESPOND WITH EXACTLY ${totalPostsNeeded} POSTS IN THIS JSON FORMAT:
+
+{
+  "posts": [
+    {
+      "platform": "platform_name",
+      "postType": "post_type_name", 
+      "title": "post title",
+      "description": "post description",
+      "hashtags": ["#hashtag1", "#hashtag2", "#hashtag3"],
+      "callToAction": "call to action text"
+    }
+  ]
+}
+
+MANDATORY RULES (YOU MUST FOLLOW THESE):
+- Generate EXACTLY ${totalPostsNeeded} posts total - this is a hard requirement
+- Distribute posts evenly across platforms: ${uniquePlatforms.join(', ')}
+- Include each post type at least once: ${postTypes.join(', ')}
+- Each post must have a unique combination of platform + postType
+- Use only the selected platforms: ${uniquePlatforms.join(', ')}
+- Use only the selected post types: ${postTypes.join(', ')}
+- DO NOT include hashtags in the description field - hashtags should ONLY be in the hashtags array
+- Keep descriptions clean and hashtag-free
+- The JSON must contain exactly ${totalPostsNeeded} posts in the "posts" array`
+     
+           // Construct the prompt
+      const prompt = `CRITICAL REQUIREMENT: You MUST generate EXACTLY ${totalPostsNeeded} social media posts - no more, no less.
+
+Based on the following business information and services, generate EXACTLY ${totalPostsNeeded} engaging social media posts for the specified platforms.
 
 IMPORTANT: Generate all content in ${localeLanguage} language.
 
@@ -265,36 +310,24 @@ IMPORTANT: Generate all content in ${localeLanguage} language.
  
  BUSINESS QUALITIES TO HIGHLIGHT: ${qualityDescriptions}
  
- PLATFORMS TO GENERATE CONTENT FOR: ${platforms.join(', ')}
+ PLATFORMS TO GENERATE CONTENT FOR: ${uniquePlatforms.join(', ')}
 
-Please generate content for each platform with the following specifications:
+ POST TYPES TO INCLUDE: ${postTypes.join(', ')}
 
-1. FACEBOOK/INSTAGRAM: 
-   - Engaging title (max 60 characters)
-   - Compelling description (150-200 words)
-   - Relevant hashtags (5-8 hashtags)
-   - Clear call-to-action
+ POSTING FREQUENCY: ${frequency} (${totalPostsNeeded} total posts needed)
 
-2. LINKEDIN:
-   - Professional title (max 60 characters)
-   - Business-focused description (200-250 words)
-   - Professional hashtags (3-5 hashtags)
-   - Professional call-to-action
+Please generate ${totalPostsNeeded} posts ONLY for the selected platforms above with the following specifications:
 
-3. TWITTER/X:
-   - Concise title (max 50 characters)
-   - Brief description (max 280 characters)
-   - Trending hashtags (3-5 hashtags)
-   - Short call-to-action
+     console.log("🤖 Full AI Prompt:")
+     console.log(prompt)
 
-4. TIKTOK:
-   - Catchy title (max 50 characters)
-   - Trendy description (100-150 words)
-   - Viral hashtags (5-8 hashtags)
-   - Engaging call-to-action
+${platformSpecs}
 
- IMPORTANT GUIDELINES:
- - Generate ALL content in ${localeLanguage} language
+   CRITICAL GUIDELINES:
+  - Generate ALL content in ${localeLanguage} language
+  - Create EXACTLY ${totalPostsNeeded} unique posts total - this is mandatory
+  - Ensure each selected post type is represented in the content
+  - Distribute posts evenly across selected platforms
  - Only mention prices for services with fixed pricing
  - Emphasize online booking convenience for bookable services
  - Highlight instant quotation availability where applicable
@@ -304,130 +337,113 @@ Please generate content for each platform with the following specifications:
  - Promote all services, not just specific ones
  - SPECIALLY EMPHASIZE the selected business qualities: ${qualityDescriptions}
  - Make sure the content reflects and highlights these specific qualities throughout
+ - Vary the content style based on post types (questions, tips, showcases, etc.)
 
-Format the response exactly as follows:
+ Format the response exactly as follows:
 
-**FACEBOOK/INSTAGRAM:**
-**TITLE:** [title]
-**DESCRIPTION:** [description]
-**HASHTAGS:** [hashtags separated by spaces]
-**CALL-TO-ACTION:** [call to action]
+ ${responseFormat}
 
-**LINKEDIN:**
-**TITLE:** [title]
-**DESCRIPTION:** [description]
-**HASHTAGS:** [hashtags separated by spaces]
-**CALL-TO-ACTION:** [call to action]
+ FINAL REMINDER: You MUST generate EXACTLY ${totalPostsNeeded} posts in the JSON response.
+ CRITICAL: Respond with ONLY valid JSON. No additional text before or after the JSON.
+ NOTE: If you cannot generate ${totalPostsNeeded} posts due to output limitations, generate as many as possible and clearly indicate the limitation.`
 
-**TWITTER/X:**
-**TITLE:** [title]
-**DESCRIPTION:** [description]
-**HASHTAGS:** [hashtags separated by spaces]
-**CALL-TO-ACTION:** [call to action]
-
-**TIKTOK:**
-**TITLE:** [title]
-**DESCRIPTION:** [description]
-**HASHTAGS:** [hashtags separated by spaces]
-**CALL-TO-ACTION:** [call to action]`
+         // Call the AI model using the Vercel AI SDK
 
     // Call the AI model using the Vercel AI SDK
-    console.log("🚀 [generateSocialMediaContent] Making OpenAI API call with gpt-4o-mini...")
-    console.log("📄 [generateSocialMediaContent] Prompt length:", prompt.length, "characters")
-    
     const result = await generateText({
       model: openai('gpt-4o-mini'),
       prompt: prompt,
     })
 
-    console.log("✅ [generateSocialMediaContent] OpenAI API response received")
-    console.log("📄 [generateSocialMediaContent] Response length:", result.text.length, "characters")
-    console.log("📄 [generateSocialMediaContent] Raw response:", result.text)
-
-    // Parse the response to extract content for each platform
-    console.log("🔧 [generateSocialMediaContent] Parsing OpenAI response...")
     const content = result.text
+    console.log("🤖 Raw AI Response:")
+    console.log(content)
     
     const socialMediaContent: SocialMediaContent[] = []
     
-         // Parse each platform's content - only for selected platforms
-     const platformsToParse = platforms.map(p => {
-       if (p === 'facebook/instagram') return 'FACEBOOK/INSTAGRAM'
-       if (p === 'twitter/x') return 'TWITTER/X'
-       return p.toUpperCase()
-     })
-     
-     platformsToParse.forEach(platform => {
-       // Create a more flexible regex that handles the actual AI response format
-       const platformSection = content.match(new RegExp(`\\*\\*${platform}:\\*\\*([\\s\\S]*?)(?=\\*\\*[A-Z]|$)`, 'i'))
-       
-                        if (platformSection) {
-          const sectionContent = platformSection[1]
-          console.log(`🔍 [generateSocialMediaContent] Raw section content for ${platform}:`, sectionContent.substring(0, 200) + '...')
-          
-          // Extract title - more flexible pattern
-          const titleMatch = sectionContent.match(/\*\*TITLE:\*\*\s*([^\n]+)/i)
-          const title = titleMatch ? titleMatch[1].trim() : ''
-          
-          // Extract description - more flexible pattern
-          const descriptionMatch = sectionContent.match(/\*\*DESCRIPTION:\*\*\s*([\s\S]*?)(?=\*\*HASHTAGS:\*\*|$)/i)
-          const description = descriptionMatch ? descriptionMatch[1].trim() : ''
-          
-          // Extract hashtags - more flexible pattern
-          const hashtagsMatch = sectionContent.match(/\*\*HASHTAGS:\*\*\s*([^\n]+)/i)
-          const hashtags = hashtagsMatch ? hashtagsMatch[1].trim().split(/\s+/).filter(tag => tag.startsWith('#')) : []
-          
-          // Extract call to action - more flexible pattern
-          const callToActionMatch = sectionContent.match(/\*\*CALL-TO-ACTION:\*\*\s*([^\n]+)/i)
-          const callToAction = callToActionMatch ? callToActionMatch[1].trim() : ''
+    try {
+      // Try to parse JSON response
+      const jsonMatch = content.match(/\{[\s\S]*\}/)
+      if (jsonMatch) {
+        const jsonResponse = JSON.parse(jsonMatch[0])
         
-        // Map platform names to match the component's expected format
-        let platformId = platform.toLowerCase()
-        if (platform === 'FACEBOOK/INSTAGRAM') {
-          platformId = 'facebook/instagram'
-        } else if (platform === 'TWITTER/X') {
-          platformId = 'twitter/x'
-        }
-        
-        socialMediaContent.push({
-          platform: platformId,
-          title,
-          description,
-          hashtags,
-          callToAction
-        })
-        
-                           console.log(`✅ [generateSocialMediaContent] Parsed ${platform}:`, {
-            title: title.substring(0, 50) + '...',
-            descriptionLength: description.length,
-            hashtagsCount: hashtags.length,
-            callToAction: callToAction.substring(0, 50) + '...',
-            sectionContentLength: sectionContent.length,
-            titleMatch: !!titleMatch,
-            descriptionMatch: !!descriptionMatch,
-            hashtagsMatch: !!hashtagsMatch,
-            callToActionMatch: !!callToActionMatch,
-            titleRaw: titleMatch ? titleMatch[0] : 'NO MATCH',
-            descriptionRaw: descriptionMatch ? descriptionMatch[0].substring(0, 100) + '...' : 'NO MATCH',
-            hashtagsRaw: hashtagsMatch ? hashtagsMatch[0] : 'NO MATCH',
-            callToActionRaw: callToActionMatch ? callToActionMatch[0] : 'NO MATCH'
+        if (jsonResponse.posts && Array.isArray(jsonResponse.posts)) {
+          console.log(`📊 Parsed ${jsonResponse.posts.length} posts from JSON`)
+          
+          jsonResponse.posts.forEach((post: any, index: number) => {
+            if (post.platform && post.title && post.description) {
+              socialMediaContent.push({
+                platform: post.platform.toLowerCase(),
+                title: post.title,
+                description: post.description,
+                hashtags: Array.isArray(post.hashtags) ? post.hashtags : [],
+                callToAction: post.callToAction || ''
+              })
+            }
           })
-      } else {
-        console.log(`❌ [generateSocialMediaContent] Failed to parse ${platform}`)
+        }
       }
-    })
-
-    console.log("📧 [generateSocialMediaContent] Extracted social media content:", {
-      platformsGenerated: socialMediaContent.length,
-      platforms: socialMediaContent.map(content => content.platform)
-    })
-
-    console.log("✅ [generateSocialMediaContent] Successfully generated social media content")
-    
-    return {
-      content: socialMediaContent,
-      rawResponse: result.text
+      
+      // If JSON parsing failed, fall back to old format
+      if (socialMediaContent.length === 0) {
+        console.log("⚠️ JSON parsing failed, falling back to old format")
+        
+        uniquePlatforms.forEach(platform => {
+          const platformName = platform === 'twitter/x' ? 'TWITTER/X' : platform.toUpperCase()
+          const sectionStart = `===${platformName}===`
+          const sectionEnd = '===END==='
+          
+          const startIndex = content.indexOf(sectionStart)
+          if (startIndex !== -1) {
+            const endIndex = content.indexOf(sectionEnd, startIndex)
+            if (endIndex !== -1) {
+              const sectionContent = content.substring(startIndex + sectionStart.length, endIndex).trim()
+              
+              const titleMatch = sectionContent.match(/TITLE:\s*(.+?)(?=\n|$)/i)
+              const descriptionMatch = sectionContent.match(/DESCRIPTION:\s*([\s\S]*?)(?=\nHASHTAGS:|$)/i)
+              const hashtagsMatch = sectionContent.match(/HASHTAGS:\s*(.+?)(?=\n|$)/i)
+              const callToActionMatch = sectionContent.match(/CALL-TO-ACTION:\s*(.+?)(?=\n|$)/i)
+              
+              const title = titleMatch ? titleMatch[1].trim() : ''
+              const description = descriptionMatch ? descriptionMatch[1].trim() : ''
+              const hashtags = hashtagsMatch ? hashtagsMatch[1].trim().split(/\s+/).filter(tag => tag.startsWith('#')) : []
+              const callToAction = callToActionMatch ? callToActionMatch[1].trim() : ''
+            
+              if (title || description) {
+                socialMediaContent.push({
+                  platform: platform,
+                  title,
+                  description,
+                  hashtags,
+                  callToAction
+                })
+              }
+            }
+          }
+        })
+      }
+    } catch (error) {
+      console.error("❌ Error parsing AI response:", error)
+      throw new Error('Failed to parse AI response')
     }
+
+         console.log("✅ Generated content for", socialMediaContent.length, "platforms")
+     
+     // Validate that we got the exact number of posts requested
+     if (socialMediaContent.length !== totalPostsNeeded) {
+       console.log(`⚠️ Warning: Generated ${socialMediaContent.length} posts but requested ${totalPostsNeeded}`)
+       console.log("📊 This might be due to AI output limitations or not following the exact count requirement")
+       console.log("💡 Consider using a higher-tier model like GPT-4o for larger post counts")
+     }
+     
+     // Calculate token usage and cost
+     const tokenUsage = calculateTokenUsageAndCost(prompt, result.text)
+     
+     return {
+       content: socialMediaContent,
+       rawResponse: result.text,
+       tokenUsage
+     }
   } catch (error) {
     console.error("❌ [generateSocialMediaContent] Error:", error)
     console.error('Error generating social media content:', error)
@@ -447,7 +463,7 @@ ${servicesText}
 
 Please generate:
 1. An engaging email marketing content (200-300 words)
-2. A social media post title and description for platforms like Facebook/Instagram
+2. A social media post title and description for platforms like Facebook and Instagram
 
 Make the content engaging, professional, and focused on the value these services provide to customers. The content should be in the same language as the business name and description.
 
@@ -484,3 +500,5 @@ SOCIAL MEDIA DESCRIPTION:
     throw new Error('Failed to generate marketing content')
   }
 }
+
+

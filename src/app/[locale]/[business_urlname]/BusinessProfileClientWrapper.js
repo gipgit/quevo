@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { usePathname } from 'next/navigation'; // Still use this to get the current URL path
 import { Link } from '@/i18n/navigation'; // IMPORTANT: Use locale-aware Link from next-intl/navigation
 import Image from 'next/image';
@@ -27,8 +27,22 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
     // OPTIMIZED: Add state for payment methods loading
     const [businessPaymentMethods, setBusinessPaymentMethods] = useState(initialServerData.businessPaymentMethods || []);
     const [isLoadingPaymentMethods, setIsLoadingPaymentMethods] = useState(false);
+    
+    // Loading animation state
+    const [isLoading, setIsLoading] = useState(true);
 
     const t = useTranslations('Common'); // Initialize translations
+
+    // Handle loading animation
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 1500); // Show loading for 1.5 seconds
+
+        return () => clearTimeout(timer);
+    }, []);
+
+
 
     const pathname = usePathname(); // e.g., /en/nutrizionista_equilibrio/products
     const { business_urlname } = initialServerData.businessData;
@@ -132,28 +146,81 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
             <div style={cssVariables} className={`${bodyClass} profile-content-wrapper`}>
                 
 
-                {/* --- CONDITIONAL RENDERING OF BusinessProfileHeader --- */}
+                {/* --- for main profile/landing business page --- */}
                 {!isBookingConfirmationPage && !isServiceBoardPage && !isAIChatPage && (
-                 
-                    <div className="flex flex-col lg:items-start relative z-10 lg:gap-8 lg:p-8 lg:pt-20 mx-auto">
-                        <div className="w-full lg:order-1">
-                            <BusinessProfileHeader
-                                toggleContactModal={openContactModal}
-                                togglePaymentsModal={openPaymentsModal}
-                                toggleAddressModal={openAddressModal}
-                                toggleMenuOverlay={toggleMenuOverlay}
-                                initialServerData={initialServerData}
-                            />
+                    <>
+                        {/* Loading Animation Overlay */}
+                        <div 
+                            className={`fixed inset-0 z-50 flex items-center justify-center transition-transform duration-1000 ease-in-out ${
+                                isLoading ? 'translate-y-0' : '-translate-y-full'
+                            }`}
+                            style={{ 
+                                backgroundColor: initialServerData.themeColorButton || '#302318'
+                            }}
+                        >
+                            <div className="relative">
+                                {initialServerData.businessData.business_img_profile ? (
+                                    <div className="w-24 h-24 rounded-full mx-auto overflow-hidden relative flex items-center justify-center">
+                                        <div className="w-20 h-20 rounded-full overflow-hidden">
+                                            <Image
+                                                src={initialServerData.businessData.business_img_profile}
+                                                alt={initialServerData.businessData.business_name}
+                                                width={80}
+                                                height={80}
+                                                className="object-cover w-full h-full"
+                                            />
+                                        </div>
+                                        <div 
+                                            className="absolute inset-0 rounded-full border-2 border-transparent"
+                                            style={{ 
+                                                borderTopColor: initialServerData.themeColorButton || '#302318',
+                                                animation: 'spin 1s linear infinite'
+                                            }}
+                                        ></div>
+                                    </div>
+                                ) : (
+                                    <div className="w-24 h-24 rounded-full mx-auto overflow-hidden relative flex items-center justify-center">
+                                        <div 
+                                            className="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold"
+                                            style={{ 
+                                                backgroundColor: initialServerData.themeColorBackground || '#ffffff',
+                                                color: initialServerData.themeColorButton || '#302318'
+                                            }}
+                                        >
+                                            {initialServerData.businessData.business_name?.charAt(0)?.toUpperCase() || 'B'}
+                                        </div>
+                                        <div 
+                                            className="absolute inset-0 rounded-full border-2 border-transparent"
+                                            style={{ 
+                                                borderTopColor: initialServerData.themeColorButton || '#302318',
+                                                animation: 'spin 1s linear infinite'
+                                            }}
+                                        ></div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        
-                        <div className="w-full lg:order-2">
-                            <div className='profile-main lg:rounded-2xl lg:px-8'>
-                                <div className='block mx-auto max-w-[1400px]'>
-                                {children} {/* This is where the specific section's page.tsx content will render */}
+                 
+                        <div className="flex flex-col lg:items-start relative z-10 lg:gap-8 lg:p-8 lg:pt-20 mx-auto">
+                            <div className="w-full lg:order-1">
+                                <BusinessProfileHeader
+                                    toggleContactModal={openContactModal}
+                                    togglePaymentsModal={openPaymentsModal}
+                                    toggleAddressModal={openAddressModal}
+                                    toggleMenuOverlay={toggleMenuOverlay}
+                                    initialServerData={initialServerData}
+                                />
+                            </div>
+                            
+                            <div className="w-full lg:order-2">
+                                <div className='profile-main lg:rounded-2xl lg:px-8'>
+                                    <div className='block mx-auto max-w-[1400px]'>
+                                    {children} {/* This is where the specific section's page.tsx content will render */}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </>
                 )}
 
                 {/* For booking confirmation and service board pages, keep single column layout */}

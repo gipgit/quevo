@@ -51,14 +51,14 @@ export default function RequirementsStep({
                 setConfirmedRequirements(initialConfirmedRequirements);
 
                 const initialQuestionResponses = {};
-                (data.questions || []).filter(q => q.question_type !== 'checkbox_multi').forEach(q => {
+                (data.questions || []).filter(q => q.question_type !== 'checkbox_multi' && q.question_type !== 'checkbox_single').forEach(q => {
                     initialQuestionResponses[q.question_id] = '';
                 });
                 setQuestionResponses(initialQuestionResponses);
 
                 const initialCheckboxResponses = {};
-                (data.questions || []).filter(q => q.question_type === 'checkbox_multi').forEach(q => {
-                    initialCheckboxResponses[q.question_id] = [];
+                (data.questions || []).filter(q => q.question_type === 'checkbox_multi' || q.question_type === 'checkbox_single').forEach(q => {
+                    initialCheckboxResponses[q.question_id] = q.question_type === 'checkbox_single' ? null : [];
                 });
                 setCheckboxResponses(initialCheckboxResponses);
 
@@ -99,13 +99,19 @@ export default function RequirementsStep({
         }
     }, []);
 
-    const handleCheckboxChange = useCallback((questionId, optionId, checked) => {
+    const handleCheckboxChange = useCallback((questionId, optionValue, checked, questionType) => {
         setCheckboxResponses(prev => {
-            const currentOptions = prev[questionId] || [];
-            if (checked) {
-                return { ...prev, [questionId]: [...currentOptions, optionId] };
+            if (questionType === 'checkbox_single') {
+                // For single checkbox, store the selected value
+                return { ...prev, [questionId]: checked ? optionValue : null };
             } else {
-                return { ...prev, [questionId]: currentOptions.filter(id => id !== optionId) };
+                // For multi checkbox, store array of selected values
+                const currentOptions = prev[questionId] || [];
+                if (checked) {
+                    return { ...prev, [questionId]: [...currentOptions, optionValue] };
+                } else {
+                    return { ...prev, [questionId]: currentOptions.filter(value => value !== optionValue) };
+                }
             }
         });
         // Clear error when checkbox is selected
@@ -134,6 +140,10 @@ export default function RequirementsStep({
             if (q.is_required) {
                 if (q.question_type === 'checkbox_multi') {
                     if (!checkboxResponses[q.question_id] || checkboxResponses[q.question_id].length === 0) {
+                        errors[`question-${q.question_id}`] = t('pleaseFillAllRequiredFields');
+                    }
+                } else if (q.question_type === 'checkbox_single') {
+                    if (!checkboxResponses[q.question_id]) {
                         errors[`question-${q.question_id}`] = t('pleaseFillAllRequiredFields');
                     }
                 } else {
@@ -270,62 +280,90 @@ export default function RequirementsStep({
                     <h3 className="text-xs lg:text-base font-semibold opacity-50 text-uppercase border-b border-gray-500 pb-1" style={{ color: themeColorText }}>
                         {t('questionsTitle')}
                     </h3>
-                    {questions.sort((a, b) => a.display_order - b.display_order).map(q => (
-                        <div key={q.question_id} className="mb-4">
-                            <label className="block text-sm font-medium mb-1">
-                                {q.question_text} {q.is_required && <span className="text-red-500">*</span>}
-                            </label>
-                            {q.question_type === 'open' && (
-                                <input
-                                    type="text"
-                                    id={`question-${q.question_id}`}
-                                    className={`mt-1 block w-full rounded-md border shadow-sm p-2 ${fieldErrors[`question-${q.question_id}`] ? 'border-red-500' : ''}`}
-                                    style={{ backgroundColor: themeColorBackgroundCard, color: themeColorText, borderColor: fieldErrors[`question-${q.question_id}`] ? '#ef4444' : themeColorBorder}}
-                                    maxLength={q.max_length || 100}
-                                    value={questionResponses[q.question_id] || ''}
-                                    onChange={(e) => handleQuestionTextChange(q.question_id, e.target.value)}
-                                    required={q.is_required}
-                                />
-                            )}
-                            {q.question_type === 'media_upload' && (
-                                <input
-                                    type="url"
-                                    id={`question-${q.question_id}`}
-                                    className={`mt-1 block w-full rounded-md border shadow-sm p-2 ${fieldErrors[`question-${q.question_id}`] ? 'border-red-500' : ''}`}
-                                    style={{ backgroundColor: themeColorBackgroundCard, color: themeColorText, borderColor: fieldErrors[`question-${q.question_id}`] ? '#ef4444' : themeColorBorder}}
-                                    placeholder={t('mediaUploadPlaceholder')}
-                                    value={questionResponses[q.question_id] || ''}
-                                    onChange={(e) => handleQuestionTextChange(q.question_id, e.target.value)}
-                                    required={q.is_required}
-                                />
-                            )}
-                            {q.question_type === 'checkbox_multi' && (
-                                <div className={`mt-1 flex flex-row flex-wrap items-center gap-x-3 ${fieldErrors[`question-${q.question_id}`] ? 'border-l-4 border-red-500 pl-3' : ''}`}>
-                                    {q.options?.sort((a, b) => a.display_order - b.display_order).map(option => (
-                                        <label key={option.option_id} className="flex items-center">
-                                            <input
-                                                type="checkbox"
-                                                className="form-checkbox h-4 w-4 rounded mr-1"
-                                                checked={(checkboxResponses[q.question_id] || []).includes(option.option_id)}
-                                                onChange={(e) => handleCheckboxChange(q.question_id, option.option_id, e.target.checked)}
-                                            />
-                                            <span className="text-xs md:text-sm">{option.option_text}</span>
-                                        </label>
-                                    ))}
-                                    {fieldErrors[`question-${q.question_id}`] && (
-                                        <div className="text-red-500 text-xs mt-1 w-full">
-                                            {fieldErrors[`question-${q.question_id}`]}
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                            {fieldErrors[`question-${q.question_id}`] && q.question_type !== 'checkbox_multi' && (
-                                <div className="text-red-500 text-xs mt-1">
-                                    {fieldErrors[`question-${q.question_id}`]}
-                                </div>
-                            )}
-                        </div>
-                    ))}
+                    {questions.sort((a, b) => a.display_order - b.display_order).map(q => {
+                        // Parse question_options JSONB if it exists and is valid
+                        let questionOptions = [];
+                        if (q.question_options) {
+                            try {
+                                // Handle both string and object formats
+                                if (typeof q.question_options === 'string') {
+                                    questionOptions = JSON.parse(q.question_options);
+                                } else if (typeof q.question_options === 'object') {
+                                    questionOptions = q.question_options;
+                                }
+                            } catch (error) {
+                                console.warn('Failed to parse question_options for question:', q.question_id, error);
+                                questionOptions = [];
+                            }
+                        }
+                        
+                        return (
+                            <div key={q.question_id} className="mb-4">
+                                <label className="block text-sm font-medium mb-1">
+                                    {q.question_text} {q.is_required && <span className="text-red-500">*</span>}
+                                </label>
+                                {q.question_type === 'open' && (
+                                    <input
+                                        type="text"
+                                        id={`question-${q.question_id}`}
+                                        className={`mt-1 block w-full rounded-md border shadow-sm p-2 ${fieldErrors[`question-${q.question_id}`] ? 'border-red-500' : ''}`}
+                                        style={{ backgroundColor: themeColorBackgroundCard, color: themeColorText, borderColor: fieldErrors[`question-${q.question_id}`] ? '#ef4444' : themeColorBorder}}
+                                        maxLength={q.max_length || 100}
+                                        value={questionResponses[q.question_id] || ''}
+                                        onChange={(e) => handleQuestionTextChange(q.question_id, e.target.value)}
+                                        required={q.is_required}
+                                    />
+                                )}
+                                {q.question_type === 'media_upload' && (
+                                    <input
+                                        type="url"
+                                        id={`question-${q.question_id}`}
+                                        className={`mt-1 block w-full rounded-md border shadow-sm p-2 ${fieldErrors[`question-${q.question_id}`] ? 'border-red-500' : ''}`}
+                                        style={{ backgroundColor: themeColorBackgroundCard, color: themeColorText, borderColor: fieldErrors[`question-${q.question_id}`] ? '#ef4444' : themeColorBorder}}
+                                        placeholder={t('mediaUploadPlaceholder')}
+                                        value={questionResponses[q.question_id] || ''}
+                                        onChange={(e) => handleQuestionTextChange(q.question_id, e.target.value)}
+                                        required={q.is_required}
+                                    />
+                                )}
+                                {(q.question_type === 'checkbox_single' || q.question_type === 'checkbox_multi') && questionOptions.length > 0 && (
+                                    <div className={`mt-1 flex flex-row flex-wrap items-center gap-x-3 ${fieldErrors[`question-${q.question_id}`] ? 'border-l-4 border-red-500 pl-3' : ''}`}>
+                                        {questionOptions.map(option => (
+                                            <label key={option.id} className="flex items-center">
+                                                <input
+                                                    type={q.question_type === 'checkbox_single' ? 'radio' : 'checkbox'}
+                                                    name={q.question_type === 'checkbox_single' ? `question-${q.question_id}` : undefined}
+                                                    className={`${q.question_type === 'checkbox_single' ? 'form-radio' : 'form-checkbox'} h-4 w-4 rounded mr-1`}
+                                                    checked={
+                                                        q.question_type === 'checkbox_single' 
+                                                            ? checkboxResponses[q.question_id] === option.value
+                                                            : (checkboxResponses[q.question_id] || []).includes(option.value)
+                                                    }
+                                                    onChange={(e) => handleCheckboxChange(q.question_id, option.value, e.target.checked, q.question_type)}
+                                                />
+                                                <span className="text-xs md:text-sm">{option.text}</span>
+                                            </label>
+                                        ))}
+                                        {fieldErrors[`question-${q.question_id}`] && (
+                                            <div className="text-red-500 text-xs mt-1 w-full">
+                                                {fieldErrors[`question-${q.question_id}`]}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                                {(q.question_type === 'checkbox_single' || q.question_type === 'checkbox_multi') && questionOptions.length === 0 && (
+                                    <div className="mt-1 text-sm text-gray-500 italic">
+                                        {t('noOptionsAvailable') || 'No options available for this question.'}
+                                    </div>
+                                )}
+                                {fieldErrors[`question-${q.question_id}`] && q.question_type !== 'checkbox_multi' && q.question_type !== 'checkbox_single' && (
+                                    <div className="text-red-500 text-xs mt-1">
+                                        {fieldErrors[`question-${q.question_id}`]}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             )}
 

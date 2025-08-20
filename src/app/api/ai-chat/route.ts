@@ -36,14 +36,14 @@ export async function POST(request: NextRequest) {
         where: {
           business_id: business.business_id,
           is_active: true,
-          date_selection: true
+          available_booking: true
         },
         select: {
           service_id: true,
           service_name: true,
           description: true,
           duration_minutes: true,
-          date_selection: true
+          available_booking: true
         }
       });
 

@@ -12,7 +12,7 @@ const r2Client = new S3Client({
   },
 });
 
-export type UploadType = 'business' | 'service-board' | 'customer';
+export type UploadType = 'business' | 'service-board' | 'customer' | 'service';
 
 export interface ProcessAndSaveImageOptions {
   buffer: Buffer;
@@ -44,6 +44,8 @@ function getBucketName(uploadType: UploadType): string {
       return process.env.CLOUDFLARE_R2_BUCKET_SERVICE_BOARD_PRIVATE!;
     case 'customer':
       return process.env.CLOUDFLARE_R2_BUCKET_CUSTOMER_UPLOADS_PRIVATE!;
+    case 'service':
+      return process.env.CLOUDFLARE_R2_BUCKET_BUSINESS_PUBLIC!;
     default:
       throw new Error(`Invalid upload type: ${uploadType}`);
   }
@@ -59,6 +61,9 @@ function generateKey(uploadType: UploadType, businessId: string, filename: strin
     case 'customer':
       if (!customerId) throw new Error('customerId required for customer uploads');
       return `customer-uploads/${businessId}/${customerId}/${filename}`;
+    case 'service':
+      if (!serviceBoardId) throw new Error('serviceBoardId required for service uploads');
+      return `business/${businessId}/services/${serviceBoardId}/${filename}`;
     default:
       throw new Error(`Invalid upload type: ${uploadType}`);
   }
@@ -114,7 +119,7 @@ export async function processAndSaveImage({
     let signedUrl: string | undefined;
 
     // Handle different access patterns
-    if (uploadType === 'business') {
+    if (uploadType === 'business' || uploadType === 'service') {
       // Public access - use custom domain if available
       const publicDomain = process.env.CLOUDFLARE_R2_PUBLIC_DOMAIN;
       if (publicDomain) {
@@ -170,6 +175,24 @@ export async function getSignedUrlForPrivateFile(key: string, uploadType: Upload
   });
   
   return await getSignedUrl(r2Client, getCommand, { expiresIn });
+}
+
+// Utility function to construct service image path
+export function getServiceImagePath(businessPublicUuid: string, serviceId: string | number): string {
+  return `business/${businessPublicUuid}/services/${serviceId}/cover.webp`;
+}
+
+// Utility function to get service image URL
+export function getServiceImageUrl(businessPublicUuid: string, serviceId: string | number): string {
+  const path = getServiceImagePath(businessPublicUuid, serviceId);
+  const publicDomain = process.env.CLOUDFLARE_R2_PUBLIC_DOMAIN;
+  
+  if (publicDomain) {
+    return `${publicDomain}/${path}`;
+  } else {
+    // Fallback to R2 endpoint
+    return `${process.env.CLOUDFLARE_R2_ENDPOINT}/${process.env.CLOUDFLARE_R2_BUCKET_BUSINESS_PUBLIC}/${path}`;
+  }
 }
 
 // Helper functions for different upload types

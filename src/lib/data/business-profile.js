@@ -192,9 +192,10 @@ export async function getServiceRequestServicesData(businessUrlname) {
                 duration_minutes: true,
                 buffer_minutes: true,
                 price_base: true, // Prisma will return this as a Decimal object
-                date_selection: true, 
-                quotation_available: true, // Add quotation_available field
+                available_booking: true, 
+                available_quotation: true, // Add available_quotation field
                 category_id: true, // To link with categories
+                display_order: true, // Add display_order for proper ordering
                 serviceitem: {
                     select: {
                         service_item_id: true,
@@ -211,7 +212,7 @@ export async function getServiceRequestServicesData(businessUrlname) {
                 },
             },
             orderBy: {
-                service_name: 'asc', // Order services alphabetically
+                display_order: 'asc', // Order services by display_order
             },
         });
         // console.log(`[getServiceRequestServicesData] Fetched services (raw from Prisma):`, services); // Optional: keep for raw check
@@ -219,10 +220,10 @@ export async function getServiceRequestServicesData(businessUrlname) {
         // Convert Decimal 'price' to a number before passing to client component
         const serializedServices = services.map(service => ({
             ...service,
-            price_base: service.price_base.toNumber(), // <--- CONVERT DECIMAL TO NUMBER HERE
+            price_base: service.price_base ? service.price_base.toNumber() : null, // Handle null price_base
             serviceitem: service.serviceitem?.map(item => ({
                 ...item,
-                price_base: item.price_base.toNumber(), // Convert service item price to number
+                price_base: item.price_base ? item.price_base.toNumber() : 0, // Convert service item price to number
             })) || [],
         }));
 

@@ -22,8 +22,8 @@ interface Service {
   description: string;
   price_base: number;
   duration_minutes: number;
-  quotation_available: boolean;
-  date_selection: boolean;
+  available_quotation: boolean;
+  available_booking: boolean;
   serviceevent?: ServiceEvent[];
 }
 
