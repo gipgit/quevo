@@ -588,6 +588,7 @@ model service {
   servicecategory            servicecategory?          @relation(fields: [category_id], references: [category_id])
   serviceboard               serviceboard[]
   serviceevent               serviceevent[]
+  serviceextra               serviceextra[]
   serviceitem                serviceitem[]
   servicequestion            servicequestion[]
   servicerequest             servicerequest[]
@@ -608,6 +609,21 @@ model serviceitem {
   date_updated                      DateTime?                           @default(now()) @db.Timestamp(6)
   service                           service                             @relation(fields: [service_id], references: [service_id], onDelete: Cascade)
   servicerequestselectedserviceitem servicerequestselectedserviceitem[]
+}
+
+model serviceextra {
+  service_extra_id                  Int                                 @id @default(autoincrement())
+  service_id                        String                              @db.Uuid
+  extra_name                        String                              @db.VarChar(255)
+  extra_description                 String?
+  price_base                        Decimal                             @default(0.00) @db.Decimal(10, 2)
+  price_type                        String                              @default("fixed") @db.VarChar(50)
+  price_unit                        String?                             @db.VarChar(50)
+  is_active                         Boolean?                            @default(true)
+  display_order                     Int?                                @default(0)
+  date_created                      DateTime?                           @default(now()) @db.Timestamp(6)
+  date_updated                      DateTime?                           @default(now()) @db.Timestamp(6)
+  service                           service                             @relation(fields: [service_id], references: [service_id], onDelete: Cascade)
 }
 
 model servicerequest {
@@ -1042,6 +1058,8 @@ model aigenerationemail {
   @@index([business_id], map: "idx_aigenerationemail_business")
   @@index([generation_date], map: "idx_aigenerationemail_date")
 }
+
+
 
 enum business_sponsorship_level {
   basic

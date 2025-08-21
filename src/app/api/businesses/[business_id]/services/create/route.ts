@@ -133,6 +133,24 @@ export async function POST(req: NextRequest, { params }: { params: { business_id
           })
         }
       }
+      // Create service extras
+      if (data.extras && data.extras.length > 0) {
+        for (let i = 0; i < data.extras.length; i++) {
+          const extra = data.extras[i]
+          await tx.serviceextra.create({
+            data: {
+              service_id: service.service_id,
+              extra_name: extra.extra_name,
+              extra_description: extra.extra_description,
+              price_base: extra.price_base,
+              price_type: extra.price_type,
+              price_unit: extra.price_unit,
+              is_active: true,
+              display_order: i,
+            },
+          })
+        }
+      }
       // Create service events
       if (data.events && data.events.length > 0) {
         for (let i = 0; i < data.events.length; i++) {

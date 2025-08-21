@@ -237,7 +237,8 @@ export default function RequirementsStep({
     }
 
     return (
-        <div className="space-y-2 lg:space-y-6 flex flex-col h-full p-6">
+        <div className="flex flex-col h-full">
+            <div className="flex-1 p-6 space-y-6 lg:space-y-8">
             <div>
                 <h2 className="text-xl lg:text-2xl font-bold mb-2" style={{ color: themeColorText }}>
                     {t('requirementsAndQuestionsTitle')}
@@ -251,7 +252,7 @@ export default function RequirementsStep({
                         {t('requirementsTitle')}
                     </h3>
                     {requirements.map(req => (
-                        <div key={req.requirement_block_id} className="mb-3">
+                        <div key={req.requirement_block_id} className="mb-1 lg:mb-3">
                             <label className={`flex items-start ${fieldErrors[`requirement-${req.requirement_block_id}`] ? 'border-l-4 border-red-500 pl-3' : ''}`}>
                                 <input
                                     type="checkbox"
@@ -259,8 +260,8 @@ export default function RequirementsStep({
                                     checked={confirmedRequirements[req.requirement_block_id] || false}
                                     onChange={(e) => handleRequirementChange(req.requirement_block_id, e.target.checked)}
                                 />
-                                <div className="text-sm leading-tight">
-                                    <span className="">{req.title}:</span>{' '}
+                                <div className="text-xs lg:text-sm leading-tight">
+                                    <span className="font-semibold">{req.title}:</span>{' '}
                                     <span className="">{req.requirements_text}</span>
                                     {fieldErrors[`requirement-${req.requirement_block_id}`] && (
                                         <div className="text-red-500 text-xs mt-1">
@@ -366,23 +367,29 @@ export default function RequirementsStep({
                     })}
                 </div>
             )}
+            </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-end pt-4 mt-auto sticky bottom-0 bg-gradient-to-t from-white via-white/95 to-transparent border-t border-gray-200 -mx-6 px-6 py-4">
-                <button
-                    onClick={handleBack}
-                    className="px-4 py-2 rounded-md text-sm font-medium mr-2"
-                    style={{ backgroundColor: 'transparent', color: themeColorText, border: `1px solid ${themeColorText}` }}
-                >
-                    {t('back')}
-                </button>
-                <button
-                    onClick={handleNext}
-                    className="px-4 py-2 rounded-md text-sm font-medium"
-                    style={{ color: "#FFF", backgroundColor: themeColorButton }}
-                >
-                    {t('continue')}
-                </button>
+            <div className="sticky bottom-0 p-6 border-t bg-white" style={{ borderColor: themeColorBorder }}>
+                <div className="flex justify-between items-center">
+                    <button
+                        onClick={handleBack}
+                        className="px-4 py-2 rounded-lg border text-sm flex items-center"
+                        style={{ borderColor: themeColorBorder, color: themeColorText }}
+                    >
+                        <svg className="w-4 h-4 lg:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span className="hidden lg:inline">{t('back')}</span>
+                    </button>
+                    <button
+                        onClick={handleNext}
+                        className="px-6 py-2 rounded-lg font-medium"
+                        style={{ backgroundColor: themeColorButton, color: 'white' }}
+                    >
+                        {t('continue')}
+                    </button>
+                </div>
             </div>
         </div>
     );

@@ -200,16 +200,17 @@ export default function ServiceItemsStep({
     }
 
     return (
-        <div className="space-y-4 lg:space-y-6 flex flex-col h-full p-6">
-            <div>
-                <h2 className="text-lg lg:text-2xl font-bold mb-1 lg:mb-2" style={{ color: themeColorText }}>
-                    {t('serviceItemsTitle')}
-                </h2>
-            </div>
+        <div className="flex flex-col h-full">
+            <div className="flex-1 p-6">
+                <div className="mb-6">
+                    <h2 className="text-lg lg:text-2xl font-bold mb-1 lg:mb-2" style={{ color: themeColorText }}>
+                        {t('serviceItemsTitle')}
+                    </h2>
+                </div>
 
-            {/* Service Items Section */}
-            <div className="space-y-4">
-                <div className="grid gap-2 lg:gap-3">
+                {/* Service Items Section */}
+                <div className="space-y-4">
+                <div className="grid gap-1 lg:gap-3">
                     {serviceItems.map((item) => {
                         const isSelected = selectedServiceItems[item.service_item_id] && selectedServiceItems[item.service_item_id].quantity > 0;
                         
@@ -217,7 +218,7 @@ export default function ServiceItemsStep({
                             <div
                                 key={item.service_item_id}
                                 className={`
-                                    relative flex flex-row md:items-center justify-between p-3 rounded-lg transition-all duration-200 ease-in-out border
+                                    relative flex flex-row items-center justify-between p-2 lg:p-3 rounded-lg transition-all duration-200 ease-in-out border
                                     ${isSelected ? 'border-l-4' : 'border-l'}
                                 `}
                                 style={isSelected ? { backgroundColor: themeColorBackgroundCard, color: themeColorText, borderColor: themeColorButton } : { backgroundColor: themeColorBackgroundCard, color: themeColorText, borderColor: themeColorBorder }}
@@ -299,31 +300,37 @@ export default function ServiceItemsStep({
                     </div>
                 </div>
             </div>
+        </div>
 
-            {/* Action Buttons */}
-            <div className="flex justify-between pt-4 mt-auto sticky bottom-0 bg-gradient-to-t from-white via-white/95 to-transparent border-t border-gray-200 -mx-6 px-6 py-4">
-                <button
-                    onClick={handleBack}
-                    className="px-4 py-2 rounded-md text-sm font-medium"
-                    style={{ backgroundColor: 'transparent', color: themeColorText, border: `1px solid ${themeColorText}` }}
-                >
-                    {t('back')}
-                </button>
-                <div className="flex gap-2">
+        {/* Action Buttons */}
+            <div className="sticky bottom-0 p-6 border-t bg-white" style={{ borderColor: themeColorBorder }}>
+                <div className="flex justify-between items-center">
                     <button
-                        onClick={handleSkip}
-                        className="px-4 py-2 rounded-md text-sm font-medium"
-                        style={{ backgroundColor: 'transparent', color: themeColorText, border: `1px solid ${themeColorBorder}` }}
+                        onClick={handleBack}
+                        className="px-4 py-2 rounded-lg border text-sm flex items-center"
+                        style={{ borderColor: themeColorBorder, color: themeColorText }}
                     >
-                        {t('skip')}
+                        <svg className="w-4 h-4 lg:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span className="hidden lg:inline">{t('back')}</span>
                     </button>
-                    <button
-                        onClick={handleNext}
-                        className="px-4 py-2 rounded-md text-sm font-medium"
-                        style={{ color: "#FFF", backgroundColor: themeColorButton }}
-                    >
-                        {t('continue')}
-                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={handleSkip}
+                            className="px-4 py-2 rounded-lg text-sm"
+                            style={{ borderColor: themeColorBorder, color: themeColorText }}
+                        >
+                            {t('skip')}
+                        </button>
+                        <button
+                            onClick={handleNext}
+                            className="px-6 py-2 rounded-lg font-medium"
+                            style={{ backgroundColor: themeColorButton, color: 'white' }}
+                        >
+                            {t('continue')}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

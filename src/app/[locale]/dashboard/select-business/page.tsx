@@ -45,6 +45,7 @@ export default function BusinessSelectionPage() {
   const { businesses, switchBusiness } = useBusiness()
   const [loading, setLoading] = useState(true)
   const [avatarError, setAvatarError] = useState<{ [id: string]: boolean }>({})
+  const [selectingBusiness, setSelectingBusiness] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === "loading") return
@@ -90,49 +91,90 @@ export default function BusinessSelectionPage() {
     return null
   }
 
-  const handleBusinessSelect = (businessId: string) => {
-    // Use the switchBusiness function from context which properly updates session and redirects
-    switchBusiness(businessId)
+  const handleBusinessSelect = async (businessId: string) => {
+    // Prevent multiple clicks
+    if (selectingBusiness) return
+    
+    setSelectingBusiness(businessId)
+    
+    try {
+      // Use the switchBusiness function from context which properly updates session and redirects
+      await switchBusiness(businessId)
+      
+      // Add a fallback check to ensure the business was actually switched
+      setTimeout(() => {
+        const currentBusinessId = sessionStorage.getItem("currentBusinessId")
+        if (currentBusinessId !== businessId) {
+          console.warn("Business switch may have failed, retrying...")
+          setSelectingBusiness(null)
+        }
+      }, 2000)
+      
+    } catch (error) {
+      console.error("Error switching business:", error)
+      setSelectingBusiness(null)
+    }
   }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
-          <h1 className="text-2xl font-medium mb-8">
+          <p className="text-xl mb-6">
             {t("welcome", { name: session.user?.name?.split(" ")[0] || "" })}
-          </h1>
+          </p>
           <h2 className="text-3xl font-bold mb-12">{t("whatToManage")}</h2>
+          {selectingBusiness && (
+            <div className="text-blue-400 text-lg font-medium animate-pulse">
+              Switching to business...
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6 max-w-6xl mx-auto">
-          {businesses.map((business) => (
-            <button
-              key={business.business_id}
-              onClick={() => handleBusinessSelect(business.business_id)}
-              className="bg-white text-gray-900 rounded-2xl p-6 hover:shadow-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50"
-            >
-              <div className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 rounded-full bg-gray-200 mb-4 overflow-hidden">
-                  {!avatarError[business.business_id] ? (
-                    <Image
-                      src={getProfileImageUrl(business)}
-                      alt={business.business_name}
-                      width={64}
-                      height={64}
-                      className="w-full h-full object-cover"
-                      onError={() => setAvatarError(errs => ({ ...errs, [business.business_id]: true }))}
-                    />
-                  ) : (
-                    <div className="w-full h-full rounded-full bg-blue-200 text-blue-700 flex items-center justify-center font-bold text-lg">
-                      {getInitial(business.business_name)}
-                    </div>
-                  )}
+          {businesses.map((business) => {
+            const isSelecting = selectingBusiness === business.business_id
+            
+            return (
+              <button
+                key={business.business_id}
+                onClick={() => handleBusinessSelect(business.business_id)}
+                disabled={selectingBusiness !== null}
+                className={`bg-white text-gray-900 rounded-2xl p-4 lg:p-6 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 ${
+                  isSelecting 
+                    ? 'opacity-75 cursor-not-allowed ring-2 ring-blue-500' 
+                    : selectingBusiness !== null
+                    ? 'opacity-50 cursor-not-allowed'
+                    : 'hover:shadow-lg hover:bg-gray-100'
+                }`}
+              >
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-16 h-16 rounded-full bg-gray-200 mb-2 lg:mb-4 overflow-hidden relative">
+                    {isSelecting && (
+                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10">
+                        <LoadingSpinner size="sm" color="white" />
+                      </div>
+                    )}
+                    {!avatarError[business.business_id] ? (
+                      <Image
+                        src={getProfileImageUrl(business)}
+                        alt={business.business_name}
+                        width={64}
+                        height={64}
+                        className="w-full h-full object-cover"
+                        onError={() => setAvatarError(errs => ({ ...errs, [business.business_id]: true }))}
+                      />
+                    ) : (
+                      <div className="w-full h-full rounded-full bg-blue-200 text-blue-700 flex items-center justify-center font-bold text-lg">
+                        {getInitial(business.business_name)}
+                      </div>
+                    )}
+                  </div>
+                  <h3 className="font-medium text-sm leading-tight">{business.business_name}</h3>
                 </div>
-                <h3 className="font-medium text-sm leading-tight">{business.business_name}</h3>
-              </div>
-            </button>
-          ))}
+              </button>
+            )
+          })}
         </div>
 
         <div className="text-center mt-16">

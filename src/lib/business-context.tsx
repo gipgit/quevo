@@ -317,17 +317,20 @@ export function BusinessProvider({
     setCurrentBusinessIdCookie(business.business_id) // Set cookie for server-side access
   }, [])
 
-  const switchBusiness = useCallback((businessId: string) => {
+  const switchBusiness = useCallback(async (businessId: string) => {
     const business = businesses.find((b) => b.business_id === businessId)
     
     if (business) {
+      // Set all state updates synchronously
       setCurrentBusiness(business)
       sessionStorage.setItem("currentBusinessId", business.business_id)
       setCurrentBusinessIdCookie(business.business_id)
       setBusinessSwitchKey(prev => prev + 1)
       
-      // Instead of window.location.reload(), use router.push to navigate
-      // This prevents the infinite loop while still ensuring fresh data
+      // Add a small delay to ensure state updates are processed
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
+      // Navigate to dashboard
       console.log("BusinessContext: Switched to business:", business.business_name, "- navigating to dashboard")
       router.push("/dashboard")
     } else {

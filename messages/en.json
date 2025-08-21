@@ -232,8 +232,10 @@
     "additionalNotesPlaceholder": "Add any additional notes or special requests...",
     "allServices": "All Services",
     "book": "Book",
+    "dateTimeRequired": "Date and time selection is required for this service.",
     "priceOnRequest": "Price on request",
-    "quotationAvailable": "Simulatable Quote"
+    "quotationAvailable": "Simulatable Quote",
+    "back": "Back"
   },
   "Promotions": {
     "loading": "Loading promotions...",

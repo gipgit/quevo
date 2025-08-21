@@ -100,14 +100,15 @@ export default function CustomerDetailsStep({
     };
 
     return (
-        <div className="space-y-6 p-6">
-            <div>
-                <h2 className="text-xl lg:text-2xl font-bold mb-2" style={{ color: themeColorText }}>
-                    {t('yourDetails')}
-                </h2>
-            </div>
+        <div className="flex flex-col h-full">
+            <div className="flex-1 p-6">
+                <div className="mb-6">
+                    <h2 className="text-xl lg:text-2xl font-bold mb-2" style={{ color: themeColorText }}>
+                        {t('yourDetails')}
+                    </h2>
+                </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+                <form id="customerDetailsForm" onSubmit={handleSubmit} className="space-y-4">
                 {/* Authentication Status */}
                 {isLoggedIn && (
                     <div className="flex items-center p-3 rounded-lg bg-green-50 border border-green-200">
@@ -189,27 +190,34 @@ export default function CustomerDetailsStep({
                         {submissionError}
                     </div>
                 )}
+                </form>
+            </div>
 
-                {/* Action Buttons */}
-                <div className="flex justify-between pt-4">
+            {/* Action Buttons */}
+            <div className="sticky bottom-0 p-6 border-t bg-white" style={{ borderColor: themeColorBorder }}>
+                <div className="flex justify-between items-center">
                     <button
                         type="button"
                         onClick={onBack}
-                        className="px-4 py-2 rounded-md text-sm font-medium"
-                        style={{ backgroundColor: 'transparent', color: themeColorText, border: `1px solid ${themeColorBorder}` }}
+                        className="px-4 py-2 rounded-lg border text-sm flex items-center"
+                        style={{ borderColor: themeColorBorder, color: themeColorText }}
                     >
-                        {tCommon('back')}
+                        <svg className="w-4 h-4 lg:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span className="hidden lg:inline">{tCommon('back')}</span>
                     </button>
                     <button
                         type="submit"
-                        className="px-4 py-2 rounded-md text-sm font-medium"
-                        style={{ color: "#FFF", backgroundColor: themeColorButton }}
+                        form="customerDetailsForm"
+                        className="px-6 py-2 rounded-lg font-medium"
+                        style={{ backgroundColor: themeColorButton, color: 'white' }}
                         disabled={isSubmitting}
                     >
                         {isSubmitting ? tCommon('submitting') + '...' : t('confirmServiceRequestButton')}
                     </button>
                 </div>
-            </form>
+            </div>
         </div>
     );
 }
