@@ -45,7 +45,8 @@ export default function ServiceSelection({
     themeColorBackgroundCard,
     themeColorBorder,
     businessPublicUuid, // Business public UUID for image paths
-    locale // Passed for currency formatting
+    locale, // Passed for currency formatting
+    isLoading = false // Loading state from parent
 }) {
     const t = useTranslations('ServiceRequest');
 
@@ -129,7 +130,13 @@ export default function ServiceSelection({
         <div className="space-y-6" style={{ color: themeColorText}}>
             {/* Category Filter Pills */}
             {hasServices && allCategories.length > 1 && (
-                <div className="flex gap-2 overflow-x-auto lg:justify-center lg:overflow-x-visible lg:flex-wrap pb-2 lg:pb-0">
+                <div className={`flex gap-2 overflow-x-auto lg:justify-center lg:overflow-x-visible lg:flex-wrap pb-2 lg:pb-0 ${
+                    isLoading ? 'opacity-0' : 'opacity-100'
+                }`}
+                    style={{
+                        transform: isLoading ? 'translateY(20px)' : 'translateY(0)',
+                        transition: 'opacity 1s ease-out 1.0s, transform 1s ease-out 1.0s'
+                    }}>
                     {allCategories.map(category => (
                         <button
                             key={category}
@@ -153,11 +160,17 @@ export default function ServiceSelection({
 
             {/* Services Grid */}
             {hasServices && filteredServices.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 ${
+                    isLoading ? 'opacity-0' : 'opacity-100'
+                }`}
+                    style={{
+                        transform: isLoading ? 'translateY(20px)' : 'translateY(0)',
+                        transition: 'opacity 1s ease-out 1.2s, transform 1s ease-out 1.2s'
+                    }}>
                     {filteredServices.map((service, index) => (
                         <div
                             key={service.service_id}
-                            className={`w-full min-h-[200px] lg:min-h-[240px] rounded-2xl cursor-pointer transition-all duration-200 hover:scale-105 animate-fade-in-slide-up ${
+                            className={`w-full min-h-[200px] lg:min-h-[240px] rounded-2xl cursor-pointer transition-all duration-200 hover:scale-105 ${
                                 selectedService?.service_id === service.service_id ? 'ring-2 ring-offset-2' : ''
                             }`}
                             style={{
@@ -166,8 +179,9 @@ export default function ServiceSelection({
                                 boxShadow: selectedService?.service_id === service.service_id 
                                     ? `0 4px 12px ${themeColorButton}40` 
                                     : '0 2px 8px rgba(0,0,0,0.1)',
-                                animationDelay: `${index * 100}ms`,
-                                animationFillMode: 'both'
+                                opacity: isLoading ? 0 : 1,
+                                transform: isLoading ? 'translateY(20px)' : 'translateY(0)',
+                                transition: `opacity 0.6s ease-out ${1.2 + (index * 0.1)}s, transform 0.6s ease-out ${1.2 + (index * 0.1)}s`
                             }}
                                                             onClick={() => onOpenServiceModal ? onOpenServiceModal(service) : onServiceSelect(service)}
                         >

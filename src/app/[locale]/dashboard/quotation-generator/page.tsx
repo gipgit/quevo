@@ -43,25 +43,8 @@ export default async function QuotationGeneratorPage({ searchParams }: PageProps
     redirect('/dashboard/service-requests')
   }
 
-  // Fetch saved quotation templates
-  const savedTemplates = await prisma.quotationtemplate.findMany({
-    where: {
-      business_id: serviceRequest.business_id
-    },
-    select: {
-      id: true,
-      template_name: true,
-      template_data: true,
-      is_default: true,
-      created_at: true
-    },
-    orderBy: {
-      created_at: 'desc'
-    }
-  }).then(templates => templates.map(template => ({
-    ...template,
-    is_default: template.is_default ?? false
-  })))
+  // Quotation templates are not currently supported
+  const savedTemplates: any[] = []
 
   // Transform the data to match the expected format
   const quotationData = {

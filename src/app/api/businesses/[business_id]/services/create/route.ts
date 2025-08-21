@@ -78,30 +78,28 @@ export async function POST(req: NextRequest, { params }: { params: { business_id
           if (!ALLOWED_QUESTION_TYPES.includes(question.question_type)) {
             throw new Error(`Invalid question_type: ${question.question_type}. Allowed: ${ALLOWED_QUESTION_TYPES.join(", ")}`)
           }
+          // Prepare question options as JSON for radio/checkbox questions
+          let questionOptionsJson = null;
+          if (question.options && question.options.length > 0) {
+            questionOptionsJson = question.options.map((option: string, index: number) => ({
+              id: index + 1,
+              text: option,
+              display_order: index
+            }));
+          }
+
           const createdQuestion = await tx.servicequestion.create({
             data: {
               service_id: service.service_id,
               question_text: question.question_text,
               question_type: question.question_type,
+              question_options: questionOptionsJson,
               max_length: question.max_length,
               is_required: question.is_required,
               display_order: i,
               is_active: true,
             },
           })
-          // Create question options for radio/checkbox questions
-          if (question.options && question.options.length > 0) {
-            for (let j = 0; j < question.options.length; j++) {
-              await tx.servicequestionoption.create({
-                data: {
-                  question_id: createdQuestion.question_id,
-                  option_text: question.options[j],
-                  display_order: j,
-                  is_active: true,
-                },
-              })
-            }
-          }
         }
       }
       // Create requirement blocks

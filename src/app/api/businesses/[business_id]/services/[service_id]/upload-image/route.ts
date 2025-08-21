@@ -30,7 +30,7 @@ export async function POST(
     // Verify service exists and belongs to this business
     const service = await prisma.service.findFirst({
       where: {
-        service_id: parseInt(service_id),
+        service_id: service_id,
         business_id: business_id,
       },
     })

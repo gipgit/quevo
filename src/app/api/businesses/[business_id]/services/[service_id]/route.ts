@@ -8,16 +8,11 @@ export async function DELETE(
 ) {
   try {
     const { business_id, service_id } = params
-    const serviceId = parseInt(service_id)
-
-    if (isNaN(serviceId)) {
-      return NextResponse.json({ error: "Invalid service ID" }, { status: 400 })
-    }
 
     // Check if the service exists and belongs to the business
     const existingService = await prisma.service.findFirst({
       where: {
-        service_id: serviceId,
+        service_id: service_id,
         business_id: business_id,
       },
     })
@@ -29,7 +24,7 @@ export async function DELETE(
     // Delete the service (this will cascade to related records due to foreign key constraints)
     await prisma.service.delete({
       where: {
-        service_id: serviceId,
+        service_id: service_id,
       },
     })
 

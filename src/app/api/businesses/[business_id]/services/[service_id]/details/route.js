@@ -13,9 +13,10 @@ export async function GET(request, { params }) {
         return NextResponse.json({ error: 'Service ID is required' }, { status: 400 });
     }
 
-    const parsedServiceId = parseInt(service_id, 10);
+    // service_id is now a UUID, so we use it directly
+    const parsedServiceId = service_id;
 
-    if (isNaN(parsedServiceId)) {
+    if (!parsedServiceId) {
         return NextResponse.json({ error: 'Invalid Service ID format' }, { status: 400 });
     }
 

@@ -11,7 +11,7 @@ export async function GET(
     // Verify the service exists and belongs to the business
     const service = await prisma.service.findFirst({
       where: {
-        service_id: parseInt(service_id),
+        service_id: service_id,
         business_id: business_id,
         is_active: true,
       },
@@ -24,7 +24,7 @@ export async function GET(
     // Fetch events for this service that have availability
     const events = await prisma.serviceevent.findMany({
       where: {
-        service_id: parseInt(service_id),
+        service_id: service_id,
         is_active: true,
         // Only include events that have at least one availability slot
         serviceeventavailability: {

@@ -64,6 +64,7 @@ export default async function ServicesPage() {
   // Transform services to convert Decimal types to numbers
   const transformedServices = services.map(service => ({
     ...service,
+    service_id: Number(service.service_id),
     price_base: service.price_base ? Number(service.price_base) : null,
     serviceitem: service.serviceitem.map(item => ({
       ...item,

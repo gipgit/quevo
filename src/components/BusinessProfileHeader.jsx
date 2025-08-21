@@ -12,7 +12,9 @@ import { useTranslations } from 'next-intl';
 import { parseContacts, hasValidContacts } from '@/lib/utils/contacts';
 import MobileMenuOverlay from './MobileMenuOverlay';
 
-const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggleMenuOverlay, toggleAddressModal }) => {
+const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggleMenuOverlay, toggleAddressModal, isLoading }) => {
+    // Debug: Log the isLoading prop
+    console.log('BusinessProfileHeader isLoading:', isLoading);
     const [overlayOpacity, setOverlayOpacity] = useState(0.3); // Start with light overlay
     const [imageTranslateY, setImageTranslateY] = useState(0); // Start with no translation
     const [imageHeight, setImageHeight] = useState(50); // Start with 50vh height
@@ -408,12 +410,19 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                 getButtonIconStyle={getButtonIconStyle}
             />
 
-             {/* Mobile/Tablet Profile Image - Hidden on desktop */}
-             <div className="lg:hidden container-profile-pic pic-lg relative z-10 mx-auto -translate-y-[45px] rounded-full overflow-hidden bg-gray-100"
+             {/* Mobile/Tablet Layout (up to lg) */}
+             {/* Mobile/Tablet Profile Image (Hidden on desktop) */}
+             <div 
+                 className={`lg:hidden container-profile-pic pic-lg relative z-10 mx-auto rounded-full overflow-hidden bg-gray-100 transition-all duration-1000 ease-out ${
+                     isLoading ? 'opacity-0' : 'opacity-100'
+                 }`}
                  style={{
                      width: '70px',
                      height: '70px',
-                 }}>
+                     transform: isLoading ? 'translateY(-53px)' : 'translateY(-45px)',
+                     transition: 'opacity 1s ease-out 0.5s, transform 1s ease-out 0.5s'
+                 }}
+             >
                  {businessData.business_img_profile ? (
                      <Image
                          src={businessData.business_img_profile}
@@ -428,8 +437,16 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                  )}
              </div>
 
-            {/* Mobile/Tablet Layout (up to lg) */}
-            <div className="lg:hidden container flex flex-col mx-auto max-w-3xl relative px-4 mt-[-50px]">
+            
+            <div 
+                className={`lg:hidden container flex flex-col mx-auto max-w-3xl relative px-4 mt-[-50px] ${
+                    isLoading ? 'opacity-0' : 'opacity-100'
+                }`}
+                style={{
+                    transform: isLoading ? 'translateY(-8px)' : 'translateY(0)',
+                    transition: 'opacity 1s ease-out 0.7s, transform 1s ease-out 0.7s'
+                }}
+            >
                 <div className="flex flex-col justify-center items-center gap-2 mt-4">
                     {/* Top Column: Business Info */}
                     <div className="flex-1">
@@ -571,7 +588,13 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
             </div>
 
             {/* Desktop Hero Container (lg+) */}
-            <div className="max-w-[1600px] mx-auto hidden lg:flex rounded-2xl lg:flex-col justify-end overflow-y-auto relative">
+            <div className={`max-w-[1600px] mx-auto hidden lg:flex rounded-2xl lg:flex-col justify-end overflow-y-auto relative ${
+                isLoading ? 'opacity-0' : 'opacity-100'
+            }`}
+                style={{
+                    transform: isLoading ? 'translateY(-20px)' : 'translateY(0)',
+                    transition: 'opacity 1s ease-out 0.5s, transform 1s ease-out 0.5s'
+                }}>
                 {/* Cover Image Background - Only for desktop layout */}
                 {businessData.business_img_cover_desktop && (
                     <div className="w-full z-0 rounded-2xl">

@@ -741,10 +741,12 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
         </div>
         {/* Profile image positioned to align with navbar content */}
         <div className="absolute bottom-2 left-6 w-16 h-16 rounded-full overflow-hidden bg-gray-100 border-3 border-white shadow-lg">
-          {businessData.business_public_uuid ? (
-            <img
-              src={`/uploads/business/${businessData.business_public_uuid}/profile.webp`}
+          {businessData.business_img_profile ? (
+            <Image
+              src={businessData.business_img_profile}
               alt={businessData.business_name}
+              width={64}
+              height={64}
               className="h-full w-full object-cover"
             />
           ) : (
@@ -1484,23 +1486,35 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                         <div className="space-y-3">
                           {boardData.servicerequest.requirement_responses_snapshot.map((response, index) => (
                             <div key={index} className="border-b-2">
-                              <div className="flex flex-col lg:flex-row lg:items-center justify-between">
-                                <div className="flex-1">
+                              <div className="flex items-center justify-between mb-1">
+                                <div className="flex items-center gap-2">
                                   {response.title && (
                                     <h5 className="text-xs font-medium text-gray-900">{response.title}</h5>
                                   )}
-                                  <p className="text-xs text-gray-500 mb-1">{response.requirements_text}</p>
+                                  <button
+                                    onClick={() => {
+                                      const element = document.getElementById(`requirement-text-${index}`);
+                                      if (element) {
+                                        element.classList.toggle('hidden');
+                                      }
+                                    }}
+                                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                                    title="Toggle requirement details"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                  </button>
                                 </div>
-                                <div className="ml-3">
-                                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                    response.customer_confirmed 
-                                      ? 'bg-green-100 text-green-800' 
-                                      : 'bg-red-100 text-red-800'
-                                  }`}>
-                                    {response.customer_confirmed ? tServiceBoard('confirmed') : tServiceBoard('notConfirmed')}
-                                  </span>
-                                </div>
+                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                  response.customer_confirmed 
+                                    ? 'bg-green-100 text-green-800' 
+                                    : 'bg-red-100 text-red-800'
+                                }`}>
+                                  {response.customer_confirmed ? tServiceBoard('confirmed') : tServiceBoard('notConfirmed')}
+                                </span>
                               </div>
+                              <p id={`requirement-text-${index}`} className="text-xs text-gray-500 mb-1 hidden">{response.requirements_text}</p>
                             </div>
                           ))}
                         </div>

@@ -209,6 +209,7 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
                                     toggleAddressModal={openAddressModal}
                                     toggleMenuOverlay={toggleMenuOverlay}
                                     initialServerData={initialServerData}
+                                    isLoading={isLoading}
                                 />
                             </div>
                             

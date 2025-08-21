@@ -31,18 +31,18 @@ interface ServiceItem {
   item_name: string
   item_description: string | null
   price_base: any
-  price_type: string
+  price_type: string | null
   price_unit: string | null
 }
 
 interface Service {
-  service_id: number
+  service_id: string
   service_name: string
   description: string | null
   duration_minutes: number | null
   buffer_minutes: number | null
   price_base: any | null
-  price_type: string
+  price_type: string | null
   available_quotation: boolean | null
   has_items: boolean | null
   available_booking: boolean | null

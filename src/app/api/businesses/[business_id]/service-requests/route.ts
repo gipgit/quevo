@@ -430,33 +430,35 @@ export async function POST(
           // Prepare checkbox responses snapshot
           if (serviceResponses.checkboxResponses && Object.keys(serviceResponses.checkboxResponses).length > 0) {
             for (const [questionId, optionIds] of Object.entries(serviceResponses.checkboxResponses)) {
-              if (Array.isArray(optionIds) && optionIds.length > 0) {
-                // Get question details
+              // Handle both single values (checkbox_single) and arrays (checkbox_multi)
+              const selectedValues = Array.isArray(optionIds) ? optionIds : [optionIds];
+              
+              if (selectedValues.length > 0 && selectedValues.some(val => val !== null && val !== undefined)) {
+                // Get question details with options from JSON field
                 const question = await prisma.servicequestion.findUnique({
                   where: { question_id: parseInt(questionId) },
-                  select: { question_text: true, question_type: true }
+                  select: { question_text: true, question_type: true, question_options: true }
                 });
                 
-                if (question) {
-                  // Get option details
-                  const options = await prisma.servicequestionoption.findMany({
-                    where: { 
-                      question_id: parseInt(questionId),
-                      option_id: { in: optionIds.map(id => parseInt(id)) }
-                    },
-                    select: { option_id: true, option_text: true }
-                  });
+                if (question && question.question_options) {
+                  // Parse the JSON options
+                  const options = Array.isArray(question.question_options) ? question.question_options : [];
                   
-                  if (options.length > 0) {
+                  // Filter selected options based on selectedValues (which are the option values from frontend)
+                  const selectedOptions = options
+                    .filter((option: any) => selectedValues.includes(option.value))
+                    .map((option: any) => ({
+                      option_id: option.id,
+                      option_text: option.text
+                    }));
+                  
+                  if (selectedOptions.length > 0) {
                     if (!questionResponsesSnapshot) questionResponsesSnapshot = [];
                     questionResponsesSnapshot.push({
                       question_id: parseInt(questionId),
                       question_text: question.question_text,
                       question_type: question.question_type,
-                      selected_options: options.map(opt => ({
-                        option_id: opt.option_id,
-                        option_text: opt.option_text
-                      }))
+                      selected_options: selectedOptions
                     });
                   }
                 }

@@ -10,7 +10,8 @@ import { useBusinessProfile } from '@/contexts/BusinessProfileContext';
 export default function ServiceRequestPageClientContent({
     business,
     services: rawServices,
-    categories: rawCategories
+    categories: rawCategories,
+    isLoading = false
 }) {
     const { locale, themeColorText, themeColorButton, themeColorBackgroundCard, themeColorBorder, themeColorBackground  } = useBusinessProfile();
     const t = useTranslations('ServiceRequest');
@@ -69,6 +70,7 @@ export default function ServiceRequestPageClientContent({
                 themeColorBorder={themeColorBorder} 
                 businessPublicUuid={business.business_public_uuid}
                 locale={locale}
+                isLoading={isLoading}
             />
 
             {/* Service Request Modal */}

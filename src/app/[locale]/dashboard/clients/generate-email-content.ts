@@ -22,18 +22,18 @@ interface ServiceItem {
   item_name: string
   item_description: string | null
   price_base: Decimal
-  price_type: string
+  price_type: string | null
   price_unit: string | null
 }
 
 interface Service {
-  service_id: number
+  service_id: string
   service_name: string
   description: string | null
   duration_minutes: number | null
   buffer_minutes: number | null
   price_base: Decimal | null
-  price_type: string
+  price_type: string | null
   has_items: boolean | null
   available_booking: boolean | null
   available_quotation: boolean | null
@@ -77,7 +77,7 @@ function formatServicesForPrompt(business: Business, services: Service[]): strin
     }
     
     // Include price type information
-    text += `   Price Type: ${service.price_type}\n`
+    text += `   Price Type: ${service.price_type || 'Not specified'}\n`
     
     // Include booking and quotation availability
     if (service.available_booking) {

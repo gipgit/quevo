@@ -41,7 +41,7 @@ interface QuotationData {
     country: string | null
   }
   service: {
-    id: number | undefined
+    id: string
     name: string | null
     description: string | null
     basePrice: any
@@ -51,7 +51,7 @@ interface QuotationData {
       description: string | null
       price: number | null
       priceAtRequest: number | null
-      priceType: string
+      priceType: string | null
       priceUnit: string | null
       quantity: number
     }>

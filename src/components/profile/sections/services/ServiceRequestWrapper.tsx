@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useBusinessProfile } from '@/contexts/BusinessProfileContext';
 import ServiceRequestPageClientContent from './ServiceRequestPageClientContent';
 
@@ -11,6 +11,19 @@ interface ServiceRequestWrapperProps {
 
 export default function ServiceRequestWrapper({ services, categories }: ServiceRequestWrapperProps) {
     const { businessData, themeColorText, themeColorButton } = useBusinessProfile();
+    
+    // Simulate loading state that starts after the header animations
+    const [isLoading, setIsLoading] = useState(true);
+    
+    useEffect(() => {
+        // Start the service cards animation 1.2 seconds after component mount
+        // This aligns with the timing of the header animations
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 1200);
+        
+        return () => clearTimeout(timer);
+    }, []);
     
     const business = {
         business_id: (businessData as any)?.business_id,
@@ -33,6 +46,7 @@ export default function ServiceRequestWrapper({ services, categories }: ServiceR
             business={business}
             services={services}
             categories={categories}
+            isLoading={isLoading}
         />
     );
 } 
