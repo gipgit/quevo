@@ -474,19 +474,7 @@ export default function AIChatClientWrapper({ initialData }: AIChatClientWrapper
           position: 'relative'
         }}
       >
-                 {/* Moving Shine Effects */}
-         <div 
-           className="absolute inset-0 opacity-30 z-0"
-           style={{
-             background: `
-               radial-gradient(circle at 30% 20%, ${initialData.themeColors.text}15 0%, transparent 50%),
-               radial-gradient(circle at 70% 80%, ${initialData.themeColors.text}10 0%, transparent 50%),
-               radial-gradient(circle at 50% 50%, ${initialData.themeColors.text}20 0%, transparent 60%)
-             `,
-             animation: 'shineMove 15s ease-in-out infinite'
-           }}
-         />
-        
+
                  {/* Fixed Grid Lines */}
          <div 
            className="absolute inset-0 opacity-5 z-0"
@@ -519,26 +507,7 @@ export default function AIChatClientWrapper({ initialData }: AIChatClientWrapper
          </div>
         
                  <style jsx>{`
-           @keyframes shineMove {
-             0%, 100% { 
-               transform: translateX(-20px) translateY(-20px) scale(1);
-               opacity: 0.3;
-             }
-             25% { 
-               transform: translateX(20px) translateY(-40px) scale(1.1);
-               opacity: 0.5;
-             }
-             50% { 
-               transform: translateX(40px) translateY(-20px) scale(0.9);
-               opacity: 0.2;
-             }
-             75% { 
-               transform: translateX(20px) translateY(20px) scale(1.2);
-               opacity: 0.4;
-             }
-           }
            
-
            
            @keyframes particleFloat {
              0%, 100% { 
@@ -615,7 +584,7 @@ export default function AIChatClientWrapper({ initialData }: AIChatClientWrapper
           {/* Right Column - Locale Switcher + Menu */}
           <div className="flex items-center justify-end gap-2">
             <div
-              className="p-2 rounded-lg transition-colors hover:bg-opacity-20"
+              className="hidden lg:block p-2 rounded-lg transition-colors hover:bg-opacity-20"
               style={{
                 backgroundColor: initialData.themeColors.text + '10',
                 color: initialData.themeColors.text
@@ -652,7 +621,7 @@ export default function AIChatClientWrapper({ initialData }: AIChatClientWrapper
          // Welcome layout
          <div className="max-w-[800px] mx-auto flex-1 flex items-center justify-center relative z-10">
            <div className="w-full max-w-xl mx-auto px-4">
-                           <div className="text-center mb-4">
+               <div className="text-center mb-2 lg:mb-4">
                 <h2 
                   className="text-xl lg:text-2xl font-bold mb-2"
                   style={{ color: initialData.themeColors.text }}

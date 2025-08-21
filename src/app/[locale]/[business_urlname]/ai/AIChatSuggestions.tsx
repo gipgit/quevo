@@ -48,7 +48,7 @@ export default function AIChatSuggestions({ onSuggestionClick, themeColors }: AI
   ];
 
   return (
-    <div className="p-4 relative z-10" style={{ borderColor: themeColors.text + '20' }}>
+    <div className="py-2 px-2 relative z-10" style={{ borderColor: themeColors.text + '20' }}>
       
       <div className="flex flex-wrap gap-1 lg:gap-2 justify-center relative z-10">
         {suggestions.map((suggestion, index) => (
