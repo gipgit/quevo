@@ -7,6 +7,7 @@ import AIChatInput from './AIChatInput';
 import AIChatSuggestions from './AIChatSuggestions';
 import { useBusinessProfile } from '@/contexts/BusinessProfileContext';
 import LocaleSwitcherButton from '@/components/ui/LocaleSwitcherButton';
+import { generateSessionId } from '@/lib/ai-message-history';
 
 // Contact parsing utilities
 function parseContacts(contactsJson: string | null): Array<{ value: string }> {
@@ -64,6 +65,7 @@ export default function AIChatClientWrapper({ initialData }: AIChatClientWrapper
   const businessContext = useBusinessProfile();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [sessionId] = useState(() => generateSessionId());
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
 
@@ -94,12 +96,12 @@ export default function AIChatClientWrapper({ initialData }: AIChatClientWrapper
   }, [initialData.business.name]);
 
   const handleSendMessage = async (message: string) => {
-    if (!message.trim()) return;
+    if (!message.trim() || isLoading) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       type: 'user',
-      content: message,
+      content: message.trim(),
       timestamp: new Date(),
     };
 
@@ -107,73 +109,162 @@ export default function AIChatClientWrapper({ initialData }: AIChatClientWrapper
     setIsLoading(true);
 
     try {
-      const userMessageLower = message.toLowerCase();
-      
-      // Check if this is an availability request (dynamic data)
-      const isAvailabilityRequest = userMessageLower.includes('disponibilità') || 
-                                   userMessageLower.includes('disponibilita') || 
-                                   userMessageLower.includes('controlla disponibilità') || 
-                                   userMessageLower.includes('controlla disponibilita');
-
-      if (isAvailabilityRequest) {
-        // Use API for availability (dynamic data)
-        const response = await fetch('/api/ai-chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            message,
-            businessUrlname: window.location.pathname.split('/')[2],
-            requestType: 'availability'
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`Failed to get availability data: ${response.status}`);
-        }
-
-        const aiResponse = await response.json();
-        
+      // Check if it's a simple predefined request first
+      const simpleResponse = handleSimplePredefinedRequest(message, initialData);
+      if (simpleResponse) {
         const assistantMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
           type: 'assistant',
-          content: aiResponse.content,
+          content: simpleResponse.content,
           timestamp: new Date(),
-          data: aiResponse.data,
+          data: simpleResponse.data,
         };
-
         setMessages(prev => [...prev, assistantMessage]);
-      } else {
-        // Use cached data for static content (services, contacts, etc.)
-        const cachedResponse = await generateAIResponse(message, initialData);
-        
-        const assistantMessage: ChatMessage = {
-          id: (Date.now() + 1).toString(),
-          type: 'assistant',
-          content: cachedResponse.content,
-          timestamp: new Date(),
-          data: cachedResponse.data,
-        };
-
-        setMessages(prev => [...prev, assistantMessage]);
+        setIsLoading(false);
+        return;
       }
+
+      // If not a simple request, call OpenAI
+      await handleOpenAIResponse(message);
     } catch (error) {
-      console.error('Error generating AI response:', error);
-      // Fallback to local response generation
-      const fallbackResponse = await generateAIResponse(message, initialData);
-      
+      console.error('Error handling message:', error);
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        type: 'assistant',
+        content: 'Mi dispiace, si è verificato un errore. Riprova più tardi.',
+        timestamp: new Date(),
+        data: { error: 'Failed to process message' },
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleOpenAIResponse = async (userMessage: string) => {
+    try {
+      const response = await fetch('/api/ai-chat/openai', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: userMessage,
+          businessUrlname: (businessContext as any).businessUrlname || window.location.pathname.split('/')[2],
+          context: {
+            businessData: initialData.business,
+            services: initialData.services,
+            categories: initialData.categories,
+            promotions: initialData.promotions,
+            rewards: initialData.rewards,
+            products: initialData.products,
+          },
+          sessionId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('No response body');
+      }
+
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: fallbackResponse.content,
+        content: '',
         timestamp: new Date(),
-        data: fallbackResponse.data,
+        data: { isStreaming: true },
       };
 
       setMessages(prev => [...prev, assistantMessage]);
-    } finally {
-      setIsLoading(false);
+
+      let fullResponse = '';
+      let promptInfo: { systemPrompt: string; userMessage: string; business: string; servicesCount: number; } | null = null;
+      let tokenInfo: { inputTokens: number; outputTokens: number; cost: number; inputCost: number; outputCost: number; } | null = null;
+      let isFirstChunk = true;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        if (value && (value as any instanceof Uint8Array || value as any instanceof ArrayBuffer)) {
+          const chunk = new TextDecoder().decode(value);
+          
+          if (isFirstChunk) {
+            // First chunk contains metadata
+            try {
+              const metadata = JSON.parse(chunk);
+              promptInfo = metadata.promptInfo;
+              tokenInfo = metadata.tokenInfo;
+              isFirstChunk = false;
+              continue;
+            } catch {
+              // If parsing fails, treat as regular content
+              fullResponse += chunk;
+            }
+          } else {
+            fullResponse += chunk;
+          }
+
+          // Update the message content in real-time
+          setMessages(prev => 
+            prev.map(msg => 
+              msg.id === assistantMessage.id 
+                ? { ...msg, content: fullResponse }
+                : msg
+            )
+          );
+        }
+      }
+
+      // Finalize the message
+      setMessages(prev => 
+        prev.map(msg => 
+          msg.id === assistantMessage.id 
+            ? { 
+                ...msg, 
+                content: fullResponse,
+                data: { 
+                  isStreaming: false,
+                  promptInfo,
+                  tokenInfo,
+                }
+              }
+            : msg
+        )
+      );
+
+      // Log the cached response
+      if (tokenInfo) {
+        try {
+          await fetch('/api/ai-chat/log-cached', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              business_id: initialData.business.id,
+              session_id: sessionId,
+              user_message: userMessage,
+              ai_response: fullResponse,
+              input_tokens: tokenInfo.inputTokens,
+              output_tokens: tokenInfo.outputTokens,
+              cost_usd: tokenInfo.cost,
+              success: true,
+            }),
+          });
+        } catch (error) {
+          console.error('Failed to log cached response:', error);
+        }
+      }
+
+    } catch (error) {
+      console.error('Error in OpenAI response:', error);
+      throw error;
     }
   };
 
@@ -667,6 +758,153 @@ export default function AIChatClientWrapper({ initialData }: AIChatClientWrapper
        )}
     </div>
   );
+}
+
+// Simple predefined request handler
+function handleSimplePredefinedRequest(message: string, data: any) {
+  const lowerMessage = message.toLowerCase();
+
+  // Services
+  if (lowerMessage.includes('servizi') || lowerMessage.includes('cosa fate') || lowerMessage.includes('offerte')) {
+    if (data.services.length === 0) {
+      return {
+        content: 'Al momento non abbiamo servizi disponibili.',
+        data: null
+      };
+    }
+
+    const serviceList = data.services.slice(0, 5).map((service: any) => 
+      `🔧 ${service.service_name} - €${service.price_base}`
+    ).join('\n');
+
+    return {
+      content: `Ecco i nostri servizi principali:\n\n${serviceList}\n\nVuoi prenotare un servizio o ricevere un preventivo?`,
+      data: { type: 'services', services: data.services }
+    };
+  }
+
+  // Quotations
+  if (lowerMessage.includes('preventivo') || lowerMessage.includes('quanto costa') || lowerMessage.includes('prezzo')) {
+    if (data.services.length === 0) {
+      return {
+        content: 'Al momento non abbiamo servizi disponibili per i preventivi.',
+        data: null
+      };
+    }
+
+    return {
+      content: 'Perfetto! Posso aiutarti a creare un preventivo personalizzato. Scegli un servizio per iniziare.',
+      data: { 
+        type: 'quotation_service_selection', 
+        services: data.services 
+      }
+    };
+  }
+
+  // Availability
+  if (lowerMessage.includes('disponibilità') || lowerMessage.includes('quando') || lowerMessage.includes('orari')) {
+    const availableServices = data.services.filter((service: any) => service.available_booking);
+    
+    if (availableServices.length === 0) {
+      return {
+        content: 'Al momento non abbiamo servizi con prenotazione disponibile.',
+        data: null
+      };
+    }
+
+    return {
+      content: 'Perfetto! Ecco i servizi per cui puoi controllare la disponibilità. Scegli un servizio per vedere gli eventi disponibili.',
+      data: { 
+        type: 'availability_service_selection', 
+        services: availableServices 
+      }
+    };
+  }
+
+  // Contact
+  if (lowerMessage.includes('contatto') || lowerMessage.includes('chiamare') || lowerMessage.includes('email') || lowerMessage.includes('telefono') || lowerMessage.includes('contatti')) {
+    const phones = parseContacts(data.business.phone);
+    const emails = parseContacts(data.business.email);
+    
+    if (!hasValidContacts(phones) && !hasValidContacts(emails)) {
+      return {
+        content: 'Al momento non abbiamo informazioni di contatto disponibili. Contattaci attraverso il nostro sito web.',
+        data: null
+      };
+    }
+
+    return {
+      content: 'Ecco le nostre informazioni di contatto. Puoi cliccare sui pulsanti qui sotto per chiamare, inviare un\'email o copiare i contatti.',
+      data: { 
+        type: 'contacts', 
+        phones: phones.map(phone => ({
+          ...phone,
+          whatsappLink: createWhatsAppLink(phone.value)
+        })),
+        emails: emails
+      }
+    };
+  }
+
+  // Products
+  if (lowerMessage.includes('prodotti') || lowerMessage.includes('menu') || lowerMessage.includes('cosa vendete')) {
+    if (data.products.length === 0) {
+      return {
+        content: 'Al momento non abbiamo prodotti disponibili nel nostro menu.',
+        data: null
+      };
+    }
+
+    const productList = data.products.slice(0, 5).map((category: any) => 
+      `📁 ${category.category_name} (${category.items.length} prodotti)`
+    ).join('\n');
+
+    return {
+      content: `Ecco le nostre categorie di prodotti:\n\n${productList}\n\nVuoi vedere i dettagli di una categoria specifica?`,
+      data: { type: 'products', products: data.products }
+    };
+  }
+
+  // Promotions
+  if (lowerMessage.includes('promozioni') || lowerMessage.includes('offerte') || lowerMessage.includes('sconti')) {
+    if (data.promotions.length === 0) {
+      return {
+        content: 'Al momento non abbiamo promozioni attive. Controlla regolarmente per nuove offerte!',
+        data: null
+      };
+    }
+
+    const promotionList = data.promotions.slice(0, 3).map((promo: any) => 
+      `🎉 ${promo.promo_title}\n${promo.promo_text_full}`
+    ).join('\n\n');
+
+    return {
+      content: `Ecco le nostre promozioni attive:\n\n${promotionList}`,
+      data: { type: 'promotions', promotions: data.promotions }
+    };
+  }
+
+  // Rewards
+  if (lowerMessage.includes('premi') || lowerMessage.includes('rewards') || lowerMessage.includes('punti')) {
+    if (data.rewards.length === 0) {
+      return {
+        content: 'Al momento non abbiamo un programma premi attivo.',
+        data: null
+      };
+    }
+
+    const rewardList = data.rewards.slice(0, 3).map((reward: any) => 
+      `🏆 ${reward.reward_description} (${reward.required_points} punti)`
+    ).join('\n');
+
+    return {
+      content: `Ecco alcuni dei nostri premi disponibili:\n\n${rewardList}\n\nChiedi al nostro staff come accumulare punti!`,
+      data: { type: 'rewards', rewards: data.rewards }
+    };
+  }
+
+  // Default response - return null to trigger OpenAI
+  return null;
 }
 
 // AI Response Generator

@@ -14,19 +14,19 @@ interface AIChatSuggestionsProps {
 export default function AIChatSuggestions({ onSuggestionClick, themeColors }: AIChatSuggestionsProps) {
   const suggestions = [
     {
-      icon: '🔧',
+      icon: '⚙️',
       text: 'Mostrami i servizi'
     },
     {
-      icon: '📅',
+      icon: '📱',
       text: 'Prenota un servizio'
     },
     {
-      icon: '📅',
+      icon: '⏰',
       text: 'Controlla Disponibilità'
     },
     {
-      icon: '💰',
+      icon: '💳',
       text: 'Voglio un preventivo'
     },
     {
@@ -34,21 +34,21 @@ export default function AIChatSuggestions({ onSuggestionClick, themeColors }: AI
       text: 'Contatti'
     },
     {
-      icon: '🛍️',
+      icon: '🛒',
       text: 'Mostrami i prodotti'
     },
     {
-      icon: '🎉',
+      icon: '🎯',
       text: 'Promozioni attive'
     },
     {
-      icon: '🏆',
+      icon: '⭐',
       text: 'Programma premi'
     }
   ];
 
   return (
-    <div className="p-4 border-t relative z-10" style={{ borderColor: themeColors.text + '20' }}>
+    <div className="p-4 relative z-10" style={{ borderColor: themeColors.text + '20' }}>
       
       <div className="flex flex-wrap gap-1 lg:gap-2 justify-center relative z-10">
         {suggestions.map((suggestion, index) => (

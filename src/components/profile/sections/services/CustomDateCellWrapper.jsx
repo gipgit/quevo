@@ -51,7 +51,7 @@ const CustomDateCellWrapper = ({ children, value, onDateCellClick, availableDays
       {/* This is the content that replaces the default date cell number/button */}
       {isAvailable && !isPastDate ? (
         <div
-          className="flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm md:text-base"
+          className="flex items-center justify-center w-6 h-6 lg:w-8 lg:h-8 rounded-full font-bold text-xs lg:text-sm md:text-base"
           style={{
             backgroundColor: themeColorButton,
             color: 'white',

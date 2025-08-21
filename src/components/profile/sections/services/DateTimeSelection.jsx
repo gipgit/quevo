@@ -172,7 +172,7 @@ export default function DateTimeSelection({
                             events={[]}
                             startAccessor="start"
                             endAccessor="end"
-                            className="h-[320px] lg:h-[360px]"
+                            className="h-[300px] lg:h-[360px]"
                             date={calendarDate}
                             onNavigate={handleCalendarNavigate}
                             onSelectSlot={handleDateSelect}

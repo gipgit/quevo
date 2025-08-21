@@ -348,9 +348,9 @@ export default function CreateServicePage() {
          available_quotation: availableQuotation,
          questions: questions.filter((q) => q.question_text.trim()),
          requirements: requirements.filter((r) => r.requirements_text.trim()),
-                   items: items.filter((i) => i.item_name.trim()),
+         items: items.filter((i) => i.item_name.trim()),
           extras: extras.filter((e) => e.extra_name.trim()),
-          events: events.filter((e) => e.event_name.trim()),
+         events: events.filter((e) => e.event_name.trim()),
        }
 
       const response = await fetch(`/api/businesses/${currentBusiness?.business_id}/services/create`, {
@@ -645,19 +645,19 @@ export default function CreateServicePage() {
                   />
                   
                                      {/* Items for Quotation Section - Only show when quotation is active */}
-                   {availableQuotation && (
-                     <div className="mt-6 pt-6 border-t border-gray-300 dark:border-gray-600">
-                       <div className="flex justify-between items-center mb-4">
-                         <h2 className={`text-lg font-semibold ${
-                           theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                  {availableQuotation && (
+                    <div className="mt-6 pt-6 border-t border-gray-300 dark:border-gray-600">
+                      <div className="flex justify-between items-center mb-4">
+                        <h2 className={`text-lg font-semibold ${
+                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
                          }`}>Items for Quotation</h2>
-                                                 <button
-                           type="button"
-                           onClick={addItem}
-                           className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
-                         >
+                        <button
+                          type="button"
+                          onClick={addItem}
+                          className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
+                        >
                            Add Item
-                         </button>
+                        </button>
                       </div>
 
                       {items.map((item, index) => (
@@ -681,94 +681,94 @@ export default function CreateServicePage() {
                             </button>
                           </div>
 
-                                                     <div className="space-y-4">
-                             <div>
-                               <label className={`block text-sm font-medium mb-1 ${
-                                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                               }`}>{t("itemName")}</label>
-                               <input
-                                 type="text"
-                                 value={item.item_name}
-                                 onChange={(e) => updateItem(index, "item_name", e.target.value)}
-                                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                   theme === 'dark' 
-                                     ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                     : 'border-gray-300 bg-white text-gray-900'
-                                 }`}
-                               />
-                             </div>
+                            <div className="space-y-4">
+                              <div>
+                                <label className={`block text-sm font-medium mb-1 ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                }`}>{t("itemName")}</label>
+                                <input
+                                  type="text"
+                                  value={item.item_name}
+                                  onChange={(e) => updateItem(index, "item_name", e.target.value)}
+                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                      : 'border-gray-300 bg-white text-gray-900'
+                                  }`}
+                                />
+                              </div>
 
-                             <div>
-                               <label className={`block text-sm font-medium mb-1 ${
-                                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                               }`}>{t("itemDescription")}</label>
-                               <textarea
-                                 value={item.item_description}
-                                 onChange={(e) => updateItem(index, "item_description", e.target.value)}
-                                 rows={3}
-                                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                   theme === 'dark' 
-                                     ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                     : 'border-gray-300 bg-white text-gray-900'
-                                 }`}
-                               />
-                             </div>
+                              <div>
+                                <label className={`block text-sm font-medium mb-1 ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                }`}>{t("itemDescription")}</label>
+                                <textarea
+                                  value={item.item_description}
+                                  onChange={(e) => updateItem(index, "item_description", e.target.value)}
+                                  rows={3}
+                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                      : 'border-gray-300 bg-white text-gray-900'
+                                  }`}
+                                />
+                            </div>
 
                              {/* Price Settings - All in one row */}
                              <div className="grid grid-cols-3 gap-4">
-                               <div>
-                                 <label className={`block text-sm font-medium mb-1 ${
-                                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                 }`}>{t("price")}</label>
-                                 <input
-                                   type="number"
-                                   step="0.01"
-                                   value={item.price_base}
-                                   onChange={(e) => updateItem(index, "price_base", Number.parseFloat(e.target.value) || 0)}
-                                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                     theme === 'dark' 
-                                       ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                       : 'border-gray-300 bg-white text-gray-900'
-                                   }`}
-                                 />
-                               </div>
+                                <div>
+                                  <label className={`block text-sm font-medium mb-1 ${
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                  }`}>{t("price")}</label>
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    value={item.price_base}
+                                    onChange={(e) => updateItem(index, "price_base", Number.parseFloat(e.target.value) || 0)}
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                      theme === 'dark' 
+                                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                        : 'border-gray-300 bg-white text-gray-900'
+                                    }`}
+                                  />
+                                </div>
 
-                               <div>
-                                 <label className={`block text-sm font-medium mb-1 ${
-                                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                 }`}>{t("priceType")}</label>
-                                 <select
-                                   value={item.price_type}
-                                   onChange={(e) => updateItem(index, "price_type", e.target.value)}
-                                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                     theme === 'dark' 
-                                       ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                       : 'border-gray-300 bg-white text-gray-900'
-                                   }`}
-                                 >
-                                   <option value="fixed">{t("fixed")}</option>
-                                   <option value="percentage">{t("percentage")}</option>
-                                 </select>
-                               </div>
+                                <div>
+                                  <label className={`block text-sm font-medium mb-1 ${
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                  }`}>{t("priceType")}</label>
+                                  <select
+                                    value={item.price_type}
+                                    onChange={(e) => updateItem(index, "price_type", e.target.value)}
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                      theme === 'dark' 
+                                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                        : 'border-gray-300 bg-white text-gray-900'
+                                    }`}
+                                  >
+                                    <option value="fixed">{t("fixed")}</option>
+                                    <option value="percentage">{t("percentage")}</option>
+                                  </select>
+                              </div>
 
-                               <div>
-                                 <label className={`block text-sm font-medium mb-1 ${
-                                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                 }`}>{t("priceUnit")}</label>
-                                 <input
-                                   type="text"
-                                   value={item.price_unit || ""}
-                                   onChange={(e) => updateItem(index, "price_unit", e.target.value)}
-                                   placeholder={t("priceUnitPlaceholder")}
-                                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                     theme === 'dark' 
-                                       ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                       : 'border-gray-300 bg-white text-gray-900'
-                                   }`}
-                                 />
-                               </div>
-                             </div>
-                           </div>
+                              <div>
+                                <label className={`block text-sm font-medium mb-1 ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                }`}>{t("priceUnit")}</label>
+                                <input
+                                  type="text"
+                                  value={item.price_unit || ""}
+                                  onChange={(e) => updateItem(index, "price_unit", e.target.value)}
+                                  placeholder={t("priceUnitPlaceholder")}
+                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                      : 'border-gray-300 bg-white text-gray-900'
+                                  }`}
+                                />
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -954,89 +954,89 @@ export default function CreateServicePage() {
                             </button>
                           </div>
 
-                                                     <div className="space-y-4">
-                             <div>
-                               <label className={`block text-sm font-medium mb-1 ${
-                                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                               }`}>{t("eventName")}</label>
-                               <input
-                                 type="text"
-                                 value={event.event_name}
-                                 onChange={(e) => updateEvent(index, "event_name", e.target.value)}
-                                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                   theme === 'dark' 
-                                     ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                     : 'border-gray-300 bg-white text-gray-900'
-                                 }`}
-                               />
-                             </div>
+                            <div className="space-y-4">
+                              <div>
+                                <label className={`block text-sm font-medium mb-1 ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                }`}>{t("eventName")}</label>
+                                <input
+                                  type="text"
+                                  value={event.event_name}
+                                  onChange={(e) => updateEvent(index, "event_name", e.target.value)}
+                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                      : 'border-gray-300 bg-white text-gray-900'
+                                  }`}
+                                />
+                              </div>
 
-                             <div>
-                               <label className={`block text-sm font-medium mb-1 ${
-                                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                               }`}>{t("eventDescription")}</label>
-                               <textarea
-                                 value={event.event_description}
-                                 onChange={(e) => updateEvent(index, "event_description", e.target.value)}
+                              <div>
+                                <label className={`block text-sm font-medium mb-1 ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                }`}>{t("eventDescription")}</label>
+                                <textarea
+                                  value={event.event_description}
+                                  onChange={(e) => updateEvent(index, "event_description", e.target.value)}
                                  rows={2}
-                                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                   theme === 'dark' 
-                                     ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                     : 'border-gray-300 bg-white text-gray-900'
-                                 }`}
-                               />
-                             </div>
+                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                      : 'border-gray-300 bg-white text-gray-900'
+                                  }`}
+                                />
+                              </div>
 
-                             <div className="grid grid-cols-2 gap-4">
-                               <div>
-                                 <label className={`block text-sm font-medium mb-1 ${
-                                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                 }`}>{t("duration")} ({t("minutes")})</label>
-                                 <input
-                                   type="number"
-                                   value={event.duration_minutes}
-                                   onChange={(e) => updateEvent(index, "duration_minutes", Number.parseInt(e.target.value) || 60)}
-                                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                     theme === 'dark' 
-                                       ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                       : 'border-gray-300 bg-white text-gray-900'
-                                   }`}
-                                 />
-                               </div>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <label className={`block text-sm font-medium mb-1 ${
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                  }`}>{t("duration")} ({t("minutes")})</label>
+                                  <input
+                                    type="number"
+                                    value={event.duration_minutes}
+                                    onChange={(e) => updateEvent(index, "duration_minutes", Number.parseInt(e.target.value) || 60)}
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                      theme === 'dark' 
+                                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                        : 'border-gray-300 bg-white text-gray-900'
+                                    }`}
+                                  />
+                                </div>
 
-                               <div>
-                                 <label className={`block text-sm font-medium mb-1 ${
-                                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                 }`}>{t("bufferTime")} ({t("minutes")})</label>
-                                 <input
-                                   type="number"
-                                   value={event.buffer_minutes}
-                                   onChange={(e) => updateEvent(index, "buffer_minutes", Number.parseInt(e.target.value) || 0)}
-                                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                     theme === 'dark' 
-                                       ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                       : 'border-gray-300 bg-white text-gray-900'
-                                   }`}
-                                 />
-                               </div>
-                             </div>
+                                <div>
+                                  <label className={`block text-sm font-medium mb-1 ${
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                  }`}>{t("bufferTime")} ({t("minutes")})</label>
+                                  <input
+                                    type="number"
+                                    value={event.buffer_minutes}
+                                    onChange={(e) => updateEvent(index, "buffer_minutes", Number.parseInt(e.target.value) || 0)}
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                      theme === 'dark' 
+                                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                        : 'border-gray-300 bg-white text-gray-900'
+                                    }`}
+                                  />
+                                </div>
+                              </div>
 
-                             <div>
-                               <label className={`block text-sm font-medium mb-1 ${
-                                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                               }`}>{t("displayOrder")}</label>
-                               <input
-                                 type="number"
-                                 value={event.display_order}
-                                 onChange={(e) => updateEvent(index, "display_order", Number.parseInt(e.target.value) || 0)}
-                                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                   theme === 'dark' 
-                                     ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                     : 'border-gray-300 bg-white text-gray-900'
-                                 }`}
-                               />
-                             </div>
-                           </div>
+                              <div>
+                                <label className={`block text-sm font-medium mb-1 ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                }`}>{t("displayOrder")}</label>
+                                <input
+                                  type="number"
+                                  value={event.display_order}
+                                  onChange={(e) => updateEvent(index, "display_order", Number.parseInt(e.target.value) || 0)}
+                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                      : 'border-gray-300 bg-white text-gray-900'
+                                  }`}
+                                />
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -1265,7 +1265,7 @@ export default function CreateServicePage() {
 
                   {question.question_type === "open" && (
                     <div className="mb-4">
-                      <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4">
                         <label className={`text-sm font-medium ${
                           theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                         }`}>{t("maxLength")}:</label>
@@ -1292,8 +1292,8 @@ export default function CreateServicePage() {
                           {t("characters")}
                         </span>
                       </div>
-                    </div>
-                  )}
+                      </div>
+                    )}
 
                   
 
