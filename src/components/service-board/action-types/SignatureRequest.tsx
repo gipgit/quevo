@@ -129,7 +129,7 @@ export default function SignatureRequest({ details, onUpdate, action_id }: Props
       )}
 
       <div>
-        <h4 className="text-sm font-medium text-gray-900 mb-3">Document to Sign</h4>
+        <p className="text-xs font-medium text-gray-900 mb-2 lg:mb-3 hidden">Document to Sign</p>
         <div className="mt-2">
           {details.document_method === 'email' ? (
                                       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4">
@@ -182,7 +182,7 @@ export default function SignatureRequest({ details, onUpdate, action_id }: Props
                     <button
                       onClick={handleSecureView}
                       disabled={isViewing}
-                      className="inline-flex items-center px-2 py-1.5 md:px-3 md:py-2 border border-gray-300 text-xs md:text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                      className="hidden items-center px-2 py-1.5 md:px-3 md:py-2 border border-gray-300 text-xs md:text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
                     >
                       <svg className="mr-1.5 md:mr-2 h-3 w-3 md:h-4 md:w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
