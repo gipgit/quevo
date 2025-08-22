@@ -67,6 +67,40 @@ export default function AIChatMessage({ message, themeColors, businessProfileIma
     );
   };
 
+  // Check if there's meaningful structured data to display
+  const hasStructuredData = () => {
+    if (!message.data || !message.data.type) return false;
+    
+    switch (message.data.type) {
+      case 'services':
+        return message.data.services && message.data.services.length > 0;
+      case 'service_request_init':
+        return message.data.services && message.data.services.length > 0;
+      case 'service_request_summary':
+        return message.data.service && message.data.customerDetails;
+      case 'quotation_service_selection':
+        return message.data.services && message.data.services.length > 0;
+      case 'quotation_summary':
+        return message.data.service && message.data.totalPrice;
+      case 'availability_service_selection':
+      case 'availability_event_selection':
+        return message.data.selectedService || (message.data.services && message.data.services.length > 0);
+      case 'products':
+        return message.data.products && message.data.products.length > 0;
+      case 'promotions':
+        return message.data.promotions && message.data.promotions.length > 0;
+      case 'rewards':
+        return message.data.rewards && message.data.rewards.length > 0;
+      case 'fallback_suggestions':
+        return message.data.suggestions && message.data.suggestions.length > 0;
+      case 'contacts':
+        return (message.data.phones && message.data.phones.length > 0) || 
+               (message.data.emails && message.data.emails.length > 0);
+      default:
+        return false;
+    }
+  };
+
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} w-full relative z-10`}>
       <div className={`flex ${isUser ? 'flex-col items-end' : 'flex-col items-start'} w-full ${message.data?.type === 'services' ? '' : 'max-w-lg lg:max-w-2xl'} relative z-10`}>
@@ -138,7 +172,7 @@ export default function AIChatMessage({ message, themeColors, businessProfileIma
             )}
             
             {/* Structured data display */}
-            {message.data && (
+            {message.data && hasStructuredData() && (
               <div className="mt-3 pt-3 border-t" style={{ borderColor: themeColors.text + '20' }}>
                 
                 {message.data.type === 'services' && (

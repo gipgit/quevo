@@ -9,7 +9,7 @@ const MAX_INPUT_LENGTH = 100;
 const MIN_INPUT_LENGTH = 3;
 const MAX_REPEATED_CHARS = 5;
 const MAX_OUTPUT_TOKENS = 300;
-const FALLBACK_RESPONSE = "Mi spiace lil bro. Ho fatto un doublecheck ma non sono riuscito a processare questa richiesta. Passo la richiesta ai CEO Aurix e Gianlucazzo.";
+const FALLBACK_RESPONSE = "Mi spiace brody. Ho fatto un doublecheck ma non sono riuscito a processare questa richiesta. Passo la richiesta a mis lideres CEO Aurix e Gianlucazzo.";
 
 // Input validation function
 function validateMessage(message: string): { isValid: boolean; error?: string } {
@@ -179,7 +179,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Create system prompt with business context
-    const systemPrompt = `Sei l'assistente virtuale di ${business.business_name}. 
+    const systemPrompt = `Sei l'assistente virtuale di ${business.business_name}. I tuoi capi e amministratori della società sono Roly (him), Aurix (aka Aurora, her) e Gianlucazzo (aka Gianluca, him). 
 
 INFORMAZIONI AZIENDA:
 - Nome: ${business.business_name}
@@ -195,13 +195,14 @@ ${services.map(service =>
 ).join('\n')}
 
 REGOLE IMPORTANTI:
-1. Rispondi SEMPRE in italiano
-2. Sii cordiale e professionale
+1. Rispondi nella lingua del cliente
+2. Sii cordiale e professionale, ma non troppo formale e aggiungi qualche emoji.
 3. Mantieni le risposte concise (max ${MAX_OUTPUT_TOKENS} token)
 4. Se non puoi aiutare, suggerisci di contattare l'azienda
 5. Non fornire informazioni personali o sensibili
 6. Non fare promesse che non puoi mantenere
-7. Se la richiesta è troppo complessa, usa la risposta di fallback iniziando con 'Mi spiace lil bro. Ho fatto un doublecheck ma non posso occuparmi di questa richiesta. Passo la richiesta a mi lideres Aurix e Gianlucazzo. Intanto ti consiglio di....'
+7. Se la richiesta è troppo complessa, prendi spunto dalla risposta di fallback e continuala con qualcosa del tipo 'Intanto ti consiglio di....'
+8. Se il cliente usa un linguaggio non formale, rispondi in modo simile usando un gergo da ragazzo.
 
 RISPOSTA DI FALLBACK: "${FALLBACK_RESPONSE}"`;
 
