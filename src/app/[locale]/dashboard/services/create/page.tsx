@@ -627,30 +627,30 @@ export default function CreateServicePage() {
                 </div>
                              </div>
 
-                               {/* Service Options Section */}
-                <div className="md:col-span-2 space-y-6">
+               {/* Service Options Section */}
+               <div className="md:col-span-2 space-y-6">
 
                                    {/* Service Extras Section */}
                   <div className="mb-8">
-                    <div className="flex justify-between items-center mb-4">
-                      <h2 className={`text-lg font-semibold ${
-                        theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                      <div className="flex justify-between items-center mb-4">
+                        <h2 className={`text-lg font-semibold ${
+                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
                       }`}>Service Extras</h2>
-                      <button
-                        type="button"
+                        <button
+                          type="button"
                         onClick={addExtra}
-                        className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
-                      >
+                          className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
+                        >
                         Add Extra
-                      </button>
-                    </div>
+                        </button>
+                      </div>
 
                    {extras.map((extra, index) => (
-                     <div key={index} className={`border rounded-lg p-4 mb-4 shadow-sm ${
-                       theme === 'dark' 
-                         ? 'border-gray-600 bg-zinc-800' 
-                         : 'border-gray-300 bg-zinc-100'
-                     }`}>
+                        <div key={index} className={`border rounded-lg p-4 mb-4 shadow-sm ${
+                          theme === 'dark' 
+                            ? 'border-gray-600 bg-zinc-800' 
+                            : 'border-gray-300 bg-zinc-100'
+                        }`}>
                                                                                                                                                <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-8 lg:gap-4">
                           {/* Circular number icon - 1 column on lg */}
                           <div className="lg:col-span-1 flex items-center justify-center">
@@ -665,74 +665,74 @@ export default function CreateServicePage() {
 
                           {/* Name - 2 columns on lg */}
                           <div className="lg:col-span-2">
-                            <label className={`block text-sm font-medium mb-1 ${
-                              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                <label className={`block text-sm font-medium mb-1 ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                             }`}>Extra Name</label>
-                            <input
-                              type="text"
+                                <input
+                                  type="text"
                               value={extra.extra_name}
                               onChange={(e) => updateExtra(index, "extra_name", e.target.value)}
-                              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                theme === 'dark' 
-                                  ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                  : 'border-gray-300 bg-white text-gray-900'
-                              }`}
-                            />
-                          </div>
+                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                      : 'border-gray-300 bg-white text-gray-900'
+                                  }`}
+                                />
+                              </div>
 
                           {/* Description - 2 columns on lg */}
                           <div className="lg:col-span-2">
-                            <label className={`block text-sm font-medium mb-1 ${
-                              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                <label className={`block text-sm font-medium mb-1 ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                             }`}>Extra Description</label>
                             <input
                               type="text"
                               value={extra.extra_description}
                               onChange={(e) => updateExtra(index, "extra_description", e.target.value)}
-                              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                theme === 'dark' 
-                                  ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                  : 'border-gray-300 bg-white text-gray-900'
-                              }`}
-                            />
-                          </div>
+                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                      : 'border-gray-300 bg-white text-gray-900'
+                                  }`}
+                                />
+                            </div>
 
                           {/* Price - 1 column on lg */}
-                          <div>
-                            <label className={`block text-sm font-medium mb-1 ${
-                              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                            }`}>{t("price")}</label>
-                            <input
-                              type="number"
-                              step="0.01"
+                                <div>
+                                  <label className={`block text-sm font-medium mb-1 ${
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                  }`}>{t("price")}</label>
+                                  <input
+                                    type="number"
+                                    step="0.01"
                               value={extra.price_base}
                               onChange={(e) => updateExtra(index, "price_base", Number.parseFloat(e.target.value) || 0)}
-                              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                theme === 'dark' 
-                                  ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                  : 'border-gray-300 bg-white text-gray-900'
-                              }`}
-                            />
-                          </div>
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                      theme === 'dark' 
+                                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                        : 'border-gray-300 bg-white text-gray-900'
+                                    }`}
+                                  />
+                                </div>
 
                           {/* Price Type - 1 column on lg */}
-                          <div>
-                            <label className={`block text-sm font-medium mb-1 ${
-                              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                            }`}>{t("priceType")}</label>
-                            <select
+                                <div>
+                                  <label className={`block text-sm font-medium mb-1 ${
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                  }`}>{t("priceType")}</label>
+                                  <select
                               value={extra.price_type}
                               onChange={(e) => updateExtra(index, "price_type", e.target.value)}
-                              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                theme === 'dark' 
-                                  ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                  : 'border-gray-300 bg-white text-gray-900'
-                              }`}
-                            >
-                              <option value="fixed">{t("fixed")}</option>
-                              <option value="percentage">{t("percentage")}</option>
-                            </select>
-                          </div>
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                      theme === 'dark' 
+                                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                        : 'border-gray-300 bg-white text-gray-900'
+                                    }`}
+                                  >
+                                    <option value="fixed">{t("fixed")}</option>
+                                    <option value="percentage">{t("percentage")}</option>
+                                  </select>
+                              </div>
 
                           {/* Red cross button - 1 column on lg */}
                           <div className="lg:col-span-1 flex items-center justify-center">
@@ -740,18 +740,18 @@ export default function CreateServicePage() {
                               type="button"
                               onClick={() => removeExtra(index)}
                               className={`w-6 h-6 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition-colors ${
-                                theme === 'dark' 
+                                    theme === 'dark' 
                                   ? 'bg-red-600' 
                                   : 'bg-red-500'
-                              }`}
+                                  }`}
                             >
                               ×
                             </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
 
                                                                                                                                                {/* Quotation Section with Conditional Content */}
                                          <div className={`border-t pt-8 mb-8 ${
@@ -759,12 +759,12 @@ export default function CreateServicePage() {
                          ? 'border-gray-600' 
                          : 'border-gray-300'
                      }`}>
-                       <div className="flex justify-between items-center mb-4">
-                         <h2 className={`text-lg font-semibold ${
-                           theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                     <div className="flex justify-between items-center mb-4">
+                       <h2 className={`text-lg font-semibold ${
+                         theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
                          }`}>Quotation</h2>
-                         <button
-                           type="button"
+                       <button
+                         type="button"
                            onClick={() => setAvailableQuotation(!availableQuotation)}
                            className={`px-3 py-1 rounded-lg text-sm transition-colors ${
                              availableQuotation
@@ -786,18 +786,18 @@ export default function CreateServicePage() {
                           <button
                             type="button"
                             onClick={addItem}
-                            className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
-                          >
+                         className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
+                       >
                              Add Item
-                          </button>
-                        </div>
+                       </button>
+                     </div>
 
                         {items.map((item, index) => (
-                         <div key={index} className={`border rounded-lg p-4 mb-4 shadow-sm ${
-                           theme === 'dark' 
-                             ? 'border-gray-600 bg-zinc-800' 
-                             : 'border-gray-300 bg-zinc-100'
-                         }`}>
+                       <div key={index} className={`border rounded-lg p-4 mb-4 shadow-sm ${
+                         theme === 'dark' 
+                           ? 'border-gray-600 bg-zinc-800' 
+                           : 'border-gray-300 bg-zinc-100'
+                       }`}>
                                                                                                                                                                                                                                <div className="space-y-3 lg:space-y-0 lg:grid lg:grid-cols-8 lg:gap-4">
                               {/* Circular number icon - 1 column on lg */}
                               <div className="lg:col-span-1 flex items-center justify-center">
@@ -808,78 +808,78 @@ export default function CreateServicePage() {
                                 }`}>
                                   {index + 1}
                                 </div>
-                              </div>
+                         </div>
 
                               {/* Name - 2 columns on lg */}
                               <div className="lg:col-span-2">
                                 <label className={`block text-xs font-medium mb-1 ${
-                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                               theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                                 }`}>{t("itemName")}</label>
-                                <input
-                                  type="text"
+                             <input
+                               type="text"
                                   value={item.item_name}
                                   onChange={(e) => updateItem(index, "item_name", e.target.value)}
-                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                    theme === 'dark' 
-                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                      : 'border-gray-300 bg-white text-gray-900'
-                                  }`}
-                                />
-                              </div>
+                               className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                 theme === 'dark' 
+                                   ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                   : 'border-gray-300 bg-white text-gray-900'
+                               }`}
+                             />
+                           </div>
 
                               {/* Description - 2 columns on lg */}
                               <div className="lg:col-span-2">
                                 <label className={`block text-xs font-medium mb-1 ${
-                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                               theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                                 }`}>{t("itemDescription")}</label>
                                 <input
                                   type="text"
                                   value={item.item_description}
                                   onChange={(e) => updateItem(index, "item_description", e.target.value)}
-                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                    theme === 'dark' 
-                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                      : 'border-gray-300 bg-white text-gray-900'
-                                  }`}
-                                />
-                              </div>
+                               className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                 theme === 'dark' 
+                                   ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                   : 'border-gray-300 bg-white text-gray-900'
+                               }`}
+                             />
+                           </div>
 
                               {/* Price - 1 column on lg */}
-                              <div>
+                             <div>
                                 <label className={`block text-xs font-medium mb-1 ${
-                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                }`}>{t("price")}</label>
-                                <input
-                                  type="number"
-                                  step="0.01"
+                                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                               }`}>{t("price")}</label>
+                               <input
+                                 type="number"
+                                 step="0.01"
                                   value={item.price_base}
                                   onChange={(e) => updateItem(index, "price_base", Number.parseFloat(e.target.value) || 0)}
-                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                    theme === 'dark' 
-                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                      : 'border-gray-300 bg-white text-gray-900'
-                                  }`}
-                                />
-                              </div>
+                                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                   theme === 'dark' 
+                                     ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                     : 'border-gray-300 bg-white text-gray-900'
+                                 }`}
+                               />
+                             </div>
 
                               {/* Price Type - 1 column on lg */}
-                              <div>
+                             <div>
                                 <label className={`block text-xs font-medium mb-1 ${
-                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                }`}>{t("priceType")}</label>
-                                <select
+                                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                               }`}>{t("priceType")}</label>
+                               <select
                                   value={item.price_type}
                                   onChange={(e) => updateItem(index, "price_type", e.target.value)}
-                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                    theme === 'dark' 
-                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                      : 'border-gray-300 bg-white text-gray-900'
-                                  }`}
-                                >
-                                  <option value="fixed">{t("fixed")}</option>
-                                  <option value="percentage">{t("percentage")}</option>
-                                </select>
-                              </div>
+                                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                   theme === 'dark' 
+                                     ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                     : 'border-gray-300 bg-white text-gray-900'
+                                 }`}
+                               >
+                                 <option value="fixed">{t("fixed")}</option>
+                                 <option value="percentage">{t("percentage")}</option>
+                               </select>
+                             </div>
 
                               {/* Red cross button - 1 column on lg */}
                               <div className="lg:col-span-1 flex items-center justify-center">
@@ -887,26 +887,26 @@ export default function CreateServicePage() {
                                   type="button"
                                   onClick={() => removeItem(index)}
                                   className={`w-6 h-6 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition-colors ${
-                                    theme === 'dark' 
+                                   theme === 'dark' 
                                       ? 'bg-red-600' 
                                       : 'bg-red-500'
-                                  }`}
+                                 }`}
                                 >
                                   ×
                                 </button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                           </div>
+                         </div>
+                       </div>
+                     ))}
+                   </div>
                     )}
 
 
-                 </div>
+                </div>
 
-                                                                                                                                       {/* Booking Section with Conditional Content */}
+                {/* Booking Section with Conditional Content */}
                                        <div className={`border-t pt-8 mb-8 ${
-                      theme === 'dark' 
+                  theme === 'dark' 
                         ? 'border-gray-600' 
                         : 'border-gray-300'
                     }`}>
@@ -930,20 +930,20 @@ export default function CreateServicePage() {
                                      {/* Events Section - Only show when booking is active and events exist */}
                    {availableBooking && events.length > 0 && (
                      <div className="mt-6">
-                       <div className="flex justify-between items-center mb-4">
-                         <h2 className={`text-lg font-semibold ${
-                           theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                         }`}>{t("events")}</h2>
-                         <button
-                           type="button"
-                           onClick={addEvent}
-                           className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
-                         >
-                           {t("addEvent")}
-                         </button>
-                       </div>
+                      <div className="flex justify-between items-center mb-4">
+                        <h2 className={`text-lg font-semibold ${
+                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                        }`}>{t("events")}</h2>
+                        <button
+                          type="button"
+                          onClick={addEvent}
+                          className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
+                        >
+                          {t("addEvent")}
+                        </button>
+                      </div>
 
-                       {events.map((event, index) => (
+                      {events.map((event, index) => (
                         <div key={index} className={`border rounded-lg p-4 mb-4 shadow-sm ${
                           theme === 'dark' 
                             ? 'border-gray-600 bg-zinc-800' 
@@ -959,7 +959,7 @@ export default function CreateServicePage() {
                                 }`}>
                                   {index + 1}
                                 </div>
-                              </div>
+                          </div>
 
                               {/* Name - 2 columns on lg */}
                               <div className="lg:col-span-2">
@@ -996,37 +996,37 @@ export default function CreateServicePage() {
                               </div>
 
                               {/* Duration - 1 column on lg */}
-                              <div>
+                                <div>
                                 <label className={`block text-xs font-medium mb-1 ${
-                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                }`}>{t("duration")} ({t("minutes")})</label>
-                                <input
-                                  type="number"
-                                  value={event.duration_minutes}
-                                  onChange={(e) => updateEvent(index, "duration_minutes", Number.parseInt(e.target.value) || 60)}
-                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                    theme === 'dark' 
-                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                      : 'border-gray-300 bg-white text-gray-900'
-                                  }`}
-                                />
-                              </div>
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                  }`}>{t("duration")} ({t("minutes")})</label>
+                                  <input
+                                    type="number"
+                                    value={event.duration_minutes}
+                                    onChange={(e) => updateEvent(index, "duration_minutes", Number.parseInt(e.target.value) || 60)}
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                      theme === 'dark' 
+                                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                        : 'border-gray-300 bg-white text-gray-900'
+                                    }`}
+                                  />
+                                </div>
 
                               {/* Buffer Time - 1 column on lg */}
-                              <div>
+                                <div>
                                 <label className={`block text-xs font-medium mb-1 ${
-                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                }`}>{t("bufferTime")} ({t("minutes")})</label>
-                                <input
-                                  type="number"
-                                  value={event.buffer_minutes}
-                                  onChange={(e) => updateEvent(index, "buffer_minutes", Number.parseInt(e.target.value) || 0)}
-                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                    theme === 'dark' 
-                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                      : 'border-gray-300 bg-white text-gray-900'
-                                  }`}
-                                />
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                  }`}>{t("bufferTime")} ({t("minutes")})</label>
+                                  <input
+                                    type="number"
+                                    value={event.buffer_minutes}
+                                    onChange={(e) => updateEvent(index, "buffer_minutes", Number.parseInt(e.target.value) || 0)}
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                      theme === 'dark' 
+                                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                        : 'border-gray-300 bg-white text-gray-900'
+                                    }`}
+                                  />
                               </div>
 
                               {/* Red cross button - 1 column on lg */}
@@ -1042,8 +1042,8 @@ export default function CreateServicePage() {
                                 >
                                   ×
                                 </button>
-                              </div>
                             </div>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -1057,24 +1057,24 @@ export default function CreateServicePage() {
 
 
 
-                                           {/* Requirements Section */}
+          {/* Requirements Section */}
             <div className={`border-t pt-8 mb-8 ${
               theme === 'dark' 
                 ? 'border-gray-600' 
                 : 'border-gray-300'
-            }`}>
-              <div className="flex justify-between items-center mb-4">
-                <h2 className={`text-lg font-semibold ${
-                  theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                }`}>{t("requirements")}</h2>
-                <button
-                  type="button"
-                  onClick={addRequirement}
-                  className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
-                >
-                  {t("addRequirement")}
-                </button>
-              </div>
+          }`}>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className={`text-lg font-semibold ${
+                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+              }`}>{t("requirements")}</h2>
+              <button
+                type="button"
+                onClick={addRequirement}
+                className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
+              >
+                {t("addRequirement")}
+              </button>
+            </div>
 
             {requirements.map((requirement, index) => (
               <div key={index} className={`border rounded-lg p-4 mb-4 shadow-sm ${
@@ -1092,7 +1092,7 @@ export default function CreateServicePage() {
                     }`}>
                       {index + 1}
                     </div>
-                  </div>
+                </div>
 
                   {/* Title - 2 columns on lg */}
                   <div className="lg:col-span-2">
@@ -1147,24 +1147,24 @@ export default function CreateServicePage() {
             ))}
           </div>
 
-                                           {/* Questions Section */}
+          {/* Questions Section */}
             <div className={`border-t pt-8 mb-8 ${
               theme === 'dark' 
                 ? 'border-gray-600' 
                 : 'border-gray-300'
-            }`}>
-              <div className="flex justify-between items-center mb-4">
-                <h2 className={`text-lg font-semibold ${
-                  theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                }`}>{t("questions")}</h2>
-                <button
-                  type="button"
-                  onClick={addQuestion}
-                  className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
-                >
-                  {t("addQuestion")}
-                </button>
-              </div>
+          }`}>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className={`text-lg font-semibold ${
+                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+              }`}>{t("questions")}</h2>
+              <button
+                type="button"
+                onClick={addQuestion}
+                className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
+              >
+                {t("addQuestion")}
+              </button>
+            </div>
 
               {questions.map((question, index) => (
                 <div key={index} className={`border rounded-lg p-4 mb-4 shadow-sm ${
@@ -1182,35 +1182,35 @@ export default function CreateServicePage() {
                       }`}>
                         {index + 1}
                       </div>
-                    </div>
+                  </div>
 
                     {/* Question Type - 2 columns on lg */}
                     <div className="lg:col-span-2">
-                      <label className={`block text-sm font-medium mb-2 ${
-                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                      }`}>{t("questionType")}</label>
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {[
-                          { value: "open", label: t("openText"), icon: "📝" },
-                          { value: "checkbox_single", label: t("singleCheckbox"), icon: "☑️" },
-                          { value: "checkbox_multi", label: t("multipleChoice"), icon: "☑️☑️" }
-                        ].map((type) => (
-                          <button
-                            key={type.value}
-                            type="button"
-                            onClick={() => updateQuestion(index, "question_type", type.value)}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                              question.question_type === type.value
-                                ? 'bg-blue-600 text-white shadow-md'
-                                : theme === 'dark'
-                                  ? 'bg-zinc-700 text-gray-300 hover:bg-zinc-600 border border-gray-600'
-                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
-                            }`}
-                          >
-                            <span>{type.icon}</span>
-                            <span>{type.label}</span>
-                          </button>
-                        ))}
+                    <label className={`block text-sm font-medium mb-2 ${
+                      theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                    }`}>{t("questionType")}</label>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {[
+                        { value: "open", label: t("openText"), icon: "📝" },
+                        { value: "checkbox_single", label: t("singleCheckbox"), icon: "☑️" },
+                        { value: "checkbox_multi", label: t("multipleChoice"), icon: "☑️☑️" }
+                      ].map((type) => (
+                        <button
+                          key={type.value}
+                          type="button"
+                          onClick={() => updateQuestion(index, "question_type", type.value)}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                            question.question_type === type.value
+                              ? 'bg-blue-600 text-white shadow-md'
+                              : theme === 'dark'
+                                ? 'bg-zinc-700 text-gray-300 hover:bg-zinc-600 border border-gray-600'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
+                          }`}
+                        >
+                          <span>{type.icon}</span>
+                          <span>{type.label}</span>
+                        </button>
+                      ))}
                       </div>
                     </div>
 
