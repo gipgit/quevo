@@ -67,9 +67,17 @@ interface ServiceBoardData {
     date_updated?: string;
     selected_service_items_snapshot?: Array<{
       service_item_id: number;
-      item_name: string;
-      quantity: number;
-      price_at_request: number;
+      name: string; // Shortened from item_name
+      qty: number; // Shortened from quantity
+      price_at_req: number; // Shortened from price_at_request
+      description?: string; // Added description
+      price?: number; // Added base price
+      price_type?: string; // Added price_type
+      price_unit?: string | null; // Added price_unit
+      // Backward compatibility for old snapshot keys
+      item_name?: string;
+      quantity?: number;
+      price_at_request?: number;
     }>;
     question_responses_snapshot?: Array<{
       question_id: number;
@@ -1429,11 +1437,19 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                           {boardData.servicerequest.selected_service_items_snapshot.map((item, index) => (
                             <div key={index} className="border-1 border-b border-gray-300">
                               <div className="flex flex-col lg:flex-row justify-between lg:items-center">
-                                  <h5 className="text-xs lg:text-sm font-medium text-gray-900">{item.item_name}</h5>
-                                  <div className="flex items-center gap-2 lg:gap-4 mt-1 lg:mt-2 text-xs text-gray-500">
-                                    <span>x {item.quantity}</span>
-                                    <span>( €{parseFloat(item.price_at_request.toString()).toFixed(2)} )</span>
-                                  </div>
+                                  <h5 className="text-xs lg:text-sm font-medium text-gray-900">
+                                    {item.name || item.item_name}
+                                  </h5>
+                                     <div className="flex items-center space-x-2 mt-1 lg:mt-2 text-xs text-gray-500">
+                                      <span className="text-gray-400">€{parseFloat((item.price_at_req || item.price_at_request || 0).toString()).toFixed(2)}</span>
+                                      <div>
+                                      <span className="text-gray-400">x {item.qty || item.quantity} </span>
+                                      {(item.price_type === 'per_unit' && item.price_unit) && (
+                                        <span className="text-gray-400">{item.price_unit}</span>
+                                      )}
+                                      </div>
+                                      <span className="font-medium">= €{(((item.qty || item.quantity || 0) * parseFloat((item.price_at_req || item.price_at_request || 0).toString()))).toFixed(2)}</span>
+                                    </div>
                               </div>
                             </div>
                           ))}

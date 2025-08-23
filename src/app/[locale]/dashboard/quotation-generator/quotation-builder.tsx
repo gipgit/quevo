@@ -13,7 +13,8 @@ import {
   Cog6ToothIcon,
   ArrowLeftIcon,
   CheckIcon,
-  XMarkIcon
+  XMarkIcon,
+  PencilIcon
 } from '@heroicons/react/24/outline'
 
 interface QuotationData {
@@ -79,6 +80,8 @@ interface EditableItem {
   description: string | null
   price: number
   quantity: number
+  priceType: string
+  priceUnit: string | null
   isEditable: boolean
 }
 
@@ -99,38 +102,50 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
   const [taxPercentage, setTaxPercentage] = useState(22) // Default 22% VAT
   const [isGenerating, setIsGenerating] = useState(false)
   const [introductoryText, setIntroductoryText] = useState('we are pleased to provide you with a detailed quotation for the requested services. Please find below the complete breakdown of costs and terms.')
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editingField, setEditingField] = useState<string>('')
+  const [editValue, setEditValue] = useState<string>('')
+  const [showItemsModal, setShowItemsModal] = useState(false)
   const quotationRef = useRef<HTMLDivElement>(null)
 
   // Create editable items list with main service and service items
   const [editableItems, setEditableItems] = useState<EditableItem[]>(() => {
     const items: EditableItem[] = []
     
-    // Add main service
-    if (quotationData.service.name) {
-      items.push({
-        id: 0,
-        name: quotationData.service.name,
-        description: quotationData.service.description,
-        price: quotationData.service.basePrice ? parseFloat(quotationData.service.basePrice) : 0,
-        quantity: 1,
-        isEditable: true
-      })
-    }
+         // Add main service if it has a name
+     if (quotationData.service.name) {
+       items.push({
+         id: 0,
+         name: quotationData.service.name,
+         description: quotationData.service.description,
+         price: quotationData.service.basePrice ? parseFloat(quotationData.service.basePrice) : 0,
+         quantity: 1,
+         priceType: 'fixed',
+         priceUnit: null,
+         isEditable: true
+       })
+     }
     
-    // Add service items
-    quotationData.service.items.forEach(item => {
-      items.push({
-        id: item.id,
-        name: item.name,
-        description: item.description,
-        price: item.price || 0,
-        quantity: item.quantity || 1,
-        isEditable: true
-      })
-    })
+         // Add service items from the service request
+     quotationData.service.items.forEach(item => {
+       items.push({
+         id: item.id,
+         name: item.name,
+         description: item.description,
+         price: item.priceAtRequest ? parseFloat(item.priceAtRequest.toString()) : (item.price || 0),
+         quantity: item.quantity || 1,
+         priceType: item.priceType || 'fixed',
+         priceUnit: item.priceUnit || null,
+         isEditable: true
+       })
+     })
     
     return items
   })
+
+  const removeItem = (id: number) => {
+    setEditableItems(prev => prev.filter(item => item.id !== id))
+  }
 
   const updateItemPrice = (id: number, price: number) => {
     setEditableItems(prev => prev.map(item =>
@@ -410,11 +425,89 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
         pdf.addImage(imgData, 'PNG', xOffset, currentY, imgWidth, imgHeight)
       }
 
-      pdf.save(`quotation-${quotationNumber}.pdf`)
+      // Generate filename: business_name - customer_name - "Quotation" request_reference
+      const businessName = quotationData.business.name.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, ' ')
+      const customerName = quotationData.customer.name.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, ' ')
+      const filename = `${businessName} - ${customerName} - Quotation ${quotationData.requestReference}.pdf`
+      pdf.save(filename)
     } catch (error) {
       console.error('Error generating PDF:', error)
     } finally {
       setIsGenerating(false)
+    }
+  }
+
+  const openEditModal = (field: string, currentValue: string) => {
+    setEditingField(field)
+    setEditValue(currentValue)
+    setShowEditModal(true)
+  }
+
+  const closeEditModal = () => {
+    setShowEditModal(false)
+    setEditingField('')
+    setEditValue('')
+  }
+
+  const saveEdit = () => {
+    switch (editingField) {
+      case 'quotationNumber':
+        setQuotationNumber(editValue)
+        break
+      case 'validUntil':
+        setValidUntil(editValue)
+        break
+      case 'taxPercentage':
+        setTaxPercentage(parseFloat(editValue) || 0)
+        break
+      case 'introductoryText':
+        setIntroductoryText(editValue)
+        break
+      case 'terms':
+        setTerms(editValue)
+        break
+      case 'notes':
+        setNotes(editValue)
+        break
+    }
+    closeEditModal()
+  }
+
+  const getFieldLabel = (field: string) => {
+    switch (field) {
+      case 'quotationNumber':
+        return t('quotationNumber') || 'Quotation Number'
+      case 'validUntil':
+        return t('validUntil') || 'Valid Until'
+      case 'taxPercentage':
+        return t('taxPercentage') || 'Tax Percentage (%)'
+      case 'introductoryText':
+        return 'Introductory Text'
+      case 'terms':
+        return t('terms') || 'Terms & Conditions'
+      case 'notes':
+        return t('notes') || 'Notes'
+      default:
+        return field
+    }
+  }
+
+  const getFieldValue = (field: string) => {
+    switch (field) {
+      case 'quotationNumber':
+        return quotationNumber
+      case 'validUntil':
+        return validUntil || 'Not set'
+      case 'taxPercentage':
+        return `${taxPercentage}%`
+      case 'introductoryText':
+        return introductoryText.length > 50 ? `${introductoryText.substring(0, 50)}...` : introductoryText
+      case 'terms':
+        return terms.length > 50 ? `${terms.substring(0, 50)}...` : terms || 'Not set'
+      case 'notes':
+        return notes.length > 50 ? `${notes.substring(0, 50)}...` : notes || 'Not set'
+      default:
+        return ''
     }
   }
 
@@ -423,72 +516,58 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
     console.log('Saving quotation...')
   }
 
+  const openItemsModal = () => {
+    setShowItemsModal(true)
+  }
+
+  const closeItemsModal = () => {
+    setShowItemsModal(false)
+  }
+
+  const addNewItem = () => {
+    const newId = Math.max(...editableItems.map(item => item.id), 0) + 1
+    const newItem: EditableItem = {
+      id: newId,
+      name: '',
+      description: '',
+      price: 0,
+      quantity: 1,
+      priceType: 'fixed',
+      priceUnit: null,
+      isEditable: true
+    }
+    setEditableItems(prev => [...prev, newItem])
+  }
+
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => window.history.back()}
-              className={`p-2 rounded-lg transition-colors ${
-                theme === 'dark' 
-                  ? 'bg-zinc-700 text-gray-300 hover:bg-zinc-600' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              <ArrowLeftIcon className="w-5 h-5" />
-            </button>
-            <div>
-              <h1 className={`text-2xl font-bold ${
-                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-              }`}>
-                {t('title') || 'Quotation Generator'}
-              </h1>
-              <p className={`text-sm mt-1 ${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-              }`}>
-                {t('subtitle') || 'Create and customize your quotation'}
-              </p>
-            </div>
+          <div>
+            <h1 className={`text-2xl font-bold ${
+              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+            }`}>
+              {t('title') || 'Quotation Generator'}
+            </h1>
           </div>
-
-          <div className="flex gap-3">
-            <button
-              onClick={saveQuotation}
-              className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 ${
-                theme === 'dark' 
-                  ? 'bg-zinc-700 text-gray-300 hover:bg-zinc-600' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              <DocumentTextIcon className="w-4 h-4" />
-              {t('save') || 'Save'}
-            </button>
-            <button
-              onClick={generatePDF}
-              disabled={isGenerating}
-              className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 ${
-                theme === 'dark' 
-                  ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
-              } ${isGenerating ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              <DocumentArrowDownIcon className="w-4 h-4" />
-              {isGenerating ? (t('generating') || 'Generating...') : (t('generatePDF') || 'Generate PDF')}
-            </button>
-          </div>
+          <button
+            onClick={() => window.history.back()}
+            className={`p-2 rounded-lg transition-colors ${
+              theme === 'dark' 
+                ? 'bg-zinc-700 text-gray-300 hover:bg-zinc-600' 
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            <ArrowLeftIcon className="w-5 h-5" />
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Settings Panel */}
-          <div className="lg:col-span-1">
-            <div className={`p-6 rounded-lg ${
-              theme === 'dark' ? 'bg-zinc-800' : 'bg-white'
-            } shadow-sm border ${
-              theme === 'dark' ? 'border-zinc-700' : 'border-gray-200'
-            }`}>
-              <div className="flex items-center gap-2 mb-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-2 md:p-4 lg:p-6">
+                     {/* Settings Panel */}
+           <div className="lg:col-span-1">
+             <div className="p-2 md:p-6">
+              <div className="flex items-center gap-2 mb-3 md:mb-6">
                 <Cog6ToothIcon className="w-5 h-5" />
                 <h2 className={`text-lg font-semibold ${
                   theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
@@ -498,8 +577,8 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
               </div>
 
               {/* Template Selection */}
-              <div className="mb-6">
-                <label className={`block text-sm font-medium mb-2 ${
+              <div className="mb-2 md:mb-4">
+                <label className={`block text-sm font-medium mb-1 md:mb-2 ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                 }`}>
                   {t('template') || 'Template'}
@@ -525,137 +604,145 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                 </select>
               </div>
 
-              {/* Quotation Number */}
-              <div className="mb-6">
-                <label className={`block text-sm font-medium mb-2 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  {t('quotationNumber') || 'Quotation Number'}
-                </label>
-                <input
-                  type="text"
-                  value={quotationNumber}
-                  onChange={(e) => setQuotationNumber(e.target.value)}
-                  className={`w-full p-2 rounded-lg border ${
-                    theme === 'dark' 
-                      ? 'bg-zinc-700 border-zinc-600 text-gray-100' 
-                      : 'bg-white border-gray-300 text-gray-900'
-                  }`}
-                />
-              </div>
+                             {/* Settings Sections */}
+               <div className="space-y-0">
+                 {[
+                   'quotationNumber',
+                   'validUntil', 
+                   'taxPercentage',
+                   'introductoryText',
+                   'terms',
+                   'notes'
+                 ].map((field, index) => (
+                   <div key={field}>
+                     <div className="py-2 md:py-4">
+                       <div className="flex justify-between items-start">
+                         <div className="flex-1">
+                           <p className={`text-xs font-bold uppercase tracking-wide mb-0.5 md:mb-1 ${
+                             theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                           }`}>
+                             {getFieldLabel(field)}
+                           </p>
+                           <p className={`text-xs md:text-sm ${
+                             theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                           }`}>
+                             {getFieldValue(field)}
+                           </p>
+                         </div>
+                         <button
+                           onClick={() => {
+                             let currentValue = ''
+                             switch (field) {
+                               case 'quotationNumber':
+                                 currentValue = quotationNumber
+                                 break
+                               case 'validUntil':
+                                 currentValue = validUntil
+                                 break
+                               case 'taxPercentage':
+                                 currentValue = taxPercentage.toString()
+                                 break
+                               case 'introductoryText':
+                                 currentValue = introductoryText
+                                 break
+                               case 'terms':
+                                 currentValue = terms
+                                 break
+                               case 'notes':
+                                 currentValue = notes
+                                 break
+                             }
+                             openEditModal(field, currentValue)
+                           }}
+                           className={`p-2 rounded-lg transition-colors ${
+                             theme === 'dark' 
+                               ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700' 
+                               : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'
+                           }`}
+                           title="Edit"
+                         >
+                           <PencilIcon className="w-4 h-4" />
+                         </button>
+                       </div>
+                     </div>
+                     {index < 5 && (
+                       <div className={`border-b ${
+                         theme === 'dark' ? 'border-zinc-700' : 'border-gray-200'
+                       }`}></div>
+                     )}
+                   </div>
+                 ))}
 
-              {/* Valid Until */}
-              <div className="mb-6">
-                <label className={`block text-sm font-medium mb-2 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  {t('validUntil') || 'Valid Until'}
-                </label>
-                <input
-                  type="date"
-                  value={validUntil}
-                  onChange={(e) => setValidUntil(e.target.value)}
-                  className={`w-full p-2 rounded-lg border ${
-                    theme === 'dark' 
-                      ? 'bg-zinc-700 border-zinc-600 text-gray-100' 
-                      : 'bg-white border-gray-300 text-gray-900'
-                  }`}
-                />
-              </div>
-
-              {/* Tax Percentage */}
-              <div className="mb-6">
-                <label className={`block text-sm font-medium mb-2 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  {t('taxPercentage') || 'Tax Percentage (%)'}
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="0.01"
-                  value={taxPercentage}
-                  onChange={(e) => setTaxPercentage(parseFloat(e.target.value) || 0)}
-                  className={`w-full p-2 rounded-lg border ${
-                    theme === 'dark' 
-                      ? 'bg-zinc-700 border-zinc-600 text-gray-100' 
-                      : 'bg-white border-gray-300 text-gray-900'
-                  }`}
-                />
-              </div>
-
-              {/* Introductory Text */}
-              <div className="mb-6">
-                <label className={`block text-sm font-medium mb-2 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  Introductory Text
-                </label>
-                <textarea
-                  value={introductoryText}
-                  onChange={(e) => setIntroductoryText(e.target.value)}
-                  rows={3}
-                  className={`w-full p-2 rounded-lg border ${
-                    theme === 'dark' 
-                      ? 'bg-zinc-700 border-zinc-600 text-gray-100' 
-                      : 'bg-white border-gray-300 text-gray-900'
-                  }`}
-                  placeholder="Enter introductory text..."
-                />
-              </div>
-
-              {/* Terms */}
-              <div className="mb-6">
-                <label className={`block text-sm font-medium mb-2 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  {t('terms') || 'Terms & Conditions'}
-                </label>
-                <textarea
-                  value={terms}
-                  onChange={(e) => setTerms(e.target.value)}
-                  rows={4}
-                  className={`w-full p-2 rounded-lg border ${
-                    theme === 'dark' 
-                      ? 'bg-zinc-700 border-zinc-600 text-gray-100' 
-                      : 'bg-white border-gray-300 text-gray-900'
-                  }`}
-                  placeholder={t('enterTerms') || 'Enter terms and conditions...'}
-                />
-              </div>
-
-              {/* Notes */}
-              <div className="mb-6">
-                <label className={`block text-sm font-medium mb-2 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  {t('notes') || 'Notes'}
-                </label>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  rows={3}
-                  className={`w-full p-2 rounded-lg border ${
-                    theme === 'dark' 
-                      ? 'bg-zinc-700 border-zinc-600 text-gray-100' 
-                      : 'bg-white border-gray-300 text-gray-900'
-                  }`}
-                  placeholder={t('enterNotes') || 'Enter additional notes...'}
-                />
-              </div>
+                 {/* Items Section */}
+                 <div className="py-2 md:py-4">
+                   <div className="flex justify-between items-start">
+                     <div className="flex-1">
+                       <p className={`text-xs font-bold uppercase tracking-wide mb-0.5 md:mb-1 ${
+                         theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                       }`}>
+                         Items ({editableItems.length})
+                       </p>
+                       <p className={`text-xs md:text-sm ${
+                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                       }`}>
+                         {editableItems.length} items • €{calculateSubtotal().toFixed(2)} subtotal
+                       </p>
+                     </div>
+                     <button
+                       onClick={openItemsModal}
+                       className={`p-2 rounded-lg transition-colors ${
+                         theme === 'dark' 
+                           ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700' 
+                           : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'
+                       }`}
+                       title="Edit Items"
+                     >
+                       <PencilIcon className="w-4 h-4" />
+                     </button>
+                   </div>
+                 </div>
+               </div>
             </div>
           </div>
 
-          {/* Quotation Preview */}
-          <div className="lg:col-span-2">
-            <div 
-              ref={quotationRef}
-              className={`quotation-preview p-10 ${
-                theme === 'dark' ? 'bg-zinc-800' : 'bg-white'
-              }`}
-              style={{ margin: '20px' }}
-            >
+                     {/* Quotation Preview */}
+           <div className="lg:col-span-2 -mx-2 md:mx-0">
+             <div className={`px-0 py-4 md:p-6 rounded-lg ${
+               theme === 'dark' ? 'bg-zinc-800' : 'bg-gray-800'
+             } shadow-lg`}>
+                             {/* Action Buttons */}
+               <div className="flex justify-center gap-2 md:gap-4 mb-4 md:mb-6">
+                 <button
+                   onClick={saveQuotation}
+                   className={`px-3 md:px-6 py-2 md:py-3 rounded-xl transition-all duration-200 flex items-center gap-2 md:gap-3 shadow-lg hover:shadow-xl ${
+                     theme === 'dark' 
+                       ? 'bg-zinc-700 text-gray-300 hover:bg-zinc-600 hover:scale-105' 
+                       : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'
+                   }`}
+                 >
+                   <DocumentTextIcon className="w-4 h-4 md:w-5 md:h-5" />
+                   {t('save') || 'Save'}
+                 </button>
+                 <button
+                   onClick={generatePDF}
+                   disabled={isGenerating}
+                   className={`px-3 md:px-6 py-2 md:py-3 rounded-xl transition-all duration-200 flex items-center gap-2 md:gap-3 shadow-lg hover:shadow-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white ${
+                     isGenerating ? 'opacity-50 cursor-not-allowed hover:scale-100' : 'hover:scale-105'
+                   }`}
+                 >
+                   <DocumentArrowDownIcon className="w-4 h-4 md:w-5 md:h-5" />
+                   {isGenerating ? (t('generating') || 'Generating...') : (t('generatePDF') || 'Generate PDF')}
+                 </button>
+               </div>
+
+              {/* Preview Content */}
+                             <div 
+                 ref={quotationRef}
+                 className={`quotation-preview p-4 md:p-10 ${
+                   theme === 'dark' ? 'bg-zinc-700' : 'bg-white'
+                 } rounded-lg`}
+                 style={{ margin: '0' }}
+               >
                              {/* Header */}
                <div className="flex justify-between items-start mb-8">
                  <div className="flex-1">
@@ -671,228 +758,200 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                             />
                           </div>
                         )}
-                        <h1 className={`text-2xl font-bold ${
-                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                        }`}>
-                          {quotationData.business.name}
-                        </h1>
-                        {(quotationData.business.address || quotationData.business.companyAddress) && (
-                          <p className={`text-sm leading-tight ${
-                            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                          }`}>
-                            {[quotationData.business.address, quotationData.business.companyAddress]
-                              .filter(Boolean)
-                              .join(', ')}
-                          </p>
-                        )}
-                        {/* Business Contacts */}
-                        {quotationData.business.email && (
-                          <p className={`text-sm leading-tight ${
-                            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                          }`}>
-                            Email: {cleanContactDisplay(quotationData.business.email)}
-                          </p>
-                        )}
-                        {quotationData.business.phone && (
-                          <p className={`text-sm leading-tight ${
-                            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                          }`}>
-                            Phone: {cleanContactDisplay(quotationData.business.phone)}
-                          </p>
-                        )}
+                                                 <h1 className={`text-base md:text-2xl font-bold ${
+                           theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                         }`}>
+                           {quotationData.business.name}
+                         </h1>
+                                                 {(quotationData.business.address || quotationData.business.companyAddress) && (
+                           <p className={`text-xs leading-tight ${
+                             theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                           }`}>
+                             {quotationData.business.address || quotationData.business.companyAddress}
+                           </p>
+                         )}
+                                                 {/* Business Contacts */}
+                         {(quotationData.business.email || quotationData.business.phone) && (
+                           <p className={`text-xs leading-tight ${
+                             theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                           }`}>
+                             {quotationData.business.email && cleanContactDisplay(quotationData.business.email)}
+                             {quotationData.business.email && quotationData.business.phone && ' • '}
+                             {quotationData.business.phone && cleanContactDisplay(quotationData.business.phone)}
+                           </p>
+                         )}
                      </div>
                    </div>
                  </div>
                  
-                 {/* Customer Data on the right */}
-                 <div className="text-right ml-8">
-                   <h3 className={`text-lg font-semibold mb-2 ${
-                     theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                   }`}>
-                     {t('customer') || 'Customer'}
-                   </h3>
-                                       <p className={`text-lg font-bold ${
-                      theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                    }`}>
-                      {quotationData.customer.name}
-                    </p>
-                                       {quotationData.customer.email && (
-                      <p className={`text-sm leading-tight ${
-                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                      }`}>
-                        {quotationData.customer.email}
-                      </p>
-                    )}
-                    {quotationData.customer.phone && (
-                      <p className={`text-sm leading-tight ${
-                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                      }`}>
-                        {quotationData.customer.phone}
-                      </p>
-                    )}
-                    {(quotationData.customer.address || quotationData.customer.city) && (
-                      <p className={`text-sm leading-tight ${
-                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                      }`}>
-                        {[quotationData.customer.address, quotationData.customer.city, quotationData.customer.region, quotationData.customer.country]
-                          .filter(Boolean)
-                          .join(', ')}
-                      </p>
-                    )}
+                                   {/* Customer Data on the right */}
+                  <div className="text-right ml-8">
+                                         <h3 className={`text-xs md:text-lg mb-2 ${
+                       theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                     }`}>
+                       {t('customer') || 'Customer'}
+                     </h3>
+                                        <p className={`text-xs md:text-lg font-bold ${
+                       theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                     }`}>
+                       {quotationData.customer.name}
+                     </p>
+                                                            {quotationData.customer.email && (
+                       <p className={`text-xs leading-tight ${
+                         theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                       }`}>
+                         {quotationData.customer.email}
+                       </p>
+                     )}
+                     {quotationData.customer.phone && (
+                       <p className={`text-xs leading-tight ${
+                         theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                       }`}>
+                         {quotationData.customer.phone}
+                       </p>
+                     )}
+                     {(quotationData.customer.address || quotationData.customer.city) && (
+                       <p className={`text-xs leading-tight ${
+                         theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                       }`}>
+                         {[quotationData.customer.address, quotationData.customer.city, quotationData.customer.region, quotationData.customer.country]
+                           .filter(Boolean)
+                           .join(', ')}
+                       </p>
+                     )}
                  </div>
                </div>
 
-                               {/* Quotation Data - Now below the header */}
-                <div className="mb-8">
-                  <h2 className={`text-xl font-bold ${
-                    theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                  }`}>
-                    {t('quotation') || 'QUOTATION'}
-                  </h2>
-                  <p className={`text-sm ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                  }`}>
-                    {t('number') || 'Number'}: {quotationNumber}
-                  </p>
-                  <p className={`text-sm ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                  }`}>
-                    {t('date') || 'Date'}: {formatDate(new Date())}
-                  </p>
-                  {validUntil && (
-                    <p className={`text-sm ${
-                      theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                    }`}>
-                      {t('validUntil') || 'Valid Until'}: {new Date(validUntil).toLocaleDateString()}
-                    </p>
-                  )}
-                </div>
+                                                               {/* Quotation Data - Document Subject Style */}
+                                                      <div className="mb-8">
+                     <div className={`text-xs md:text-lg ${
+                       theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                     }`}>
+                       <span className="font-bold">{t('quotation') || 'QUOTATION'}</span>
+                       <span className="text-xs"> N. {quotationNumber} of {formatDate(new Date())}</span>
+                       {validUntil && (
+                         <span className="text-xs">, valid until {new Date(validUntil).toLocaleDateString()}</span>
+                       )}
+                     </div>
+                   </div>
 
                 {/* Introductory Section */}
-                <div className="mb-8">
-                <p className={`text-base ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  <span className="font-medium">Dear {quotationData.customer.name},</span>
-                  <br />
-                  {introductoryText}
-                </p>
-              </div>
+                                 <div className="mb-8">
+                 <p className={`text-xs md:text-base ${
+                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                 }`}>
+                   <span className="font-medium">Dear {quotationData.customer.name},</span>
+                   <br />
+                   {introductoryText}
+                 </p>
+               </div>
 
-              {/* Items Table */}
-              {editableItems.length > 0 && (
-                <div className="mb-8">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className={`border-b-2 ${
-                        theme === 'dark' ? 'border-gray-600' : 'border-gray-300'
-                      }`}>
-                        <th className={`text-left py-3 px-2 w-1/2 ${
-                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                        }`}>
-                          {t('item') || 'Item'}
-                        </th>
-                        <th className={`text-center py-3 px-2 w-1/6 ${
-                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                        }`}>
-                          {t('quantity') || 'Qty'}
-                        </th>
-                        <th className={`text-right py-3 px-2 w-1/6 ${
-                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                        }`}>
-                          {t('price') || 'Price'}
-                        </th>
-                        <th className={`text-right py-3 px-2 w-1/6 ${
-                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                        }`}>
-                          {t('total') || 'Total'}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {editableItems.map((item, index) => (
-                        <tr key={item.id} className={`border-b ${
-                          theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
-                        }`}>
-                                                     <td className="py-3 px-2">
-                             <div>
-                               <p className={`text-base font-semibold ${
+              
+
+                             {/* Items Table */}
+               {editableItems.length > 0 && (
+                 <div className="mb-8">
+                   <table className="w-full border-collapse">
+                     <thead>
+                       <tr className={`border-b-2 ${
+                         theme === 'dark' ? 'border-gray-600' : 'border-gray-300'
+                       }`}>
+                                                                                                       <th className={`text-left py-3 px-2 w-2/3 text-xs ${
+                             theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                           }`}>
+                             {t('item') || 'Item'}
+                           </th>
+                           <th className={`text-right py-3 px-2 w-1/6 text-xs ${
+                             theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                           }`}>
+                             {t('price') || 'Price'}
+                           </th>
+                           <th className={`text-center py-3 px-2 w-1/6 text-xs ${
+                             theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                           }`}>
+                             {t('quantity') || 'Qty'}
+                           </th>
+                           <th className={`text-right py-3 px-2 w-1/6 text-xs ${
+                             theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                           }`}>
+                             {t('total') || 'Total'}
+                           </th>
+                       </tr>
+                     </thead>
+                     <tbody>
+                       {editableItems.map((item, index) => (
+                         <tr key={item.id} className={`border-b ${
+                           theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+                         }`}>
+                                                                                                               <td className="py-3 px-2">
+                               <p className={`text-xs md:text-base font-semibold ${
                                  theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
                                }`}>
                                  {item.name}
                                </p>
-                               {item.description && (
-                                 <p className={`text-xs mt-1 ${
-                                   theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                                 }`}>
-                                   {item.description}
-                                 </p>
-                               )}
-                             </div>
-                           </td>
-                          <td className="py-3 px-2 text-center">
-                            <input
-                              type="number"
-                              min="1"
-                              value={item.quantity}
-                              onChange={(e) => updateItemQuantity(item.id, parseInt(e.target.value) || 1)}
-                              className={`w-16 text-center p-1 rounded border ${
-                                theme === 'dark' 
-                                  ? 'bg-zinc-700 border-zinc-600 text-gray-100' 
-                                  : 'bg-white border-gray-300 text-gray-900'
-                              }`}
-                            />
-                          </td>
-                          <td className="py-3 px-2 text-right">
-                            <input
-                              type="number"
-                              min="0"
-                              step="0.01"
-                              value={item.price}
-                              onChange={(e) => updateItemPrice(item.id, parseFloat(e.target.value) || 0)}
-                              className={`w-20 text-right p-1 rounded border ${
-                                theme === 'dark' 
-                                  ? 'bg-zinc-700 border-zinc-600 text-gray-100' 
-                                  : 'bg-white border-gray-300 text-gray-900'
-                              }`}
-                            />
-                          </td>
-                                                     <td className={`py-3 px-2 text-right font-medium text-base ${
-                             theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                           }`}>
-                             €{(item.price * item.quantity).toFixed(2)}
-                           </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+                             </td>
+                                                                                                               <td className={`py-3 px-2 text-right ${
+                               theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                             }`}>
+                                                               <span className="text-xs">
+                                  €{item.price.toFixed(2)}
+                                  {item.priceType !== 'fixed' && item.priceUnit && (
+                                    <span className={`text-xs ${
+                                      theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                                    }`}>
+                                      /{item.priceUnit}
+                                    </span>
+                                  )}
+                                </span>
+                             </td>
+                                                                                                               <td className={`py-3 px-2 text-center text-xs ${
+                               theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                             }`}>
+                              {item.quantity}
+                              {item.priceType !== 'fixed' && item.priceUnit && (
+                                <span className={`text-xs block ${
+                                  theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                                }`}>
+                                  {item.priceUnit}
+                                </span>
+                              )}
+                            </td>
+                                                                                                               <td className={`py-3 px-2 text-right font-medium text-xs md:text-base ${
+                               theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                             }`}>
+                               €{(item.price * item.quantity).toFixed(2)}
+                             </td>
+                         </tr>
+                       ))}
+                     </tbody>
+                   </table>
+                 </div>
+               )}
 
               {/* Pricing Summary */}
               <div className="mb-8">
                 <div className="flex justify-end">
                   <div className="w-64">
-                                                               <div className={`flex justify-between py-2 text-base ${
-                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                      }`}>
-                        <span>{t('subtotal') || 'Subtotal'}:</span>
-                        <span className="text-lg font-medium">€{calculateSubtotal().toFixed(2)}</span>
-                      </div>
-                      <div className={`flex justify-between py-2 text-base ${
-                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                      }`}>
-                        <span>{t('tax') || 'Tax'} ({taxPercentage}%):</span>
-                        <span className="text-lg font-medium">€{calculateTax().toFixed(2)}</span>
-                      </div>
-                    <div className={`flex justify-between py-3 border-t-2 font-bold text-xl ${
-                      theme === 'dark' 
-                        ? 'border-gray-600 text-gray-100' 
-                        : 'border-gray-300 text-gray-900'
-                    }`}>
-                      <span>{t('total') || 'Total'}:</span>
-                      <span>€{calculateTotal().toFixed(2)}</span>
-                    </div>
+                                                                                                                               <div className={`flex justify-between py-2 text-xs md:text-base ${
+                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                       }`}>
+                         <span>{t('subtotal') || 'Subtotal'}:</span>
+                         <span className="text-sm md:text-lg font-medium">€{calculateSubtotal().toFixed(2)}</span>
+                       </div>
+                       <div className={`flex justify-between py-2 text-xs md:text-base ${
+                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                       }`}>
+                         <span>{t('tax') || 'Tax'} ({taxPercentage}%):</span>
+                         <span className="text-sm md:text-lg font-medium">€{calculateTax().toFixed(2)}</span>
+                       </div>
+                     <div className={`flex justify-between py-3 border-t-2 font-bold text-sm md:text-xl ${
+                       theme === 'dark' 
+                         ? 'border-gray-600 text-gray-100' 
+                         : 'border-gray-300 text-gray-900'
+                     }`}>
+                       <span>{t('total') || 'Total'}:</span>
+                       <span>€{calculateTotal().toFixed(2)}</span>
+                     </div>
                   </div>
                 </div>
               </div>
@@ -902,52 +961,381 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                 <div className="mb-8">
                   {terms && (
                     <div className="mb-4">
-                      <h3 className={`text-lg font-semibold mb-2 ${
-                        theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                      }`}>
-                        {t('terms') || 'Terms & Conditions'}
-                      </h3>
-                      <p className={`text-sm whitespace-pre-wrap ${
-                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                      }`}>
-                        {terms}
-                      </p>
+                                                                                           <h3 className={`text-xs md:text-lg font-semibold mb-2 ${
+                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                        }`}>
+                          {t('terms') || 'Terms & Conditions'}
+                        </h3>
+                        <p className={`text-xs whitespace-pre-wrap ${
+                          theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                        }`}>
+                          {terms}
+                        </p>
                     </div>
                   )}
                   {notes && (
                     <div className="mb-4">
-                      <h3 className={`text-lg font-semibold mb-2 ${
-                        theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                      }`}>
-                        {t('notes') || 'Notes'}
-                      </h3>
-                      <p className={`text-sm whitespace-pre-wrap ${
-                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                      }`}>
-                        {notes}
-                      </p>
+                                                                                           <h3 className={`text-xs md:text-lg font-semibold mb-2 ${
+                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                        }`}>
+                          {t('notes') || 'Notes'}
+                        </h3>
+                        <p className={`text-xs whitespace-pre-wrap ${
+                          theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                        }`}>
+                          {notes}
+                        </p>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Signature Area */}
-              <div className="flex justify-end mt-12">
-                <div className="text-center">
-                  <div className={`w-48 h-20 border-b-2 border-dashed ${
-                    theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
-                  } mb-2`}></div>
-                  <p className={`text-sm ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                  }`}>
-                    Signature
-                  </p>
-                </div>
+                             {/* Signature Area */}
+               <div className="flex justify-end mt-12">
+                 <div className="text-center">
+                   <div className={`w-48 h-20 border-b-2 border-dashed ${
+                     theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
+                   } mb-2`}></div>
+                                                                               <p className={`text-xs ${
+                       theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                     }`}>
+                       Signature
+                     </p>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+
+           {/* Edit Modal */}
+        {showEditModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className={`p-6 rounded-lg max-w-md w-full mx-4 ${
+              theme === 'dark' ? 'bg-zinc-800' : 'bg-white'
+            }`}>
+              <h3 className={`text-lg font-semibold mb-4 ${
+                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+              }`}>
+                Edit {getFieldLabel(editingField)}
+              </h3>
+              
+              {editingField === 'validUntil' ? (
+                <input
+                  type="date"
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  className={`w-full p-2 rounded-lg border mb-4 ${
+                    theme === 'dark' 
+                      ? 'bg-zinc-700 border-zinc-600 text-gray-100' 
+                      : 'bg-white border-gray-300 text-gray-900'
+                  }`}
+                />
+              ) : editingField === 'taxPercentage' ? (
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.01"
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  className={`w-full p-2 rounded-lg border mb-4 ${
+                    theme === 'dark' 
+                      ? 'bg-zinc-700 border-zinc-600 text-gray-100' 
+                      : 'bg-white border-gray-300 text-gray-900'
+                  }`}
+                />
+              ) : editingField === 'introductoryText' || editingField === 'terms' || editingField === 'notes' ? (
+                <textarea
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  rows={4}
+                  className={`w-full p-2 rounded-lg border mb-4 ${
+                    theme === 'dark' 
+                      ? 'bg-zinc-700 border-zinc-600 text-gray-100' 
+                      : 'bg-white border-gray-300 text-gray-900'
+                  }`}
+                  placeholder={`Enter ${getFieldLabel(editingField).toLowerCase()}...`}
+                />
+              ) : (
+                <input
+                  type="text"
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  className={`w-full p-2 rounded-lg border mb-4 ${
+                    theme === 'dark' 
+                      ? 'bg-zinc-700 border-zinc-600 text-gray-100' 
+                      : 'bg-white border-gray-300 text-gray-900'
+                  }`}
+                  placeholder={`Enter ${getFieldLabel(editingField).toLowerCase()}...`}
+                />
+              )}
+              
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={closeEditModal}
+                  className={`px-4 py-2 rounded-lg transition-colors ${
+                    theme === 'dark' 
+                      ? 'bg-zinc-700 text-gray-300 hover:bg-zinc-600' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={saveEdit}
+                  className={`px-4 py-2 rounded-lg transition-colors ${
+                    theme === 'dark' 
+                      ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
+                >
+                  Save
+                </button>
               </div>
             </div>
           </div>
+        )}
+
+      {/* Items Modal */}
+      {showItemsModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className={`p-6 rounded-lg max-w-4xl w-full mx-4 max-h-[80vh] overflow-y-auto ${
+            theme === 'dark' ? 'bg-zinc-800' : 'bg-white'
+          }`}>
+            <div className="flex justify-between items-center mb-6">
+              <h3 className={`text-lg font-semibold ${
+                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+              }`}>
+                Edit Items ({editableItems.length})
+              </h3>
+              <div className="flex gap-2">
+                <button
+                  onClick={addNewItem}
+                  className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-2 ${
+                    theme === 'dark' 
+                      ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
+                >
+                  <CheckIcon className="w-4 h-4" />
+                  Add Item
+                </button>
+                <button
+                  onClick={closeItemsModal}
+                  className={`p-2 rounded-lg transition-colors ${
+                    theme === 'dark' 
+                      ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700' 
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  <XMarkIcon className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {editableItems.map((item, index) => (
+                <div key={item.id} className={`p-3 rounded-lg border ${
+                  theme === 'dark' 
+                    ? 'bg-zinc-700 border-zinc-600' 
+                    : 'bg-gray-50 border-gray-200'
+                }`}>
+                                     <div className="grid grid-cols-12 gap-3 items-end">
+                     {/* Item Name */}
+                     <div className="col-span-3">
+                       <label className={`block text-xs font-medium mb-1 ${
+                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                       }`}>
+                         Item Name
+                       </label>
+                       <input
+                         type="text"
+                         value={item.name}
+                         onChange={(e) => {
+                           setEditableItems(prev => prev.map(i =>
+                             i.id === item.id ? { ...i, name: e.target.value } : i
+                           ))
+                         }}
+                         className={`w-full p-2 rounded-lg border text-sm ${
+                           theme === 'dark' 
+                             ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
+                             : 'bg-white border-gray-300 text-gray-900'
+                         }`}
+                         placeholder="Enter item name"
+                       />
+                     </div>
+
+                     {/* Notes */}
+                     <div className="col-span-2">
+                       <label className={`block text-xs font-medium mb-1 ${
+                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                       }`}>
+                         Notes
+                       </label>
+                       <input
+                         type="text"
+                         value={item.description || ''}
+                         onChange={(e) => {
+                           setEditableItems(prev => prev.map(i =>
+                             i.id === item.id ? { ...i, description: e.target.value } : i
+                           ))
+                         }}
+                         className={`w-full p-2 rounded-lg border text-sm ${
+                           theme === 'dark' 
+                             ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
+                             : 'bg-white border-gray-300 text-gray-900'
+                         }`}
+                         placeholder="Optional notes"
+                       />
+                     </div>
+
+                     {/* Price Type */}
+                     <div className="col-span-2">
+                       <label className={`block text-xs font-medium mb-1 ${
+                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                       }`}>
+                         Price Type
+                       </label>
+                       <select
+                         value={item.priceType}
+                         onChange={(e) => {
+                           setEditableItems(prev => prev.map(i =>
+                             i.id === item.id ? { ...i, priceType: e.target.value } : i
+                           ))
+                         }}
+                         className={`w-full p-2 rounded-lg border text-sm ${
+                           theme === 'dark' 
+                             ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
+                             : 'bg-white border-gray-300 text-gray-900'
+                         }`}
+                       >
+                         <option value="fixed">Fixed</option>
+                         <option value="per_unit">Per Unit</option>
+                         <option value="per_hour">Per Hour</option>
+                         <option value="per_day">Per Day</option>
+                       </select>
+                     </div>
+
+                     {/* Price Unit */}
+                     <div className="col-span-2">
+                       <label className={`block text-xs font-medium mb-1 ${
+                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                       }`}>
+                         Price Unit
+                       </label>
+                       <input
+                         type="text"
+                         value={item.priceUnit || ''}
+                         onChange={(e) => {
+                           setEditableItems(prev => prev.map(i =>
+                             i.id === item.id ? { ...i, priceUnit: e.target.value } : i
+                           ))
+                         }}
+                         className={`w-full p-2 rounded-lg border text-sm ${
+                           theme === 'dark' 
+                             ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
+                             : 'bg-white border-gray-300 text-gray-900'
+                         }`}
+                         placeholder="e.g., piece, hour"
+                       />
+                     </div>
+
+                     {/* Quantity */}
+                     <div className="col-span-1">
+                       <label className={`block text-xs font-medium mb-1 ${
+                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                       }`}>
+                         Qty
+                       </label>
+                       <input
+                         type="number"
+                         min="1"
+                         value={item.quantity}
+                         onChange={(e) => updateItemQuantity(item.id, parseInt(e.target.value) || 1)}
+                         className={`w-full p-2 rounded-lg border text-sm ${
+                           theme === 'dark' 
+                             ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
+                             : 'bg-white border-gray-300 text-gray-900'
+                         }`}
+                       />
+                     </div>
+
+                     {/* Price */}
+                     <div className="col-span-1">
+                       <label className={`block text-xs font-medium mb-1 ${
+                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                       }`}>
+                         Price (€)
+                       </label>
+                       <input
+                         type="number"
+                         min="0"
+                         step="0.01"
+                         value={item.price}
+                         onChange={(e) => updateItemPrice(item.id, parseFloat(e.target.value) || 0)}
+                         className={`w-full p-2 rounded-lg border text-sm ${
+                           theme === 'dark' 
+                             ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
+                             : 'bg-white border-gray-300 text-gray-900'
+                         }`}
+                       />
+                     </div>
+
+                     {/* Total */}
+                     <div className="col-span-1">
+                       <label className={`block text-xs font-medium mb-1 ${
+                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                       }`}>
+                         Total
+                       </label>
+                       <p className={`text-sm font-medium p-2 ${
+                         theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                       }`}>
+                         €{(item.price * item.quantity).toFixed(2)}
+                       </p>
+                     </div>
+                   </div>
+
+                  {/* Remove Button */}
+                  <div className="flex justify-end mt-2">
+                    <button
+                      onClick={() => removeItem(item.id)}
+                      className={`px-2 py-1 rounded text-xs transition-colors flex items-center gap-1 ${
+                        theme === 'dark' 
+                          ? 'text-red-400 hover:text-red-300 hover:bg-red-900/20' 
+                          : 'text-red-600 hover:text-red-700 hover:bg-red-50'
+                      }`}
+                    >
+                      <XMarkIcon className="w-3 h-3" />
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+              <div className={`text-sm ${
+                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+              }`}>
+                Subtotal: €{calculateSubtotal().toFixed(2)}
+              </div>
+              <button
+                onClick={closeItemsModal}
+                className={`px-4 py-2 rounded-lg transition-colors ${
+                  theme === 'dark' 
+                    ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
+              >
+                Done
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-    </DashboardLayout>
-  )
-}
+      )}
+     </DashboardLayout>
+   )
+ }

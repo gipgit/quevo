@@ -76,15 +76,15 @@ export default async function QuotationGeneratorPage({ searchParams }: PageProps
       name: serviceRequest.service.service_name,
       description: serviceRequest.service.description,
       basePrice: serviceRequest.service.price_base ? serviceRequest.service.price_base.toNumber() : null,
-      items: serviceRequest.servicerequestselectedserviceitem.map(item => ({
-        id: item.serviceitem.service_item_id,
-        name: item.serviceitem.item_name,
-        description: item.serviceitem.item_description,
-        price: item.serviceitem.price_base ? item.serviceitem.price_base.toNumber() : null,
-        priceAtRequest: item.price_at_request ? item.price_at_request.toNumber() : null,
-        priceType: item.serviceitem.price_type,
-        priceUnit: item.serviceitem.price_unit,
-        quantity: item.quantity
+      items: (Array.isArray(serviceRequest.selected_service_items_snapshot) ? serviceRequest.selected_service_items_snapshot : []).map((item: any, index: number) => ({
+        id: index + 1, // Generate a unique ID since we don't have the actual service_item_id
+        name: item.name || item.item_name, // Handle both new and old format
+        description: null, // Not available in snapshot
+        price: null, // Not available in snapshot
+        priceAtRequest: item.price_at_req || item.price_at_request || 0,
+        priceType: item.price_type || 'fixed',
+        priceUnit: item.price_unit || null,
+        quantity: item.qty || item.quantity || 1
       })),
       requirements: [] // Simplified for now
     },

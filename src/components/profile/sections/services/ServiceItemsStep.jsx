@@ -224,20 +224,20 @@ export default function ServiceItemsStep({
                                 style={isSelected ? { backgroundColor: themeColorBackgroundCard, color: themeColorText, borderColor: themeColorButton } : { backgroundColor: themeColorBackgroundCard, color: themeColorText, borderColor: themeColorBorder }}
                             >
                                 <div className="text-base flex-1">
-                                    <div className="flex items-center gap-2">
-                                        <p className="text-sm md:text-base font-medium leading-none">{item.item_name}</p>
-                                        {item.item_description && (
-                                            <button
-                                                type="button"
-                                                onClick={() => toggleDescription(item.service_item_id)}
-                                                className="text-gray-400 hover:text-gray-600 transition-colors"
-                                            >
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                            </button>
-                                        )}
-                                    </div>
+                                                                         <div className="flex items-center gap-1 md:gap-2">
+                                         {item.item_description && (
+                                             <button
+                                                 type="button"
+                                                 onClick={() => toggleDescription(item.service_item_id)}
+                                                 className="text-gray-400 hover:text-gray-600 transition-colors"
+                                             >
+                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                 </svg>
+                                             </button>
+                                         )}
+                                         <p className="text-sm md:text-base font-medium leading-none">{item.item_name}</p>
+                                     </div>
                                     {item.item_description && expandedDescriptions[item.service_item_id] && (
                                         <p className="text-xs opacity-60 leading-none mt-1">{item.item_description}</p>
                                     )}
@@ -245,8 +245,11 @@ export default function ServiceItemsStep({
                                 
                                 <div className="flex items-center gap-3">
                                     <div className="text-right">
-                                        <p className="text-xs md:text-sm font-medium">{parseFloat(item.price_base).toFixed(2)}€
-                                           {item.price_type === 'per_unit' && ` / ${item.price_unit}`}
+                                        <p className="text-xs md:text-sm font-medium">
+                                            {isSelected 
+                                                ? `€${(parseFloat(item.price_base) * selectedServiceItems[item.service_item_id]?.quantity).toFixed(2)}`
+                                                : `${parseFloat(item.price_base).toFixed(2)}€${item.price_type === 'per_unit' && (item.price_unit ? ` / ${item.price_unit}` : '')}`
+                                            }
                                         </p>
                                     </div>
                                     
@@ -260,7 +263,7 @@ export default function ServiceItemsStep({
                                              Add
                                          </button>
                                      ) : (
-                                         <div className="flex items-center space-x-2">
+                                                                                   <div className="flex items-center space-x-1 md:space-x-2">
                                              <button
                                                  type="button"
                                                  onClick={() => handleServiceItemQuantityChange(item.service_item_id, -1)}
@@ -269,10 +272,10 @@ export default function ServiceItemsStep({
                                              >
                                                  -
                                              </button>
-                                             <span className="font-bold text-center text-xs md:text-base min-w-[2rem]">
-                                                 {selectedServiceItems[item.service_item_id]?.quantity || 0}
-                                                 {item.price_type === 'per_unit' && ` ${item.price_unit}`}
-                                             </span>
+                                                                                           <span className="font-bold text-center text-xs md:text-base min-w-[2rem]">
+                                                  {selectedServiceItems[item.service_item_id]?.quantity || 0}
+                                                  {item.price_type === 'per_unit' && (item.price_unit ? ` ${item.price_unit}` : '')}
+                                              </span>
                                              <button
                                                  type="button"
                                                  onClick={() => handleServiceItemQuantityChange(item.service_item_id, 1)}

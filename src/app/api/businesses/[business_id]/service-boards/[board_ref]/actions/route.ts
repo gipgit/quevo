@@ -3,6 +3,10 @@ import { PrismaClient } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { getPlanLimits } from '@/lib/plan-limit';
 import { canCreateMore } from '@/lib/usage-utils';
+import nodemailer from 'nodemailer';
+import { format } from 'date-fns';
+import { it } from 'date-fns/locale';
+import { customerActionNotificationEmail } from '@/lib/emailTemplatesServiceRequest';
 
 const prisma = new PrismaClient();
 
@@ -232,6 +236,131 @@ export async function POST(
         is_archived: false,
       },
     });
+
+    // Send email notification to customer (non-blocking)
+    try {
+      // Fetch additional data needed for email
+      const boardWithDetails = await prisma.serviceboard.findFirst({
+        where: {
+          board_id: serviceBoard.board_id,
+        },
+        include: {
+          business: {
+            select: {
+              business_name: true,
+              business_public_uuid: true,
+              business_img_profile: true,
+              business_urlname: true,
+            },
+          },
+          servicerequest: {
+            select: {
+              request_reference: true,
+              customer_name: true,
+              customer_email: true,
+              price_subtotal: true,
+              date_created: true,
+              service: {
+                select: {
+                  service_name: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (boardWithDetails?.servicerequest?.customer_email) {
+        const host = request.headers.get('host');
+        const appBaseUrl = `http${process.env.NODE_ENV === 'production' ? 's' : ''}://${host}`;
+        const requestLocale = 'it'; // Default to Italian
+
+        
+
+        // Create email link
+        const customerRequestLink = `${appBaseUrl}/${boardWithDetails.business.business_urlname}/s/${board_ref}?locale=${requestLocale}`;
+
+        // Prepare business profile image URL
+        const R2_PUBLIC_DOMAIN = "https://pub-eac238aed876421982e277e0221feebc.r2.dev";
+        const businessProfileImageUrl = !boardWithDetails.business.business_img_profile 
+          ? `${appBaseUrl}/uploads/business/${boardWithDetails.business.business_public_uuid}/profile.webp`
+          : `${R2_PUBLIC_DOMAIN}/business/${boardWithDetails.business.business_public_uuid}/profile.webp`;
+
+        // Get business name initial for fallback
+        const businessNameInitial = boardWithDetails.business.business_name 
+          ? boardWithDetails.business.business_name.charAt(0).toUpperCase() 
+          : 'Q';
+
+        // Determine priority display text
+        const priorityDisplayMap = {
+          'high': 'Alta',
+          'medium': 'Media', 
+          'low': 'Bassa'
+        };
+
+                 // Prepare email data
+         const emailData = {
+           board_ref: board_ref,
+           service_name: boardWithDetails.servicerequest.service.service_name,
+           customer_name: boardWithDetails.servicerequest.customer_name,
+           customer_email: boardWithDetails.servicerequest.customer_email,
+           business_name: boardWithDetails.business.business_name,
+           business_profile_image: businessProfileImageUrl,
+           business_name_initial: businessNameInitial,
+           action_title: newAction.action_title,
+           action_description: newAction.action_description,
+           action_priority: newAction.action_priority || 'medium',
+           action_priority_display: priorityDisplayMap[newAction.action_priority as keyof typeof priorityDisplayMap] || 'Media',
+           due_date: newAction.due_date ? format(new Date(newAction.due_date), 'PPPP', { locale: it }) : null,
+           request_link: customerRequestLink,
+         };
+
+        // Helper function to fill template
+        const fillTemplate = (template: string, data: Record<string, string | null>): string => {
+          let result = template;
+          for (const [key, value] of Object.entries(data)) {
+            const placeholder = `{{${key}}}`;
+            if (value !== null) {
+              result = result.replace(new RegExp(placeholder, 'g'), value);
+            } else {
+              // Remove conditional blocks for null values
+              result = result.replace(new RegExp(`{{#if ${key}}}[\\s\\S]*?{{\\/if}}`, 'g'), '');
+            }
+          }
+          return result;
+        };
+
+        // Create email HTML content
+        const customerEmailHtml = fillTemplate(customerActionNotificationEmail, emailData);
+
+        // Send email
+        const transporter = nodemailer.createTransport({
+          host: process.env.SMTP_HOST,
+          port: parseInt(process.env.SMTP_PORT || '587'),
+          secure: false,
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+          },
+        });
+
+                 await transporter.sendMail({
+           from: process.env.EMAIL_FROM,
+           to: boardWithDetails.servicerequest.customer_email,
+           subject: `${boardWithDetails.business.business_name} / ${board_ref} / Aggiornamento `,
+           html: customerEmailHtml,
+          headers: {
+            'X-Entity-Ref-ID': 'my-id-123',
+            'X-Mailer': 'Quevo Email System'
+          }
+        });
+
+        console.log('Action notification email sent successfully');
+      }
+    } catch (emailError) {
+      console.error('Error sending action notification email:', emailError);
+      // Don't fail the request if email fails
+    }
 
     return NextResponse.json(newAction, { status: 201 });
   } catch (error) {

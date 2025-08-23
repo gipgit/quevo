@@ -375,9 +375,11 @@ export async function POST(
           if (serviceResponses.selectedServiceItems && serviceResponses.selectedServiceItems.length > 0) {
             selectedServiceItemsSnapshot = serviceResponses.selectedServiceItems.map((item: any) => ({
               service_item_id: item.service_item_id,
-              item_name: item.item_name,
-              quantity: item.quantity,
-              price_at_request: parseFloat(item.price_base.toString())
+              name: item.item_name, // Shortened from item_name
+              qty: item.quantity, // Shortened from quantity
+              price_at_req: parseFloat(item.price_base.toString()), // Shortened from price_at_request
+              price_type: item.price_type || 'fixed',
+              price_unit: item.price_unit || null
             }));
           }
 
