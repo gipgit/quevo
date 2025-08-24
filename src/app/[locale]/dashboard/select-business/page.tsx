@@ -93,26 +93,48 @@ export default function BusinessSelectionPage() {
 
   const handleBusinessSelect = async (businessId: string) => {
     // Prevent multiple clicks
-    if (selectingBusiness) return
+    if (selectingBusiness) {
+      console.log("Business selection already in progress, ignoring click")
+      return
+    }
     
+    console.log("Starting business selection for:", businessId)
     setSelectingBusiness(businessId)
     
     try {
       // Use the switchBusiness function from context which properly updates session and redirects
+      console.log("Calling switchBusiness...")
       await switchBusiness(businessId)
+      console.log("switchBusiness completed successfully")
       
-      // Add a fallback check to ensure the business was actually switched
-      setTimeout(() => {
-        const currentBusinessId = sessionStorage.getItem("currentBusinessId")
-        if (currentBusinessId !== businessId) {
-          console.warn("Business switch may have failed, retrying...")
-          setSelectingBusiness(null)
-        }
-      }, 2000)
+      // Add a more robust fallback check with multiple retries
+      let retryCount = 0
+      const maxRetries = 3
+      
+      const checkBusinessSwitch = () => {
+        setTimeout(() => {
+          const currentBusinessId = sessionStorage.getItem("currentBusinessId")
+          console.log(`Checking business switch - expected: ${businessId}, actual: ${currentBusinessId}`)
+          
+          if (currentBusinessId !== businessId && retryCount < maxRetries) {
+            console.warn(`Business switch may have failed, retry ${retryCount + 1}/${maxRetries}...`)
+            retryCount++
+            checkBusinessSwitch()
+          } else if (retryCount >= maxRetries) {
+            console.error("Business switch failed after multiple retries")
+            setSelectingBusiness(null)
+          }
+        }, 1000 * (retryCount + 1)) // Exponential backoff
+      }
+      
+      checkBusinessSwitch()
       
     } catch (error) {
       console.error("Error switching business:", error)
       setSelectingBusiness(null)
+      
+      // Show user-friendly error message
+      alert("Failed to switch business. Please try again.")
     }
   }
 
@@ -126,7 +148,10 @@ export default function BusinessSelectionPage() {
           <h2 className="text-3xl font-bold mb-12">{t("whatToManage")}</h2>
           {selectingBusiness && (
             <div className="text-blue-400 text-lg font-medium animate-pulse">
-              Switching to business...
+              <div className="flex items-center justify-center space-x-2">
+                <LoadingSpinner size="sm" color="blue" />
+                <span>Switching to business...</span>
+              </div>
             </div>
           )}
         </div>
@@ -134,16 +159,17 @@ export default function BusinessSelectionPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6 max-w-6xl mx-auto">
           {businesses.map((business) => {
             const isSelecting = selectingBusiness === business.business_id
+            const isDisabled = selectingBusiness !== null
             
             return (
               <button
                 key={business.business_id}
                 onClick={() => handleBusinessSelect(business.business_id)}
-                disabled={selectingBusiness !== null}
+                disabled={isDisabled}
                 className={`bg-white text-gray-900 rounded-2xl p-4 lg:p-6 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 ${
                   isSelecting 
                     ? 'opacity-75 cursor-not-allowed ring-2 ring-blue-500' 
-                    : selectingBusiness !== null
+                    : isDisabled
                     ? 'opacity-50 cursor-not-allowed'
                     : 'hover:shadow-lg hover:bg-gray-100'
                 }`}

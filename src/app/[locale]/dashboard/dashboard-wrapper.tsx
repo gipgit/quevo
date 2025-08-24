@@ -89,6 +89,30 @@ export default function DashboardWrapper({ usage, planLimits }: DashboardWrapper
     setDOMAIN(isLocalhost ? "http://localhost:3000" : "https://quevo.vercel.app")
   }, [])
 
+  // Client-side check for business synchronization
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const sessionBusinessId = sessionStorage.getItem("currentBusinessId")
+      const cookieBusinessId = document.cookie
+        .split(';')
+        .find(cookie => cookie.trim().startsWith('current-business-id='))
+        ?.split('=')[1]
+      
+      // If we have businesses but no current business, or if there's a mismatch
+      if (businesses.length > 0 && !currentBusiness) {
+        console.log("Business context mismatch detected, redirecting to select-business")
+        window.location.href = "/dashboard/select-business"
+        return
+      }
+      
+      // If there's a mismatch between session storage and current business
+      if (sessionBusinessId && currentBusiness && sessionBusinessId !== currentBusiness.business_id) {
+        console.log("Session storage mismatch detected, updating...")
+        sessionStorage.setItem("currentBusinessId", currentBusiness.business_id)
+      }
+    }
+  }, [businesses, currentBusiness])
+
   // Helper to get plan limit value for a feature
   const getPlanLimitValue = (feature: string) => {
     // Map feature to correct scope

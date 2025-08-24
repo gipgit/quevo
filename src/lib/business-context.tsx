@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
-import { setCurrentBusinessIdCookie } from "./business-utils"
+import { setCurrentBusinessIdCookie, BUSINESS_ID_COOKIE_NAME } from "./business-utils"
 
 interface Business {
   business_id: string
@@ -62,6 +62,7 @@ interface BusinessContextType {
   loading: boolean
   error: string | null
   businessSwitchKey: number // Add this to track business switches
+  cacheBuster: string // Add cache buster for server-side data invalidation
 }
 
 interface InitialData {
@@ -92,6 +93,7 @@ export function BusinessProvider({
   const [loading, setLoading] = useState(!initialData) // If we have initial data, we're not loading
   const [error, setError] = useState<string | null>(null)
   const [businessSwitchKey, setBusinessSwitchKey] = useState(0) // Force re-render key
+  const [cacheBuster, setCacheBuster] = useState(`?v=${Date.now()}`) // Cache buster for server-side data
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const fetchManagerDashboard = useCallback(async (retryCount = 0) => {
@@ -321,18 +323,47 @@ export function BusinessProvider({
     const business = businesses.find((b) => b.business_id === businessId)
     
     if (business) {
-      // Set all state updates synchronously
-      setCurrentBusiness(business)
-      sessionStorage.setItem("currentBusinessId", business.business_id)
-      setCurrentBusinessIdCookie(business.business_id)
-      setBusinessSwitchKey(prev => prev + 1)
-      
-      // Add a small delay to ensure state updates are processed
-      await new Promise(resolve => setTimeout(resolve, 100))
-      
-      // Navigate to dashboard
-      console.log("BusinessContext: Switched to business:", business.business_name, "- navigating to dashboard")
-      router.push("/dashboard")
+      try {
+        console.log("BusinessContext: Starting business switch to:", business.business_name)
+        
+        // Set all state updates synchronously
+        setCurrentBusiness(business)
+        sessionStorage.setItem("currentBusinessId", business.business_id)
+        
+        // Set cookie immediately and verify it
+        setCurrentBusinessIdCookie(business.business_id)
+        
+        // Force a small delay to ensure cookie is set
+        await new Promise(resolve => setTimeout(resolve, 100))
+        
+        // Verify cookie was set
+        const cookies = document.cookie.split(';')
+        const businessCookie = cookies.find(cookie => 
+          cookie.trim().startsWith(`${BUSINESS_ID_COOKIE_NAME}=`)
+        )
+        
+        if (!businessCookie) {
+          console.warn('Cookie not set, retrying...')
+          // Retry setting the cookie
+          setCurrentBusinessIdCookie(business.business_id)
+          await new Promise(resolve => setTimeout(resolve, 100))
+        }
+        
+        setBusinessSwitchKey(prev => prev + 1)
+        setCacheBuster(`?v=${Date.now()}`) // Update cache buster to force server-side refetch
+        
+        // Store the business switch time in session storage for the CacheBusterWrapper
+        sessionStorage.setItem("businessSwitchTime", Date.now().toString())
+        
+        console.log("BusinessContext: Business switch completed, navigating to dashboard")
+        router.push("/dashboard")
+      } catch (error) {
+        console.error("Error switching business:", error)
+        // Reset state on error
+        setCurrentBusiness(null)
+        setBusinessSwitchKey(prev => prev + 1)
+        throw error
+      }
     } else {
       setCurrentBusiness(null)
       setBusinessSwitchKey(prev => prev + 1)
@@ -356,6 +387,7 @@ export function BusinessProvider({
         loading,
         error,
         businessSwitchKey,
+        cacheBuster,
       }}
     >
       {children}

@@ -59,6 +59,15 @@ interface ServiceEvent {
   is_required: boolean
   display_order: number
   is_active: boolean
+  availability: {
+    monday: { start: string; end: string; enabled: boolean }
+    tuesday: { start: string; end: string; enabled: boolean }
+    wednesday: { start: string; end: string; enabled: boolean }
+    thursday: { start: string; end: string; enabled: boolean }
+    friday: { start: string; end: string; enabled: boolean }
+    saturday: { start: string; end: string; enabled: boolean }
+    sunday: { start: string; end: string; enabled: boolean }
+  }
 }
 
 export default function CreateServicePage() {
@@ -75,13 +84,17 @@ export default function CreateServicePage() {
   // Service basic info
   const [serviceName, setServiceName] = useState("")
   const [description, setDescription] = useState("")
-  const [categoryId, setCategoryId] = useState<number | null>(null)
+  const [categoryId, setCategoryId] = useState<number | "new" | null>(null)
+  const [newCategoryTitle, setNewCategoryTitle] = useState("")
   const [priceBase, setPriceBase] = useState<number | null>(null)
   const [priceType, setPriceType] = useState("fixed")
   const [priceUnit, setPriceUnit] = useState("")
   const [hasItems, setHasItems] = useState(false)
   const [availableBooking, setAvailableBooking] = useState(false)
   const [requireConsentNewsletter, setRequireConsentNewsletter] = useState(false)
+  const [requirePhoneNumber, setRequirePhoneNumber] = useState(false)
+  const [newsletterConsentText, setNewsletterConsentText] = useState("")
+  const [phoneNumberText, setPhoneNumberText] = useState("")
   const [availableQuotation, setAvailableQuotation] = useState(false)
 
   // Dynamic sections
@@ -146,6 +159,15 @@ export default function CreateServicePage() {
           is_required: true,
           display_order: 0,
           is_active: true,
+          availability: {
+            monday: { start: "09:00", end: "17:00", enabled: true },
+            tuesday: { start: "09:00", end: "17:00", enabled: true },
+            wednesday: { start: "09:00", end: "17:00", enabled: true },
+            thursday: { start: "09:00", end: "17:00", enabled: true },
+            friday: { start: "09:00", end: "17:00", enabled: true },
+            saturday: { start: "09:00", end: "17:00", enabled: false },
+            sunday: { start: "09:00", end: "17:00", enabled: false },
+          },
         },
       ])
     } else if (!availableBooking) {
@@ -294,6 +316,15 @@ export default function CreateServicePage() {
         is_required: true,
         display_order: events.length,
         is_active: true,
+        availability: {
+          monday: { start: "09:00", end: "17:00", enabled: true },
+          tuesday: { start: "09:00", end: "17:00", enabled: true },
+          wednesday: { start: "09:00", end: "17:00", enabled: true },
+          thursday: { start: "09:00", end: "17:00", enabled: true },
+          friday: { start: "09:00", end: "17:00", enabled: true },
+          saturday: { start: "09:00", end: "17:00", enabled: false },
+          sunday: { start: "09:00", end: "17:00", enabled: false },
+        },
       },
     ])
   }
@@ -301,6 +332,27 @@ export default function CreateServicePage() {
   const updateEvent = (index: number, field: keyof ServiceEvent, value: any) => {
     const updated = [...events]
     updated[index] = { ...updated[index], [field]: value }
+    setEvents(updated)
+  }
+
+  const updateEventAvailability = (eventIndex: number, day: string, field: 'start' | 'end' | 'enabled', value: string | boolean) => {
+    const updated = [...events]
+    const event = updated[eventIndex]
+    if (day === 'monday') {
+      event.availability.monday = { ...event.availability.monday, [field]: value }
+    } else if (day === 'tuesday') {
+      event.availability.tuesday = { ...event.availability.tuesday, [field]: value }
+    } else if (day === 'wednesday') {
+      event.availability.wednesday = { ...event.availability.wednesday, [field]: value }
+    } else if (day === 'thursday') {
+      event.availability.thursday = { ...event.availability.thursday, [field]: value }
+    } else if (day === 'friday') {
+      event.availability.friday = { ...event.availability.friday, [field]: value }
+    } else if (day === 'saturday') {
+      event.availability.saturday = { ...event.availability.saturday, [field]: value }
+    } else if (day === 'sunday') {
+      event.availability.sunday = { ...event.availability.sunday, [field]: value }
+    }
     setEvents(updated)
   }
 
@@ -338,14 +390,18 @@ export default function CreateServicePage() {
              const serviceData = {
          service_name: serviceName,
          description: description ? sanitizeHtmlContent(description) : null,
-         category_id: categoryId,
-         price_base: priceBase,
+                   category_id: categoryId,
+          new_category_title: newCategoryTitle,
+          price_base: priceBase,
          price_type: priceType,
          price_unit: priceUnit,
          has_items: hasItems,
          available_booking: availableBooking,
-         require_consent_newsletter: requireConsentNewsletter,
-         available_quotation: availableQuotation,
+                   require_consent_newsletter: requireConsentNewsletter,
+          require_phone_number: requirePhoneNumber,
+          newsletter_consent_text: newsletterConsentText,
+          phone_number_text: phoneNumberText,
+          available_quotation: availableQuotation,
          questions: questions.filter((q) => q.question_text.trim()),
          requirements: requirements.filter((r) => r.requirements_text.trim()),
          items: items.filter((i) => i.item_name.trim()),
@@ -510,61 +566,14 @@ export default function CreateServicePage() {
         </div>
         <form onSubmit={handleSubmit} className="">
           {/* Basic Information */}
-          <div className="pb-4 lg:pb-6">
+          <div className="pb-4 lg:pb-6 border-b border-gray-200 dark:border-gray-700">
           
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-1 lg:gap-2">
-              <div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 items-stretch gap-6 space-y-4">
+              {/* Left Column - Image */}
+              <div className="lg:col-span-1 h-full">
                 <label className={`block text-sm font-medium mb-2 ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>{t("serviceName")} *</label>
-                <input
-                  type="text"
-                  value={serviceName}
-                  onChange={(e) => setServiceName(e.target.value)}
-                  className={`w-full text-lg px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    theme === 'dark' 
-                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                      : 'border-gray-300 bg-white text-gray-900'
-                  }`}
-                  required
-                />
-              </div>
-
-              <div>
-                <label className={`block text-sm font-medium mb-2 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>{t("category")}</label>
-                <select
-                  value={categoryId || ""}
-                  onChange={(e) => setCategoryId(e.target.value ? Number.parseInt(e.target.value) : null)}
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    theme === 'dark' 
-                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                      : 'border-gray-300 bg-white text-gray-900'
-                  }`}
-                >
-                  <option value="">{t("selectCategory")}</option>
-                  {categories.map((category) => (
-                    <option key={category.category_id} value={category.category_id}>
-                      {category.category_name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="md:col-span-2">
-                <label className={`block text-sm font-medium mb-2 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>{t("description")}</label>
-                <RichTextEditor
-                  value={description}
-                  onChange={setDescription}
-                  placeholder={t("description")}
-                  theme={theme === 'dark' ? 'dark' : 'light'}
-                />
-              </div>
-
-              <div className="md:col-span-2">
+                }`}>{t("serviceImage")}</label>
                 <ServiceImageUpload
                   onImageChange={setServiceImage}
                   currentImage={serviceImage}
@@ -572,7 +581,81 @@ export default function CreateServicePage() {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              {/* Right Column - Service Details */}
+              <div className="lg:col-span-2 space-y-2">
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>{t("serviceName")} *</label>
+                  <input
+                    type="text"
+                    value={serviceName}
+                    onChange={(e) => setServiceName(e.target.value)}
+                    className={`w-full text-lg px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                      theme === 'dark' 
+                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                        : 'border-gray-300 bg-white text-gray-900'
+                    }`}
+                    required
+                  />
+                </div>
+
+                                 <div>
+                   <label className={`block text-sm font-medium mb-2 ${
+                     theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                   }`}>{t("category")}</label>
+                   <select
+                     value={categoryId || ""}
+                     onChange={(e) => setCategoryId(e.target.value ? (e.target.value === "new" ? "new" : Number.parseInt(e.target.value)) : null)}
+                     className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                       theme === 'dark' 
+                         ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                         : 'border-gray-300 bg-white text-gray-900'
+                     }`}
+                   >
+                     <option value="">{t("selectCategory")}</option>
+                     {categories.map((category) => (
+                       <option key={category.category_id} value={category.category_id}>
+                         {category.category_name}
+                       </option>
+                     ))}
+                     <option value="new">➕ New Category</option>
+                   </select>
+                 </div>
+                 
+                 {/* Conditional New Category Title Field */}
+                 {categoryId === "new" && (
+                   <div>
+                     <label className={`block text-sm font-medium mb-2 ${
+                       theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                     }`}>New Category Title</label>
+                     <input
+                       type="text"
+                       value={newCategoryTitle}
+                       onChange={(e) => setNewCategoryTitle(e.target.value)}
+                       placeholder="Enter new category name..."
+                       className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                         theme === 'dark' 
+                           ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                           : 'border-gray-300 bg-white text-gray-900'
+                       }`}
+                     />
+                   </div>
+                 )}
+
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>{t("description")}</label>
+                  <RichTextEditor
+                    value={description}
+                    onChange={setDescription}
+                    placeholder={t("description")}
+                    theme={theme === 'dark' ? 'dark' : 'light'}
+                  />
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${
                     theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
@@ -625,17 +708,21 @@ export default function CreateServicePage() {
                     disabled={priceType === "fixed"}
                   />
                 </div>
-                             </div>
+              </div>
+            </div>
 
-               {/* Service Options Section */}
-               <div className="md:col-span-2 space-y-6">
+            </div>
 
-                                   {/* Service Extras Section */}
-                  <div className="mb-8">
-                      <div className="flex justify-between items-center mb-4">
-                        <h2 className={`text-lg font-semibold ${
-                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                      }`}>Service Extras</h2>
+                               {/* Start Service Additional / Optional Sections */}
+                <div className="mt-12 lg:mt-16 space-y-8">
+
+                                    {/* Service Extras Section */}
+                   <div className="mb-8">
+                       <div className="flex justify-between items-center mb-6">
+                         <h2 className={`text-xl font-bold ${
+                           theme === 'dark' ? 'text-gray-100' : 
+                           'text-gray-900'
+                       }`}>Service Extras</h2>
                         <button
                           type="button"
                         onClick={addExtra}
@@ -645,27 +732,23 @@ export default function CreateServicePage() {
                         </button>
                       </div>
 
-                   {extras.map((extra, index) => (
-                        <div key={index} className={`border rounded-lg p-4 mb-4 shadow-sm ${
-                          theme === 'dark' 
-                            ? 'border-gray-600 bg-zinc-800' 
-                            : 'border-gray-300 bg-zinc-100'
-                        }`}>
-                                                                                                                                               <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-8 lg:gap-4">
-                          {/* Circular number icon - 1 column on lg */}
-                          <div className="lg:col-span-1 flex items-center justify-center">
+                                       {extras.map((extra, index) => (
+                         <div key={index} className="mb-4">
+                                                                                                                                               <div className="space-y-4 lg:space-y-0 lg:flex lg:gap-4 lg:items-center">
+                          {/* Circular number icon - minimal width */}
+                          <div className="flex items-center justify-center w-8 flex-shrink-0">
                             <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
                               theme === 'dark' 
-                                ? 'bg-blue-600 text-white' 
-                                : 'bg-blue-500 text-white'
+                                ? 'bg-gray-700 text-gray-200' 
+                                : 'bg-gray-600 text-white'
                             }`}>
                               {index + 1}
                             </div>
                           </div>
 
-                          {/* Name - 2 columns on lg */}
-                          <div className="lg:col-span-2">
-                                <label className={`block text-sm font-medium mb-1 ${
+                          {/* Name - flexible width */}
+                          <div className="flex-1">
+                                <label className={`block text-xs font-medium mb-1 ${
                                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                             }`}>Extra Name</label>
                                 <input
@@ -680,9 +763,9 @@ export default function CreateServicePage() {
                                 />
                               </div>
 
-                          {/* Description - 2 columns on lg */}
-                          <div className="lg:col-span-2">
-                                <label className={`block text-sm font-medium mb-1 ${
+                          {/* Description - flexible width */}
+                          <div className="flex-1">
+                                <label className={`block text-xs font-medium mb-1 ${
                                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                             }`}>Extra Description</label>
                             <input
@@ -697,9 +780,9 @@ export default function CreateServicePage() {
                                 />
                             </div>
 
-                          {/* Price - 1 column on lg */}
-                                <div>
-                                  <label className={`block text-sm font-medium mb-1 ${
+                          {/* Price - fixed width */}
+                                <div className="w-24 flex-shrink-0">
+                                  <label className={`block text-xs font-medium mb-1 ${
                                     theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                                   }`}>{t("price")}</label>
                                   <input
@@ -715,9 +798,9 @@ export default function CreateServicePage() {
                                   />
                                 </div>
 
-                          {/* Price Type - 1 column on lg */}
-                                <div>
-                                  <label className={`block text-sm font-medium mb-1 ${
+                          {/* Price Type - fixed width */}
+                                <div className="w-28 flex-shrink-0">
+                                  <label className={`block text-xs font-medium mb-1 ${
                                     theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                                   }`}>{t("priceType")}</label>
                                   <select
@@ -734,15 +817,15 @@ export default function CreateServicePage() {
                                   </select>
                               </div>
 
-                          {/* Red cross button - 1 column on lg */}
-                          <div className="lg:col-span-1 flex items-center justify-center">
+                          {/* Red cross button - minimal width */}
+                          <div className="flex items-center justify-center w-8 flex-shrink-0">
                             <button
                               type="button"
                               onClick={() => removeExtra(index)}
-                              className={`w-6 h-6 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition-colors ${
+                              className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
                                     theme === 'dark' 
-                                  ? 'bg-red-600' 
-                                  : 'bg-red-500'
+                                  ? 'bg-gray-600 text-gray-300 hover:bg-red-600 hover:text-white' 
+                                  : 'bg-gray-400 text-gray-600 hover:bg-red-500 hover:text-white'
                                   }`}
                             >
                               ×
@@ -753,16 +836,12 @@ export default function CreateServicePage() {
                       ))}
                     </div>
 
-                                                                                                                                               {/* Quotation Section with Conditional Content */}
-                                         <div className={`border-t pt-8 mb-8 ${
-                       theme === 'dark' 
-                         ? 'border-gray-600' 
-                         : 'border-gray-300'
-                     }`}>
-                     <div className="flex justify-between items-center mb-4">
-                       <h2 className={`text-lg font-semibold ${
-                         theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                         }`}>Quotation</h2>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               {/* Quotation Section with Conditional Content */}
+                                            <div className={`border-t-2 border-gray-300 dark:border-gray-600 pt-10 mb-10`}>
+                      <div className="flex justify-between items-center mb-6">
+                        <h2 className={`text-xl font-bold ${
+                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                          }`}>Quotation</h2>
                        <button
                          type="button"
                            onClick={() => setAvailableQuotation(!availableQuotation)}
@@ -792,26 +871,22 @@ export default function CreateServicePage() {
                        </button>
                      </div>
 
-                        {items.map((item, index) => (
-                       <div key={index} className={`border rounded-lg p-4 mb-4 shadow-sm ${
-                         theme === 'dark' 
-                           ? 'border-gray-600 bg-zinc-800' 
-                           : 'border-gray-300 bg-zinc-100'
-                       }`}>
-                                                                                                                                                                                                                               <div className="space-y-3 lg:space-y-0 lg:grid lg:grid-cols-8 lg:gap-4">
-                              {/* Circular number icon - 1 column on lg */}
-                              <div className="lg:col-span-1 flex items-center justify-center">
+                                                 {items.map((item, index) => (
+                        <div key={index} className="mb-4">
+                                                                                                                                                                                                                               <div className="space-y-3 lg:space-y-0 lg:flex lg:gap-4 lg:items-center">
+                              {/* Circular number icon - minimal width */}
+                              <div className="flex items-center justify-center w-8 flex-shrink-0">
                                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
                                   theme === 'dark' 
-                                    ? 'bg-blue-600 text-white' 
-                                    : 'bg-blue-500 text-white'
+                                    ? 'bg-gray-700 text-gray-200' 
+                                    : 'bg-gray-600 text-white'
                                 }`}>
                                   {index + 1}
                                 </div>
                          </div>
 
-                              {/* Name - 2 columns on lg */}
-                              <div className="lg:col-span-2">
+                              {/* Name - flexible width */}
+                              <div className="flex-1">
                                 <label className={`block text-xs font-medium mb-1 ${
                                theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                                 }`}>{t("itemName")}</label>
@@ -827,8 +902,8 @@ export default function CreateServicePage() {
                              />
                            </div>
 
-                              {/* Description - 2 columns on lg */}
-                              <div className="lg:col-span-2">
+                              {/* Description - flexible width */}
+                              <div className="flex-1">
                                 <label className={`block text-xs font-medium mb-1 ${
                                theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                                 }`}>{t("itemDescription")}</label>
@@ -844,8 +919,8 @@ export default function CreateServicePage() {
                              />
                            </div>
 
-                              {/* Price - 1 column on lg */}
-                             <div>
+                              {/* Price - fixed width */}
+                             <div className="w-24 flex-shrink-0">
                                 <label className={`block text-xs font-medium mb-1 ${
                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                                }`}>{t("price")}</label>
@@ -862,8 +937,8 @@ export default function CreateServicePage() {
                                />
                              </div>
 
-                              {/* Price Type - 1 column on lg */}
-                             <div>
+                              {/* Price Type - fixed width */}
+                             <div className="w-28 flex-shrink-0">
                                 <label className={`block text-xs font-medium mb-1 ${
                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                                }`}>{t("priceType")}</label>
@@ -881,15 +956,15 @@ export default function CreateServicePage() {
                                </select>
                              </div>
 
-                              {/* Red cross button - 1 column on lg */}
-                              <div className="lg:col-span-1 flex items-center justify-center">
+                              {/* Red cross button - minimal width */}
+                              <div className="flex items-center justify-center w-8 flex-shrink-0">
                                 <button
                                   type="button"
                                   onClick={() => removeItem(index)}
-                                  className={`w-6 h-6 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition-colors ${
+                                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
                                    theme === 'dark' 
-                                      ? 'bg-red-600' 
-                                      : 'bg-red-500'
+                                      ? 'bg-gray-600 text-gray-300 hover:bg-red-600 hover:text-white' 
+                                      : 'bg-gray-400 text-gray-600 hover:bg-red-500 hover:text-white'
                                  }`}
                                 >
                                   ×
@@ -902,18 +977,14 @@ export default function CreateServicePage() {
                     )}
 
 
-                </div>
+                                 </div>
 
-                {/* Booking Section with Conditional Content */}
-                                       <div className={`border-t pt-8 mb-8 ${
-                  theme === 'dark' 
-                        ? 'border-gray-600' 
-                        : 'border-gray-300'
-                    }`}>
-                      <div className="flex justify-between items-center mb-4">
-                        <h2 className={`text-lg font-semibold ${
-                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                        }`}>Booking</h2>
+                                                                       {/* Booking Section with Conditional Content */}
+                                          <div className={`border-t-2 border-gray-300 dark:border-gray-600 pt-10 mb-10`}>
+                       <div className="flex justify-between items-center mb-6">
+                         <h2 className={`text-xl font-bold ${
+                           theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                         }`}>Booking</h2>
                         <button
                           type="button"
                           onClick={() => setAvailableBooking(!availableBooking)}
@@ -943,26 +1014,22 @@ export default function CreateServicePage() {
                         </button>
                       </div>
 
-                      {events.map((event, index) => (
-                        <div key={index} className={`border rounded-lg p-4 mb-4 shadow-sm ${
-                          theme === 'dark' 
-                            ? 'border-gray-600 bg-zinc-800' 
-                            : 'border-gray-300 bg-zinc-100'
-                        }`}>
-                                                                                                           <div className="space-y-3 lg:space-y-0 lg:grid lg:grid-cols-8 lg:gap-4">
-                              {/* Circular number icon - 1 column on lg */}
-                              <div className="lg:col-span-1 flex items-center justify-center">
+                                             {events.map((event, index) => (
+                         <div key={index} className="mb-4">
+                                                                                                           <div className="space-y-3 lg:space-y-0 lg:flex lg:gap-4 lg:items-center">
+                              {/* Circular number icon - minimal width */}
+                              <div className="flex items-center justify-center w-8 flex-shrink-0">
                                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
                                   theme === 'dark' 
-                                    ? 'bg-blue-600 text-white' 
-                                    : 'bg-blue-500 text-white'
+                                    ? 'bg-gray-700 text-gray-200' 
+                                    : 'bg-gray-600 text-white'
                                 }`}>
                                   {index + 1}
                                 </div>
                           </div>
 
-                              {/* Name - 2 columns on lg */}
-                              <div className="lg:col-span-2">
+                              {/* Name - flexible width */}
+                              <div className="flex-1">
                                 <label className={`block text-xs font-medium mb-1 ${
                                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                                 }`}>{t("eventName")}</label>
@@ -978,8 +1045,8 @@ export default function CreateServicePage() {
                                 />
                               </div>
 
-                              {/* Description - 2 columns on lg */}
-                              <div className="lg:col-span-2">
+                              {/* Description - flexible width */}
+                              <div className="flex-1">
                                 <label className={`block text-xs font-medium mb-1 ${
                                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                                 }`}>{t("eventDescription")}</label>
@@ -995,8 +1062,8 @@ export default function CreateServicePage() {
                                 />
                               </div>
 
-                              {/* Duration - 1 column on lg */}
-                                <div>
+                              {/* Duration - fixed width */}
+                                <div className="w-24 flex-shrink-0">
                                 <label className={`block text-xs font-medium mb-1 ${
                                     theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                                   }`}>{t("duration")} ({t("minutes")})</label>
@@ -1012,8 +1079,8 @@ export default function CreateServicePage() {
                                   />
                                 </div>
 
-                              {/* Buffer Time - 1 column on lg */}
-                                <div>
+                              {/* Buffer Time - fixed width */}
+                                <div className="w-24 flex-shrink-0">
                                 <label className={`block text-xs font-medium mb-1 ${
                                     theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                                   }`}>{t("bufferTime")} ({t("minutes")})</label>
@@ -1029,21 +1096,108 @@ export default function CreateServicePage() {
                                   />
                               </div>
 
-                              {/* Red cross button - 1 column on lg */}
-                              <div className="lg:col-span-1 flex items-center justify-center">
+                              {/* Red cross button - minimal width */}
+                              <div className="flex items-center justify-center w-8 flex-shrink-0">
                                 <button
                                   type="button"
                                   onClick={() => removeEvent(index)}
-                                  className={`w-6 h-6 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition-colors ${
+                                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
                                     theme === 'dark' 
-                                      ? 'bg-red-600' 
-                                      : 'bg-red-500'
+                                      ? 'bg-gray-600 text-gray-300 hover:bg-red-600 hover:text-white' 
+                                      : 'bg-gray-400 text-gray-600 hover:bg-red-500 hover:text-white'
                                   }`}
                                 >
                                   ×
                                 </button>
                             </div>
                           </div>
+
+                                                     {/* Availability Section */}
+                           <div className="mt-6">
+                             <h4 className={`text-sm font-semibold mb-3 ${
+                               theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
+                             }`}>Availability</h4>
+                                                           <div className="space-y-2">
+                               {[
+                                 { key: 'monday', label: 'Monday' },
+                                 { key: 'tuesday', label: 'Tuesday' },
+                                 { key: 'wednesday', label: 'Wednesday' },
+                                 { key: 'thursday', label: 'Thursday' },
+                                 { key: 'friday', label: 'Friday' },
+                                 { key: 'saturday', label: 'Saturday' },
+                                 { key: 'sunday', label: 'Sunday' }
+                               ].map((day) => (
+                                                                   <div key={day.key} className={`p-2 rounded border ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-800' 
+                                      : 'border-gray-200 bg-gray-50'
+                                  }`}>
+                                    <div className="flex items-center gap-3">
+                                      <span className={`text-sm font-medium w-20 ${
+                                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                      }`}>{day.label}</span>
+                                      
+                                      {/* Toggle Switch */}
+                                      <button
+                                        type="button"
+                                        onClick={() => updateEventAvailability(index, day.key, 'enabled', !event.availability[day.key as keyof typeof event.availability].enabled)}
+                                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                                          event.availability[day.key as keyof typeof event.availability].enabled
+                                            ? 'bg-blue-600'
+                                            : 'bg-gray-300'
+                                        }`}
+                                      >
+                                        <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                                          event.availability[day.key as keyof typeof event.availability].enabled
+                                            ? 'translate-x-5'
+                                            : 'translate-x-1'
+                                        }`} />
+                                      </button>
+                                      
+                                      {/* Time Fields */}
+                                      <div className="flex items-center gap-2 ml-auto">
+                                        <div className={`flex items-center gap-1 px-2 py-1 rounded border ${
+                                          theme === 'dark' 
+                                            ? 'border-gray-500 bg-zinc-700' 
+                                            : 'border-gray-300 bg-white'
+                                        }`}>
+                                          <label className={`text-xs text-gray-500`}>Start</label>
+                                          <input
+                                            type="time"
+                                            value={event.availability[day.key as keyof typeof event.availability].start}
+                                            onChange={(e) => updateEventAvailability(index, day.key, 'start', e.target.value)}
+                                            disabled={!event.availability[day.key as keyof typeof event.availability].enabled}
+                                            className={`w-16 px-1 py-0.5 text-xs border-0 bg-transparent focus:ring-0 focus:outline-none ${
+                                              theme === 'dark' 
+                                                ? 'text-gray-100' 
+                                                : 'text-gray-900'
+                                            } ${!event.availability[day.key as keyof typeof event.availability].enabled ? 'opacity-50' : ''}`}
+                                          />
+                                        </div>
+                                        <div className={`flex items-center gap-1 px-2 py-1 rounded border ${
+                                          theme === 'dark' 
+                                            ? 'border-gray-500 bg-zinc-700' 
+                                            : 'border-gray-300 bg-white'
+                                        }`}>
+                                          <label className={`text-xs text-gray-500`}>End</label>
+                                          <input
+                                            type="time"
+                                            value={event.availability[day.key as keyof typeof event.availability].end}
+                                            onChange={(e) => updateEventAvailability(index, day.key, 'end', e.target.value)}
+                                            disabled={!event.availability[day.key as keyof typeof event.availability].enabled}
+                                            className={`w-16 px-1 py-0.5 text-xs border-0 bg-transparent focus:ring-0 focus:outline-none ${
+                                              theme === 'dark' 
+                                                ? 'text-gray-100' 
+                                                : 'text-gray-900'
+                                            } ${!event.availability[day.key as keyof typeof event.availability].enabled ? 'opacity-50' : ''}`}
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                               ))}
+                             </div>
+                           </div>
                         </div>
                       ))}
                     </div>
@@ -1051,22 +1205,18 @@ export default function CreateServicePage() {
                 </div>
               </div>
             </div>
-          </div>
+          
 
 
 
 
 
-          {/* Requirements Section */}
-            <div className={`border-t pt-8 mb-8 ${
-              theme === 'dark' 
-                ? 'border-gray-600' 
-                : 'border-gray-300'
-          }`}>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className={`text-lg font-semibold ${
-                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-              }`}>{t("requirements")}</h2>
+                                                                                       {/* Requirements Section */}
+               <div className={`border-t-2 border-gray-300 dark:border-gray-600 pt-10 mb-10`}>
+             <div className="flex justify-between items-center mb-6">
+               <h2 className={`text-xl font-bold ${
+                 theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+               }`}>{t("requirements")}</h2>
               <button
                 type="button"
                 onClick={addRequirement}
@@ -1076,27 +1226,23 @@ export default function CreateServicePage() {
               </button>
             </div>
 
-            {requirements.map((requirement, index) => (
-              <div key={index} className={`border rounded-lg p-4 mb-4 shadow-sm ${
-                theme === 'dark' 
-                  ? 'border-gray-600 bg-zinc-800' 
-                  : 'border-gray-300 bg-zinc-100'
-              }`}>
-                <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-8 lg:gap-4">
-                  {/* Circular number icon - 1 column on lg */}
-                  <div className="lg:col-span-1 flex items-center justify-center">
+                         {requirements.map((requirement, index) => (
+               <div key={index} className="mb-4">
+                <div className="space-y-4 lg:space-y-0 lg:flex lg:gap-4 lg:items-center">
+                  {/* Circular number icon - minimal width */}
+                  <div className="flex items-center justify-center w-8 flex-shrink-0">
                     <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
                       theme === 'dark' 
-                        ? 'bg-blue-600 text-white' 
-                        : 'bg-blue-500 text-white'
+                        ? 'bg-gray-700 text-gray-200' 
+                        : 'bg-gray-600 text-white'
                     }`}>
                       {index + 1}
                     </div>
                 </div>
 
-                  {/* Title - 2 columns on lg */}
-                  <div className="lg:col-span-2">
-                    <label className={`block text-sm font-medium mb-1 ${
+                  {/* Title - fixed width */}
+                  <div className="w-48 flex-shrink-0">
+                    <label className={`block text-xs font-medium mb-1 ${
                       theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                     }`}>{t("requirementTitle")}</label>
                     <input
@@ -1111,15 +1257,15 @@ export default function CreateServicePage() {
                     />
                   </div>
 
-                  {/* Description - 4 columns on lg */}
-                  <div className="lg:col-span-4">
-                    <label className={`block text-sm font-medium mb-1 ${
+                  {/* Description - flexible width */}
+                  <div className="flex-1">
+                    <label className={`block text-xs font-medium mb-1 ${
                       theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                     }`}>{t("requirementText")}</label>
-                    <textarea
+                    <input
+                      type="text"
                       value={requirement.requirements_text}
                       onChange={(e) => updateRequirement(index, "requirements_text", e.target.value)}
-                      rows={3}
                       className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                         theme === 'dark' 
                           ? 'border-gray-600 bg-zinc-800 text-gray-100' 
@@ -1128,15 +1274,15 @@ export default function CreateServicePage() {
                     />
                   </div>
 
-                  {/* Red cross button - 1 column on lg */}
-                  <div className="lg:col-span-1 flex items-center justify-center">
+                  {/* Red cross button - minimal width */}
+                  <div className="flex items-center justify-center w-8 flex-shrink-0">
                     <button
                       type="button"
                       onClick={() => removeRequirement(index)}
-                      className={`w-6 h-6 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition-colors ${
+                      className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
                         theme === 'dark' 
-                          ? 'bg-red-600' 
-                          : 'bg-red-500'
+                          ? 'bg-gray-600 text-gray-300 hover:bg-red-600 hover:text-white' 
+                          : 'bg-gray-400 text-gray-600 hover:bg-red-500 hover:text-white'
                       }`}
                     >
                       ×
@@ -1147,16 +1293,12 @@ export default function CreateServicePage() {
             ))}
           </div>
 
-          {/* Questions Section */}
-            <div className={`border-t pt-8 mb-8 ${
-              theme === 'dark' 
-                ? 'border-gray-600' 
-                : 'border-gray-300'
-          }`}>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className={`text-lg font-semibold ${
-                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-              }`}>{t("questions")}</h2>
+                                                                                       {/* Questions Section */}
+               <div className={`border-t-2 border-gray-300 dark:border-gray-600 pt-10 mb-10`}>
+             <div className="flex justify-between items-center mb-6">
+               <h2 className={`text-xl font-bold ${
+                 theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+               }`}>{t("questions")}</h2>
               <button
                 type="button"
                 onClick={addQuestion}
@@ -1166,80 +1308,107 @@ export default function CreateServicePage() {
               </button>
             </div>
 
-              {questions.map((question, index) => (
-                <div key={index} className={`border rounded-lg p-4 mb-4 shadow-sm ${
-                  theme === 'dark' 
-                    ? 'border-gray-600 bg-zinc-800' 
-                    : 'border-gray-300 bg-zinc-100'
-                }`}>
-                  <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-8 lg:gap-4">
-                    {/* Circular number icon - 1 column on lg */}
-                    <div className="lg:col-span-1 flex items-center justify-center">
+                             {questions.map((question, index) => (
+                 <div key={index} className="mb-4">
+                  <div className="space-y-4 lg:space-y-0 lg:flex lg:gap-4 lg:items-center">
+                    {/* Circular number icon - minimal width */}
+                    <div className="flex items-center justify-center w-8 flex-shrink-0">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
                         theme === 'dark' 
-                          ? 'bg-blue-600 text-white' 
-                          : 'bg-blue-500 text-white'
+                          ? 'bg-gray-700 text-gray-200' 
+                          : 'bg-gray-600 text-white'
                       }`}>
                         {index + 1}
                       </div>
                   </div>
 
-                    {/* Question Type - 2 columns on lg */}
-                    <div className="lg:col-span-2">
-                    <label className={`block text-sm font-medium mb-2 ${
-                      theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                    }`}>{t("questionType")}</label>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {[
-                        { value: "open", label: t("openText"), icon: "📝" },
-                        { value: "checkbox_single", label: t("singleCheckbox"), icon: "☑️" },
-                        { value: "checkbox_multi", label: t("multipleChoice"), icon: "☑️☑️" }
-                      ].map((type) => (
-                        <button
-                          key={type.value}
-                          type="button"
-                          onClick={() => updateQuestion(index, "question_type", type.value)}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                            question.question_type === type.value
-                              ? 'bg-blue-600 text-white shadow-md'
-                              : theme === 'dark'
-                                ? 'bg-zinc-700 text-gray-300 hover:bg-zinc-600 border border-gray-600'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
-                          }`}
-                        >
-                          <span>{type.icon}</span>
-                          <span>{type.label}</span>
-                        </button>
-                      ))}
-                      </div>
-                    </div>
+                                         {/* Question Type - dropdown */}
+                     <div className="w-48 flex-shrink-0">
+                     <label className={`block text-xs font-medium mb-1 ${
+                       theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                     }`}>{t("questionType")}</label>
+                     <select
+                       value={question.question_type}
+                       onChange={(e) => updateQuestion(index, "question_type", e.target.value)}
+                       className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                         theme === 'dark' 
+                           ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                           : 'border-gray-300 bg-white text-gray-900'
+                       }`}
+                     >
+                       <option value="open">📝 {t("openText")}</option>
+                       <option value="checkbox_single">☑️ {t("singleCheckbox")}</option>
+                       <option value="checkbox_multi">☑️☑️ {t("multipleChoice")}</option>
+                     </select>
+                     </div>
 
-                    {/* Question Text - 4 columns on lg */}
-                    <div className="lg:col-span-4">
-                      <label className={`block text-sm font-medium mb-1 ${
-                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                      }`}>{t("questionText")}</label>
-                      <input
-                        type="text"
-                        value={question.question_text}
-                        onChange={(e) => updateQuestion(index, "question_text", e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                          theme === 'dark' 
-                            ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                            : 'border-gray-300 bg-white text-gray-900'
-                        }`}
-                      />
-                    </div>
+                                         {/* Question Text - flexible width */}
+                     <div className="flex-1">
+                       <label className={`block text-xs font-medium mb-1 ${
+                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                       }`}>{t("questionText")}</label>
+                       <input
+                         type="text"
+                         value={question.question_text}
+                         onChange={(e) => updateQuestion(index, "question_text", e.target.value)}
+                         className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                           theme === 'dark' 
+                             ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                             : 'border-gray-300 bg-white text-gray-900'
+                         }`}
+                       />
+                     </div>
 
-                    {/* Red cross button - 1 column on lg */}
-                    <div className="lg:col-span-1 flex items-center justify-center">
+                     {/* Max Length - fixed width (only for open questions) */}
+                     {question.question_type === "open" && (
+                       <div className="w-32 flex-shrink-0">
+                         <label className={`block text-xs font-medium mb-1 ${
+                           theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                         }`}>{t("maxLength")}</label>
+                         <input
+                           type="number"
+                           value={question.max_length || ""}
+                           onChange={(e) =>
+                             updateQuestion(
+                               index,
+                               "max_length",
+                               e.target.value ? Number.parseInt(e.target.value) : undefined,
+                             )
+                           }
+                           placeholder="500"
+                           className={`w-full px-3 py-2 border rounded-lg text-sm ${
+                             theme === 'dark' 
+                               ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                               : 'border-gray-300 bg-white text-gray-900'
+                           }`}
+                         />
+                       </div>
+                     )}
+
+                     {/* Required checkbox - fixed width */}
+                     <div className="w-20 flex-shrink-0 flex items-end">
+                       <label className="flex items-center">
+                         <input
+                           type="checkbox"
+                           checked={question.is_required}
+                           onChange={(e) => updateQuestion(index, "is_required", e.target.checked)}
+                           className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                         />
+                         <span className={`ml-2 text-xs ${
+                           theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                         }`}>{t("required")}</span>
+                       </label>
+                     </div>
+
+                    {/* Red cross button - minimal width */}
+                    <div className="flex items-center justify-center w-8 flex-shrink-0">
                       <button
                         type="button"
                         onClick={() => removeQuestion(index)}
-                        className={`w-6 h-6 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition-colors ${
+                        className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
                           theme === 'dark' 
-                            ? 'bg-red-600' 
-                            : 'bg-red-500'
+                            ? 'bg-gray-600 text-gray-300 hover:bg-red-600 hover:text-white' 
+                            : 'bg-gray-400 text-gray-600 hover:bg-red-500 hover:text-white'
                         }`}
                       >
                         ×
@@ -1247,128 +1416,132 @@ export default function CreateServicePage() {
                     </div>
                   </div>
 
-                  {/* Conditional fields based on question type */}
-                  {(question.question_type === "checkbox_single" || question.question_type === "checkbox_multi") && (
-                    <div className="mb-4">
-                      <div className="flex justify-between items-center mb-2">
-                        <label className={`block text-sm font-medium ${
-                          theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                        }`}>{t("options")}</label>
-                        <button
-                          type="button"
-                          onClick={() => addQuestionOption(index)}
-                          className={`text-sm px-2 py-1 rounded ${
-                            theme === 'dark' 
-                              ? 'text-blue-400 hover:text-blue-300 hover:bg-zinc-700' 
-                              : 'text-blue-600 hover:text-blue-700 hover:bg-blue-50'
-                          }`}
-                        >
-                          {t("addOption")}
-                        </button>
-                      </div>
-                      {question.options?.map((option, optionIndex) => (
-                        <div key={optionIndex} className="flex gap-2 mb-2">
-                          <input
-                            type="text"
-                            value={option}
-                            onChange={(e) => updateQuestionOption(index, optionIndex, e.target.value)}
-                            placeholder={`${t("option")} ${optionIndex + 1}`}
-                            className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                              theme === 'dark' 
-                                ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                : 'border-gray-300 bg-white text-gray-900'
-                            }`}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeQuestionOption(index, optionIndex)}
-                            className={`px-3 py-2 rounded-lg ${
-                              theme === 'dark' 
-                                ? 'text-red-400 hover:text-red-300 hover:bg-zinc-700' 
-                                : 'text-red-600 hover:text-red-700 hover:bg-red-50'
-                            }`}
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
-                      {(!question.options || question.options.length === 0) && (
-                        <p className={`text-sm italic ${
-                          theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                        }`}>
-                          {t("addOptionsToContinue")}
-                        </p>
-                      )}
-                    </div>
-                  )}
-
-                  {question.question_type === "open" && (
-                    <div className="mb-4">
-                  <div className="flex items-center gap-4">
-                        <label className={`text-sm font-medium ${
-                          theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                        }`}>{t("maxLength")}:</label>
-                        <input
-                          type="number"
-                          value={question.max_length || ""}
-                          onChange={(e) =>
-                            updateQuestion(
-                              index,
-                              "max_length",
-                              e.target.value ? Number.parseInt(e.target.value) : undefined,
-                            )
-                          }
-                          placeholder="500"
-                          className={`w-24 px-3 py-2 border rounded-lg text-sm ${
-                            theme === 'dark' 
-                              ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                              : 'border-gray-300 bg-white text-gray-900'
-                          }`}
-                        />
-                        <span className={`text-xs ${
-                          theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                        }`}>
-                          {t("characters")}
-                        </span>
-                      </div>
-                      </div>
-                    )}
-
-                  
-
-                  <div className="flex items-center gap-4">
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={question.is_required}
-                        onChange={(e) => updateQuestion(index, "is_required", e.target.checked)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      />
-                      <span className={`ml-2 text-sm ${
-                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                      }`}>{t("required")}</span>
-                    </label>
-                  </div>
+                                     {/* Conditional fields based on question type */}
+                   {(question.question_type === "checkbox_single" || question.question_type === "checkbox_multi") && (
+                     <div className="mt-4">
+                       <div className="flex justify-between items-center mb-2">
+                         <label className={`block text-sm font-medium ${
+                           theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                         }`}>{t("options")}</label>
+                         <button
+                           type="button"
+                           onClick={() => addQuestionOption(index)}
+                           className={`text-sm px-2 py-1 rounded ${
+                             theme === 'dark' 
+                               ? 'text-blue-400 hover:text-blue-300 hover:bg-zinc-700' 
+                               : 'text-blue-600 hover:text-blue-700 hover:bg-blue-50'
+                           }`}
+                         >
+                           {t("addOption")}
+                         </button>
+                       </div>
+                       {question.options?.map((option, optionIndex) => (
+                         <div key={optionIndex} className="flex gap-2 mb-2">
+                           <input
+                             type="text"
+                             value={option}
+                             onChange={(e) => updateQuestionOption(index, optionIndex, e.target.value)}
+                             placeholder={`${t("option")} ${optionIndex + 1}`}
+                             className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                               theme === 'dark' 
+                                 ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                                 : 'border-gray-300 bg-white text-gray-900'
+                             }`}
+                           />
+                           <button
+                             type="button"
+                             onClick={() => removeQuestionOption(index, optionIndex)}
+                             className={`px-3 py-2 rounded-lg ${
+                               theme === 'dark' 
+                                 ? 'text-red-400 hover:text-red-300 hover:bg-zinc-700' 
+                                 : 'text-red-600 hover:text-red-700 hover:bg-red-50'
+                             }`}
+                           >
+                             ×
+                           </button>
+                         </div>
+                       ))}
+                       {(!question.options || question.options.length === 0) && (
+                         <p className={`text-sm italic ${
+                           theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                         }`}>
+                           {t("addOptionsToContinue")}
+                         </p>
+                       )}
+                     </div>
+                   )}
                 </div>
               ))}
             </div>
 
-                     {/* Newsletter Consent Section */}
-           <div className="mt-8 pb-4 lg:pb-6">
-             <div className="md:col-span-2">
-               <label className={`block text-sm font-medium mb-3 ${
-                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-               }`}>Additional Options</label>
-               
-               <SelectableCard
-                 title={t("requireConsentNewsletter")}
-                 description={t("requireConsentNewsletterDescription")}
-                 selected={requireConsentNewsletter}
-                 onSelect={setRequireConsentNewsletter}
-                 theme={theme === 'dark' ? 'dark' : 'light'}
-               />
-             </div>
-           </div>
+                                 {/* Additional Options Section */}
+            <div className="mt-8 pb-4 lg:pb-6">
+              <div className="md:col-span-2">
+                <label className={`block text-sm font-medium mb-3 ${
+                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                }`}>Additional Options</label>
+                
+                <div className="space-y-4">
+                  {/* Newsletter Consent Card */}
+                  <SelectableCard
+                    title={t("requireConsentNewsletter")}
+                    description={t("requireConsentNewsletterDescription")}
+                    selected={requireConsentNewsletter}
+                    onSelect={setRequireConsentNewsletter}
+                    theme={theme === 'dark' ? 'dark' : 'light'}
+                  />
+                  
+                  {/* Conditional Newsletter Consent Text */}
+                  {requireConsentNewsletter && (
+                    <div className="ml-6">
+                      <label className={`block text-sm font-medium mb-2 ${
+                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Newsletter Consent Text</label>
+                      <input
+                        type="text"
+                        value={newsletterConsentText}
+                        onChange={(e) => setNewsletterConsentText(e.target.value)}
+                        placeholder="I agree to receive newsletter updates..."
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                          theme === 'dark' 
+                            ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                            : 'border-gray-300 bg-white text-gray-900'
+                        }`}
+                      />
+                    </div>
+                  )}
+                  
+                  {/* Phone Number Card */}
+                  <SelectableCard
+                    title="Require Phone Number"
+                    description="Require customers to provide their phone number when booking or requesting a quotation"
+                    selected={requirePhoneNumber}
+                    onSelect={setRequirePhoneNumber}
+                    theme={theme === 'dark' ? 'dark' : 'light'}
+                  />
+                  
+                  {/* Conditional Phone Number Text */}
+                  {requirePhoneNumber && (
+                    <div className="ml-6">
+                      <label className={`block text-sm font-medium mb-2 ${
+                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Phone Number Field Text</label>
+                      <input
+                        type="text"
+                        value={phoneNumberText}
+                        onChange={(e) => setPhoneNumberText(e.target.value)}
+                        placeholder="Please provide your phone number..."
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                          theme === 'dark' 
+                            ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                            : 'border-gray-300 bg-white text-gray-900'
+                        }`}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
 
            {/* Submit Button */}
            <div className="mt-8 flex justify-end gap-2 lg:gap-4">

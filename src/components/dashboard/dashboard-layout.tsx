@@ -15,6 +15,10 @@ import LocaleSelectModal from "@/components/ui/LocaleSelectModal"
 import { useLocaleSwitcher } from "@/hooks/useLocaleSwitcher"
 import { useTheme } from "@/contexts/ThemeContext"
 import { GlobeAltIcon } from "@heroicons/react/24/outline"
+import CacheBusterWrapper from "./CacheBusterWrapper"
+import { useBusinessSwitchTracker } from "@/hooks/useBusinessSwitchTracker"
+import NavigationInterceptor from "./NavigationInterceptor"
+import { useForceRefreshOnBusinessChange } from "@/hooks/useForceRefreshOnBusinessChange"
 
 import { 
   HomeIcon, 
@@ -64,6 +68,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { currentBusiness, businesses, switchBusiness, loading, userPlan, userManager, businessSwitchKey } = useBusiness()
   const { isModalOpen, setIsModalOpen, currentLocale, availableLocales, switchLocale } = useLocaleSwitcher()
   const { theme, toggleTheme } = useTheme()
+  
+  // Initialize business switch tracker
+  useBusinessSwitchTracker()
+  
+  // Force refresh on business change
+  useForceRefreshOnBusinessChange()
   
   // Domain state to avoid hydration mismatch
   const [DOMAIN, setDOMAIN] = useState("https://quevo.vercel.app")
@@ -206,11 +216,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   }
 
   return (
-    <div className={`min-h-screen lg:px-6 lg:py-4 ${
-      theme === 'dark' 
-        ? 'bg-gradient-to-t from-zinc-950 to-zinc-900' 
-        : 'bg-gradient-to-t from-zinc-300 to-zinc-100'
-    }`}>
+    <>
+      <NavigationInterceptor />
+      <div className={`min-h-screen lg:px-6 lg:py-4 ${
+        theme === 'dark' 
+          ? 'bg-gradient-to-t from-zinc-950 to-zinc-900' 
+          : 'bg-gradient-to-t from-zinc-300 to-zinc-100'
+      }`}>
       {/* Desktop Sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-80 lg:flex-col rounded-xl">
         <div className="flex grow flex-col gap-y-3 overflow-y-auto px-4 py-6">
@@ -845,7 +857,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             ? 'bg-[#1d1d21] border-gray-600 text-white' 
             : 'bg-zinc-50 border-gray-200 text-gray-900'
         }`}>
-          {children}
+          <CacheBusterWrapper>
+            {children}
+          </CacheBusterWrapper>
         </div>
       </div>
 
@@ -938,6 +952,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         </div>
       )}
     </div>
+    </>
   )
 }
 

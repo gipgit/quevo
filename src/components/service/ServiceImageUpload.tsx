@@ -108,15 +108,10 @@ export default function ServiceImageUpload({ onImageChange, currentImage, theme 
   }
 
   return (
-    <div className="space-y-4">
-      <label className={`block text-sm font-medium ${
-        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-      }`}>
-        {t("serviceImage")}
-      </label>
+    <div className="space-y-4 h-full">
       
       <div
-        className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+        className={`relative flex items-center justify-center h-full border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
           isDragOver
             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
             : theme === 'dark'
