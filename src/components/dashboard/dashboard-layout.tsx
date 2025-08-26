@@ -12,6 +12,7 @@ import AnimatedLoadingBackground from "@/components/ui/AnimatedLoadingBackground
 import SupportButton from "@/components/ui/SupportButton"
 import LocaleSwitcherButton from "@/components/ui/LocaleSwitcherButton"
 import LocaleSelectModal from "@/components/ui/LocaleSelectModal"
+import DashboardSupportModal from "@/components/modals/DashboardSupportModal"
 import { useLocaleSwitcher } from "@/hooks/useLocaleSwitcher"
 import { useTheme } from "@/contexts/ThemeContext"
 import { GlobeAltIcon } from "@heroicons/react/24/outline"
@@ -39,7 +40,8 @@ import {
   MoonIcon,
   BellIcon,
   ShareIcon,
-  UsersIcon
+  UsersIcon,
+  EnvelopeIcon
 } from "@heroicons/react/24/outline"
 
 interface DashboardLayoutProps {
@@ -62,6 +64,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const t = useTranslations("dashboard")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [showBusinessModal, setShowBusinessModal] = useState(false)
+  const [showSupportModal, setShowSupportModal] = useState(false)
   const [copied, setCopied] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
@@ -154,24 +157,18 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     { href: "/dashboard/service-boards", label: t("nav.serviceBoards") || "Bacheche Servizi", icon: ClipboardDocumentIcon },
     { href: "/dashboard/appointments", label: t("nav.appointments") || "Appuntamenti", icon: CalendarIcon },
     { href: "/dashboard/clients", label: t("nav.clients") || "Clients", icon: UsersIcon },
-    { href: "/dashboard/marketing", label: t("nav.marketing") || "Marketing", icon: ShareIcon },
+    { href: "/dashboard/marketing", label: t("nav.marketing") || "Marketing", icon: ShareIcon, comingSoon: true },
+    { href: "/dashboard/marketing-email-assistant", label: t("nav.marketingEmailAssistant") || "Email Assistant", icon: EnvelopeIcon, comingSoon: true },
   ]
 
-  const reportItems = [
-    { href: "/dashboard/reports/surveys", label: t("nav.surveyReports") || "Report Sondaggi", icon: ChartBarIcon },
-  ]
 
-  const accountItems = [
-    { href: "/dashboard/account", label: t("nav.manageAccount") || "Manage Account", icon: UserIcon },
-  ]
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" })
   }
 
   const handleSupportRequest = () => {
-    // TODO: Implement support request functionality
-    console.log("Support request clicked")
+    setShowSupportModal(true)
   }
 
   // Domain constant for public link - will be set after component mounts to avoid hydration mismatch
@@ -278,7 +275,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     }`}
                   >
                         <IconComponent className="h-5 w-5" />
-                    {item.label}
+                    <span className="flex-1">{item.label}</span>
+                    {item.comingSoon && (
+                      <span className="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                        Coming Soon
+                      </span>
+                    )}
                   </Link>
                 </li>
                   )
@@ -286,67 +288,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             </ul>
           </nav>
           
-          {/* Reports Section */}
-          <div className="mt-4">
-            <p className={`text-xs uppercase ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-            }`}>{t("nav.reports")}</p>
-            <ul className="mt-2 space-y-2">
-                {reportItems.map((item) => {
-                  const IconComponent = item.icon
-                  return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={`flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 transition-all ${
-                      pathname === item.href
-                        ? theme === 'dark' 
-                          ? "bg-zinc-700 text-gray-100 shadow-sm" 
-                          : "bg-white text-gray-900 shadow-sm"
-                        : theme === 'dark'
-                          ? "text-gray-400 hover:bg-zinc-700"
-                          : "text-gray-600 hover:bg-zinc-200"
-                    }`}
-                  >
-                        <IconComponent className="h-5 w-5" />
-                    {item.label}
-                  </Link>
-                </li>
-                  )
-                })}
-            </ul>
-          </div>
 
-          {/* Account Section */}
-          <div className="mt-4">
-            <p className={`text-xs uppercase ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-            }`}>Account</p>
-            <ul className="mt-2 space-y-2">
-                {accountItems.map((item) => {
-                  const IconComponent = item.icon
-                  return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={`flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 transition-all ${
-                      pathname === item.href
-                        ? theme === 'dark' 
-                          ? "bg-zinc-700 text-gray-100 shadow-sm" 
-                          : "bg-white text-gray-900 shadow-sm"
-                        : theme === 'dark'
-                          ? "text-gray-400 hover:bg-zinc-700"
-                          : "text-gray-600 hover:bg-zinc-200"
-                    }`}
-                  >
-                        <IconComponent className="h-5 w-5" />
-                    {item.label}
-                  </Link>
-                </li>
-                  )
-                })}
-            </ul>
-          </div>
 
           {/* Theme Toggle, Locale Switcher and Support Buttons */}
           <div className="mt-auto">
@@ -473,7 +415,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                         <IconComponent className="h-5 w-5" />
-                    {item.label}
+                    <span className="flex-1">{item.label}</span>
+                    {item.comingSoon && (
+                      <span className="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                        Coming Soon
+                      </span>
+                    )}
                   </Link>
                 </li>
                   )
@@ -481,69 +428,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             </ul>
           </nav>
           
-          {/* Reports Section */}
-          <div className="mt-4">
-            <p className={`text-xs uppercase ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-            }`}>{t("nav.reports")}</p>
-            <ul className="mt-2 space-y-2">
-                {reportItems.map((item) => {
-                  const IconComponent = item.icon
-                  return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={`flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 transition-all ${
-                      pathname === item.href
-                        ? theme === 'dark' 
-                          ? "bg-zinc-700 text-gray-100 shadow-sm" 
-                          : "bg-white text-gray-900 shadow-sm"
-                        : theme === 'dark'
-                          ? "text-gray-400 hover:bg-zinc-700"
-                          : "text-gray-600 hover:bg-zinc-200"
-                    }`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                        <IconComponent className="h-5 w-5" />
-                    {item.label}
-                  </Link>
-                </li>
-                  )
-                })}
-            </ul>
-          </div>
 
-          {/* Account Section */}
-          <div className="mt-4">
-            <p className={`text-xs uppercase ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-            }`}>Account</p>
-            <ul className="mt-2 space-y-2">
-                {accountItems.map((item) => {
-                  const IconComponent = item.icon
-                  return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={`flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 transition-all ${
-                      pathname === item.href
-                        ? theme === 'dark' 
-                          ? "bg-zinc-700 text-gray-100 shadow-sm" 
-                          : "bg-white text-gray-900 shadow-sm"
-                        : theme === 'dark'
-                          ? "text-gray-400 hover:bg-zinc-700"
-                          : "text-gray-600 hover:bg-zinc-200"
-                    }`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                        <IconComponent className="h-5 w-5" />
-                    {item.label}
-                  </Link>
-                </li>
-                  )
-                })}
-            </ul>
-          </div>
 
           {/* Theme Toggle, Locale Switcher and Support Buttons */}
           <div className="mt-auto">
@@ -771,43 +656,41 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 {/* User Plan Card */}
                 {userPlan && (
                   <div className="hidden lg:flex items-center gap-4">
-                    {/* Current Plan Pill */}
-                    <div className="flex items-center gap-2">
-                      {(() => {
-                        const planColors = getPlanColors(userPlan.plan_name);
-                        return (
-                          <span className={`inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium ${planColors.gradient} ${planColors.textColor}`}>
-                            {planColors.showStar && (
-                              <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                              </svg>
-                            )}
-                            {capitalizePlanName(userPlan.plan_name)}
-                          </span>
-                        );
-                      })()}
-                    </div>
-                    
                     {/* Plan Management Buttons */}
                     <div className="flex items-center gap-2">
                       <Link 
                         href="/dashboard/plan" 
-                        className={`px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                        className={`px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-2 ${
                           theme === 'dark'
                             ? 'bg-zinc-700 text-gray-100 hover:bg-zinc-600'
                             : 'bg-zinc-300 text-gray-700 hover:bg-zinc-500'
                         }`}
                       >
                         Manage your plan
+                        {(() => {
+                          const planColors = getPlanColors(userPlan.plan_name);
+                          return (
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${planColors.gradient} ${planColors.textColor}`}>
+                              {planColors.showStar && (
+                                <svg className="w-2 h-2 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                              )}
+                              {capitalizePlanName(userPlan.plan_name)}
+                            </span>
+                          );
+                        })()}
                       </Link>
-                      {userPlan.plan_name === 'FREE' && (
-                        <Link 
-                          href="/dashboard/plan" 
-                          className="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-gradient-to-r from-black to-yellow-600 text-white hover:from-zinc-900 hover:to-yellow-700 shadow-lg"
-                        >
-                          Upgrade Plan
-                        </Link>
-                      )}
+                      <button
+                        onClick={handleSupportRequest}
+                        className={`px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                          theme === 'dark'
+                            ? 'bg-zinc-700 text-gray-100 hover:bg-zinc-600'
+                            : 'bg-zinc-300 text-gray-700 hover:bg-zinc-500'
+                        }`}
+                      >
+                        Support
+                      </button>
                     </div>
                   </div>
                 )}
@@ -878,6 +761,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         currentLocale={currentLocale}
         availableLocales={availableLocales}
         onLocaleSelect={switchLocale}
+      />
+
+      {/* Dashboard Support Modal */}
+      <DashboardSupportModal
+        isOpen={showSupportModal}
+        onClose={() => setShowSupportModal(false)}
+        businessId={currentBusiness?.business_id || ''}
       />
 
       {/* Share Link Modal */}

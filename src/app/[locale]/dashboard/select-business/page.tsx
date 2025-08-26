@@ -42,10 +42,18 @@ export default function BusinessSelectionPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const t = useTranslations("Dashboard")
-  const { businesses, switchBusiness } = useBusiness()
-  const [loading, setLoading] = useState(true)
+  const { businesses, switchBusiness, loading: contextLoading } = useBusiness()
   const [avatarError, setAvatarError] = useState<{ [id: string]: boolean }>({})
   const [selectingBusiness, setSelectingBusiness] = useState<string | null>(null)
+
+  // Debug logging
+  console.log("SelectBusinessPage render:", {
+    sessionStatus: status,
+    contextLoading,
+    businessesCount: businesses.length,
+    businesses: businesses.map(b => ({ id: b.business_id, name: b.business_name })),
+    selectingBusiness
+  })
 
   useEffect(() => {
     if (status === "loading") return
@@ -53,33 +61,11 @@ export default function BusinessSelectionPage() {
       router.push("/signin/business")
       return
     }
+  }, [session, status, router])
 
-    // If businesses are already loaded from context, we don't need to fetch them
-    if (businesses.length > 0) {
-      setLoading(false)
-      return
-    }
-
-    // Fetch user's businesses if not available in context
-    const fetchBusinesses = async () => {
-      try {
-        const response = await fetch("/api/user/businesses")
-        if (response.ok) {
-          const data = await response.json()
-          // Note: We don't set businesses here as they should come from context
-          // This is just to ensure we have the data
-        }
-      } catch (error) {
-        console.error("Error fetching businesses:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchBusinesses()
-  }, [session, status, router, businesses.length])
-
-  if (status === "loading" || loading) {
+  // Show loading if session is loading or business context is loading
+  if (status === "loading" || contextLoading) {
+    console.log("SelectBusinessPage: Showing loading state")
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <LoadingSpinner size="lg" color="white" />
@@ -88,10 +74,26 @@ export default function BusinessSelectionPage() {
   }
 
   if (!session) {
+    console.log("SelectBusinessPage: No session, returning null")
     return null
   }
 
+  // If no businesses, show error or redirect
+  if (businesses.length === 0) {
+    console.log("SelectBusinessPage: No businesses found")
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center text-white">
+          <h2 className="text-2xl font-bold mb-4">No businesses found</h2>
+          <p>Please contact support if you believe this is an error.</p>
+        </div>
+      </div>
+    )
+  }
+
   const handleBusinessSelect = async (businessId: string) => {
+    console.log("handleBusinessSelect called with businessId:", businessId)
+    
     // Prevent multiple clicks
     if (selectingBusiness) {
       console.log("Business selection already in progress, ignoring click")
@@ -107,27 +109,15 @@ export default function BusinessSelectionPage() {
       await switchBusiness(businessId)
       console.log("switchBusiness completed successfully")
       
-      // Add a more robust fallback check with multiple retries
-      let retryCount = 0
-      const maxRetries = 3
+      // Navigate to dashboard after successful business switch
+      console.log("Navigating to dashboard...")
+      router.push("/dashboard")
       
-      const checkBusinessSwitch = () => {
-        setTimeout(() => {
-          const currentBusinessId = sessionStorage.getItem("currentBusinessId")
-          console.log(`Checking business switch - expected: ${businessId}, actual: ${currentBusinessId}`)
-          
-          if (currentBusinessId !== businessId && retryCount < maxRetries) {
-            console.warn(`Business switch may have failed, retry ${retryCount + 1}/${maxRetries}...`)
-            retryCount++
-            checkBusinessSwitch()
-          } else if (retryCount >= maxRetries) {
-            console.error("Business switch failed after multiple retries")
-            setSelectingBusiness(null)
-          }
-        }, 1000 * (retryCount + 1)) // Exponential backoff
-      }
-      
-      checkBusinessSwitch()
+      // Add a fallback navigation in case router.push doesn't work
+      setTimeout(() => {
+        console.log("Fallback navigation: Using window.location")
+        window.location.href = "/dashboard"
+      }, 2000)
       
     } catch (error) {
       console.error("Error switching business:", error)

@@ -221,6 +221,11 @@
     "select": "Select",
     "serviceItemsTitle": "Services to Include",
     "serviceItemsDescription": "Select any additional services you would like to include in your request",
+    "serviceExtrasTitle": "Service Extras",
+    "serviceExtrasDescription": "Select any additional services you'd like to include with your booking.",
+    "noExtrasAvailable": "No additional extras available for this service.",
+    "totalExtras": "Total Extras",
+    "errorFetchingServiceExtras": "Error fetching service extras.",
     "requirementsAndQuestionsTitle": "Requirements & Information",
     "requirementsAndQuestionsDescription": "Please review and confirm the requirements and provide any additional information",
     "yourDetailsDescription": "Please provide your contact information to complete the request",
@@ -235,7 +240,12 @@
     "dateTimeRequired": "Date and time selection is required for this service.",
     "priceOnRequest": "Price on request",
     "quotationAvailable": "Simulatable Quote",
-    "back": "Back"
+    "back": "Back",
+    "consentTitle": "Consent",
+    "pdpConsentText": "I consent to the processing of my personal data in accordance with the Privacy Policy",
+    "newsletterConsentText": "I consent to receive marketing communications and newsletters",
+    "pdpConsentRequired": "PDP consent is required",
+    "newsletterConsentRequired": "Newsletter consent is required"
   },
   "Promotions": {
     "loading": "Loading promotions...",
@@ -466,6 +476,7 @@
     "addOption": "Add Option",
     "option": "Option",
     "required": "Required",
+    "thisFieldIsRequired": "This field is required",
     "maxLength": "Max Length",
     "requirements": "Requirements",
     "addRequirement": "Add Requirement",
@@ -607,7 +618,29 @@
       "reports": "Reports",
       "logout": "Logout",
       "manageAccount": "Manage Account",
-      "marketing": "Marketing"
+      "marketing": "Marketing",
+      "marketingEmailAssistant": "Email Assistant"
+    },
+    "support": {
+      "title": "Support Request",
+      "category": "Category",
+      "message": "Message",
+      "messagePlaceholder": "Describe your issue or question...",
+      "email": "Email",
+      "optional": "Optional",
+      "characters": "characters",
+      "cancel": "Cancel",
+      "submit": "Submit Request",
+      "submitting": "Submitting...",
+      "success": {
+        "title": "Request Submitted",
+        "message": "Thank you! We'll get back to you soon."
+      },
+      "categories": {
+        "general": "General",
+        "technical": "Technical Issue",
+        "account": "Account Issue"
+      }
     }
   },
   "plan": {
@@ -945,8 +978,10 @@
   },
   "serviceRequests": {
     "title": "Service Requests",
+    "subtitle": "Manage and track customer service requests efficiently",
     "noServiceRequests": "No service requests yet",
     "noServiceRequestsDescription": "Service requests from customers will appear here.",
+    "createFirstServiceRequest": "Create First Service Request",
     "planInfo": "{current} of {max} service requests used",
     "upgradePlan": "Upgrade Plan",
     "unlimited": "Unlimited",
@@ -957,6 +992,7 @@
     "status": "Status",
     "date": "Date",
     "price": "Price",
+    "notSpecified": "Not specified",
     "pending": "Pending",
     "confirmed": "Confirmed",
     "cancelled": "Cancelled",
@@ -964,7 +1000,12 @@
     "rescheduled": "Rescheduled",
     "viewDetails": "View Details",
     "openBoard": "Open Board",
-    "notes": "Notes"
+    "notes": "Notes",
+    "statusPending": "Pending",
+    "statusConfirmed": "Confirmed",
+    "statusCompleted": "Completed",
+    "statusCancelled": "Cancelled",
+    "statusRescheduled": "Rescheduled"
   },
   "serviceBoards": {
     "title": "Service Boards",

@@ -67,7 +67,7 @@ const Toaster: React.FC<ToasterProps> = ({ toast, onClose }) => {
       info: "border-blue-200 bg-blue-50 shadow-blue-100"
     }
 
-    return `${baseStyles} ${visibilityStyles} ${typeStyles[toast.type]}`
+    return `${baseStyles} ${visibilityStyles} ${typeStyles[toast.type] || typeStyles.info}` // Fallback to info style if type is not recognized
   }
 
   const getIconColor = () => {
@@ -77,7 +77,7 @@ const Toaster: React.FC<ToasterProps> = ({ toast, onClose }) => {
       warning: "text-yellow-600", 
       info: "text-blue-600"
     }
-    return colors[toast.type]
+    return colors[toast.type] || "text-gray-600" // Fallback to gray if type is not recognized
   }
 
   const getProgressColor = () => {
@@ -87,7 +87,7 @@ const Toaster: React.FC<ToasterProps> = ({ toast, onClose }) => {
       warning: "stroke-yellow-500",
       info: "stroke-blue-500"
     }
-    return colors[toast.type]
+    return colors[toast.type] || "stroke-gray-500" // Fallback to gray if type is not recognized
   }
 
   return (

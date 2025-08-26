@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 
 export default function ServiceExtrasStep({
@@ -14,50 +14,113 @@ export default function ServiceExtrasStep({
     themeColorBorder
 }) {
     const t = useTranslations('ServiceRequest');
+
     const [serviceExtras, setServiceExtras] = useState([]);
-    const [selectedExtras, setSelectedExtras] = useState({});
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [selectedServiceExtras, setSelectedServiceExtras] = useState({});
+    const [totalExtrasPrice, setTotalExtrasPrice] = useState(0);
+    const [isLoadingDetails, setIsLoadingDetails] = useState(true);
+    const [fetchError, setFetchError] = useState(null);
+    const [expandedDescriptions, setExpandedDescriptions] = useState({});
 
+    // Effect to fetch service extras
     useEffect(() => {
-        fetchServiceExtras();
-    }, [selectedService]);
-
-    const fetchServiceExtras = async () => {
-        try {
-            setIsLoading(true);
-            const response = await fetch(`/api/businesses/${selectedService.business_id}/services/${selectedService.service_id}/extras`);
-            if (response.ok) {
+        const fetchServiceExtras = async () => {
+            setIsLoadingDetails(true);
+            setFetchError(null);
+            try {
+                const response = await fetch(`/api/businesses/${selectedService.business_id}/services/${selectedService.service_id}/extras`);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || t('errorFetchingServiceExtras'));
+                }
                 const data = await response.json();
-                setServiceExtras(data.extras || []);
-            } else {
-                console.error('Failed to fetch service extras');
-                setError('Failed to load service extras');
-            }
-        } catch (error) {
-            console.error('Error fetching service extras:', error);
-            setError('Error loading service extras');
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
-    const handleExtraToggle = (extraId, extra) => {
-        setSelectedExtras(prev => {
-            const newSelected = { ...prev };
-            if (newSelected[extraId]) {
-                delete newSelected[extraId];
-            } else {
-                newSelected[extraId] = extra;
+                setServiceExtras(data.extras || []);
+
+                // Initialize selectedServiceExtras: assuming all are optional and start unselected.
+                const initialSelectedExtras = {};
+                setSelectedServiceExtras(initialSelectedExtras);
+
+            } catch (err) {
+                console.error("Error fetching service extras:", err);
+                setFetchError(err.message || t('errorFetchingServiceExtras'));
+            } finally {
+                setIsLoadingDetails(false);
             }
-            return newSelected;
+        };
+
+        if (selectedService?.service_id && selectedService?.business_id) {
+            fetchServiceExtras();
+        }
+    }, [selectedService?.service_id, selectedService?.business_id, t]);
+
+    // Effect to calculate total extras price whenever selected extras change
+    useEffect(() => {
+        let currentTotalPrice = 0;
+
+        for (const serviceExtraId in selectedServiceExtras) {
+            const extra = selectedServiceExtras[serviceExtraId];
+            // Ensure extra.price_base is parsed as a float
+            currentTotalPrice += parseFloat(extra.price_base) * extra.quantity;
+        }
+        setTotalExtrasPrice(currentTotalPrice);
+    }, [selectedServiceExtras]);
+
+    // Handler for toggling service extra selection
+    const handleServiceExtraToggle = useCallback((extra) => {
+        setSelectedServiceExtras(prev => {
+            const serviceExtraId = extra.service_extra_id;
+            const isCurrentlySelected = prev[serviceExtraId] && prev[serviceExtraId].quantity > 0;
+
+            if (isCurrentlySelected) {
+                // Remove extra from selection
+                const newSelection = { ...prev };
+                delete newSelection[serviceExtraId];
+                return newSelection;
+            } else {
+                // Add extra to selection with quantity 1
+                return {
+                    ...prev,
+                    [serviceExtraId]: {
+                        quantity: 1,
+                        price_base: extra.price_base,
+                        price_type: extra.price_type,
+                        extra_name: extra.extra_name,
+                        price_unit: extra.price_unit
+                    }
+                };
+            }
         });
-    };
+    }, []);
+
+    // Handler for changing service extra quantity
+    const handleServiceExtraQuantityChange = useCallback((serviceExtraId, change) => {
+        setSelectedServiceExtras(prev => {
+            const currentExtra = prev[serviceExtraId];
+            if (!currentExtra) return prev;
+
+            const newQuantity = currentExtra.quantity + change;
+            if (newQuantity < 1) {
+                // Remove extra if quantity drops below 1
+                const newSelection = { ...prev };
+                delete newSelection[serviceExtraId];
+                return newSelection;
+            }
+
+            return {
+                ...prev,
+                [serviceExtraId]: {
+                    ...currentExtra,
+                    quantity: newQuantity
+                }
+            };
+        });
+    }, []);
 
     const handleNext = () => {
         onNext({
-            selectedExtras: selectedExtras,
-            totalExtrasPrice: Object.values(selectedExtras).reduce((total, extra) => total + (extra.price_base || 0), 0)
+            selectedServiceExtras: selectedServiceExtras,
+            totalExtrasPrice: totalExtrasPrice
         });
     };
 
@@ -65,28 +128,32 @@ export default function ServiceExtrasStep({
         onSkip();
     };
 
-    if (isLoading) {
+    if (isLoadingDetails) {
         return (
-            <div className="p-6">
-                <div className="flex items-center justify-center h-32">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: themeColorButton }}></div>
+            <div className="flex flex-col h-full">
+                <div className="flex-1 p-6">
+                    <div className="flex items-center justify-center h-32">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: themeColorButton }}></div>
+                    </div>
                 </div>
             </div>
         );
     }
 
-    if (error) {
+    if (fetchError) {
         return (
-            <div className="p-6">
-                <div className="text-center text-red-600">
-                    <p>{error}</p>
-                    <button
-                        onClick={handleSkip}
-                        className="mt-4 px-4 py-2 rounded-lg text-sm"
-                        style={{ backgroundColor: themeColorButton, color: 'white' }}
-                    >
-                        Continue without extras
-                    </button>
+            <div className="flex flex-col h-full">
+                <div className="flex-1 p-6">
+                    <div className="text-center text-red-600">
+                        <p>{fetchError}</p>
+                        <button
+                            onClick={handleSkip}
+                            className="mt-4 px-4 py-2 rounded-lg text-sm"
+                            style={{ backgroundColor: themeColorButton, color: 'white' }}
+                        >
+                            Continue without extras
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -94,59 +161,56 @@ export default function ServiceExtrasStep({
 
     if (serviceExtras.length === 0) {
         return (
-            <div className="p-6">
-                <div className="text-center">
-                    <h3 className="text-lg font-semibold mb-4" style={{ color: themeColorText }}>
-                        Service Extras
-                    </h3>
-                    <p className="text-gray-600 mb-6">No additional extras available for this service.</p>
-                    <button
-                        onClick={handleSkip}
-                        className="px-6 py-3 rounded-lg font-medium"
-                        style={{ backgroundColor: themeColorButton, color: 'white' }}
-                    >
-                        Continue
-                    </button>
+            <div className="flex flex-col h-full">
+                <div className="flex-1 p-6">
+                    <div className="text-center">
+                        <h3 className="text-lg font-semibold mb-4" style={{ color: themeColorText }}>
+                            {t('serviceExtrasTitle') || 'Service Extras'}
+                        </h3>
+                        <p className="text-gray-600 mb-6">{t('noExtrasAvailable') || 'No additional extras available for this service.'}</p>
+                        <button
+                            onClick={handleSkip}
+                            className="px-6 py-3 rounded-lg font-medium"
+                            style={{ backgroundColor: themeColorButton, color: 'white' }}
+                        >
+                            {t('continue')}
+                        </button>
+                    </div>
                 </div>
             </div>
         );
     }
-
-    const totalSelectedPrice = Object.values(selectedExtras).reduce((total, extra) => total + (extra.price_base || 0), 0);
 
     return (
         <div className="flex flex-col h-full">
             <div className="flex-1 p-6">
                 <div className="mb-6">
                     <h3 className="text-lg font-semibold mb-2" style={{ color: themeColorText }}>
-                        Service Extras
+                        {t('serviceExtrasTitle') || 'Service Extras'}
                     </h3>
                     <p className="text-gray-600 text-sm">
-                        Select any additional services you'd like to include with your booking.
+                        {t('serviceExtrasDescription') || 'Select any additional services you\'d like to include with your booking.'}
                     </p>
                 </div>
 
                 <div className="space-y-4 mb-6">
-                    {serviceExtras.map((extra) => (
-                        <div
-                            key={extra.service_extra_id}
-                            className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                                selectedExtras[extra.service_extra_id]
-                                    ? 'border-blue-500 bg-blue-50'
-                                    : 'border-gray-200 hover:border-gray-300'
-                            }`}
-                            style={{ backgroundColor: selectedExtras[extra.service_extra_id] ? 'rgba(59, 130, 246, 0.05)' : themeColorBackgroundCard }}
-                            onClick={() => handleExtraToggle(extra.service_extra_id, extra)}
-                        >
-                            <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-3">
-                                        <input
-                                            type="checkbox"
-                                            checked={!!selectedExtras[extra.service_extra_id]}
-                                            onChange={() => handleExtraToggle(extra.service_extra_id, extra)}
-                                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                                        />
+                    {serviceExtras.map((extra) => {
+                        const isSelected = selectedServiceExtras[extra.service_extra_id] && selectedServiceExtras[extra.service_extra_id].quantity > 0;
+                        const selectedExtra = selectedServiceExtras[extra.service_extra_id];
+                        
+                        return (
+                            <div
+                                key={extra.service_extra_id}
+                                className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                                    isSelected
+                                        ? 'border-l-4'
+                                        : 'border-l'
+                                }`}
+                                style={isSelected ? { backgroundColor: themeColorBackgroundCard, color: themeColorText, borderColor: themeColorButton } : { backgroundColor: themeColorBackgroundCard, color: themeColorText, borderColor: themeColorBorder }}
+                                onClick={() => handleServiceExtraToggle(extra)}
+                            >
+                                <div className="flex items-start justify-between">
+                                    <div className="flex-1">
                                         <div>
                                             <h4 className="font-medium" style={{ color: themeColorText }}>
                                                 {extra.extra_name}
@@ -158,30 +222,58 @@ export default function ServiceExtrasStep({
                                             )}
                                         </div>
                                     </div>
-                                </div>
-                                <div className="text-right">
-                                    <span className="font-semibold" style={{ color: themeColorText }}>
-                                        €{extra.price_base?.toFixed(2) || '0.00'}
-                                    </span>
-                                    {extra.price_unit && extra.price_type !== 'fixed' && (
-                                        <span className="text-xs text-gray-500 block">
-                                            per {extra.price_unit}
+                                    <div className="text-right">
+                                        <span className="font-semibold" style={{ color: themeColorText }}>
+                                            {isSelected 
+                                                ? `€${(parseFloat(extra.price_base) * selectedExtra.quantity).toFixed(2)}`
+                                                : `€${parseFloat(extra.price_base).toFixed(2)}`
+                                            }
                                         </span>
-                                    )}
+                                        {extra.price_unit && extra.price_type === 'per_unit' && (
+                                            <span className="text-xs text-gray-500 block">
+                                                per {extra.price_unit}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
+                                
+                                {isSelected && extra.price_type === 'per_unit' && (
+                                    <div className="flex items-center justify-center mt-3 space-x-2">
+                                        <button
+                                            type="button"
+                                            onClick={(e) => { e.stopPropagation(); handleServiceExtraQuantityChange(extra.service_extra_id, -1); }}
+                                            className="bg-white px-2 py-1 rounded-full text-sm font-bold shadow-sm"
+                                            style={{ color: themeColorButton, border: `1px solid ${themeColorButton}` }}
+                                        >
+                                            -
+                                        </button>
+                                        <span className="font-bold text-center text-sm">
+                                            {selectedExtra.quantity}
+                                            {extra.price_unit ? ` ${extra.price_unit}` : ''}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={(e) => { e.stopPropagation(); handleServiceExtraQuantityChange(extra.service_extra_id, 1); }}
+                                            className="bg-white px-2 py-1 rounded-full text-sm font-bold shadow-sm"
+                                            style={{ color: themeColorButton, border: `1px solid ${themeColorButton}` }}
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+                                )}
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
-                {totalSelectedPrice > 0 && (
+                {totalExtrasPrice > 0 && (
                     <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: themeColorBackgroundCard, borderColor: themeColorBorder }}>
                         <div className="flex justify-between items-center">
                             <span className="font-medium" style={{ color: themeColorText }}>
-                                Total Extras:
+                                {t('totalExtras') || 'Total Extras'}:
                             </span>
                             <span className="font-semibold text-lg" style={{ color: themeColorText }}>
-                                €{totalSelectedPrice.toFixed(2)}
+                                €{totalExtrasPrice.toFixed(2)}
                             </span>
                         </div>
                     </div>

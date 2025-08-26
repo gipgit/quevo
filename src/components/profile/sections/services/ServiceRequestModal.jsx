@@ -78,6 +78,9 @@ export default function ServiceRequestModal({
     const [checkboxResponses, setCheckboxResponses] = useState({});
     const [customerDetails, setCustomerDetails] = useState(null);
 
+    // Add state for enriched service details
+    const [enrichedServiceDetails, setEnrichedServiceDetails] = useState(null);
+
     const [serviceRequestStatusMessage, setServiceRequestStatusMessage] = useState(null);
     const [showStatusMessage, setShowStatusMessage] = useState(false);
     const [statusMessageType, setStatusMessageType] = useState('success');
@@ -106,6 +109,30 @@ export default function ServiceRequestModal({
         }
     }, [business.business_id]);
 
+    // Function to fetch enriched service details
+    const fetchEnrichedServiceDetails = useCallback(async (service) => {
+        try {
+            const response = await fetch(`/api/businesses/${service.business_id}/services/${service.service_id}/details`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch service details');
+            }
+            const data = await response.json();
+            
+            // Merge the original service data with the enriched details
+            const enrichedService = {
+                ...service,
+                ...data.service // This includes consent fields and other details
+            };
+            
+            console.log('Enriched service details:', enrichedService);
+            setEnrichedServiceDetails(enrichedService);
+            return enrichedService;
+        } catch (error) {
+            console.error('Error fetching enriched service details:', error);
+            return service; // Fallback to original service data
+        }
+    }, []);
+
     // Function to determine the correct initial step based on service configuration
     const determineInitialStep = useCallback(async (service) => {
         // Always start with service overview (step 1)
@@ -121,27 +148,28 @@ export default function ServiceRequestModal({
             }
             const data = await response.json();
             
-            const hasServiceItems = (data.serviceItems || []).length > 0;
+            // Use the has_items and has_extras fields from the service data
+            const hasServiceItems = data.service?.has_items || false;
+            const hasExtras = data.service?.has_extras || false;
             const hasRequirements = (data.requirements || []).length > 0;
             const hasQuestions = (data.questions || []).length > 0;
             
-            // Check for service extras
-            const extrasResponse = await fetch(`/api/businesses/${service.business_id}/services/${service.service_id}/extras`);
-            const hasExtras = extrasResponse.ok && (await extrasResponse.json()).extras?.length > 0;
             setHasServiceExtras(hasExtras);
             
-            if (hasExtras) {
-                return 5; // Service extras step
-            } else if (hasServiceItems) {
-                return 5; // Service items step (skip extras)
+
+            
+            if (hasServiceItems) {
+                return 2; // Service items step
+            } else if (hasExtras) {
+                return 3; // Service extras step (skip items)
             } else if (hasRequirements || hasQuestions) {
-                return 6; // Requirements step (skip extras and items)
+                return 4; // Requirements step (skip items and extras)
             } else {
-                return 7; // Customer details step (skip extras, items, and requirements)
+                return 5; // Event selection step (skip items, extras, and requirements)
             }
         } catch (error) {
             console.error('Error checking service details:', error);
-            return 5; // Default to service items step (skip extras)
+            return 2; // Default to service items step
         }
     }, []);
 
@@ -153,6 +181,65 @@ export default function ServiceRequestModal({
     }, [determineInitialStep]);
 
     const handleServiceOverviewNext = useCallback(async () => {
+        // Always go to the next step based on service configuration
+        const nextStep = await checkServiceItemsAndRequirements(selectedService);
+        setStep(nextStep);
+    }, [selectedService, checkServiceItemsAndRequirements]);
+
+    const handleEventSelect = useCallback((event) => {
+        setSelectedEvent(event);
+        // Update totalOccupancyDuration based on the selected event's duration and buffer only
+        const eventDuration = event.duration_minutes || 0;
+        const eventBuffer = event.buffer_minutes || 0;
+        setTotalOccupancyDuration(eventDuration + eventBuffer);
+        setStep(6); // Go to date time selection with the selected event
+    }, []);
+
+    const handleDateTimeSelect = useCallback(async ({ dateTimes }) => {
+        // Store the simplified format
+        setSelectedDateTime({ 
+            dateTimes: dateTimes || [] // Array of ISO 8601 strings
+        });
+        setStep(7); // Go to customer details step
+    }, []);
+
+    // New handlers for the 3-step form
+    const handleServiceExtrasNext = useCallback(({ selectedServiceExtras: extras, totalExtrasPrice: price }) => {
+        setSelectedServiceExtras(extras);
+        setTotalExtrasPrice(price);
+        setStep(4); // Go to requirements step
+    }, []);
+
+    const handleServiceExtrasSkip = useCallback(() => {
+        setStep(4); // Skip to requirements step
+    }, []);
+
+    const handleServiceItemsNext = useCallback(async ({ selectedServiceItems: items, totalQuotationPrice: price }) => {
+        setSelectedServiceItems(items);
+        setTotalQuotationPrice(price);
+        
+        // Check if service has extras to determine next step
+        if (enrichedServiceDetails?.has_extras) {
+            setStep(3); // Go to service extras step
+        } else {
+            setStep(4); // Skip to requirements step
+        }
+    }, [enrichedServiceDetails]);
+
+    const handleServiceItemsSkip = useCallback(async () => {
+        // Check if service has extras to determine next step
+        if (enrichedServiceDetails?.has_extras) {
+            setStep(3); // Skip to service extras step
+        } else {
+            setStep(4); // Skip to requirements step
+        }
+    }, [enrichedServiceDetails]);
+
+    const handleRequirementsNext = useCallback(async ({ confirmedRequirements: reqs, questionResponses: qResps, checkboxResponses: cResps }) => {
+        setConfirmedRequirements(reqs);
+        setQuestionResponses(qResps);
+        setCheckboxResponses(cResps);
+        
         // Check if service has available_booking to determine next step
         if (selectedService.available_booking) {
             const result = await fetchServiceEvents(selectedService.service_id);
@@ -167,9 +254,8 @@ export default function ServiceRequestModal({
             setServiceEvents(events);
             
             if (events.length === 0) {
-                // No events available, check if we can skip to requirements
-                const nextStep = await checkServiceItemsAndRequirements(selectedService);
-                setStep(nextStep);
+                // No events available, go directly to customer details
+                setStep(7);
             } else if (events.length === 1) {
                 // One event found, set it as selected and go to date time selection
                 const singleEvent = events[0];
@@ -177,59 +263,16 @@ export default function ServiceRequestModal({
                 const eventDuration = singleEvent.duration_minutes || 0;
                 const eventBuffer = singleEvent.buffer_minutes || 0;
                 setTotalOccupancyDuration(eventDuration + eventBuffer);
-                setStep(3); // Date time selection
+                setStep(6); // Date time selection
             } else {
                 // Multiple events found, go to event selection step
-                setStep(2); // Event selection
+                setStep(5); // Event selection
             }
         } else {
-            // No date selection required, check if we can skip to requirements
-            const nextStep = await checkServiceItemsAndRequirements(selectedService);
-            setStep(nextStep);
+            // No date selection required, go directly to customer details
+            setStep(7);
         }
-    }, [selectedService, fetchServiceEvents, checkServiceItemsAndRequirements, t]);
-
-    const handleEventSelect = useCallback((event) => {
-        setSelectedEvent(event);
-        // Update totalOccupancyDuration based on the selected event's duration and buffer only
-        const eventDuration = event.duration_minutes || 0;
-        const eventBuffer = event.buffer_minutes || 0;
-        setTotalOccupancyDuration(eventDuration + eventBuffer);
-        setStep(3); // Go to date time selection with the selected event
-    }, []);
-
-    const handleDateTimeSelect = useCallback(({ date, time }) => {
-        setSelectedDateTime({ date, time });
-        setStep(5); // Always go to step 5, which will show extras or items based on hasServiceExtras state
-    }, []);
-
-    // New handlers for the 3-step form
-    const handleServiceExtrasNext = useCallback(({ selectedExtras, totalExtrasPrice: price }) => {
-        setSelectedServiceExtras(selectedExtras);
-        setTotalExtrasPrice(price);
-        setStep(6); // Go to next step (items or requirements)
-    }, []);
-
-    const handleServiceExtrasSkip = useCallback(() => {
-        setStep(6); // Skip to next step (items or requirements)
-    }, []);
-
-    const handleServiceItemsNext = useCallback(({ selectedServiceItems: items, totalQuotationPrice: price }) => {
-        setSelectedServiceItems(items);
-        setTotalQuotationPrice(price);
-        setStep(6); // Go to requirements step
-    }, []);
-
-    const handleServiceItemsSkip = useCallback(() => {
-        setStep(6); // Skip to requirements step
-    }, []);
-
-    const handleRequirementsNext = useCallback(({ confirmedRequirements: reqs, questionResponses: qResps, checkboxResponses: cResps }) => {
-        setConfirmedRequirements(reqs);
-        setQuestionResponses(qResps);
-        setCheckboxResponses(cResps);
-        setStep(7); // Go to customer details step
-    }, []);
+    }, [selectedService, fetchServiceEvents, t]);
 
 
 
@@ -267,8 +310,8 @@ export default function ServiceRequestModal({
                 customerEmail: customerDetails.customerEmail,
                 customerPhone: customerDetails.customerPhone,
                 customerNotes: customerDetails.customerNotes,
-                requestDate: selectedDateTime ? format(selectedDateTime.date, 'yyyy-MM-dd') : null,
-                requestTimeStart: selectedDateTime ? selectedDateTime.time : null,
+                // Use simplified datetime format
+                requestDateTimes: selectedDateTime?.dateTimes || [],
                 totalPrice: totalQuotationPrice + totalExtrasPrice,
                 customerUserId: customerUserId,
                 eventId: selectedEvent ? selectedEvent.event_id : null,
@@ -346,38 +389,36 @@ export default function ServiceRequestModal({
             // Going back from service overview - close modal
             onClose();
         } else if (step === 2) {
-            // Going back from event selection to service overview
+            // Going back from service items to service overview
             setStep(1);
-            setSelectedEvent(null);
-            setServiceEvents([]);
         } else if (step === 3) {
-            // Going back from date time selection to event selection (if multiple events) or service overview
-            if (serviceEvents.length > 1) {
+            // Going back from service extras to service items
                 setStep(2);
-                setSelectedEvent(null);
+        } else if (step === 4) {
+            // Going back from requirements to service extras (if available) or service items
+            if (hasServiceExtras) {
+                setStep(3);
             } else {
-                setStep(1);
-                setSelectedEvent(null);
-                setServiceEvents([]);
+                setStep(2);
             }
         } else if (step === 5) {
-            // Going back from service extras/items to date time selection (if available_booking) or service overview
-            if (selectedService && selectedService.available_booking) {
-                setStep(3);
-                setSelectedDateTime(null);
+            // Going back from event selection to requirements
+            setStep(4);
+        } else if (step === 6) {
+            // Going back from date time selection to event selection (if multiple events) or requirements
+            if (serviceEvents.length > 1) {
+                setStep(5);
+                setSelectedEvent(null);
             } else {
-                setStep(1);
+                setStep(4);
                 setSelectedEvent(null);
                 setServiceEvents([]);
             }
-        } else if (step === 6) {
-            // Going back from requirements to service items/extras
-            setStep(5); // Back to step 5 (extras or items based on hasServiceExtras state)
         } else if (step === 7) {
-            // Going back from customer details to requirements
+            // Going back from customer details to date time selection
             setStep(6);
         }
-    }, [step, serviceEvents.length, selectedService, onClose]);
+    }, [step, serviceEvents.length, hasServiceExtras, onClose]);
 
     const handleCloseModal = useCallback(() => {
         onClose();
@@ -397,6 +438,7 @@ export default function ServiceRequestModal({
         setQuestionResponses({});
         setCheckboxResponses({});
         setCustomerDetails(null);
+        setEnrichedServiceDetails(null);
         
         setShowErrorModal(false);
         setErrorMessage('');
@@ -423,11 +465,15 @@ export default function ServiceRequestModal({
              setQuestionResponses({});
              setCheckboxResponses({});
              setCustomerDetails(null);
+              setEnrichedServiceDetails(null);
              
              setShowErrorModal(false);
              setErrorMessage('');
+              
+              // Fetch enriched service details
+              fetchEnrichedServiceDetails(selectedService);
          }
-     }, [isOpen, selectedService]);
+      }, [isOpen, selectedService, fetchEnrichedServiceDetails]);
 
     if (!isOpen || !selectedService) {
         return null;
@@ -480,8 +526,49 @@ export default function ServiceRequestModal({
                              />
                          )}
 
+                                                   {/* Service Items Step */}
+                          {step === 2 && selectedService && (
+                              <ServiceItemsStep
+                                  selectedService={enrichedServiceDetails || selectedService}
+                                  onNext={handleServiceItemsNext}
+                                  onSkip={handleServiceItemsSkip}
+                                  onBack={handleBack}
+                                  themeColorText={themeColorText}
+                                  themeColorBackgroundCard={themeColorBackgroundCard}
+                                  themeColorButton={themeColorButton}
+                                  themeColorBorder={themeColorBorder}
+                              />
+                          )}
+
+                          {/* Service Extras Step */}
+                          {step === 3 && selectedService && (
+                              <ServiceExtrasStep
+                                  selectedService={enrichedServiceDetails || selectedService}
+                                  onNext={handleServiceExtrasNext}
+                                  onSkip={handleServiceExtrasSkip}
+                                  onBack={handleBack}
+                                  themeColorText={themeColorText}
+                                  themeColorBackgroundCard={themeColorBackgroundCard}
+                                  themeColorButton={themeColorButton}
+                                  themeColorBorder={themeColorBorder}
+                              />
+                          )}
+
+                          {/* Requirements Step */}
+                          {step === 4 && selectedService && (
+                              <RequirementsStep
+                                  selectedService={enrichedServiceDetails || selectedService}
+                                  onNext={handleRequirementsNext}
+                                 onBack={handleBack}
+                                 themeColorText={themeColorText}
+                                 themeColorBackgroundCard={themeColorBackgroundCard}
+                                 themeColorButton={themeColorButton}
+                                 themeColorBorder={themeColorBorder}
+                             />
+                         )}
+
                          {/* Event Selection Step */}
-                         {step === 2 && selectedService && !isLoadingEvents && serviceEvents.length > 1 && (
+                          {step === 5 && selectedService && !isLoadingEvents && serviceEvents.length > 1 && (
                             <EventSelectionStep
                                 serviceEvents={serviceEvents}
                                 selectedEvent={selectedEvent}
@@ -494,7 +581,7 @@ export default function ServiceRequestModal({
                         )}
 
                                                  {/* Date Time Selection Step */}
-                         {step === 3 && selectedService && selectedService.available_booking && selectedEvent && (
+                          {step === 6 && selectedService && selectedService.available_booking && selectedEvent && (
                              <DateTimeSelection
                                  businessId={business.business_id}
                                  totalOccupancyDuration={totalOccupancyDuration}
@@ -507,54 +594,14 @@ export default function ServiceRequestModal({
                                  themeColorBorder={themeColorBorder} 
                                  locale={locale}
                                  onBack={serviceEvents.length > 1 ? handleBack : undefined}
-                                                                   onSkip={() => setStep(5)}
-                             />
-                         )}
-
-                                                 {/* Service Extras Step */}
-                         {step === 5 && selectedService && hasServiceExtras && (
-                             <ServiceExtrasStep
-                                 selectedService={selectedService}
-                                 onNext={handleServiceExtrasNext}
-                                 onSkip={handleServiceExtrasSkip}
-                                 onBack={handleBack}
-                                 themeColorText={themeColorText}
-                                 themeColorBackgroundCard={themeColorBackgroundCard}
-                                 themeColorButton={themeColorButton}
-                                 themeColorBorder={themeColorBorder}
-                             />
-                         )}
-
-                         {/* Service Items Step */}
-                         {step === 5 && selectedService && !hasServiceExtras && (
-                             <ServiceItemsStep
-                                 selectedService={selectedService}
-                                 onNext={handleServiceItemsNext}
-                                 onSkip={handleServiceItemsSkip}
-                                 onBack={handleBack}
-                                 themeColorText={themeColorText}
-                                 themeColorBackgroundCard={themeColorBackgroundCard}
-                                 themeColorButton={themeColorButton}
-                                 themeColorBorder={themeColorBorder}
-                             />
-                         )}
-
-                         {/* Requirements Step */}
-                         {step === 6 && selectedService && (
-                             <RequirementsStep
-                                 selectedService={selectedService}
-                                 onNext={handleRequirementsNext}
-                                 onBack={handleBack}
-                                 themeColorText={themeColorText}
-                                 themeColorBackgroundCard={themeColorBackgroundCard}
-                                 themeColorButton={themeColorButton}
-                                 themeColorBorder={themeColorBorder}
+                                  onSkip={() => setStep(7)}
                              />
                          )}
 
                          {/* Customer Details Step */}
                          {step === 7 && selectedService && (
                             <CustomerDetailsStep
+                                  selectedService={enrichedServiceDetails || selectedService}
                                 onConfirm={handleCustomerDetailsConfirm}
                                 onBack={handleBack}
                                 themeColorText={themeColorText}

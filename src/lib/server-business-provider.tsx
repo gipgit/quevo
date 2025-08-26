@@ -74,11 +74,12 @@ export default async function ServerBusinessProvider({ children }: ServerBusines
     redirect('/dashboard/onboarding')
   }
 
-  // Get current business from cookie or use first business as fallback
+  // Get current business from cookie - if no cookie exists, don't set a current business
+  // This allows the select-business page to work properly
   const currentBusinessId = getCurrentBusinessIdFromCookie()
   const currentBusiness = currentBusinessId 
-    ? businesses.find(b => b.business_id === currentBusinessId) || businesses[0]
-    : businesses[0]
+    ? businesses.find(b => b.business_id === currentBusinessId) || null
+    : null
 
   // Fetch user manager details
   const userManager = await prisma.usermanager.findFirst({
@@ -130,7 +131,8 @@ export default async function ServerBusinessProvider({ children }: ServerBusines
     date_created: b.date_created?.toISOString() || new Date().toISOString()
   }))
 
-  const transformedCurrentBusiness: Business = {
+  // Only transform current business if we have one
+  const transformedCurrentBusiness: Business | null = currentBusiness ? {
     business_id: currentBusiness.business_id,
     business_name: currentBusiness.business_name,
     business_urlname: currentBusiness.business_urlname,
@@ -144,7 +146,7 @@ export default async function ServerBusinessProvider({ children }: ServerBusines
     business_img_cover: currentBusiness.business_img_cover,
     business_public_uuid: currentBusiness.business_public_uuid || '',
     date_created: currentBusiness.date_created?.toISOString() || new Date().toISOString()
-  }
+  } : null
 
   return (
     <BusinessProvider 

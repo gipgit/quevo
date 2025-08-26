@@ -72,7 +72,9 @@
     "passwordLabel": "Password",
     "passwordPlaceholder": "••••••••",
     "loginButton": "Accedi",
-    "createAccountLink": "Crea Account"
+    "createAccountLink": "Crea Account",
+    "required": "Obbligatorio",
+    "thisFieldIsRequired": "Questo campo è obbligatorio"
   },
   "FAQ": {
     "title": "Domande Frequenti",
@@ -222,6 +224,11 @@
     "select": "Seleziona",
     "serviceItemsTitle": "Servizi da includere",
     "serviceItemsDescription": "Seleziona eventuali servizi aggiuntivi che vorresti includere nella tua richiesta",
+    "serviceExtrasTitle": "Extra del Servizio",
+    "serviceExtrasDescription": "Seleziona eventuali servizi aggiuntivi che desideri includere con la tua prenotazione.",
+    "noExtrasAvailable": "Nessun extra aggiuntivo disponibile per questo servizio.",
+    "totalExtras": "Totale Extra",
+    "errorFetchingServiceExtras": "Errore nel caricamento degli extra del servizio.",
     "requirementsAndQuestionsTitle": "Requisiti e informazioni",
     "requirementsAndQuestionsDescription": "Rivedi e conferma i requisiti e fornisci eventuali informazioni aggiuntive",
     "yourDetailsDescription": "Fornisci le tue informazioni di contatto per completare la richiesta",
@@ -236,7 +243,12 @@
     "dateTimeRequired": "La selezione di data e ora è obbligatoria per questo servizio.",
     "priceOnRequest": "Prezzo su richiesta",
     "quotationAvailable": "Preventivo Simulabile",
-    "back": "Indietro"
+    "back": "Indietro",
+    "consentTitle": "Consenso",
+    "pdpConsentText": "Acconsento al trattamento dei miei dati personali in conformità con la Privacy Policy",
+    "newsletterConsentText": "Acconsento a ricevere comunicazioni di marketing e newsletter",
+    "pdpConsentRequired": "Il consenso PDP è obbligatorio",
+    "newsletterConsentRequired": "Il consenso newsletter è obbligatorio"
   },
   "Promotions": {
     "loading": "Caricamento promozioni...",
@@ -493,6 +505,7 @@
     "addOption": "Aggiungi Opzione",
     "option": "Opzione",
     "required": "Obbligatorio",
+    "thisFieldIsRequired": "Questo campo è obbligatorio",
     "maxLength": "Lunghezza Max",
     "requirements": "Requisiti",
     "addRequirement": "Aggiungi Requisito",
@@ -612,7 +625,29 @@
       "reports": "Report",
       "logout": "Esci",
       "manageAccount": "Gestisci Account",
-      "marketing": "Marketing"
+      "marketing": "Marketing",
+      "marketingEmailAssistant": "Assistente Email"
+    },
+    "support": {
+      "title": "Richiesta Supporto",
+      "category": "Categoria",
+      "message": "Messaggio",
+      "messagePlaceholder": "Descrivi il tuo problema o domanda...",
+      "email": "Email",
+      "optional": "Opzionale",
+      "characters": "caratteri",
+      "cancel": "Annulla",
+      "submit": "Invia Richiesta",
+      "submitting": "Invio in corso...",
+      "success": {
+        "title": "Richiesta Inviata",
+        "message": "Grazie! Ti risponderemo presto."
+      },
+      "categories": {
+        "general": "Generale",
+        "technical": "Problema Tecnico",
+        "account": "Problema Account"
+      }
     }
   },
   "plan": {

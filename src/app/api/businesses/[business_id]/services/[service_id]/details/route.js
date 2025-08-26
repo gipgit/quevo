@@ -21,6 +21,28 @@ export async function GET(request, { params }) {
     }
 
     try {
+        // Fetch service details including consent-related fields
+        const service = await prisma.service.findUnique({
+            where: {
+                service_id: parsedServiceId,
+            },
+            select: {
+                service_id: true,
+                service_name: true,
+                description: true,
+                require_phone: true,
+                require_consent_pdp: true,
+                require_consent_newsletter: true,
+                require_consent_newsletter_text: true,
+                has_extras: true,
+                has_items: true,
+            },
+        });
+
+        if (!service) {
+            return NextResponse.json({ error: 'Service not found' }, { status: 404 });
+        }
+
         // Fetch requirements for the service
         const requirements = await prisma.servicerequirementblock.findMany({
             where: {
@@ -31,6 +53,7 @@ export async function GET(request, { params }) {
                 requirement_block_id: true,
                 title: true,
                 requirements_text: true,
+                is_required: true,
             },
             orderBy: {
                 requirement_block_id: 'asc',
@@ -77,7 +100,7 @@ export async function GET(request, { params }) {
             },
         });
 
-        return NextResponse.json({ requirements, questions, serviceItems }, { status: 200 });
+        return NextResponse.json({ service, requirements, questions, serviceItems }, { status: 200 });
 
     } catch (error) {
         console.error('Prisma error fetching service details:', error);

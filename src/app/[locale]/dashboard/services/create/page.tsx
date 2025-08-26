@@ -32,6 +32,7 @@ interface ServiceQuestion {
 interface ServiceRequirement {
   title: string
   requirements_text: string
+  is_required: boolean
 }
 
 interface ServiceItem {
@@ -89,12 +90,10 @@ export default function CreateServicePage() {
   const [priceBase, setPriceBase] = useState<number | null>(null)
   const [priceType, setPriceType] = useState("fixed")
   const [priceUnit, setPriceUnit] = useState("")
-  const [hasItems, setHasItems] = useState(false)
   const [availableBooking, setAvailableBooking] = useState(false)
   const [requireConsentNewsletter, setRequireConsentNewsletter] = useState(false)
-  const [requirePhoneNumber, setRequirePhoneNumber] = useState(false)
-  const [newsletterConsentText, setNewsletterConsentText] = useState("")
-  const [phoneNumberText, setPhoneNumberText] = useState("")
+  const [requireConsentNewsletterText, setRequireConsentNewsletterText] = useState("")
+  const [requirePhone, setRequirePhone] = useState(false)
   const [availableQuotation, setAvailableQuotation] = useState(false)
 
   // Dynamic sections
@@ -116,7 +115,7 @@ export default function CreateServicePage() {
 
   // Automatically add first item when hasItems is checked
   useEffect(() => {
-    if (hasItems && items.length === 0) {
+    if (availableQuotation && items.length === 0) {
       setItems([
         {
           item_name: "",
@@ -127,9 +126,9 @@ export default function CreateServicePage() {
         },
       ])
     }
-  }, [hasItems])
+  }, [availableQuotation])
 
-  // Clear items when quotation is disabled, or add first item when enabled
+  // Clear items when hasItems is disabled, or add first item when enabled
   useEffect(() => {
     if (!availableQuotation) {
       setItems([])
@@ -244,11 +243,12 @@ export default function CreateServicePage() {
       {
         title: "",
         requirements_text: "",
+        is_required: false,
       },
     ])
   }
 
-  const updateRequirement = (index: number, field: keyof ServiceRequirement, value: string) => {
+  const updateRequirement = (index: number, field: keyof ServiceRequirement, value: string | boolean) => {
     const updated = [...requirements]
     updated[index] = { ...updated[index], [field]: value }
     setRequirements(updated)
@@ -373,6 +373,39 @@ export default function CreateServicePage() {
       return
     }
 
+    // Validate category selection
+    if (categoryId === "new" && !newCategoryTitle.trim()) {
+      showToast({
+        type: "error",
+        title: t("error"),
+        message: "Please enter a category name",
+        duration: 4000
+      })
+      return
+    }
+
+    // Validate items if quotation is enabled
+    if (availableQuotation && items.length === 0) {
+      showToast({
+        type: "error",
+        title: t("error"),
+        message: "Please add at least one item for quotation",
+        duration: 4000
+      })
+      return
+    }
+
+    // Validate events if booking is enabled
+    if (availableBooking && events.length === 0) {
+      showToast({
+        type: "error",
+        title: t("error"),
+        message: "Please add at least one event for booking",
+        duration: 4000
+      })
+      return
+    }
+
     // Block creation if limit reached
     if (serviceLimitReached) {
       showToast({
@@ -387,6 +420,11 @@ export default function CreateServicePage() {
     setLoading(true)
 
     try {
+             // Determine flags based on form data
+             const hasItems = items.filter((i) => i.item_name.trim()).length > 0
+             const hasExtras = extras.filter((e) => e.extra_name.trim()).length > 0
+             const hasEvents = events.filter((e) => e.event_name.trim()).length > 0
+
              const serviceData = {
          service_name: serviceName,
          description: description ? sanitizeHtmlContent(description) : null,
@@ -395,12 +433,12 @@ export default function CreateServicePage() {
           price_base: priceBase,
          price_type: priceType,
          price_unit: priceUnit,
-         has_items: hasItems,
-         available_booking: availableBooking,
+         has_items: hasItems, // Set based on actual items added
+         has_extras: hasExtras, // Set based on actual extras added
+         available_booking: hasEvents, // Set based on actual events added
                    require_consent_newsletter: requireConsentNewsletter,
-          require_phone_number: requirePhoneNumber,
-          newsletter_consent_text: newsletterConsentText,
-          phone_number_text: phoneNumberText,
+          require_consent_newsletter_text: requireConsentNewsletterText,
+          require_phone: requirePhone,
           available_quotation: availableQuotation,
          questions: questions.filter((q) => q.question_text.trim()),
          requirements: requirements.filter((r) => r.requirements_text.trim()),
@@ -1274,6 +1312,21 @@ export default function CreateServicePage() {
                     />
                   </div>
 
+                  {/* Required checkbox - fixed width */}
+                  <div className="w-20 flex-shrink-0 flex items-end">
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={requirement.is_required}
+                        onChange={(e) => updateRequirement(index, "is_required", e.target.checked)}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className={`ml-2 text-xs ${
+                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                      }`}>{t("required")}</span>
+                    </label>
+                  </div>
+
                   {/* Red cross button - minimal width */}
                   <div className="flex items-center justify-center w-8 flex-shrink-0">
                     <button
@@ -1491,17 +1544,17 @@ export default function CreateServicePage() {
                     theme={theme === 'dark' ? 'dark' : 'light'}
                   />
                   
-                  {/* Conditional Newsletter Consent Text */}
+                  {/* Conditional Newsletter Consent Text Field */}
                   {requireConsentNewsletter && (
                     <div className="ml-6">
                       <label className={`block text-sm font-medium mb-2 ${
                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                       }`}>Newsletter Consent Text</label>
-                      <input
-                        type="text"
-                        value={newsletterConsentText}
-                        onChange={(e) => setNewsletterConsentText(e.target.value)}
-                        placeholder="I agree to receive newsletter updates..."
+                      <textarea
+                        value={requireConsentNewsletterText}
+                        onChange={(e) => setRequireConsentNewsletterText(e.target.value)}
+                        placeholder="Enter the text that customers will see for newsletter consent..."
+                        rows={3}
                         className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                           theme === 'dark' 
                             ? 'border-gray-600 bg-zinc-800 text-gray-100' 
@@ -1515,57 +1568,37 @@ export default function CreateServicePage() {
                   <SelectableCard
                     title="Require Phone Number"
                     description="Require customers to provide their phone number when booking or requesting a quotation"
-                    selected={requirePhoneNumber}
-                    onSelect={setRequirePhoneNumber}
+                    selected={requirePhone}
+                    onSelect={setRequirePhone}
                     theme={theme === 'dark' ? 'dark' : 'light'}
                   />
-                  
-                  {/* Conditional Phone Number Text */}
-                  {requirePhoneNumber && (
-                    <div className="ml-6">
-                      <label className={`block text-sm font-medium mb-2 ${
-                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                      }`}>Phone Number Field Text</label>
-                      <input
-                        type="text"
-                        value={phoneNumberText}
-                        onChange={(e) => setPhoneNumberText(e.target.value)}
-                        placeholder="Please provide your phone number..."
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                          theme === 'dark' 
-                            ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                            : 'border-gray-300 bg-white text-gray-900'
-                        }`}
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+                 </div>
+               </div>
+             </div>
 
-           {/* Submit Button */}
-           <div className="mt-8 flex justify-end gap-2 lg:gap-4">
-             <button
-               type="button"
-               onClick={() => router.back()}
-               className={`px-6 py-2 border rounded-lg transition-colors ${
-                 theme === 'dark' 
-                   ? 'border-gray-600 text-gray-300 hover:bg-zinc-700' 
-                   : 'border-gray-300 text-gray-700 hover:bg-zinc-50'
-               }`}
-             >
-               {t("cancel")}
-             </button>
-             <button
-               type="submit"
-               disabled={loading}
-               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-             >
-               {loading ? t("creating") : t("createService")}
-             </button>
-           </div>
-        </form>
-      </div>
-    </DashboardLayout>
-  )
-}
+            {/* Submit Button */}
+            <div className="mt-8 flex justify-end gap-2 lg:gap-4">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                className={`px-6 py-2 border rounded-lg transition-colors ${
+                  theme === 'dark' 
+                    ? 'border-gray-600 text-gray-300 hover:bg-zinc-700' 
+                    : 'border-gray-300 text-gray-700 hover:bg-zinc-50'
+                }`}
+              >
+                {t("cancel")}
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              >
+                {loading ? t("creating") : t("createService")}
+              </button>
+            </div>
+         </form>
+       </div>
+     </DashboardLayout>
+   )
+ }

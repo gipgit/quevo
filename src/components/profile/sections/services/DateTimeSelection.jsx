@@ -44,6 +44,10 @@ export default function DateTimeSelection({
     const [loadingSlots, setLoadingSlots] = useState(false);
     const [slotsError, setSlotsError] = useState(null);
 
+    // New state for multiple datetime selection
+    const [selectedDateTimes, setSelectedDateTimes] = useState([]);
+    const [allowMultiple, setAllowMultiple] = useState(false); // Can be made configurable
+
     console.log("Available Days Overview:", availableDaysOverview); // Keep this for debugging!
 
     const fetchAvailabilityOverview = useCallback(async (start, end) => {
@@ -133,7 +137,26 @@ export default function DateTimeSelection({
     }, [t]);
 
     const handleTimeSlotClick = (time) => {
-        onDateTimeSelect({ date: selectedDate, time });
+        // Create ISO 8601 datetime string
+        const dateTimeString = `${format(selectedDate, 'yyyy-MM-dd')}T${time}`;
+        
+        if (allowMultiple) {
+            // For multiple selection, add to array if not already selected
+            setSelectedDateTimes(prev => {
+                const isAlreadySelected = prev.some(dt => dt === dateTimeString);
+                if (isAlreadySelected) {
+                    // Remove if already selected (toggle behavior)
+                    return prev.filter(dt => dt !== dateTimeString);
+                } else {
+                    // Add new datetime
+                    return [...prev, dateTimeString];
+                }
+            });
+        } else {
+            // For single selection, replace the array with one item
+            const newDateTimes = [dateTimeString];
+            setSelectedDateTimes(newDateTimes);
+        }
     };
 
     const handleSkip = useCallback(() => {
@@ -141,6 +164,18 @@ export default function DateTimeSelection({
             onSkip();
         }
     }, [onSkip]);
+
+    const handleConfirm = useCallback(() => {
+        if (selectedDateTimes.length > 0) {
+            // Pass the simplified ISO 8601 datetime strings
+            onDateTimeSelect({ 
+                dateTimes: selectedDateTimes,
+                // Keep legacy format for backward compatibility
+                date: selectedDate,
+                time: selectedDateTimes[0] ? selectedDateTimes[0].split('T')[1] : null
+            });
+        }
+    }, [selectedDateTimes, selectedDate, onDateTimeSelect]);
 
     const dayPropGetter = useCallback((date) => {
         // Return empty props to let CustomDateCellWrapper handle all styling
@@ -150,6 +185,11 @@ export default function DateTimeSelection({
         };
     }, []);
 
+    // Check if a time slot is selected
+    const isTimeSlotSelected = (time) => {
+        const dateTimeString = `${format(selectedDate, 'yyyy-MM-dd')}T${time}`;
+        return selectedDateTimes.includes(dateTimeString);
+    };
 
     return (
         <div className="flex flex-col h-full p-6" style={{ color: themeColorText}}>
@@ -220,6 +260,31 @@ export default function DateTimeSelection({
                     <p className="text-sm mb-4">
                         {t('selectedDate')}: <span className="font-semibold">{format(selectedDate, 'dd/MM/yyyy')}</span>
                     </p>
+                    
+                    {/* Selected DateTimes Display */}
+                    {selectedDateTimes.length > 0 && (
+                        <div className="mb-4 p-3 rounded-lg border" style={{ borderColor: themeColorBorder, backgroundColor: themeColorBackgroundCard }}>
+                            <p className="text-sm font-medium mb-2">{t('selectedTimes') || 'Selected Times'}:</p>
+                            <div className="space-y-1">
+                                {selectedDateTimes.map((dateTime, index) => {
+                                    const [date, time] = dateTime.split('T');
+                                    return (
+                                        <div key={index} className="flex items-center justify-between text-xs">
+                                            <span>{format(new Date(date), 'dd/MM/yyyy')}</span>
+                                            <span className="font-medium">{time}</span>
+                                            <button
+                                                onClick={() => setSelectedDateTimes(prev => prev.filter((_, i) => i !== index))}
+                                                className="text-red-500 hover:text-red-700"
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
                     {loadingSlots && (
                         <div className="relative rounded-lg p-6" style={{ backgroundColor: themeColorBackgroundCard }}>
                             <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-10 rounded-lg">
@@ -236,17 +301,16 @@ export default function DateTimeSelection({
                             <button
                                 key={slot.time}
                                 className={`p-2 rounded-md border transition-colors ${
-                                    selectedDateTime?.time === slot.time && isSameDay(selectedDateTime?.date, selectedDate)
+                                    isTimeSlotSelected(slot.time)
                                         ? 'text-white'
                                         : ''
                                 }`}
                                 style={{
-                                    backgroundColor: selectedDateTime?.time === slot.time && isSameDay(selectedDateTime?.date, selectedDate) ? themeColorButton : themeColorBackgroundCard,
-                                    color: selectedDateTime?.time === slot.time && isSameDay(selectedDateTime?.date, selectedDate) ? 'white' : themeColorText,
-                                    borderColor: selectedDateTime?.time === slot.time && isSameDay(selectedDateTime?.date, selectedDate) ? 'white' : themeColorBorder, 
+                                    backgroundColor: isTimeSlotSelected(slot.time) ? themeColorButton : themeColorBackgroundCard,
+                                    color: isTimeSlotSelected(slot.time) ? 'white' : themeColorText,
+                                    borderColor: isTimeSlotSelected(slot.time) ? 'white' : themeColorBorder, 
                                 }}
                                 onClick={() => handleTimeSlotClick(slot.time)}
-                                disabled={selectedDateTime?.time === slot.time && isSameDay(selectedDateTime?.date, selectedDate)}
                             >
                                 {slot.time}
                             </button>
@@ -273,6 +337,15 @@ export default function DateTimeSelection({
                     >
                         {t('skip')}
                     </button>
+                    {selectedDateTimes.length > 0 && (
+                        <button
+                            onClick={handleConfirm}
+                            className="px-4 py-2 rounded-md text-sm font-medium text-white"
+                            style={{ backgroundColor: themeColorButton }}
+                        >
+                            {t('confirm') || 'Confirm'}
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

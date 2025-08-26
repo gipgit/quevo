@@ -18,21 +18,42 @@ export default async function ServiceRequestsPage() {
     redirect('/dashboard')
   }
 
-  // Fetch service requests for the current business (service-requests-specific data)
+  // Fetch service requests for the current business with enhanced data
   const serviceRequests = await prisma.servicerequest.findMany({
     where: {
       business_id: currentBusinessId
     },
-    select: {
-      request_id: true,
-      request_reference: true,
-      status: true,
-      date_created: true,
-      customer_name: true,
-      customer_email: true,
-      customer_phone: true,
-      customer_notes: true,
-      price_subtotal: true,
+          select: {
+        request_id: true,
+        request_reference: true,
+        status: true,
+        date_created: true,
+        customer_name: true,
+        customer_email: true,
+        customer_phone: true,
+        customer_notes: true,
+        price_subtotal: true,
+        // Snapshot data for request details
+        selected_service_items_snapshot: true,
+        question_responses_snapshot: true,
+        requirement_responses_snapshot: true,
+        // Event and datetime information
+        event_id: true,
+        request_datetimes: true,
+        // New fields for enhanced management (commented until Prisma client is regenerated)
+        // is_handled: true,
+        // handled_at: true,
+        // handled_by: true,
+        // priority: true,
+        // urgency_flag: true,
+        // assigned_to: true,
+        // estimated_completion: true,
+        // actual_completion: true,
+        // customer_satisfaction: true,
+        // follow_up_required: true,
+        // follow_up_date: true,
+        // tags: true,
+        // internal_notes: true,
       service: {
         select: {
           service_name: true,
@@ -41,6 +62,18 @@ export default async function ServiceRequestsPage() {
               category_name: true
             }
           }
+        }
+      },
+      serviceevent: {
+        select: {
+          event_id: true,
+          event_name: true,
+          event_description: true,
+          event_type: true,
+          duration_minutes: true,
+          buffer_minutes: true,
+          is_required: true,
+          is_active: true
         }
       },
       usercustomer: {
@@ -54,7 +87,8 @@ export default async function ServiceRequestsPage() {
       servicerequeststatushistory: {
         select: {
           new_status: true,
-          changed_at: true
+          changed_at: true,
+          changed_by: true
         },
         orderBy: {
           changed_at: 'desc'
@@ -68,6 +102,33 @@ export default async function ServiceRequestsPage() {
         },
         orderBy: {
           sent_at: 'desc'
+        }
+      },
+      // Include linked service board
+      serviceboard: {
+        select: {
+          board_id: true,
+          board_ref: true,
+          board_title: true,
+          status: true,
+          action_count: true,
+          created_at: true,
+          updated_at: true,
+          serviceboardaction: {
+            select: {
+              action_id: true,
+              action_type: true,
+              action_title: true,
+              action_status: true,
+              action_priority: true,
+              created_at: true,
+              due_date: true,
+              is_customer_action_required: true
+            },
+            orderBy: {
+              created_at: 'desc'
+            }
+          }
         }
       }
     },

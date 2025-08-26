@@ -13,6 +13,7 @@ export default function RequirementsStep({
     themeColorBorder
 }) {
     const t = useTranslations('ServiceRequest');
+    const tCommon = useTranslations('Common');
 
     const [requirements, setRequirements] = useState([]);
     const [questions, setQuestions] = useState([]);
@@ -42,6 +43,8 @@ export default function RequirementsStep({
 
                 setRequirements(data.requirements || []);
                 setQuestions(data.questions || []);
+
+
 
                 // Initialize response states for requirements and questions
                 const initialConfirmedRequirements = {};
@@ -131,24 +134,24 @@ export default function RequirementsStep({
         // Validate required requirements
         requirements.forEach(req => {
             if (req.is_required && !confirmedRequirements[req.requirement_block_id]) {
-                errors[`requirement-${req.requirement_block_id}`] = t('pleaseFillAllRequiredFields');
+                errors[`requirement-${req.requirement_block_id}`] = tCommon('thisFieldIsRequired');
             }
         });
 
         // Validate required questions
         questions.forEach(q => {
-            if (q.is_required) {
+            if (q.is_required === true || q.is_required === 'true') {
                 if (q.question_type === 'checkbox_multi') {
                     if (!checkboxResponses[q.question_id] || checkboxResponses[q.question_id].length === 0) {
-                        errors[`question-${q.question_id}`] = t('pleaseFillAllRequiredFields');
+                        errors[`question-${q.question_id}`] = tCommon('thisFieldIsRequired');
                     }
                 } else if (q.question_type === 'checkbox_single') {
                     if (!checkboxResponses[q.question_id]) {
-                        errors[`question-${q.question_id}`] = t('pleaseFillAllRequiredFields');
+                        errors[`question-${q.question_id}`] = tCommon('thisFieldIsRequired');
                     }
                 } else {
                     if (!questionResponses[q.question_id] || questionResponses[q.question_id].trim() === '') {
-                        errors[`question-${q.question_id}`] = t('pleaseFillAllRequiredFields');
+                        errors[`question-${q.question_id}`] = tCommon('thisFieldIsRequired');
                     }
                 }
             }
@@ -252,26 +255,32 @@ export default function RequirementsStep({
                         {t('requirementsTitle')}
                     </h3>
                     {requirements.map(req => (
-                        <div key={req.requirement_block_id} className="mb-1 lg:mb-3">
-                            <label className={`flex items-start ${fieldErrors[`requirement-${req.requirement_block_id}`] ? 'border-l-4 border-red-500 pl-3' : ''}`}>
-                                <input
-                                    type="checkbox"
-                                    className="form-checkbox h-5 w-5 rounded mt-1 mr-2"
-                                    checked={confirmedRequirements[req.requirement_block_id] || false}
-                                    onChange={(e) => handleRequirementChange(req.requirement_block_id, e.target.checked)}
-                                />
-                                <div className="text-xs lg:text-sm leading-tight">
-                                    <span className="font-semibold">{req.title}:</span>{' '}
-                                    <span className="">{req.requirements_text}</span>
-                                    {fieldErrors[`requirement-${req.requirement_block_id}`] && (
-                                        <div className="text-red-500 text-xs mt-1">
-                                            {fieldErrors[`requirement-${req.requirement_block_id}`]}
-                                        </div>
-                                    )}
-                                </div>
-                            </label>
-                        </div>
-                    ))}
+                            <div key={req.requirement_block_id} className="mb-1 lg:mb-3">
+                                <label className={`flex items-start ${fieldErrors[`requirement-${req.requirement_block_id}`] ? 'border-l-4 border-red-500 pl-3' : ''}`}>
+                                    <input
+                                        type="checkbox"
+                                        className="form-checkbox h-5 w-5 rounded mt-1 mr-2"
+                                        checked={confirmedRequirements[req.requirement_block_id] || false}
+                                        onChange={(e) => handleRequirementChange(req.requirement_block_id, e.target.checked)}
+                                    />
+                                    <div className="text-xs lg:text-sm leading-tight">
+                                        <span className="font-semibold">{req.title}:</span>{' '}
+                                        <span className="">{req.requirements_text}</span>
+                                        {req.is_required && (
+                                            <span className="inline-block ml-1 md:ml-2 px-1.5 md:px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-700 rounded-full">
+                                                {tCommon('required')}
+                                            </span>
+                                        )}
+                                        {fieldErrors[`requirement-${req.requirement_block_id}`] && (
+                                            <div className="text-red-500 text-xs mt-1">
+                                                {fieldErrors[`requirement-${req.requirement_block_id}`]}
+                                            </div>
+                                        )}
+                                    </div>
+                                </label>
+                            </div>
+                        )
+                    )}
                 </div>
             )}
 
@@ -301,7 +310,11 @@ export default function RequirementsStep({
                         return (
                             <div key={q.question_id} className="mb-4">
                                 <label className="block text-sm font-medium mb-1">
-                                    {q.question_text} {q.is_required && <span className="text-red-500">*</span>}
+                                    {q.question_text} {(q.is_required === true || q.is_required === 'true') && (
+                                        <span className="inline-block ml-1 md:ml-2 px-1.5 md:px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-700 rounded-full">
+                                            {tCommon('required')}
+                                        </span>
+                                    )}
                                 </label>
                                 {q.question_type === 'open' && (
                                     <input
@@ -329,22 +342,26 @@ export default function RequirementsStep({
                                 )}
                                 {(q.question_type === 'checkbox_single' || q.question_type === 'checkbox_multi') && questionOptions.length > 0 && (
                                     <div className={`mt-1 flex flex-row flex-wrap items-center gap-x-3 ${fieldErrors[`question-${q.question_id}`] ? 'border-l-4 border-red-500 pl-3' : ''}`}>
-                                        {questionOptions.map(option => (
-                                            <label key={option.id} className="flex items-center">
-                                                <input
-                                                    type={q.question_type === 'checkbox_single' ? 'radio' : 'checkbox'}
-                                                    name={q.question_type === 'checkbox_single' ? `question-${q.question_id}` : undefined}
-                                                    className={`${q.question_type === 'checkbox_single' ? 'form-radio' : 'form-checkbox'} h-4 w-4 rounded mr-1`}
-                                                    checked={
-                                                        q.question_type === 'checkbox_single' 
-                                                            ? checkboxResponses[q.question_id] === option.value
-                                                            : (checkboxResponses[q.question_id] || []).includes(option.value)
-                                                    }
-                                                    onChange={(e) => handleCheckboxChange(q.question_id, option.value, e.target.checked, q.question_type)}
-                                                />
-                                                <span className="text-xs md:text-sm">{option.text}</span>
-                                            </label>
-                                        ))}
+                                        {questionOptions.map(option => {
+                                            const optionValue = option.value || option.id;
+                                            const optionText = option.text || option.option_text;
+                                            const isChecked = q.question_type === 'checkbox_single' 
+                                                ? checkboxResponses[q.question_id] === optionValue
+                                                : (checkboxResponses[q.question_id] || []).includes(optionValue);
+                                            
+                                            return (
+                                                <label key={optionValue} className="flex items-center">
+                                                    <input
+                                                        type={q.question_type === 'checkbox_single' ? 'radio' : 'checkbox'}
+                                                        name={q.question_type === 'checkbox_single' ? `question-${q.question_id}` : undefined}
+                                                        className={`${q.question_type === 'checkbox_single' ? 'form-radio' : 'form-checkbox'} h-4 w-4 rounded mr-1`}
+                                                        checked={isChecked}
+                                                        onChange={(e) => handleCheckboxChange(q.question_id, optionValue, e.target.checked, q.question_type)}
+                                                    />
+                                                    <span className="text-xs md:text-sm">{optionText}</span>
+                                                </label>
+                                            );
+                                        })}
                                         {fieldErrors[`question-${q.question_id}`] && (
                                             <div className="text-red-500 text-xs mt-1 w-full">
                                                 {fieldErrors[`question-${q.question_id}`]}

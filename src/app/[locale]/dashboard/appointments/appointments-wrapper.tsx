@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
 import { format, parse, startOfWeek, getDay, startOfMonth, isSameDay, startOfDay } from 'date-fns'
@@ -9,12 +9,28 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import Link from 'next/link'
 
 import DashboardLayout from '@/components/dashboard/dashboard-layout'
-import { UsageLimitBar } from '@/components/dashboard/UsageLimitBar'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import { useToaster } from '@/components/ui/ToasterProvider'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useBusiness } from '@/lib/business-context'
 import EmptyState from '@/components/EmptyState'
+import { 
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  CalendarIcon,
+  ListBulletIcon,
+  ClockIcon,
+  UserIcon,
+  MapPinIcon,
+  PhoneIcon,
+  EnvelopeIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  TrashIcon
+} from '@heroicons/react/24/outline'
+import { 
+  CheckCircleIcon as CheckCircleSolidIcon
+} from '@heroicons/react/24/solid'
 
 const locales = {
   'en-US': enUS,
@@ -60,8 +76,10 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
   const { theme } = useTheme()
   const [appointments, setAppointments] = useState(initialAppointments)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
-  const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar')
+  const [viewMode, setViewMode] = useState<'calendar' | 'list'>('list')
   const [currentDate, setCurrentDate] = useState<Date>(startOfDay(new Date()))
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
+  const [selectedIndex, setSelectedIndex] = useState(0)
 
   // Refetch appointments when business changes
   useEffect(() => {
@@ -85,8 +103,55 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
     }
   }, [currentBusiness?.business_id, businessSwitchKey])
 
+  // Set initial selected appointment
+  useEffect(() => {
+    if (appointments.length > 0 && !selectedAppointment) {
+      setSelectedAppointment(appointments[0])
+      setSelectedIndex(0)
+    }
+  }, [appointments, selectedAppointment])
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!appointments.length) return
+
+      switch (event.key) {
+        case 'ArrowUp':
+          event.preventDefault()
+          navigateAppointment(-1)
+          break
+        case 'ArrowDown':
+          event.preventDefault()
+          navigateAppointment(1)
+          break
+        case 'Enter':
+          event.preventDefault()
+          if (selectedAppointment) {
+            handleEventSelect(selectedAppointment)
+          }
+          break
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [appointments, selectedAppointment])
+
+  const navigateAppointment = useCallback((direction: number) => {
+    if (!appointments.length) return
+    
+    const newIndex = Math.max(0, Math.min(appointments.length - 1, selectedIndex + direction))
+    setSelectedIndex(newIndex)
+    setSelectedAppointment(appointments[newIndex])
+  }, [appointments, selectedIndex])
+
   const handleEventSelect = (event: Appointment) => {
-    console.log('Selected appointment:', event)
+    setSelectedAppointment(event)
+    const index = appointments.findIndex(apt => apt.id === event.id)
+    if (index !== -1) {
+      setSelectedIndex(index)
+    }
   }
 
   const handleSlotSelect = ({ start, end }: { start: Date; end: Date }) => {
@@ -133,6 +198,21 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
     }
   }
 
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'confirmed':
+        return 'Confirmed'
+      case 'cancelled':
+        return 'Cancelled'
+      case 'completed':
+        return 'Completed'
+      case 'pending':
+        return 'Pending'
+      default:
+        return status
+    }
+  }
+
   const handleStatusChange = async (appointmentId: string, newStatus: string) => {
     try {
       const response = await fetch(`/api/businesses/${currentBusiness?.business_id}/appointments/${appointmentId}/status`, {
@@ -153,8 +233,13 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
         type: 'success',
       })
       
-      // Reload the page to refresh the appointments list
-      window.location.reload()
+      // Update local state
+      setAppointments(prev => prev.map(apt => 
+        apt.id === appointmentId ? { ...apt, status: newStatus as any } : apt
+      ))
+      if (selectedAppointment?.id === appointmentId) {
+        setSelectedAppointment(prev => prev ? { ...prev, status: newStatus as any } : null)
+      }
     } catch (error) {
       console.error('Error updating appointment status:', error)
       showToast({
@@ -183,8 +268,12 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
         type: 'success',
       })
       
-      // Reload the page to refresh the appointments list
-      window.location.reload()
+      // Update local state
+      setAppointments(prev => prev.filter(apt => apt.id !== appointmentId))
+      if (selectedAppointment?.id === appointmentId) {
+        setSelectedAppointment(null)
+        setSelectedIndex(0)
+      }
     } catch (error) {
       console.error('Error deleting appointment:', error)
       showToast({
@@ -247,29 +336,158 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
     showMore: (total: number) => t('showMore', { total }),
   }
 
-  // Note: Usage and plan limits are not needed for appointments page
-  // They are only needed for the dashboard overview
-  const canCreateAppointment = true // Simplified for now
+  // Calculate progress
+  const totalAppointments = appointments.length
+  const confirmedAppointments = appointments.filter(apt => apt.status === 'confirmed').length
+  const completedAppointments = appointments.filter(apt => apt.status === 'completed').length
+  const progressPercentage = totalAppointments > 0 ? ((confirmedAppointments + completedAppointments) / totalAppointments) * 100 : 0
+
+  if (appointments.length === 0) {
+    return (
+      <DashboardLayout>
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h1 className={`text-2xl font-bold ${
+                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+              }`}>{t('title')}</h1>
+            </div>
+          </div>
+
+          <EmptyState
+            title={t('empty.title')}
+            description={t('empty.description')}
+            buttonText={t('addFirst')}
+            onButtonClick={() => setSelectedDate(new Date())}
+            icon={<svg className="mx-auto w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
+          />
+        </div>
+      </DashboardLayout>
+    )
+  }
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto h-screen flex flex-col">
         {/* Header */}
-        <div className="flex justify-between gap-4 mb-6">
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-              <h1 className={`text-xl lg:text-2xl font-bold ${
-                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className={`text-2xl font-bold ${
+              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+            }`}>{t('title')}</h1>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            {/* Keyboard Shortcuts Button with Tooltip */}
+            <div className="relative group">
+              <button
+                className={`p-2 rounded-lg transition-colors ${
+                  theme === 'dark' 
+                    ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                }`}
+                title="Keyboard shortcuts"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </button>
+              
+              {/* Tooltip */}
+              <div className={`absolute right-0 top-full mt-2 p-3 rounded-lg shadow-lg border z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto ${
+                theme === 'dark' 
+                  ? 'bg-gray-800 border-gray-700 text-gray-300' 
+                  : 'bg-white border-gray-200 text-gray-700'
               }`}>
-                {t('title')}
-              </h1>
-              {/* Calendar/List View Tabs */}
+                <div className="text-xs whitespace-nowrap">
+                  <div className="font-medium mb-2">Keyboard Shortcuts:</div>
+                  <div>↑↓ Navigate appointments</div>
+                  <div>Enter Open appointment</div>
+                </div>
+                {/* Arrow pointing up */}
+                <div className={`absolute -top-1 right-4 w-2 h-2 rotate-45 ${
+                  theme === 'dark' 
+                    ? 'bg-gray-800 border-l border-t border-gray-700' 
+                    : 'bg-white border-l border-t border-gray-200'
+                }`}></div>
+              </div>
+            </div>
+            
+            {/* Navigation Arrows */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => navigateAppointment(-1)}
+                disabled={selectedIndex === 0}
+                className={`p-2 rounded-lg transition-colors ${
+                  selectedIndex === 0
+                    ? 'opacity-50 cursor-not-allowed'
+                    : theme === 'dark'
+                      ? 'hover:bg-gray-700'
+                      : 'hover:bg-gray-100'
+                }`}
+              >
+                <ArrowLeftIcon className="w-5 h-5" />
+              </button>
+              <span className={`text-sm ${
+                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+              }`}>
+                {selectedIndex + 1} of {appointments.length}
+              </span>
+              <button
+                onClick={() => navigateAppointment(1)}
+                disabled={selectedIndex === appointments.length - 1}
+                className={`p-2 rounded-lg transition-colors ${
+                  selectedIndex === appointments.length - 1
+                    ? 'opacity-50 cursor-not-allowed'
+                    : theme === 'dark'
+                      ? 'hover:bg-gray-700'
+                      : 'hover:bg-gray-100'
+                }`}
+              >
+                <ArrowRightIcon className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content - Outlook-like Layout */}
+        <div className="flex-1 flex gap-6 min-h-0">
+          {/* Left Panel - Calendar/List View */}
+          <div className={`w-80 border-r ${
+            theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+          } flex flex-col`}>
+            {/* Progress Bar */}
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex justify-between items-center mb-2">
+                <span className={`text-sm font-medium ${
+                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                }`}>
+                  Progress: {confirmedAppointments + completedAppointments} of {totalAppointments} confirmed
+                </span>
+                <span className={`text-sm ${
+                  theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                }`}>
+                  {totalAppointments - (confirmedAppointments + completedAppointments)} pending
+                </span>
+              </div>
+              <div className={`w-full h-2 rounded-full ${
+                theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
+              }`}>
+                <div 
+                  className="h-2 bg-green-500 rounded-full transition-all duration-300"
+                  style={{ width: `${progressPercentage}%` }}
+                />
+              </div>
+            </div>
+
+            {/* View Mode Tabs */}
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <div className={`flex space-x-1 p-1 rounded-lg ${
                 theme === 'dark' ? 'bg-zinc-700' : 'bg-zinc-100'
               }`}>
                 <button
                   onClick={() => setViewMode('calendar')}
-                  className={`py-1.5 px-3 text-xs font-medium rounded-md transition-colors ${
+                  className={`py-1.5 px-3 text-xs font-medium rounded-md transition-colors flex items-center gap-1.5 ${
                     viewMode === 'calendar'
                       ? theme === 'dark' 
                         ? 'bg-zinc-600 text-gray-100 shadow-sm' 
@@ -279,16 +497,12 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                         : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  <div className="flex items-center gap-1.5">
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    Calendar
-                  </div>
+                  <CalendarIcon className="w-3.5 h-3.5" />
+                  Calendar
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`py-1.5 px-3 text-xs font-medium rounded-md transition-colors ${
+                  className={`py-1.5 px-3 text-xs font-medium rounded-md transition-colors flex items-center gap-1.5 ${
                     viewMode === 'list'
                       ? theme === 'dark' 
                         ? 'bg-zinc-600 text-gray-100 shadow-sm' 
@@ -298,233 +512,286 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                         : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  <div className="flex items-center gap-1.5">
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                    </svg>
-                    List
-                  </div>
+                  <ListBulletIcon className="w-3.5 h-3.5" />
+                  List
                 </button>
               </div>
             </div>
-          </div>
-          <div className="flex flex-col-reverse items-end lg:flex-row lg:items-center gap-1 lg:gap-4">
-            {/* Usage Limit Bar - Removed from appointments page as it's not needed */}
-            <Link
-              href="/dashboard/appointments/create"
-              className={`ml-2 px-2 lg:px-4 py-2 md:px-4 md:py-2 text-xs lg:text-sm md:text-lg rounded-lg transition-colors inline-flex items-center gap-1 lg:gap-2 whitespace-nowrap ${
-                canCreateAppointment
-                  ? "bg-blue-600 hover:bg-blue-700 text-white"
-                  : "bg-zinc-300 text-gray-500 cursor-not-allowed"
-              }`}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              {t("addNew")}
-            </Link>
-          </div>
-        </div>
-
-        {/* Content */}
-        {appointments.length === 0 ? (
-          <EmptyState
-            title={t('empty.title')}
-            description={t('empty.description')}
-            buttonText={t('addFirst')}
-            onButtonClick={() => setSelectedDate(new Date())}
-            icon={<svg className="mx-auto w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
-          />
-        ) : (
-          <>
-            {viewMode === 'calendar' ? (
-              <div className="dashboard-calendar-wrapper">
-                <Calendar
-                  localizer={localizer}
-                  events={calendarEvents}
-                  startAccessor="start"
-                  endAccessor="end"
-                  style={{ height: 600 }}
-                  onSelectEvent={handleEventSelect}
-                  onSelectSlot={handleSlotSelect}
-                  selectable={true}
-                  eventPropGetter={eventStyleGetter}
-                  messages={messages}
-                  views={['month', 'week']}
-                  defaultView="month"
-                  date={currentDate}
-                  step={60}
-                  timeslots={1}
-                  className=""
-
-                />
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {appointments.map((appointment) => (
-                  <div
-                    key={appointment.id}
-                    className={`border rounded-lg p-4 sm:p-6 transition-colors ${
-                      theme === 'dark' 
-                        ? 'border-gray-600 bg-zinc-800' 
-                        : 'border-gray-200 bg-white'
-                    }`}
-                  >
-                    <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-                      <div className="w-full lg:w-56 flex-shrink-0">
-                        <div className={`border rounded-lg p-4 lg:p-6 ${
-                          theme === 'dark' 
-                            ? 'border-gray-600 bg-zinc-700' 
-                            : 'border-gray-200 bg-zinc-50'
-                        }`}>
-                          <div className="flex flex-row lg:flex-col items-center gap-3">
+            
+            {/* Calendar/List Content */}
+            <div className="flex-1 overflow-y-auto">
+              {viewMode === 'calendar' ? (
+                <div className="p-2">
+                  <Calendar
+                    localizer={localizer}
+                    events={calendarEvents}
+                    startAccessor="start"
+                    endAccessor="end"
+                    style={{ height: 400 }}
+                    onSelectEvent={handleEventSelect}
+                    onSelectSlot={handleSlotSelect}
+                    selectable={true}
+                    eventPropGetter={eventStyleGetter}
+                    messages={messages}
+                    views={['month']}
+                    defaultView="month"
+                    date={currentDate}
+                    step={60}
+                    timeslots={1}
+                    className=""
+                  />
+                </div>
+              ) : (
+                <div className="space-y-1 p-2">
+                  {appointments.map((appointment, index) => {
+                    const isSelected = selectedAppointment?.id === appointment.id
+                    
+                    return (
+                      <div
+                        key={appointment.id}
+                        onClick={() => {
+                          setSelectedAppointment(appointment)
+                          setSelectedIndex(index)
+                        }}
+                        className={`p-3 rounded-lg cursor-pointer transition-all ${
+                          isSelected
+                            ? theme === 'dark'
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-blue-50 border-blue-200 border'
+                            : theme === 'dark'
+                              ? 'hover:bg-gray-700 text-gray-300'
+                              : 'hover:bg-gray-50 text-gray-900'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-1">
+                            <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(appointment.status)}`}>
+                              {getStatusText(appointment.status)}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex gap-4">
+                          {/* Left Column - Date and Time */}
+                          <div className="flex-shrink-0 w-20">
                             <div className="text-center">
-                              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(appointment.status)}`}>
-                                {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
-                              </span>
-                              <div className={`text-xs lg:text-sm mt-2 ${
-                                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                              }`}>
+                              <div className="text-xs opacity-75 mb-1">
                                 {new Date(appointment.start).toLocaleDateString('it-IT', { 
-                                  weekday: 'short',
                                   day: 'numeric',
                                   month: 'short'
                                 })}
                               </div>
-                            </div>
-                            <div className="text-center">
-                              <div className={`text-xl lg:text-2xl font-bold ${
-                                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                              }`}>
+                              <div className="text-sm font-medium">
                                 {formatTime(appointment.start)}
                               </div>
-                              <div className={`text-xs lg:text-sm ${
-                                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                              }`}>
-                                Ends at {formatTime(appointment.end)}
-                              </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-col gap-3">
-                          <div>
-                            <h3 className={`text-xl lg:text-2xl font-semibold mb-1 ${
-                              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                            }`}>
+                          
+                          {/* Right Column - Appointment and Customer */}
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-sm mb-1 truncate">
                               {appointment.title}
-                            </h3>
-                            {appointment.service_board_title && (
-                              <p className={`text-xs font-medium ${
-                                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                              }`}>
-                                {appointment.service_board_title}
-                              </p>
-                            )}
-                          </div>
-                          
-                          {appointment.notes && (
-                            <div className="flex items-center gap-2">
-                              <span className="text-gray-500 text-xs whitespace-nowrap">Notes:</span>
-                              <p className={`text-xs mt-0 line-clamp-2 ${
-                                theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                              }`}>
-                                {appointment.notes}
-                              </p>
                             </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="w-full lg:w-64 flex-shrink-0">
-                        <div className={`border rounded-lg p-4 lg:p-6 ${
-                          theme === 'dark' 
-                            ? 'border-gray-600 bg-zinc-700' 
-                            : 'border-gray-200 bg-zinc-50'
-                        }`}>
-                          <div className="flex flex-col gap-1 lg:gap-2">
-                            <div className="flex items-center gap-2 lg:gap-2">
-                              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                <span className="text-blue-600 font-bold text-xs lg:text-sm">
-                                  {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
-                                </span>
-                              </div>
-                              <h4 className={`font-medium text-sm lg:text-base ${
-                                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                              }`}>
-                                {appointment.customerName}
-                              </h4>
+                            <div className="text-xs opacity-75 truncate">
+                              {appointment.customerName}
                             </div>
-                            
-                            <div className="flex items-center gap-2">
-                              <span className={`text-xs font-medium ${
-                                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                              }`}>
-                                {appointment.customerEmail}
-                              </span>
-                            </div>
-                            
-                            {appointment.customerPhone && (
-                              <div className="flex items-center gap-2">
-                                <span className={`text-xs font-medium ${
-                                  theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                                }`}>
-                                  {appointment.customerPhone}
-                                </span>
-                              </div>
-                            )}
                           </div>
                         </div>
                       </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
 
-                      <div className="w-full lg:w-32 flex-shrink-0">
-                        <div className="flex flex-row lg:flex-col gap-2">
-                          <button
-                            onClick={() => handleStatusChange(appointment.id, 'confirmed')}
-                            className={`flex-1 lg:w-full px-3 py-2 text-sm rounded-md border transition-colors ${
-                              theme === 'dark'
-                                ? 'border-green-500 text-green-400 hover:bg-green-900/20'
-                                : 'border-green-500 text-green-600 hover:bg-green-50'
-                            }`}
-                          >
-                            Confirm
-                          </button>
-                          
-                          <button
-                            onClick={() => handleStatusChange(appointment.id, 'cancelled')}
-                            className={`flex-1 lg:w-full px-3 py-2 text-sm rounded-md border transition-colors ${
-                              theme === 'dark'
-                                ? 'border-red-500 text-red-400 hover:bg-red-900/20'
-                                : 'border-red-500 text-red-600 hover:bg-red-50'
-                            }`}
-                          >
-                            Cancel
-                          </button>
-                          
-                          <button
-                            onClick={() => handleDeleteAppointment(appointment.id)}
-                            className={`w-8 h-8 rounded-full border transition-colors flex items-center justify-center ${
-                              theme === 'dark'
-                                ? 'border-red-500 text-red-400 hover:bg-red-900/20'
-                                : 'border-red-500 text-red-600 hover:bg-red-50'
-                            }`}
-                            title="Delete Appointment"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
+          {/* Right Panel - Appointment Details */}
+          <div className="flex-1 flex flex-col min-h-0">
+            {selectedAppointment ? (
+              <>
+                {/* Appointment Header */}
+                <div className={`p-6 border-b ${
+                  theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+                }`}>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-4">
+                      <h2 className={`text-xl font-bold ${
+                        theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                      }`}>
+                        {selectedAppointment.title}
+                      </h2>
+                      <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(selectedAppointment.status)}`}>
+                        {getStatusText(selectedAppointment.status)}
+                      </span>
                     </div>
                   </div>
-                ))}
+                  
+                  {/* Appointment Details - Each on its own row */}
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <ClockIcon className="w-5 h-5" />
+                      <span className="text-base font-medium">{formatTime(selectedAppointment.start)} - {formatTime(selectedAppointment.end)}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CalendarIcon className="w-5 h-5" />
+                      <span className="text-base font-medium">{formatDate(selectedAppointment.start)}</span>
+                    </div>
+                    {selectedAppointment.appointment_location && (
+                      <div className="flex items-center gap-3">
+                        <MapPinIcon className="w-5 h-5" />
+                        <span className="text-base font-medium">{selectedAppointment.appointment_location}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className={`p-6 border-b ${
+                  theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+                }`}>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleStatusChange(selectedAppointment.id, 'confirmed')}
+                      className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors flex items-center gap-2"
+                      title="Confirm appointment"
+                    >
+                      <CheckCircleIcon className="w-4 h-4" />
+                      Confirm
+                    </button>
+                    
+                    <button
+                      onClick={() => handleStatusChange(selectedAppointment.id, 'cancelled')}
+                      className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors flex items-center gap-2"
+                      title="Cancel appointment"
+                    >
+                      <XCircleIcon className="w-4 h-4" />
+                      Cancel
+                    </button>
+                    
+                    <button
+                      onClick={() => handleDeleteAppointment(selectedAppointment.id)}
+                      className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors flex items-center gap-2"
+                      title="Delete appointment"
+                    >
+                      <TrashIcon className="w-4 h-4" />
+                      Delete
+                    </button>
+                  </div>
+                </div>
+
+                {/* Customer Details */}
+                <div className={`p-6 border-b ${
+                  theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+                }`}>
+                  <h3 className={`text-lg font-semibold mb-3 ${
+                    theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                  }`}>Customer Details</h3>
+                  <div className="flex items-center gap-6 text-sm">
+                    <div className="flex items-center gap-2">
+                      <UserIcon className="w-4 h-4" />
+                      <span>{selectedAppointment.customerName}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <EnvelopeIcon className="w-4 h-4" />
+                      <span>{selectedAppointment.customerEmail}</span>
+                    </div>
+                    {selectedAppointment.customerPhone && (
+                      <div className="flex items-center gap-2">
+                        <PhoneIcon className="w-4 h-4" />
+                        <span>{selectedAppointment.customerPhone}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Appointment Content */}
+                <div className="flex-1 p-6">
+                  <div className="space-y-6">
+                    {/* Service Board Information */}
+                    {selectedAppointment.service_board_title && (
+                      <div>
+                        <h3 className={`text-lg font-semibold mb-2 ${
+                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                        }`}>Service Board</h3>
+                        <div className={`p-4 rounded-lg border ${
+                          theme === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
+                        }`}>
+                          <div className="flex items-center gap-6 text-sm">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">Board:</span>
+                              <span>{selectedAppointment.service_board_title}</span>
+                            </div>
+                            {selectedAppointment.service_board_ref && (
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Reference:</span>
+                                <span>{selectedAppointment.service_board_ref}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Notes */}
+                    {selectedAppointment.notes && (
+                      <div>
+                        <h3 className={`text-lg font-semibold mb-2 ${
+                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                        }`}>Notes</h3>
+                        <div className={`p-4 rounded-lg ${
+                          theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'
+                        }`}>
+                          {selectedAppointment.notes}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Platform Information */}
+                    {selectedAppointment.platform_name && (
+                      <div>
+                        <h3 className={`text-lg font-semibold mb-2 ${
+                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                        }`}>Meeting Platform</h3>
+                        <div className={`p-4 rounded-lg border ${
+                          theme === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
+                        }`}>
+                          <div className="flex items-center gap-6 text-sm">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">Platform:</span>
+                              <span>{selectedAppointment.platform_name}</span>
+                            </div>
+                            {selectedAppointment.platform_link && (
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Link:</span>
+                                <a 
+                                  href={selectedAppointment.platform_link} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:text-blue-700 underline"
+                                >
+                                  Join Meeting
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 flex items-center justify-center">
+                <div className={`text-center ${
+                  theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                }`}>
+                  <CalendarIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>Select an appointment to view details</p>
+                </div>
               </div>
             )}
-          </>
-        )}
+          </div>
+        </div>
       </div>
     </DashboardLayout>
   )

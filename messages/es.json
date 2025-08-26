@@ -222,6 +222,11 @@
     "select": "Seleccionar",
     "serviceItemsTitle": "Servicios a incluir",
     "serviceItemsDescription": "Selecciona servicios adicionales que te gustaría incluir en tu solicitud",
+    "serviceExtrasTitle": "Servicios Adicionales",
+    "serviceExtrasDescription": "Selecciona servicios adicionales que te gustaría incluir con tu reserva.",
+    "noExtrasAvailable": "No hay servicios adicionales disponibles para este servicio.",
+    "totalExtras": "Total de Adicionales",
+    "errorFetchingServiceExtras": "Error al cargar los servicios adicionales.",
     "requirementsAndQuestionsTitle": "Requisitos e información",
     "requirementsAndQuestionsDescription": "Por favor revisa y confirma los requisitos y proporciona información adicional",
     "yourDetailsDescription": "Por favor proporciona tu información de contacto para completar la solicitud",
@@ -236,7 +241,12 @@
     "dateTimeRequired": "La selección de fecha y hora es obligatoria para este servicio.",
     "priceOnRequest": "Precio a consultar",
     "quotationAvailable": "Cotización Simulable",
-    "back": "Atrás"
+    "back": "Atrás",
+    "consentTitle": "Consentimiento",
+    "pdpConsentText": "Consiento el procesamiento de mis datos personales de acuerdo con la Política de Privacidad",
+    "newsletterConsentText": "Consiento recibir comunicaciones de marketing y newsletters",
+    "pdpConsentRequired": "El consentimiento PDP es requerido",
+    "newsletterConsentRequired": "El consentimiento newsletter es requerido"
   },
   "Promotions": {
     "loading": "Cargando promociones...",
@@ -684,6 +694,7 @@
     "addOption": "Agregar Opción",
     "option": "Opción",
     "required": "Requerido",
+    "thisFieldIsRequired": "Este campo es obligatorio",
     "maxLength": "Longitud Máxima",
     "requirements": "Requisitos",
     "addRequirement": "Agregar Requisito",
@@ -893,7 +904,8 @@
       "reports": "Reportes",
       "logout": "Cerrar Sesión",
       "manageAccount": "Gestionar Cuenta",
-      "marketing": "Marketing"
+      "marketing": "Marketing",
+      "marketingEmailAssistant": "Asistente de Email"
     }
   },
   "plan": {

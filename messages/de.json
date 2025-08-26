@@ -72,7 +72,9 @@
     "passwordLabel": "Passwort",
     "passwordPlaceholder": "••••••••",
     "loginButton": "Anmelden",
-    "createAccountLink": "Konto erstellen"
+    "createAccountLink": "Konto erstellen",
+    "required": "Erforderlich",
+    "thisFieldIsRequired": "Dieses Feld ist erforderlich"
   },
   "FAQ": {
     "title": "Häufig gestellte Fragen",
@@ -221,6 +223,11 @@
     "select": "Auswählen",
     "serviceItemsTitle": "Einzubeziehende Dienstleistungen",
     "serviceItemsDescription": "Wählen Sie zusätzliche Dienstleistungen aus, die Sie in Ihre Anfrage einbeziehen möchten",
+    "serviceExtrasTitle": "Service-Zuschläge",
+    "serviceExtrasDescription": "Wählen Sie zusätzliche Dienstleistungen aus, die Sie mit Ihrer Buchung einbeziehen möchten.",
+    "noExtrasAvailable": "Keine zusätzlichen Zuschläge für diesen Service verfügbar.",
+    "totalExtras": "Gesamte Zuschläge",
+    "errorFetchingServiceExtras": "Fehler beim Laden der Service-Zuschläge.",
     "requirementsAndQuestionsTitle": "Anforderungen und Informationen",
     "requirementsAndQuestionsDescription": "Bitte überprüfen und bestätigen Sie die Anforderungen und geben Sie zusätzliche Informationen an",
     "yourDetailsDescription": "Bitte geben Sie Ihre Kontaktdaten an, um die Anfrage abzuschließen",
@@ -235,7 +242,12 @@
     "dateTimeRequired": "Die Auswahl von Datum und Uhrzeit ist für diesen Service erforderlich.",
     "priceOnRequest": "Preis auf Anfrage",
     "quotationAvailable": "Simulierbares Angebot",
-    "back": "Zurück"
+    "back": "Zurück",
+    "consentTitle": "Einverständnis",
+    "pdpConsentText": "Ich stimme der Verarbeitung meiner personenbezogenen Daten gemäß der Datenschutzerklärung zu",
+    "newsletterConsentText": "Ich stimme dem Erhalt von Marketing-Kommunikation und Newslettern zu",
+    "pdpConsentRequired": "PDP-Einverständnis ist erforderlich",
+    "newsletterConsentRequired": "Newsletter-Einverständnis ist erforderlich"
   },
   "Promotions": {
     "loading": "Aktionen werden geladen...",
@@ -466,6 +478,7 @@
     "addOption": "Option hinzufügen",
     "option": "Option",
     "required": "Erforderlich",
+    "thisFieldIsRequired": "Dieses Feld ist erforderlich",
     "maxLength": "Maximale Länge",
     "requirements": "Anforderungen",
     "addRequirement": "Anforderung hinzufügen",
@@ -585,7 +598,8 @@
       "reports": "Berichte",
       "logout": "Abmelden",
       "manageAccount": "Konto verwalten",
-      "marketing": "Marketing"
+      "marketing": "Marketing",
+      "marketingEmailAssistant": "E-Mail-Assistent"
     }
   },
   "plan": {

@@ -69,7 +69,7 @@ interface InitialData {
   userManager: UserManager
   userPlan: Plan
   businesses: Business[]
-  currentBusiness: Business
+  currentBusiness: Business | null
   usage?: UsageData
   planLimits?: any[]
 }
@@ -154,7 +154,16 @@ export function BusinessProvider({
         return
       }
 
-      // Set current business from session or first business
+      // Check if we're on the select-business page
+      const isSelectBusinessPage = window.location.pathname.includes('/select-business')
+      
+      if (isSelectBusinessPage) {
+        console.log("BusinessContext: On select-business page, not setting current business")
+        setCurrentBusiness(null)
+        return
+      }
+
+      // Set current business from session or first business (only if not on select-business page)
       const currentBusinessId = sessionStorage.getItem("currentBusinessId")
       console.log("BusinessContext: Session business ID:", currentBusinessId)
       
@@ -226,7 +235,12 @@ export function BusinessProvider({
   useEffect(() => {
     // Only fetch if we don't have initial data
     if (initialData) {
-      console.log("BusinessContext: Using initial data from server")
+      console.log("BusinessContext: Using initial data from server", {
+        hasUserManager: !!initialData.userManager,
+        businessesCount: initialData.businesses?.length || 0,
+        hasCurrentBusiness: !!initialData.currentBusiness,
+        currentBusinessId: initialData.currentBusiness?.business_id
+      })
       // Set the cookie for the current business to ensure it's available for server-side requests
       if (initialData.currentBusiness) {
         sessionStorage.setItem("currentBusinessId", initialData.currentBusiness.business_id)
@@ -355,8 +369,8 @@ export function BusinessProvider({
         // Store the business switch time in session storage for the CacheBusterWrapper
         sessionStorage.setItem("businessSwitchTime", Date.now().toString())
         
-        console.log("BusinessContext: Business switch completed, navigating to dashboard")
-        router.push("/dashboard")
+        console.log("BusinessContext: Business switch completed successfully")
+        // Note: Navigation is now handled by the calling component
       } catch (error) {
         console.error("Error switching business:", error)
         // Reset state on error
@@ -368,7 +382,7 @@ export function BusinessProvider({
       setCurrentBusiness(null)
       setBusinessSwitchKey(prev => prev + 1)
     }
-  }, [businesses, router])
+  }, [businesses])
 
   return (
     <BusinessContext.Provider
@@ -390,7 +404,17 @@ export function BusinessProvider({
         cacheBuster,
       }}
     >
-      {children}
+      {(() => {
+        console.log("BusinessContext.Provider render:", {
+          hasUserManager: !!userManager,
+          businessesCount: businesses.length,
+          hasCurrentBusiness: !!currentBusiness,
+          currentBusinessId: currentBusiness?.business_id,
+          loading,
+          error
+        })
+        return children
+      })()}
     </BusinessContext.Provider>
   )
 }

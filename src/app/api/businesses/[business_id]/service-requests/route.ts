@@ -123,8 +123,7 @@ export async function POST(
       customerEmail,
       customerPhone,
       customerNotes,
-      requestDate,
-      requestTimeStart,
+      requestDateTimes, // Simplified format: array of ISO 8601 strings
       totalPrice,
       serviceResponses,
       eventId
@@ -178,17 +177,7 @@ export async function POST(
       }, { status: 404 });
     }
 
-    let requestStart: Date | null = null;
-    let requestEnd: Date | null = null;
-
-    if (requestDate && requestTimeStart) {
-      // For now, let's skip time validation to isolate the issue
-      // We'll handle time properly once the basic flow works
-      console.log("Time fields provided but skipping validation for now");
-
-      // Skip time slot availability check for now
-      console.log("Skipping time slot availability check");
-    }
+    // Note: Time validation can be added here if needed for the simplified datetime format
 
     // ENFORCE PER-MONTH SERVICE REQUEST LIMIT
     // plan_id is on usermanager, not business
@@ -329,13 +318,7 @@ export async function POST(
            customer_email: customerEmail,
            customer_phone: customerPhone || undefined,
            customer_notes: customerNotes || null,
-           request_datetimes: requestDate && requestTimeStart ? [
-             {
-               date: requestDate,
-               time: requestTimeStart,
-               timestamp: new Date(`${requestDate}T${requestTimeStart}`).toISOString()
-             }
-           ] : undefined,
+           request_datetimes: requestDateTimes && requestDateTimes.length > 0 ? requestDateTimes : undefined,
            price_subtotal: new Decimal(totalPrice.toString()),
            status: 'pending',
            request_reference: requestReference
@@ -685,6 +668,20 @@ export async function GET(
         price_subtotal: true,
         customer_notes: true,
         date_created: true,
+        // New fields for enhanced management (commented until Prisma client is regenerated)
+        // is_handled: true,
+        // handled_at: true,
+        // handled_by: true,
+        // priority: true,
+        // urgency_flag: true,
+        // assigned_to: true,
+        // estimated_completion: true,
+        // actual_completion: true,
+        // customer_satisfaction: true,
+        // follow_up_required: true,
+        // follow_up_date: true,
+        // tags: true,
+        // internal_notes: true,
         service: {
           select: {
             service_name: true,
@@ -709,7 +706,8 @@ export async function GET(
           take: 1,
           select: {
             new_status: true,
-            changed_at: true
+            changed_at: true,
+            changed_by: true
           }
         },
         servicerequestmessage: {
@@ -725,7 +723,48 @@ export async function GET(
         },
         selected_service_items_snapshot: true,
         question_responses_snapshot: true,
-        requirement_responses_snapshot: true
+        requirement_responses_snapshot: true,
+        // Event information
+        event_id: true,
+        serviceevent: {
+          select: {
+            event_id: true,
+            event_name: true,
+            event_description: true,
+            event_type: true,
+            duration_minutes: true,
+            buffer_minutes: true,
+            is_required: true,
+            is_active: true
+          }
+        },
+        // Include linked service board
+        serviceboard: {
+          select: {
+            board_id: true,
+            board_ref: true,
+            board_title: true,
+            status: true,
+            action_count: true,
+            created_at: true,
+            updated_at: true,
+            serviceboardaction: {
+              select: {
+                action_id: true,
+                action_type: true,
+                action_title: true,
+                action_status: true,
+                action_priority: true,
+                created_at: true,
+                due_date: true,
+                is_customer_action_required: true
+              },
+              orderBy: {
+                created_at: 'desc'
+              }
+            }
+          }
+        }
       }
     });
 

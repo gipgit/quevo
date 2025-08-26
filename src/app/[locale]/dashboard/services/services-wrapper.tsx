@@ -18,6 +18,8 @@ interface ServiceQuestion {
   question_id: number
   question_text: string
   question_type: string
+  question_options?: any
+  max_length?: number
   is_required: boolean | null
 }
 
@@ -25,6 +27,7 @@ interface ServiceRequirement {
   requirement_block_id: number
   title: string | null
   requirements_text: string
+  is_required: boolean | null
 }
 
 interface ServiceItem {
@@ -36,15 +39,43 @@ interface ServiceItem {
   price_unit: string | null
 }
 
+interface ServiceExtra {
+  service_extra_id: number
+  extra_name: string
+  extra_description: string | null
+  price_base: number
+  price_type: string
+  price_unit: string | null
+}
+
+interface ServiceEvent {
+  event_id: number
+  event_name: string
+  event_description: string | null
+  event_type: string
+  duration_minutes: number
+  buffer_minutes: number
+  is_required: boolean
+  display_order: number
+  is_active: boolean
+}
+
 interface Service {
-  service_id: number
+  service_id: string
   service_name: string
   description: string | null
   duration_minutes: number | null
   buffer_minutes: number | null
   price_base: number | null
+  price_type: string | null
+  price_unit: string | null
   has_items: boolean | null
+  has_extras: boolean | null
   available_booking: boolean | null
+  require_consent_newsletter: boolean | null
+  require_consent_newsletter_text: string | null
+  require_phone: boolean | null
+  available_quotation: boolean | null
   is_active: boolean | null
   display_order: number | null
   servicecategory: {
@@ -53,6 +84,8 @@ interface Service {
   servicequestion: ServiceQuestion[]
   servicerequirementblock: ServiceRequirement[]
   serviceitem: ServiceItem[]
+  serviceextra: ServiceExtra[]
+  serviceevent: ServiceEvent[]
 }
 
 interface ServicesWrapperProps {

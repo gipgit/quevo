@@ -39,6 +39,11 @@ export default function ServiceDetailsForm({
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userRole, setUserRole] = useState(null);
 
+    // Consent fields
+    const [newsletterConsent, setNewsletterConsent] = useState(false);
+    const [pdpConsent, setPdpConsent] = useState(false);
+
+    const [service, setService] = useState(null); // Service details from API
     const [requirements, setRequirements] = useState([]);
     const [questions, setQuestions] = useState([]);
     const [serviceItems, setServiceItems] = useState([]); // New state for service items
@@ -119,6 +124,7 @@ export default function ServiceDetailsForm({
                 }
                 const data = await response.json();
 
+                setService(data.service);
                 setRequirements(data.requirements);
                 setQuestions(data.questions);
                 setServiceItems(data.serviceItems);
@@ -131,14 +137,14 @@ export default function ServiceDetailsForm({
                 setConfirmedRequirements(initialConfirmedRequirements);
 
                 const initialQuestionResponses = {};
-                data.questions.filter(q => q.question_type !== 'checkbox_multi').forEach(q => {
+                data.questions.filter(q => q.question_type !== 'checkbox_multi' && q.question_type !== 'checkbox_single').forEach(q => {
                     initialQuestionResponses[q.question_id] = '';
                 });
                 setQuestionResponses(initialQuestionResponses);
 
                 const initialCheckboxResponses = {};
-                data.questions.filter(q => q.question_type === 'checkbox_multi').forEach(q => {
-                    initialCheckboxResponses[q.question_id] = [];
+                data.questions.filter(q => q.question_type === 'checkbox_multi' || q.question_type === 'checkbox_single').forEach(q => {
+                    initialCheckboxResponses[q.question_id] = q.question_type === 'checkbox_single' ? null : [];
                 });
                 setCheckboxResponses(initialCheckboxResponses);
 
@@ -161,8 +167,8 @@ export default function ServiceDetailsForm({
 
     // Effect to calculate total quotation price whenever selected items or base service price changes
     useEffect(() => {
-        // Ensure selectedService.price is parsed as a float
-        let currentTotalPrice = parseFloat(selectedService?.price_base || 0); // Start with the base service price
+        // Ensure service.price_base is parsed as a float
+        let currentTotalPrice = parseFloat(service?.price_base || 0); // Start with the base service price
 
         for (const serviceItemId in selectedServiceItems) {
             const item = selectedServiceItems[serviceItemId];
@@ -170,7 +176,7 @@ export default function ServiceDetailsForm({
             currentTotalPrice += parseFloat(item.price_base) * item.quantity;
         }
         setTotalQuotationPrice(currentTotalPrice);
-    }, [selectedServiceItems, selectedService?.price_base]);
+    }, [selectedServiceItems, service?.price_base]);
 
 
     const handleRequirementChange = useCallback((id, checked) => {
@@ -181,13 +187,19 @@ export default function ServiceDetailsForm({
         setQuestionResponses(prev => ({ ...prev, [id]: value }));
     }, []);
 
-    const handleCheckboxChange = useCallback((questionId, optionId, checked) => {
+    const handleCheckboxChange = useCallback((questionId, optionId, checked, questionType = 'checkbox_multi') => {
         setCheckboxResponses(prev => {
-            const currentOptions = prev[questionId] || [];
-            if (checked) {
-                return { ...prev, [questionId]: [...currentOptions, optionId] };
+            if (questionType === 'checkbox_single') {
+                // For single checkbox, store the selected value
+                return { ...prev, [questionId]: checked ? optionId : null };
             } else {
-                return { ...prev, [questionId]: currentOptions.filter(id => id !== optionId) };
+                // For multi checkbox, store array of selected values
+                const currentOptions = prev[questionId] || [];
+                if (checked) {
+                    return { ...prev, [questionId]: [...currentOptions, optionId] };
+                } else {
+                    return { ...prev, [questionId]: currentOptions.filter(id => id !== optionId) };
+                }
             }
         });
     }, []);
@@ -255,8 +267,28 @@ export default function ServiceDetailsForm({
             return;
         }
 
+        // Validate phone number requirement
+        if (service?.require_phone && !customerPhone.trim()) {
+            setSubmissionError(t('phoneNumberRequired'));
+            setIsSubmitting(false);
+            return;
+        }
+
+        // Validate consent requirements
+        if (service?.require_consent_pdp && !pdpConsent) {
+            setSubmissionError(t('pdpConsentRequired'));
+            setIsSubmitting(false);
+            return;
+        }
+
+        if (service?.require_consent_newsletter && !newsletterConsent) {
+            setSubmissionError(t('newsletterConsentRequired'));
+            setIsSubmitting(false);
+            return;
+        }
+
         // Validate required requirements
-        const unconfirmedRequired = requirements.filter(req => !confirmedRequirements[req.requirement_block_id]);
+        const unconfirmedRequired = requirements.filter(req => req.is_required && !confirmedRequirements[req.requirement_block_id]);
         if (unconfirmedRequired.length > 0) {
             setSubmissionError(t('allRequirementsMustBeConfirmed'));
             setIsSubmitting(false);
@@ -264,14 +296,17 @@ export default function ServiceDetailsForm({
         }
 
         // Validate required questions
-        const unansweredRequiredQuestions = questions.filter(q => q.is_required && q.question_type !== 'checkbox_multi' && !questionResponses[q.question_id]);
+        const unansweredRequiredQuestions = questions.filter(q => q.is_required && q.question_type !== 'checkbox_multi' && q.question_type !== 'checkbox_single' && !questionResponses[q.question_id]);
         if (unansweredRequiredQuestions.length > 0) {
             setSubmissionError(t('allRequiredQuestionsMustBeAnswered'));
             setIsSubmitting(false);
             return;
         }
 
-        const unselectedRequiredCheckboxes = questions.filter(q => q.is_required && q.question_type === 'checkbox_multi' && (!checkboxResponses[q.question_id] || checkboxResponses[q.question_id].length === 0));
+        const unselectedRequiredCheckboxes = questions.filter(q => q.is_required && (q.question_type === 'checkbox_multi' || q.question_type === 'checkbox_single') && (
+            (q.question_type === 'checkbox_multi' && (!checkboxResponses[q.question_id] || checkboxResponses[q.question_id].length === 0)) ||
+            (q.question_type === 'checkbox_single' && !checkboxResponses[q.question_id])
+        ));
         if (unselectedRequiredCheckboxes.length > 0) {
             setSubmissionError(t('allRequiredCheckboxQuestionsMustBeAnswered'));
             setIsSubmitting(false);
@@ -284,6 +319,8 @@ export default function ServiceDetailsForm({
                 customerEmail,
                 customerPhone,
                 customerNotes,
+                newsletterConsent,
+                pdpConsent,
             };
 
             const responses = {
@@ -484,6 +521,11 @@ export default function ServiceDetailsForm({
                                         <div className="text-sm">
                                             <span className="">{req.title}:</span>{' '}
                                             <span className="">{req.requirements_text}</span>
+                                            {req.is_required && (
+                                                <span className="inline-block ml-2 px-2 py-0.5 text-xs font-medium bg-red-100 text-red-800 rounded-full">
+                                                    {tCommon('required')}
+                                                </span>
+                                            )}
                                         </div>
                                     </label>
                                 </div>
@@ -499,7 +541,11 @@ export default function ServiceDetailsForm({
                             {questions.sort((a, b) => a.display_order - b.display_order).map(q => (
                                 <div key={q.question_id} className="mb-4">
                                     <label className="block text-sm font-medium mb-1">
-                                        {q.question_text} {q.is_required && <span className="text-red-500">*</span>}
+                                        {q.question_text} {q.is_required && (
+                                            <span className="inline-block ml-2 px-2 py-0.5 text-xs font-medium bg-red-100 text-red-800 rounded-full">
+                                                {tCommon('required')}
+                                            </span>
+                                        )}
                                     </label>
                                     {q.question_type === 'open' && (
                                         <input
@@ -532,7 +578,23 @@ export default function ServiceDetailsForm({
                                                         type="checkbox"
                                                         className="form-checkbox h-4 w-4 rounded mr-1"
                                                         checked={(checkboxResponses[q.question_id] || []).includes(option.option_id)}
-                                                        onChange={(e) => handleCheckboxChange(q.question_id, option.option_id, e.target.checked)}
+                                                        onChange={(e) => handleCheckboxChange(q.question_id, option.option_id, e.target.checked, 'checkbox_multi')}
+                                                    />
+                                                    <span className="text-xs md:text-sm">{option.option_text}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {q.question_type === 'checkbox_single' && (
+                                        <div className="mt-1 flex flex-row flex-wrap items-center gap-x-3">
+                                            {q.options?.sort((a, b) => a.display_order - b.display_order).map(option => (
+                                                <label key={option.option_id} className="flex items-center">
+                                                    <input
+                                                        type="radio"
+                                                        name={`question-${q.question_id}`}
+                                                        className="form-radio h-4 w-4 rounded mr-1"
+                                                        checked={checkboxResponses[q.question_id] === option.option_id}
+                                                        onChange={(e) => handleCheckboxChange(q.question_id, option.option_id, e.target.checked, 'checkbox_single')}
                                                     />
                                                     <span className="text-xs md:text-sm">{option.option_text}</span>
                                                 </label>
@@ -617,6 +679,56 @@ export default function ServiceDetailsForm({
                     </div>
                 </div>
                 {/* --- End Your Details Section --- */}
+
+                {/* --- Consent Section --- */}
+                {(service?.require_consent_pdp || service?.require_consent_newsletter) && (
+                    <div className="mb-6 border-b pb-4">
+                        <h3 className={`text-xl font-semibold mb-3 ${themeColorText}`}>{t('consentTitle')}</h3>
+                        
+                        {service?.require_consent_pdp && (
+                            <div className="mb-3">
+                                <label className="flex items-start">
+                                    <input
+                                        type="checkbox"
+                                        className="form-checkbox h-5 w-5 rounded mt-1 mr-2"
+                                        checked={pdpConsent}
+                                        onChange={(e) => setPdpConsent(e.target.checked)}
+                                        required={service?.require_consent_pdp}
+                                    />
+                                    <div className="text-sm">
+                                        <span className="inline-block ml-1 md:ml-2 px-1.5 md:px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-700 rounded-full">
+                                            {tCommon('required')}
+                                        </span>
+                                        <span className="ml-2">{t('pdpConsentText')}</span>
+                                    </div>
+                                </label>
+                            </div>
+                        )}
+                        
+                        {service?.require_consent_newsletter && (
+                            <div className="mb-3">
+                                <label className="flex items-start">
+                                    <input
+                                        type="checkbox"
+                                        className="form-checkbox h-5 w-5 rounded mt-1 mr-2"
+                                        checked={newsletterConsent}
+                                        onChange={(e) => setNewsletterConsent(e.target.checked)}
+                                        required={service?.require_consent_newsletter}
+                                    />
+                                    <div className="text-sm">
+                                        <span className="inline-block ml-1 md:ml-2 px-1.5 md:px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-700 rounded-full">
+                                            {tCommon('required')}
+                                        </span>
+                                        <span className="ml-2">
+                                            {service?.require_consent_newsletter_text || t('newsletterConsentText')}
+                                        </span>
+                                    </div>
+                                </label>
+                            </div>
+                        )}
+                    </div>
+                )}
+                {/* --- End Consent Section --- */}
 
                 {submissionError && (
                     <div className="bg-red-100 text-red-800 p-3 text-sm rounded-md mb-4 text-center">

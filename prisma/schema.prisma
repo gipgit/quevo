@@ -37,6 +37,7 @@ model business {
   aicontentgenerationratelimit   aicontentgenerationratelimit?
   aigenerationemail              aigenerationemail[]
   appointment                    appointment[]
+  appsupportrequest              appsupportrequest[]
   usermanager                    usermanager                      @relation(fields: [manager_id], references: [user_id], onDelete: Cascade)
   businessad                     businessad[]
   businesscategory               businesscategory[]
@@ -49,6 +50,7 @@ model business {
   cardscan                       cardscan[]
   cardscanauthorized             cardscanauthorized[]
   emailratelimit                 emailratelimit?
+  marketingemailcampaign         marketingemailcampaign[]
   product                        product[]
   productcategory                productcategory[]
   promo                          promo[]
@@ -57,7 +59,7 @@ model business {
   servicecategory                servicecategory[]
   serviceeventavailability       serviceeventavailability[]
   servicerequest                 servicerequest[]
-  supportrequest                 supportrequest[]
+  servicesupportrequest          servicesupportrequest[]
   surveyquestionprebuiltfavorite surveyquestionprebuiltfavorite[]
 }
 
@@ -358,7 +360,7 @@ model usercustomer {
   serviceboard            serviceboard[]
   serviceboardaction      serviceboardaction[]
   servicerequest          servicerequest[]
-  supportrequest          supportrequest[]
+  servicesupportrequest   servicesupportrequest[]
   surveyanswer            surveyanswer[]
   userchallengecompletion userchallengecompletion[]
   usercustomerredemption  usercustomerredemption[]
@@ -423,43 +425,45 @@ model userguestredemption {
 }
 
 model usermanager {
-  user_id                     String                           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name_first                  String                           @db.VarChar(50)
-  name_last                   String                           @db.VarChar(50)
-  email                       String                           @unique @db.VarChar(255)
-  date_created                DateTime?                        @default(now()) @db.Timestamp(6)
-  active                      user_customer_active_status      @default(inactive)
-  verification_status         user_manager_verification_status @default(waiting)
-  plan_id                     Int                              @default(1)
-  stripe_customer_id          String?                          @unique @db.VarChar(255)
-  stripe_subscription_id      String?                          @unique @db.VarChar(255)
-  stripe_price_id             String?                          @db.VarChar(255)
-  stripe_current_period_start DateTime?                        @db.Timestamp(6)
-  stripe_current_period_end   DateTime?                        @db.Timestamp(6)
-  stripe_payment_method_id    String?                          @db.VarChar(255)
-  stripe_payment_method_brand String?                          @db.VarChar(50)
-  stripe_payment_method_last4 String?                          @db.VarChar(10)
-  stripe_next_invoice_date    DateTime?                        @db.Timestamp(6)
-  stripe_cancel_at_period_end Boolean?
-  stripe_canceled_at          DateTime?                        @db.Timestamp(6)
-  stripe_status               String?                          @db.VarChar(50)
-  subscription_status         String?                          @db.VarChar(50)
-  birth_date                  DateTime?                        @db.Date
-  birth_country               String?                          @db.VarChar(50)
-  gender                      user_gender_type?
-  residence_country           String?                          @db.VarChar(50)
-  residence_region            String?                          @db.VarChar(50)
-  residence_city              String?                          @db.VarChar(50)
-  residence_address           String?                          @db.VarChar(80)
-  tel                         String?                          @db.VarChar(20)
-  password                    String                           @db.VarChar(255)
-  token_activation            String?                          @unique @db.VarChar(255)
-  updated_at                  DateTime                         @default(now()) @db.Timestamptz(6)
-  business                    business[]
-  supportrequest              supportrequest[]
-  usercustomerredemption      usercustomerredemption[]
-  userguestredemption         userguestredemption[]
-  plan                        plan                             @relation(fields: [plan_id], references: [plan_id], onUpdate: NoAction)
+  user_id                                                      String                           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name_first                                                   String                           @db.VarChar(50)
+  name_last                                                    String                           @db.VarChar(50)
+  email                                                        String                           @unique @db.VarChar(255)
+  date_created                                                 DateTime?                        @default(now()) @db.Timestamp(6)
+  active                                                       user_customer_active_status      @default(inactive)
+  verification_status                                          user_manager_verification_status @default(waiting)
+  plan_id                                                      Int                              @default(1)
+  stripe_customer_id                                           String?                          @unique @db.VarChar(255)
+  stripe_subscription_id                                       String?                          @unique @db.VarChar(255)
+  stripe_price_id                                              String?                          @db.VarChar(255)
+  stripe_current_period_start                                  DateTime?                        @db.Timestamp(6)
+  stripe_current_period_end                                    DateTime?                        @db.Timestamp(6)
+  stripe_payment_method_id                                     String?                          @db.VarChar(255)
+  stripe_payment_method_brand                                  String?                          @db.VarChar(50)
+  stripe_payment_method_last4                                  String?                          @db.VarChar(10)
+  stripe_next_invoice_date                                     DateTime?                        @db.Timestamp(6)
+  stripe_cancel_at_period_end                                  Boolean?
+  stripe_canceled_at                                           DateTime?                        @db.Timestamp(6)
+  stripe_status                                                String?                          @db.VarChar(50)
+  subscription_status                                          String?                          @db.VarChar(50)
+  birth_date                                                   DateTime?                        @db.Date
+  birth_country                                                String?                          @db.VarChar(50)
+  gender                                                       user_gender_type?
+  residence_country                                            String?                          @db.VarChar(50)
+  residence_region                                             String?                          @db.VarChar(50)
+  residence_city                                               String?                          @db.VarChar(50)
+  residence_address                                            String?                          @db.VarChar(80)
+  tel                                                          String?                          @db.VarChar(20)
+  password                                                     String                           @db.VarChar(255)
+  token_activation                                             String?                          @unique @db.VarChar(255)
+  updated_at                                                   DateTime                         @default(now()) @db.Timestamptz(6)
+  appsupportrequest_appsupportrequest_assigned_toTousermanager appsupportrequest[]              @relation("appsupportrequest_assigned_toTousermanager")
+  appsupportrequest_appsupportrequest_manager_idTousermanager  appsupportrequest[]              @relation("appsupportrequest_manager_idTousermanager")
+  business                                                     business[]
+  servicesupportrequest                                        servicesupportrequest[]
+  usercustomerredemption                                       usercustomerredemption[]
+  userguestredemption                                          userguestredemption[]
+  plan                                                         plan                             @relation(fields: [plan_id], references: [plan_id], onUpdate: NoAction)
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -496,6 +500,7 @@ model servicerequirementblock {
   title                String?   @db.VarChar(255)
   requirements_text    String
   is_active            Boolean?  @default(true)
+  is_required          Boolean?  @default(false)
   date_created         DateTime? @default(now()) @db.Timestamp(6)
   date_updated         DateTime? @default(now()) @db.Timestamp(6)
   bookingservice       service   @relation(fields: [service_id], references: [service_id], onDelete: Cascade)
@@ -567,33 +572,37 @@ model productvariation {
 }
 
 model service {
-  service_id                 String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  business_id                String                    @db.Uuid
-  category_id                Int?
-  service_name               String                    @db.VarChar(255)
-  description                String?
-  duration_minutes           Int?
-  buffer_minutes             Int?
-  price_base                 Decimal?                  @db.Decimal(10, 2)
-  price_type                 String?                   @default("fixed") @db.VarChar(50)
-  price_unit                 String?                   @db.VarChar(50)
-  has_items                  Boolean?                  @default(false)
-  available_booking          Boolean?                  @default(false)
-  available_quotation        Boolean?                  @default(false)
-  require_consent_newsletter Boolean?                  @default(false)
-  is_active                  Boolean?                  @default(true)
-  display_order              Int?                      @default(0)
-  date_created               DateTime?                 @default(now()) @db.Timestamp(6)
-  date_updated               DateTime?                 @default(now()) @db.Timestamp(6)
-  business                   business                  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
-  servicecategory            servicecategory?          @relation(fields: [category_id], references: [category_id])
-  serviceboard               serviceboard[]
-  serviceevent               serviceevent[]
-  serviceextra               serviceextra[]
-  serviceitem                serviceitem[]
-  servicequestion            servicequestion[]
-  servicerequest             servicerequest[]
-  servicerequirementblock    servicerequirementblock[]
+  service_id                      String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  business_id                     String                    @db.Uuid
+  category_id                     Int?
+  service_name                    String                    @db.VarChar(255)
+  description                     String?
+  duration_minutes                Int?
+  buffer_minutes                  Int?
+  price_base                      Decimal?                  @db.Decimal(10, 2)
+  price_type                      String?                   @default("fixed") @db.VarChar(50)
+  price_unit                      String?                   @db.VarChar(50)
+  has_extras                      Boolean?                  @default(false)
+  has_items                       Boolean?                  @default(false)
+  available_booking               Boolean?                  @default(false)
+  available_quotation             Boolean?                  @default(false)
+  require_phone                   Boolean?                  @default(true)
+  require_consent_pdp             Boolean?                  @default(true)
+  require_consent_newsletter      Boolean?                  @default(false)
+  require_consent_newsletter_text String?
+  is_active                       Boolean?                  @default(true)
+  display_order                   Int?                      @default(0)
+  date_created                    DateTime?                 @default(now()) @db.Timestamp(6)
+  date_updated                    DateTime?                 @default(now()) @db.Timestamp(6)
+  business                        business                  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  servicecategory                 servicecategory?          @relation(fields: [category_id], references: [category_id])
+  serviceboard                    serviceboard[]
+  serviceevent                    serviceevent[]
+  serviceextra                    serviceextra[]
+  serviceitem                     serviceitem[]
+  servicequestion                 servicequestion[]
+  servicerequest                  servicerequest[]
+  servicerequirementblock         servicerequirementblock[]
 }
 
 model serviceitem {
@@ -645,9 +654,23 @@ model servicerequest {
   selected_service_items_snapshot   Json?
   question_responses_snapshot       Json?
   requirement_responses_snapshot    Json?
+  consent_newsletter                Boolean?                            @default(false)
+  consent_pdp                       Boolean?                            @default(false)
   staff_id                          Int?
   date_created                      DateTime?                           @default(now()) @db.Timestamp(6)
   date_updated                      DateTime?                           @default(now()) @db.Timestamp(6)
+  is_handled                        Boolean?                            @default(false)
+  handled_at                        DateTime?                           @db.Timestamp(6)
+  handled_by                        String?                             @db.VarChar(100)
+  priority                          String?                             @default("medium") @db.VarChar(20)
+  urgency_flag                      Boolean?                            @default(false)
+  assigned_to                       String?                             @db.VarChar(100)
+  estimated_completion              DateTime?                           @db.Timestamp(6)
+  actual_completion                 DateTime?                           @db.Timestamp(6)
+  customer_satisfaction             Int?
+  follow_up_required                Boolean?                            @default(false)
+  follow_up_date                    DateTime?                           @db.Timestamp(6)
+  tags                              Json?
   serviceboard                      serviceboard[]
   business                          business                            @relation(fields: [business_id], references: [business_id])
   usercustomer                      usercustomer?                       @relation(fields: [customer_user_id], references: [user_id], onDelete: Restrict)
@@ -765,24 +788,24 @@ model serviceboard {
 }
 
 model serviceboardaction {
-  action_id                   String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  board_id                    String           @db.Uuid
-  customer_id                 String           @db.Uuid
-  action_type                 String           @db.VarChar(50)
-  action_title                String           @db.VarChar(255)
+  action_id                   String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  board_id                    String                  @db.Uuid
+  customer_id                 String                  @db.Uuid
+  action_type                 String                  @db.VarChar(50)
+  action_title                String                  @db.VarChar(255)
   action_description          String?
   action_details              Json?
-  action_status               String           @default("pending") @db.VarChar(50)
-  action_priority             String?          @default("medium") @db.VarChar(20)
-  created_at                  DateTime         @default(now()) @db.Timestamptz(6)
-  updated_at                  DateTime         @default(now()) @db.Timestamptz(6)
-  due_date                    DateTime?        @db.Timestamptz(6)
-  is_customer_action_required Boolean          @default(false)
-  is_archived                 Boolean          @default(false)
+  action_status               String                  @default("pending") @db.VarChar(50)
+  action_priority             String?                 @default("medium") @db.VarChar(20)
+  created_at                  DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at                  DateTime                @default(now()) @db.Timestamptz(6)
+  due_date                    DateTime?               @db.Timestamptz(6)
+  is_customer_action_required Boolean                 @default(false)
+  is_archived                 Boolean                 @default(false)
   appointment                 appointment[]
-  serviceboard                serviceboard     @relation(fields: [board_id], references: [board_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sba_service_board")
-  usercustomer                usercustomer     @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_sba_user_customer")
-  supportrequest              supportrequest[]
+  serviceboard                serviceboard            @relation(fields: [board_id], references: [board_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sba_service_board")
+  usercustomer                usercustomer            @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_sba_user_customer")
+  servicesupportrequest       servicesupportrequest[]
 }
 
 model usagecounter {
@@ -809,91 +832,6 @@ model usagecountermonthly {
   @@index([business_id, feature, year, month], map: "idx_usagecountermonthly_business_feature_month")
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model supportrequest {
-  support_request_id String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  business_id        String                    @db.Uuid
-  board_ref          String                    @db.VarChar(255)
-  customer_id        String?                   @db.Uuid
-  message            String
-  related_action_id  String?                   @db.Uuid
-  email              String?                   @db.VarChar(255)
-  priority           support_request_priority?
-  category           support_request_category  @default(general)
-  status             support_request_status    @default(open)
-  assigned_to        String?                   @db.Uuid
-  resolution_notes   String?
-  created_at         DateTime?                 @default(now()) @db.Timestamptz(6)
-  updated_at         DateTime?                 @default(now()) @db.Timestamptz(6)
-  attachments        attachments[]
-  usermanager        usermanager?              @relation(fields: [assigned_to], references: [user_id], onUpdate: NoAction, map: "fk_sr_assigned_to")
-  business           business                  @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sr_business")
-  usercustomer       usercustomer?             @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_sr_customer")
-  serviceboardaction serviceboardaction?       @relation(fields: [related_action_id], references: [action_id], onUpdate: NoAction, map: "fk_sr_related_action")
-
-  @@index([board_ref], map: "idx_supportrequest_board_ref")
-  @@index([business_id, board_ref], map: "idx_supportrequest_business_board")
-  @@index([business_id], map: "idx_supportrequest_business_id")
-  @@index([business_id, status], map: "idx_supportrequest_business_status")
-  @@index([category], map: "idx_supportrequest_category")
-  @@index([created_at], map: "idx_supportrequest_created_at")
-  @@index([customer_id], map: "idx_supportrequest_customer_id")
-  @@index([priority], map: "idx_supportrequest_priority")
-  @@index([related_action_id], map: "idx_supportrequest_related_action_id")
-  @@index([status], map: "idx_supportrequest_status")
-}
-
-model emailratelimit {
-  id               Int      @id @default(autoincrement())
-  business_id      String   @unique @db.Uuid
-  tokens_available Int      @default(0)
-  fill_rate        Int      @default(10)
-  last_refill      DateTime @default(now()) @db.Timestamptz(6)
-  created_at       DateTime @default(now()) @db.Timestamptz(6)
-  updated_at       DateTime @default(now()) @db.Timestamptz(6)
-  business         business @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([business_id], map: "idx_emailratelimit_business")
-}
-
-model emailcampaign {
-  id                     Int                      @id @default(autoincrement())
-  business_id            String                   @db.Uuid
-  campaign_name          String                   @db.VarChar(255)
-  subject                String                   @db.VarChar(255)
-  content                String
-  from_name              String                   @db.VarChar(255)
-  from_email             String                   @db.VarChar(255)
-  reply_to               String?                  @db.VarChar(255)
-  recipient_count        Int                      @default(0)
-  sent_count             Int                      @default(0)
-  failed_count           Int                      @default(0)
-  status                 String                   @default("draft") @db.VarChar(50)
-  scheduled_at           DateTime?                @db.Timestamptz(6)
-  sent_at                DateTime?                @db.Timestamptz(6)
-  created_at             DateTime?                @default(now()) @db.Timestamptz(6)
-  updated_at             DateTime?                @default(now()) @db.Timestamptz(6)
-  emailcampaignrecipient emailcampaignrecipient[]
-
-  @@index([status], map: "idx_emailcampaign_status")
-  @@index([business_id], map: "idx_emailcampaign_business")
-}
-
-model emailcampaignrecipient {
-  id            Int            @id @default(autoincrement())
-  campaign_id   Int?
-  customer_id   String         @db.Uuid
-  email         String         @db.VarChar(255)
-  status        String         @default("pending") @db.VarChar(50)
-  sent_at       DateTime?      @db.Timestamptz(6)
-  error_message String?
-  created_at    DateTime?      @default(now()) @db.Timestamptz(6)
-  emailcampaign emailcampaign? @relation(fields: [campaign_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([status], map: "idx_emailcampaignrecipient_status")
-  @@index([campaign_id], map: "idx_emailcampaignrecipient_campaign")
-}
-
 model quotation {
   id               Int       @id @default(autoincrement())
   business_id      String    @db.Uuid
@@ -913,40 +851,19 @@ model quotation {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model attachments {
-  id                 BigInt          @id @default(autoincrement())
-  file_path          String          @db.VarChar(255)
-  file_name          String?         @db.VarChar(255)
-  support_request_id String?         @db.Uuid
-  user_id            String?         @db.Uuid
-  created_at         DateTime        @default(now()) @db.Timestamptz(6)
+  id                 BigInt                 @id @default(autoincrement())
+  file_path          String                 @db.VarChar(255)
+  file_name          String?                @db.VarChar(255)
+  support_request_id String?                @db.Uuid
+  user_id            String?                @db.Uuid
+  created_at         DateTime               @default(now()) @db.Timestamptz(6)
   feedback_id        BigInt?
-  feedback           feedback?       @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  support_requests   supportrequest? @relation(fields: [support_request_id], references: [support_request_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_attachments_support_request_id")
+  feedback           feedback?              @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  support_requests   servicesupportrequest? @relation(fields: [support_request_id], references: [support_request_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_attachments_support_request_id")
 
-  @@index([feedback_id], map: "idx_attachments_feedback_id")
   @@index([support_request_id], map: "idx_attachments_support_request_id")
   @@index([user_id], map: "idx_attachments_user_id")
-}
-
-model feedback {
-  id                       BigInt                    @id @default(autoincrement())
-  user_id                  String?                   @db.Uuid
-  feedback_type            feedback_type_enum
-  message                  String
-  status                   feedback_status_enum      @default(new)
-  is_anonymous             Boolean                   @default(false)
-  created_at               DateTime                  @default(now()) @db.Timestamptz(6)
-  updated_at               DateTime                  @default(now()) @db.Timestamptz(6)
-  attachments              attachments[]
-  feedbackbugreports       feedbackbugreports?
-  feedbackfeaturerequests  feedbackfeaturerequests?
-  feedbacklanguagerequests feedbacklanguagerequests?
-  feedbacksuggestions      feedbacksuggestions?
-
-  @@index([created_at], map: "idx_feedback_created_at")
-  @@index([status], map: "idx_feedback_status")
-  @@index([feedback_type], map: "idx_feedback_type")
-  @@index([user_id], map: "idx_feedback_user_id")
+  @@index([feedback_id], map: "idx_attachments_feedback_id")
 }
 
 model serviceevent {
@@ -985,6 +902,37 @@ model serviceeventavailability {
   serviceevent        serviceevent? @relation(fields: [event_id], references: [event_id], onDelete: Cascade)
 }
 
+model aiassistantmessagehistory {
+  message_id        BigInt   @id @default(autoincrement())
+  business_id       String   @db.Uuid
+  session_id        String?  @db.VarChar(255)
+  user_message      String
+  ai_response       String?
+  message_type      String?  @default("conversation") @db.VarChar(50)
+  request_type      String?  @default("openai") @db.VarChar(50)
+  input_tokens      Int?
+  output_tokens     Int?
+  cost_usd          Decimal? @db.Decimal(10, 6)
+  response_time_ms  Int?
+  success           Boolean? @default(true)
+  error_message     String?
+  user_ip           String?  @db.VarChar(45)
+  user_agent        String?
+  validation_passed Boolean? @default(true)
+  validation_errors String?
+  rate_limited      Boolean? @default(false)
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+  business          business @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+
+  @@index([business_id], map: "idx_ai_message_history_business_id")
+  @@index([created_at], map: "idx_ai_message_history_created_at")
+  @@index([message_type], map: "idx_ai_message_history_message_type")
+  @@index([request_type], map: "idx_ai_message_history_request_type")
+  @@index([session_id], map: "idx_ai_message_history_session_id")
+  @@index([success], map: "idx_ai_message_history_success")
+  @@index([validation_passed], map: "idx_ai_message_history_validation_passed")
+}
+
 model aicontentgenerationratelimit {
   id                    Int      @id @default(autoincrement())
   business_id           String   @unique @db.Uuid
@@ -996,6 +944,122 @@ model aicontentgenerationratelimit {
   business              business @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([business_id], map: "idx_aicontentgenerationratelimit_business")
+}
+
+model aigenerationemail {
+  id                            Int      @id @default(autoincrement())
+  business_id                   String   @db.Uuid
+  generation_date               DateTime @default(now()) @db.Timestamptz(6)
+  past_customers_subject        String?
+  past_customers_body           String?
+  uncommitted_customers_subject String?
+  uncommitted_customers_body    String?
+  services_text                 String?
+  past_customers_text           String?
+  uncommitted_customers_text    String?
+  created_at                    DateTime @default(now()) @db.Timestamptz(6)
+  business                      business @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([business_id], map: "idx_aigenerationemail_business")
+  @@index([generation_date], map: "idx_aigenerationemail_date")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model appsupportrequest {
+  support_request_id                                     String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  business_id                                            String                @db.Uuid
+  manager_id                                             String                @db.Uuid
+  message                                                String
+  priority                                               app_support_priority? @default(medium)
+  category                                               app_support_category  @default(general)
+  status                                                 app_support_status    @default(open)
+  assigned_to                                            String?               @db.Uuid
+  resolution_notes                                       String?
+  created_at                                             DateTime?             @default(now()) @db.Timestamptz(6)
+  updated_at                                             DateTime?             @default(now()) @db.Timestamptz(6)
+  usermanager_appsupportrequest_assigned_toTousermanager usermanager?          @relation("appsupportrequest_assigned_toTousermanager", fields: [assigned_to], references: [user_id], onUpdate: NoAction, map: "fk_asr_assigned_to")
+  business                                               business              @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_asr_business")
+  usermanager_appsupportrequest_manager_idTousermanager  usermanager           @relation("appsupportrequest_manager_idTousermanager", fields: [manager_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_asr_manager")
+
+  @@index([business_id], map: "idx_appsupportrequest_business_id")
+  @@index([business_id, status], map: "idx_appsupportrequest_business_status")
+  @@index([category], map: "idx_appsupportrequest_category")
+  @@index([created_at], map: "idx_appsupportrequest_created_at")
+  @@index([manager_id], map: "idx_appsupportrequest_manager_id")
+  @@index([priority], map: "idx_appsupportrequest_priority")
+  @@index([status], map: "idx_appsupportrequest_status")
+}
+
+model emailcampaign {
+  id                     Int                      @id @default(autoincrement())
+  business_id            String                   @db.Uuid
+  campaign_name          String                   @db.VarChar(255)
+  subject                String                   @db.VarChar(255)
+  content                String
+  from_name              String                   @db.VarChar(255)
+  from_email             String                   @db.VarChar(255)
+  reply_to               String?                  @db.VarChar(255)
+  recipient_count        Int                      @default(0)
+  sent_count             Int                      @default(0)
+  failed_count           Int                      @default(0)
+  status                 String                   @default("draft") @db.VarChar(50)
+  scheduled_at           DateTime?                @db.Timestamptz(6)
+  sent_at                DateTime?                @db.Timestamptz(6)
+  created_at             DateTime?                @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime?                @default(now()) @db.Timestamptz(6)
+  emailcampaignrecipient emailcampaignrecipient[]
+
+  @@index([business_id], map: "idx_emailcampaign_business")
+  @@index([status], map: "idx_emailcampaign_status")
+}
+
+model emailcampaignrecipient {
+  id            Int            @id @default(autoincrement())
+  campaign_id   Int?
+  customer_id   String         @db.Uuid
+  email         String         @db.VarChar(255)
+  status        String         @default("pending") @db.VarChar(50)
+  sent_at       DateTime?      @db.Timestamptz(6)
+  error_message String?
+  created_at    DateTime?      @default(now()) @db.Timestamptz(6)
+  emailcampaign emailcampaign? @relation(fields: [campaign_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([campaign_id], map: "idx_emailcampaignrecipient_campaign")
+  @@index([status], map: "idx_emailcampaignrecipient_status")
+}
+
+model emailratelimit {
+  id               Int      @id @default(autoincrement())
+  business_id      String   @unique @db.Uuid
+  tokens_available Int      @default(0)
+  fill_rate        Int      @default(10)
+  last_refill      DateTime @default(now()) @db.Timestamptz(6)
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime @default(now()) @db.Timestamptz(6)
+  business         business @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([business_id], map: "idx_emailratelimit_business")
+}
+
+model feedback {
+  id                       BigInt                    @id @default(autoincrement())
+  user_id                  String?                   @db.Uuid
+  feedback_type            feedback_type_enum
+  message                  String
+  status                   feedback_status_enum      @default(new)
+  is_anonymous             Boolean                   @default(false)
+  created_at               DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime                  @default(now()) @db.Timestamptz(6)
+  attachments              attachments[]
+  feedbackbugreports       feedbackbugreports?
+  feedbackfeaturerequests  feedbackfeaturerequests?
+  feedbacklanguagerequests feedbacklanguagerequests?
+  feedbacksuggestions      feedbacksuggestions?
+
+  @@index([created_at], map: "idx_feedback_created_at")
+  @@index([status], map: "idx_feedback_status")
+  @@index([feedback_type], map: "idx_feedback_type")
+  @@index([user_id], map: "idx_feedback_user_id")
 }
 
 model feedbackbugreports {
@@ -1042,53 +1106,67 @@ model feedbacksuggestions {
   @@index([feedback_id], map: "idx_feedbacksuggestions_feedback_id")
 }
 
-model aigenerationemail {
-  id                            Int      @id @default(autoincrement())
-  business_id                   String   @db.Uuid
-  generation_date               DateTime @default(now()) @db.Timestamptz(6)
-  past_customers_subject        String?
-  past_customers_body           String?
-  uncommitted_customers_subject String?
-  uncommitted_customers_body    String?
-  services_text                 String?
-  past_customers_text           String?
-  uncommitted_customers_text    String?
-  created_at                    DateTime @default(now()) @db.Timestamptz(6)
-  business                      business @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction)
+model marketingemailcampaign {
+  id                 BigInt    @id @default(autoincrement())
+  business_id        String    @db.Uuid
+  campaign_name      String    @db.VarChar(255)
+  subject            String    @db.VarChar(255)
+  content            String
+  from_name          String    @db.VarChar(255)
+  from_email         String    @db.VarChar(255)
+  reply_to           String?   @db.VarChar(255)
+  recipient_category String    @default("past_customers") @db.VarChar(50)
+  sent_count         Int       @default(0)
+  failed_count       Int       @default(0)
+  opened_count       Int       @default(0)
+  clicked_count      Int       @default(0)
+  status             String    @default("draft") @db.VarChar(50)
+  campaign_type      String    @default("general") @db.VarChar(50)
+  scheduled_at       DateTime? @db.Timestamptz(6)
+  sent_at            DateTime? @db.Timestamptz(6)
+  created_at         DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime? @default(now()) @db.Timestamptz(6)
+  business           business  @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@index([business_id], map: "idx_aigenerationemail_business")
-  @@index([generation_date], map: "idx_aigenerationemail_date")
+  @@index([business_id], map: "idx_marketing_email_campaign_business_id")
+  @@index([recipient_category], map: "idx_marketing_email_campaign_recipient_category")
+  @@index([scheduled_at], map: "idx_marketing_email_campaign_scheduled_at")
+  @@index([status], map: "idx_marketing_email_campaign_status")
+  @@index([campaign_type], map: "idx_marketing_email_campaign_type")
 }
 
-model aiassistantmessagehistory {
-  message_id        BigInt   @id @default(autoincrement())
-  business_id       String   @db.Uuid
-  session_id        String?  @db.VarChar(255)
-  user_message      String
-  ai_response       String?
-  message_type      String?  @default("conversation") @db.VarChar(50)
-  request_type      String?  @default("openai") @db.VarChar(50)
-  input_tokens      Int?
-  output_tokens     Int?
-  cost_usd          Decimal? @db.Decimal(10, 6)
-  response_time_ms  Int?
-  success           Boolean? @default(true)
-  error_message     String?
-  user_ip           String?  @db.VarChar(45)
-  user_agent        String?
-  validation_passed Boolean? @default(true)
-  validation_errors String?
-  rate_limited      Boolean? @default(false)
-  created_at        DateTime @default(now()) @db.Timestamptz(6)
-  business          business @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model servicesupportrequest {
+  support_request_id String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  business_id        String                    @db.Uuid
+  board_ref          String                    @db.VarChar(255)
+  customer_id        String?                   @db.Uuid
+  message            String
+  related_action_id  String?                   @db.Uuid
+  email              String?                   @db.VarChar(255)
+  priority           service_support_priority?
+  category           service_support_category  @default(general)
+  status             service_support_status    @default(open)
+  assigned_to        String?                   @db.Uuid
+  resolution_notes   String?
+  created_at         DateTime?                 @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime?                 @default(now()) @db.Timestamptz(6)
+  attachments        attachments[]
+  usermanager        usermanager?              @relation(fields: [assigned_to], references: [user_id], onUpdate: NoAction, map: "fk_ssr_assigned_to")
+  business           business                  @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ssr_business")
+  usercustomer       usercustomer?             @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_ssr_customer")
+  serviceboardaction serviceboardaction?       @relation(fields: [related_action_id], references: [action_id], onUpdate: NoAction, map: "fk_ssr_related_action")
 
-  @@index([business_id], map: "idx_ai_message_history_business_id")
-  @@index([created_at], map: "idx_ai_message_history_created_at")
-  @@index([message_type], map: "idx_ai_message_history_message_type")
-  @@index([request_type], map: "idx_ai_message_history_request_type")
-  @@index([session_id], map: "idx_ai_message_history_session_id")
-  @@index([success], map: "idx_ai_message_history_success")
-  @@index([validation_passed], map: "idx_ai_message_history_validation_passed")
+  @@index([board_ref], map: "idx_servicesupportrequest_board_ref")
+  @@index([business_id, board_ref], map: "idx_servicesupportrequest_business_board")
+  @@index([business_id], map: "idx_servicesupportrequest_business_id")
+  @@index([business_id, status], map: "idx_servicesupportrequest_business_status")
+  @@index([category], map: "idx_servicesupportrequest_category")
+  @@index([created_at], map: "idx_servicesupportrequest_created_at")
+  @@index([customer_id], map: "idx_servicesupportrequest_customer_id")
+  @@index([priority], map: "idx_servicesupportrequest_priority")
+  @@index([related_action_id], map: "idx_servicesupportrequest_related_action_id")
+  @@index([status], map: "idx_servicesupportrequest_status")
 }
 
 enum business_sponsorship_level {
@@ -1161,20 +1239,22 @@ enum request_status_type {
   rescheduled
 }
 
-enum support_request_category {
+enum app_support_category {
   general
   technical
-  account
+  billing
+  feature_request
+  bug_report
 }
 
-enum support_request_priority {
+enum app_support_priority {
   low
   medium
   high
   urgent
 }
 
-enum support_request_status {
+enum app_support_status {
   open
   in_progress
   resolved
@@ -1200,4 +1280,24 @@ enum feedback_type_enum {
   feature_request
   suggestion
   language_request
+}
+
+enum service_support_category {
+  general
+  technical
+  account
+}
+
+enum service_support_priority {
+  low
+  medium
+  high
+  urgent
+}
+
+enum service_support_status {
+  open
+  in_progress
+  resolved
+  closed
 }

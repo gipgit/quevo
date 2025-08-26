@@ -72,7 +72,9 @@
     "passwordLabel": "Mot de passe",
     "passwordPlaceholder": "••••••••",
     "loginButton": "Se connecter",
-    "createAccountLink": "Créer un compte"
+    "createAccountLink": "Créer un compte",
+    "required": "Obligatoire",
+    "thisFieldIsRequired": "Ce champ est obligatoire"
   },
   "FAQ": {
     "title": "Questions fréquemment posées",
@@ -221,6 +223,11 @@
     "select": "Sélectionner",
     "serviceItemsTitle": "Services à inclure",
     "serviceItemsDescription": "Sélectionnez les services supplémentaires que vous souhaitez inclure dans votre demande",
+    "serviceExtrasTitle": "Services Supplémentaires",
+    "serviceExtrasDescription": "Sélectionnez les services supplémentaires que vous souhaitez inclure avec votre réservation.",
+    "noExtrasAvailable": "Aucun service supplémentaire disponible pour ce service.",
+    "totalExtras": "Total des Suppléments",
+    "errorFetchingServiceExtras": "Erreur lors du chargement des services supplémentaires.",
     "requirementsAndQuestionsTitle": "Exigences et informations",
     "requirementsAndQuestionsDescription": "Veuillez examiner et confirmer les exigences et fournir des informations supplémentaires",
     "yourDetailsDescription": "Veuillez fournir vos informations de contact pour compléter la demande",
@@ -235,7 +242,12 @@
     "dateTimeRequired": "La sélection de date et heure est obligatoire pour ce service.",
     "priceOnRequest": "Prix sur demande",
     "quotationAvailable": "Devis Simulable",
-    "back": "Retour"
+    "back": "Retour",
+    "consentTitle": "Consentement",
+    "pdpConsentText": "Je consens au traitement de mes données personnelles conformément à la Politique de Confidentialité",
+    "newsletterConsentText": "Je consens à recevoir des communications marketing et des newsletters",
+    "pdpConsentRequired": "Le consentement PDP est requis",
+    "newsletterConsentRequired": "Le consentement newsletter est requis"
   },
   "Promotions": {
     "loading": "Chargement des promotions...",
@@ -466,6 +478,7 @@
     "addOption": "Ajouter une option",
     "option": "Option",
     "required": "Obligatoire",
+    "thisFieldIsRequired": "Ce champ est obligatoire",
     "maxLength": "Longueur maximale",
     "requirements": "Exigences",
     "addRequirement": "Ajouter une exigence",
@@ -585,7 +598,8 @@
       "reports": "Rapports",
       "logout": "Se déconnecter",
       "manageAccount": "Gérer le compte",
-      "marketing": "Marketing"
+      "marketing": "Marketing",
+      "marketingEmailAssistant": "Assistant Email"
     }
   },
   "plan": {

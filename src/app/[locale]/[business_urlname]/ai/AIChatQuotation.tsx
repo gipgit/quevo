@@ -15,7 +15,7 @@ interface ServiceItem {
 }
 
 interface Service {
-  service_id: number;
+  service_id: string;
   service_name: string;
   description: string;
   price_base: number;

@@ -1398,21 +1398,37 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                         <div className="space-y-2">
                           {boardData.servicerequest.request_datetimes && boardData.servicerequest.request_datetimes.length > 0 && (
                             <>
-                              {boardData.servicerequest.request_datetimes.map((datetime, index) => (
-                                <div key={index} className="space-y-1">
-                                  <div className="flex gap-x-2">
-                                    <span className="text-sm text-gray-600">
-                                      {boardData.servicerequest?.serviceevent 
-                                        ? `${tServiceBoard('preferredDate')} per ${boardData.servicerequest.serviceevent.event_name}:`
-                                        : `${tServiceBoard('preferredDate')}:`
-                                      }
-                                    </span>
-                                    <span className="text-sm font-medium">
-                                      {new Date(datetime.date).toLocaleDateString()} - {datetime.time}
-                                    </span>
-                                  </div>
-                                </div>
-                              ))}
+                              {boardData.servicerequest.request_datetimes.map((datetime, index) => {
+                                // Handle datetime object with date, time, timestamp properties
+                                try {
+                                  const dateString = typeof datetime === 'string' ? datetime : datetime.timestamp || datetime.date;
+                                  const dateObj = new Date(dateString);
+                                  if (!isNaN(dateObj.getTime())) {
+                                    const displayDate = dateObj.toLocaleDateString();
+                                    const displayTime = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                                    
+                                    return (
+                                      <div key={index} className="space-y-1">
+                                        <div className="flex gap-x-2">
+                                          <span className="text-sm text-gray-600">
+                                            {boardData.servicerequest?.serviceevent 
+                                              ? `${tServiceBoard('preferredDate')} per ${boardData.servicerequest.serviceevent.event_name}:`
+                                              : `${tServiceBoard('preferredDate')}:`
+                                            }
+                                          </span>
+                                          <span className="text-sm font-medium">
+                                            {displayDate} - {displayTime}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    );
+                                  } else {
+                                    return null; // Skip invalid dates
+                                  }
+                                } catch (error) {
+                                  return null; // Skip invalid dates
+                                }
+                              })}
                             </>
                           )}
                         </div>

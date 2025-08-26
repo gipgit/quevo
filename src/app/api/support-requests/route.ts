@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create the support request
-    const supportRequest = await prisma.supportrequest.create({
+    const supportRequest = await prisma.servicesupportrequest.create({
       data: {
         business_id,
         board_ref,
@@ -139,7 +139,7 @@ export async function GET(request: NextRequest) {
       where.status = status;
     }
 
-    const supportRequests = await prisma.supportrequest.findMany({
+    const supportRequests = await prisma.servicesupportrequest.findMany({
       where,
       orderBy: [
         { priority: 'desc' },

@@ -49,28 +49,47 @@ export async function POST(req: NextRequest, { params }: { params: { business_id
     }
 
     // Allowed question types for ServiceQuestion
-    const ALLOWED_QUESTION_TYPES = ["open", "checkbox_single", "checkbox_multi",  "media_upload"]
+    const ALLOWED_QUESTION_TYPES = ["open", "checkbox_single", "checkbox_multi", "media_upload"]
 
     // Create service with related data and increment usage
     const newService = await prisma.$transaction(async (tx) => {
+      // Handle category creation if new category is requested
+      let categoryId = data.category_id
+      if (data.category_id === "new" && data.new_category_title) {
+        const newCategory = await tx.servicecategory.create({
+          data: {
+            business_id: business_id,
+            category_name: data.new_category_title,
+            display_order: 0,
+          },
+        })
+        categoryId = newCategory.category_id
+      }
+
       // Create the service
       const service = await tx.service.create({
         data: {
           business_id: business_id,
-          category_id: data.category_id,
+          category_id: categoryId,
           service_name: data.service_name,
           description: data.description,
           duration_minutes: data.duration_minutes,
           buffer_minutes: data.buffer_minutes || 0,
           price_base: data.price_base,
+          price_type: data.price_type || "fixed",
+          price_unit: data.price_unit,
           has_items: data.has_items || false,
+          has_extras: data.has_extras || false,
           available_booking: data.available_booking || false,
           require_consent_newsletter: data.require_consent_newsletter || false,
+          require_consent_newsletter_text: data.require_consent_newsletter_text,
+          require_phone: data.require_phone || false,
           available_quotation: data.available_quotation || false,
           is_active: true,
           display_order: data.display_order || 0,
         },
       })
+
       // Create questions
       if (data.questions && data.questions.length > 0) {
         for (let i = 0; i < data.questions.length; i++) {
@@ -102,6 +121,7 @@ export async function POST(req: NextRequest, { params }: { params: { business_id
           })
         }
       }
+
       // Create requirement blocks
       if (data.requirements && data.requirements.length > 0) {
         for (const requirement of data.requirements) {
@@ -110,11 +130,13 @@ export async function POST(req: NextRequest, { params }: { params: { business_id
               service_id: service.service_id,
               title: requirement.title,
               requirements_text: requirement.requirements_text,
+              is_required: requirement.is_required || false,
               is_active: true,
             },
           })
         }
       }
+
       // Create service items
       if (data.items && data.items.length > 0) {
         for (let i = 0; i < data.items.length; i++) {
@@ -133,6 +155,7 @@ export async function POST(req: NextRequest, { params }: { params: { business_id
           })
         }
       }
+
       // Create service extras
       if (data.extras && data.extras.length > 0) {
         for (let i = 0; i < data.extras.length; i++) {
@@ -151,11 +174,12 @@ export async function POST(req: NextRequest, { params }: { params: { business_id
           })
         }
       }
-      // Create service events
+
+      // Create service events with availability
       if (data.events && data.events.length > 0) {
         for (let i = 0; i < data.events.length; i++) {
           const event = data.events[i]
-          await tx.serviceevent.create({
+          const createdEvent = await tx.serviceevent.create({
             data: {
               service_id: service.service_id,
               event_name: event.event_name,
@@ -168,8 +192,38 @@ export async function POST(req: NextRequest, { params }: { params: { business_id
               is_active: event.is_active,
             },
           })
+
+          // Create availability records for each day
+          if (event.availability) {
+            const dayMapping = {
+              monday: 1,
+              tuesday: 2,
+              wednesday: 3,
+              thursday: 4,
+              friday: 5,
+              saturday: 6,
+              sunday: 0
+            }
+
+            for (const [day, config] of Object.entries(event.availability)) {
+              const typedConfig = config as { enabled: boolean; start: string; end: string }
+              if (typedConfig.enabled) {
+                await tx.serviceeventavailability.create({
+                  data: {
+                    event_id: createdEvent.event_id,
+                    business_id: business_id,
+                    day_of_week: dayMapping[day as keyof typeof dayMapping],
+                    time_start: new Date(`2000-01-01T${typedConfig.start}:00`),
+                    time_end: new Date(`2000-01-01T${typedConfig.end}:00`),
+                    is_recurring: true,
+                  },
+                })
+              }
+            }
+          }
         }
       }
+
       // Increment usage counter
       await incrementUsage({ business_id, feature: 'services' })
       return service
