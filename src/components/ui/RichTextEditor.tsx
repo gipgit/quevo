@@ -24,6 +24,11 @@ export default function RichTextEditor({
   const emojiPickerRef = useRef<HTMLDivElement>(null)
   const [isFocused, setIsFocused] = useState(false)
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   useEffect(() => {
     if (editorRef.current && !editorRef.current.innerHTML) {
@@ -223,7 +228,25 @@ export default function RichTextEditor({
   }
 
   const isActive = (command: string) => {
+    if (!isClient || typeof document === 'undefined') return false
     return document.queryCommandState(command)
+  }
+
+  // Don't render until client is ready
+  if (!isClient) {
+    return (
+      <div className={`border rounded-lg ${className} ${
+        theme === 'dark' 
+          ? 'border-gray-600 bg-zinc-800' 
+          : 'border-gray-300 bg-white'
+      }`}>
+        <div className={`p-3 ${
+          theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+        }`}>
+          Loading editor...
+        </div>
+      </div>
+    )
   }
 
   return (

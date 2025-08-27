@@ -284,3 +284,62 @@ export async function DELETE(
     )
   }
 } 
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { business_id: string; service_id: string } }
+) {
+  try {
+    const session = await auth()
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const { business_id, service_id } = params
+    const data = await request.json()
+
+    // Verify business ownership
+    const business = await prisma.business.findFirst({
+      where: {
+        business_id: business_id,
+        manager_id: session.user.id,
+      },
+    })
+
+    if (!business) {
+      return NextResponse.json({ error: "Business not found" }, { status: 404 })
+    }
+
+    // Verify service exists and belongs to this business
+    const existingService = await prisma.service.findFirst({
+      where: {
+        service_id: service_id,
+        business_id: business_id,
+      },
+    })
+
+    if (!existingService) {
+      return NextResponse.json({ error: "Service not found" }, { status: 404 })
+    }
+
+    // Update the service with the provided data
+    const updatedService = await prisma.service.update({
+      where: {
+        service_id: service_id,
+      },
+      data: {
+        has_image: data.has_image !== undefined ? data.has_image : existingService.has_image,
+        // Add other fields that might need updating in the future
+        ...(data.service_name && { service_name: data.service_name }),
+        ...(data.description !== undefined && { description: data.description }),
+        ...(data.is_active !== undefined && { is_active: data.is_active }),
+        // Add more fields as needed
+      },
+    })
+
+    return NextResponse.json(updatedService)
+  } catch (error) {
+    console.error("Error updating service:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+} 

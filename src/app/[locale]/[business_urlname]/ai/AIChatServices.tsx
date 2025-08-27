@@ -11,6 +11,8 @@ interface Service {
   duration_minutes: number;
   available_quotation: boolean;
   available_booking: boolean;
+  demo: boolean | null;
+  has_image: boolean | null;
 }
 
 interface AIChatServicesProps {
@@ -23,10 +25,11 @@ interface AIChatServicesProps {
     text: string;
     button: string;
   };
+  businessPublicUuid: string;
   onServiceSelect: (service: Service) => void;
 }
 
-export default function AIChatServices({ data, themeColors, onServiceSelect }: AIChatServicesProps) {
+export default function AIChatServices({ data, themeColors, businessPublicUuid, onServiceSelect }: AIChatServicesProps) {
   const [modalService, setModalService] = useState<Service | null>(null);
 
   const openModal = (service: Service) => {
@@ -105,6 +108,7 @@ export default function AIChatServices({ data, themeColors, onServiceSelect }: A
       {/* Service Details Modal */}
       <ServiceDetailsModal
         service={modalService}
+        businessPublicUuid={businessPublicUuid}
         themeColors={themeColors}
         onClose={closeModal}
         onAction={handleRequestClick}

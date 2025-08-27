@@ -15,9 +15,9 @@ export async function PATCH(
 
     const { request_id } = params
     const body = await request.json()
-    const { urgency_flag } = body
+    const { is_closed } = body
 
-    console.log("Toggle urgency request:", { request_id, urgency_flag, user: session.user.email })
+    console.log("Toggle closed request:", { request_id, is_closed, user: session.user.email })
 
     // First, let's check if the request exists
     const existingRequest = await prisma.servicerequest.findUnique({
@@ -32,14 +32,15 @@ export async function PATCH(
     console.log("Existing request:", { 
       request_id: existingRequest.request_id, 
       is_handled: existingRequest.is_handled,
-      urgency_flag: existingRequest.urgency_flag 
+      urgency_flag: existingRequest.urgency_flag,
+      is_closed: existingRequest.is_closed
     })
 
     // Update the service request
     const updatedRequest = await prisma.servicerequest.update({
       where: { request_id },
       data: {
-        urgency_flag,
+        is_closed,
         date_updated: new Date()
       }
     })
@@ -47,12 +48,13 @@ export async function PATCH(
     console.log("Updated request:", { 
       request_id: updatedRequest.request_id, 
       is_handled: updatedRequest.is_handled,
-      urgency_flag: updatedRequest.urgency_flag 
+      urgency_flag: updatedRequest.urgency_flag,
+      is_closed: updatedRequest.is_closed
     })
 
     return NextResponse.json({ success: true, request: updatedRequest })
   } catch (error) {
-    console.error("Error toggling urgency flag:", error)
+    console.error("Error toggling closed status:", error)
     return NextResponse.json(
       { error: "Failed to update request" },
       { status: 500 }

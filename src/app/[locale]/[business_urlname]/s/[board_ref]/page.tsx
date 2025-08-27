@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useBusinessProfile } from '@/contexts/BusinessProfileContext';
 import PasswordVerification from '@/components/service-board/PasswordVerification';
 import ServiceBoardActionCard from '@/components/service-board/ServiceBoardActionCard';
@@ -399,6 +400,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
   const [newlyAddedActionId, setNewlyAddedActionId] = useState<string | null>(null);
   
   const { board_ref } = params;
+  const searchParams = useSearchParams();
   const { 
     businessData, 
     businessSettings, 
@@ -512,6 +514,19 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
       hasShownUpcomingRef.current = true;
     }
   }, [nextAppointment]);
+
+  // Check for URL parameter to automatically open AddAction modal
+  useEffect(() => {
+    const openAddAction = searchParams.get('openAddAction');
+    const actionType = searchParams.get('actionType');
+    if (openAddAction === 'true' && !isLoading && !requiresPassword) {
+      setShowAddActionModal(true);
+      // Store the actionType for the modal to use
+      if (actionType) {
+        sessionStorage.setItem('preSelectedActionType', actionType);
+      }
+    }
+  }, [searchParams, isLoading, requiresPassword]);
 
 
 

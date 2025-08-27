@@ -78,7 +78,18 @@ export default async function ServicesPage() {
           buffer_minutes: true,
           is_required: true,
           display_order: true,
-          is_active: true
+          is_active: true,
+          serviceeventavailability: {
+            select: {
+              availability_id: true,
+              day_of_week: true,
+              time_start: true,
+              time_end: true,
+              is_recurring: true,
+              date_effective_from: true,
+              date_effective_to: true
+            }
+          }
         }
       }
     },
@@ -110,7 +121,15 @@ export default async function ServicesPage() {
       buffer_minutes: event.buffer_minutes || 0,
       is_active: event.is_active || true,
       display_order: event.display_order || 0,
-      is_required: event.is_required || true
+      is_required: event.is_required || true,
+      serviceeventavailability: (event.serviceeventavailability || []).map(avail => ({
+        ...avail,
+        time_start: avail.time_start ? avail.time_start.toTimeString().substring(0, 8) : '08:00:00',
+        time_end: avail.time_end ? avail.time_end.toTimeString().substring(0, 8) : '18:00:00',
+        is_recurring: avail.is_recurring || true,
+        date_effective_from: avail.date_effective_from ? avail.date_effective_from.toISOString().split('T')[0] : null,
+        date_effective_to: avail.date_effective_to ? avail.date_effective_to.toISOString().split('T')[0] : null
+      }))
     }))
   }))
 

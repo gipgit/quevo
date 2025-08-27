@@ -2,9 +2,10 @@
 
 import { useEffect, useState, useRef } from "react"
 import { useTranslations } from "next-intl"
-import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline"
+import { PhotoIcon, XMarkIcon, SparklesIcon } from "@heroicons/react/24/outline"
 import dynamic from "next/dynamic"
 import type { ImageCropperRef } from "@/components/dashboard/profile/ImageCropper"
+import AIImageGenerationModal from "./AIImageGenerationModal"
 
 const ImageCropper = dynamic(() => import("@/components/dashboard/profile/ImageCropper").then(mod => ({ default: mod.default })), { ssr: false })
 
@@ -12,15 +13,18 @@ interface ServiceImageUploadProps {
   onImageChange: (file: File | null) => void
   currentImage?: File | null
   theme?: 'light' | 'dark'
+  serviceTitle?: string
+  businessId?: string
 }
 
-export default function ServiceImageUpload({ onImageChange, currentImage, theme = 'light' }: ServiceImageUploadProps) {
+export default function ServiceImageUpload({ onImageChange, currentImage, theme = 'light', serviceTitle = '', businessId = '' }: ServiceImageUploadProps) {
   const t = useTranslations("services")
   const [preview, setPreview] = useState<string | null>(null)
   const [cropperOpen, setCropperOpen] = useState(false)
   const [cropImageSrc, setCropImageSrc] = useState<string | null>(null)
   const [triggerCrop, setTriggerCrop] = useState(false)
   const [isDragOver, setIsDragOver] = useState(false)
+  const [aiModalOpen, setAiModalOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const cropperRef = useRef<ImageCropperRef>(null)
 
@@ -107,6 +111,19 @@ export default function ServiceImageUpload({ onImageChange, currentImage, theme 
     }
   }
 
+  const handleAIImageGenerated = (imageDataUrl: string) => {
+    // Convert data URL to File object
+    fetch(imageDataUrl)
+      .then(res => res.blob())
+      .then(blob => {
+        const file = new File([blob], "ai-generated-service-cover.webp", { type: "image/webp" })
+        handleImageChange(file)
+      })
+      .catch(error => {
+        console.error('Error converting AI generated image to file:', error)
+      })
+  }
+
   return (
     <div className="space-y-4 h-full">
       
@@ -140,34 +157,50 @@ export default function ServiceImageUpload({ onImageChange, currentImage, theme 
             </button>
           </div>
         ) : (
-          <div className="space-y-4">
-            <PhotoIcon className={`mx-auto h-12 w-12 ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-300'
-            }`} />
-            <div>
-              <p className={`text-sm ${
-                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-              }`}>
-                {t("dragDropImage")}
-              </p>
-              <p className={`text-xs mt-1 ${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-              }`}>
-                {t("orClickToSelect")}
-              </p>
+                      <div className="space-y-4">
+              <PhotoIcon className={`mx-auto h-12 w-12 ${
+                theme === 'dark' ? 'text-gray-400' : 'text-gray-300'
+              }`} />
+              <div>
+                <p className={`text-sm ${
+                  theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                }`}>
+                  {t("dragDropImage")}
+                </p>
+                <p className={`text-xs mt-1 ${
+                  theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                }`}>
+                  {t("orClickToSelect")}
+                </p>
+              </div>
+              <div className="flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    theme === 'dark'
+                      ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                      : 'bg-blue-500 hover:bg-blue-600 text-white'
+                  }`}
+                >
+                  {t("selectImage")}
+                </button>
+                {serviceTitle && businessId && (
+                  <button
+                    type="button"
+                    onClick={() => setAiModalOpen(true)}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                      theme === 'dark'
+                        ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                        : 'bg-purple-500 hover:bg-purple-600 text-white'
+                    }`}
+                  >
+                    <SparklesIcon className="h-4 w-4" />
+                    {t("generateAIImage")}
+                  </button>
+                )}
+              </div>
             </div>
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                theme === 'dark'
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                  : 'bg-blue-500 hover:bg-blue-600 text-white'
-              }`}
-            >
-              {t("selectImage")}
-            </button>
-          </div>
         )}
         
         <input
@@ -237,6 +270,15 @@ export default function ServiceImageUpload({ onImageChange, currentImage, theme 
           </div>
         </div>
       )}
+
+      {/* AI Image Generation Modal */}
+      <AIImageGenerationModal
+        isOpen={aiModalOpen}
+        onClose={() => setAiModalOpen(false)}
+        onImageGenerated={handleAIImageGenerated}
+        serviceTitle={serviceTitle}
+        businessId={businessId}
+      />
     </div>
   )
 }

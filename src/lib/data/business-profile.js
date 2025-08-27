@@ -196,6 +196,8 @@ export async function getServiceRequestServicesData(businessUrlname) {
                 available_quotation: true, // Add available_quotation field
                 category_id: true, // To link with categories
                 display_order: true, // Add display_order for proper ordering
+                demo: true, // Add demo field for image path logic
+                has_image: true, // Add has_image field for image display logic
                 serviceitem: {
                     select: {
                         service_item_id: true,

@@ -25,13 +25,14 @@ interface AIChatMessageProps {
   businessProfileImage?: string;
   businessName?: string;
   businessId?: string;
+  businessPublicUuid?: string;
   onServiceRequestComplete?: (data: any) => void;
   onQuotationComplete?: (data: any) => void;
   onAvailabilityComplete?: (data: any) => void;
   onSuggestionClick?: (suggestion: string) => void;
 }
 
-export default function AIChatMessage({ message, themeColors, businessProfileImage, businessName, businessId, onServiceRequestComplete, onQuotationComplete, onAvailabilityComplete, onSuggestionClick }: AIChatMessageProps) {
+export default function AIChatMessage({ message, themeColors, businessProfileImage, businessName, businessId, businessPublicUuid, onServiceRequestComplete, onQuotationComplete, onAvailabilityComplete, onSuggestionClick }: AIChatMessageProps) {
   const [showAICallOverview, setShowAICallOverview] = useState(false);
   const isUser = message.type === 'user';
   const formattedTime = message.timestamp.toLocaleTimeString('it-IT', { 
@@ -179,6 +180,7 @@ export default function AIChatMessage({ message, themeColors, businessProfileIma
                   <AIChatServices
                     data={message.data}
                     themeColors={themeColors}
+                    businessPublicUuid={businessPublicUuid || ''}
                     onServiceSelect={(service) => {
                       if (onServiceRequestComplete) {
                         onServiceRequestComplete({ 
@@ -237,6 +239,7 @@ export default function AIChatMessage({ message, themeColors, businessProfileIma
                   <AIChatQuotation
                     data={message.data}
                     themeColors={themeColors}
+                    businessPublicUuid={businessPublicUuid || ''}
                     onServiceSelect={(service) => {
                       if (onQuotationComplete) {
                         onQuotationComplete({ type: 'quotation_service_selected', service });
@@ -296,6 +299,7 @@ export default function AIChatMessage({ message, themeColors, businessProfileIma
                     data={message.data}
                     themeColors={themeColors}
                     businessId={businessId || ''}
+                    businessPublicUuid={businessPublicUuid || ''}
                     onServiceSelect={(service) => {
                       if (onAvailabilityComplete) {
                         onAvailabilityComplete({ 

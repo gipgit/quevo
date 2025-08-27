@@ -592,6 +592,8 @@ model service {
   require_consent_newsletter_text String?
   is_active                       Boolean?                  @default(true)
   display_order                   Int?                      @default(0)
+  has_image                       Boolean?                  @default(false)
+  demo                            Boolean?                  @default(false)
   date_created                    DateTime?                 @default(now()) @db.Timestamp(6)
   date_updated                    DateTime?                 @default(now()) @db.Timestamp(6)
   business                        business                  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
@@ -664,6 +666,7 @@ model servicerequest {
   handled_by                        String?                             @db.VarChar(100)
   priority                          String?                             @default("medium") @db.VarChar(20)
   urgency_flag                      Boolean?                            @default(false)
+  is_closed                         Boolean?                            @default(false)
   assigned_to                       String?                             @db.VarChar(100)
   estimated_completion              DateTime?                           @db.Timestamp(6)
   actual_completion                 DateTime?                           @db.Timestamp(6)

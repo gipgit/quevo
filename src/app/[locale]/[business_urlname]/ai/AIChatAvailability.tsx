@@ -24,6 +24,8 @@ interface Service {
   duration_minutes: number;
   available_quotation: boolean;
   available_booking: boolean;
+  demo: boolean | null;
+  has_image: boolean | null;
   serviceevent?: ServiceEvent[];
 }
 
@@ -39,11 +41,12 @@ interface AIChatAvailabilityProps {
     button: string;
   };
   businessId: string;
+  businessPublicUuid: string;
   onServiceSelect: (service: Service) => void;
   onBack: () => void;
 }
 
-export default function AIChatAvailability({ data, themeColors, businessId, onServiceSelect, onBack }: AIChatAvailabilityProps) {
+export default function AIChatAvailability({ data, themeColors, businessId, businessPublicUuid, onServiceSelect, onBack }: AIChatAvailabilityProps) {
   // Use the selectedService from data instead of local state
   const selectedService = data.selectedService;
   const [modalService, setModalService] = useState<Service | null>(null);
@@ -395,6 +398,7 @@ export default function AIChatAvailability({ data, themeColors, businessId, onSe
       {/* Service Details Modal */}
       <ServiceDetailsModal
         service={modalService}
+        businessPublicUuid={businessPublicUuid}
         themeColors={themeColors}
         onClose={closeModal}
         onAction={handleAvailabilityClick}

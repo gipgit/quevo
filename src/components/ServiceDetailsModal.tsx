@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import ServiceImageDisplay from '@/components/service/ServiceImageDisplay';
 
 interface ServiceItem {
   service_item_id: number;
@@ -34,12 +35,15 @@ interface Service {
   duration_minutes: number;
   available_quotation: boolean;
   available_booking: boolean;
+  demo: boolean | null;
+  has_image: boolean | null;
   serviceitem?: ServiceItem[];
   serviceevent?: ServiceEvent[];
 }
 
 interface ServiceDetailsModalProps {
   service: Service | null;
+  businessPublicUuid: string;
   themeColors: {
     background: string;
     text: string;
@@ -52,6 +56,7 @@ interface ServiceDetailsModalProps {
 
 export default function ServiceDetailsModal({ 
   service, 
+  businessPublicUuid,
   themeColors, 
   onClose, 
   onAction, 
@@ -71,11 +76,17 @@ export default function ServiceDetailsModal({
         style={{ backgroundColor: themeColors.background }}
       >
         <div className="p-6">
-          {/* Service Image Placeholder */}
-          <div className="w-full h-32 rounded-lg mb-4 flex items-center justify-center" style={{ backgroundColor: themeColors.text + '10' }}>
-            <svg className="w-12 h-12 opacity-30" fill="currentColor" viewBox="0 0 24 24" style={{ color: themeColors.text }}>
-              <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
-            </svg>
+          {/* Service Image */}
+          <div className="w-full h-32 rounded-lg mb-4 overflow-hidden">
+            <ServiceImageDisplay
+              serviceId={service.service_id}
+              serviceName={service.service_name}
+              demo={service.demo}
+              hasImage={service.has_image}
+              businessPublicUuid={businessPublicUuid}
+              className="w-full h-32"
+              showDemoBadge={false}
+            />
           </div>
 
           <div className="flex justify-between items-start mb-4">

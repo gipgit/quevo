@@ -5,7 +5,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 // Cloudflare R2 configuration
 const r2Client = new S3Client({
   region: 'auto',
-  endpoint: process.env.CLOUDFLARE_R2_ENDPOINT,
+  endpoint: `https://${process.env.CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
   credentials: {
     accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID!,
     secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY!,
@@ -63,7 +63,7 @@ function generateKey(uploadType: UploadType, businessId: string, filename: strin
       return `customer-uploads/${businessId}/${customerId}/${filename}`;
     case 'service':
       if (!serviceBoardId) throw new Error('serviceBoardId required for service uploads');
-      return `business/${businessId}/services/${serviceBoardId}/${filename}`;
+      return `business/${businessId}/service/${serviceBoardId}.webp`;
     default:
       throw new Error(`Invalid upload type: ${uploadType}`);
   }
@@ -82,11 +82,29 @@ export async function processAndSaveImage({
   serviceBoardId,
   customerId,
 }: ProcessAndSaveImageOptions): Promise<UploadResult> {
+  console.log("processAndSaveImage called", {
+    filename,
+    width,
+    height,
+    quality,
+    fit,
+    maxSizeBytes,
+    businessId,
+    uploadType,
+    serviceBoardId,
+    bufferSize: buffer.length
+  });
+
   // Process image with Sharp
   let outputBuffer = await sharp(buffer)
     .resize(width, height, { fit })
     .webp({ quality })
     .toBuffer();
+
+  console.log("Image processed with Sharp", { 
+    outputSize: outputBuffer.length, 
+    quality 
+  });
 
   // If >maxSizeBytes, reduce quality and re-encode more gradually
   let currentQuality = quality;
@@ -103,6 +121,13 @@ export async function processAndSaveImage({
   const bucketName = getBucketName(uploadType);
   const key = generateKey(uploadType, businessId, filename, serviceBoardId, customerId);
   
+  console.log("R2 upload configuration", {
+    bucketName,
+    key,
+    outputSize: outputBuffer.length,
+    endpoint: process.env.CLOUDFLARE_R2_ACCOUNT_ID ? `https://${process.env.CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com` : 'NOT SET'
+  });
+  
   // Upload to Cloudflare R2
   const uploadCommand = new PutObjectCommand({
     Bucket: bucketName,
@@ -113,7 +138,9 @@ export async function processAndSaveImage({
   });
 
   try {
+    console.log("Sending upload command to R2...");
     await r2Client.send(uploadCommand);
+    console.log("Upload command sent successfully");
     
     let publicPath: string | undefined;
     let signedUrl: string | undefined;
@@ -126,7 +153,7 @@ export async function processAndSaveImage({
         publicPath = `${publicDomain}/${key}`;
       } else {
         // Fallback to R2 endpoint (less ideal)
-        publicPath = `${process.env.CLOUDFLARE_R2_ENDPOINT}/${bucketName}/${key}`;
+        publicPath = `https://${process.env.CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${bucketName}/${key}`;
       }
     } else {
       // Private access - generate signed URL
@@ -146,6 +173,13 @@ export async function processAndSaveImage({
     };
   } catch (error) {
     console.error('Error uploading to R2:', error);
+    console.error('R2 Client config:', {
+      endpoint: `https://${process.env.CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+      hasAccessKeyId: !!process.env.CLOUDFLARE_R2_ACCESS_KEY_ID,
+      hasSecretAccessKey: !!process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY,
+      bucketName,
+      key
+    });
     throw new Error('Failed to upload image to cloud storage');
   }
 }
@@ -179,7 +213,7 @@ export async function getSignedUrlForPrivateFile(key: string, uploadType: Upload
 
 // Utility function to construct service image path
 export function getServiceImagePath(businessPublicUuid: string, serviceId: string | number): string {
-  return `business/${businessPublicUuid}/services/${serviceId}/cover.webp`;
+  return `business/${businessPublicUuid}/service/${serviceId}.webp`;
 }
 
 // Utility function to get service image URL
@@ -191,7 +225,7 @@ export function getServiceImageUrl(businessPublicUuid: string, serviceId: string
     return `${publicDomain}/${path}`;
   } else {
     // Fallback to R2 endpoint
-    return `${process.env.CLOUDFLARE_R2_ENDPOINT}/${process.env.CLOUDFLARE_R2_BUCKET_BUSINESS_PUBLIC}/${path}`;
+    return `https://${process.env.CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${process.env.CLOUDFLARE_R2_BUCKET_BUSINESS_PUBLIC}/${path}`;
   }
 }
 

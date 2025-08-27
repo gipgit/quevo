@@ -89,30 +89,72 @@ export default function ServiceSelection({
     }, [selectedCategory, servicesByCategory, uncategorizedServices]);
 
     // Service Image Component with Fallback
-    const ServiceImage = ({ serviceId, serviceName }) => {
+    const ServiceImage = ({ serviceId, serviceName, demo, hasImage }) => {
         const [imageError, setImageError] = useState(false);
-        const imagePath = `/uploads/business/${businessPublicUuid}/services/${serviceId}.webp`;
+        
+        // If has_image is false, show fallback instead of trying to fetch image
+        if (hasImage === false) {
+            return (
+                <div className="w-full h-full" style={{ 
+                    background: `linear-gradient(135deg, ${themeColorBackgroundCard} 0%, ${themeColorButton} 100%)` 
+                }}>
+                </div>
+            );
+        }
+        
+        const getImageUrl = () => {
+            if (!serviceId || !businessPublicUuid) return null;
+            
+            if (demo) {
+                // Local path for demo services
+                return `/uploads/business/${businessPublicUuid}/service/${serviceId}.webp`;
+            } else {
+                // R2 path for production services
+                const publicDomain = process.env.NEXT_PUBLIC_CLOUDFLARE_R2_PUBLIC_DOMAIN;
+                if (publicDomain) {
+                    return `${publicDomain}/business/${businessPublicUuid}/service/${serviceId}.webp`;
+                } else {
+                    // Fallback to R2 endpoint
+                    const accountId = process.env.NEXT_PUBLIC_CLOUDFLARE_R2_ACCOUNT_ID;
+                    return `https://${accountId}.r2.cloudflarestorage.com/business/${businessPublicUuid}/service/${serviceId}.webp`;
+                }
+            }
+        };
+
+        const imageUrl = getImageUrl();
         
         console.log('Service Image Path:', {
             serviceId,
             serviceName,
             businessPublicUuid,
-            imagePath,
+            demo,
+            hasImage,
+            imageUrl,
             imageError
         });
+
+        if (!imageUrl) {
+            return (
+                <div className="w-full h-full" style={{ 
+                    background: `linear-gradient(135deg, ${themeColorBackgroundCard} 0%, ${themeColorButton} 100%)` 
+                }}>
+                </div>
+            );
+        }
 
         if (imageError) {
             // Fallback to placeholder
             return (
-                <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: themeColorText + '10' }}>
-                   
+                <div className="w-full h-full" style={{ 
+                    background: `linear-gradient(135deg, ${themeColorBackgroundCard} 0%, ${themeColorButton} 100%)` 
+                }}>
                 </div>
             );
         }
 
         return (
             <Image
-                src={imagePath}
+                src={imageUrl}
                 alt={serviceName}
                 fill
                 className="object-cover"
@@ -187,7 +229,12 @@ export default function ServiceSelection({
                         >
                             {/* Service Image with Overlay */}
                             <div className="w-full h-full min-h-[200px] lg:min-h-[240px] rounded-2xl overflow-hidden relative">
-                                <ServiceImage serviceId={service.service_id} serviceName={service.service_name} />
+                                <ServiceImage 
+                                    serviceId={service.service_id} 
+                                    serviceName={service.service_name}
+                                    demo={service.demo}
+                                    hasImage={service.has_image}
+                                />
                                 {/* Dark gradient overlay */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
                                 {/* Service content in overlay */}

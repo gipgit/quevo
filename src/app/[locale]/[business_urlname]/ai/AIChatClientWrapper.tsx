@@ -656,6 +656,7 @@ export default function AIChatClientWrapper({ initialData }: AIChatClientWrapper
                      businessProfileImage={(businessContext as any).businessData?.business_img_profile}
                      businessName={(businessContext as any).businessData?.business_name || initialData.business.name}
                      businessId={initialData.business.id}
+                     businessPublicUuid={(businessContext as any).businessData?.business_public_uuid}
                                            onServiceRequestComplete={handleServiceRequestComplete}
                       onQuotationComplete={handleQuotationComplete}
                       onAvailabilityComplete={handleAvailabilityComplete}

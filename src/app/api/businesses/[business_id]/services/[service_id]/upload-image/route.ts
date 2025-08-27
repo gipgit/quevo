@@ -8,12 +8,13 @@ export async function POST(
   { params }: { params: { business_id: string; service_id: string } }
 ) {
   try {
+    const { business_id, service_id } = params
+    console.log("Service image upload started", { business_id, service_id });
+    
     const session = await auth()
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
-
-    const { business_id, service_id } = params
 
     // Verify business ownership
     const business = await prisma.business.findFirst({
@@ -26,6 +27,8 @@ export async function POST(
     if (!business) {
       return NextResponse.json({ error: "Business not found" }, { status: 404 })
     }
+
+    console.log("Business verified", { business_public_uuid: business.business_public_uuid });
 
     // Verify service exists and belongs to this business
     const service = await prisma.service.findFirst({
@@ -50,8 +53,15 @@ export async function POST(
       return NextResponse.json({ error: "Invalid file type. Only images are allowed." }, { status: 400 })
     }
 
+    console.log("Image file validated", { 
+      filename: imageFile.name, 
+      size: imageFile.size, 
+      type: imageFile.type 
+    });
+
     // Convert file to buffer
     const buffer = Buffer.from(await imageFile.arrayBuffer())
+    console.log("Image buffer created", { bufferSize: buffer.length });
 
     // Get business public UUID for R2 path
     const businessPublicUuid = business.business_public_uuid
@@ -59,10 +69,16 @@ export async function POST(
       return NextResponse.json({ error: "Business public UUID not found" }, { status: 500 })
     }
 
+    console.log("Starting R2 upload", {
+      businessPublicUuid,
+      service_id,
+      bucket: process.env.CLOUDFLARE_R2_BUCKET_BUSINESS_PUBLIC
+    });
+
     // Process and upload image to R2
     const result = await processAndSaveImage({
       buffer,
-      filename: "cover.webp",
+      filename: `${service_id}.webp`,
       width: 800, // Service cover width
       height: 450, // Service cover height (16:9 ratio)
       quality: 80,
@@ -72,6 +88,12 @@ export async function POST(
       uploadType: "service",
       serviceBoardId: service_id, // Use service_id for the path
     })
+
+    console.log("R2 upload completed", { 
+      path: result.path, 
+      size: result.size, 
+      publicPath: result.publicPath 
+    });
 
     // No need to update service - path is deterministic
     // We can construct the path anytime using business_public_uuid and service_id
@@ -84,6 +106,15 @@ export async function POST(
     })
   } catch (error) {
     console.error("Error uploading service image:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    console.error("Error details:", {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      business_id: params.business_id,
+      service_id: params.service_id
+    })
+    return NextResponse.json({ 
+      error: "Internal server error",
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 })
   }
 }

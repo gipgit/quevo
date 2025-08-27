@@ -70,6 +70,22 @@ export async function GET(request: Request, { params }: { params: { business_id:
             display_order: "asc",
           },
         },
+        serviceextra: {
+          where: {
+            is_active: true,
+          },
+          select: {
+            service_extra_id: true,
+            extra_name: true,
+            extra_description: true,
+            price_base: true,
+            price_type: true,
+            price_unit: true,
+          },
+          orderBy: {
+            display_order: "asc",
+          },
+        },
       },
       orderBy: [{ display_order: "asc" }, { service_name: "asc" }],
     })

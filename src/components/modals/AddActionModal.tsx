@@ -64,6 +64,21 @@ export default function AddActionModal({
     }
   }, [show, businessId]);
 
+  // Check for pre-selected action type when modal opens
+  useEffect(() => {
+    if (show && templates.length > 0) {
+      const preSelectedActionType = sessionStorage.getItem('preSelectedActionType');
+      if (preSelectedActionType) {
+        const template = templates.find(t => t.action_type === preSelectedActionType);
+        if (template) {
+          handleTemplateSelect(template);
+        }
+        // Clear the stored action type
+        sessionStorage.removeItem('preSelectedActionType');
+      }
+    }
+  }, [show, templates]);
+
   const loadTemplates = async () => {
     try {
       setLoadingTemplates(true);

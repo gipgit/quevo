@@ -22,6 +22,8 @@ interface Service {
   duration_minutes: number;
   available_quotation: boolean;
   available_booking: boolean;
+  demo: boolean | null;
+  has_image: boolean | null;
   serviceitem?: ServiceItem[];
 }
 
@@ -36,12 +38,13 @@ interface AIChatQuotationProps {
     text: string;
     button: string;
   };
+  businessPublicUuid: string;
   onServiceSelect: (service: Service) => void;
   onBack: () => void;
   onSubmit: (selectedItems: { [key: number]: number }) => void;
 }
 
-export default function AIChatQuotation({ data, themeColors, onServiceSelect, onBack, onSubmit }: AIChatQuotationProps) {
+export default function AIChatQuotation({ data, themeColors, businessPublicUuid, onServiceSelect, onBack, onSubmit }: AIChatQuotationProps) {
   // Use the selectedService from data instead of local state
   const selectedService = data.selectedService;
   const [selectedServiceItems, setSelectedServiceItems] = useState<{ [key: number]: number }>({});
@@ -334,6 +337,7 @@ export default function AIChatQuotation({ data, themeColors, onServiceSelect, on
       {/* Service Details Modal */}
       <ServiceDetailsModal
         service={modalService}
+        businessPublicUuid={businessPublicUuid}
         themeColors={themeColors}
         onClose={closeModal}
         onAction={handleQuotationClick}

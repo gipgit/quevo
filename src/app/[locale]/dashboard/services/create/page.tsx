@@ -460,7 +460,7 @@ export default function CreateServicePage() {
       if (response.ok) {
         const newService = responseData
 
-        // Upload image if provided
+        // Upload image if provided and update has_image flag
         if (serviceImage && newService.service_id) {
           const formData = new FormData()
           formData.append("image", serviceImage)
@@ -470,7 +470,20 @@ export default function CreateServicePage() {
             body: formData,
           })
 
-          if (!imageResponse.ok) {
+          if (imageResponse.ok) {
+            // Update the service to set has_image to true
+            const updateResponse = await fetch(`/api/businesses/${currentBusiness?.business_id}/services/${newService.service_id}`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ has_image: true }),
+            })
+
+            if (!updateResponse.ok) {
+              console.error("Failed to update service has_image flag")
+            }
+          } else {
             console.error("Failed to upload service image")
             // Don't fail the entire creation, just log the error
           }
@@ -616,6 +629,8 @@ export default function CreateServicePage() {
                   onImageChange={setServiceImage}
                   currentImage={serviceImage}
                   theme={theme === 'dark' ? 'dark' : 'light'}
+                  serviceTitle={serviceName}
+                  businessId={currentBusiness?.business_id || ''}
                 />
               </div>
 

@@ -224,13 +224,39 @@ export async function POST(req: NextRequest, { params }: { params: { business_id
         }
       }
 
-      // Increment usage counter
-      await incrementUsage({ business_id, feature: 'services' })
+      // Increment usage counter within the transaction
+      await tx.usagecounter.upsert({
+        where: {
+          business_id_feature: {
+            business_id,
+            feature: 'services'
+          }
+        },
+        update: { usage_count: { increment: 1 }, updated_at: new Date() },
+        create: { business_id, feature: 'services', usage_count: 1 }
+      })
+      
       return service
     })
     return NextResponse.json(newService)
   } catch (error) {
     console.error("Error creating service:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    
+    // Provide more specific error messages
+    let errorMessage = "Internal server error"
+    if (error instanceof Error) {
+      if (error.message.includes("Invalid question_type")) {
+        errorMessage = error.message
+      } else if (error.message.includes("Unique constraint")) {
+        errorMessage = "A service with this name already exists"
+      } else {
+        errorMessage = error.message
+      }
+    }
+    
+    return NextResponse.json({ 
+      error: errorMessage,
+      details: error instanceof Error ? error.stack : undefined
+    }, { status: 500 })
   }
 }

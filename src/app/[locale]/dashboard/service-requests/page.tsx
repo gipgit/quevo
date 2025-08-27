@@ -40,20 +40,13 @@ export default async function ServiceRequestsPage() {
         // Event and datetime information
         event_id: true,
         request_datetimes: true,
-        // New fields for enhanced management (commented until Prisma client is regenerated)
-        // is_handled: true,
-        // handled_at: true,
-        // handled_by: true,
-        // priority: true,
-        // urgency_flag: true,
-        // assigned_to: true,
-        // estimated_completion: true,
-        // actual_completion: true,
-        // customer_satisfaction: true,
-        // follow_up_required: true,
-        // follow_up_date: true,
-        // tags: true,
-        // internal_notes: true,
+        // New fields for enhanced management
+        is_handled: true,
+        handled_at: true,
+        handled_by: true,
+        priority: true,
+        urgency_flag: true,
+        is_closed: true,
       service: {
         select: {
           service_name: true,

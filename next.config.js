@@ -6,6 +6,12 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.js');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Environment variables for client-side
+  env: {
+    NEXT_PUBLIC_CLOUDFLARE_R2_PUBLIC_DOMAIN: process.env.CLOUDFLARE_R2_PUBLIC_DOMAIN,
+    NEXT_PUBLIC_CLOUDFLARE_R2_ACCOUNT_ID: process.env.CLOUDFLARE_R2_ACCOUNT_ID,
+  },
+  
   // Bundle optimization
   experimental: {
     optimizePackageImports: ['@heroicons/react', 'lucide-react'],

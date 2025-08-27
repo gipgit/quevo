@@ -101,30 +101,41 @@ export async function GET(request, { params }) {
         console.log(`[Overview API] Total days in interval:`, daysInMonth.length);
 
         console.log('[Overview API] Fetching bookingavailability...');
+        
+        // Build the availability query based on whether eventId is provided
+        let availabilityWhere = {
+            business_id: businessId, // Use UUID string directly
+            OR: [
+                {
+                    is_recurring: true,
+                },
+                {
+                    is_recurring: false,
+                    date_effective_from: { lte: zonedEndDate },
+                    date_effective_to: { gte: zonedStartDate }
+                },
+                {
+                    is_recurring: false,
+                    date_effective_from: { lte: zonedEndDate },
+                    date_effective_to: null,
+                },
+                {
+                    is_recurring: false,
+                    date_effective_from: null,
+                    date_effective_to: { gte: zonedStartDate },
+                }
+            ]
+        };
+
+        // If eventId is provided, filter to only include event-specific availability
+        if (eventIdParam) {
+            availabilityWhere.AND = [
+                { event_id: parseInt(eventIdParam) } // Only event-specific availability
+            ];
+        }
+
         const availableAvailabilities = await prisma.serviceeventavailability.findMany({
-            where: {
-                business_id: businessId, // Use UUID string directly
-                OR: [
-                    {
-                        is_recurring: true,
-                    },
-                    {
-                        is_recurring: false,
-                        date_effective_from: { lte: zonedEndDate },
-                        date_effective_to: { gte: zonedStartDate }
-                    },
-                    {
-                        is_recurring: false,
-                        date_effective_from: { lte: zonedEndDate },
-                        date_effective_to: null,
-                    },
-                    {
-                        is_recurring: false,
-                        date_effective_from: null,
-                        date_effective_to: { gte: zonedStartDate },
-                    }
-                ]
-            },
+            where: availabilityWhere,
             select: {
                 day_of_week: true,
                 time_start: true,
@@ -132,9 +143,11 @@ export async function GET(request, { params }) {
                 is_recurring: true,
                 date_effective_from: true,
                 date_effective_to: true,
+                event_id: true, // Add event_id to see which records are being used
             },
         });
         console.log(`[Overview API] Fetched ${availableAvailabilities.length} availability blocks.`);
+        console.log(`[Overview API] Event ID filter: ${eventIdParam ? `Only event_id=${eventIdParam} or NULL` : 'All events'}`);
         console.log(`[Overview API] Available Availabilities Details:`, JSON.stringify(availableAvailabilities, (key, value) => {
             if (value instanceof Date) {
                 return value.toISOString();
