@@ -230,9 +230,6 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
             <h1 className={`text-2xl font-bold ${
               theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
             }`}>{t("title")}</h1>
-            <p className={`text-sm mt-1 ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-            }`}>{t("subtitle")}</p>
           </div>
           <Link
             href="/dashboard/services/create"
@@ -266,8 +263,8 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
               <div key={categoryName}>
                 {/* Category Header */}
                 <div className="mb-4">
-                  <h2 className={`text-xl font-semibold ${
-                    theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                  <h2 className={`text-sm font-medium ${
+                    theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
                   }`}>
                     {categoryName}
                   </h2>

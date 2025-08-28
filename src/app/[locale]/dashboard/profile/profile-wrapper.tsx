@@ -26,18 +26,9 @@ import {
   SwatchIcon 
 } from "@heroicons/react/24/outline"
 
-// Domain constant for public link - will be set after component mounts to avoid hydration mismatch
-
 interface SocialLink {
   url: string;
   visible: boolean;
-}
-
-interface Business {
-  business_id: string
-  business_name: string
-  business_descr: string | null
-  business_urlname: string | null
 }
 
 interface UserManager {
@@ -50,6 +41,10 @@ interface UserManager {
 interface ProfileWrapperProps {
   section: string
   userManager: UserManager | null
+  initialProfileData: any
+  initialProfileSettings: any
+  initialSocialLinks: Record<string, SocialLink>
+  initialPaymentMethods: { type: string; visible: boolean; details?: any }[]
 }
 
 // Deep comparison utility
@@ -88,20 +83,21 @@ const getChangedFields = (original: any, current: any): any => {
 };
 
 export default function ProfileWrapper({ 
-  section, 
-  userManager 
+  section: initialSection, 
+  userManager,
+  initialProfileData,
+  initialProfileSettings,
+  initialSocialLinks,
+  initialPaymentMethods
 }: ProfileWrapperProps) {
   const { currentBusiness } = useBusiness()
   
   // Domain state to avoid hydration mismatch
   const [DOMAIN, setDOMAIN] = useState("https://quevo.vercel.app")
   
-  // Initialize empty data structures for profile-specific data
-  // These will be populated by the individual profile sections as needed
-  const profileData = {}
-  const profileSettings = {}
-  const socialLinks = {}
-  const paymentMethods: { type: string; visible: boolean }[] = []
+  // Section state for client-side navigation
+  const [section, setSection] = useState(initialSection)
+  
   const t = useTranslations("profile")
   const tCommon = useTranslations("Common")
   const { showToast } = useToaster()
@@ -114,73 +110,21 @@ export default function ProfileWrapper({
     setDOMAIN(isLocalhost ? "http://localhost:3000" : "https://quevo.vercel.app")
   }, [])
   
-  // Fetch profile data when component mounts or business changes
-  useEffect(() => {
-    const fetchProfileData = async () => {
-      if (!currentBusiness?.business_id) return
-      
-      setLoading(true)
-      try {
-        // Fetch profile info
-        const profileRes = await fetch(`/api/businesses/${currentBusiness.business_id}/profile`)
-        if (profileRes.ok) {
-          const data = await profileRes.json()
-          setCurrentProfileData(data.profileData || {})
-          setOriginalProfileData(data.profileData || {})
-        }
-        
-        // Fetch profile settings
-        const settingsRes = await fetch(`/api/businesses/${currentBusiness.business_id}/profile/settings`)
-        if (settingsRes.ok) {
-          const data = await settingsRes.json()
-          setCurrentProfileSettings(data.settings || {})
-          setOriginalProfileSettings(data.settings || {})
-        }
-        
-        // Fetch social links
-        const linksRes = await fetch(`/api/businesses/${currentBusiness.business_id}/profile/links`)
-        if (linksRes.ok) {
-          const data = await linksRes.json()
-          const linksMap = data.links?.reduce((acc: any, link: any) => {
-            acc[link.link_type] = { url: link.link_url, visible: link.visible }
-            return acc
-          }, {}) || {}
-          setCurrentSocialLinks(linksMap)
-          setOriginalSocialLinks(linksMap)
-        }
-        
-        // Fetch payment methods
-        const paymentsRes = await fetch(`/api/businesses/${currentBusiness.business_id}/profile/payments`)
-        if (paymentsRes.ok) {
-          const data = await paymentsRes.json()
-          setCurrentPaymentMethods(data.payments || [])
-          setOriginalPaymentMethods(data.payments || [])
-        }
-      } catch (error) {
-        console.error('Error fetching profile data:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    
-    fetchProfileData()
-  }, [currentBusiness?.business_id])
+  // Initialize state with server-fetched data
+  const [currentProfileData, setCurrentProfileData] = useState<any>(initialProfileData || {})
+  const [currentProfileSettings, setCurrentProfileSettings] = useState<any>(initialProfileSettings || {})
+  const [currentSocialLinks, setCurrentSocialLinks] = useState<Record<string, SocialLink>>(initialSocialLinks || {})
+  const [currentPaymentMethods, setCurrentPaymentMethods] = useState<{ type: string; visible: boolean; details?: any }[]>(initialPaymentMethods || [])
   
-  // Current state
-  const [currentProfileData, setCurrentProfileData] = useState<any>(profileData)
-  const [currentProfileSettings, setCurrentProfileSettings] = useState<any>(profileSettings)
-  const [currentSocialLinks, setCurrentSocialLinks] = useState<Record<string, SocialLink>>(socialLinks)
-  const [currentPaymentMethods, setCurrentPaymentMethods] = useState<{ type: string; visible: boolean }[]>(paymentMethods)
-  
-  // Original state for change detection
-  const [originalProfileData, setOriginalProfileData] = useState<any>(profileData)
-  const [originalProfileSettings, setOriginalProfileSettings] = useState<any>(profileSettings)
-  const [originalSocialLinks, setOriginalSocialLinks] = useState<Record<string, SocialLink>>(socialLinks)
-  const [originalPaymentMethods, setOriginalPaymentMethods] = useState<{ type: string; visible: boolean }[]>(paymentMethods)
+  // Original state for change detection (initialize with server data)
+  const [originalProfileData, setOriginalProfileData] = useState<any>(initialProfileData || {})
+  const [originalProfileSettings, setOriginalProfileSettings] = useState<any>(initialProfileSettings || {})
+  const [originalSocialLinks, setOriginalSocialLinks] = useState<Record<string, SocialLink>>(initialSocialLinks || {})
+  const [originalPaymentMethods, setOriginalPaymentMethods] = useState<{ type: string; visible: boolean; details?: any }[]>(initialPaymentMethods || [])
   
   // UI state
   const [saving, setSaving] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false) // Start with false since data is already loaded
   const [profileImgFile, setProfileImgFile] = useState<File | null>(null)
   const [coverImgFile, setCoverImgFile] = useState<File | null>(null)
   const [profileImgPreview, setProfileImgPreview] = useState<string | null>(null)
@@ -275,7 +219,6 @@ export default function ProfileWrapper({
   const saveInfo = async () => {
     if (!currentBusiness) return;
     
-    // Check if there are actual changes
     if (!hasInfoChanges()) {
       showToast({
         type: "info",
@@ -288,7 +231,6 @@ export default function ProfileWrapper({
 
     setSaving("info");
     
-    // Only send changed fields
     const changes = getChangedFields(originalProfileData, currentProfileData);
     if (!changes) {
       setSaving(null);
@@ -309,7 +251,6 @@ export default function ProfileWrapper({
           message: t("toasts.success.info.message"),
           duration: 4000
         })
-        // Update original state to reflect new baseline
         setOriginalProfileData(JSON.parse(JSON.stringify(currentProfileData)));
       } else {
         const { userMessage, technicalMessage } = await parseApiError(res)
@@ -320,17 +261,14 @@ export default function ProfileWrapper({
           technicalDetails: technicalMessage,
           duration: 8000
         })
-        console.error("API Error Details:", technicalMessage)
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Network error"
       showToast({
         type: "error",
         title: "Network Error",
         message: "Failed to connect to server. Please check your connection.",
         duration: 6000
       })
-      console.error("Network Error:", errorMessage)
     } finally {
       setSaving(null);
     }
@@ -339,7 +277,6 @@ export default function ProfileWrapper({
   const saveLinks = async () => {
     if (!currentBusiness) return;
     
-    // Check if there are actual changes
     if (!hasLinksChanges()) {
       showToast({
         type: "info",
@@ -374,7 +311,6 @@ export default function ProfileWrapper({
           message: t("toasts.success.links.message"),
           duration: 4000
         })
-        // Update original state
         setOriginalSocialLinks(JSON.parse(JSON.stringify(currentSocialLinks)));
       } else {
         const { userMessage, technicalMessage } = await parseApiError(res)
@@ -385,17 +321,14 @@ export default function ProfileWrapper({
           technicalDetails: technicalMessage,
           duration: 8000
         })
-        console.error("API Error Details:", technicalMessage)
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Network error"
       showToast({
         type: "error",
         title: "Network Error",
         message: "Failed to connect to server. Please check your connection.",
         duration: 6000
       })
-      console.error("Network Error:", errorMessage)
     } finally {
       setSaving(null);
     }
@@ -404,7 +337,6 @@ export default function ProfileWrapper({
   const savePayments = async () => {
     if (!currentBusiness) return;
     
-    // Check if there are actual changes
     if (!hasPaymentsChanges()) {
       showToast({
         type: "info",
@@ -431,7 +363,6 @@ export default function ProfileWrapper({
           message: t("toasts.success.payments.message"),
           duration: 4000
         })
-        // Update original state
         setOriginalPaymentMethods(JSON.parse(JSON.stringify(currentPaymentMethods)));
       } else {
         const { userMessage, technicalMessage } = await parseApiError(res)
@@ -442,17 +373,14 @@ export default function ProfileWrapper({
           technicalDetails: technicalMessage,
           duration: 8000
         })
-        console.error("API Error Details:", technicalMessage)
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Network error"
       showToast({
         type: "error",
         title: "Network Error",
         message: "Failed to connect to server. Please check your connection.",
         duration: 6000
       })
-      console.error("Network Error:", errorMessage)
     } finally {
       setSaving(null);
     }
@@ -461,7 +389,6 @@ export default function ProfileWrapper({
   const saveSettings = async () => {
     if (!currentBusiness) return;
     
-    // Check if there are actual changes
     if (!hasSettingsChanges()) {
       showToast({
         type: "info",
@@ -474,7 +401,6 @@ export default function ProfileWrapper({
 
     setSaving("settings");
     
-    // Only send changed fields
     const changes = getChangedFields(originalProfileSettings, currentProfileSettings);
     if (!changes) {
       setSaving(null);
@@ -495,7 +421,6 @@ export default function ProfileWrapper({
           message: t("toasts.success.settings.message"),
           duration: 4000
         })
-        // Update original state
         setOriginalProfileSettings(JSON.parse(JSON.stringify(currentProfileSettings)));
       } else {
         const { userMessage, technicalMessage } = await parseApiError(res)
@@ -506,17 +431,14 @@ export default function ProfileWrapper({
           technicalDetails: technicalMessage,
           duration: 8000
         })
-        console.error("API Error Details:", technicalMessage)
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Network error"
       showToast({
         type: "error",
         title: "Network Error",
         message: "Failed to connect to server. Please check your connection.",
         duration: 6000
       })
-      console.error("Network Error:", errorMessage)
     } finally {
       setSaving(null);
     }
@@ -525,7 +447,6 @@ export default function ProfileWrapper({
   const saveImages = async () => {
     if (!currentBusiness) return;
     
-    // Check if there are actual changes
     if (!hasImageChanges()) {
       showToast({
         type: "info",
@@ -578,26 +499,22 @@ export default function ProfileWrapper({
           technicalDetails: technicalMessage,
           duration: 8000
         })
-        console.error("API Error Details:", technicalMessage)
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Network error"
       showToast({
         type: "error",
         title: t("toasts.error.networkError.title"),
         message: t("toasts.error.networkError.message"),
-        technicalDetails: errorMessage,
         duration: 8000
       })
-      console.error("Network Error:", errorMessage)
     } finally {
       setSaving(null);
     }
   };
 
-  // Navigation
+  // Navigation - now uses state instead of router.push
   const handleTabClick = (tabId: string) => {
-    router.push(`/dashboard/profile/${tabId}`);
+    setSection(tabId);
   };
 
   const renderTabIcon = (iconName: string, isActive: boolean) => {
@@ -626,7 +543,7 @@ export default function ProfileWrapper({
   // Public URL
   const publicUrl = `${DOMAIN}/${currentBusiness?.business_urlname || ""}`;
 
-  if (!currentBusiness || loading) {
+  if (!currentBusiness) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-64">
@@ -638,7 +555,7 @@ export default function ProfileWrapper({
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto p-2 md:p-4 lg:p-6">
+      <div className="max-w-7xl mx-auto p-2pm">
         {/* Header */}
         <div className="flex flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
@@ -811,3 +728,4 @@ export default function ProfileWrapper({
     </DashboardLayout>
   );
 }
+

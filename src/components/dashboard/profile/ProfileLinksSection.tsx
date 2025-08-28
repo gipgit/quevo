@@ -46,7 +46,6 @@ export default function ProfileLinksSection({ socialLinks, onChange }: ProfileLi
     <div className="space-y-8">
       {/* Social Media Links */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t("links.socialMedia")}</h3>
         <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-6">
           {ALLOWED_SOCIAL_LINKS.map((social) => {
             const isActive = selected.includes(social.id)
@@ -54,7 +53,7 @@ export default function ProfileLinksSection({ socialLinks, onChange }: ProfileLi
               <button
                 key={social.id}
                 type="button"
-                className={`flex flex-col items-center justify-center p-4 rounded-lg transition-all focus:outline-none h-24 ${
+                className={`flex flex-col items-center justify-center p-3 rounded-lg transition-all focus:outline-none h-20 ${
                   isActive
                     ? "ring-2 ring-gray-400 bg-gray-100 shadow-md"
                     : "border border-gray-300 hover:border-gray-400 bg-white"
@@ -62,17 +61,17 @@ export default function ProfileLinksSection({ socialLinks, onChange }: ProfileLi
                 onClick={() => handleSelect(social.id)}
               >
                 <img src={social.iconPath} alt={social.name} className="w-8 h-8 mb-1" />
-                <span className="text-xs font-semibold text-gray-400">{social.name}</span>
+                <span className="text-xs text-gray-400">{social.name}</span>
               </button>
             )
           })}
         </div>
-        <div className="space-y-4">
+        <div className="space-y-0">
           {selected.map((id) => {
             const social = ALLOWED_SOCIAL_LINKS.find((s) => s.id === id)
             if (!social) return null
             return (
-              <div key={id} className="flex items-center gap-4 bg-gray-50 rounded-lg p-4">
+              <div key={id} className="flex items-center gap-4 bg-gray-50 rounded-lg p-4 mb-1">
                 <img src={social.iconPath} alt={social.name} className="w-6 h-6" />
                 <input
                   type="url"
@@ -83,7 +82,7 @@ export default function ProfileLinksSection({ socialLinks, onChange }: ProfileLi
                 />
                 <button
                   type="button"
-                  className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition-colors"
+                  className="bg-gray-400 hover:bg-gray-500 text-white p-2 rounded-full transition-colors"
                   onClick={() => handleSelect(id)}
                   title={t("links.remove")}
                 >

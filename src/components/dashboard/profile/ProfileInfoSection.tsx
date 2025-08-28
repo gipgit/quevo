@@ -153,10 +153,10 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
   }
 
   return (
-    <div className="py-2 space-y-6">
+    <div className="py-2 space-y-4">
       {/* Business URL Name */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">{t("businessUrlName")}</label>
+        <label className="block text-xs font-medium text-gray-500 mb-2">{t("businessUrlName")}</label>
         <div className="flex items-center rounded-full shadow-sm overflow-hidden bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200">
           <div className="flex items-center px-4 py-3 bg-gradient-to-r from-gray-100 to-gray-200 border-r border-gray-300">
             <GlobeAltIcon className="w-5 h-5 text-gray-600 mr-2" />
@@ -211,7 +211,7 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
 
       {/* Business Name */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">{t("businessName")}</label>
+        <label className="block text-xs font-medium text-gray-500 mb-2">{t("businessName")}</label>
         <input
           type="text"
           value={profileData.business_name || ""}
@@ -220,10 +220,10 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
         />
       </div>
 
-      {/* Business Location - Country, Region, Address */}
+      {/* Business Location - Country, Region, City, Address */}
       <div className="flex gap-2">
-        <div className="w-1/4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">{t("businessCountry")}</label>
+        <div className="w-1/5">
+          <label className="block text-xs font-medium text-gray-500 mb-2">{t("businessCountry")}</label>
           <input
             type="text"
             value={profileData.business_country || ""}
@@ -231,8 +231,8 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           />
         </div>
-        <div className="w-1/4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">{t("businessRegion")}</label>
+        <div className="w-1/5">
+          <label className="block text-xs font-medium text-gray-500 mb-2">{t("businessRegion")}</label>
           <input
             type="text"
             value={profileData.business_region || ""}
@@ -240,8 +240,17 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           />
         </div>
-        <div className="w-2/4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">{t("businessAddress")}</label>
+        <div className="w-1/5">
+          <label className="block text-xs font-medium text-gray-500 mb-2">{t("businessCity")}</label>
+          <input
+            type="text"
+            value={profileData.business_city || ""}
+            onChange={(e) => onChange("business_city", e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+          />
+        </div>
+        <div className="w-2/5">
+          <label className="block text-xs font-medium text-gray-500 mb-2">{t("businessAddress")}</label>
           <input
             type="text"
             value={profileData.business_address || ""}
@@ -253,7 +262,7 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
 
       {/* Business Description */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">{t("businessDescr")}</label>
+        <label className="block text-xs font-medium text-gray-500 mb-2">{t("businessDescr")}</label>
         <textarea
           value={profileData.business_descr || ""}
           onChange={(e) => onChange("business_descr", e.target.value)}
@@ -261,11 +270,11 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
         />
       </div>
       {/* Emails */}
-      <div className="mt-8">
+      <div className="mt-6">
         <div className="flex justify-between items-center mb-2">
-          <label className="block text-sm font-medium text-gray-700">{t("businessEmail")}</label>
+          <label className="block text-xs font-medium text-gray-500">{t("businessEmail")}</label>
           {emails.length < 3 && (
-            <button type="button" onClick={handleAddEmail} className="text-blue-600 text-sm">{t("addEmail")}</button>
+            <button type="button" onClick={handleAddEmail} className="text-gray-600 text-sm">{t("addEmail")}</button>
           )}
         </div>
         {emails.map((email, idx) => (
@@ -285,17 +294,24 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
               placeholder={t("emailTitlePlaceholder")}
             />
             {emails.length > 1 && (
-              <button type="button" onClick={() => handleRemoveEmail(idx)} className="text-red-500">{t("remove")}</button>
+              <button 
+                type="button" 
+                onClick={() => handleRemoveEmail(idx)} 
+                className="bg-gray-400 hover:bg-gray-500 text-white p-2 rounded-full transition-colors"
+                title={t("remove")}
+              >
+                <XMarkIcon className="w-4 h-4" />
+              </button>
             )}
           </div>
         ))}
       </div>
       {/* Phones */}
-      <div className="mt-8">
+      <div className="mt-6">
         <div className="flex justify-between items-center mb-2">
-          <label className="block text-sm font-medium text-gray-700">{t("businessPhone")}</label>
+          <label className="block text-xs font-medium text-gray-500">{t("businessPhone")}</label>
           {phones.length < 3 && (
-            <button type="button" onClick={handleAddPhone} className="text-blue-600 text-sm">{t("addPhone")}</button>
+            <button type="button" onClick={handleAddPhone} className="text-gray-600 text-sm">{t("addPhone")}</button>
           )}
         </div>
         {phones.map((phone, idx) => (
@@ -315,7 +331,14 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
               placeholder={t("phoneTitlePlaceholder")}
             />
             {phones.length > 1 && (
-              <button type="button" onClick={() => handleRemovePhone(idx)} className="text-red-500">{t("remove")}</button>
+              <button 
+                type="button" 
+                onClick={() => handleRemovePhone(idx)} 
+                className="bg-gray-400 hover:bg-gray-500 text-white p-2 rounded-full transition-colors"
+                title={t("remove")}
+              >
+                <XMarkIcon className="w-4 h-4" />
+              </button>
             )}
           </div>
         ))}

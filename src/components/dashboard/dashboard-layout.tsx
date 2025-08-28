@@ -212,6 +212,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     return firstInitial + lastInitial
   }
 
+  // Helper function to check if a navigation item is active
+  const isActiveLink = (href: string) => {
+    console.log('Checking active link:', { href, pathname, currentLocale })
+    
+    // Remove locale prefix from pathname for comparison
+    const pathWithoutLocale = pathname.replace(`/${currentLocale}`, '')
+    
+    // Special case for dashboard home
+    if (href === "/dashboard") {
+      return pathWithoutLocale === "/dashboard"
+    }
+    // For other routes, check if pathname starts with the href
+    return pathWithoutLocale.startsWith(href)
+  }
+
   return (
     <>
       <NavigationInterceptor />
@@ -264,14 +279,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className={`flex items-center gap-x-3 rounded-md p-2 text-sm md:text-base leading-6 transition-all ${
-                      pathname === item.href
+                    className={`flex items-center gap-x-3 rounded-md p-2 text-sm md:text-base leading-6 transition-all duration-200 ${
+                      isActiveLink(item.href)
                         ? theme === 'dark' 
-                          ? "bg-zinc-700 text-gray-100 shadow-sm" 
-                          : "bg-white text-gray-900 shadow-sm"
+                          ? "bg-zinc-700 text-gray-100 shadow-md border border-zinc-600" 
+                          : "bg-zinc-200 text-gray-900 shadow-md border border-zinc-300"
                         : theme === 'dark'
-                          ? "text-gray-300 hover:bg-zinc-700"
-                          : "text-gray-700 hover:bg-zinc-200"
+                          ? "text-gray-400 hover:bg-zinc-700 hover:text-gray-200"
+                          : "text-gray-500 hover:bg-zinc-100 hover:text-gray-700"
                     }`}
                   >
                         <IconComponent className="h-5 w-5" />
@@ -403,14 +418,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className={`flex items-center gap-x-3 rounded-md p-2 text-sm md:text-base leading-6 transition-all ${
-                      pathname === item.href
+                    className={`flex items-center gap-x-3 rounded-md p-2 text-sm md:text-base leading-6 transition-all duration-200 ${
+                      isActiveLink(item.href)
                         ? theme === 'dark' 
-                          ? "bg-zinc-700 text-gray-100 shadow-sm" 
-                          : "bg-white text-gray-900 shadow-sm"
+                          ? "bg-zinc-700 text-gray-100 shadow-md border border-zinc-600" 
+                          : "bg-zinc-200 text-gray-900 shadow-md border border-zinc-300"
                         : theme === 'dark'
-                          ? "text-gray-300 hover:bg-zinc-700"
-                          : "text-gray-700 hover:bg-zinc-200"
+                          ? "text-gray-400 hover:bg-zinc-700 hover:text-gray-200"
+                          : "text-gray-500 hover:bg-zinc-100 hover:text-gray-700"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -487,14 +502,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           {/* Essential Navigation Items */}
           <Link
             href="/dashboard"
-            className={`flex flex-col items-center p-1.5 rounded-lg transition-colors ${
-              pathname === "/dashboard"
+            className={`flex flex-col items-center p-1.5 rounded-lg transition-all duration-200 ${
+              isActiveLink("/dashboard")
                 ? theme === 'dark'
-                  ? "text-blue-400 bg-blue-900/30"
-                  : "text-blue-600 bg-blue-50"
+                  ? "text-gray-100 bg-zinc-700 shadow-md border border-zinc-600"
+                  : "text-gray-900 bg-zinc-200 shadow-md border border-zinc-300"
                 : theme === 'dark'
                   ? "text-gray-400 hover:text-gray-200 hover:bg-zinc-700"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-zinc-50"
+                  : "text-gray-400 hover:text-gray-600 hover:bg-zinc-100"
             }`}
           >
             <HomeIcon className="h-5 w-5" />
@@ -503,14 +518,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
           <Link
             href="/dashboard/appointments"
-            className={`flex flex-col items-center p-1.5 rounded-lg transition-colors ${
-              pathname === "/dashboard/appointments"
+            className={`flex flex-col items-center p-1.5 rounded-lg transition-all duration-200 ${
+              isActiveLink("/dashboard/appointments")
                 ? theme === 'dark'
-                  ? "text-blue-400 bg-blue-900/30"
-                  : "text-blue-600 bg-blue-50"
+                  ? "text-gray-100 bg-zinc-700 shadow-md border border-zinc-600"
+                  : "text-gray-900 bg-zinc-200 shadow-md border border-zinc-300"
                 : theme === 'dark'
                   ? "text-gray-400 hover:text-gray-200 hover:bg-zinc-700"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-zinc-50"
+                  : "text-gray-400 hover:text-gray-600 hover:bg-zinc-100"
             }`}
           >
             <CalendarIcon className="h-5 w-5" />
@@ -519,14 +534,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
           <Link
             href="/dashboard/services"
-            className={`flex flex-col items-center p-1.5 rounded-lg transition-colors ${
-              pathname === "/dashboard/services"
+            className={`flex flex-col items-center p-1.5 rounded-lg transition-all duration-200 ${
+              isActiveLink("/dashboard/services")
                 ? theme === 'dark'
-                  ? "text-blue-400 bg-blue-900/30"
-                  : "text-blue-600 bg-blue-50"
+                  ? "text-gray-100 bg-zinc-700 shadow-md border border-zinc-600"
+                  : "text-gray-900 bg-zinc-200 shadow-md border border-zinc-300"
                 : theme === 'dark'
                   ? "text-gray-400 hover:text-gray-200 hover:bg-zinc-700"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-zinc-50"
+                  : "text-gray-400 hover:text-gray-600 hover:bg-zinc-100"
             }`}
           >
             <WrenchScrewdriverIcon className="h-5 w-5" />
@@ -535,14 +550,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
           <Link
             href="/dashboard/service-boards"
-            className={`flex flex-col items-center p-1.5 rounded-lg transition-colors ${
-              pathname === "/dashboard/service-boards"
+            className={`flex flex-col items-center p-1.5 rounded-lg transition-all duration-200 ${
+              isActiveLink("/dashboard/service-boards")
                 ? theme === 'dark'
-                  ? "text-blue-400 bg-blue-900/30"
-                  : "text-blue-600 bg-blue-50"
+                  ? "text-gray-100 bg-zinc-700 shadow-md border border-zinc-600"
+                  : "text-gray-900 bg-zinc-200 shadow-md border border-zinc-300"
                 : theme === 'dark'
                   ? "text-gray-400 hover:text-gray-200 hover:bg-zinc-700"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-zinc-50"
+                  : "text-gray-400 hover:text-gray-600 hover:bg-zinc-100"
             }`}
           >
             <ClipboardDocumentIcon className="h-5 w-5" />
@@ -551,14 +566,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
           <Link
             href="/dashboard/profile"
-            className={`flex flex-col items-center p-1.5 rounded-lg transition-colors ${
-              pathname === "/dashboard/profile"
+            className={`flex flex-col items-center p-1.5 rounded-lg transition-all duration-200 ${
+              isActiveLink("/dashboard/profile")
                 ? theme === 'dark'
-                  ? "text-blue-400 bg-blue-900/30"
-                  : "text-blue-600 bg-blue-50"
+                  ? "text-gray-100 bg-zinc-700 shadow-md border border-zinc-600"
+                  : "text-gray-900 bg-zinc-200 shadow-md border border-zinc-300"
                 : theme === 'dark'
                   ? "text-gray-400 hover:text-gray-200 hover:bg-zinc-700"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-zinc-50"
+                  : "text-gray-400 hover:text-gray-600 hover:bg-zinc-100"
             }`}
           >
             <UserIcon className="h-5 w-5" />
@@ -660,10 +675,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     <div className="flex items-center gap-2">
                       <Link 
                         href="/dashboard/plan" 
-                        className={`px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-2 ${
+                        className={`px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-2 border ${
                           theme === 'dark'
-                            ? 'bg-zinc-700 text-gray-100 hover:bg-zinc-600'
-                            : 'bg-zinc-300 text-gray-700 hover:bg-zinc-500'
+                            ? 'bg-transparent text-gray-300 border-gray-600 hover:bg-zinc-800 hover:text-gray-200'
+                            : 'bg-transparent text-gray-600 border-gray-300 hover:bg-zinc-100 hover:text-gray-800'
                         }`}
                       >
                         Manage your plan
@@ -683,10 +698,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                       </Link>
                       <button
                         onClick={handleSupportRequest}
-                        className={`px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                        className={`px-5 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors border ${
                           theme === 'dark'
-                            ? 'bg-zinc-700 text-gray-100 hover:bg-zinc-600'
-                            : 'bg-zinc-300 text-gray-700 hover:bg-zinc-500'
+                            ? 'bg-transparent text-gray-300 border-gray-600 hover:bg-zinc-800 hover:text-gray-200'
+                            : 'bg-transparent text-gray-600 border-gray-300 hover:bg-zinc-100 hover:text-gray-800'
                         }`}
                       >
                         Support

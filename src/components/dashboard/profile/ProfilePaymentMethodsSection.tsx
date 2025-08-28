@@ -56,16 +56,14 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
     onChange(updated)
   }
 
-  return (
+    return (
     <div className="space-y-8">
       {/* Payment Methods */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t("paymentMethods.title") || "Payment Methods"}</h3>
         
         {/* Online Payment Methods */}
         <div className="mb-8">
-          <h4 className="text-md font-medium text-gray-800 mb-3">{PAYMENT_METHOD_CATEGORIES[0].name}</h4>
-          <p className="text-sm text-gray-600 mb-4">{PAYMENT_METHOD_CATEGORIES[0].description}</p>
+          <h4 className="text-sm font-medium text-gray-800 mb-4">{PAYMENT_METHOD_CATEGORIES[0].name}</h4>
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3 mb-6">
             {getPaymentMethodsByCategory('online').map((method) => {
               const isActive = selected.includes(method.id)
@@ -73,7 +71,7 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                 <button
                   key={method.id}
                   type="button"
-                  className={`flex flex-col items-center justify-center p-4 rounded-lg transition-all focus:outline-none h-24 ${
+                  className={`flex flex-col items-center justify-center p-3 rounded-lg transition-all focus:outline-none h-20 ${
                     isActive
                       ? "ring-2 ring-gray-400 bg-gray-100 shadow-md"
                       : "border border-gray-300 hover:border-gray-400 bg-white"
@@ -83,7 +81,7 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                   <img 
                     src={method.iconPath} 
                     alt={method.name} 
-                    className="w-12 h-12 mb-2" 
+                    className="w-10 h-10 mb-1" 
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';
                       const textElement = e.currentTarget.nextElementSibling;
@@ -93,7 +91,7 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                       }
                     }}
                   />
-                  <span className="text-xs font-bold text-gray-400">{method.name}</span>
+                  <span className="text-xs text-gray-400">{method.name}</span>
                 </button>
               )
             })}
@@ -102,8 +100,7 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
 
         {/* In-Person Payment Methods */}
         <div className="mb-8">
-          <h4 className="text-md font-medium text-gray-800 mb-3">{PAYMENT_METHOD_CATEGORIES[1].name}</h4>
-          <p className="text-sm text-gray-600 mb-4">{PAYMENT_METHOD_CATEGORIES[1].description}</p>
+          <h4 className="text-sm font-medium text-gray-800 mb-4">{PAYMENT_METHOD_CATEGORIES[1].name}</h4>
         <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-6">
             {getPaymentMethodsByCategory('in-person').map((method) => {
             const isActive = selected.includes(method.id)
@@ -111,7 +108,7 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
               <button
                 key={method.id}
                 type="button"
-                  className={`flex flex-col items-center justify-center p-4 rounded-lg transition-all focus:outline-none h-24 ${
+                  className={`flex flex-col items-center justify-center p-3 rounded-lg transition-all focus:outline-none h-20 ${
                   isActive
                     ? "ring-2 ring-gray-400 bg-gray-100 shadow-md"
                     : "border border-gray-300 hover:border-gray-400 bg-white"
@@ -121,7 +118,7 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                   <img 
                     src={method.iconPath} 
                     alt={method.name} 
-                    className="w-12 h-12 mb-2" 
+                    className="w-10 h-10 mb-1" 
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';
                       const textElement = e.currentTarget.nextElementSibling;
@@ -131,19 +128,19 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                       }
                     }}
                   />
-                  <span className="text-xs font-bold text-gray-400">{method.name}</span>
+                  <span className="text-xs text-gray-400">{method.name}</span>
               </button>
             )
           })}
           </div>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-0">
           {selected.map((id) => {
             const config = ALLOWED_PAYMENT_METHODS.find((pm) => pm.id === id)
             const method = paymentMethods.find((m) => m.type === id)
             if (!config || !config.fields || config.fields.length === 0 || !method) return null
             return (
-              <div key={id} className="flex items-center gap-4 bg-gray-50 rounded-lg p-4">
+              <div key={id} className="flex items-center gap-4 bg-gray-50 rounded-lg p-4 mb-1">
                 <img src={config.iconPath} alt={config.name} className="w-6 h-6" />
                 <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
                   {config.fields.map((field) => (
@@ -163,7 +160,7 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                 </div>
                 <button
                   type="button"
-                  className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition-colors"
+                  className="bg-gray-400 hover:bg-gray-500 text-white p-2 rounded-full transition-colors"
                   onClick={() => handleToggle(id)}
                   title={t("paymentMethods.remove")}
                 >
