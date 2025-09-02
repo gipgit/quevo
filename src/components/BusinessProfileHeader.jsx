@@ -596,11 +596,11 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                     transition: 'opacity 1s ease-out 0.5s, transform 1s ease-out 0.5s'
                 }}>
                 {/* Cover Image Background - Only for desktop layout */}
-                {businessData.business_img_cover_desktop && (
+                {businessData.business_img_cover_mobile && (
                     <div className="w-full z-0 rounded-2xl">
                         <div className="relative w-full rounded-2xl transition-all duration-700 ease-out" style={{ height: `${imageHeight}vh` }}>
                             <Image
-                                src={businessData.business_img_cover_desktop}
+                                src={businessData.business_img_cover_mobile}
                                 alt=""
                                 fill
                                 sizes="100%"

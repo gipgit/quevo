@@ -89,12 +89,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
 
 
-  useEffect(() => {
-    // If we have userManager but no businesses, redirect to onboarding
-    if (!loading && userManager && (!businesses || businesses.length === 0)) {
-      router.push("/dashboard/onboarding")
-    }
-  }, [loading, userManager, businesses, router])
+  // Removed client-side redirect logic - server-side provider handles this case
+  // This prevents conflicts with server-side redirects and infinite loops
 
   if (loading) {
     return (
@@ -134,12 +130,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">{t("noBusiness")}</h2>
-          <Link
-            href="/dashboard/onboarding"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            {t("createBusiness") || "Create Business"}
-          </Link>
+                      <Link
+              href="/onboarding"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              {t("createBusiness") || "Create Business"}
+            </Link>
         </div>
       </div>
     )
@@ -164,7 +160,34 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
 
   const handleLogout = async () => {
-    await signOut({ callbackUrl: "/" })
+    try {
+      // Clear all session storage
+      sessionStorage.clear()
+      
+      // Clear all cookies related to the application
+      const cookies = document.cookie.split(";")
+      cookies.forEach(cookie => {
+        const eqPos = cookie.indexOf("=")
+        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim()
+        // Clear all cookies except essential ones like locale
+        if (name && !name.startsWith('next-i18next') && !name.startsWith('NEXT_LOCALE')) {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
+        }
+      })
+      
+      // Clear local storage if needed
+      localStorage.clear()
+      
+      // Sign out from NextAuth and redirect to signin/business page
+      await signOut({ 
+        callbackUrl: `/${currentLocale}/signin/business`,
+        redirect: true
+      })
+    } catch (error) {
+      console.error("Error during logout:", error)
+      // Fallback to simple signOut if cleanup fails
+      await signOut({ callbackUrl: `/${currentLocale}/signin/business` })
+    }
   }
 
   const handleSupportRequest = () => {

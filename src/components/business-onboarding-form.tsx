@@ -15,7 +15,6 @@ import ProfileSettingsStep from "./onboarding-steps/profile-settings-step"
 import ProfileColorsFontStep from "./onboarding-steps/profile-colors-font-step"
 import { ConfirmationStep } from "./onboarding-steps/confirmation-step"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
-import { useBusiness } from "@/lib/business-context"
 
 export interface BusinessFormData {
   // Step 1: Business Info
@@ -83,7 +82,16 @@ const STEPS = [
 export function BusinessOnboardingForm({ onFormDataChange, formData: externalFormData }: BusinessOnboardingFormProps) {
   const router = useRouter()
   const t = useTranslations("BusinessOnboarding")
-  const { addBusiness } = useBusiness()
+  
+  // Try to get addBusiness from context, but handle case where context is not available
+  let addBusiness: ((business: any) => void) | null = null
+  try {
+    const { useBusiness } = require("@/lib/business-context")
+    const businessContext = useBusiness()
+    addBusiness = businessContext?.addBusiness || null
+  } catch (error) {
+    console.log("Business context not available, proceeding without addBusiness function")
+  }
   const [currentStep, setCurrentStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [canProceed, setCanProceed] = useState(false)
@@ -233,19 +241,23 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
               date_created: new Date().toISOString(),
             }
             
-            // Add the new business to the context and set it as current
-            addBusiness(newBusiness)
-            console.log("Successfully added new business to context:", data.business.business_id)
+            // Add the new business to the context and set it as current (if context is available)
+            if (addBusiness) {
+              addBusiness(newBusiness)
+              console.log("Successfully added new business to context:", data.business.business_id)
+            } else {
+              console.log("Business context not available, skipping context update")
+            }
           } catch (error) {
             console.error("Error adding new business to context:", error)
             // Continue with redirect even if context update fails
           }
         }
         
-        // Wait a moment to show success state, then redirect
+        // Wait longer to ensure database transaction is fully committed, then force a complete page reload
         setTimeout(() => {
-          router.push(`/dashboard/`)
-        }, 1500)
+          window.location.href = `/dashboard?t=${Date.now()}&fresh=true`
+        }, 3000)
       } else {
         let errorData
         let errorMessage = "Errore durante la creazione del business"

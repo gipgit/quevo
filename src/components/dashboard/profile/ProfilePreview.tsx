@@ -82,9 +82,28 @@ export default function ProfilePreview({
               )}
             </div>
             
+            <div 
+              className={`mt-1 text-xl font-bold ${FONT_OPTIONS.find(f => f.value === profileSettings.theme_font)?.className || ''}`} 
+              style={{ 
+                color: profileSettings.theme_color_text || "#000000", 
+                fontFamily: FONT_OPTIONS.find(f => f.value === profileSettings.theme_font)?.label 
+              }}
+            >
+              {businessName}
+            </div>
+            <button 
+              className="mt-4 px-4 py-2 rounded-full text-white text-xs" 
+              style={{ 
+                background: profileSettings.theme_color_button || "#3B82F6", 
+                fontFamily: FONT_OPTIONS.find(f => f.value === profileSettings.theme_font)?.label 
+              }}
+            >
+              {t("appearance.exampleButton") || "Example Button"}
+            </button>
+            
             {/* Social Media Icons */}
             {Object.keys(socialLinks).length > 0 && (
-              <div className="flex items-center justify-center gap-2 mt-2 mb-1">
+              <div className="flex items-center justify-center gap-2 mt-4">
                 {ALLOWED_SOCIAL_LINKS.map((social) => {
                   const socialData = socialLinks[social.id]
                   // Show icon if it exists in socialLinks (selected) and is visible
@@ -108,25 +127,6 @@ export default function ProfilePreview({
                 })}
               </div>
             )}
-            
-            <div 
-              className={`mt-1 text-xl font-bold ${FONT_OPTIONS.find(f => f.value === profileSettings.theme_font)?.className || ''}`} 
-              style={{ 
-                color: profileSettings.theme_color_text || "#000000", 
-                fontFamily: FONT_OPTIONS.find(f => f.value === profileSettings.theme_font)?.label 
-              }}
-            >
-              {businessName}
-            </div>
-            <button 
-              className="mt-4 px-4 py-2 rounded-full text-white text-xs" 
-              style={{ 
-                background: profileSettings.theme_color_button || "#3B82F6", 
-                fontFamily: FONT_OPTIONS.find(f => f.value === profileSettings.theme_font)?.label 
-              }}
-            >
-              {t("appearance.exampleButton") || "Example Button"}
-            </button>
           </div>
         </div>
       </div>

@@ -1,39 +1,64 @@
-import React, { useRef, useState, useEffect } from "react"
+import React, { useRef, useState, useEffect, useCallback } from "react"
 import { useTranslations } from "next-intl"
+import { PencilIcon } from "@heroicons/react/24/outline"
 import ImageCropper from "./ImageCropper"
+import dynamic from "next/dynamic"
+
+const DualCoverCropper = dynamic(() => import("../../onboarding-steps/dual-cover-cropper").then(mod => ({ default: mod.default })), { ssr: false })
 
 interface ProfileImageSectionProps {
   profileImg: string | undefined
-  coverImg: string | undefined
+  coverImgMobile: string | undefined
+  coverImgDesktop: string | undefined
   onProfileImgChange?: (file: File, previewUrl: string) => void
-  onCoverImgChange?: (file: File, previewUrl: string) => void
+  onCoverImgChange?: (mobileFile: File, desktopFile: File, mobilePreviewUrl: string, desktopPreviewUrl: string) => void
+  onPreviewsReady?: (clearPreviews: () => void) => void
 }
 
-export default function ProfileImageSection({ profileImg, coverImg, onProfileImgChange, onCoverImgChange }: ProfileImageSectionProps) {
+export default function ProfileImageSection({ profileImg, coverImgMobile, coverImgDesktop, onProfileImgChange, onCoverImgChange }: ProfileImageSectionProps) {
   const t = useTranslations("profile")
   const [profileCropSrc, setProfileCropSrc] = useState<string | null>(null)
   const [coverCropSrc, setCoverCropSrc] = useState<string | null>(null)
   const [profilePreview, setProfilePreview] = useState<string | null>(null)
   const [coverPreview, setCoverPreview] = useState<string | null>(null)
+  const [coverDesktopPreview, setCoverDesktopPreview] = useState<string | null>(null)
+  const [profileCropperOpen, setProfileCropperOpen] = useState(false)
+  const [coverCropperOpen, setCoverCropperOpen] = useState(false)
+  const [triggerCrop, setTriggerCrop] = useState(false)
   const profileInputRef = useRef<HTMLInputElement>(null)
   const coverInputRef = useRef<HTMLInputElement>(null)
 
-  // Always show current images from props unless a new preview is set
-  useEffect(() => {
-    setProfilePreview(null)
-    setCoverPreview(null)
-  }, [profileImg, coverImg])
+  // Don't clear previews automatically - let them persist until explicitly cleared
+  // This prevents the desktop preview from disappearing after cropping
+  
+  // Temporarily disabled to fix runtime error
+  // useEffect(() => {
+  //   if (onPreviewsReady && typeof onPreviewsReady === 'function') {
+  //     onPreviewsReady(clearPreviews)
+  //   }
+  // }, [onPreviewsReady, clearPreviews])
 
   const handleProfileFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      setProfileCropSrc(URL.createObjectURL(file))
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setProfileCropSrc(e.target?.result as string)
+        setProfileCropperOpen(true)
+      }
+      reader.readAsDataURL(file)
     }
   }
+
   const handleCoverFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      setCoverCropSrc(URL.createObjectURL(file))
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setCoverCropSrc(e.target?.result as string)
+        setCoverCropperOpen(true)
+      }
+      reader.readAsDataURL(file)
     }
   }
 
@@ -43,21 +68,108 @@ export default function ProfileImageSection({ profileImg, coverImg, onProfileImg
       const file = new File([blob], "profile.webp", { type: "image/webp" })
       onProfileImgChange(file, previewUrl)
     }
+    setProfileCropperOpen(false)
+    setProfileCropSrc(null)
   }
-  const handleCoverCrop = (blob: Blob, previewUrl: string) => {
-    setCoverPreview(previewUrl)
+
+  const handleCoverCrop = (mobileBlob: Blob, desktopBlob: Blob, mobilePreview: string, desktopPreview: string) => {
+    setCoverPreview(mobilePreview)
+    setCoverDesktopPreview(desktopPreview)
     if (onCoverImgChange) {
-      const file = new File([blob], "cover.webp", { type: "image/webp" })
-      onCoverImgChange(file, previewUrl)
+      // For API compatibility, only pass the mobile file (system will generate desktop version)
+      const mobileFile = new File([mobileBlob], "cover.webp", { type: "image/webp" })
+      const desktopFile = new File([desktopBlob], "cover-desktop.webp", { type: "image/webp" })
+      onCoverImgChange(mobileFile, desktopFile, mobilePreview, desktopPreview)
     }
+    setCoverCropperOpen(false)
+    setCoverCropSrc(null)
   }
+
+  // Function to clear previews when images are successfully saved
+  const clearPreviews = useCallback(() => {
+    setProfilePreview(null)
+    setCoverPreview(null)
+    setCoverDesktopPreview(null)
+  }, [])
+
+  const handleProfileCropperCancel = () => {
+    setProfileCropperOpen(false)
+    setProfileCropSrc(null)
+  }
+
+  const handleCoverCropperCancel = () => {
+    setCoverCropperOpen(false)
+    setCoverCropSrc(null)
+  }
+
+  const handleCropClick = () => {
+    setTriggerCrop(true)
+  }
+
+  // Reset trigger after a short delay
+  useEffect(() => {
+    if (triggerCrop) {
+      const timer = setTimeout(() => setTriggerCrop(false), 100)
+      return () => clearTimeout(timer)
+    }
+  }, [triggerCrop])
 
   return (
     <div className="p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{t("images.title")}</h3>
-      <div className="flex flex-col md:flex-row gap-8 items-center">
+      {/* Cover Image Section */}
+      <div className="flex flex-col items-center mb-8">
+        <span className="text-xs text-gray-600 mb-4">{t("images.cover")}</span>
+        
+        {/* Cover Previews Container */}
+        <div className="relative w-full">
+          <div className="flex gap-4">
+            {/* Cover Mobile Preview */}
+            <div className="flex-1">
+              <p className="text-xs text-gray-600 mb-1 text-center">Mobile Cover</p>
+              <div className="w-full h-24 bg-gray-100 border border-gray-300 rounded-lg overflow-hidden">
+                <img 
+                  src={coverPreview || coverImgMobile || "/placeholder-cover.svg"} 
+                  alt="Mobile cover" 
+                  className="w-full h-full object-cover rounded-lg" 
+                />
+              </div>
+            </div>
+            
+            {/* Cover Desktop Preview */}
+            <div className="flex-shrink-0">
+              <p className="text-xs text-gray-600 mb-1 text-center">Desktop Cover</p>
+              <div className="w-24 h-24 bg-gray-100 border border-gray-300 rounded-lg overflow-hidden">
+                <img 
+                  src={coverDesktopPreview || coverImgDesktop || "/placeholder-cover.svg"} 
+                  alt="Desktop cover" 
+                  className="w-full h-full object-cover rounded-lg" 
+                />
+              </div>
+            </div>
+          </div>
+          
+          {/* Edit Button */}
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            ref={coverInputRef}
+            onChange={handleCoverFile}
+          />
+          <button
+            type="button"
+            className="absolute -top-2 -right-2 bg-white rounded-full p-2 shadow hover:bg-gray-50 border border-gray-200"
+            onClick={() => coverInputRef.current?.click()}
+          >
+            <PencilIcon className="w-3 h-3 text-gray-600" />
+          </button>
+        </div>
+      </div>
+
+      {/* Profile Image Section - Centered */}
+      <div className="flex justify-center">
         <div className="flex flex-col items-center">
-          <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-100 mb-2 relative">
+          <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-100 mb-2 relative">
             <img
               src={profilePreview || profileImg || "/placeholder-profile.svg"}
               alt="Profile"
@@ -72,67 +184,59 @@ export default function ProfileImageSection({ profileImg, coverImg, onProfileImg
             />
             <button
               type="button"
-              className="absolute bottom-2 right-2 bg-white rounded-full p-1 shadow"
+              className="absolute bottom-1 right-1 bg-white rounded-full p-2 shadow hover:bg-gray-50 border border-gray-200"
               onClick={() => profileInputRef.current?.click()}
             >
-              ✏️
+              <PencilIcon className="w-3 h-3 text-gray-600" />
             </button>
           </div>
-          <span className="text-sm text-gray-700">{t("images.profile")}</span>
-          {profileCropSrc && (
-            <div className="mt-2">
+          <span className="text-xs text-gray-600">{t("images.profile")}</span>
+        </div>
+      </div>
+
+      {/* Profile Cropper Modal */}
+      {profileCropperOpen && profileCropSrc && (
+        <div className="fixed inset-0 top-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4">
+            <div className="flex flex-col items-center">
+              <h3 className="text-lg font-medium mb-4">Crop Profile Image</h3>
               <ImageCropper
                 image={profileCropSrc}
                 aspect={1}
                 cropShape="round"
-                containerSize={{ width: 200, height: 200 }}
+                containerSize={{ width: 350, height: 350 }}
                 onCropComplete={handleProfileCrop}
+                showCropButton={false}
+                showZoomSlider={true}
+                triggerCrop={triggerCrop}
               />
-              <button className="mt-2 text-xs text-red-500" onClick={() => setProfileCropSrc(null)}>
-                {t("images.cancel")}
-              </button>
+              <div className="mt-4 flex justify-center gap-3">
+                <button 
+                  className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300" 
+                  onClick={handleProfileCropperCancel}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" 
+                  onClick={handleCropClick}
+                >
+                  Confirm
+                </button>
+              </div>
             </div>
-          )}
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="w-64 h-32 rounded-xl overflow-hidden bg-gray-100 mb-2 relative">
-            <img
-              src={coverPreview || coverImg || "/placeholder-cover.svg"}
-              alt="Cover"
-              className="w-full h-full object-cover"
-            />
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              ref={coverInputRef}
-              onChange={handleCoverFile}
-            />
-            <button
-              type="button"
-              className="absolute bottom-2 right-2 bg-white rounded-full p-1 shadow"
-              onClick={() => coverInputRef.current?.click()}
-            >
-              ✏️
-            </button>
           </div>
-          <span className="text-sm text-gray-700">{t("images.cover")}</span>
-          {coverCropSrc && (
-            <div className="mt-2">
-              <ImageCropper
-                image={coverCropSrc}
-                aspect={3 / 1}
-                cropShape="rect"
-                containerSize={{ width: 320, height: 120 }}
-                onCropComplete={handleCoverCrop}
-              />
-              <button className="mt-2 text-xs text-red-500" onClick={() => setCoverCropSrc(null)}>
-                {t("images.cancel")}
-              </button>
-            </div>
-          )}
         </div>
-      </div>
+      )}
+
+      {/* Cover Cropper Modal */}
+      {coverCropperOpen && coverCropSrc && (
+        <DualCoverCropper
+          imageSrc={coverCropSrc}
+          onCropComplete={handleCoverCrop}
+          onCancel={handleCoverCropperCancel}
+        />
+      )}
     </div>
   )
 }

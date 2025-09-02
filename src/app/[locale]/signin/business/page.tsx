@@ -44,47 +44,131 @@ export default function ManagerSignInPage() {
   const getErrorType = (errorMessage: string): "credentials" | "system" | "network" => {
     const credentialErrors = [
       "Credenziali non valide",
-      "Account non attivo",
-      "Account in attesa di verifica",
       "Invalid credentials",
+      "CredentialsSignin",
+      "User not found",
+      "User does not exist",
       "Account not active",
-      "Account pending verification"
+      "Account in attesa di verifica",
+      "Account pending verification",
+      "Password is incorrect",
+      "Wrong password",
+      "Email or password is incorrect",
+      "Email o password non corretti",
+      "Configuration" // NextAuth sanitizes account status errors to "Configuration"
     ]
     
     const networkErrors = [
       "Failed to fetch",
       "Network error",
       "Connection error",
-      "Timeout"
+      "Timeout",
+      "ECONNREFUSED",
+      "ENOTFOUND"
     ]
 
-    if (credentialErrors.some(err => errorMessage.includes(err))) {
+    const systemErrors = [
+      "There was a problem with the server configuration",
+      "Configuration",
+      "Internal server error",
+      "Server error"
+    ]
+
+    if (credentialErrors.some(err => errorMessage.toLowerCase().includes(err.toLowerCase()))) {
       return "credentials"
-    } else if (networkErrors.some(err => errorMessage.includes(err))) {
+    } else if (networkErrors.some(err => errorMessage.toLowerCase().includes(err.toLowerCase()))) {
       return "network"
-    } else {
+    } else if (systemErrors.some(err => errorMessage.toLowerCase().includes(err.toLowerCase()))) {
       return "system"
+    } else {
+      // Default to credentials for unknown errors to be more user-friendly
+      return "credentials"
     }
   }
 
   const getErrorMessage = (errorMessage: string): string => {
     // Map server error messages to user-friendly messages
     const errorMap: Record<string, string> = {
+      // Credential errors
       "Credenziali non valide": "Email o password non corretti. Riprova.",
+      "Invalid credentials": "Email o password non corretti. Riprova.",
+      "CredentialsSignin": "Email o password non corretti. Riprova.",
+      "User not found": "Utente non trovato. Verifica la tua email.",
+      "User does not exist": "Utente non trovato. Verifica la tua email.",
+      "Password is incorrect": "Password non corretta. Riprova.",
+      "Wrong password": "Password non corretta. Riprova.",
+      "Email or password is incorrect": "Email o password non corretti. Riprova.",
+      "Email o password non corretti": "Email o password non corretti. Riprova.",
+      
+      // Account status errors
       "Account non attivo": "Il tuo account non è ancora attivo. Controlla la tua email per il link di attivazione.",
+      "Account not active": "Il tuo account non è ancora attivo. Controlla la tua email per il link di attivazione.",
       "Account in attesa di verifica": "Il tuo account è in attesa di verifica da parte dell'amministratore.",
+      "Account pending verification": "Il tuo account è in attesa di verifica da parte dell'amministratore.",
       "Account non attivo. Controlla la tua email per il link di attivazione.": "Il tuo account non è ancora attivo. Controlla la tua email per il link di attivazione.",
+      
+      // Network errors
+      "Failed to fetch": "Errore di connessione. Verifica la tua connessione internet e riprova.",
+      "Network error": "Errore di connessione. Verifica la tua connessione internet e riprova.",
+      "Connection error": "Errore di connessione. Verifica la tua connessione internet e riprova.",
+      "Timeout": "Timeout della connessione. Riprova più tardi.",
+      "ECONNREFUSED": "Impossibile connettersi al server. Riprova più tardi.",
+      "ENOTFOUND": "Impossibile raggiungere il server. Verifica la tua connessione internet.",
+      
+      // System errors - but "Configuration" might be a sanitized version of account status errors
       "There was a problem with the server configuration": "Errore di configurazione del server. Riprova più tardi.",
-      "Configuration": "Errore di configurazione del server. Riprova più tardi."
+      "Configuration": "Il tuo account non è ancora attivo. Controlla la tua email per il link di attivazione.",
+      "Internal server error": "Errore interno del server. Riprova più tardi.",
+      "Server error": "Errore del server. Riprova più tardi."
     }
 
-    return errorMap[errorMessage] || errorMessage
+    // Try exact match first
+    if (errorMap[errorMessage]) {
+      return errorMap[errorMessage]
+    }
+    
+    // Try case-insensitive match
+    const lowerErrorMessage = errorMessage.toLowerCase()
+    for (const [key, value] of Object.entries(errorMap)) {
+      if (lowerErrorMessage.includes(key.toLowerCase())) {
+        return value
+      }
+    }
+    
+    // Default to a user-friendly credential error message
+    return "Email o password non corretti. Riprova."
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     hideError()
+
+    // Clear any existing session data before attempting new login
+    // This prevents conflicts when manually navigating back to signin
+    try {
+      // Clear session storage
+      sessionStorage.clear()
+      
+      // Clear ALL cookies except locale settings to ensure complete session reset
+      const cookies = document.cookie.split(";")
+      cookies.forEach(cookie => {
+        const eqPos = cookie.indexOf("=")
+        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim()
+        // Clear all cookies except locale settings
+        if (name && !name.startsWith('NEXT_LOCALE') && !name.startsWith('next-i18next')) {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
+        }
+      })
+      
+      // Clear local storage
+      localStorage.clear()
+      
+      // Add a small delay to ensure cookies are cleared
+      await new Promise(resolve => setTimeout(resolve, 100))
+    } catch (error) {
+      console.warn("Error clearing session data:", error)
+    }
 
     try {
       const res = await signIn("credentials", {
@@ -95,17 +179,35 @@ export default function ManagerSignInPage() {
       })
 
       if (res?.error) {
+        console.log("Raw error from server:", res.error)
         const errorType = getErrorType(res.error)
         const userFriendlyMessage = getErrorMessage(res.error)
+        console.log("Error type:", errorType)
+        console.log("User friendly message:", userFriendlyMessage)
         showError(userFriendlyMessage, errorType)
         setLoading(false)
       } else if (res?.ok) {
-        // Success - redirect to dashboard
-        console.log("SignIn successful, redirecting to dashboard...")
+        // Success - force session refresh and redirect to dashboard
+        console.log("SignIn successful, refreshing session and redirecting to dashboard...")
+        
+        try {
+          // Call session refresh endpoint to ensure fresh server-side session
+          await fetch('/api/auth/refresh-session', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+        } catch (error) {
+          console.warn('Session refresh failed, continuing with redirect:', error)
+        }
+        
         // Get the current locale from the URL
         const pathname = window.location.pathname
         const locale = pathname.split('/')[1] || 'it'
-        router.push(`/${locale}/dashboard`)
+        // Force a complete page reload to ensure fresh session data
+        window.location.href = `/${locale}/dashboard?t=${Date.now()}&fresh=true`
+        return
       } else {
         showError(t("unexpectedError"), "system")
         setLoading(false)
@@ -117,12 +219,12 @@ export default function ManagerSignInPage() {
     }
   }
 
-  // Auto-hide error after 5 seconds
+  // Auto-hide error after 10 seconds
   useEffect(() => {
     if (error.show) {
       const timer = setTimeout(() => {
         hideError()
-      }, 5000)
+      }, 10000)
       return () => clearTimeout(timer)
     }
   }, [error.show])
@@ -134,51 +236,9 @@ export default function ManagerSignInPage() {
         <p className="text-gray-600">{t("subtitle")}</p>
       </div>
       
-        <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 w-full max-w-[380px]">
-        
-        {/* Error Toast */}
-        {error.show && (
-          <div className={`mb-6 p-4 rounded-lg border-l-4 shadow-md animate-in slide-in-from-top-2 duration-300 ${
-            error.type === "credentials" 
-              ? "bg-red-50 border-red-400 text-red-700" 
-              : error.type === "network"
-              ? "bg-yellow-50 border-yellow-400 text-yellow-700"
-              : "bg-orange-50 border-orange-400 text-orange-700"
-          }`}>
-            <div className="flex items-start">
-              <div className="flex-shrink-0">
-                {error.type === "credentials" ? (
-                  <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
-                ) : error.type === "network" ? (
-                  <ExclamationTriangleIcon className="h-5 w-5 text-yellow-400" />
-                ) : (
-                  <ExclamationTriangleIcon className="h-5 w-5 text-orange-400" />
-                )}
-              </div>
-              <div className="ml-3 flex-1">
-                <p className="text-sm font-medium">
-                  {error.type === "credentials" 
-                    ? t("errorLogin")
-                    : error.type === "network"
-                    ? t("errorConnection")
-                    : t("errorSystem")
-                  }
-                </p>
-                <p className="text-sm mt-1">{error.message}</p>
-              </div>
-              <div className="ml-4 flex-shrink-0">
-                <button
-                  onClick={hideError}
-                  className="inline-flex text-gray-400 hover:text-gray-600 focus:outline-none"
-                >
-                  <XMarkIcon className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-6">
+                 <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 w-full max-w-[380px]">
+         
+         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
               {tCommon("mailLabel")}
@@ -250,10 +310,29 @@ export default function ManagerSignInPage() {
             ) : (
               tCommon("loginButton")
             )}
-          </button>
-        </form>
-        
-               </div>
+                     </button>
+         </form>
+         
+                   {/* Error Toast */}
+          {error.show && (
+            <div className={`mt-6 p-4 rounded-lg border-l-4 shadow-md animate-in slide-in-from-top-2 duration-300 relative ${
+              error.type === "credentials" 
+                ? "bg-red-50 border-red-400 text-red-700" 
+                : error.type === "network"
+                ? "bg-yellow-50 border-yellow-400 text-yellow-700"
+                : "bg-orange-50 border-orange-400 text-orange-700"
+            }`}>
+                             <p className="text-sm font-medium">{error.message}</p>
+              <button
+                onClick={hideError}
+                className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 focus:outline-none"
+              >
+                <XMarkIcon className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+         
+                </div>
       
              {/* Links and locale switcher below the card */}
        <div className="mt-6 text-center">

@@ -4,11 +4,11 @@ import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { ArrowPathIcon } from "@heroicons/react/24/outline"
 import { BusinessOnboardingForm } from "@/components/business-onboarding-form"
 import ProfilePreview from "@/components/dashboard/profile/ProfilePreview"
 import { LocaleSwitcherButton } from "@/components/ui/LocaleSwitcherButton"
 import { LocaleSelectModal } from "@/components/ui/LocaleSelectModal"
+import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import { useLocale } from "next-intl"
 
 export default function OnboardingPage() {
@@ -93,7 +93,7 @@ export default function OnboardingPage() {
   useEffect(() => {
     if (status === "loading") return
     if (!session) {
-      router.push("/signin")
+      router.push("/signin/business")
       return
     }
   }, [session, status, router])
@@ -101,11 +101,7 @@ export default function OnboardingPage() {
   if (status === "loading") {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <ArrowPathIcon className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">{t("loading") || "Caricamento..."}</h2>
-          <p className="text-gray-600">{t("pleaseWait") || "Attendere prego..."}</p>
-        </div>
+        <LoadingSpinner size="lg" color="blue" />
       </div>
     )
   }

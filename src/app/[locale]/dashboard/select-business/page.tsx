@@ -109,14 +109,14 @@ export default function BusinessSelectionPage() {
       await switchBusiness(businessId)
       console.log("switchBusiness completed successfully")
       
-      // Navigate to dashboard after successful business switch
+      // Navigate to dashboard after successful business switch with cache-busting
       console.log("Navigating to dashboard...")
-      router.push("/dashboard")
+      router.push(`/dashboard?t=${Date.now()}&fresh=true`)
       
       // Add a fallback navigation in case router.push doesn't work
       setTimeout(() => {
         console.log("Fallback navigation: Using window.location")
-        window.location.href = "/dashboard"
+        window.location.href = `/dashboard?t=${Date.now()}&fresh=true`
       }, 2000)
       
     } catch (error) {
@@ -146,7 +146,7 @@ export default function BusinessSelectionPage() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6 max-w-6xl mx-auto">
+        <div className="flex flex-wrap gap-4 lg:gap-6 max-w-6xl justify-center items-center mx-auto">
           {businesses.map((business) => {
             const isSelecting = selectingBusiness === business.business_id
             const isDisabled = selectingBusiness !== null
@@ -156,7 +156,7 @@ export default function BusinessSelectionPage() {
                 key={business.business_id}
                 onClick={() => handleBusinessSelect(business.business_id)}
                 disabled={isDisabled}
-                className={`bg-white text-gray-900 rounded-2xl p-4 lg:p-6 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 ${
+                className={`min-w-[200px] bg-white text-gray-900 rounded-2xl p-4 lg:p-6 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 ${
                   isSelecting 
                     ? 'opacity-75 cursor-not-allowed ring-2 ring-blue-500' 
                     : isDisabled

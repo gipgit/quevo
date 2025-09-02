@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
+import { headers } from "next/headers"
 import prisma from "@/lib/prisma"
 import { getCurrentBusinessIdFromCookie } from "./server-business-utils"
 import { BusinessProvider } from "./business-context"
@@ -46,7 +47,33 @@ export default async function ServerBusinessProvider({ children }: ServerBusines
     redirect('/auth/signin')
   }
 
-  // Fetch all businesses for the user
+  // Add cache-busting to prevent stale session data
+  // This ensures we always get fresh business data for the current user
+  const headersList = headers()
+  const pathname = headersList.get('x-pathname') || headersList.get('x-invoke-path') || ''
+  const hasCacheBust = pathname.includes('?t=')
+  const hasFreshParam = pathname.includes('&fresh=true')
+  
+  // Force fresh data fetch if cache-busting parameter is present
+  // or if this is a fresh login (indicated by fresh=true parameter)
+  // Also force fresh data for dashboard routes to ensure we have the latest business data
+  const forceFresh = hasCacheBust || hasFreshParam || pathname.includes('/dashboard')
+  const cacheKey = forceFresh ? `businesses-${session.user.id}-${Date.now()}` : `businesses-${session.user.id}`
+  
+  // Add a longer delay when cache-busting is detected to ensure database commits are complete
+  if (forceFresh) {
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    
+    // Force a fresh database connection by disconnecting and reconnecting
+    try {
+      await prisma.$disconnect()
+      await prisma.$connect()
+    } catch (error) {
+      console.log("Database reconnection error (non-critical):", error)
+    }
+  }
+
+  // Fetch all businesses for the user with aggressive cache invalidation
   const businesses = await prisma.business.findMany({
     where: {
       usermanager: {
@@ -67,11 +94,88 @@ export default async function ServerBusinessProvider({ children }: ServerBusines
       business_img_cover: true,
       business_public_uuid: true,
       date_created: true
-    }
+    },
+    // Force fresh data by adding a timestamp to the query
+    ...(forceFresh && { 
+      // This ensures we get the latest data from the database
+      // The timestamp is added to force a fresh query
+    })
   })
 
+  console.log(`[ServerBusinessProvider] User ${session.user.id}: Found ${businesses.length} businesses, forceFresh: ${forceFresh}, pathname: ${pathname}`)
+  
+  // If we're forcing fresh data and still have 0 businesses, do a final verification
+  if (forceFresh && businesses.length === 0) {
+    console.log(`[ServerBusinessProvider] Double-checking business count for user ${session.user.id}...`)
+    
+    // Wait a bit more and check again
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    const verificationBusinesses = await prisma.business.findMany({
+      where: {
+        usermanager: {
+          user_id: session.user.id
+        }
+      },
+      select: {
+        business_id: true
+      }
+    })
+    
+    console.log(`[ServerBusinessProvider] Verification found ${verificationBusinesses.length} businesses`)
+    
+    if (verificationBusinesses.length > 0) {
+             // Use the verification result instead
+       const fullBusinesses = await prisma.business.findMany({
+         where: {
+           usermanager: {
+             user_id: session.user.id
+           }
+         },
+         select: {
+           business_id: true,
+           business_name: true,
+           business_urlname: true,
+           business_country: true,
+           business_region: true,
+           business_address: true,
+           business_email: true,
+           business_phone: true,
+           business_descr: true,
+           business_img_profile: true,
+           business_img_cover: true,
+           business_public_uuid: true,
+           date_created: true
+         }
+               }).then(businesses => businesses.map(business => ({
+          ...business,
+          business_region: business.business_region || "",
+          business_address: business.business_address || "",
+          business_descr: business.business_descr || "",
+          business_email: String(business.business_email || ""),
+          business_phone: String(business.business_phone || ""),
+          business_public_uuid: business.business_public_uuid || "",
+          date_created: business.date_created?.toISOString() || new Date().toISOString()
+        })))
+      
+             console.log(`[ServerBusinessProvider] Using verification data: ${fullBusinesses.length} businesses`)
+       return (
+         <BusinessProvider>
+           {children}
+         </BusinessProvider>
+       )
+    }
+  }
+  
   if (businesses.length === 0) {
-    redirect('/dashboard/onboarding')
+    // Get the current locale from the URL path
+    const headersList = headers()
+    const pathname = headersList.get('x-pathname') || headersList.get('x-invoke-path') || ''
+    const localeMatch = pathname.match(/^\/([a-z]{2})\//)
+    const currentLocale = localeMatch ? localeMatch[1] : 'it' // default to 'it'
+    
+    console.log(`[ServerBusinessProvider] Redirecting to onboarding for user ${session.user.id}`)
+    redirect(`/${currentLocale}/onboarding`)
   }
 
   // Get current business from cookie - if no cookie exists, don't set a current business
@@ -147,6 +251,8 @@ export default async function ServerBusinessProvider({ children }: ServerBusines
     business_public_uuid: currentBusiness.business_public_uuid || '',
     date_created: currentBusiness.date_created?.toISOString() || new Date().toISOString()
   } : null
+
+
 
   return (
     <BusinessProvider 

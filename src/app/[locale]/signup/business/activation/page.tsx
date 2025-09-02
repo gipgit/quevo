@@ -82,7 +82,8 @@ export default function BusinessActivationPage() {
 
                      if (signInResult?.ok) {
                        console.log(`[activation] Auto-login successful on attempt ${attempt}`);
-                       router.push(`/${currentLocale}/dashboard/onboarding`);
+                       // Redirect to dashboard with cache-busting - let the server-side provider handle the redirect to onboarding if needed
+                       router.push(`/${currentLocale}/dashboard?t=${Date.now()}&fresh=true`);
                        return true;
                      } else {
                        console.error(`[activation] Auto-login failed on attempt ${attempt}:`, signInResult);

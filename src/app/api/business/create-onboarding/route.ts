@@ -296,6 +296,17 @@ export async function POST(request: Request) {
           }
         }
 
+        // Verify the business was actually created by fetching it from the database
+        const verificationBusiness = await tx.business.findUnique({
+          where: { business_id: business.business_id },
+          select: { business_id: true, business_name: true }
+        })
+        
+        if (!verificationBusiness) {
+          throw new Error("Business creation verification failed")
+        }
+        
+        console.log(`[BusinessCreation] Business ${business.business_id} created and verified for user ${session.user.id}`)
         return business
       })
     } catch (dbError) {

@@ -113,7 +113,8 @@ export default async function ServicesPage() {
     })),
     servicequestion: service.servicequestion.map(question => ({
       ...question,
-      max_length: question.max_length || undefined
+      max_length: question.max_length || undefined,
+      question_options: question.question_options || undefined
     })),
     serviceevent: service.serviceevent.map(event => ({
       ...event,

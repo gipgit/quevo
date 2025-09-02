@@ -89,16 +89,10 @@ export default function DualCoverCropper({ imageSrc, onCropComplete, onCancel }:
             <h3 className="text-base font-medium text-center mb-1">
               {t("cropImage")}
             </h3>
-            <p className="text-xs text-gray-600 text-center">
-              {currentCrop === "mobile" 
-                ? t("mobileCropDescription") 
-                : t("desktopCropDescription")
-              }
-            </p>
           </div>
 
           {/* Simplified Crop Type Indicator */}
-          <div className="flex gap-3 mb-3">
+          <div className="flex gap-3 mb-2">
             <div className={`flex items-center gap-1.5 text-xs ${
               currentCrop === "mobile" ? "text-blue-600 font-medium" : "text-gray-500"
             }`}>
@@ -111,6 +105,16 @@ export default function DualCoverCropper({ imageSrc, onCropComplete, onCancel }:
               <ComputerDesktopIcon className="w-4 h-4" />
               <span>{t("desktop")}</span>
             </div>
+          </div>
+
+          {/* Description below the pills */}
+          <div className="w-full mb-3">
+            <p className="text-xs text-gray-600 text-center">
+              {currentCrop === "mobile" 
+                ? t("mobileCropDescription") 
+                : t("desktopCropDescription")
+              }
+            </p>
           </div>
 
           {/* Cropper with responsive sizing */}

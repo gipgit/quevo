@@ -272,18 +272,8 @@ export function BusinessProvider({
     }
   }, [initialData, fetchManagerDashboard])
 
-  useEffect(() => {
-    console.log("BusinessContext: useEffect - checking redirect conditions:", {
-      loading,
-      hasUserManager: !!userManager,
-      businessesCount: businesses.length
-    })
-    // If we have a userManager but no businesses, redirect to onboarding
-    if (!loading && userManager && businesses.length === 0) {
-      console.log("BusinessContext: Redirecting to onboarding - no businesses found")
-      router.push("/dashboard/onboarding")
-    }
-  }, [loading, userManager, businesses, router])
+  // Removed client-side redirect logic - server-side provider handles this case
+  // This prevents conflicts with server-side redirects and infinite loops
 
   useEffect(() => {
     console.log("BusinessContext: useEffect - userPlan changed:", userPlan?.plan_id)

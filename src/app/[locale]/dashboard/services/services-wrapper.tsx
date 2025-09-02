@@ -19,7 +19,7 @@ interface ServiceQuestion {
   question_id: number
   question_text: string
   question_type: string
-  question_options?: any
+  question_options?: any // Allow any type to handle Prisma JsonValue
   max_length?: number
   is_required: boolean | null
 }
@@ -263,7 +263,7 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
               <div key={categoryName}>
                 {/* Category Header */}
                 <div className="mb-4">
-                  <h2 className={`text-sm font-medium ${
+                  <h2 className={`text-xs font-medium ${
                     theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
                   }`}>
                     {categoryName}
@@ -285,51 +285,38 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                       }`}
                     >
                       <div className="flex flex-col lg:flex-row gap-6">
-                        {/* Column 1: Service image - made slightly smaller */}
-                        <div className="lg:w-1/4">
+                        {/* Column 1: Service image - slightly more width, less height */}
+                        <div className="lg:w-1/3">
                           <ServiceImageDisplay
                             serviceId={service.service_id}
                             serviceName={service.service_name}
                             demo={service.demo}
                             hasImage={service.has_image}
                             businessPublicUuid={currentBusiness?.business_public_uuid || ''}
-                            className="w-full h-40"
+                            className="w-full h-32"
                             showDemoBadge={true}
                           />
                         </div>
 
-                        {/* Column 2: Service title, status pill, description, price - given more width */}
-                        <div className="lg:w-2/4">
-                          <h3 className={`text-lg font-semibold mb-2 ${
+                        {/* Column 2: Service title, description, price, duration - given more width */}
+                        <div className="lg:w-2/5">
+                          <h3 className={`text-xl font-semibold mb-3 ${
                             theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
                           }`}>{service.service_name}</h3>
-                          
-                          {/* Status pill moved here from column 3 */}
-                          <div className="mb-3">
-                            <span className={`px-3 py-1 text-sm rounded-full ${
-                              service.is_active 
-                                ? (theme === 'dark' ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-800')
-                                : (theme === 'dark' ? 'bg-red-900 text-red-300' : 'bg-red-100 text-red-800')
-                            }`}>
-                              {service.is_active ? t("active") : t("inactive")}
-                            </span>
-                          </div>
 
                           {service.description && (
                             <div className="mb-3">
                               <RichTextDisplay content={service.description} />
                             </div>
                           )}
-                          {service.price_base !== null && (
-                            <div className={`text-lg font-semibold ${
-                              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                            }`}>€{service.price_base}</div>
-                          )}
-                        </div>
-
-                        {/* Column 3: Duration pills + questions, requirements, items, extras counters - reduced width */}
-                        <div className="lg:w-1/4">
-                          <div className="flex flex-wrap gap-2 mb-4">
+                          
+                          {/* Price and duration in same line */}
+                          <div className="flex items-center gap-3">
+                            {service.price_base !== null && (
+                              <div className={`text-lg font-semibold ${
+                                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                              }`}>€{service.price_base}</div>
+                            )}
                             {service.duration_minutes && (
                               <span className={`px-3 py-1 text-sm rounded-full ${
                                 theme === 'dark' ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-800'
@@ -345,16 +332,11 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                               </span>
                             )}
                           </div>
-                          
+                        </div>
+
+                        {/* Column 3: Extras, items, requirements, questions counters */}
+                        <div className="lg:w-1/4">
                           <div className="space-y-2">
-                            <div className={`flex items-center gap-2 text-sm ${
-                              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                            }`}>
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                              </svg>
-                              {t("serviceItems")}: {service.serviceitem.length}
-                            </div>
                             <div className={`flex items-center gap-2 text-sm ${
                               theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                             }`}>
@@ -367,9 +349,9 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                               theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                             }`}>
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                               </svg>
-                              {t("questions")}: {service.servicequestion.length}
+                              {t("serviceItems")}: {service.serviceitem.length}
                             </div>
                             <div className={`flex items-center gap-2 text-sm ${
                               theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
@@ -379,11 +361,30 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                               </svg>
                               {t("requirements")}: {service.servicerequirementblock.length}
                             </div>
+                            <div className={`flex items-center gap-2 text-sm ${
+                              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                            }`}>
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                              {t("questions")}: {service.servicequestion.length}
+                            </div>
                           </div>
                         </div>
 
-                        {/* Column 4: Edit/delete buttons */}
-                        <div className="lg:w-1/4 flex justify-end items-start">
+                        {/* Column 4: Status pill + Edit/delete buttons */}
+                        <div className="lg:w-1/6 flex flex-col justify-between items-end gap-3">
+                          {/* Status pill moved here */}
+                          <div>
+                            <span className={`px-3 py-1 text-sm rounded-full ${
+                              service.is_active 
+                                ? (theme === 'dark' ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-800')
+                                : (theme === 'dark' ? 'bg-red-900 text-red-300' : 'bg-red-100 text-red-800')
+                            }`}>
+                              {service.is_active ? t("active") : t("inactive")}
+                            </span>
+                          </div>
+                          
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleEditService(service)}
@@ -481,3 +482,4 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
     </DashboardLayout>
   )
 }
+

@@ -12,7 +12,7 @@ interface ServiceQuestion {
   question_id: number
   question_text: string
   question_type: string
-  question_options?: any
+  question_options?: Array<string | { id: number; text: string; value: string }>
   max_length?: number
   is_required: boolean | null
 }
@@ -117,6 +117,9 @@ export default function ServiceEditModal({
   const { theme } = useTheme()
   const { showToast } = useToaster()
 
+  // Tab navigation state
+  const [activeTab, setActiveTab] = useState('basic')
+
   // Form state
   const [formData, setFormData] = useState({
     service_name: '',
@@ -154,7 +157,13 @@ export default function ServiceEditModal({
 
   // Questions state
   const [questions, setQuestions] = useState<ServiceQuestion[]>([])
-  const [newQuestion, setNewQuestion] = useState({
+  const [newQuestion, setNewQuestion] = useState<{
+    question_text: string
+    question_type: string
+    question_options: Array<string | { id: number; text: string; value: string }>
+    max_length?: number
+    is_required: boolean
+  }>({
     question_text: '',
     question_type: 'open',
     question_options: [],
@@ -217,7 +226,31 @@ export default function ServiceEditModal({
       })
       setItems(service.serviceitem || [])
       setExtras(service.serviceextra || [])
-      setQuestions(service.servicequestion || [])
+      // Normalize question options to ensure consistent format
+      const normalizedQuestions = (service.servicequestion || []).map(q => {
+        if (q.question_type === 'checkbox_single' || q.question_type === 'checkbox_multi') {
+          // Ensure options are in the correct object format
+          if (q.question_options && Array.isArray(q.question_options)) {
+            const normalizedOptions = q.question_options.map((opt: any, idx: number) => {
+              if (typeof opt === 'string') {
+                return { id: idx + 1, text: opt, value: `option${idx + 1}` }
+              }
+              return opt
+            })
+            return { ...q, question_options: normalizedOptions }
+          }
+          // Initialize with default options if none exist
+          return { 
+            ...q, 
+            question_options: [
+              { id: 1, text: 'Option 1', value: 'option1' },
+              { id: 2, text: 'Option 2', value: 'option2' }
+            ]
+          }
+        }
+        return q
+      })
+      setQuestions(normalizedQuestions)
       setRequirements(service.servicerequirementblock || [])
       setEvents(service.serviceevent || [])
     }
@@ -349,11 +382,21 @@ export default function ServiceEditModal({
   const addQuestion = () => {
     if (!newQuestion.question_text) return
 
+    // Format question options based on type
+    let formattedOptions = newQuestion.question_options
+    if ((newQuestion.question_type === 'checkbox_single' || newQuestion.question_type === 'checkbox_multi') && 
+        (!formattedOptions || formattedOptions.length === 0)) {
+      formattedOptions = [
+        { id: 1, text: 'Option 1', value: 'option1' },
+        { id: 2, text: 'Option 2', value: 'option2' }
+      ]
+    }
+
     const question: ServiceQuestion = {
       question_id: Date.now(), // Temporary ID
       question_text: newQuestion.question_text,
       question_type: newQuestion.question_type,
-      question_options: newQuestion.question_options,
+      question_options: formattedOptions,
       max_length: newQuestion.max_length,
       is_required: newQuestion.is_required
     }
@@ -461,18 +504,25 @@ export default function ServiceEditModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2">
-      <div className={`max-w-7xl w-full max-h-[90vh] rounded-lg flex flex-col ${
+      <div className={`max-w-7xl w-full max-h-[90vh] min-h-[600px] rounded-lg flex flex-col ${
         theme === 'dark' ? 'bg-zinc-800' : 'bg-white'
       }`}>
         {/* Header */}
-        <div className="flex justify-between items-center p-4 lg:p-6 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-6">
-            <h2 className={`text-xl font-semibold ${
-              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-            }`}>
+        <div className="flex justify-between items-start p-4 lg:p-6 border-b border-gray-200 dark:border-gray-700">
+          {/* Left side - Title and Service Name */}
+                            <div className="flex flex-col">
+            <h2 className={`text-xs lg:text-sm font-medium text-gray-500 dark:text-gray-400 mb-0.5 lg:mb-1`}>
               {t("editService")}
             </h2>
-            
+            <h1 className={`text-xl lg:text-2xl font-bold ${
+              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+            }`}>
+              {service.service_name}
+            </h1>
+          </div>
+          
+          {/* Right side - Toggle switches and close button */}
+          <div className="flex items-center gap-4">
             {/* Toggle switches */}
             <div className="flex items-center gap-4">
               <label className="flex items-center gap-2">
@@ -521,25 +571,130 @@ export default function ServiceEditModal({
                 </div>
               </label>
             </div>
+            
+            <button
+              onClick={onClose}
+              className={`p-2 rounded-lg transition-colors ${
+                theme === 'dark' 
+                  ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700' 
+                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+              }`}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-          
-          <button
-            onClick={onClose}
-            className={`p-2 rounded-lg transition-colors ${
-              theme === 'dark' 
-                ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700' 
-                : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-            }`}
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200 dark:border-gray-700">
+          <div className="flex space-x-1 px-4 lg:px-6 overflow-x-auto scroll-smooth">
+            <button
+              onClick={() => setActiveTab('basic')}
+              className={`px-3 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors ${
+                activeTab === 'basic'
+                  ? theme === 'dark'
+                    ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
+                    : 'bg-white text-gray-900 border-b-2 border-blue-500'
+                  : theme === 'dark'
+                    ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+              }`}
+            >
+              Basic Info
+            </button>
+            <button
+              onClick={() => setActiveTab('extras')}
+              className={`px-3 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors ${
+                activeTab === 'extras'
+                  ? theme === 'dark'
+                    ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
+                    : 'bg-white text-gray-900 border-b-2 border-blue-500'
+                  : theme === 'dark'
+                    ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+              }`}
+            >
+              Extras ({extras.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('items')}
+              className={`px-3 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors ${
+                activeTab === 'items'
+                  ? theme === 'dark'
+                    ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
+                    : 'bg-white text-gray-900 border-b-2 border-blue-500'
+                  : theme === 'dark'
+                    ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-100'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+              }`}
+            >
+              Items ({items.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('questions')}
+              className={`px-3 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors ${
+                activeTab === 'questions'
+                  ? theme === 'dark'
+                    ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
+                    : 'bg-white text-gray-900 border-b-2 border-blue-500'
+                  : theme === 'dark'
+                    ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+              }`}
+            >
+              Questions ({questions.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('requirements')}
+              className={`px-3 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors ${
+                activeTab === 'requirements'
+                  ? theme === 'dark'
+                    ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
+                    : 'bg-white text-gray-900 border-b-2 border-blue-500'
+                  : theme === 'dark'
+                    ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+              }`}
+            >
+              Requirements ({requirements.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('events')}
+              className={`px-3 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors ${
+                activeTab === 'events'
+                  ? theme === 'dark'
+                    ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
+                    : 'bg-white text-gray-900 border-b-2 border-blue-500'
+                  : theme === 'dark'
+                    ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+              }`}
+            >
+              Events ({events.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('consent')}
+              className={`px-3 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors ${
+                activeTab === 'consent'
+                  ? theme === 'dark'
+                    ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
+                    : 'bg-white text-gray-900 border-b-2 border-blue-500'
+                  : theme === 'dark'
+                    ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+              }`}
+            >
+              Consent
+            </button>
+          </div>
         </div>
 
         <div className="p-4 lg:p-6 overflow-y-auto flex-1">
           {/* Basic Information Section - Column Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 mb-8">
+          {activeTab === 'basic' && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 mb-8">
             {/* Left Column - Service Image */}
             <div className="lg:col-span-1">
               <div className="relative w-full h-48 rounded-lg overflow-hidden">
@@ -668,12 +823,11 @@ export default function ServiceEditModal({
               </div>
             </div>
           </div>
-
-          {/* Horizontal separator */}
-          <div className={`border-t-2 border-gray-300 dark:border-gray-600 pt-6 mb-6`}></div>
+          )}
 
           {/* Service Extras - Full Width */}
-          <div className="mb-8">
+          {activeTab === 'extras' && (
+            <div className="mb-8">
              <div className="flex justify-between items-center mb-4">
                <h3 className={`text-lg font-semibold ${
                         theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
@@ -689,10 +843,10 @@ export default function ServiceEditModal({
                     </div>
 
              {/* Extras list */}
-             <div className="space-y-4">
+             <div className="space-y-3">
                {extras.map((extra, index) => (
-                 <div key={extra.service_extra_id} className="mb-4 border border-gray-300 dark:border-gray-600 rounded-lg p-4 lg:py-3">
-                   <div className="space-y-3 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
+                 <div key={extra.service_extra_id} className="mb-3 border border-gray-200 dark:border-gray-700 rounded-lg p-3 lg:py-2 bg-gray-100 dark:bg-zinc-700 shadow-sm">
+                   <div className="space-y-2 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
                      {/* Header row with number icon and delete button - mobile only */}
                      <div className="flex justify-between items-center lg:hidden mb-2">
                        {/* Circular number icon - minimal width */}
@@ -732,31 +886,31 @@ export default function ServiceEditModal({
                     </div>
 
                                                                                        {/* Name - even less width */}
-                      <div className="w-full lg:w-1/4 flex-shrink-0">
-                        <label className={`block text-xs font-normal mb-0.5 ${
-                          theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                        }`}>Extra Name</label>
-                        <input
-                          type="text"
-                          value={extra.extra_name}
-                          onChange={(e) => {
-                            const updatedExtras = [...extras]
-                            updatedExtras[index] = { ...updatedExtras[index], extra_name: e.target.value }
-                            setExtras(updatedExtras)
-                          }}
-                          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                            theme === 'dark' 
-                              ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                              : 'border-gray-300 bg-white text-gray-900'
-                          }`}
-                        />
+                      <div className="w-full lg:w-1/4 flex-shrink-0 relative">
+                                                                      <input
+                         type="text"
+                         value={extra.extra_name}
+                         onChange={(e) => {
+                           const updatedExtras = [...extras]
+                           updatedExtras[index] = { ...updatedExtras[index], extra_name: e.target.value }
+                           setExtras(updatedExtras)
+                         }}
+                         className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
+                           theme === 'dark' 
+                             ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                             : 'border-gray-300 bg-gray-50 text-gray-900'
+                         }`}
+                         placeholder="Extra Name"
+                       />
+                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                         theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                       }`}>
+                         Extra Name
+                       </span>
                   </div>
 
                      {/* Description - more width */}
-                     <div className="w-full lg:flex-1">
-                       <label className={`block text-xs font-normal mb-0.5 ${
-                         theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                       }`}>Extra Description</label>
+                     <div className="w-full lg:flex-1 relative">
                        <input
                          type="text"
                          value={extra.extra_description || ''}
@@ -765,19 +919,22 @@ export default function ServiceEditModal({
                            updatedExtras[index] = { ...updatedExtras[index], extra_description: e.target.value }
                            setExtras(updatedExtras)
                          }}
-                         className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
+                         className={`w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                            theme === 'dark' 
                              ? 'border-gray-600 bg-zinc-800 text-gray-100' 
                              : 'border-gray-300 bg-white text-gray-900'
                          }`}
+                         placeholder="Description"
                        />
+                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                         theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                       }`}>
+                         Description
+                       </span>
                      </div>
 
                      {/* Price - fixed width */}
-                     <div className="w-full lg:w-24 flex-shrink-0">
-                       <label className={`block text-xs font-normal mb-0.5 ${
-                         theme === 'dark' ? 'text-gray-600' : 'text-gray-500'
-                       }`}>{t("price")}</label>
+                     <div className="w-full lg:w-24 flex-shrink-0 relative">
                        <input
                          type="number"
                          step="0.01"
@@ -787,19 +944,22 @@ export default function ServiceEditModal({
                            updatedExtras[index] = { ...updatedExtras[index], price_base: parseFloat(e.target.value) || 0 }
                            setExtras(updatedExtras)
                          }}
-                         className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
+                         className={`w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                            theme === 'dark' 
-                             ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-300 bg-white text-gray-900'
+                             ? 'border-gray-600 bg-zinc-700 text-gray-100' 
+                             : 'border-gray-300 bg-gray-50 text-gray-900'
                          }`}
+                         placeholder="0.00"
                        />
+                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                         theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                       }`}>
+                         Price
+                       </span>
                      </div>
 
                      {/* Price Type - fixed width */}
-                     <div className="w-full lg:w-28 flex-shrink-0">
-                       <label className={`block text-xs font-normal mb-0.5 ${
-                         theme === 'dark' ? 'text-gray-500' : 'text-gray-600'
-                       }`}>{t("priceType")}</label>
+                     <div className="w-full lg:w-32 flex-shrink-0 relative">
                        <select
                          value={extra.price_type}
                          onChange={(e) => {
@@ -807,15 +967,20 @@ export default function ServiceEditModal({
                            updatedExtras[index] = { ...updatedExtras[index], price_type: e.target.value }
                            setExtras(updatedExtras)
                          }}
-                         className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
+                         className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                            theme === 'dark' 
                              ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-300 bg-white text-gray-900'
+                             : 'border-gray-300 bg-gray-50 text-gray-900'
                          }`}
                        >
                        <option value="fixed">{t("fixed")}</option>
                        <option value="percentage">{t("percentage")}</option>
                      </select>
+                     <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                       theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                     }`}>
+                       Type
+                     </span>
                    </div>
 
                      {/* Red cross button - desktop only */}
@@ -836,13 +1001,91 @@ export default function ServiceEditModal({
                 </div>
               ))}
                              </div>
-          </div>
 
-          {/* Horizontal separator */}
-          <div className={`border-t-2 border-gray-300 dark:border-gray-600 pt-6 mb-6`}></div>
+              {/* Add Extra Form */}
+              <div className="mt-6 p-4 border border-gray-300 dark:border-gray-600 rounded-lg">
+                <h4 className={`text-md font-medium mb-3 ${
+                  theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
+                }`}>
+                  Add New Extra
+                </h4>
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={newExtra.extra_name}
+                      onChange={(e) => setNewExtra(prev => ({ ...prev, extra_name: e.target.value }))}
+                      className={`w-full px-3 py-2 pr-20 border rounded-lg ${
+                        theme === 'dark' 
+                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      }`}
+                      placeholder="Extra Name"
+                    />
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                      theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                    }`}>
+                      Extra Name
+                    </span>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={newExtra.extra_description}
+                      onChange={(e) => setNewExtra(prev => ({ ...prev, extra_description: e.target.value }))}
+                      className={`w-full px-3 py-2 pr-24 border rounded-lg ${
+                        theme === 'dark' 
+                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      }`}
+                      placeholder="Description"
+                    />
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                      theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                    }`}>
+                      Description
+                    </span>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={newExtra.price_base}
+                      onChange={(e) => setNewExtra(prev => ({ ...prev, price_base: e.target.value }))}
+                      className={`w-full px-3 py-2 pr-16 border rounded-lg ${
+                        theme === 'dark' 
+                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      }`}
+                      placeholder="0.00"
+                    />
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                      theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                    }`}>
+                      Price
+                    </span>
+                  </div>
+                  <div className="flex items-end">
+                    <button
+                      onClick={addExtra}
+                      disabled={!newExtra.extra_name.trim() || !newExtra.price_base}
+                      className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+                        !newExtra.extra_name.trim() || !newExtra.price_base
+                          ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                          : 'bg-blue-600 hover:bg-blue-700 text-white'
+                      }`}
+                    >
+                      Add Extra
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Service Items - Full Width */}
-          <div className="mb-8">
+          {activeTab === 'items' && (
+            <div className="mb-8">
              <div className="flex justify-between items-center mb-4">
                <h3 className={`text-lg font-semibold ${
                 theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
@@ -857,11 +1100,11 @@ export default function ServiceEditModal({
                </button>
              </div>
 
-             {/* Items list */}
-             <div className="space-y-4">
-                                {items.map((item, index) => (
-                   <div key={item.service_item_id} className="mb-4 border border-gray-300 dark:border-gray-600 rounded-lg p-4 lg:py-3">
-                     <div className="space-y-3 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
+                          {/* Items list */}
+             <div className="space-y-3">
+               {items.map((item, index) => (
+                   <div key={item.service_item_id} className="mb-3 border border-gray-200 dark:border-gray-700 rounded-lg p-3 lg:py-2 bg-gray-100 dark:bg-zinc-700 shadow-sm">
+                     <div className="space-y-2 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
                                            {/* Header row with number icon and delete button - mobile only */}
                       <div className="flex justify-between items-center lg:hidden mb-2">
                         {/* Circular number icon - minimal width */}
@@ -901,74 +1144,80 @@ export default function ServiceEditModal({
                       </div>
 
                                              {/* Name - even less width */}
-                       <div className="w-full lg:w-1/4 flex-shrink-0">
-                                                 <label className={`block text-xs font-normal mb-0.5 ${
-                          theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                        }`}>{t("itemName")}</label>
-               <input
-                 type="text"
-                        value={item.item_name}
-                        onChange={(e) => {
-                          const updatedItems = [...items]
-                          updatedItems[index] = { ...updatedItems[index], item_name: e.target.value }
-                          setItems(updatedItems)
-                        }}
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                theme === 'dark' 
-                         ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                         : 'border-gray-300 bg-white text-gray-900'
-               }`}
-               />
+                       <div className="w-full lg:w-1/4 flex-shrink-0 relative">
+                                                                                            <input
+                   type="text"
+                   value={item.item_name}
+                   onChange={(e) => {
+                     const updatedItems = [...items]
+                     updatedItems[index] = { ...updatedItems[index], item_name: e.target.value }
+                     setItems(updatedItems)
+                   }}
+                   className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
+                     theme === 'dark' 
+                       ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                       : 'border-gray-300 bg-gray-50 text-gray-900'
+                   }`}
+                   placeholder={t("itemName")}
+                 />
+                 <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                   theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                 }`}>
+                   {t("itemName")}
+                 </span>
                       </div>
 
                                            {/* Description - more width */}
-                       <div className="w-full lg:flex-1">
-                         <label className={`block text-xs font-normal mb-0.5 ${
-                           theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                         }`}>{t("itemDescription")}</label>
-                        <input
-                          type="text"
-                          value={item.item_description || ''}
-                          onChange={(e) => {
-                            const updatedItems = [...items]
-                            updatedItems[index] = { ...updatedItems[index], item_description: e.target.value }
-                            setItems(updatedItems)
-                          }}
-                          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                            theme === 'dark' 
-                              ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                              : 'border-gray-300 bg-white text-gray-900'
-                          }`}
-                        />
+                       <div className="w-full lg:flex-1 relative">
+                                                                                                                                                               <input
+                   type="text"
+                   value={item.item_description || ''}
+                   onChange={(e) => {
+                     const updatedItems = [...items]
+                     updatedItems[index] = { ...updatedItems[index], item_description: e.target.value }
+                     setItems(updatedItems)
+                   }}
+                   className={`w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
+                     theme === 'dark' 
+                       ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                       : 'border-gray-300 bg-gray-50 text-gray-900'
+                   }`}
+                   placeholder={t("itemDescription")}
+                 />
+                          <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                            theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                          }`}>
+                            {t("itemDescription")}
+                          </span>
                       </div>
 
                      {/* Price - fixed width */}
-                     <div className="w-full lg:w-24 flex-shrink-0">
-                       <label className={`block text-xs font-normal mb-0.5 ${
-                         theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                       }`}>{t("price")}</label>
-               <input
-                 type="number"
-                 step="0.01"
-                        value={item.price_base}
-                        onChange={(e) => {
-                          const updatedItems = [...items]
-                          updatedItems[index] = { ...updatedItems[index], price_base: parseFloat(e.target.value) || 0 }
-                          setItems(updatedItems)
-                        }}
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                theme === 'dark' 
-                         ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                         : 'border-gray-300 bg-white text-gray-900'
-               }`}
-               />
+                     <div className="w-full lg:w-24 flex-shrink-0 relative">
+                                                                                                                           <input
+                    type="number"
+                    step="0.01"
+                    value={item.price_base}
+                    onChange={(e) => {
+                      const updatedItems = [...items]
+                      updatedItems[index] = { ...updatedItems[index], price_base: parseFloat(e.target.value) || 0 }
+                      setItems(updatedItems)
+                    }}
+                    className={`w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
+                      theme === 'dark' 
+                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                        : 'border-gray-300 bg-gray-50 text-gray-900'
+                    }`}
+                    placeholder="0.00"
+                  />
+                 <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                   theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                 }`}>
+                   {t("price")}
+                 </span>
                      </div>
 
                      {/* Price Type - fixed width */}
-                     <div className="w-full lg:w-28 flex-shrink-0">
-                       <label className={`block text-xs font-normal mb-0.5 ${
-                         theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                       }`}>{t("priceType")}</label>
+                     <div className="w-full lg:w-32 flex-shrink-0 relative">
                        <select
                          value={item.price_type}
                          onChange={(e) => {
@@ -976,15 +1225,20 @@ export default function ServiceEditModal({
                            updatedItems[index] = { ...updatedItems[index], price_type: e.target.value }
                            setItems(updatedItems)
                          }}
-                         className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
+                         className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                 theme === 'dark' 
                          ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                         : 'border-gray-300 bg-white text-gray-900'
+                         : 'border-gray-300 bg-gray-50 text-gray-900'
                }`}
             >
                        <option value="fixed">{t("fixed")}</option>
                        <option value="percentage">{t("percentage")}</option>
                      </select>
+                     <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                       theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                     }`}>
+                       {t("priceType")}
+                     </span>
             </div>
 
                      {/* Red cross button - desktop only */}
@@ -1004,14 +1258,92 @@ export default function ServiceEditModal({
                    </div>
                  </div>
                ))}
-                            </div>
-          </div>
+                                                         </div>
 
-                    {/* Horizontal separator */}
-          <div className={`border-t-2 border-gray-300 dark:border-gray-600 pt-6 mb-6`}></div>
+              {/* Add Item Form */}
+              <div className="mt-6 p-4 border border-gray-300 dark:border-gray-600 rounded-lg">
+                <h4 className={`text-md font-medium mb-3 ${
+                  theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
+                }`}>
+                  Add New Item
+                </h4>
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={newItem.item_name}
+                      onChange={(e) => setNewItem(prev => ({ ...prev, item_name: e.target.value }))}
+                      className={`w-full px-3 py-2 pr-20 border rounded-lg ${
+                        theme === 'dark' 
+                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      }`}
+                      placeholder={t("itemName")}
+                    />
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                      theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                    }`}>
+                      {t("itemName")}
+                    </span>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={newItem.item_description}
+                      onChange={(e) => setNewItem(prev => ({ ...prev, item_description: e.target.value }))}
+                      className={`w-full px-3 py-2 pr-24 border rounded-lg ${
+                        theme === 'dark' 
+                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      }`}
+                      placeholder={t("itemDescription")}
+                    />
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                      theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                    }`}>
+                      {t("itemDescription")}
+                    </span>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={newItem.price_base}
+                      onChange={(e) => setNewItem(prev => ({ ...prev, price_base: e.target.value }))}
+                      className={`w-full px-3 py-2 pr-16 border rounded-lg ${
+                        theme === 'dark' 
+                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      }`}
+                      placeholder="0.00"
+                    />
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                      theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                    }`}>
+                      {t("price")}
+                    </span>
+                  </div>
+                  <div className="flex items-end">
+                    <button
+                      onClick={addItem}
+                      disabled={!newItem.item_name.trim() || !newItem.price_base}
+                      className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+                        !newItem.item_name.trim() || !newItem.price_base
+                          ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                          : 'bg-blue-600 hover:bg-blue-700 text-white'
+                      }`}
+                    >
+                      Add Item
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
                            {/* Service Questions - Full Width */}
-          <div className="mb-8">
+          {activeTab === 'questions' && (
+            <div className="mb-8">
              <div className="flex justify-between items-center mb-4">
                <h3 className={`text-lg font-semibold ${
                 theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
@@ -1027,10 +1359,10 @@ export default function ServiceEditModal({
              </div>
 
              {/* Questions list */}
-             <div className="space-y-4">
+             <div className="space-y-3">
                {questions.map((question, index) => (
-                 <div key={question.question_id} className="mb-4 border border-gray-300 dark:border-gray-600 rounded-lg p-4 lg:py-3">
-                   <div className="space-y-3 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
+                 <div key={question.question_id} className="mb-3 border border-gray-200 dark:border-gray-700 rounded-lg p-3 lg:py-2 bg-gray-100 dark:bg-zinc-700 shadow-sm">
+                   <div className="space-y-2 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
                      {/* Header row with number icon and delete button - mobile only */}
                      <div className="flex justify-between items-center lg:hidden mb-2">
                        {/* Circular number icon - minimal width */}
@@ -1070,31 +1402,31 @@ export default function ServiceEditModal({
                      </div>
 
                      {/* Question Text - flexible width */}
-                     <div className="w-full lg:flex-1">
-                                                                                               <label className={`block text-xs font-normal mb-0.5 ${
-                           theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                         }`}>{t("questionText")}</label>
-              <input
-                type="text"
-                       value={question.question_text}
-                       onChange={(e) => {
-                         const updatedQuestions = [...questions]
-                         updatedQuestions[index] = { ...updatedQuestions[index], question_text: e.target.value }
-                         setQuestions(updatedQuestions)
-                       }}
-                       className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                theme === 'dark' 
-                         ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                         : 'border-gray-300 bg-white text-gray-900'
-              }`}
-              />
+                     <div className="w-full lg:flex-1 relative">
+                             <input
+                 type="text"
+                 value={question.question_text}
+                 onChange={(e) => {
+                   const updatedQuestions = [...questions]
+                   updatedQuestions[index] = { ...updatedQuestions[index], question_text: e.target.value }
+                   setQuestions(updatedQuestions)
+                 }}
+                                   className={`w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
+                    theme === 'dark' 
+                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
+                      : 'border-gray-300 bg-gray-50 text-gray-900'
+                  }`}
+                 placeholder={t("questionText")}
+               />
+              <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+              }`}>
+                {t("questionText")}
+              </span>
                      </div>
 
                      {/* Question Type - fixed width */}
-                     <div className="w-full lg:w-32 flex-shrink-0">
-                                                                                               <label className={`block text-xs font-normal mb-0.5 ${
-                           theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                         }`}>{t("type")}</label>
+                     <div className="w-full lg:w-36 flex-shrink-0 relative">
               <select
                        value={question.question_type}
                        onChange={(e) => {
@@ -1107,14 +1439,31 @@ export default function ServiceEditModal({
                            updatedQuestions[index] = { 
                              ...updatedQuestions[index], 
                              question_type: newType,
-                             question_options: ['Option 1', 'Option 2']
+                             question_options: [
+                               { id: 1, text: 'Option 1', value: 'option1' },
+                               { id: 2, text: 'Option 2', value: 'option2' }
+                             ]
                            }
                          } else if (newType === 'checkbox_single' || newType === 'checkbox_multi') {
                            // Ensure only 2 options when switching to checkbox types
+                           const existingOptions = question.question_options || []
+                           const formattedOptions = existingOptions.map((opt: any, idx: number) => {
+                             if (typeof opt === 'string') {
+                               return { id: idx + 1, text: opt, value: `option${idx + 1}` }
+                             }
+                             return opt
+                           }).slice(0, 2)
+                           
+                           if (formattedOptions.length < 2) {
+                             formattedOptions.push(
+                               { id: formattedOptions.length + 1, text: `Option ${formattedOptions.length + 1}`, value: `option${formattedOptions.length + 1}` }
+                             )
+                           }
+                           
                            updatedQuestions[index] = { 
                              ...updatedQuestions[index], 
                              question_type: newType,
-                             question_options: question.question_options?.slice(0, 2) || ['Option 1', 'Option 2']
+                             question_options: formattedOptions
                            }
                          } else {
                            updatedQuestions[index] = { ...updatedQuestions[index], question_type: newType }
@@ -1122,10 +1471,10 @@ export default function ServiceEditModal({
                          
                          setQuestions(updatedQuestions)
                        }}
-                       className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
+                       className={`w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                 theme === 'dark' 
                          ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                         : 'border-gray-300 bg-white text-gray-900'
+                         : 'border-gray-300 bg-gray-50 text-gray-900'
                          }`}
                        >
                        <option value="open">{t("open")}</option>
@@ -1133,6 +1482,11 @@ export default function ServiceEditModal({
                        <option value="checkbox_multi">{t("checkboxMulti")}</option>
                        <option value="media_upload">{t("mediaUpload")}</option>
               </select>
+              <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+              }`}>
+                {t("type")}
+              </span>
             </div>
 
                      {/* Required checkbox - fixed width */}
@@ -1176,30 +1530,35 @@ export default function ServiceEditModal({
                    {(question.question_type === 'checkbox_single' || question.question_type === 'checkbox_multi') && (
                      <div className="mt-2 ml-12">
                        <label className={`block text-xs font-normal mb-1 ${
-                         theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                         theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                        }`}>
                          Options
                        </label>
-                       <div className="space-y-1">
-                         {(question.question_options || []).map((option: string, optionIndex: number) => (
-                           <div key={optionIndex} className="flex items-center gap-2">
+                       <div className="flex flex-wrap items-center gap-2">
+                         {(question.question_options || []).map((option: any, optionIndex: number) => (
+                           <div key={optionIndex} className="flex items-center gap-1">
                              <input
                                type="text"
-                               value={option}
+                               value={typeof option === 'string' ? option : option?.text || ''}
                                onChange={(e) => {
                                  const updatedQuestions = [...questions]
                                  const updatedOptions = [...(updatedQuestions[index].question_options || [])]
-                                 updatedOptions[optionIndex] = e.target.value
+                                 // Handle both string and object formats
+                                 if (typeof option === 'object' && option !== null) {
+                                   updatedOptions[optionIndex] = { ...option, text: e.target.value }
+                                 } else {
+                                   updatedOptions[optionIndex] = e.target.value
+                                 }
                                  updatedQuestions[index] = { 
                                    ...updatedQuestions[index], 
                                    question_options: updatedOptions
                                  }
                                  setQuestions(updatedQuestions)
                                }}
-                               className={`flex-1 px-2 py-1 border rounded text-xs ${
+                               className={`w-28 px-2 py-1 border rounded text-xs ${
                                  theme === 'dark' 
                                    ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                   : 'border-gray-300 bg-white text-gray-900'
+                                   : 'border-gray-300 bg-gray-50 text-gray-900'
                                }`}
                                placeholder={`Option ${optionIndex + 1}`}
                              />
@@ -1215,14 +1574,14 @@ export default function ServiceEditModal({
                                  }
                                  setQuestions(updatedQuestions)
                                }}
-                               className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${
+                               className={`w-4 h-4 rounded-full flex items-center justify-center transition-colors ${
                                  theme === 'dark' 
                                    ? 'bg-gray-500 text-gray-400 hover:bg-red-600 hover:text-white' 
                                    : 'bg-gray-200 text-gray-500 hover:bg-red-500 hover:text-white'
                                }`}
                                disabled={(question.question_options || []).length <= 2}
                              >
-                               <span className="text-sm font-light">×</span>
+                               <span className="text-xs font-light">×</span>
                              </button>
                            </div>
                          ))}
@@ -1230,14 +1589,21 @@ export default function ServiceEditModal({
                            type="button"
                            onClick={() => {
                              const updatedQuestions = [...questions]
-                             const updatedOptions = [...(updatedQuestions[index].question_options || []), `Option ${(updatedQuestions[index].question_options || []).length + 1}`]
+                             const currentOptions = updatedQuestions[index].question_options || []
+                             const newOptionId = currentOptions.length + 1
+                             const newOption = { 
+                               id: newOptionId, 
+                               text: `Option ${newOptionId}`, 
+                               value: `option${newOptionId}` 
+                             }
+                             const updatedOptions = [...currentOptions, newOption]
                              updatedQuestions[index] = { 
                                ...updatedQuestions[index], 
                                question_options: updatedOptions
                              }
                              setQuestions(updatedQuestions)
                            }}
-                           className="px-2 py-1 bg-zinc-500 text-white rounded text-xs hover:bg-zinc-700 transition-colors"
+                           className="px-2 py-1 border border-gray-300 dark:border-gray-600 bg-transparent text-gray-600 dark:text-gray-400 rounded text-xs hover:bg-gray-100 dark:hover:bg-zinc-700 hover:text-gray-800 dark:hover:text-gray-300 transition-colors"
                          >
                            Add Option
                          </button>
@@ -1247,13 +1613,75 @@ export default function ServiceEditModal({
                 </div>
               ))}
                              </div>
-          </div>
 
-          {/* Horizontal separator */}
-          <div className={`border-t-2 border-gray-300 dark:border-gray-600 pt-6 mb-6`}></div>
+              {/* Add Question Form */}
+              <div className="mt-6 p-4 border border-gray-300 dark:border-gray-600 rounded-lg">
+                <h4 className={`text-md font-medium mb-3 ${
+                  theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
+                }`}>
+                  Add New Question
+                </h4>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={newQuestion.question_text}
+                      onChange={(e) => setNewQuestion(prev => ({ ...prev, question_text: e.target.value }))}
+                      className={`w-full px-3 py-2 pr-24 border rounded-lg ${
+                        theme === 'dark' 
+                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      }`}
+                      placeholder={t("questionText")}
+                    />
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                      theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                    }`}>
+                      {t("questionText")}
+                    </span>
+                  </div>
+                  <div className="relative">
+                    <select
+                      value={newQuestion.question_type}
+                      onChange={(e) => setNewQuestion(prev => ({ ...prev, question_type: e.target.value }))}
+                      className={`w-full px-3 py-2 pr-20 border rounded-lg ${
+                        theme === 'dark' 
+                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      }`}
+                    >
+                      <option value="open">{t("open")}</option>
+                      <option value="checkbox_single">{t("checkboxSingle")}</option>
+                      <option value="checkbox_multi">{t("checkboxMulti")}</option>
+                      <option value="media_upload">{t("mediaUpload")}</option>
+                    </select>
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                      theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                    }`}>
+                      {t("type")}
+                    </span>
+                  </div>
+                  <div className="flex items-end">
+                    <button
+                      onClick={addQuestion}
+                      disabled={!newQuestion.question_text.trim()}
+                      className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+                        !newQuestion.question_text.trim()
+                          ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                          : 'bg-blue-600 hover:bg-blue-700 text-white'
+                      }`}
+                    >
+                      Add Question
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
                            {/* Service Requirements - Full Width */}
-          <div className="mb-8">
+          {activeTab === 'requirements' && (
+            <div className="mb-8">
              <div className="flex justify-between items-center mb-4">
                <h3 className={`text-lg font-semibold ${
                 theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
@@ -1269,10 +1697,10 @@ export default function ServiceEditModal({
              </div>
 
              {/* Requirements list */}
-             <div className="space-y-4">
+             <div className="space-y-3">
                {requirements.map((requirement, index) => (
-                 <div key={requirement.requirement_block_id} className="mb-4 border border-gray-300 dark:border-gray-600 rounded-lg p-4 lg:py-3">
-                                               <div className="space-y-3 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
+                                  <div key={requirement.requirement_block_id} className="mb-3 border border-gray-200 dark:border-gray-700 rounded-lg p-3 lg:py-2 bg-gray-100 dark:bg-zinc-700 shadow-sm">
+                                                 <div className="space-y-2 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
                                          {/* Header row with number icon and delete button - mobile only */}
                      <div className="flex justify-between items-center lg:hidden mb-2">
                        {/* Circular number icon - minimal width */}
@@ -1312,10 +1740,7 @@ export default function ServiceEditModal({
                      </div>
 
                                                                                                                                                                                                                                                                                                                                                                    {/* Title - very narrow */}
-                         <div className="w-full lg:w-1/5 flex-shrink-0">
-                                                                                                   <label className={`block text-xs font-normal mb-0.5 ${
-                            theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                          }`}>{t("requirementTitle")}</label>
+                         <div className="w-full lg:w-1/5 flex-shrink-0 relative">
             <input
               type="text"
                         value={requirement.title || ''}
@@ -1324,19 +1749,22 @@ export default function ServiceEditModal({
                           updatedRequirements[index] = { ...updatedRequirements[index], title: e.target.value }
                           setRequirements(updatedRequirements)
                         }}
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
+                        className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
               theme === 'dark' 
                             ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                            : 'border-gray-300 bg-white text-gray-900'
+                            : 'border-gray-300 bg-gray-50 text-gray-900'
               }`}
+              placeholder={t("requirementTitle")}
             />
+            <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+              theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+            }`}>
+              {t("requirementTitle")}
+            </span>
                     </div>
 
                                                                                       {/* Requirements Text - more width */}
-                        <div className="w-full lg:flex-1">
-                                                                                                   <label className={`block text-xs font-normal mb-0.5 ${
-                            theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                          }`}>{t("requirementsText")}</label>
+                        <div className="w-full lg:flex-1 relative">
                         <input
                           type="text"
                           value={requirement.requirements_text}
@@ -1345,12 +1773,18 @@ export default function ServiceEditModal({
                             updatedRequirements[index] = { ...updatedRequirements[index], requirements_text: e.target.value }
                             setRequirements(updatedRequirements)
                           }}
-                          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
+                          className={`w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
               theme === 'dark' 
                             ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                            : 'border-gray-300 bg-white text-gray-900'
+                            : 'border-gray-300 bg-gray-50 text-gray-900'
                         }`}
+                        placeholder={t("requirementsText")}
                         />
+                        <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                          theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                        }`}>
+                          {t("requirementsText")}
+                        </span>
                       </div>
 
                                           {/* Required checkbox - fixed width */}
@@ -1392,13 +1826,72 @@ export default function ServiceEditModal({
                  </div>
                ))}
                                                    </div>
-          </div>
 
-          {/* Horizontal separator */}
-          <div className={`border-t-2 border-gray-300 dark:border-gray-600 pt-6 mb-6`}></div>
+              {/* Add Requirement Form */}
+              <div className="mt-6 p-4 border border-gray-300 dark:border-gray-600 rounded-lg">
+                <h4 className={`text-md font-medium mb-3 ${
+                  theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
+                }`}>
+                  Add New Requirement
+                </h4>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={newRequirement.title}
+                      onChange={(e) => setNewRequirement(prev => ({ ...prev, title: e.target.value }))}
+                      className={`w-full px-3 py-2 pr-16 border rounded-lg ${
+                        theme === 'dark' 
+                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      }`}
+                      placeholder={t("requirementTitle")}
+                    />
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                      theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                    }`}>
+                      {t("requirementTitle")}
+                    </span>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={newRequirement.requirements_text}
+                      onChange={(e) => setNewRequirement(prev => ({ ...prev, requirements_text: e.target.value }))}
+                      className={`w-full px-2 py-2 pr-24 border rounded-lg ${
+                        theme === 'dark' 
+                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      }`}
+                      placeholder={t("requirementsText")}
+                    />
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                      theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                    }`}>
+                      {t("requirementsText")}
+                    </span>
+                  </div>
+                  <div className="flex items-end">
+                    <button
+                      onClick={addRequirement}
+                      disabled={!newRequirement.requirements_text.trim()}
+                      className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+                        !newRequirement.requirements_text.trim()
+                          ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                          : 'bg-blue-600 hover:bg-blue-700 text-white'
+                      }`}
+                    >
+                      Add Requirement
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
            {/* Service Events - Full Width */}
-                <div className="mb-8">
+          {activeTab === 'events' && (
+            <div className="mb-8">
              <div className="flex justify-between items-center mb-4">
                <h3 className={`text-lg font-semibold ${
                           theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
@@ -1414,10 +1907,10 @@ export default function ServiceEditModal({
                           </div>
 
              {/* Events list */}
-             <div className="space-y-4">
+             <div className="space-y-3">
                {events.map((event, index) => (
-                 <div key={event.event_id} className="mb-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg p-4">
-                                               <div className="space-y-3 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
+                                  <div key={event.event_id} className="mb-3 border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-100 dark:bg-zinc-700 shadow-sm">
+                                                 <div className="space-y-2 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
                                          {/* Circular number icon - minimal width */}
                      <div className="flex items-center justify-center w-8 flex-shrink-0">
                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-normal ${
@@ -1430,10 +1923,7 @@ export default function ServiceEditModal({
                  </div>
 
                                            {/* Event Name - narrower width */}
-                      <div className="w-full lg:w-1/4 flex-shrink-0">
-                                                                                               <label className={`block text-xs font-normal mb-0.5 ${
-                          theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                        }`}>Event Name</label>
+                      <div className="w-full lg:w-1/4 flex-shrink-0 relative">
                        <input
                          type="text"
                          value={event.event_name}
@@ -1442,19 +1932,22 @@ export default function ServiceEditModal({
                            updatedEvents[index] = { ...updatedEvents[index], event_name: e.target.value }
                            setEvents(updatedEvents)
                          }}
-                         className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
+                         className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                            theme === 'dark' 
                              ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-300 bg-white text-gray-900'
+                             : 'border-gray-300 bg-gray-50 text-gray-900'
                          }`}
+                         placeholder="Event Name"
                        />
+                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                         theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                       }`}>
+                         Event Name
+                       </span>
                      </div>
 
                                           {/* Event Description - flexible width */}
-                      <div className="w-full lg:flex-1">
-                                                  <label className={`block text-xs font-normal mb-0.5 ${
-                            theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                          }`}>Event Description</label>
+                      <div className="w-full lg:flex-1 relative">
                        <input
                          type="text"
                          value={event.event_description || ''}
@@ -1463,19 +1956,22 @@ export default function ServiceEditModal({
                            updatedEvents[index] = { ...updatedEvents[index], event_description: e.target.value }
                            setEvents(updatedEvents)
                          }}
-                         className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
+                         className={`w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                            theme === 'dark' 
                              ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-300 bg-white text-gray-900'
+                             : 'border-gray-300 bg-gray-50 text-gray-900'
                          }`}
+                         placeholder="Description"
                        />
+                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                         theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                       }`}>
+                         Description
+                       </span>
                      </div>
 
                                           {/* Duration - fixed width */}
-                      <div className="w-full lg:w-24 flex-shrink-0">
-                                                                                                   <label className={`block text-xs font-normal mb-0.5 ${
-                            theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                          }`}>Duration (min)</label>
+                      <div className="w-full lg:w-24 flex-shrink-0 relative">
                        <input
                          type="number"
                          value={event.duration_minutes}
@@ -1484,12 +1980,18 @@ export default function ServiceEditModal({
                            updatedEvents[index] = { ...updatedEvents[index], duration_minutes: parseInt(e.target.value) || 60 }
                            setEvents(updatedEvents)
                          }}
-                         className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
+                         className={`w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                            theme === 'dark' 
                              ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-300 bg-white text-gray-900'
+                             : 'border-gray-300 bg-gray-50 text-gray-900'
                          }`}
+                         placeholder="60"
                        />
+                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                         theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                       }`}>
+                         Duration
+                       </span>
                      </div>
 
                                           {/* Buffer - fixed width */}
@@ -1694,13 +2196,90 @@ export default function ServiceEditModal({
                  </div>
                ))}
                                                     </div>
-          </div>
 
-          {/* Horizontal separator */}
-          <div className={`border-t-2 border-gray-300 dark:border-gray-600 pt-6 mb-6`}></div>
+              {/* Add Event Form */}
+              <div className="mt-6 p-4 border border-gray-300 dark:border-gray-600 rounded-lg">
+                <h4 className={`text-md font-medium mb-3 ${
+                  theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
+                }`}>
+                  Add New Event
+                </h4>
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={newEvent.event_name}
+                      onChange={(e) => setNewEvent(prev => ({ ...prev, event_name: e.target.value }))}
+                      className={`w-full px-3 py-2 pr-20 border rounded-lg ${
+                        theme === 'dark' 
+                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      }`}
+                      placeholder="Event Name"
+                    />
+                                         <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                       theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                     }`}>
+                       Event Name
+                     </span>
+                  </div>
+                                      <div className="relative">
+                      <input
+                        type="text"
+                        value={newEvent.event_description}
+                        onChange={(e) => setNewEvent(prev => ({ ...prev, event_description: e.target.value }))}
+                        className={`w-full px-3 py-2 pr-24 border rounded-lg ${
+                          theme === 'dark'
+                            ? 'bg-zinc-700 border-gray-600 text-gray-100'
+                            : 'bg-white border-gray-300 text-gray-900'
+                        }`}
+                        placeholder="Description"
+                      />
+                     <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                       theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                     }`}>
+                       Description
+                     </span>
+                    </div>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={newEvent.duration_minutes}
+                      onChange={(e) => setNewEvent(prev => ({ ...prev, duration_minutes: parseInt(e.target.value) || 60 }))}
+                      className={`w-full px-3 py-2 pr-20 border rounded-lg ${
+                        theme === 'dark' 
+                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      }`}
+                      placeholder="60"
+                    />
+                                         <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                       theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                     }`}>
+                       Duration
+                     </span>
+                  </div>
+                  <div className="flex items-end">
+                    <button
+                      onClick={addEvent}
+                      disabled={!newEvent.event_name.trim()}
+                      className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+                        !newEvent.event_name.trim()
+                          ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                          : 'bg-blue-600 hover:bg-blue-700 text-white'
+                      }`}
+                    >
+                      Add Event
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
            {/* Consent Options - Full Width */}
-          <div className="mb-8">
+          {activeTab === 'consent' && (
+            <div className="mb-8">
             <h3 className={`text-lg font-semibold mb-4 ${
               theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
             }`}>
@@ -1759,6 +2338,7 @@ export default function ServiceEditModal({
               )}
             </div>
           </div>
+          )}
         </div>
 
         {/* Footer - Fixed at bottom */}

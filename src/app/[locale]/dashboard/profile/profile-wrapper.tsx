@@ -129,6 +129,7 @@ export default function ProfileWrapper({
   const [coverImgFile, setCoverImgFile] = useState<File | null>(null)
   const [profileImgPreview, setProfileImgPreview] = useState<string | null>(null)
   const [coverImgPreview, setCoverImgPreview] = useState<string | null>(null)
+  const [clearImagePreviews, setClearImagePreviews] = useState<(() => void) | null>(null)
 
   // Change detection functions
   const hasInfoChanges = useCallback(() => {
@@ -189,9 +190,13 @@ export default function ProfileWrapper({
     setProfileImgPreview(previewUrl)
   }
 
-  const handleCoverImgChange = async (file: File, previewUrl: string) => {
-    setCoverImgFile(file)
-    setCoverImgPreview(previewUrl)
+  const handleCoverImgChange = async (mobileFile: File, desktopFile: File, mobilePreviewUrl: string, desktopPreviewUrl: string) => {
+    setCoverImgFile(mobileFile) // Store mobile file as main cover file (API expects this)
+    setCoverImgPreview(mobilePreviewUrl)
+  }
+
+  const handlePreviewsReady = (clearPreviews: () => void) => {
+    setClearImagePreviews(() => clearPreviews)
   }
 
   // Helper function to parse API error response
@@ -484,6 +489,11 @@ export default function ProfileWrapper({
         setCoverImgFile(null);
         setCoverImgPreview(null);
         
+        // Clear image previews in ProfileImageSection
+        if (clearImagePreviews) {
+          clearImagePreviews();
+        }
+        
         showToast({
           type: "success",
           title: t("toasts.success.images.title"),
@@ -626,9 +636,11 @@ export default function ProfileWrapper({
               <>
                 <ProfileImageSection
                   profileImg={profileImgPreview || currentProfileData?.business_img_profile}
-                  coverImg={coverImgPreview || currentProfileData?.business_img_cover}
+                  coverImgMobile={coverImgPreview || currentProfileData?.business_img_cover_mobile}
+                  coverImgDesktop={currentProfileData?.business_img_cover_desktop}
                   onProfileImgChange={handleProfileImgChange}
                   onCoverImgChange={handleCoverImgChange}
+                  onPreviewsReady={handlePreviewsReady}
                 />
                 <div className="mt-4">
                   <SaveButton 
@@ -715,7 +727,7 @@ export default function ProfileWrapper({
                     profileData={currentProfileData}
                     profileSettings={currentProfileSettings}
                     profileImg={profileImgPreview || currentProfileData?.business_img_profile}
-                    coverImg={coverImgPreview || currentProfileData?.business_img_cover}
+                    coverImg={coverImgPreview || currentProfileData?.business_img_cover_mobile}
                     businessName={currentProfileData?.business_name}
                     socialLinks={currentSocialLinks}
                   />

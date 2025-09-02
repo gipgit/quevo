@@ -62,13 +62,15 @@ export default async function ProfilePage() {
   } : null
 
   // Patch image paths for frontend
-  let patchedProfileData = { ...business }
+  let patchedProfileData = { ...business } as any
   if (business.business_public_uuid) {
     patchedProfileData.business_img_profile = `/uploads/business/${business.business_public_uuid}/profile.webp`
-    patchedProfileData.business_img_cover = `/uploads/business/${business.business_public_uuid}/cover.webp`
+    patchedProfileData.business_img_cover_mobile = `/uploads/business/${business.business_public_uuid}/cover-mobile.webp`
+    patchedProfileData.business_img_cover_desktop = `/uploads/business/${business.business_public_uuid}/cover-desktop.webp`
   } else {
     patchedProfileData.business_img_profile = null
-    patchedProfileData.business_img_cover = null
+    patchedProfileData.business_img_cover_mobile = null
+    patchedProfileData.business_img_cover_desktop = null
   }
 
   // Transform social links to expected format

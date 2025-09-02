@@ -15,8 +15,47 @@ export default async function DashboardPage() {
   const currentBusinessId = getCurrentBusinessIdFromCookie()
   
   if (!currentBusinessId) {
-    // Redirect to select-business page instead of creating a loop
-    redirect('/dashboard/select-business')
+    // Check if user has only one business - if so, auto-select it
+    const userBusinesses = await prisma.business.findMany({
+      where: {
+        usermanager: {
+          user_id: session.user.id
+        }
+      },
+      select: {
+        business_id: true,
+        business_name: true
+      }
+    })
+    
+    if (userBusinesses.length === 1) {
+      // Auto-select the single business and continue to dashboard
+      const singleBusiness = userBusinesses[0]
+      console.log(`[Dashboard] Auto-selecting single business: ${singleBusiness.business_name}`)
+      
+      // Set the business ID in the response headers so the client can pick it up
+      // The client-side business context will handle setting the session storage and cookie
+      return (
+        <DashboardWrapper 
+          usage={{
+            services: 0,
+            service_requests: 0,
+            boards: 0,
+            appointments: 0,
+            active_boards: 0,
+            products: 0
+          }}
+          planLimits={[]}
+          autoSelectBusinessId={singleBusiness.business_id}
+        />
+      )
+    } else if (userBusinesses.length === 0) {
+      // No businesses - this should be handled by server-business-provider redirect to onboarding
+      redirect('/onboarding')
+    } else {
+      // Multiple businesses - redirect to select-business page
+      redirect('/dashboard/select-business')
+    }
   }
 
   // Fetch usage counters for the current business (dashboard-specific data)

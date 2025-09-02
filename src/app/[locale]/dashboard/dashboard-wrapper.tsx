@@ -70,9 +70,10 @@ interface DashboardWrapperProps {
     products: number
   }
   planLimits: any[]
+  autoSelectBusinessId?: string
 }
 
-export default function DashboardWrapper({ usage, planLimits }: DashboardWrapperProps) {
+export default function DashboardWrapper({ usage, planLimits, autoSelectBusinessId }: DashboardWrapperProps) {
   const { businesses, currentBusiness, userManager, userPlan } = useBusiness()
   const t = useTranslations("dashboard")
   const { theme } = useTheme()
@@ -89,6 +90,24 @@ export default function DashboardWrapper({ usage, planLimits }: DashboardWrapper
     setDOMAIN(isLocalhost ? "http://localhost:3000" : "https://quevo.vercel.app")
   }, [])
 
+  // Handle auto-selection of single business
+  useEffect(() => {
+    if (autoSelectBusinessId && businesses.length > 0 && !currentBusiness) {
+      console.log(`[DashboardWrapper] Auto-selecting business: ${autoSelectBusinessId}`)
+      
+      // Find the business to auto-select
+      const businessToSelect = businesses.find(b => b.business_id === autoSelectBusinessId)
+      
+      if (businessToSelect) {
+        // Set the business in session storage and trigger business context update
+        sessionStorage.setItem("currentBusinessId", businessToSelect.business_id)
+        
+        // Force a page reload to ensure the business context picks up the new selection
+        window.location.reload()
+      }
+    }
+  }, [autoSelectBusinessId, businesses, currentBusiness])
+
   // Client-side check for business synchronization
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -98,7 +117,8 @@ export default function DashboardWrapper({ usage, planLimits }: DashboardWrapper
         .find(cookie => cookie.trim().startsWith('current-business-id='))
         ?.split('=')[1]
       
-      // If we have businesses but no current business, or if there's a mismatch
+      // Only redirect to select-business if we have businesses but no current business
+      // Don't redirect if user has no businesses (server-side provider handles this)
       if (businesses.length > 0 && !currentBusiness) {
         console.log("Business context mismatch detected, redirecting to select-business")
         window.location.href = "/dashboard/select-business"
@@ -278,16 +298,16 @@ export default function DashboardWrapper({ usage, planLimits }: DashboardWrapper
                  >
                    {t("currentBusiness.change")}
                  </button>
-                 <Link
-                   href="/dashboard/onboarding"
-                   className={`px-2 py-1 w-auto border rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
-                     theme === 'dark'
-                       ? 'bg-zinc-700 border-gray-600 text-gray-300 hover:bg-zinc-600'
-                       : 'bg-white border-gray-300 text-gray-700 hover:bg-zinc-50'
-                   }`}
-                 >
-                   Add Business
-                 </Link>
+                                   <Link
+                    href="/onboarding"
+                    className={`px-2 py-1 w-auto border rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                      theme === 'dark'
+                        ? 'bg-zinc-700 border-gray-600 text-gray-300 hover:bg-zinc-600'
+                        : 'bg-white border-gray-300 text-gray-700 hover:bg-zinc-50'
+                    }`}
+                  >
+                    Add Business
+                  </Link>
                </div>
              </div>
           </div>
