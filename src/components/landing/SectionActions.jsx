@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { features, getFeatureData, getActionIconAndColor } from '@/lib/unified-action-system';
+import ActionCardScreenshot from './ActionCardScreenshot';
 
 export default function SectionActions({ locale }) {
   const t = useTranslations('Landing');
@@ -70,137 +71,91 @@ export default function SectionActions({ locale }) {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-stretch">
-          
-          
-          
-          <div className="space-y-6 flex flex-col">
-           
-
-              {/* Actions List */}
-             <div className="space-y-2 flex-1">
-               {features.map((action, index) => {
-                 const localizedAction = getLocalizedAction(action);
-                 return (
-                   <div
-                     key={action.id}
-                     className={`border-2 rounded-xl transition-all duration-300 cursor-pointer ${
-                       index === currentActionIndex
-                         ? 'border-blue-500 bg-blue-50 shadow-lg'
-                         : 'border-gray-200 hover:border-gray-300'
-                     }`}
-                     onClick={() => handleActionSelect(index)}
-                   >
-                     {/* Action Header */}
-                     <div className="p-4">
-                       <div className="flex items-center justify-between">
-                         <div className="flex items-center gap-4 flex-1">
-                           {/* Action Icon */}
-                           <div className={`flex-shrink-0 w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex items-center justify-center ${
-                             getActionIconAndColor(action.key).color
-                           }`}>
-                             <img 
-                               src={getActionIconAndColor(action.key).icon}
-                               alt={localizedAction.title}
-                               className="w-5 h-5"
-                               onError={(e) => {
-                                 e.target.style.display = 'none';
-                                 e.target.nextSibling.style.display = 'block';
-                               }}
-                             />
-                             <svg 
-                               className="w-5 h-5 text-gray-600"
-                               style={{ display: 'none' }}
-                               fill="currentColor" 
-                               viewBox="0 0 20 20"
-                             >
-                               <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                             </svg>
-                           </div>
-                           
-                           <div className="flex-1">
-                             <h3 className={`text-md lg:text-lg font-semibold leading-tight ${
-                               index === currentActionIndex ? 'text-blue-700' : 'text-gray-900'
-                             }`}>
-                               {localizedAction.title}
-                             </h3>
-                           </div>
-                         </div>
-                         
-                         {/* Arrow icon */}
-                         <svg 
-                           className={`w-5 h-5 ml-4 transition-transform duration-300 ${
-                             index === currentActionIndex ? 'rotate-180 text-blue-500' : 'text-gray-400'
-                           }`}
-                           fill="none" 
-                           stroke="currentColor" 
-                           viewBox="0 0 24 24"
-                         >
-                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                         </svg>
-                       </div>
-                     </div>
-
-                     {/* Action Details (expanded content) */}
-                     {index === currentActionIndex && (
-                       <div className="px-4 pb-4">
-                         <p className="text-gray-700 leading-tight">
-                           {localizedAction.description}
-                         </p>
-                       </div>
-                     )}
-
-                     {/* Progress indicator at bottom of card */}
-                     {index === currentActionIndex && isAutoPlaying && (
-                       <div className="h-1 bg-blue-500 transition-all duration-50 ease-linear rounded-b-lg"
-                            style={{ width: `${progressPercentage}%` }}>
-                       </div>
-                     )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-                     {/* Right Column - Action Image */}
-           <div className="relative flex items-center justify-center">
-             <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-2xl px-4 py-6 lg:p-8 w-full h-full flex flex-col items-center justify-center">
-               {/* Static link pill */}
-               <div className="text-center mb-4">
-                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
-                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
-                   </svg>
-                   <span>{tCommon('domainPrefix')}</span>
-                 </div>
-               </div>
-
-               {/* Smartphone frame */}
-               <div className="relative w-[90%] h-[500px] lg:w-[360px] lg:h-[600px] max-w-[360px] bg-gray-800 rounded-3xl shadow-2xl p-2">
-                {/* Image container with gradient overlay */}
-                <div className={`relative w-full h-full rounded-2xl overflow-hidden bg-gradient-to-br ${localizedCurrentAction.gradient}`}>
-                  <img 
-                    src={localizedCurrentAction.image}
-                    alt={localizedCurrentAction.title}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
-                    }}
-                  />
-                  {/* Fallback content */}
-                  <div 
-                    className={`w-full h-full bg-gradient-to-br ${localizedCurrentAction.gradient} hidden items-center justify-center`}
-                    style={{ display: 'none' }}
-                  >
-                    <div className="text-center text-white">
-                      <svg className="w-16 h-16 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
+        {/* Actions Cards Row - Moved above the preview */}
+        <div className="mb-12">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 max-w-7xl mx-auto">
+            {features.map((action, index) => {
+              const localizedAction = getLocalizedAction(action);
+              return (
+                <div
+                  key={action.id}
+                  className={`border rounded-xl transition-all duration-300 cursor-pointer text-center ${
+                    index === currentActionIndex
+                      ? 'border-blue-400 bg-blue-50 shadow-md'
+                      : 'border-gray-100 hover:border-gray-200'
+                  }`}
+                  onClick={() => handleActionSelect(index)}
+                >
+                  {/* Action Header */}
+                  <div className="p-2">
+                    {/* Action Icon - Much bigger and centered, rounder */}
+                    <div className={`flex-shrink-0 w-14 h-14 lg:w-16 lg:h-16 rounded-full flex items-center justify-center mx-auto mb-2 ${
+                      getActionIconAndColor(action.key).color
+                    }`}>
+                      <img 
+                        src={getActionIconAndColor(action.key).icon}
+                        alt={localizedAction.title}
+                        className="w-7 h-7 lg:w-8 lg:h-8"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'block';
+                        }}
+                      />
+                      <svg 
+                        className="w-7 h-7 lg:w-8 lg:h-8 text-gray-600"
+                        style={{ display: 'none' }}
+                        fill="currentColor" 
+                        viewBox="0 0 20 20"
+                      >
                         <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
                       </svg>
-                      <p className="text-lg font-semibold">{localizedCurrentAction.title}</p>
                     </div>
+                    
+                    {/* Action Title - Centered, not bold */}
+                    <h3 className={`text-xs lg:text-sm font-normal leading-tight ${
+                      index === currentActionIndex ? 'text-blue-700' : 'text-gray-900'
+                    }`}>
+                      {localizedAction.title}
+                    </h3>
+
+                    {/* Progress indicator at bottom of card */}
+                    {index === currentActionIndex && isAutoPlaying && (
+                      <div className="h-1 bg-blue-500 transition-all duration-50 ease-linear rounded-b-lg"
+                           style={{ width: `${progressPercentage}%` }}>
+                      </div>
+                    )}
                   </div>
                 </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Action Card Screenshot Preview - Now full width below the actions */}
+        <div className="flex justify-center">
+          <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-3xl p-8 lg:p-12 overflow-hidden max-w-4xl w-full">
+            <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 lg:p-12">
+              {/* Action Description - Added above the screenshot */}
+              <div className="text-center mb-6">
+                <h3 className="text-lg lg:text-xl font-medium text-gray-800 mb-3">
+                  {localizedCurrentAction.title}
+                </h3>
+                <p className="text-sm lg:text-base text-gray-600 leading-relaxed max-w-2xl mx-auto">
+                  {localizedCurrentAction.description}
+                </p>
+              </div>
+              
+              {/* Action Card Screenshot */}
+              <div className="flex justify-center">
+                <ActionCardScreenshot 
+                  action={{
+                    title: localizedCurrentAction.title,
+                    description: localizedCurrentAction.description,
+                    iconData: getActionIconAndColor(currentAction.key),
+                    gradient: localizedCurrentAction.gradient
+                  }}
+                  className="shadow-2xl"
+                />
               </div>
             </div>
           </div>

@@ -4,6 +4,7 @@
 import { useRef, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import BusinessProfileScreenshot from './BusinessProfileScreenshot';
 
 // Example businesses data based on actual database entries
 const exampleBusinesses = {
@@ -12,41 +13,193 @@ const exampleBusinesses = {
       id: 1,
       name: "Traslochi Express",
       url: "traslochi_express",
-      desktopImage: "/landing/traslochi_express/profile-desktop.webp",
-      smartphoneImage: "/landing/traslochi_express/profile-mobile.webp",
-      category: "Traslochi"
+      category: "Traslochi",
+      description: "Servizi rapidi di traslochi.",
+      coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
+      profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#3B82F6", // Blue
+        secondaryColor: "#1E40AF", // Darker blue
+        accentColor: "#60A5FA", // Light blue
+        backgroundColor: "#F8FAFC", // Light gray
+        textColor: "#1F2937", // Dark gray
+        buttonBgColor: "#3B82F6", // Blue
+        buttonTextColor: "#FFFFFF", // White
+        fontFamily: "Inter"
+      }
     },
     {
       id: 2,
       name: "Edilizia Premium",
       url: "edilizia_premium",
-      desktopImage: "/landing/edilizia_premium/profile-desktop.webp",
-      smartphoneImage: "/landing/edilizia_premium/profile-mobile.webp",
-      category: "Edilizia"
+      category: "Edilizia",
+      description: "Ristrutturazioni e costruzioni di qualità.",
+      coverImage: "/uploads/business/e5f6a7b8-9c0d-1e2f-3a4b-5c6d7e8f9a0b/cover-desktop.webp",
+      profileImage: "/uploads/business/e5f6a7b8-9c0d-1e2f-3a4b-5c6d7e8f9a0b/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#059669", // Green
+        secondaryColor: "#047857", // Darker green
+        accentColor: "#10B981", // Light green
+        backgroundColor: "#F0FDF4", // Light green
+        textColor: "#064E3B", // Dark green
+        buttonBgColor: "#059669", // Green
+        buttonTextColor: "#FFFFFF", // White
+        fontFamily: "Poppins"
+      }
     },
     {
       id: 3,
       name: "Digital Marketing Solutions",
       url: "digital_marketing_solutions",
-      desktopImage: "/landing/digital_marketing_solutions/profile-desktop.webp",
-      smartphoneImage: "/landing/digital_marketing_solutions/profile-mobile.webp",
-      category: "Marketing Digitale"
+      category: "Marketing Digitale",
+      description: "Agenzia di marketing digitale e comunicazione strategica.",
+      coverImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/cover-desktop.webp",
+      profileImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#8B5CF6", // Purple
+        secondaryColor: "#7C3AED", // Darker purple
+        accentColor: "#A78BFA", // Light purple
+        backgroundColor: "#FAF5FF", // Light purple
+        textColor: "#581C87", // Dark purple
+        buttonBgColor: "#8B5CF6", // Purple
+        buttonTextColor: "#FFFFFF", // White
+        fontFamily: "Roboto"
+      }
     },
     {
       id: 4,
       name: "Agenzia Immobiliare Roma",
       url: "agenzia_immobiliare_roma",
-      desktopImage: "/landing/agenzia_immobiliare_roma/profile-desktop.webp",
-      smartphoneImage: "/landing/agenzia_immobiliare_roma/profile-mobile.webp",
-      category: "Immobiliare"
+      category: "Immobiliare",
+      description: "Servizi immobiliari completi a Roma.",
+      coverImage: "/uploads/business/b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e/cover-desktop.webp",
+      profileImage: "/uploads/business/b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#DC2626", // Red
+        secondaryColor: "#B91C1C", // Darker red
+        accentColor: "#EF4444", // Light red
+        backgroundColor: "#FEF2F2", // Light red
+        textColor: "#7F1D1D", // Dark red
+        buttonBgColor: "#DC2626", // Red
+        buttonTextColor: "#FFFFFF", // White
+        fontFamily: "Open Sans"
+      }
     },
     {
       id: 5,
       name: "Concessionaria Auto Milano",
       url: "concessionaria_auto_milano",
-      desktopImage: "/landing/concessionaria_auto_milano/profile-desktop.webp",
-      smartphoneImage: "/landing/concessionaria_auto_milano/profile-mobile.webp",
-      category: "Auto"
+      category: "Auto",
+      description: "Auto nuove e usate delle migliori marche.",
+      coverImage: "/uploads/business/33445566-7788-9900-1122-ddeeffaabbcc/cover-desktop.webp",
+      profileImage: "/uploads/business/33445566-7788-9900-1122-ddeeffaabbcc/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#F59E0B", // Amber
+        secondaryColor: "#D97706", // Darker amber
+        accentColor: "#FBBF24", // Light amber
+        backgroundColor: "#FFFBEB", // Light amber
+        textColor: "#92400E", // Dark amber
+        buttonBgColor: "#F59E0B", // Amber
+        buttonTextColor: "#FFFFFF", // White
+        fontFamily: "Montserrat"
+      }
+    },
+    {
+      id: 6,
+      name: "Studio Commercialista Roma",
+      url: "studio_commercialista_roma",
+      category: "Consulenza",
+      description: "Consulenza fiscale e commerciale professionale.",
+      coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
+      profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#6B7280", // Gray
+        secondaryColor: "#4B5563", // Darker gray
+        accentColor: "#9CA3AF", // Light gray
+        backgroundColor: "#F9FAFB", // Light gray
+        textColor: "#374151", // Dark gray
+        buttonBgColor: "#6B7280", // Gray
+        buttonTextColor: "#FFFFFF", // White
+        fontFamily: "Source Sans Pro"
+      }
+    },
+    {
+      id: 7,
+      name: "Centro Medicina Estetica",
+      url: "centro_medicina_estetica",
+      category: "Salute",
+      description: "Trattamenti di medicina estetica avanzati.",
+      coverImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/cover-desktop.webp",
+      profileImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#EC4899", // Pink
+        secondaryColor: "#BE185D", // Darker pink
+        accentColor: "#F472B6", // Light pink
+        backgroundColor: "#FDF2F8", // Light pink
+        textColor: "#831843", // Dark pink
+        buttonBgColor: "#EC4899", // Pink
+        buttonTextColor: "#FFFFFF", // White
+        fontFamily: "Lato"
+      }
+    },
+    {
+      id: 8,
+      name: "Ristorante Italiano",
+      url: "ristorante_italiano",
+      category: "Ristorazione",
+      description: "Cucina tradizionale italiana di qualità.",
+      coverImage: "/uploads/business/7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b/cover-desktop.webp",
+      profileImage: "/uploads/business/7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#16A34A", // Green
+        secondaryColor: "#15803D", // Darker green
+        accentColor: "#22C55E", // Light green
+        backgroundColor: "#F0FDF4", // Light green
+        textColor: "#14532D", // Dark green
+        buttonBgColor: "#16A34A", // Green
+        buttonTextColor: "#FFFFFF", // White
+        fontFamily: "Playfair Display"
+      }
     }
   ],
   en: [
@@ -54,41 +207,109 @@ const exampleBusinesses = {
       id: 1,
       name: "Express Moving Services",
       url: "traslochi_express",
-      desktopImage: "/landing/traslochi_express/profile-desktop.webp",
-      smartphoneImage: "/landing/traslochi_express/profile-mobile.webp",
-      category: "Moving Services"
+      category: "Moving Services",
+      description: "Fast moving services.",
+      coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
+      profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#3B82F6", // Blue
+        secondaryColor: "#1E40AF", // Darker blue
+        accentColor: "#60A5FA", // Light blue
+        backgroundColor: "#F8FAFC", // Light gray
+        textColor: "#1F2937", // Dark gray
+        buttonBgColor: "#3B82F6", // Blue
+        buttonTextColor: "#FFFFFF", // White
+        fontFamily: "Inter"
+      }
     },
     {
       id: 2,
       name: "Premium Construction",
       url: "edilizia_premium",
-      desktopImage: "/landing/edilizia_premium/profile-desktop.webp",
-      smartphoneImage: "/landing/edilizia_premium/profile-mobile.webp",
-      category: "Construction"
+      category: "Construction",
+      description: "Quality renovations and constructions.",
+      coverImage: "/uploads/business/e5f6a7b8-9c0d-1e2f-3a4b-5c6d7e8f9a0b/cover-desktop.webp",
+      profileImage: "/uploads/business/e5f6a7b8-9c0d-1e2f-3a4b-5c6d7e8f9a0b/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ]
     },
     {
       id: 3,
       name: "Digital Marketing Solutions",
       url: "digital_marketing_solutions",
-      desktopImage: "/landing/digital_marketing_solutions/profile-desktop.webp",
-      smartphoneImage: "/landing/digital_marketing_solutions/profile-mobile.webp",
-      category: "Digital Marketing"
+      category: "Digital Marketing",
+      description: "Digital marketing agency and strategic communication.",
+      coverImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/cover-desktop.webp",
+      profileImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ]
     },
     {
       id: 4,
       name: "Roma Real Estate Agency",
       url: "agenzia_immobiliare_roma",
-      desktopImage: "/landing/agenzia_immobiliare_roma/profile-desktop.webp",
-      smartphoneImage: "/landing/agenzia_immobiliare_roma/profile-mobile.webp",
-      category: "Real Estate"
+      category: "Real Estate",
+      description: "Complete real estate services in Rome.",
+      coverImage: "/uploads/business/b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e/cover-desktop.webp",
+      profileImage: "/uploads/business/b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ]
     },
     {
-      id: 5,
+      id: 6,
       name: "Milan Auto Dealership",
       url: "concessionaria_auto_milano",
-      desktopImage: "/landing/concessionaria_auto_milano/profile-desktop.webp",
-      smartphoneImage: "/landing/concessionaria_auto_milano/profile-mobile.webp",
-      category: "Automotive"
+      category: "Automotive",
+      description: "New and used cars from the best brands.",
+      coverImage: "/uploads/business/33445566-7788-9900-1122-ddeeffaabbcc/cover-desktop.webp",
+      profileImage: "/uploads/business/33445566-7788-9900-1122-ddeeffaabbcc/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ]
+    },
+    {
+      id: 7,
+      name: "Roma Accounting Studio",
+      url: "studio_commercialista_roma",
+      category: "Consulting",
+      description: "Professional tax and business consulting.",
+      coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
+      profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ]
+    },
+    {
+      id: 8,
+      name: "Aesthetic Medicine Center",
+      url: "centro_medicina_estetica",
+      category: "Health",
+      description: "Advanced aesthetic medicine treatments.",
+      coverImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/cover-desktop.webp",
+      profileImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ]
     }
   ],
   es: [
@@ -96,41 +317,99 @@ const exampleBusinesses = {
       id: 1,
       name: "Traslados Express",
       url: "traslochi_express",
-      desktopImage: "/landing/traslochi_express/profile-desktop.webp",
-      smartphoneImage: "/landing/traslochi_express/profile-mobile.webp",
-      category: "Traslados"
+      category: "Traslados",
+      description: "Servicios rápidos de mudanza.",
+      coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
+      profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ]
     },
     {
       id: 2,
       name: "Construcción Premium",
       url: "edilizia_premium",
-      desktopImage: "/landing/edilizia_premium/profile-desktop.webp",
-      smartphoneImage: "/landing/edilizia_premium/profile-mobile.webp",
-      category: "Construcción"
+      category: "Construcción",
+      description: "Renovaciones y construcciones de calidad.",
+      coverImage: "/uploads/business/e5f6a7b8-9c0d-1e2f-3a4b-5c6d7e8f9a0b/cover-desktop.webp",
+      profileImage: "/uploads/business/e5f6a7b8-9c0d-1e2f-3a4b-5c6d7e8f9a0b/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ]
     },
     {
       id: 3,
       name: "Soluciones de Marketing Digital",
       url: "digital_marketing_solutions",
-      desktopImage: "/landing/digital_marketing_solutions/profile-desktop.webp",
-      smartphoneImage: "/landing/digital_marketing_solutions/profile-mobile.webp",
-      category: "Marketing Digital"
+      category: "Marketing Digital",
+      description: "Agencia de marketing digital y comunicación estratégica.",
+      coverImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/cover-desktop.webp",
+      profileImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ]
     },
     {
       id: 4,
       name: "Agencia Inmobiliaria Roma",
       url: "agenzia_immobiliare_roma",
-      desktopImage: "/landing/agenzia_immobiliare_roma/profile-desktop.webp",
-      smartphoneImage: "/landing/agenzia_immobiliare_roma/profile-mobile.webp",
-      category: "Inmobiliaria"
+      category: "Inmobiliaria",
+      description: "Servicios inmobiliarios completos en Roma.",
+      coverImage: "/uploads/business/b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e/cover-desktop.webp",
+      profileImage: "/uploads/business/b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ]
     },
     {
       id: 5,
       name: "Concesionario Auto Milán",
       url: "concessionaria_auto_milano",
-      desktopImage: "/landing/concessionaria_auto_milano/profile-desktop.webp",
-      smartphoneImage: "/landing/concessionaria_auto_milano/profile-mobile.webp",
-      category: "Automóviles"
+      category: "Automóviles",
+      description: "Autos nuevos y usados de las mejores marcas.",
+      coverImage: "/uploads/business/33445566-7788-9900-1122-ddeeffaabbcc/cover-desktop.webp",
+      profileImage: "/uploads/business/33445566-7788-9900-1122-ddeeffaabbcc/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ]
+    },
+    {
+      id: 6,
+      name: "Estudio Contable Roma",
+      url: "studio_commercialista_roma",
+      category: "Consultoría",
+      description: "Consultoría fiscal y comercial profesional.",
+      coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
+      profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ]
+    },
+    {
+      id: 7,
+      name: "Centro de Medicina Estética",
+      url: "centro_medicina_estetica",
+      category: "Salud",
+      description: "Tratamientos avanzados de medicina estética.",
+      coverImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/cover-desktop.webp",
+      profileImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
+        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
+        { type: 'web', icon: '/icons/web.png', url: '#' }
+      ]
     }
   ]
 };
@@ -300,58 +579,33 @@ export default function SectionHero({ locale }) {
                         </div>
                     </div>
 
-                    {/* Bottom Column - Carousel */}
+                    {/* Bottom Column - Carousel with Gradient Background */}
                     <div className="relative">
+                        {/* Gradient Background Container */}
+                        <div className="relative rounded-3xl p-8 lg:p-12 overflow-hidden" style={{
+                          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%)'
+                        }}>
+                          {/* Subtle overlay for better readability */}
+                          <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
+                          
+                          {/* Content Container */}
+                          <div className="relative z-10">
                         {/* Desktop and Smartphone Views */}
                         <div className="relative flex flex-col lg:flex-row justify-center lg:items-center gap-4">
                             {/* Smartphone View */}
                             <div className="relative z-20 -left-1 flex justify-center items-center">
-                                <div className="bg-gray-800 rounded-3xl shadow-2xl p-1">
-                                    <img 
-                                        src={currentBusiness.smartphoneImage}
-                                        alt={`${currentBusiness.name} mobile view`}
-                                        className="w-[280px] h-[520px] rounded-2xl object-cover object-top"
-                                        onError={(e) => {
-                                            e.target.style.display = 'none';
-                                            e.target.nextSibling.style.display = 'block';
-                                        }}
-                                        onLoad={(e) => {
-                                            e.target.style.display = 'block';
-                                            e.target.nextSibling.style.display = 'none';
-                                        }}
+                                    <BusinessProfileScreenshot 
+                                        business={currentBusiness}
+                                        variant="mobile"
                                     />
-                                    <div 
-                                        className="w-[280px] h-[520px] rounded-2xl bg-gradient-to-br from-gray-300 to-gray-400"
-                                        style={{ display: 'none', minWidth: '14rem', minHeight: '18rem' }}
-                                    />
-                                </div>
                             </div>
                             {/* Desktop View */}
                             <div className="relative z-10 w-full max-w-9xl overflow-visible">
-                                <div 
-                                    className="bg-gray-800 rounded-lg shadow-2xl p-[1px] overflow-visible w-[100vw] h-auto lg:w-full"
-                                >
-                                    <img 
-                                        src={currentBusiness.desktopImage}
-                                        alt={`${currentBusiness.name} desktop view`}
-                                        className="w-full h-auto rounded-lg object-contain"
-                                        onError={(e) => {
-                                            e.target.style.display = 'none';
-                                            e.target.nextSibling.style.display = 'block';
-                                        }}
-                                        onLoad={(e) => {
-                                            e.target.style.display = 'block';
-                                            e.target.nextSibling.style.display = 'none';
-                                        }}
+                                    <BusinessProfileScreenshot 
+                                        business={currentBusiness}
+                                        variant="desktop"
                                     />
-                                    <div 
-                                        className="w-full h-[180px] lg:h-64 rounded-lg bg-gradient-to-br from-gray-300 to-gray-400"
-                                        style={{ 
-                                            display: 'none', 
-                                            minWidth: '20rem', 
-                                            minHeight: '16rem'
-                                        }}
-                                    />
+                                </div>
                                 </div>
                             </div>
                         </div>

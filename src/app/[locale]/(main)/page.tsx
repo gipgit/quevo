@@ -24,12 +24,12 @@ export default function HomePage({ params }: HomePageProps) {
                 <SectionHero locale={params.locale} />
                 
                 <SectionFeatures locale={params.locale} />
-                
-                <SectionActions locale={params.locale} />
-            
-                <SectionBoard locale={params.locale} />
 
                 <SectionSteps locale={params.locale} />
+                
+                <SectionBoard locale={params.locale} />
+
+                <SectionActions locale={params.locale} />
 
                 <SectionCategories/>
                 

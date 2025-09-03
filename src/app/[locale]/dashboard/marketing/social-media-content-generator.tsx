@@ -975,10 +975,10 @@ export default function SocialMediaContentGenerator({
         <>
           {/* Service Selection */}
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            <h2 className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-2">
               Select Services to Include
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2">
               {services.map((service) => {
                 const isSelected = selectedServices.includes(service.service_id.toString())
                 
@@ -986,15 +986,15 @@ export default function SocialMediaContentGenerator({
                   <button
                     key={service.service_id}
                     onClick={() => handleServiceToggle(service.service_id.toString())}
-                    className={`p-2 md:p-4 rounded-lg border-2 transition-all duration-200 relative text-center ${
+                    className={`p-2 rounded-lg border-2 transition-all duration-200 relative text-center ${
                       isSelected
                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100'
                         : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
                     }`}
                   >
-                    <div className="font-medium text-sm md:text-base">{service.service_name}</div>
+                    <div className="font-medium text-sm">{service.service_name}</div>
                     {isSelected && (
-                      <CheckIcon className="w-4 h-4 md:w-5 md:h-5 absolute top-1 right-1 md:top-2 md:right-2 text-blue-600 dark:text-blue-400" />
+                      <CheckIcon className="w-3 h-3 absolute top-1 right-1 text-blue-600 dark:text-blue-400" />
                     )}
                   </button>
                 )
@@ -1004,10 +1004,10 @@ export default function SocialMediaContentGenerator({
 
           {/* Platform Selection */}
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            <h2 className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-2">
               Select Social Media Platforms
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2 md:gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2">
               {SOCIAL_PLATFORMS.map((platform) => {
                 const Icon = platform.icon
                 const isSelected = selectedPlatforms.includes(platform.id)
@@ -1016,20 +1016,20 @@ export default function SocialMediaContentGenerator({
                   <button
                     key={platform.id}
                     onClick={() => handlePlatformToggle(platform.id)}
-                    className={`p-2 md:p-4 rounded-lg border-2 transition-all duration-200 relative ${
+                    className={`p-2 rounded-lg border-2 transition-all duration-200 relative ${
                       isSelected
                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100'
                         : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
                     }`}
                   >
-                    <div className="flex items-center space-x-2 md:space-x-3">
-                      <div className={`p-1.5 md:p-2 rounded-full ${isSelected ? 'bg-blue-600' : platform.color}`}>
-                        <Icon platform={platform.id} className="w-4 h-4 md:w-5 md:h-5 text-white" />
+                    <div className="flex items-center space-x-2">
+                      <div className={`p-1.5 rounded-full ${isSelected ? 'bg-blue-600' : platform.color}`}>
+                        <Icon platform={platform.id} className="w-4 h-4 text-white" />
                       </div>
-                      <span className="font-medium text-sm md:text-base">{platform.name}</span>
+                      <span className="font-medium text-sm">{platform.name}</span>
                     </div>
                     {isSelected && (
-                      <CheckIcon className="w-4 h-4 md:w-5 md:h-5 absolute top-1 right-1 md:top-2 md:right-2 text-blue-600 dark:text-blue-400" />
+                      <CheckIcon className="w-3 h-3 absolute top-1 right-1 text-blue-600 dark:text-blue-400" />
                     )}
                   </button>
                 )
@@ -1039,10 +1039,10 @@ export default function SocialMediaContentGenerator({
 
       {/* Business Qualities Selection */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
+        <h2 className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-2">
           Select Business Qualities to Highlight
         </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2">
           {BUSINESS_QUALITIES.map((quality) => {
             const Icon = quality.icon
             const isSelected = selectedQualities.includes(quality.id)
@@ -1051,19 +1051,19 @@ export default function SocialMediaContentGenerator({
               <button
                 key={quality.id}
                 onClick={() => handleQualityToggle(quality.id)}
-                    className={`group p-2 md:p-4 rounded-lg border-2 transition-all duration-200 relative ${
+                    className={`group p-2 rounded-lg border-2 transition-all duration-200 relative ${
                   isSelected
                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100'
                     : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
                 }`}
                     title={quality.description}
                   >
-                    <div className="flex items-center space-x-2 md:space-x-3">
-                      <Icon className={`w-5 h-5 md:w-6 md:h-6 ${isSelected ? 'text-blue-600 dark:text-blue-400' : quality.textColor}`} />
-                      <div className="font-medium text-xs md:text-sm">{quality.name}</div>
+                    <div className="flex items-center space-x-2">
+                      <Icon className={`w-4 h-4 ${isSelected ? 'text-blue-600 dark:text-blue-400' : quality.textColor}`} />
+                      <div className="font-medium text-xs">{quality.name}</div>
                     </div>
                 {isSelected && (
-                      <CheckIcon className="w-4 h-4 md:w-5 md:h-5 absolute top-1 right-1 md:top-2 md:right-2 text-blue-600 dark:text-blue-400" />
+                      <CheckIcon className="w-3 h-3 absolute top-1 right-1 text-blue-600 dark:text-blue-400" />
                 )}
               </button>
             )
@@ -1073,55 +1073,53 @@ export default function SocialMediaContentGenerator({
 
        {/* Post Types Selection */}
        <div>
-         <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
+         <h2 className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-2">
            Select Types of Posts to Include
          </h2>
-         <div className="space-y-2">
+         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
            {postTypesData.post_types_by_purpose.map((category, categoryIndex) => (
-             <div key={categoryIndex} className="space-y-3">
-               <div className="bg-gray-50 dark:bg-gray-700 rounded-lg">
-                 <p 
-                   className="text-sm font-medium text-gray-800 dark:text-gray-100 mb-2 cursor-help"
-                   title={category.description}
-                 >
-                   {category.category}
-                 </p>
-                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                   {category.posts.map((post, postIndex) => {
-                     const isSelected = selectedPostTypes.includes(post.title)
-                     
-                     return (
-                       <button
-                         key={postIndex}
-                         onClick={() => {
-                           setSelectedPostTypes(prev => {
-                             const newSelection = prev.includes(post.title)
-                               ? prev.filter(type => type !== post.title)
-                               : [...prev, post.title]
-                             
-                             // Ensure at least one post type is selected
-                             if (newSelection.length === 0) {
-                               return [post.title]
-                             }
-                             
-                             return newSelection
-                           })
-                         }}
-                         className={`p-3 rounded-lg border-2 transition-all duration-200 text-left relative ${
-                           isSelected
-                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100'
-                             : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
-                         }`}
-                         title={post.description}
-                       >
-                         <div className="font-medium text-sm">{post.title}</div>
-                {isSelected && (
-                           <CheckIcon className="w-4 h-4 absolute top-2 right-2 text-blue-600 dark:text-blue-400" />
-                )}
-              </button>
-            )
-          })}
-                 </div>
+             <div key={categoryIndex} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+               <p 
+                 className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 cursor-help border-b border-gray-200 dark:border-gray-600 pb-1"
+                 title={category.description}
+               >
+                 {category.category}
+               </p>
+               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                 {category.posts.map((post, postIndex) => {
+                   const isSelected = selectedPostTypes.includes(post.title)
+                   
+                   return (
+                     <button
+                       key={postIndex}
+                       onClick={() => {
+                         setSelectedPostTypes(prev => {
+                           const newSelection = prev.includes(post.title)
+                             ? prev.filter(type => type !== post.title)
+                             : [...prev, post.title]
+                           
+                           // Ensure at least one post type is selected
+                           if (newSelection.length === 0) {
+                             return [post.title]
+                           }
+                           
+                           return newSelection
+                         })
+                       }}
+                       className={`p-2 rounded-lg border-2 transition-all duration-200 text-left relative ${
+                         isSelected
+                           ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100'
+                           : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
+                       }`}
+                       title={post.description}
+                     >
+                       <div className="font-medium text-xs">{post.title}</div>
+              {isSelected && (
+                         <CheckIcon className="w-3 h-3 absolute top-1 right-1 text-blue-600 dark:text-blue-400" />
+              )}
+            </button>
+          )
+        })}
                </div>
              </div>
            ))}
@@ -1130,10 +1128,10 @@ export default function SocialMediaContentGenerator({
 
        {/* Posting Frequency Selection */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
+        <h2 className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-2">
               Select Posting Frequency
         </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2 md:gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2">
               {[
                 { id: 'minimal', name: 'Minimal', description: 'Conservative approach', color: 'bg-red-500', textColor: 'text-red-600' },
                 { id: 'low', name: 'Low', description: 'Light engagement', color: 'bg-orange-500', textColor: 'text-orange-600' },
@@ -1147,20 +1145,20 @@ export default function SocialMediaContentGenerator({
               <button
                     key={frequency.id}
                     onClick={() => setSelectedFrequency(frequency.id)}
-                    className={`p-2 md:p-4 rounded-lg border-2 transition-all duration-200 relative text-center ${
+                    className={`p-2 rounded-lg border-2 transition-all duration-200 relative text-center ${
                   isSelected
                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100'
                     : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
                 }`}
                     title={frequency.description}
                   >
-                    <div className="flex flex-col items-center space-y-1 md:space-y-2">
-                      <div className={`w-4 h-4 md:w-5 md:h-5 rounded-full ${isSelected ? 'bg-blue-600' : frequency.color}`}></div>
-                      <div className="font-medium text-xs md:text-sm">{frequency.name}</div>
+                    <div className="flex flex-col items-center space-y-1">
+                      <div className={`w-4 h-4 rounded-full ${isSelected ? 'bg-blue-600' : frequency.color}`}></div>
+                      <div className="font-medium text-xs">{frequency.name}</div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">{frequency.description}</div>
                 </div>
                 {isSelected && (
-                      <CheckIcon className="w-4 h-4 md:w-5 md:h-5 absolute top-1 right-1 md:top-2 md:right-2 text-blue-600 dark:text-blue-400" />
+                      <CheckIcon className="w-3 h-3 absolute top-1 right-1 text-blue-600 dark:text-blue-400" />
                 )}
               </button>
             )
