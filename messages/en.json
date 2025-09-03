@@ -219,11 +219,13 @@
     "selectEvent": "Select an Event",
     "selectEventDescription": "Choose the event you would like to book",
     "select": "Select",
-    "serviceItemsTitle": "Services to Include",
+    "serviceItemsTitle": "Want to simulate a quotation?",
     "serviceItemsDescription": "Select any additional services you would like to include in your request",
-    "serviceExtrasTitle": "Service Extras",
+    "serviceExtrasTitle": "Need extras?",
     "serviceExtrasDescription": "Select any additional services you'd like to include with your booking.",
     "noExtrasAvailable": "No additional extras available for this service.",
+    "noRequirementsAvailable": "No requirements available for this service.",
+    "noQuestionsAvailable": "No questions available for this service.",
     "totalExtras": "Total Extras",
     "errorFetchingServiceExtras": "Error fetching service extras.",
     "requirementsAndQuestionsTitle": "Requirements & Information",
@@ -476,6 +478,7 @@
     "addOption": "Add Option",
     "option": "Option",
     "required": "Required",
+    "optional": "Optional",
     "thisFieldIsRequired": "This field is required",
     "maxLength": "Max Length",
     "requirements": "Requirements",
@@ -522,6 +525,8 @@
     "crop": "Crop",
     "availableBooking": "Available for Booking",
     "availableBookingDescription": "Allow customers to book this service online",
+    "activeBooking": "Active Booking",
+    "activeQuotation": "Active Quotation",
     "requireConsentNewsletter": "Newsletter Consent",
     "requireConsentNewsletterDescription": "Ask for consent to send newsletter subscriptions",
     "availableQuotation": "Online Quotation",
@@ -894,6 +899,18 @@
       "fonts": "Fonts",
       "saveChanges": "Save Changes",
       "exampleButton": "Example Button"
+    },
+    "toasts": {
+      "success": {
+        "title": "Success",
+        "message": "Changes saved successfully"
+      },
+      "error": {
+        "saveFailed": {
+          "title": "Save Failed",
+          "message": "Failed to save changes. Please try again."
+        }
+      }
     }
   },
   "onboarding": {

@@ -346,12 +346,25 @@ export async function POST(
 
       // Prepare JSON snapshots for service request
       let selectedServiceItemsSnapshot = null;
+      let selectedServiceExtrasSnapshot = null;
       let questionResponsesSnapshot = null;
       let requirementResponsesSnapshot = null;
 
       // Store service responses if provided
       if (serviceResponses) {
         console.log("Processing service responses:", JSON.stringify(serviceResponses, null, 2));
+        console.log("Service responses structure:", {
+          hasSelectedServiceItems: !!serviceResponses.selectedServiceItems,
+          selectedServiceItemsCount: serviceResponses.selectedServiceItems?.length || 0,
+          hasSelectedServiceExtras: !!serviceResponses.selectedServiceExtras,
+          selectedServiceExtrasCount: serviceResponses.selectedServiceExtras?.length || 0,
+          hasQuestionResponses: !!serviceResponses.questionResponses,
+          questionResponsesKeys: serviceResponses.questionResponses ? Object.keys(serviceResponses.questionResponses) : [],
+          hasCheckboxResponses: !!serviceResponses.checkboxResponses,
+          checkboxResponsesKeys: serviceResponses.checkboxResponses ? Object.keys(serviceResponses.checkboxResponses) : [],
+          hasConfirmedRequirements: !!serviceResponses.confirmedRequirements,
+          confirmedRequirementsKeys: serviceResponses.confirmedRequirements ? Object.keys(serviceResponses.confirmedRequirements) : []
+        });
         
         try {
           // Prepare selected service items snapshot
@@ -366,11 +379,11 @@ export async function POST(
             }));
           }
 
-          // Prepare question responses snapshot
+          // Prepare question responses snapshot for open text and media upload questions
           if (serviceResponses.questionResponses && Object.keys(serviceResponses.questionResponses).length > 0) {
             questionResponsesSnapshot = [];
             for (const [questionId, response] of Object.entries(serviceResponses.questionResponses)) {
-              if (response) {
+              if (response && typeof response === 'string' && response.trim() !== '') {
                 // Get question details from the service
                 const question = await prisma.servicequestion.findUnique({
                   where: { question_id: parseInt(questionId) },
@@ -382,41 +395,51 @@ export async function POST(
                     question_id: parseInt(questionId),
                     question_text: question.question_text,
                     question_type: question.question_type,
-                    response_text: response
+                    response_text: response.trim()
                   });
                 }
               }
             }
           }
 
-          // Prepare requirement responses snapshot
-          if (serviceResponses.confirmedRequirements && Object.keys(serviceResponses.confirmedRequirements).length > 0) {
-            requirementResponsesSnapshot = [];
-            for (const [requirementBlockId, confirmed] of Object.entries(serviceResponses.confirmedRequirements)) {
-              if (confirmed) {
-                // Get requirement block details
-                const requirementBlock = await prisma.servicerequirementblock.findUnique({
-                  where: { requirement_block_id: parseInt(requirementBlockId) },
-                  select: { title: true, requirements_text: true }
-                });
-                
-                if (requirementBlock) {
-                  requirementResponsesSnapshot.push({
-                    requirement_block_id: parseInt(requirementBlockId),
-                    title: requirementBlock.title,
-                    requirements_text: requirementBlock.requirements_text,
-                    customer_confirmed: true
-                  });
-                }
-              }
-            }
+          // Prepare requirement responses snapshot - save ALL requirements with selection status
+          const allRequirements = await prisma.servicerequirementblock.findMany({
+            where: { 
+              service_id: serviceId,
+              is_active: true
+            },
+            select: { 
+              requirement_block_id: true, 
+              title: true, 
+              requirements_text: true
+            },
+            orderBy: { requirement_block_id: 'asc' }
+          });
+
+          console.log("All requirements found:", allRequirements);
+          console.log("Confirmed requirements from frontend:", serviceResponses.confirmedRequirements);
+
+          if (allRequirements.length > 0) {
+            requirementResponsesSnapshot = allRequirements.map(req => {
+              const isConfirmed = serviceResponses.confirmedRequirements?.[req.requirement_block_id] || false;
+              console.log(`Requirement ${req.requirement_block_id} confirmed: ${isConfirmed}`);
+              return {
+                requirement_block_id: req.requirement_block_id,
+                title: req.title,
+                requirements_text: req.requirements_text,
+                customer_confirmed: isConfirmed
+              };
+            });
           }
 
           // Prepare checkbox responses snapshot
           if (serviceResponses.checkboxResponses && Object.keys(serviceResponses.checkboxResponses).length > 0) {
+            console.log("Processing checkbox responses:", JSON.stringify(serviceResponses.checkboxResponses, null, 2));
+            
             for (const [questionId, optionIds] of Object.entries(serviceResponses.checkboxResponses)) {
               // Handle both single values (checkbox_single) and arrays (checkbox_multi)
               const selectedValues = Array.isArray(optionIds) ? optionIds : [optionIds];
+              console.log(`Question ${questionId} selected values:`, selectedValues);
               
               if (selectedValues.length > 0 && selectedValues.some(val => val !== null && val !== undefined)) {
                 // Get question details with options from JSON field
@@ -425,17 +448,44 @@ export async function POST(
                   select: { question_text: true, question_type: true, question_options: true }
                 });
                 
+                console.log(`Question ${questionId} details:`, {
+                  question_text: question?.question_text,
+                  question_type: question?.question_type,
+                  question_options: question?.question_options
+                });
+                
                 if (question && question.question_options) {
-                  // Parse the JSON options
-                  const options = Array.isArray(question.question_options) ? question.question_options : [];
+                  // Parse the JSON options - handle both string and object formats
+                  let options = [];
+                  try {
+                    if (typeof question.question_options === 'string') {
+                      options = JSON.parse(question.question_options);
+                    } else if (Array.isArray(question.question_options)) {
+                      options = question.question_options;
+                    }
+                  } catch (parseError) {
+                    console.warn(`Failed to parse question_options for question ${questionId}:`, parseError);
+                    options = [];
+                  }
+                  
+                  console.log(`Question ${questionId} parsed options:`, options);
                   
                   // Filter selected options based on selectedValues (which are the option values from frontend)
                   const selectedOptions = options
-                    .filter((option: any) => selectedValues.includes(option.value))
+                    .filter((option: any) => {
+                      // Handle different option structures
+                      const optionValue = option.value || option.id || option.option_value;
+                      const isSelected = selectedValues.includes(optionValue);
+                      console.log(`Option ${optionValue} selected: ${isSelected}`, option);
+                      return isSelected;
+                    })
                     .map((option: any) => ({
-                      option_id: option.id,
-                      option_text: option.text
+                      option_id: option.id || option.option_id,
+                      option_text: option.text || option.option_text,
+                      option_value: option.value || option.id || option.option_value
                     }));
+                  
+                  console.log(`Question ${questionId} selected options:`, selectedOptions);
                   
                   if (selectedOptions.length > 0) {
                     if (!questionResponsesSnapshot) questionResponsesSnapshot = [];
@@ -466,17 +516,58 @@ export async function POST(
             }
           }
 
+          // Prepare selected service extras snapshot
+          let selectedServiceExtrasSnapshot = null;
+          console.log("Checking serviceResponses.selectedServiceExtras:", {
+            exists: !!serviceResponses.selectedServiceExtras,
+            type: typeof serviceResponses.selectedServiceExtras,
+            isArray: Array.isArray(serviceResponses.selectedServiceExtras),
+            length: serviceResponses.selectedServiceExtras?.length,
+            content: serviceResponses.selectedServiceExtras
+          });
+          
+          if (serviceResponses.selectedServiceExtras && serviceResponses.selectedServiceExtras.length > 0) {
+            console.log("Processing selected service extras:", JSON.stringify(serviceResponses.selectedServiceExtras, null, 2));
+            
+            selectedServiceExtrasSnapshot = serviceResponses.selectedServiceExtras.map((extra: any) => ({
+              service_extra_id: extra.service_extra_id,
+              extra_name: extra.extra_name,
+              extra_description: extra.extra_description,
+              price_at_request: parseFloat(extra.price_base.toString()),
+              price_type: extra.price_type || 'fixed',
+              price_unit: extra.price_unit || null,
+              quantity: extra.quantity || 1
+            }));
+            
+            console.log("Service extras snapshot prepared:", selectedServiceExtrasSnapshot);
+            
+            // TODO: Uncomment after regenerating Prisma
+            // console.log("Would save service extras snapshot to database:", selectedServiceExtrasSnapshot);
+          } else {
+            console.log("No service extras found or empty array");
+          }
+
         } catch (responseError) {
           console.error("Error processing service responses:", responseError);
           // Continue with the main flow even if responses fail
         }
       }
 
+      // Log all snapshots before database update
+      console.log("Final snapshots to save:", {
+        selectedServiceItemsSnapshot,
+        selectedServiceExtrasSnapshot,
+        questionResponsesSnapshot,
+        requirementResponsesSnapshot
+      });
+
       // Update service request with JSON snapshots
       const updatedServiceRequest = await prisma.servicerequest.update({
         where: { request_id: serviceRequest.request_id },
         data: {
           selected_service_items_snapshot: selectedServiceItemsSnapshot || undefined,
+          // TODO: Uncomment after regenerating Prisma with the new selected_service_extras_snapshot column
+          // selected_service_extras_snapshot: selectedServiceExtrasSnapshot || undefined,
           question_responses_snapshot: questionResponsesSnapshot || undefined,
           requirement_responses_snapshot: requirementResponsesSnapshot || undefined
         }

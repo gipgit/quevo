@@ -74,6 +74,7 @@
     "loginButton": "Accedi",
     "createAccountLink": "Crea Account",
     "required": "Obbligatorio",
+    "optional": "Opzionale",
     "thisFieldIsRequired": "Questo campo è obbligatorio"
   },
   "FAQ": {
@@ -222,11 +223,13 @@
     "selectEvent": "Seleziona un Evento",
     "selectEventDescription": "Scegli l'evento che vorresti prenotare",
     "select": "Seleziona",
-    "serviceItemsTitle": "Servizi da includere",
+    "serviceItemsTitle": "Vuoi simulare un preventivo?",
     "serviceItemsDescription": "Seleziona eventuali servizi aggiuntivi che vorresti includere nella tua richiesta",
-    "serviceExtrasTitle": "Extra del Servizio",
+    "serviceExtrasTitle": "Hai bisogno di extra?",
     "serviceExtrasDescription": "Seleziona eventuali servizi aggiuntivi che desideri includere con la tua prenotazione.",
     "noExtrasAvailable": "Nessun extra aggiuntivo disponibile per questo servizio.",
+    "noRequirementsAvailable": "Nessun requisito disponibile per questo servizio.",
+    "noQuestionsAvailable": "Nessuna domanda disponibile per questo servizio.",
     "totalExtras": "Totale Extra",
     "errorFetchingServiceExtras": "Errore nel caricamento degli extra del servizio.",
     "requirementsAndQuestionsTitle": "Requisiti e informazioni",
@@ -562,6 +565,8 @@
     "crop": "Ritaglia",
     "availableBooking": "Disponibile per Prenotazione",
     "availableBookingDescription": "Consenti ai clienti di prenotare questo servizio online",
+    "activeBooking": "Prenotazione Attiva",
+    "activeQuotation": "Preventivo Attivo",
     "requireConsentNewsletter": "Consenso Newsletter",
     "requireConsentNewsletterDescription": "Richiedi il consenso per l'invio di newsletter",
     "availableQuotation": "Preventivo Online",
@@ -817,6 +822,18 @@
       "fonts": "Font",
       "saveChanges": "Salva Modifiche",
       "exampleButton": "Esempio Bottone"
+    },
+    "toasts": {
+      "success": {
+        "title": "Successo",
+        "message": "Modifiche salvate con successo"
+      },
+      "error": {
+        "saveFailed": {
+          "title": "Salvataggio Fallito",
+          "message": "Impossibile salvare le modifiche. Riprova."
+        }
+      }
     }
   },
   "onboarding": {

@@ -435,11 +435,11 @@ export default function CreateServicePage() {
          price_unit: priceUnit,
          has_items: hasItems, // Set based on actual items added
          has_extras: hasExtras, // Set based on actual extras added
-         available_booking: hasEvents, // Set based on actual events added
+         active_booking: hasEvents, // Set based on actual events added
                    require_consent_newsletter: requireConsentNewsletter,
           require_consent_newsletter_text: requireConsentNewsletterText,
           require_phone: requirePhone,
-          available_quotation: availableQuotation,
+          active_quotation: availableQuotation,
          questions: questions.filter((q) => q.question_text.trim()),
          requirements: requirements.filter((r) => r.requirements_text.trim()),
          items: items.filter((i) => i.item_name.trim()),

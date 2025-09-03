@@ -97,10 +97,7 @@ export default function CustomerDetailsStep({
             return;
         }
 
-        if (selectedService?.require_consent_newsletter && !newsletterConsent) {
-            setSubmissionError(t('newsletterConsentRequired'));
-            return;
-        }
+        // Newsletter consent is optional - no validation required
 
         setIsSubmitting(true);
         setSubmissionError(null);
@@ -245,11 +242,10 @@ export default function CustomerDetailsStep({
                                         className="form-checkbox h-5 w-5 rounded mt-1 mr-2"
                                         checked={newsletterConsent}
                                         onChange={(e) => setNewsletterConsent(e.target.checked)}
-                                        required={selectedService?.require_consent_newsletter}
                                     />
                                     <div className="text-sm">
                                         <span className="inline-block ml-1 md:ml-2 px-1.5 md:px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-700 rounded-full">
-                                            {tCommon('required')}
+                                            {tCommon('optional')}
                                         </span>
                                         <span className="ml-2">
                                             {selectedService?.require_consent_newsletter_text || t('newsletterConsentText')}

@@ -46,7 +46,6 @@ export const ALLOWED_PAYMENT_METHODS: PaymentMethodConfig[] = [
       { name: "iban", label: "IBAN", type: "text", required: true },
       { name: "account_holder", label: "Account Holder", type: "text", required: true },
       { name: "bank_name", label: "Bank Name", type: "text" },
-      { name: "transfer_subject", label: "Transfer Subject", type: "text" },
     ],
   },
   {

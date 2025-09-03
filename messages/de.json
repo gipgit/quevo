@@ -74,6 +74,7 @@
     "loginButton": "Anmelden",
     "createAccountLink": "Konto erstellen",
     "required": "Erforderlich",
+    "optional": "Optional",
     "thisFieldIsRequired": "Dieses Feld ist erforderlich"
   },
   "FAQ": {
@@ -221,11 +222,13 @@
     "selectEvent": "Event auswählen",
     "selectEventDescription": "Wählen Sie das Event aus, das Sie buchen möchten",
     "select": "Auswählen",
-    "serviceItemsTitle": "Einzubeziehende Dienstleistungen",
+    "serviceItemsTitle": "Möchten Sie ein Angebot simulieren?",
     "serviceItemsDescription": "Wählen Sie zusätzliche Dienstleistungen aus, die Sie in Ihre Anfrage einbeziehen möchten",
-    "serviceExtrasTitle": "Service-Zuschläge",
+    "serviceExtrasTitle": "Brauchen Sie Extras?",
     "serviceExtrasDescription": "Wählen Sie zusätzliche Dienstleistungen aus, die Sie mit Ihrer Buchung einbeziehen möchten.",
     "noExtrasAvailable": "Keine zusätzlichen Zuschläge für diesen Service verfügbar.",
+    "noRequirementsAvailable": "Keine Anforderungen für diesen Service verfügbar.",
+    "noQuestionsAvailable": "Keine Fragen für diesen Service verfügbar.",
     "totalExtras": "Gesamte Zuschläge",
     "errorFetchingServiceExtras": "Fehler beim Laden der Service-Zuschläge.",
     "requirementsAndQuestionsTitle": "Anforderungen und Informationen",
@@ -535,6 +538,8 @@
     "crop": "Zuschneiden",
     "availableBooking": "Verfügbar für Buchung",
     "availableBookingDescription": "Kunden erlauben, diesen Service online zu buchen",
+    "activeBooking": "Aktive Buchung",
+    "activeQuotation": "Aktives Angebot",
     "requireConsentNewsletter": "Newsletter-Zustimmung",
     "requireConsentNewsletterDescription": "Zustimmung für Newsletter-Abonnements anfordern",
     "availableQuotation": "Online-Angebot",
@@ -769,6 +774,18 @@
       "fonts": "Schriftarten",
       "saveChanges": "Änderungen speichern",
       "exampleButton": "Beispiel-Button"
+    },
+    "toasts": {
+      "success": {
+        "title": "Erfolg",
+        "message": "Änderungen erfolgreich gespeichert"
+      },
+      "error": {
+        "saveFailed": {
+          "title": "Speichern fehlgeschlagen",
+          "message": "Änderungen konnten nicht gespeichert werden. Bitte versuchen Sie es erneut."
+        }
+      }
     }
   },
   "onboarding": {

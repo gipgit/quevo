@@ -76,11 +76,11 @@ interface Service {
   price_unit: string | null
   has_items: boolean | null
   has_extras: boolean | null
-  available_booking: boolean | null
+  active_booking: boolean | null
   require_consent_newsletter: boolean | null
   require_consent_newsletter_text: string | null
   require_phone: boolean | null
-  available_quotation: boolean | null
+  active_quotation: boolean | null
   is_active: boolean | null
   display_order: number | null
   demo: boolean | null
@@ -128,8 +128,8 @@ export default function ServiceEditModal({
      price_type: 'fixed',
      price_unit: '',
     is_active: true,
-     available_booking: true,
-     available_quotation: false,
+     active_booking: true,
+     active_quotation: false,
      require_phone: false,
      require_consent_newsletter: false,
      require_consent_newsletter_text: ''
@@ -218,8 +218,8 @@ export default function ServiceEditModal({
          price_type: service.price_type || 'fixed',
          price_unit: service.price_unit || '',
         is_active: service.is_active || false,
-         available_booking: service.available_booking || false,
-         available_quotation: service.available_quotation || false,
+         active_booking: service.active_booking || false,
+         active_quotation: service.active_quotation || false,
          require_phone: service.require_phone || false,
          require_consent_newsletter: service.require_consent_newsletter || false,
          require_consent_newsletter_text: service.require_consent_newsletter_text || ''
@@ -316,7 +316,7 @@ export default function ServiceEditModal({
           ...formData,
           has_items: hasItems,
           has_extras: hasExtras,
-          available_booking: hasEvents || formData.available_booking,
+          active_booking: hasEvents || formData.active_booking,
           serviceitem: items,
           serviceextra: extras,
           servicequestion: questions,
@@ -552,21 +552,44 @@ export default function ServiceEditModal({
                 <span className={`text-sm ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                 }`}>
-                  {t("availableForBooking")}
+                  {t("activeBooking")}
                 </span>
                 <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  formData.available_booking 
+                  formData.active_booking 
                     ? 'bg-blue-600' 
                     : 'bg-gray-300 dark:bg-gray-600'
                 }`}>
                   <input
                     type="checkbox"
-                    checked={formData.available_booking}
-                    onChange={(e) => handleInputChange('available_booking', e.target.checked)}
+                    checked={formData.active_booking}
+                    onChange={(e) => handleInputChange('active_booking', e.target.checked)}
                     className="sr-only"
                   />
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    formData.available_booking ? 'translate-x-6' : 'translate-x-1'
+                    formData.active_booking ? 'translate-x-6' : 'translate-x-1'
+                  }`} />
+                </div>
+              </label>
+
+              <label className="flex items-center gap-2">
+                <span className={`text-sm ${
+                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                }`}>
+                  {t("activeQuotation")}
+                </span>
+                <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  formData.active_quotation 
+                    ? 'bg-blue-600' 
+                    : 'bg-gray-300 dark:bg-gray-600'
+                }`}>
+                  <input
+                    type="checkbox"
+                    checked={formData.active_quotation}
+                    onChange={(e) => handleInputChange('active_quotation', e.target.checked)}
+                    className="sr-only"
+                  />
+                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    formData.active_quotation ? 'translate-x-6' : 'translate-x-1'
                   }`} />
                 </div>
               </label>
@@ -695,39 +718,7 @@ export default function ServiceEditModal({
           {/* Basic Information Section - Column Layout */}
           {activeTab === 'basic' && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 mb-8">
-            {/* Left Column - Service Image */}
-            <div className="lg:col-span-1">
-              <div className="relative w-full h-48 rounded-lg overflow-hidden">
-                <ServiceImageDisplay
-                  serviceId={service.service_id}
-                  serviceName={service.service_name}
-                  demo={service.demo}
-                  hasImage={service.has_image}
-                  businessPublicUuid={businessPublicUuid}
-                  className="w-full h-full"
-                  showDemoBadge={false}
-                />
-                
-                {/* Delete Image Button - positioned near the image */}
-                {service?.has_image && (
-                  <button
-                    onClick={handleRemoveImage}
-                    disabled={isLoading}
-                    className={`absolute top-2 right-2 p-2 rounded-full transition-colors flex items-center gap-1 ${
-                      isLoading
-                        ? "bg-red-400 text-white cursor-not-allowed"
-                        : "bg-red-600 hover:bg-red-700 text-white shadow-lg"
-                    }`}
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Right Column - Basic Information Fields */}
+            {/* Left Column - Basic Information Fields */}
             <div className="lg:col-span-2">
               <div className="space-y-4">
                 <div>
@@ -820,6 +811,38 @@ export default function ServiceEditModal({
                   />
                    </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Right Column - Service Image */}
+            <div className="lg:col-span-1">
+              <div className="relative w-full h-48 rounded-lg overflow-hidden">
+                <ServiceImageDisplay
+                  serviceId={service.service_id}
+                  serviceName={service.service_name}
+                  demo={service.demo}
+                  hasImage={service.has_image}
+                  businessPublicUuid={businessPublicUuid}
+                  className="w-full h-full"
+                  showDemoBadge={false}
+                />
+                
+                {/* Delete Image Button - positioned near the image */}
+                {service?.has_image && (
+                  <button
+                    onClick={handleRemoveImage}
+                    disabled={isLoading}
+                    className={`absolute top-2 right-2 p-2 rounded-full transition-colors flex items-center gap-1 ${
+                      isLoading
+                        ? "bg-red-400 text-white cursor-not-allowed"
+                        : "bg-red-600 hover:bg-red-700 text-white shadow-lg"
+                    }`}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                )}
               </div>
             </div>
           </div>

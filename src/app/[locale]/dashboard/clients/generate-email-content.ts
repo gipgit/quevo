@@ -35,8 +35,8 @@ interface Service {
   price_base: Decimal | null
   price_type: string | null
   has_items: boolean | null
-  available_booking: boolean | null
-  available_quotation: boolean | null
+  active_booking: boolean | null
+  active_quotation: boolean | null
   is_active: boolean | null
   display_order: number | null
   servicecategory: {
@@ -80,12 +80,12 @@ function formatServicesForPrompt(business: Business, services: Service[]): strin
     text += `   Price Type: ${service.price_type || 'Not specified'}\n`
     
     // Include booking and quotation availability
-    if (service.available_booking) {
+    if (service.active_booking) {
       text += `   Bookable: Yes (customers can book appointments online)\n`
     }
     
     // Include quotation availability
-    if (service.available_quotation) {
+    if (service.active_quotation) {
       text += `   Quotation Available: Yes (customers can get online quotes)\n`
     } else {
       text += `   Quotation Available: No\n`

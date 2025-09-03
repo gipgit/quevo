@@ -259,14 +259,14 @@ export default function ServiceSelection({
                                                 {/* Service Pills */}
                                                 <div className="flex flex-row items-center gap-2">
                                                     {/* Bookable Pill */}
-                                                    {service.available_booking && (
+                                                    {service.active_booking && (
                                                         <span className="text-xs text-white/80" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
                                                             {t('bookable')}
                                                         </span>
                                                     )}
                                                     
                                                     {/* Quotation Pill */}
-                                                    {service.available_quotation && (
+                                                    {service.active_quotation && (
                                                         <span className="text-xs text-white/80" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
                                                             {t('quotationAvailable')}
                                                         </span>

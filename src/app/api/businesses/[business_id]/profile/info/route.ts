@@ -39,8 +39,8 @@ export async function PUT(
       }
       if (!Array.isArray(emails) || emails.length > 3)
         return NextResponse.json({ error: "Invalid emails" }, { status: 400 })
-      const emailArr = emails.map((e: any) => typeof e === "object" ? e.value : e)
-      updates.business_email = JSON.stringify(emailArr)
+      // Store complete objects with both value and title
+      updates.business_email = JSON.stringify(emails)
     }
     
     if (body.business_phones !== undefined) {
@@ -50,8 +50,8 @@ export async function PUT(
       }
       if (!Array.isArray(phones) || phones.length > 3)
         return NextResponse.json({ error: "Invalid phones" }, { status: 400 })
-      const phoneArr = phones.map((p: any) => typeof p === "object" ? p.value : p)
-      updates.business_phone = JSON.stringify(phoneArr)
+      // Store complete objects with both value and title
+      updates.business_phone = JSON.stringify(phones)
     }
     
     // business_urlname change (max once every 7 days)

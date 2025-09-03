@@ -20,8 +20,8 @@ interface Service {
   description: string;
   price_base: number;
   duration_minutes: number;
-  available_quotation: boolean;
-  available_booking: boolean;
+  active_quotation: boolean;
+  active_booking: boolean;
   demo: boolean | null;
   has_image: boolean | null;
   serviceitem?: ServiceItem[];

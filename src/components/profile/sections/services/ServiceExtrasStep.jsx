@@ -188,9 +188,6 @@ export default function ServiceExtrasStep({
                     <h3 className="text-lg font-semibold mb-2" style={{ color: themeColorText }}>
                         {t('serviceExtrasTitle') || 'Service Extras'}
                     </h3>
-                    <p className="text-gray-600 text-sm">
-                        {t('serviceExtrasDescription') || 'Select any additional services you\'d like to include with your booking.'}
-                    </p>
                 </div>
 
                 <div className="space-y-4 mb-6">

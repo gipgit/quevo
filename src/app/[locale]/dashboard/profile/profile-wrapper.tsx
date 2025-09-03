@@ -252,8 +252,8 @@ export default function ProfileWrapper({
       if (res.ok) {
         showToast({
           type: "success",
-          title: t("toasts.success.info.title"),
-          message: t("toasts.success.info.message"),
+          title: t("toasts.success.title"),
+          message: t("toasts.success.message"),
           duration: 4000
         })
         setOriginalProfileData(JSON.parse(JSON.stringify(currentProfileData)));
@@ -312,8 +312,8 @@ export default function ProfileWrapper({
       if (res.ok) {
         showToast({
           type: "success",
-          title: t("toasts.success.links.title"),
-          message: t("toasts.success.links.message"),
+          title: t("toasts.success.title"),
+          message: t("toasts.success.message"),
           duration: 4000
         })
         setOriginalSocialLinks(JSON.parse(JSON.stringify(currentSocialLinks)));
@@ -364,8 +364,8 @@ export default function ProfileWrapper({
       if (res.ok) {
         showToast({
           type: "success",
-          title: t("toasts.success.payments.title"),
-          message: t("toasts.success.payments.message"),
+          title: t("toasts.success.title"),
+          message: t("toasts.success.message"),
           duration: 4000
         })
         setOriginalPaymentMethods(JSON.parse(JSON.stringify(currentPaymentMethods)));
@@ -422,8 +422,8 @@ export default function ProfileWrapper({
       if (res.ok) {
         showToast({
           type: "success",
-          title: t("toasts.success.settings.title"),
-          message: t("toasts.success.settings.message"),
+          title: t("toasts.success.title"),
+          message: t("toasts.success.message"),
           duration: 4000
         })
         setOriginalProfileSettings(JSON.parse(JSON.stringify(currentProfileSettings)));
@@ -496,8 +496,8 @@ export default function ProfileWrapper({
         
         showToast({
           type: "success",
-          title: t("toasts.success.images.title"),
-          message: t("toasts.success.images.message"),
+          title: t("toasts.success.title"),
+          message: t("toasts.success.message"),
           duration: 4000
         })
       } else {

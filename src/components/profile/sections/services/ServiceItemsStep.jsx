@@ -248,7 +248,7 @@ export default function ServiceItemsStep({
                                         <p className="text-xs md:text-sm font-medium">
                                             {isSelected 
                                                 ? `€${(parseFloat(item.price_base) * selectedServiceItems[item.service_item_id]?.quantity).toFixed(2)}`
-                                                : `${parseFloat(item.price_base).toFixed(2)}€${item.price_type === 'per_unit' && (item.price_unit ? ` / ${item.price_unit}` : '')}`
+                                                : `${parseFloat(item.price_base).toFixed(2)}€${item.price_type === 'per_unit' && item.price_unit ? ` / ${item.price_unit}` : ''}`
                                             }
                                         </p>
                                     </div>

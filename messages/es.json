@@ -220,11 +220,13 @@
     "selectEvent": "Seleccionar un Evento",
     "selectEventDescription": "Elige el evento que te gustaría reservar",
     "select": "Seleccionar",
-    "serviceItemsTitle": "Servicios a incluir",
+    "serviceItemsTitle": "¿Quieres simular una cotización?",
     "serviceItemsDescription": "Selecciona servicios adicionales que te gustaría incluir en tu solicitud",
-    "serviceExtrasTitle": "Servicios Adicionales",
+    "serviceExtrasTitle": "¿Necesitas extras?",
     "serviceExtrasDescription": "Selecciona servicios adicionales que te gustaría incluir con tu reserva.",
     "noExtrasAvailable": "No hay servicios adicionales disponibles para este servicio.",
+    "noRequirementsAvailable": "No hay requisitos disponibles para este servicio.",
+    "noQuestionsAvailable": "No hay preguntas disponibles para este servicio.",
     "totalExtras": "Total de Adicionales",
     "errorFetchingServiceExtras": "Error al cargar los servicios adicionales.",
     "requirementsAndQuestionsTitle": "Requisitos e información",
@@ -694,6 +696,7 @@
     "addOption": "Agregar Opción",
     "option": "Opción",
     "required": "Requerido",
+    "optional": "Opcional",
     "thisFieldIsRequired": "Este campo es obligatorio",
     "maxLength": "Longitud Máxima",
     "requirements": "Requisitos",
@@ -751,6 +754,8 @@
     "crop": "Recortar",
     "availableBooking": "Disponible para Reserva",
     "availableBookingDescription": "Permitir a los clientes reservar este servicio en línea",
+    "activeBooking": "Reserva Activa",
+    "activeQuotation": "Cotización Activa",
     "requireConsentNewsletter": "Consentimiento Newsletter",
     "requireConsentNewsletterDescription": "Solicitar consentimiento para enviar suscripciones a newsletter",
     "availableQuotation": "Cotización en Línea",
@@ -1075,6 +1080,18 @@
       "fonts": "Fuente",
       "saveChanges": "Guardar Cambios",
       "exampleButton": "Botón de Ejemplo"
+    },
+    "toasts": {
+      "success": {
+        "title": "Éxito",
+        "message": "Cambios guardados exitosamente"
+      },
+      "error": {
+        "saveFailed": {
+          "title": "Error al Guardar",
+          "message": "No se pudieron guardar los cambios. Por favor, inténtalo de nuevo."
+        }
+      }
     }
   },
   "serviceRequests": {

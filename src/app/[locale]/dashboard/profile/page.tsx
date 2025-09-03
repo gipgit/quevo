@@ -4,6 +4,38 @@ import prisma from "@/lib/prisma"
 import ProfileWrapper from "./profile-wrapper"
 import { getCurrentBusinessIdFromCookie } from "@/lib/server-business-utils"
 
+// Mapping function to convert database payment method names to frontend config IDs
+function mapPaymentMethodNameToId(methodName: string): string {
+  const mapping: Record<string, string> = {
+    'PayPal': 'paypal',
+    'Bank Transfer': 'bank_transfer',
+    'Cash': 'cash',
+    'POS': 'pos',
+    'Stripe': 'stripe',
+    'Satispay': 'satispay',
+    'Credit Card': 'credit_card',
+    'Apple Pay': 'apple_pay',
+    'Google Pay': 'google_pay',
+    'Amazon Pay': 'amazon_pay',
+    'Klarna': 'klarna',
+    'Sofort': 'sofort',
+    'iDEAL': 'ideal',
+    'Bancontact': 'bancontact',
+    'Giropay': 'giropay',
+    'EPS': 'eps',
+    'Multibanco': 'multibanco',
+    'Trustly': 'trustly',
+    'Paysafecard': 'paysafecard',
+    'Skrill': 'skrill',
+    'Neteller': 'neteller',
+    'Rapid Transfer': 'rapid_transfer',
+    'MyBank': 'mybank',
+    'BPAY': 'bpay'
+  }
+  
+  return mapping[methodName] || methodName.toLowerCase().replace(/\s+/g, '_')
+}
+
 export default async function ProfilePage() {
   const session = await auth()
   
@@ -80,10 +112,12 @@ export default async function ProfilePage() {
 
   // Transform payment methods to expected format
   const paymentMethods = payments.map(pm => ({
-    type: String(pm.paymentmethod?.method_name || pm.payment_method_id),
+    type: mapPaymentMethodNameToId(pm.paymentmethod?.method_name || ''),
     visible: pm.visible ?? false,
     details: pm.method_details_json || {},
   }))
+
+
 
   return (
     <ProfileWrapper 

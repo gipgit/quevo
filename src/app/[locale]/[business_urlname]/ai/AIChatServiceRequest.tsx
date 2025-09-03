@@ -80,7 +80,7 @@ export default function AIChatServiceRequest({
                   </svg>
                   {service.duration_minutes} min
                 </div>
-                {service.available_booking && (
+                {service.active_booking && (
                   <div className="flex items-center gap-1">
                     <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
@@ -102,7 +102,7 @@ export default function AIChatServiceRequest({
                 color: '#FFFFFF' 
               }}
               onClick={() => {
-                if (selectedService.available_booking) {
+                if (selectedService.active_booking) {
                   setCurrentStep('datetime_selection');
                 } else {
                   setCurrentStep('customer_details');
@@ -224,10 +224,10 @@ export default function AIChatServiceRequest({
     return (
       <div className="space-y-3">
         <div className="flex items-center gap-2 mb-4">
-          {(data.services.length > 1 || selectedService?.available_booking) && (
+          {(data.services.length > 1 || selectedService?.active_booking) && (
             <button
               onClick={() => {
-                if (selectedService?.available_booking) {
+                if (selectedService?.active_booking) {
                   setCurrentStep('datetime_selection');
                 } else if (data.services.length > 1) {
                   setCurrentStep('service_selection');

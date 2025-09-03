@@ -304,14 +304,14 @@ export default function AIChatClientWrapper({ initialData }: AIChatClientWrapper
       
       // Determine the next step based on service requirements
       let nextStep = 'customer_details';
-      if (selectedService.available_booking) {
+      if (selectedService.active_booking) {
         nextStep = 'datetime_selection';
       }
 
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: `Perfetto! Hai scelto "${selectedService.service_name}". ${selectedService.available_booking ? 'Ora scegli data e ora per la prenotazione.' : 'Ora compila i tuoi dati per completare la prenotazione.'}`,
+        content: `Perfetto! Hai scelto "${selectedService.service_name}". ${selectedService.active_booking ? 'Ora scegli data e ora per la prenotazione.' : 'Ora compila i tuoi dati per completare la prenotazione.'}`,
         timestamp: new Date(),
         data: { 
           type: 'service_request_init', 
@@ -773,7 +773,7 @@ function handleSimplePredefinedRequest(message: string, data: any) {
 
   // Availability
   if (lowerMessage.includes('disponibilità') || lowerMessage.includes('quando') || lowerMessage.includes('orari')) {
-    const availableServices = data.services.filter((service: any) => service.available_booking);
+    const availableServices = data.services.filter((service: any) => service.active_booking);
     
     if (availableServices.length === 0) {
       return {
@@ -901,7 +901,7 @@ async function generateAIResponse(userMessage: string, data: any) {
 
   // Quotation
   if (message.includes('preventivo') || message.includes('quotation') || message.includes('prezzo') || message.includes('costo')) {
-    const availableServices = data.services.filter((service: any) => service.available_quotation === true);
+    const availableServices = data.services.filter((service: any) => service.active_quotation === true);
     
     if (availableServices.length === 0) {
       return {
@@ -921,7 +921,7 @@ async function generateAIResponse(userMessage: string, data: any) {
 
   // Availability Check
   if (message.includes('disponibilità') || message.includes('disponibilita') || message.includes('controlla disponibilità') || message.includes('controlla disponibilita')) {
-    const availableServices = data.services.filter((service: any) => service.available_booking === true);
+    const availableServices = data.services.filter((service: any) => service.active_booking === true);
     
     if (availableServices.length === 0) {
       return {

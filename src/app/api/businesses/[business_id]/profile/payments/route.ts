@@ -2,6 +2,38 @@ import { NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 
+// Reverse mapping function to convert frontend payment method IDs to database method names
+function mapPaymentMethodIdToName(methodId: string): string {
+  const mapping: Record<string, string> = {
+    'paypal': 'PayPal',
+    'bank_transfer': 'Bank Transfer',
+    'cash': 'Cash',
+    'pos': 'POS',
+    'stripe': 'Stripe',
+    'satispay': 'Satispay',
+    'credit_card': 'Credit Card',
+    'apple_pay': 'Apple Pay',
+    'google_pay': 'Google Pay',
+    'amazon_pay': 'Amazon Pay',
+    'klarna': 'Klarna',
+    'sofort': 'Sofort',
+    'ideal': 'iDEAL',
+    'bancontact': 'Bancontact',
+    'giropay': 'Giropay',
+    'eps': 'EPS',
+    'multibanco': 'Multibanco',
+    'trustly': 'Trustly',
+    'paysafecard': 'Paysafecard',
+    'skrill': 'Skrill',
+    'neteller': 'Neteller',
+    'rapid_transfer': 'Rapid Transfer',
+    'mybank': 'MyBank',
+    'bpay': 'BPAY'
+  }
+  
+  return mapping[methodId] || methodId
+}
+
 export async function PUT(
   request: Request,
   { params }: { params: { business_id: string } }
@@ -25,9 +57,12 @@ export async function PUT(
       // Use transaction for better performance and consistency
       await prisma.$transaction(async (tx) => {
         for (const pm of body.payments) {
+          // Convert frontend ID to database method name
+          const methodName = mapPaymentMethodIdToName(pm.type)
+          
           // Find payment_method_id by name
           const method = await tx.paymentmethod.findFirst({ 
-            where: { method_name: pm.type } 
+            where: { method_name: methodName } 
           })
           
           if (!method) continue

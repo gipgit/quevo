@@ -192,8 +192,8 @@ export async function getServiceRequestServicesData(businessUrlname) {
                 duration_minutes: true,
                 buffer_minutes: true,
                 price_base: true, // Prisma will return this as a Decimal object
-                available_booking: true, 
-                available_quotation: true, // Add available_quotation field
+                active_booking: true, 
+                                  active_quotation: true, // Add active_quotation field
                 category_id: true, // To link with categories
                 display_order: true, // Add display_order for proper ordering
                 demo: true, // Add demo field for image path logic

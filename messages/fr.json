@@ -74,6 +74,7 @@
     "loginButton": "Se connecter",
     "createAccountLink": "Créer un compte",
     "required": "Obligatoire",
+    "optional": "Optionnel",
     "thisFieldIsRequired": "Ce champ est obligatoire"
   },
   "FAQ": {
@@ -221,11 +222,13 @@
     "selectEvent": "Sélectionner un événement",
     "selectEventDescription": "Choisissez l'événement que vous souhaitez réserver",
     "select": "Sélectionner",
-    "serviceItemsTitle": "Services à inclure",
+    "serviceItemsTitle": "Voulez-vous simuler un devis ?",
     "serviceItemsDescription": "Sélectionnez les services supplémentaires que vous souhaitez inclure dans votre demande",
-    "serviceExtrasTitle": "Services Supplémentaires",
+    "serviceExtrasTitle": "Besoin d'extras ?",
     "serviceExtrasDescription": "Sélectionnez les services supplémentaires que vous souhaitez inclure avec votre réservation.",
     "noExtrasAvailable": "Aucun service supplémentaire disponible pour ce service.",
+    "noRequirementsAvailable": "Aucune exigence disponible pour ce service.",
+    "noQuestionsAvailable": "Aucune question disponible pour ce service.",
     "totalExtras": "Total des Suppléments",
     "errorFetchingServiceExtras": "Erreur lors du chargement des services supplémentaires.",
     "requirementsAndQuestionsTitle": "Exigences et informations",
@@ -535,6 +538,8 @@
     "crop": "Recadrer",
     "availableBooking": "Disponible pour Réservation",
     "availableBookingDescription": "Permettre aux clients de réserver ce service en ligne",
+    "activeBooking": "Réservation Active",
+    "activeQuotation": "Devis Actif",
     "requireConsentNewsletter": "Consentement Newsletter",
     "requireConsentNewsletterDescription": "Demander le consentement pour envoyer des abonnements newsletter",
     "availableQuotation": "Devis en Ligne",
@@ -769,6 +774,18 @@
       "fonts": "Polices",
       "saveChanges": "Enregistrer les modifications",
       "exampleButton": "Bouton d'exemple"
+    },
+    "toasts": {
+      "success": {
+        "title": "Succès",
+        "message": "Modifications enregistrées avec succès"
+      },
+      "error": {
+        "saveFailed": {
+          "title": "Échec de l'enregistrement",
+          "message": "Impossible d'enregistrer les modifications. Veuillez réessayer."
+        }
+      }
     }
   },
   "onboarding": {

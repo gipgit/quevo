@@ -95,8 +95,8 @@ interface Service {
   price_base: any
   price_type: string | null
   has_items: boolean | null
-  available_booking: boolean | null
-  available_quotation: boolean | null
+  active_booking: boolean | null
+  active_quotation: boolean | null
   is_active: boolean | null
   display_order: number | null
   servicecategory: {

@@ -584,8 +584,8 @@ model service {
   price_unit                      String?                   @db.VarChar(50)
   has_extras                      Boolean?                  @default(false)
   has_items                       Boolean?                  @default(false)
-  available_booking               Boolean?                  @default(false)
-  available_quotation             Boolean?                  @default(false)
+  active_booking                  Boolean?                  @default(false)
+  active_quotation                Boolean?                  @default(false)
   require_phone                   Boolean?                  @default(true)
   require_consent_pdp             Boolean?                  @default(true)
   require_consent_newsletter      Boolean?                  @default(false)
@@ -653,6 +653,7 @@ model servicerequest {
   customer_notes                    String?
   internal_notes                    String?                             @db.VarChar(200)
   price_subtotal                    Decimal?                            @db.Decimal(10, 2)
+  selected_service_extras_snapshot  Json?
   selected_service_items_snapshot   Json?
   question_responses_snapshot       Json?
   requirement_responses_snapshot    Json?
@@ -885,6 +886,11 @@ model serviceevent {
   service                  service                    @relation(fields: [service_id], references: [service_id], onDelete: Cascade)
   serviceeventavailability serviceeventavailability[]
   servicerequest           servicerequest[]
+
+  @@index([is_active], map: "idx_serviceevent_active")
+  @@index([service_id], map: "idx_serviceevent_service")
+  @@index([service_id, is_active], map: "idx_serviceevent_service_active")
+  @@index([event_type], map: "idx_serviceevent_type")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -903,6 +909,13 @@ model serviceeventavailability {
   date_updated        DateTime?     @default(now()) @db.Timestamp(6)
   business            business      @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
   serviceevent        serviceevent? @relation(fields: [event_id], references: [event_id], onDelete: Cascade)
+
+  @@index([business_id, day_of_week], map: "idx_serviceeventavailability_business_day")
+  @@index([business_id, event_id, day_of_week], map: "idx_serviceeventavailability_business_event_day")
+  @@index([date_effective_from, date_effective_to], map: "idx_serviceeventavailability_effective_dates")
+  @@index([event_id, business_id], map: "idx_serviceeventavailability_event_business")
+  @@index([is_recurring], map: "idx_serviceeventavailability_recurring")
+  @@index([time_start, time_end], map: "idx_serviceeventavailability_time_range")
 }
 
 model aiassistantmessagehistory {

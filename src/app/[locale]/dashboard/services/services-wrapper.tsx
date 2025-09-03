@@ -83,11 +83,11 @@ interface Service {
   price_unit: string | null
   has_items: boolean | null
   has_extras: boolean | null
-  available_booking: boolean | null
+  active_booking: boolean | null
   require_consent_newsletter: boolean | null
   require_consent_newsletter_text: string | null
   require_phone: boolean | null
-  available_quotation: boolean | null
+  active_quotation: boolean | null
   is_active: boolean | null
   display_order: number | null
   demo: boolean | null
