@@ -1,63 +1,35 @@
 // components/landing/SectionFeatures.jsx
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import FeaturePreview from './FeaturePreview';
 
 export default function SectionFeatures({ locale }) {
   const t = useTranslations('Landing');
+  const [selectedFeature, setSelectedFeature] = useState('serviceRequests');
 
   // Features data
   const featuresCards = [
     {
-      icon: "✓",
-      title: t('Features.cards.serviceListing.title'),
-      description: t('Features.cards.serviceListing.description')
-    },
-    {
+      id: 'serviceRequests',
       icon: "✓",
       title: t('Features.cards.serviceRequests.title'),
       description: t('Features.cards.serviceRequests.description')
     },
     {
+      id: 'appointmentsScheduling',
       icon: "✓",
       title: t('Features.cards.appointmentsScheduling.title'),
       description: t('Features.cards.appointmentsScheduling.description')
     },
     {
+      id: 'quoteSimulation',
       icon: "✓",
       title: t('Features.cards.quoteSimulation.title'),
       description: t('Features.cards.quoteSimulation.description')
     },
-    {
-      icon: "✓",
-      title: t('Features.cards.qrWebsite.title'),
-      description: t('Features.cards.qrWebsite.description')
-    },
-    {
-      icon: "✓",
-      title: t('Features.cards.digitalMenu.title'),
-      description: t('Features.cards.digitalMenu.description')
-    },
-    {
-      icon: "✓",
-      title: t('Features.cards.mailingList.title'),
-      description: t('Features.cards.mailingList.description')
-    },
-    {
-      icon: "✓",
-      title: t('Features.cards.fidelityCard.title'),
-      description: t('Features.cards.fidelityCard.description')
-    },
-    {
-      icon: "✓",
-      title: t('Features.cards.surveys.title'),
-      description: t('Features.cards.surveys.description')
-    },
-    {
-      icon: "✓",
-      title: t('Features.cards.promotions.title'),
-      description: t('Features.cards.promotions.description')
-    }
+    
   ];
 
   return (
@@ -73,28 +45,52 @@ export default function SectionFeatures({ locale }) {
           </p>
         </div>
 
-        {/* Features Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2 lg:gap-4 max-w-7xl mx-auto mb-8">
-          {featuresCards.map((card, index) => (
-            <div
-              key={index}
-              className="flex flex-row lg:flex-col gap-4 lg:gap-0 rounded-2xl p-2 lg:p-4 items-start"
-            >
-              <div className="flex-shrink-0 w-8 h-8 lg:w-8 lg:h-8 rounded-full bg-blue-100 flex items-center justify-center mb-2">
-                <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
+        {/* 2-Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 max-w-7xl mx-auto">
+          {/* Left Column - Features List */}
+          <div className="lg:col-span-2 space-y-6">
+            {featuresCards.map((card, index) => (
+              <div
+                key={index}
+                onClick={() => setSelectedFeature(card.id)}
+                className={`flex flex-row gap-4 p-3 items-start cursor-pointer transition-all duration-200 border-l-4 ${
+                  selectedFeature === card.id 
+                    ? 'border-blue-500 bg-blue-50/30' 
+                    : 'border-transparent hover:border-gray-300 hover:bg-gray-50/50'
+                }`}
+              >
+                <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
+                  selectedFeature === card.id ? 'bg-blue-500' : 'bg-gray-200'
+                }`}>
+                  <svg className={`w-4 h-4 ${
+                    selectedFeature === card.id ? 'text-white' : 'text-gray-600'
+                  }`} fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className={`text-lg font-semibold mb-1 leading-tight ${
+                    selectedFeature === card.id ? 'text-blue-900' : 'text-gray-900'
+                  }`}>
+                    {card.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    {card.description}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-1 lg:mb-2 leading-tight">
-                  {card.title}
-                </h3>
-                <p className="text-sm text-gray-600">
-                  {card.description}
-                </p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Right Column - Feature Preview */}
+          <div className="lg:col-span-3 hidden lg:block">
+            <FeaturePreview featureType={selectedFeature} locale={locale} />
+          </div>
+        </div>
+
+        {/* Mobile Preview - Show below cards on mobile */}
+        <div className="lg:hidden mt-8">
+          <FeaturePreview featureType={selectedFeature} locale={locale} />
         </div>
       </div>
     </section>

@@ -763,7 +763,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
           ></div>
         </div>
         {/* Profile image positioned to align with navbar content */}
-        <div className="absolute bottom-2 left-6 w-16 h-16 rounded-full overflow-hidden bg-gray-100 border-3 border-white shadow-lg">
+        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 md:left-auto md:transform-none md:mx-auto w-16 h-16 rounded-full overflow-hidden bg-gray-100 border-3 border-white shadow-lg">
           {businessData.business_img_profile ? (
             <Image
               src={businessData.business_img_profile}
@@ -786,7 +786,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
       <div className="px-6 lg:px-8 py-2 lg:py-5 pb-0">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           {/* Left Column - Board Info */}
-          <div className="flex-1 flex items-center gap-x-4">
+          <div className="flex-1 flex items-center justify-center lg:justify-start gap-x-4">
             <div className="hidden lg:block w-14 h-14 lg:w-20 lg:h-20 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
                   {businessData.business_img_profile ? (
                     <Image
@@ -808,7 +808,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
               <div className="flex flex-col gap-y-3 gap-x-8">
                 <div>
                   <h1 className="text-2xl md:text-3xl font-bold">{boardData.board_title}</h1>
-                  <div className="flex items-center flex-wrap gap-y-1 gap-x-2 mt-1">
+                  <div className="hidden lg:flex items-center flex-wrap gap-y-1 gap-x-2 mt-1">
                   <p className="font-semibold">{businessData.business_name}</p>
                   {boardData.service && (
                        <div className="text-sm">
@@ -1279,7 +1279,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
 
           {/* Timeline */}
           <div className="relative">
-            <div className="absolute left-[-8px] lg:left-5 top-0 bottom-0 w-0.5 bg-blue-500"></div>
+            <div className="absolute left-[-8px] lg:left-5 top-0 bottom-0 w-0.5 bg-zinc-400"></div>
             <div className="space-y-2 lg:space-y-4">
               {/* Other timeline actions */}
               {actions.map((action) => (

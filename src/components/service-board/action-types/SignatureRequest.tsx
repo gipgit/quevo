@@ -157,28 +157,24 @@ export default function SignatureRequest({ details, onUpdate, action_id }: Props
                </div>
              </div>
                      ) : (
-                                         <div className="bg-gradient-to-t from-blue-50 to-white border-2 border-blue-200 rounded-lg p-3 md:p-4">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0">
-                  <div className="flex items-center space-x-2 md:space-x-3">
-                                         {/* Edit Icon */}
-                     <div className="p-1.5 md:p-2 bg-blue-100 text-blue-600 rounded-lg">
-                       <img src="/icons/sanity/edit.svg" alt="Edit" className="w-5 h-5 md:w-7 md:h-7" />
-                     </div>
+                                         <div className="bg-gradient-to-t from-blue-50 to-white border-[1px] border-blue-200 rounded-lg p-3 md:p-4">
+                <div className="flex items-center justify-between gap-2 md:gap-3">
+                  <div className="flex items-center space-x-2 md:space-x-3 min-w-0 flex-1">
                     {/* File Type Icon */}
-                    <div className="flex items-center justify-center">
+                    <div className="flex items-center justify-center flex-shrink-0">
                       <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
                       </svg>
                     </div>
                     {/* Document Title */}
-                    <div className="flex-1 min-w-0">
-                      <h5 className="text-sm md:text-base font-medium text-gray-900 truncate">
+                    <div className="min-w-0 flex-1">
+                      <h5 className="text-xs md:text-base font-medium text-gray-900 truncate">
                         {details.document_name || t('document')}
                       </h5>
                     </div>
                   </div>
                   {/* Action Buttons */}
-                  <div className="flex items-center gap-1.5 md:gap-2">
+                  <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
                     <button
                       onClick={handleSecureView}
                       disabled={isViewing}
@@ -193,7 +189,7 @@ export default function SignatureRequest({ details, onUpdate, action_id }: Props
                     <button
                       onClick={handleSecureDownload}
                       disabled={isDownloading}
-                      className="inline-flex items-center px-2 py-1.5 md:px-3 md:py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50 text-xs md:text-sm font-medium"
+                      className="inline-flex items-center px-2 py-1.5 md:px-3 md:py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50 text-xs md:text-sm font-medium"
                     >
                       <svg
                         className="w-3 h-3 md:w-4 md:h-4 mr-1.5 md:mr-2"

@@ -47,14 +47,14 @@ export default function Header() {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      <header className={`fixed top-4 left-4 right-4 z-50 transition-all duration-300 rounded-2xl ${
         isScrolled 
-          ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200' 
-          : 'bg-transparent'
+          ? 'bg-white/95 backdrop-blur-md shadow-lg border border-gray-200' 
+          : 'bg-white/90 backdrop-blur-sm'
       }`}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            {/* Hamburger Menu Button */}
+            {/* Mobile Hamburger Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="lg:hidden flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-900 transition-colors"
@@ -86,14 +86,26 @@ export default function Header() {
               </svg>
             </button>
 
-            {/* Logo */}
-            <Link href="/" className="flex items-center space-x-2">
-              <img src="/icons/home.png" alt={tHeader('logoAlt')} className="h-4 lg:h-8 w-4 lg:w-8" />
+            {/* Left Column - Logo and Locale Switcher (lg+) */}
+            <div className="hidden lg:flex items-center space-x-4 w-1/3">
+              <Link href="/" className="flex items-center space-x-2">
+                <img src="/icons/home.png" alt={tHeader('logoAlt')} className="h-8 w-8" />
+                <span className="text-xl font-bold text-gray-900">{tHeader('brandName')}</span>
+              </Link>
+              <LocaleSwitcherButton 
+                onClick={() => setIsModalOpen(true)}
+                className="text-gray-600 hover:text-gray-800"
+              />
+            </div>
+
+            {/* Mobile Logo */}
+            <Link href="/" className="lg:hidden flex items-center space-x-2">
+              <img src="/icons/home.png" alt={tHeader('logoAlt')} className="h-4 w-4" />
               <span className="text-xl font-bold text-gray-900">{tHeader('brandName')}</span>
             </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-8 ml-8">
+            {/* Center Column - Desktop Navigation (lg+) */}
+            <nav className="hidden lg:flex items-center justify-center space-x-8 w-1/3">
               <Link href="/features" className="text-gray-600 hover:text-gray-900 transition-colors">
                 {tHeader('features')}
               </Link>
@@ -105,16 +117,11 @@ export default function Header() {
               </Link>
             </nav>
 
-            {/* Right side - Auth buttons and locale switcher */}
-            <div className="flex items-center space-x-2 lg:space-x-4 ml-auto">
-              <LocaleSwitcherButton 
-                onClick={() => setIsModalOpen(true)}
-                className="hidden lg:flex text-gray-600 hover:text-gray-800"
-              />
-              
+            {/* Right Column - Auth buttons (lg+) */}
+            <div className="hidden lg:flex items-center justify-end space-x-4 w-1/3">
               <Link 
                 href="/signin/business" 
-                className="border border-gray-900 text-gray-900 text-sm lg:text-base px-4 py-2 rounded-md hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                className="border border-gray-900 text-gray-900 text-base px-4 py-2 rounded-md hover:bg-gray-100 hover:text-gray-900 transition-colors"
               >
                 {tHeader('signIn')}
               </Link>
@@ -122,6 +129,23 @@ export default function Header() {
               <Link 
                 href="/signup/business" 
                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+              >
+                {tCommon('getStarted')}
+              </Link>
+            </div>
+
+            {/* Mobile Auth buttons */}
+            <div className="lg:hidden flex items-center space-x-2">
+              <Link 
+                href="/signin/business" 
+                className="border border-gray-900 text-gray-900 text-sm px-3 py-1.5 rounded-md hover:bg-gray-100 hover:text-gray-900 transition-colors"
+              >
+                {tHeader('signIn')}
+              </Link>
+              
+              <Link 
+                href="/signup/business" 
+                className="bg-blue-600 text-white text-sm px-3 py-1.5 rounded-md hover:bg-blue-700 transition-colors"
               >
                 {tCommon('getStarted')}
               </Link>

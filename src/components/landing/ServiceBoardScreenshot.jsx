@@ -12,7 +12,7 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
          style={{ fontFamily: theme?.fontFamily || 'Inter' }}
        >
         {/* Mobile Header with Cover Image */}
-        <div className="w-full h-32 relative" style={{ background: `linear-gradient(to bottom right, ${theme?.primaryColor || '#3B82F6'}, ${theme?.secondaryColor || '#1E40AF'})` }}>
+        <div className="w-full h-20 relative" style={{ background: `linear-gradient(to bottom right, ${theme?.primaryColor || '#3B82F6'}, ${theme?.secondaryColor || '#1E40AF'})` }}>
           {business.coverImage ? (
             <Image
               src={business.coverImage}
@@ -33,18 +33,18 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
           />
           
           {/* Profile Image */}
-          <div className="absolute bottom-2 left-6 w-16 h-16 rounded-full overflow-hidden bg-gray-100 border-2 border-white shadow-lg">
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full overflow-hidden bg-gray-100 border-2 border-white shadow-lg">
             {business.profileImage ? (
               <Image
                 src={business.profileImage}
                 alt=""
-                width={64}
-                height={64}
+                width={48}
+                height={48}
                 className="h-full w-full object-cover"
               />
             ) : (
               <div className="h-full w-full flex items-center justify-center bg-gray-200">
-                <span className="text-lg font-medium text-gray-500">
+                <span className="text-sm font-medium text-gray-500">
                   {business.name.charAt(0)}
                 </span>
               </div>
@@ -53,14 +53,14 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
         </div>
 
         {/* Content Area */}
-        <div className="pt-8 px-4">
+        <div className="pt-6 px-4">
           {/* Business Info */}
           <div className="text-center mb-3">
-            <h2 className="text-lg font-bold mb-1" style={{ color: theme?.textColor || '#1F2937' }}>
-              {business.name}
-            </h2>
-            <h3 className="text-sm font-medium text-gray-600 mb-2" style={{ color: theme?.textColor || '#1F2937' }}>
+            <h2 className="text-sm font-medium text-gray-600 mb-0.5" style={{ color: theme?.textColor || '#1F2937' }}>
               {business.boardTitle || 'Service Board'}
+            </h2>
+            <h3 className="text-xs font-medium mb-1" style={{ color: theme?.textColor || '#1F2937' }}>
+              {business.name}
             </h3>
             <span className="inline-block px-3 py-1 text-xs font-mono font-bold bg-gray-100 text-gray-700 rounded-full">
               {business.boardRef}
@@ -81,24 +81,69 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
           </div>
 
           {/* Timeline Preview */}
+          <div className="relative">
+            {/* Timeline Line */}
+            <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-300"></div>
+            
           <div className="space-y-3">
-            {/* Timeline Item 1 */}
+              {/* Timeline Item 1 - Payment Request */}
             <div className="flex items-start space-x-3">
-              <div className="w-3 h-3 rounded-full bg-green-500 border-2 border-green-600 mt-2 flex-shrink-0"></div>
-              <div className="flex-1 bg-white border border-gray-200 rounded-lg p-3 text-center">
+                <div className="w-3 h-3 rounded-full bg-yellow-500 border-2 border-yellow-600 mt-2 flex-shrink-0 relative z-10"></div>
+                <div className="flex-1 bg-white border border-gray-200 rounded-lg p-3 ml-2">
                 <div className="text-xs text-gray-500 mb-1">2 hours ago</div>
-                <div className="text-sm font-medium text-gray-900">Appointment Confirmed</div>
-                <div className="text-xs text-gray-600">Your appointment has been confirmed for tomorrow</div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="text-lg font-bold text-gray-900">€ 150.00</div>
+                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">pending</span>
+                  </div>
+                  <div className="text-sm font-medium text-gray-900 mb-1">Payment Request</div>
+                  <div className="text-xs text-gray-600">Service consultation fee</div>
+                </div>
+              </div>
+
+              {/* Timeline Item 2 - Document Download */}
+              <div className="flex items-start space-x-3">
+                <div className="w-3 h-3 rounded-full bg-red-500 border-2 border-red-600 mt-2 flex-shrink-0 relative z-10"></div>
+                <div className="flex-1 bg-white border border-gray-200 rounded-lg p-3 ml-2">
+                  <div className="text-xs text-gray-500 mb-1">1 day ago</div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-red-100 text-red-800">PDF</span>
+                    <h4 className="text-sm font-medium text-gray-900">Service Agreement</h4>
+                  </div>
+                  <div className="text-sm font-medium text-gray-900 mb-1">Document Download</div>
+                  <div className="text-xs text-gray-600">Contract and terms document</div>
+                </div>
+              </div>
+
+              {/* Timeline Item 3 - Milestone Update */}
+              <div className="flex items-start space-x-3">
+                <div className="w-3 h-3 rounded-full bg-blue-500 border-2 border-blue-600 mt-2 flex-shrink-0 relative z-10"></div>
+                <div className="flex-1 bg-white border border-gray-200 rounded-lg p-3 ml-2">
+                  <div className="text-xs text-gray-500 mb-1">2 days ago</div>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-sm font-semibold text-gray-900">Initial Consultation</h3>
+                    <div className="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center">
+                      <svg className="h-4 w-4 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="text-sm font-medium text-gray-900 mb-1">Milestone Update</div>
+                  <div className="text-xs text-gray-600">Project milestone in progress</div>
               </div>
             </div>
 
-            {/* Timeline Item 2 */}
+              {/* Timeline Item 4 - Checklist */}
             <div className="flex items-start space-x-3">
-              <div className="w-3 h-3 rounded-full bg-blue-500 border-2 border-blue-600 mt-2 flex-shrink-0"></div>
-              <div className="flex-1 bg-white border border-gray-200 rounded-lg p-3 text-center">
-                <div className="text-xs text-gray-500 mb-1">1 day ago</div>
-                <div className="text-sm font-medium text-gray-900">Service Request Created</div>
-                <div className="text-xs text-gray-600">New service request submitted successfully</div>
+                <div className="w-3 h-3 rounded-full bg-green-500 border-2 border-green-600 mt-2 flex-shrink-0 relative z-10"></div>
+                <div className="flex-1 bg-white border border-gray-200 rounded-lg p-3 ml-2">
+                  <div className="text-xs text-gray-500 mb-1">3 days ago</div>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-sm font-semibold text-gray-900">Requirements Checklist</h3>
+                    <span className="text-xs font-medium text-gray-700">75%</span>
+                  </div>
+                  <div className="text-sm font-medium text-gray-900 mb-1">Checklist</div>
+                  <div className="text-xs text-gray-600">Project requirements verification</div>
+                </div>
               </div>
             </div>
           </div>
@@ -164,22 +209,65 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
           <div className="grid grid-cols-8 gap-1">
             {/* Timeline Section - Even Narrower */}
             <div className="col-span-4 p-3">
+              <div className="relative">
+                {/* Timeline Line */}
+                <div className="absolute left-3 top-0 bottom-0 w-0.5 bg-gray-300"></div>
+                
               <div className="space-y-2">
                 <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
                   <div className="flex items-start space-x-2">
-                    <div className="w-3 h-3 rounded-full bg-green-500 border-2 border-green-600 mt-1 flex-shrink-0"></div>
-                    <div className="flex-1">
-                      <div className="text-sm font-medium text-gray-900">Appointment Confirmed</div>
+                      <div className="w-3 h-3 rounded-full bg-yellow-500 border-2 border-yellow-600 mt-1 flex-shrink-0 relative z-10"></div>
+                      <div className="flex-1 ml-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="text-lg font-bold text-gray-900">€ 150.00</div>
+                          <span className="px-1.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">pending</span>
+                        </div>
+                        <div className="text-sm font-medium text-gray-900">Payment Request</div>
                       <div className="text-xs text-gray-500">2 hours ago</div>
                     </div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
                   <div className="flex items-start space-x-2">
-                    <div className="w-3 h-3 rounded-full bg-blue-500 border-2 border-blue-600 mt-1 flex-shrink-0"></div>
-                    <div className="flex-1">
-                      <div className="text-sm font-medium text-gray-900">Service Request Created</div>
-                      <div className="text-xs text-gray-500">1 day ago</div>
+                      <div className="w-3 h-3 rounded-full bg-red-500 border-2 border-red-600 mt-1 flex-shrink-0 relative z-10"></div>
+                      <div className="flex-1 ml-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-lg text-xs font-medium bg-red-100 text-red-800">PDF</span>
+                          <h4 className="text-sm font-medium text-gray-900">Service Agreement</h4>
+                        </div>
+                        <div className="text-sm font-medium text-gray-900">Document Download</div>
+                        <div className="text-xs text-gray-500">1 day ago</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
+                    <div className="flex items-start space-x-2">
+                      <div className="w-3 h-3 rounded-full bg-blue-500 border-2 border-blue-600 mt-1 flex-shrink-0 relative z-10"></div>
+                      <div className="flex-1 ml-1">
+                        <div className="flex items-center justify-between mb-1">
+                          <h3 className="text-sm font-semibold text-gray-900">Initial Consultation</h3>
+                          <div className="h-5 w-5 rounded-full bg-blue-100 flex items-center justify-center">
+                            <svg className="h-3 w-3 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                        </div>
+                        <div className="text-sm font-medium text-gray-900">Milestone Update</div>
+                        <div className="text-xs text-gray-500">2 days ago</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
+                    <div className="flex items-start space-x-2">
+                      <div className="w-3 h-3 rounded-full bg-green-500 border-2 border-green-600 mt-1 flex-shrink-0 relative z-10"></div>
+                      <div className="flex-1 ml-1">
+                        <div className="flex items-center justify-between mb-1">
+                          <h3 className="text-sm font-semibold text-gray-900">Requirements</h3>
+                          <span className="text-xs font-medium text-gray-700">75%</span>
+                        </div>
+                        <div className="text-sm font-medium text-gray-900">Checklist</div>
+                        <div className="text-xs text-gray-500">3 days ago</div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -189,13 +277,56 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
             {/* Appointments Section */}
             <div className="col-span-2 p-3">
               <div className="space-y-2">
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-2">
-                  <div className="text-sm font-medium text-gray-900">Tomorrow at 2:00 PM</div>
-                  <div className="text-xs text-gray-700">Service consultation</div>
+                <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
+                  <div className="text-sm font-medium text-gray-900 mb-2">Service consultation</div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span className="text-sm font-medium text-gray-900">Tomorrow</span>
+                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-sm font-medium text-gray-900">2:00 PM</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-blue-600">Zoom Meeting</span>
+                    <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 rounded-full">
+                      <svg className="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      <span className="text-xs text-blue-600">Open</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-2">
-                  <div className="text-sm font-medium text-gray-900">Next week</div>
-                  <div className="text-xs text-gray-700">Follow-up meeting</div>
+                <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
+                  <div className="text-sm font-medium text-gray-900 mb-2">Follow-up meeting</div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span className="text-sm font-medium text-gray-900">Next week</span>
+                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-sm font-medium text-gray-900">10:00 AM</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-600">123 Main St</span>
+                    <div className="flex items-center gap-1">
+                      <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
+                        <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      </div>
+                      <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
+                        <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -252,19 +383,19 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
                 </div>
 
                 {/* Contact Buttons */}
-                <div className="flex justify-center space-x-2">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: theme?.buttonBgColor || '#3B82F6' }}>
-                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex justify-center space-x-1">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: theme?.buttonBgColor || '#3B82F6' }}>
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   </div>
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: theme?.buttonBgColor || '#3B82F6' }}>
-                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: theme?.buttonBgColor || '#3B82F6' }}>
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
                   </div>
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: theme?.buttonBgColor || '#3B82F6' }}>
-                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: theme?.buttonBgColor || '#3B82F6' }}>
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
@@ -272,10 +403,10 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
                 </div>
 
                 {/* Social Icons */}
-                <div className="flex justify-center space-x-3 pt-2">
+                <div className="flex justify-center space-x-2 pt-1">
                   {business.socialLinks?.map((social, index) => (
-                    <div key={index} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: theme?.accentColor || '#60A5FA' }}></div>
+                    <div key={index} className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: theme?.accentColor || '#60A5FA' }}></div>
                     </div>
                   ))}
                 </div>

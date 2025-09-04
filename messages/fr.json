@@ -1272,8 +1272,8 @@
           "description": "Liens uniques et sécurisés pour chaque service. Partagez sans effort, avec protection par mot de passe optionnelle."
         },
         "problemSolving": {
-          "title": "Puissance de résolution de problèmes",
-          "description": "Mettez fin aux malentendus et aux litiges. Un enregistrement partagé et chronologique maintient tout le monde aligné."
+          "title": "Tickets de Support et Historique Complet",
+          "description": "Les clients demandent un support via des tickets depuis la board. Historique chronologique partagé des événements et accès immédiat à tous les enregistrements pour résolution rapide des problèmes."
         }
       }
     },

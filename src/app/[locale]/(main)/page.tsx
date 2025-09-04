@@ -2,12 +2,14 @@
 
 import SectionBoard from '@/components/landing/SectionBoard';
 import SectionActions from '@/components/landing/SectionActions';
+import SectionRequestFeatures from '@/components/landing/SectionRequestFeatures';
 import SectionHero from '@/components/landing/SectionHero';
 import SectionSteps from '@/components/landing/SectionSteps'; 
 import SectionFaqs from '@/components/landing/SectionFaqs'; 
 import SectionCTA from '@/components/landing/SectionCTA'; 
 import SectionCategories from '@/components/landing/SectionCategories';
 import SectionFeatures from '@/components/landing/SectionFeatures';
+import SectionMarketingFeatures from '@/components/landing/SectionMarketingFeatures';
 
 interface HomePageProps {
   params: {
@@ -30,6 +32,10 @@ export default function HomePage({ params }: HomePageProps) {
                 <SectionBoard locale={params.locale} />
 
                 <SectionActions locale={params.locale} />
+
+                <SectionRequestFeatures locale={params.locale} />
+
+                <SectionMarketingFeatures locale={params.locale} />
 
                 <SectionCategories/>
                 

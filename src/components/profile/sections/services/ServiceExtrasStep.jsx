@@ -190,7 +190,7 @@ export default function ServiceExtrasStep({
                     </h3>
                 </div>
 
-                <div className="space-y-4 mb-6">
+                <div className="space-y-3 lg:space-y-4 mb-6">
                     {serviceExtras.map((extra) => {
                         const isSelected = selectedServiceExtras[extra.service_extra_id] && selectedServiceExtras[extra.service_extra_id].quantity > 0;
                         const selectedExtra = selectedServiceExtras[extra.service_extra_id];
@@ -198,7 +198,7 @@ export default function ServiceExtrasStep({
                         return (
                             <div
                                 key={extra.service_extra_id}
-                                className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                                className={`p-3 lg:p-4 rounded-lg border-2 cursor-pointer transition-all ${
                                     isSelected
                                         ? 'border-l-4'
                                         : 'border-l'
@@ -213,13 +213,13 @@ export default function ServiceExtrasStep({
                                                 {extra.extra_name}
                                             </h4>
                                             {extra.extra_description && (
-                                                <p className="text-sm text-gray-600 mt-1">
+                                                <p className="text-xs lg:text-sm text-gray-600 mt-1">
                                                     {extra.extra_description}
                                                 </p>
                                             )}
                                         </div>
                                     </div>
-                                    <div className="text-right">
+                                    <div className="text-right text-sm lg:text-base">
                                         <span className="font-semibold" style={{ color: themeColorText }}>
                                             {isSelected 
                                                 ? `€${(parseFloat(extra.price_base) * selectedExtra.quantity).toFixed(2)}`

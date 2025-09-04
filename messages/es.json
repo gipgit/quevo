@@ -405,8 +405,8 @@
           "description": "Enlaces únicos y seguros para cada servicio. Comparte sin esfuerzo, con protección de contraseña opcional."
         },
         "problemSolving": {
-          "title": "Poder de Resolución de Problemas",
-          "description": "Termina malentendidos y disputas. Un registro cronológico compartido mantiene a todos alineados."
+          "title": "Tickets de Soporte e Historial Completo",
+          "description": "Los clientes solicitan soporte a través de tickets desde la board. Historial cronológico compartido de eventos y acceso inmediato a todos los registros para resolución rápida de problemas."
         }
       }
     },

@@ -62,18 +62,19 @@ function getStatusText(status: string, t: any): string {
   }
 }
 
+// Updated to use border-bottom instead of background colors
 function getStatusColor(status: string): string {
   switch (status.toLowerCase()) {
     case "pending":
-      return "bg-yellow-300 text-yellow-800"
+      return "text-gray-700 border-b-2 border-yellow-500"
     case "completed":
-      return "bg-green-300 text-green-800"
+      return "text-gray-700 border-b-2 border-green-500"
     case "in_progress":
-      return "bg-blue-100 text-blue-800"
+      return "text-gray-700 border-b-2 border-blue-500"
     case "cancelled":
-      return "bg-red-100 text-red-800"
+      return "text-gray-700 border-b-2 border-red-500"
     default:
-      return "bg-gray-100 text-gray-800"
+      return "text-gray-700 border-b-2 border-gray-500"
   }
 }
 
@@ -144,26 +145,15 @@ export default function ServiceBoardActionCard({ action, onActionUpdate, onAppoi
   const shouldShowExpandButton = action.action_status === 'completed'
 
   return (
-    <div className={`p-5 md:p-6 lg:p-7 rounded-2xl
+    <div className={`p-5 md:p-6 lg:p-7 rounded-2xl text-center lg:text-left 
       ${action.is_customer_action_required && action.action_status !== 'completed' ? "bg-white border-[1px] border-gray-300 shadow-sm" : "bg-white border-[1px] border-gray-200"}
     `}>
       <div className="flex items-start justify-between mb-4">
         <div>
-            <div className="flex items-center flex-wrap gap-1 mb-2">
+            <div className="flex items-center justify-center flex-wrap gap-1 mb-3">
               <span className="text-gray-600 text-xs lg:text-base">
                 {format(new Date(action.created_at), "PPP", { locale: locale === 'it' ? it : enUS })}
               </span>
-              <span className={`
-                px-2 py-1 lg:px-3 lg:py-1 rounded-full text-xs md:text-md
-                ${getStatusColor(action.action_status)}
-              `}>
-                {getStatusText(action.action_status, t)}
-              </span>
-              {action.is_customer_action_required && action.action_status !== 'completed' && (
-                <span className="px-2 py-1 rounded-full bg-blue-600 text-blue-100 text-xs md:text-md font-medium">
-                  {t("actionRequired")}
-                </span>
-              )}
               {action.due_date && (
                 <span className="text-orange-600 text-xs md:text-md">
                   {t("dueBy")}: {format(new Date(action.due_date), "PPP", { locale: locale === 'it' ? it : enUS })}
@@ -196,10 +186,25 @@ export default function ServiceBoardActionCard({ action, onActionUpdate, onAppoi
       </div>
 
       {isExpanded && (
-        <div className="mt-1 pt-2 lg:pt-3 border-t">
+        <div className="mt-1 pt-2 lg:pt-3 border-t text-center lg:text-left">
           {renderActionContent()}
         </div>
       )}
+
+      {/* Status and Action Required Pills - moved to the end */}
+      <div className="inline-flex items-center flex-wrap gap-2 mt-4 pt-3 border-t border-gray-100">
+        <span className={`
+          text-xs md:text-md font-medium
+          ${getStatusColor(action.action_status)}
+        `}>
+          {getStatusText(action.action_status, t)}
+        </span>
+        {action.is_customer_action_required && action.action_status !== 'completed' && (
+          <span className="px-2 py-1 rounded-full text-blue-600 text-xs md:text-md font-medium">
+            {t("actionRequired")}
+          </span>
+        )}
+      </div>
     </div>
   )
 } 
