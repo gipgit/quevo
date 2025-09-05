@@ -603,6 +603,7 @@
       "services": "Dienstleistungen",
       "products": "Produkte",
       "serviceRequests": "Dienstleistungsanfragen",
+      "supportRequests": "Support-Anfragen",
       "serviceBoards": "Service Boards",
       "appointments": "Termine",
       "bookings": "Buchungen",
@@ -1155,8 +1156,8 @@
       }
     },
     "Actions": {
-      "title": "Leistungsstarke Funktionen für Ihr Unternehmen",
-      "subtitle": "Alles, was Sie brauchen, um eine professionelle Online-Präsenz zu schaffen und Ihr Unternehmen zu vergrößern.",
+      "title": "Vordefinierte Aktionen für Sofortige Serviceverwaltung",
+      "subtitle": "Fügen Sie schnell vordefinierte Aktionen von jedem Gerät ein, wenn Sie automatische Serviceanfrage-E-Mails erhalten. Erstellen Sie transparente Service-Boards, wo Kunden genau sehen, was passiert, was bereits getan wurde, was getan werden muss und was als nächstes kommt. Jeder Prozess wird zu einem klaren und transparenten Service.",
       "domainLink": "domain.com/ihrunternehmen/s/board",
       "cards": {
         "serviceListing": {
@@ -1164,8 +1165,8 @@
           "description": "Zeigen Sie Ihre Angebote klar auf. Gewinnen Sie mehr Kunden durch detaillierte Beschreibung jeder Dienstleistung."
         },
         "serviceRequests": {
-          "title": "Direkte Dienstleistungsanfragen",
-          "description": "Lassen Sie Kunden sofort Kontakt aufnehmen. Fangen Sie Leads direkt von Ihrer Seite ab."
+          "title": "Geführte Dienstleistungsanfragen",
+          "description": "Nahtloser, schrittweiser Dienstleistungsanfrageprozess, der Kunden durch jede Interaktion führt. Intelligente Formulare passen sich an Kundenbedürfnisse an und machen komplexe Dienstleistungsanfragen einfach und intuitiv."
         },
         "appointmentsScheduling": {
           "title": "Online-Terminbuchung",
@@ -1202,16 +1203,16 @@
       }
     },
     "Features": {
-      "title": "Alles, was Sie zum Erfolg brauchen",
-      "subtitle": "Entdecken Sie alle leistungsstarken Tools und Funktionen, die Ihrem Unternehmen helfen, in der digitalen Welt zu wachsen und zu gedeihen.",
+      "title": "Geführte Kundenreise, die Konvertiert",
+      "subtitle": "Verwandeln Sie komplexe Serviceinteraktionen in nahtlose, geführte Erfahrungen, die Kunden natürlich von der Anfrage zur Konvertierung führen. Jede Funktion ist darauf ausgelegt, zu führen, zu vereinfachen und Ihre Erfolgsrate zu steigern.",
       "cards": {
         "serviceListing": {
           "title": "Dienstleistungsauflistung",
           "description": "Zeigen Sie Ihre Angebote klar auf. Gewinnen Sie mehr Kunden durch detaillierte Beschreibung jeder Dienstleistung."
         },
         "serviceRequests": {
-          "title": "Direkte Dienstleistungsanfragen",
-          "description": "Lassen Sie Kunden sofort Kontakt aufnehmen. Fangen Sie Leads direkt von Ihrer Seite ab."
+          "title": "Geführte Dienstleistungsanfragen",
+          "description": "Nahtloser, schrittweiser Dienstleistungsanfrageprozess, der Kunden durch jede Interaktion führt. Intelligente Formulare passen sich an Kundenbedürfnisse an und machen komplexe Dienstleistungsanfragen einfach und intuitiv."
         },
         "appointmentsScheduling": {
           "title": "Online-Terminbuchung",

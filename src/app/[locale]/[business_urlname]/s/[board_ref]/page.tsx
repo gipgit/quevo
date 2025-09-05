@@ -40,6 +40,7 @@ interface ServiceBoardData {
   board_description?: string;
   status: string;
   created_at: string;
+  customer_id: string;
   service?: {
     service_name: string;
     service_description?: string;
@@ -1829,7 +1830,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
         }))}
         businessId={businessData.business_id}
         boardRef={board_ref}
-        customerId={boardData?.servicerequest?.request_id}
+        customerId={boardData?.customer_id}
         themeColorText={themeColorText || '#000000'}
         themeColorBackground={themeColorBackground || '#ffffff'}
         themeColorButton={themeColorButton || '#000000'}

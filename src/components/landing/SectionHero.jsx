@@ -27,7 +27,7 @@ const exampleBusinesses = {
         secondaryColor: "#1E40AF", // Darker blue
         accentColor: "#60A5FA", // Light blue
         backgroundColor: "#F8FAFC", // Light gray
-        textColor: "#1F2937", // Dark gray
+        textColor: "#374151", // Neutral dark gray
         buttonBgColor: "#3B82F6", // Blue
         buttonTextColor: "#FFFFFF", // White
         fontFamily: "Inter"
@@ -51,7 +51,7 @@ const exampleBusinesses = {
         secondaryColor: "#047857", // Darker green
         accentColor: "#10B981", // Light green
         backgroundColor: "#F0FDF4", // Light green
-        textColor: "#064E3B", // Dark green
+        textColor: "#374151", // Neutral dark gray
         buttonBgColor: "#059669", // Green
         buttonTextColor: "#FFFFFF", // White
         fontFamily: "Poppins"
@@ -75,7 +75,7 @@ const exampleBusinesses = {
         secondaryColor: "#7C3AED", // Darker purple
         accentColor: "#A78BFA", // Light purple
         backgroundColor: "#FAF5FF", // Light purple
-        textColor: "#581C87", // Dark purple
+        textColor: "#374151", // Neutral dark gray
         buttonBgColor: "#8B5CF6", // Purple
         buttonTextColor: "#FFFFFF", // White
         fontFamily: "Roboto"
@@ -99,7 +99,7 @@ const exampleBusinesses = {
         secondaryColor: "#B91C1C", // Darker red
         accentColor: "#EF4444", // Light red
         backgroundColor: "#FEF2F2", // Light red
-        textColor: "#7F1D1D", // Dark red
+        textColor: "#374151", // Neutral dark gray
         buttonBgColor: "#DC2626", // Red
         buttonTextColor: "#FFFFFF", // White
         fontFamily: "Open Sans"
@@ -123,8 +123,8 @@ const exampleBusinesses = {
         secondaryColor: "#D97706", // Darker amber
         accentColor: "#FBBF24", // Light amber
         backgroundColor: "#FFFBEB", // Light amber
-        textColor: "#92400E", // Dark amber
-        buttonBgColor: "#F59E0B", // Amber
+        textColor: "#374151", // Neutral dark gray
+        buttonBgColor: "#1F2937", // Dark gray instead of amber
         buttonTextColor: "#FFFFFF", // White
         fontFamily: "Montserrat"
       }
@@ -147,7 +147,7 @@ const exampleBusinesses = {
         secondaryColor: "#4B5563", // Darker gray
         accentColor: "#9CA3AF", // Light gray
         backgroundColor: "#F9FAFB", // Light gray
-        textColor: "#374151", // Dark gray
+        textColor: "#374151", // Neutral dark gray
         buttonBgColor: "#6B7280", // Gray
         buttonTextColor: "#FFFFFF", // White
         fontFamily: "Source Sans Pro"
@@ -171,8 +171,8 @@ const exampleBusinesses = {
         secondaryColor: "#BE185D", // Darker pink
         accentColor: "#F472B6", // Light pink
         backgroundColor: "#FDF2F8", // Light pink
-        textColor: "#831843", // Dark pink
-        buttonBgColor: "#EC4899", // Pink
+        textColor: "#374151", // Neutral dark gray
+        buttonBgColor: "#1F2937", // Dark gray instead of pink
         buttonTextColor: "#FFFFFF", // White
         fontFamily: "Lato"
       }
@@ -195,7 +195,7 @@ const exampleBusinesses = {
         secondaryColor: "#15803D", // Darker green
         accentColor: "#22C55E", // Light green
         backgroundColor: "#F0FDF4", // Light green
-        textColor: "#14532D", // Dark green
+        textColor: "#374151", // Neutral dark gray
         buttonBgColor: "#16A34A", // Green
         buttonTextColor: "#FFFFFF", // White
         fontFamily: "Playfair Display"
@@ -221,7 +221,7 @@ const exampleBusinesses = {
         secondaryColor: "#1E40AF", // Darker blue
         accentColor: "#60A5FA", // Light blue
         backgroundColor: "#F8FAFC", // Light gray
-        textColor: "#1F2937", // Dark gray
+        textColor: "#374151", // Neutral dark gray
         buttonBgColor: "#3B82F6", // Blue
         buttonTextColor: "#FFFFFF", // White
         fontFamily: "Inter"
@@ -440,6 +440,17 @@ export default function SectionHero({ locale }) {
                                    cleanWord === 'conversions' ||
                                    cleanWord === 'streamline' ||
                                    cleanWord === 'operations' ||
+                                   cleanWord === 'grows' ||
+                                   cleanWord === 'grow' ||
+                                   cleanWord === 'growing' ||
+                                   cleanWord === 'evolving' ||
+                                   cleanWord === 'evolve' ||
+                                   cleanWord === 'adapts' ||
+                                   cleanWord === 'adapt' ||
+                                   cleanWord === 'amplify' ||
+                                   cleanWord === 'amplifies' ||
+                                   cleanWord === 'intelligent' ||
+                                   cleanWord === 'automation' ||
                                    // Italian translations
                                    cleanWord === 'unico' ||
                                    cleanWord === 'schermo' ||
@@ -516,10 +527,10 @@ export default function SectionHero({ locale }) {
                     {/* Top Row - Content */}
                      <div className="space-y-6 max-w-[1000px] text-center">
                          <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-none mb-6">
-                             {renderTextWithItalic(t('Hero.title'))}
+                             <em className="text-blue-600">AI-Powered</em> {renderTextWithItalic("Business Platform That Grows With You")}
                          </h1>
                          <p className="text-lg text-gray-600 leading-tight lg:leading-relaxed">
-                             {renderTextWithItalic(t('Hero.subtitle'))}
+                             {renderTextWithItalic("Simplify complex service interactions and amplify your marketing with intelligent automation. From customer guidance and support to AI-generated content and evolving features - your business platform adapts and grows with your needs.")}
                          </p>
                          
                          {/* 3 Horizontal List Items */}
@@ -583,7 +594,7 @@ export default function SectionHero({ locale }) {
                     <div className="relative">
                         {/* Gradient Background Container */}
                         <div className="relative rounded-3xl p-8 lg:p-12 overflow-hidden" style={{
-                          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%)'
+                          background: 'linear-gradient(135deg, #1f2937 0%, #374151 20%, #4b5563 40%, #6b7280 60%, #9ca3af 80%, #1f2937 100%)'
                         }}>
                           {/* Subtle overlay for better readability */}
                           <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
@@ -594,17 +605,21 @@ export default function SectionHero({ locale }) {
                         <div className="relative flex flex-col lg:flex-row justify-center lg:items-center gap-4">
                             {/* Smartphone View */}
                             <div className="relative z-20 -left-1 flex justify-center items-center">
-                                    <BusinessProfileScreenshot 
-                                        business={currentBusiness}
-                                        variant="mobile"
-                                    />
+                                    <div className="shadow-[0_20px_40px_rgba(0,0,0,0.15),0_0_0_1px_rgba(255,255,255,0.1)] rounded-3xl">
+                                        <BusinessProfileScreenshot 
+                                            business={currentBusiness}
+                                            variant="mobile"
+                                        />
+                                    </div>
                             </div>
                             {/* Desktop View */}
                             <div className="relative z-10 w-full max-w-9xl overflow-visible">
-                                    <BusinessProfileScreenshot 
-                                        business={currentBusiness}
-                                        variant="desktop"
-                                    />
+                                    <div className="shadow-[0_25px_50px_rgba(0,0,0,0.2),0_0_0_1px_rgba(255,255,255,0.1)] rounded-2xl">
+                                        <BusinessProfileScreenshot 
+                                            business={currentBusiness}
+                                            variant="desktop"
+                                        />
+                                    </div>
                                 </div>
                                 </div>
                             </div>

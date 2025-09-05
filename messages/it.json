@@ -630,6 +630,7 @@
       "services": "Servizi",
       "products": "Prodotti",
       "serviceRequests": "Richieste Servizi",
+      "supportRequests": "Richieste Supporto",
       "serviceBoards": "Bacheche Servizi",
       "appointments": "Appuntamenti",
       "bookings": "Prenotazioni",
@@ -1186,8 +1187,8 @@
       }
     },
     "Actions": {
-      "title": "Funzionalità Potenti per la Tua Attività",
-      "subtitle": "Tutto quello che ti serve per creare una presenza online professionale e far crescere la tua attività.",
+      "title": "Azioni Predefinite per Gestione Servizi Istantanea",
+      "subtitle": "Inserisci velocemente azioni predefinite da ogni dispositivo quando ricevi le email automatiche di richiesta servizio. Crea board di servizio trasparenti dove i clienti vedono esattamente cosa sta succedendo, cosa è già stato fatto, cosa serve fare e cosa viene dopo. Ogni processo diventa un servizio chiaro e trasparente.",
       "domainLink": "domain.com/tuaattivita/s/board",
       "cards": {
         "serviceListing": {
@@ -1195,8 +1196,8 @@
           "description": "Mostra le tue offerte con chiarezza. Attrai più clienti dettagliando ogni servizio."
         },
         "serviceRequests": {
-          "title": "Richieste di Servizio Dirette",
-          "description": "Lascia che i clienti ti contattino istantaneamente. Cattura lead direttamente dalla tua pagina."
+          "title": "Richieste di Servizio Guidate",
+          "description": "Processo di richiesta servizio fluido e graduale che guida i clienti attraverso ogni interazione. Moduli intelligenti si adattano alle esigenze dei clienti, rendendo le richieste di servizio complesse semplici e intuitive."
         },
         "appointmentsScheduling": {
           "title": "Prenotazione Appuntamenti Online",
@@ -1233,16 +1234,16 @@
       }
     },
     "Features": {
-      "title": "Tutto Quello che Ti Serve per Riuscire",
-      "subtitle": "Scopri tutti gli strumenti e le funzionalità potenti che aiuteranno la tua attività a crescere e prosperare nel mondo digitale.",
+      "title": "Percorso Cliente Guidato che Converte",
+      "subtitle": "Trasforma le interazioni di servizio complesse in esperienze fluide e guidate che portano naturalmente i clienti dall'inchiesta alla conversione. Ogni funzionalità è progettata per guidare, semplificare e aumentare il tuo tasso di successo.",
       "cards": {
         "serviceListing": {
           "title": "Elenco Servizi",
           "description": "Mostra le tue offerte con chiarezza. Attrai più clienti dettagliando ogni servizio."
         },
         "serviceRequests": {
-          "title": "Richieste di Servizio Dirette",
-          "description": "Lascia che i clienti ti contattino istantaneamente. Cattura lead direttamente dalla tua pagina."
+          "title": "Richieste di Servizio Guidate",
+          "description": "Processo di richiesta servizio fluido e graduale che guida i clienti attraverso ogni interazione. Moduli intelligenti si adattano alle esigenze dei clienti, rendendo le richieste di servizio complesse semplici e intuitive."
         },
         "appointmentsScheduling": {
           "title": "Prenotazione Appuntamenti Online",

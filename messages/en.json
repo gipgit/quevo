@@ -621,6 +621,7 @@
       "services": "Services",
       "products": "Products",
       "serviceRequests": "Service Requests",
+      "supportRequests": "Support Requests",
       "serviceBoards": "Service Boards",
       "appointments": "Appointments",
       "clients": "Clients",
@@ -1283,8 +1284,8 @@
       }
     },
     "Actions": {
-      "title": "Powerful Features for Your Business",
-      "subtitle": "Everything you need to create a professional online presence and grow your business.",
+      "title": "Predefined Actions for Instant Service Management",
+      "subtitle": "Quick-insert predefined actions from any device when you receive automatic service request emails. Create transparent service boards where customers see exactly what's happening, what's been done, what needs to be done, and what comes next. Every process becomes a clear and transparent service.",
       "domainLink": "domain.com/yourbusiness/s/board",
       "cards": {
         "serviceListing": {
@@ -1292,8 +1293,8 @@
           "description": "Showcase your offerings with clarity. Attract more clients by detailing every service."
         },
         "serviceRequests": {
-          "title": "Direct Service Requests",
-          "description": "Let customers reach out instantly. Capture leads directly from your page."
+          "title": "Guided Service Requests",
+          "description": "Seamless, step-by-step service request process that guides customers through every interaction. Intelligent forms adapt to customer needs, making complex service requests simple and intuitive."
         },
         "appointmentsScheduling": {
           "title": "Online Appointment Booking",
@@ -1330,16 +1331,16 @@
       }
     },
     "Features": {
-      "title": "Everything You Need to Succeed",
-      "subtitle": "Discover all the powerful tools and features that will help your business grow and thrive in the digital world.",
+      "title": "Guided Customer Journey That Converts",
+      "subtitle": "Transform complex service interactions into seamless, guided experiences that lead customers naturally from inquiry to conversion. Every feature is designed to guide, simplify, and increase your success rate.",
       "cards": {
         "serviceListing": {
           "title": "Service Listings",
           "description": "Showcase your offerings with clarity. Attract more clients by detailing every service."
         },
         "serviceRequests": {
-          "title": "Direct Service Requests",
-          "description": "Let customers reach out instantly. Capture leads directly from your page."
+          "title": "Guided Service Requests",
+          "description": "Seamless, step-by-step service request process that guides customers through every interaction. Intelligent forms adapt to customer needs, making complex service requests simple and intuitive."
         },
         "appointmentsScheduling": {
           "title": "Online Appointment Booking",

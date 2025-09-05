@@ -8,11 +8,6 @@ export default function SectionMarketingFeatures({ locale }) {
 
   const marketingCards = [
     {
-      icon: "📄",
-      title: "AI-Powered Quotation Generator",
-      description: "Generate professional quotations automatically from service requests. Customize pricing, add terms, and export to PDF with your business branding."
-    },
-    {
       icon: "📱",
       title: "Social Media Content Creator",
       description: "AI generates engaging social media posts for Facebook, Instagram, LinkedIn, Twitter, and TikTok. Includes posting schedules and optimal timing recommendations."
@@ -25,7 +20,7 @@ export default function SectionMarketingFeatures({ locale }) {
   ];
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center relative overflow-hidden">
+    <section className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black flex items-center relative overflow-hidden">
       {/* AI Pattern Overlay */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,0,0.08)_1px,transparent_1px)] bg-[length:25px_25px]"></div>
@@ -40,15 +35,15 @@ export default function SectionMarketingFeatures({ locale }) {
       
       <div className="container mx-auto px-6 lg:px-12 py-16 max-w-7xl relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-5xl font-bold text-white leading-tight mb-4 drop-shadow-lg">
-            {t('Features.marketingTitle')}
+          <h2 className="text-3xl lg:text-5xl font-bold leading-tight mb-4 drop-shadow-lg">
+            <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">AI-Powered</span> <span className="text-white">Marketing Features</span>
           </h2>
           <p className="text-lg lg:text-xl text-gray-300 leading-tight lg:leading-relaxed max-w-3xl mx-auto mb-8 drop-shadow-md">
-            {t('Features.marketingSubtitle')}
+            Transform your marketing strategy with intelligent automation, smart content generation, and AI-driven insights
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto mb-8">
           {marketingCards.map((card, index) => (
             <div
               key={index}

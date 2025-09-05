@@ -288,8 +288,8 @@
       }
     },
     "Actions": {
-      "title": "Funciones Potentes para Tu Negocio",
-      "subtitle": "Todo lo que necesitas para crear una presencia online profesional y hacer crecer tu negocio.",
+      "title": "Acciones Predefinidas para Gestión Instantánea de Servicios",
+      "subtitle": "Inserta rápidamente acciones predefinidas desde cualquier dispositivo cuando recibas los emails automáticos de solicitud de servicio. Crea tableros de servicio transparentes donde los clientes ven exactamente qué está pasando, qué se ha hecho, qué necesita hacerse y qué viene después. Cada proceso se convierte en un servicio claro y transparente.",
       "domainLink": "domain.com/tunegocio/s/board",
       "cards": {
         "serviceListing": {
@@ -297,8 +297,8 @@
           "description": "Muestra tus ofertas con claridad. Atrae más clientes detallando cada servicio."
         },
         "serviceRequests": {
-          "title": "Solicitudes de Servicio Directas",
-          "description": "Deja que los clientes te contacten al instante. Captura leads directamente desde tu página."
+          "title": "Solicitudes de Servicio Guiadas",
+          "description": "Proceso de solicitud de servicio fluido y paso a paso que guía a los clientes a través de cada interacción. Formularios inteligentes se adaptan a las necesidades del cliente, haciendo que las solicitudes de servicio complejas sean simples e intuitivas."
         },
         "appointmentsScheduling": {
           "title": "Reserva de Citas Online",
@@ -335,16 +335,16 @@
       }
     },
     "Features": {
-      "title": "Todo Lo Que Necesitas Para Triunfar",
-      "subtitle": "Descubre todas las herramientas y funciones potentes que ayudarán a tu negocio a crecer y prosperar en el mundo digital.",
+      "title": "Viaje del Cliente Guiado que Convierte",
+      "subtitle": "Transforma las interacciones de servicio complejas en experiencias fluidas y guiadas que llevan naturalmente a los clientes desde la consulta hasta la conversión. Cada función está diseñada para guiar, simplificar y aumentar tu tasa de éxito.",
       "cards": {
         "serviceListing": {
           "title": "Listado de Servicios",
           "description": "Muestra tus ofertas con claridad. Atrae más clientes detallando cada servicio."
         },
         "serviceRequests": {
-          "title": "Solicitudes de Servicio Directas",
-          "description": "Deja que los clientes te contacten al instante. Captura leads directamente desde tu página."
+          "title": "Solicitudes de Servicio Guiadas",
+          "description": "Proceso de solicitud de servicio fluido y paso a paso que guía a los clientes a través de cada interacción. Formularios inteligentes se adaptan a las necesidades del cliente, haciendo que las solicitudes de servicio complejas sean simples e intuitivas."
         },
         "appointmentsScheduling": {
           "title": "Reserva de Citas Online",
@@ -909,6 +909,7 @@
       "services": "Servicios",
       "products": "Productos",
       "serviceRequests": "Solicitudes de Servicio",
+      "supportRequests": "Solicitudes de Soporte",
       "serviceBoards": "Tableros de Servicio",
       "appointments": "Citas",
       "bookings": "Reservas",

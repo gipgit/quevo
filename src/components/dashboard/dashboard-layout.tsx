@@ -41,7 +41,8 @@ import {
   BellIcon,
   ShareIcon,
   UsersIcon,
-  EnvelopeIcon
+  EnvelopeIcon,
+  ChatBubbleLeftRightIcon
 } from "@heroicons/react/24/outline"
 
 interface DashboardLayoutProps {
@@ -150,6 +151,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     { href: "/dashboard/profile", label: t("nav.profile") || "Profilo", icon: UserIcon },
     { href: "/dashboard/services", label: t("nav.services") || "Servizi", icon: WrenchScrewdriverIcon },
     { href: "/dashboard/service-requests", label: t("nav.serviceRequests") || "Richieste Servizi", icon: ClipboardDocumentListIcon },
+    { href: "/dashboard/support-requests", label: t("nav.supportRequests") || "Support Requests", icon: ChatBubbleLeftRightIcon },
     { href: "/dashboard/service-boards", label: t("nav.serviceBoards") || "Bacheche Servizi", icon: ClipboardDocumentIcon },
     { href: "/dashboard/appointments", label: t("nav.appointments") || "Appuntamenti", icon: CalendarIcon },
     { href: "/dashboard/clients", label: t("nav.clients") || "Clients", icon: UsersIcon },

@@ -603,6 +603,7 @@
       "services": "Services",
       "products": "Produits",
       "serviceRequests": "Demandes de service",
+      "supportRequests": "Demandes de support",
       "serviceBoards": "Tableaux de service",
       "appointments": "Rendez-vous",
       "bookings": "Réservations",
@@ -1155,8 +1156,8 @@
       }
     },
     "Actions": {
-      "title": "Fonctionnalités puissantes pour votre entreprise",
-      "subtitle": "Tout ce dont vous avez besoin pour créer une présence en ligne professionnelle et développer votre entreprise.",
+      "title": "Actions Prédefinies pour Gestion Instantanée des Services",
+      "subtitle": "Insérez rapidement des actions prédefinies depuis n'importe quel appareil lorsque vous recevez les emails automatiques de demande de service. Créez des tableaux de service transparents où les clients voient exactement ce qui se passe, ce qui a été fait, ce qui doit être fait et ce qui vient ensuite. Chaque processus devient un service clair et transparent.",
       "domainLink": "domain.com/votreentreprise/s/tableau",
       "cards": {
         "serviceListing": {
@@ -1164,8 +1165,8 @@
           "description": "Présentez vos offres avec clarté. Attirez plus de clients en détaillant chaque service."
         },
         "serviceRequests": {
-          "title": "Demandes de service directes",
-          "description": "Laissez les clients vous contacter instantanément. Capturez les prospects directement depuis votre page."
+          "title": "Demandes de service guidées",
+          "description": "Processus de demande de service fluide et étape par étape qui guide les clients à travers chaque interaction. Formulaires intelligents s'adaptent aux besoins des clients, rendant les demandes de service complexes simples et intuitives."
         },
         "appointmentsScheduling": {
           "title": "Réservation de rendez-vous en ligne",
@@ -1202,16 +1203,16 @@
       }
     },
     "Features": {
-      "title": "Tout ce dont vous avez besoin pour réussir",
-      "subtitle": "Découvrez tous les outils et fonctionnalités puissants qui aideront votre entreprise à grandir et prospérer dans le monde numérique.",
+      "title": "Parcours Client Guidé qui Convertit",
+      "subtitle": "Transformez les interactions de service complexes en expériences fluides et guidées qui mènent naturellement les clients de l'enquête à la conversion. Chaque fonctionnalité est conçue pour guider, simplifier et augmenter votre taux de réussite.",
       "cards": {
         "serviceListing": {
           "title": "Liste de services",
           "description": "Présentez vos offres avec clarté. Attirez plus de clients en détaillant chaque service."
         },
         "serviceRequests": {
-          "title": "Demandes de service directes",
-          "description": "Laissez les clients vous contacter instantanément. Capturez les prospects directement depuis votre page."
+          "title": "Demandes de service guidées",
+          "description": "Processus de demande de service fluide et étape par étape qui guide les clients à travers chaque interaction. Formulaires intelligents s'adaptent aux besoins des clients, rendant les demandes de service complexes simples et intuitives."
         },
         "appointmentsScheduling": {
           "title": "Réservation de rendez-vous en ligne",
