@@ -368,10 +368,10 @@
   "UserManagerActivation": {
     "subject": "Activate Your Quevo Business Account",
     "welcome_heading": "Hello {recipientName}!",
-    "confirm_email_prompt": "Thank you for signing up for Quevo Business. To complete your registration, please confirm your email address by clicking the button below.",
-    "after_confirmation_note": "Once confirmed, you'll be able to access all Quevo Business features and start managing your business.",
+    "confirmation_message": "Thank you for signing up for Quevo Business. To complete your registration, please confirm your email address by clicking the button below. Once confirmed, you'll be able to access all Quevo Business features and start managing your business.",
     "confirm_button_text": "Confirm Email",
     "fallback_link_instruction": "If the button doesn't work, copy and paste this link into your browser:",
+    "help_message": "If you need any help, don't hesitate to contact us.",
     "closing_salutation": "Best regards,",
     "team_name": "The Quevo team",
     "logo_url": "https://quevo.com/logo.png"

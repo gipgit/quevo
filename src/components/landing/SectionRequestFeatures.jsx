@@ -28,8 +28,8 @@ export default function SectionRequestFeatures({ locale }) {
     switch (selectedFeature) {
       case 'quotationGenerator':
         return (
-          <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="bg-white rounded-2xl shadow-2xl p-4 lg:p-8 border border-gray-100">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
               {/* Settings Panel */}
               <div className="lg:col-span-1 bg-gray-50 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-4">
@@ -203,8 +203,8 @@ export default function SectionRequestFeatures({ locale }) {
 
       case 'requestManagement':
         return (
-          <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="bg-white rounded-2xl shadow-2xl p-4 lg:p-8 border border-gray-100">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
               {/* Left Column - Request List */}
               <div className="lg:col-span-1 space-y-4 bg-gray-50 rounded-lg p-4">
                 {/* Header with Navigation */}
@@ -636,52 +636,98 @@ export default function SectionRequestFeatures({ locale }) {
           </p>
         </div>
 
-        {/* 2-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12 max-w-7xl mx-auto">
-          {/* Left Column - Features List */}
-          <div className="lg:col-span-1 space-y-6">
+        {/* Mobile Layout - Preview First, then Cards */}
+        <div className="lg:hidden space-y-8">
+          {/* Mobile Preview - Show first on mobile */}
+          <div>
+            {renderFeaturePreview()}
+          </div>
+          
+          {/* Mobile Features List - Show below preview */}
+          <div className="space-y-4">
             {requestFeatures.map((feature, index) => (
               <div
                 key={index}
                 onClick={() => setSelectedFeature(feature.id)}
-                className={`flex flex-row gap-4 p-3 items-start cursor-pointer transition-all duration-200 border-l-4 ${
+                className={`p-3 cursor-pointer transition-all duration-200 border-l-4 ${
                   selectedFeature === feature.id 
                     ? 'border-blue-500 bg-blue-50/30' 
                     : 'border-transparent hover:border-gray-300 hover:bg-gray-50/50'
                 }`}
               >
-                <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
-                  selectedFeature === feature.id ? 'bg-blue-500' : 'bg-gray-200'
-                }`}>
-                  <svg className={`w-4 h-4 ${
-                    selectedFeature === feature.id ? 'text-white' : 'text-gray-600'
-                  }`} fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <h3 className={`text-lg font-semibold mb-2 leading-tight ${
-                    selectedFeature === feature.id ? 'text-blue-900' : 'text-gray-900'
+                <div className="flex flex-row gap-4 items-start">
+                  <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
+                    selectedFeature === feature.id ? 'bg-blue-500' : 'bg-gray-200'
                   }`}>
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 leading-snug">
+                    <svg className={`w-4 h-4 ${
+                      selectedFeature === feature.id ? 'text-white' : 'text-gray-600'
+                    }`} fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className={`text-lg font-semibold mb-2 leading-tight ${
+                      selectedFeature === feature.id ? 'text-blue-900' : 'text-gray-900'
+                    }`}>
+                      {feature.title}
+                    </h3>
+                  </div>
+                </div>
+                {selectedFeature === feature.id && (
+                  <p className="text-xs lg:text-sm text-gray-600 leading-tight lg:leading-snug mt-2 ml-10">
                     {feature.description}
                   </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop Layout - 2-Column Layout */}
+        <div className="hidden lg:grid grid-cols-4 gap-12 max-w-7xl mx-auto">
+          {/* Left Column - Features List */}
+          <div className="col-span-1 space-y-6">
+            {requestFeatures.map((feature, index) => (
+              <div
+                key={index}
+                onClick={() => setSelectedFeature(feature.id)}
+                className={`p-3 cursor-pointer transition-all duration-200 border-l-4 ${
+                  selectedFeature === feature.id 
+                    ? 'border-blue-500 bg-blue-50/30' 
+                    : 'border-transparent hover:border-gray-300 hover:bg-gray-50/50'
+                }`}
+              >
+                <div className="flex flex-row gap-4 items-start">
+                  <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
+                    selectedFeature === feature.id ? 'bg-blue-500' : 'bg-gray-200'
+                  }`}>
+                    <svg className={`w-4 h-4 ${
+                      selectedFeature === feature.id ? 'text-white' : 'text-gray-600'
+                    }`} fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className={`text-lg font-semibold mb-2 leading-tight ${
+                      selectedFeature === feature.id ? 'text-blue-900' : 'text-gray-900'
+                    }`}>
+                      {feature.title}
+                    </h3>
+                  </div>
                 </div>
+                {selectedFeature === feature.id && (
+                  <p className="text-xs lg:text-sm text-gray-600 leading-tight lg:leading-snug mt-2 ml-10">
+                    {feature.description}
+                  </p>
+                )}
               </div>
             ))}
           </div>
 
           {/* Right Column - Feature Preview */}
-          <div className="lg:col-span-3 hidden lg:block">
+          <div className="col-span-3">
             {renderFeaturePreview()}
           </div>
-        </div>
-
-        {/* Mobile Preview - Show below cards on mobile */}
-        <div className="lg:hidden mt-8">
-          {renderFeaturePreview()}
         </div>
       </div>
     </section>

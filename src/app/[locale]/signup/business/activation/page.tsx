@@ -157,7 +157,7 @@ export default function BusinessActivationPage() {
         {status === 'loading' && (
           <>
             <LoadingSpinner size="lg" color="blue" className="mt-6 mb-4" />
-            <p className="mb-4 text-lg font-bold">{t('activatingAccount')}</p>
+            <p className="font-medium text-lg mb-4">{t('activatingAccount')}</p>
             <p className="text-gray-700">{t('pleaseWait')}</p>
           </>
         )}
@@ -166,7 +166,7 @@ export default function BusinessActivationPage() {
           <>
             {userData && (
               <>
-                <p className="font-bold text-xl lg:text-2xl mb-3">{t('welcomeMessage', { recipientName: userData.name_first })}</p>
+                <p className="font-medium text-lg lg:text-xl mb-3">{t('welcomeMessage', { recipientName: userData.name_first })}</p>
                 <p className="mb-4">{t('accountActiveMessage')}</p>
               </>
             )}
@@ -183,7 +183,7 @@ export default function BusinessActivationPage() {
           <>
             {userData && (
               <>
-                <p className="font-bold text-xl lg:text-2xl mb-3">{t('welcomeMessage', { recipientName: userData.name_first })}</p>
+                <p className="font-medium text-lg lg:text-xl mb-3">{t('welcomeMessage', { recipientName: userData.name_first })}</p>
                 <p className="mb-4">{t('accountActiveMessage')}</p>
               </>
             )}

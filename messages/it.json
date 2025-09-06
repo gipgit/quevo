@@ -398,10 +398,10 @@
   "UserManagerActivation": {
     "subject": "Attiva il tuo account Business Quevo",
     "welcome_heading": "Benvenuto su Quevo, {recipientName}!",
-    "confirm_email_prompt": "Conferma la tua email per iniziare.",
-    "after_confirmation_note": "Dopo la conferma, potrai già configurare e gestire il tuo profilo online.",
+    "confirmation_message": "Conferma la tua email per iniziare subito a configurare e gestire il tuo nuovo spazio online.",
     "confirm_button_text": "Conferma e inizia",
     "fallback_link_instruction": "Se il pulsante non funziona, puoi anche copiare e incollare questo link nel tuo browser:",
+    "help_message": "Se hai bisogno di aiuto, non esitare a contattarci.",
     "closing_salutation": "A presto,",
     "team_name": "Il team di Quevo",
     "logo_url": "https://yourwebsite.com/logo.png"

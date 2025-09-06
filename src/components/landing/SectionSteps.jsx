@@ -188,10 +188,10 @@ export default function SectionSteps({ locale }) {
         {/* Vertical Timeline Layout */}
         <div className="relative max-w-6xl mx-auto" data-timeline-container>
           {/* Timeline line - centered with progressive growth */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-0.5 bg-gray-300"></div>
+          <div className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-1 bg-gray-300"></div>
           <div 
             ref={timelineRef}
-            className="absolute left-1/2 transform -translate-x-1/2 top-0 w-0.5 bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300"
+            className="absolute left-1/2 transform -translate-x-1/2 top-0 w-1 bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300"
             style={{ 
               height: `${Math.max(10, timelineProgress * 100)}%`,
               maxHeight: '100%',
@@ -199,7 +199,7 @@ export default function SectionSteps({ locale }) {
             }}
           ></div>
           
-          <div className="space-y-16">
+          <div className="space-y-8 lg:space-y-10">
             {steps.map((step, index) => {
               const isVisible = visibleSteps.includes(index);
               const isEven = index % 2 === 0;
@@ -220,9 +220,9 @@ export default function SectionSteps({ locale }) {
                   }}
                 >
                   {/* Timeline dot with number - centered */}
-                  <div className={`absolute left-1/2 transform -translate-x-1/2 w-16 h-16 rounded-full border-4 border-white shadow-lg z-10 transition-all duration-700 ease-out flex items-center justify-center text-white text-xl font-bold ${
+                  <div className={`absolute left-1/2 transform -translate-x-1/2 w-12 h-12 lg:w-16 lg:h-16 rounded-full shadow-lg z-10 transition-all duration-700 ease-out flex items-center justify-center text-white text-lg lg:text-xl font-bold ${
                     timelineReached 
-                      ? 'bg-blue-500 scale-100 shadow-xl' 
+                      ? 'bg-blue-500 scale-75 lg:scale-100 shadow-xl' 
                       : 'bg-gray-300 scale-75'
                   }`}
                   style={{
@@ -233,7 +233,7 @@ export default function SectionSteps({ locale }) {
                          
                   {/* Step content */}
                   <div className={`w-5/12 transition-all duration-800 ease-out ${
-                    isEven ? 'pr-8 text-right' : 'ml-auto pl-8 text-left'
+                    isEven ? 'pr-1 lg:pr-8 text-right' : 'ml-auto pl-1 lg:pl-8 text-left'
                   } ${
                     isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'
                   }`}
@@ -241,10 +241,10 @@ export default function SectionSteps({ locale }) {
                     transitionDelay: isVisible ? `${index * 200 + 300}ms` : '0ms'
                   }}>
                     <div className="transition-all duration-500">
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">
+                      <h3 className="text-base lg:text-lg font-bold text-gray-900 mb-2">
                              {step.title}
                            </h3>
-                      <p className="text-gray-600 text-sm leading-tight mb-4">
+                      <p className="text-gray-600 text-xs lg:text-sm leading-tight mb-4">
                          {step.description}
                        </p>
                       

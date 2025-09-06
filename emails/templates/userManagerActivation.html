@@ -12,7 +12,7 @@
         }
         body {
             font-family: Arial, sans-serif;
-            background-color: #f9f4f4;
+            background-color: #fdfdfd;
             color: #333333;
             line-height: 1.6;
             -webkit-text-size-adjust: 100%;
@@ -25,20 +25,20 @@
     </style>
 </head>
 <body>
-    <div class="email-container" style="width:95%; max-width: 580px; margin: 0 auto; padding: 15px; text-align: center;">
-        <div class="email-header" style="margin-bottom: 15px;">
-            <img src="{{LOGO_URL}}" alt="Logo" class="logo" style="display: block; margin-left: auto; margin-right: auto; width: 150px; margin-bottom: 20px;">
+    <div class="email-header" style="width: 100%; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #4e0aec 50%, #348352 100%); margin: 0; margin-bottom: 15px; padding: 35px 0; text-align: center;">
+        <img src="{{LOGO_URL}}" alt="Quevo Logo" class="logo" style="display: block; margin: 0 auto; width: 150px; height: auto;">
+    </div>
+    <div class="email-container" style="max-width: 400px; margin: 0 auto; padding: 15px 5px; text-align: center;">
+        <div class="email-body" style="background-color: #ffffff; border: 1px solid #c7c7c7; padding: 55px 40px; border-radius: 35px; box-shadow: 0 2px 5px rgba(0,0,0,0); margin-bottom: 20px;">
+            <h1 style="font-size:20px; margin-bottom: 15px;">{{WELCOME_HEADING}}</h1>
+            <p style="font-size:14px; margin-bottom: 15px;">{{CONFIRMATION_MESSAGE}}</p>
+            <a href="{{CONFIRMATION_LINK}}" style="display: inline-block; padding: 12px 25px; border: 1px solid #fff; background-color: #121212; color: white; font-size: 13px; border-radius: 35px; text-decoration: none; margin-top: 10px; margin-bottom: 10px;">{{CONFIRM_BUTTON_TEXT}}</a>
+            <p style="font-size:10px; margin-top: 15px;color: #888888;">{{FALLBACK_LINK_INSTRUCTION}}</p>
+            <p style="font-size:9px"><a href="{{CONFIRMATION_LINK}}">{{CONFIRMATION_LINK}}</a></p>
         </div>
-        <div class="email-body" style="background-color: #ffffff; padding: 40px 25px; border-radius: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px;">
-            <h1 style="font-size:28px; margin-bottom: 15px;">{{WELCOME_HEADING}}</h1>
-            <p style="font-size:18px; margin-bottom: 15px;">{{CONFIRM_EMAIL_PROMPT}}</p>
-            <p style="font-size:13px; margin-bottom: 15px;">{{AFTER_CONFIRMATION_NOTE}}</p>
-            <a href="{{CONFIRMATION_LINK}}" style="display: inline-block; padding: 12px 35px; border: 1px solid #fff; background-color: #0d0d0e; color: white; font-size: 16px; border-radius: 35px; text-decoration: none; margin-top: 10px; margin-bottom: 10px;">{{CONFIRM_BUTTON_TEXT}}</a>
-            <p style="font-size:13px; margin-top: 15px;color: #888888;">{{FALLBACK_LINK_INSTRUCTION}}</p>
-            <p style="font-size:11px"><a href="{{CONFIRMATION_LINK}}">{{CONFIRMATION_LINK}}</a></p>
-        </div>
-        <div class="email-footer" style="text-align: center; font-size: 15px; color: #888888;">
-            <p>{{CLOSING_SALUTATION}}<br>{{TEAM_NAME}}</p>
+        <div class="email-footer" style="text-align: center;">
+            <p style="font-size: 13px; margin-bottom: 10px; color: #585858;">{{HELP_MESSAGE}}</p>
+            <p style="font-size: 13px; color: #565656;">{{CLOSING_SALUTATION}} {{TEAM_NAME}}</p>
         </div>
     </div>
 </body>
