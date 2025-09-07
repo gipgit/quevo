@@ -61,7 +61,7 @@ export default function SectionCategories() {
     }, []); // Empty dependency array means this effect runs once after initial render
 
     return (
-        <section className="container-x-lg py-8 lg:py-8 bg-gray-50" ref={parallaxSectionRef}>
+        <section className="container-x-lg py-16 lg:py-20 bg-gray-50" ref={parallaxSectionRef}>
             <div className="d-flex flex-col lg:flex-row gap-4 lg:gap-8 items-center">
                 <div className="flex-grow flex-basis-80 text-center mx-auto" style={{ maxWidth: '600px' }}>
                     <p className="font-bold text-2xl lg:text-3xl mb-3 text-center">{t('Categories.title')}</p>
@@ -81,7 +81,7 @@ export default function SectionCategories() {
 
                     {/* Business Categories Lists */}
                     <div className="pill-list-section-wrapper">
-                        <p className="business-examples-category text-center">Bellezza e Benessere:</p>
+                        <p className="business-examples-category text-left">Bellezza e Benessere:</p>
                         <div className="business-examples-scroll-container">
                             <ul className="pill-list">
                                 <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Saloni di parrucchieri</li>
@@ -99,7 +99,7 @@ export default function SectionCategories() {
                     </div>
 
                     <div className="pill-list-section-wrapper">
-                        <p className="business-examples-category text-center">Fitness e Salute:</p>
+                        <p className="business-examples-category text-right">Fitness e Salute:</p>
                         <div className="business-examples-scroll-container">
                             <ul className="pill-list">
                                 <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Personal trainer</li>
@@ -113,7 +113,7 @@ export default function SectionCategories() {
                     </div>
 
                     <div className="pill-list-section-wrapper">
-                        <p className="business-examples-category text-center">Servizi:</p>
+                        <p className="business-examples-category text-left">Servizi:</p>
                         <div className="business-examples-scroll-container">
                             <ul className="pill-list">
                                 <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Consulenti (aziendali, marketing, life coaching, ecc.)</li>
@@ -136,38 +136,6 @@ export default function SectionCategories() {
                         </div>
                     </div>
 
-                    <div className="pill-list-section-wrapper">
-                        <p className="business-examples-category text-center">Ristorazione:</p>
-                        <div className="business-examples-scroll-container">
-                            <ul className="pill-list">
-                                <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Caffetterie/Bar (per menu digitali e offerte speciali)</li>
-                                <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Piccoli ristoranti/Bistrot (specialmente quelli con asporto/consegna)</li>
-                                <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Food truck</li>
-                                <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Pasticcerie (per torte personalizzate)</li>
-                                <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Panetterie</li>
-                                <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Gelaterie</li>
-                                <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Negozi di alimentari</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div className="pill-list-section-wrapper">
-                        <p className="business-examples-category text-center">Vendita al Dettaglio:</p>
-                        <div className="business-examples-scroll-container">
-                            <ul className="pill-list">
-                                <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Concessionarie Auto</li>
-                                <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Agenzie di Viaggi</li>
-                                <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Boutique (abbigliamento, regali, articoli per la casa)</li>
-                                <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Fioristi</li>
-                                <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Librerie</li>
-                                <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Gioiellerie</li>
-                                <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Gallerie d'arte (per esporre artisti/opere)</li>
-                                <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Negozi di artigianato</li>
-                                <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Negozi vintage</li>
-                                <li className="border border-gray-100 px-3 py-1 text-sm rounded-full">Negozi di dischi</li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
             </div>
         </section>

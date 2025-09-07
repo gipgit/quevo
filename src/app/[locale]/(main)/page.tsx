@@ -22,7 +22,7 @@ export default function HomePage({ params }: HomePageProps) {
     return (
         <>
          
-            <main>
+            <main className="overflow-x-hidden">
 
                 <SectionHero locale={params.locale} />
                 

@@ -321,6 +321,9 @@ export default function SectionBoard({ locale }) {
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
     const [timeRemaining, setTimeRemaining] = useState(3000); // 3 seconds in milliseconds
+    const [scrollProgress, setScrollProgress] = useState(0);
+    const [isMobile, setIsMobile] = useState(false);
+    const sectionRef = useRef(null);
 
     
 
@@ -373,6 +376,53 @@ export default function SectionBoard({ locale }) {
         return () => clearInterval(interval);
 
     }, [isAutoPlaying, businesses.length, currentBusinessIndex]);
+
+    // Screen size detection
+    useEffect(() => {
+        const checkScreenSize = () => {
+            setIsMobile(window.innerWidth < 1024); // lg breakpoint is 1024px
+        };
+
+        checkScreenSize(); // Initial check
+        window.addEventListener('resize', checkScreenSize);
+
+        return () => window.removeEventListener('resize', checkScreenSize);
+    }, []);
+
+    // Scroll detection for horizontal movement effect (mobile only)
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!sectionRef.current || !isMobile) {
+                setScrollProgress(0);
+                return;
+            }
+
+            const section = sectionRef.current;
+            const rect = section.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            
+            // Calculate scroll progress within the section
+            // When section is fully visible, progress is 0
+            // When section starts to leave view, progress increases
+            const sectionTop = rect.top;
+            const sectionHeight = rect.height;
+            
+            // Only apply effect when section is in view
+            if (sectionTop < windowHeight && sectionTop + sectionHeight > 0) {
+                // Calculate progress: 0 when section is at top, 1 when section is at bottom
+                // Start movement at middle point between previous settings
+                const progress = Math.max(0, Math.min(1, (windowHeight - sectionTop - 450) / (windowHeight + sectionHeight - 650)));
+                setScrollProgress(progress);
+            } else {
+                setScrollProgress(0);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll(); // Initial call
+
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [isMobile]);
 
 
 
@@ -468,7 +518,7 @@ export default function SectionBoard({ locale }) {
 
     return (
 
-        <section className="min-h-screen bg-white flex items-center">
+        <section ref={sectionRef} className="min-h-screen bg-white flex items-center">
 
             <div className="container mx-auto px-6 py-16 max-w-[1300px]">
 
@@ -739,11 +789,24 @@ export default function SectionBoard({ locale }) {
 
                                     {/* Desktop Service Board Screenshot */}
                                     <div className="relative z-10 max-w-7xl overflow-visible w-full">
-                                        <ServiceBoardScreenshot 
-                                            business={currentBusiness}
-                                            variant="desktop"
-                                            className="shadow-2xl"
-                                        />
+                                        <div 
+                                            className="shadow-2xl transition-transform duration-100 ease-out md:transform-none md:scale-100"
+                                            style={{
+                                                // Apply horizontal movement and scaling only on mobile (xs to md) with faster movement
+                                                // Start positioned to the right, then move left as user scrolls
+                                                // Use cubic-bezier for rounder movement curve
+                                                // Only apply transform on mobile screens
+                                                transform: isMobile 
+                                                    ? `translateX(${1200 + Math.pow(scrollProgress, 0.7) * -1400}px) scale(0.75)`
+                                                    : 'translateX(0px) scale(1)',
+                                            }}
+                                        >
+                                            <ServiceBoardScreenshot 
+                                                business={currentBusiness}
+                                                variant="desktop"
+                                                className=""
+                                            />
+                                        </div>
                                     </div>
                                 </div>
 

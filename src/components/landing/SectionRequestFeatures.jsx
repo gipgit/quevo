@@ -384,33 +384,6 @@ export default function SectionRequestFeatures({ locale }) {
                     </div>
                   </div>
 
-                  <div className="p-2.5 rounded-lg hover:bg-gray-50">
-                    <div className="flex items-center justify-between text-xs mb-1">
-                      <div className="flex items-center gap-1">
-                        <span className="opacity-50">10 Dec 15:20</span>
-                      </div>
-                      <span className="px-1.5 py-0.5 rounded-full text-xs bg-blue-100 text-blue-800">
-                        In Progress
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-start justify-between mb-1">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-blue-500" />
-                        <span className="font-medium text-xs">SR-2024-006</span>
-                        <span className="text-xs opacity-75">• Elena Ferrari</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <svg className="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                      </div>
-                    </div>
-                    
-                    <div className="text-xs">
-                      <div className="text-xs opacity-75">Social Media Management</div>
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -418,7 +391,7 @@ export default function SectionRequestFeatures({ locale }) {
               <div className="lg:col-span-2 space-y-0">
                 {/* Request Header */}
                 <div className="p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
@@ -437,31 +410,34 @@ export default function SectionRequestFeatures({ locale }) {
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <button className="px-3 py-1.5 rounded-lg bg-green-600 text-white text-sm flex items-center gap-1.5 hover:bg-green-700">
-                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                    <div className="flex items-center gap-1.5 lg:gap-2 flex-wrap">
+                      <button className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-green-600 text-white text-xs lg:text-sm flex items-center gap-1 lg:gap-1.5 hover:bg-green-700">
+                        <svg className="w-3 h-3 lg:w-3.5 lg:h-3.5" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
-                        Mark Handled
+                        <span className="hidden sm:inline">Mark Handled</span>
+                        <span className="sm:hidden">Handled</span>
                       </button>
-                      <button className="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm flex items-center gap-1.5 hover:bg-blue-700">
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <button className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-blue-600 text-white text-xs lg:text-sm flex items-center gap-1 lg:gap-1.5 hover:bg-blue-700">
+                        <svg className="w-3 h-3 lg:w-3.5 lg:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        Generate Quotation
+                        <span className="hidden sm:inline">Generate Quotation</span>
+                        <span className="sm:hidden">Quote</span>
                       </button>
-                      <button className="px-3 py-1.5 rounded-lg bg-gray-600 text-white text-sm flex items-center gap-1.5 hover:bg-gray-700">
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <button className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-gray-600 text-white text-xs lg:text-sm flex items-center gap-1 lg:gap-1.5 hover:bg-gray-700">
+                        <svg className="w-3 h-3 lg:w-3.5 lg:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                         </svg>
-                        Open Board
+                        <span className="hidden sm:inline">Open Board</span>
+                        <span className="sm:hidden">Board</span>
                       </button>
                     </div>
                   </div>
                 </div>
 
                 {/* Customer Details */}
-                <div className="p-4">
+                <div className="p-2">
                   <h4 className="text-[10px] font-medium mb-2 pt-1 border-t uppercase tracking-wide text-gray-500 border-gray-200">Customer Details</h4>
                   <div className="flex items-center gap-4 text-sm">
                     <div className="flex items-center gap-2">
@@ -484,102 +460,93 @@ export default function SectionRequestFeatures({ locale }) {
                 </div>
 
                 {/* Selected Items */}
-                <div className="p-4">
+                <div className="p-2">
                   <h4 className="text-[10px] font-medium mb-2 pt-1 border-t uppercase tracking-wide text-gray-500 border-gray-200">Selected Items</h4>
                   <div className="space-y-1">
                     <div className="p-1.5 rounded border border-gray-200 bg-white">
-                      <div className="flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">Website Development</span>
-                          <span className="opacity-60">(Custom design)</span>
+                      <div className="flex items-start justify-between text-xs">
+                        <div className="flex-1">
+                          <div className="font-medium">Website Development</div>
+                          <div className="opacity-60 text-[10px]">(Custom design)</div>
                         </div>
                         <div className="text-right">
-                          <span className="font-medium">€2,500.00</span>
+                          <span className="font-medium text-xs lg:text-sm">€2,500.00</span>
                         </div>
                       </div>
                   </div>
                     <div className="p-1.5 rounded border border-gray-200 bg-white">
-                      <div className="flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">SEO Optimization</span>
-                          <span className="opacity-60">(Search optimization)</span>
-                  </div>
+                      <div className="flex items-start justify-between text-xs">
+                        <div className="flex-1">
+                          <div className="font-medium">SEO Optimization</div>
+                          <div className="opacity-60 text-[10px]">(Search optimization)</div>
+                        </div>
                         <div className="text-right">
-                          <span className="font-medium">€800.00</span>
-                  </div>
-                </div>
-              </div>
+                          <span className="font-medium text-xs lg:text-sm">€800.00</span>
+                        </div>
+                      </div>
+                    </div>
             </div>
           </div>
 
                 {/* Selected Extras */}
-                <div className="p-4">
+                <div className="p-2">
                   <h4 className="text-[10px] font-medium mb-2 pt-1 border-t uppercase tracking-wide text-gray-500 border-gray-200">Selected Extras</h4>
                   <div className="space-y-1">
                     <div className="p-1.5 rounded border border-gray-200 bg-white">
-                      <div className="flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">Premium Support</span>
-                          <span className="opacity-60">(6 months)</span>
-                    </div>
-                        <div className="text-right">
-                          <span className="font-medium">€200.00</span>
-                    </div>
-                  </div>
-                </div>
-                    <div className="p-1.5 rounded border border-gray-200 bg-white">
-                      <div className="flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">SSL Certificate</span>
-                          <span className="opacity-60">(1 year)</span>
+                      <div className="flex items-start justify-between text-xs">
+                        <div className="flex-1">
+                          <div className="font-medium">Premium Support</div>
+                          <div className="opacity-60 text-[10px]">(6 months)</div>
                         </div>
                         <div className="text-right">
-                          <span className="font-medium">€50.00</span>
+                          <span className="font-medium text-xs lg:text-sm">€200.00</span>
                         </div>
-                    </div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Question Responses */}
-                <div className="p-4">
+                <div className="p-2">
                   <h4 className="text-[10px] font-medium mb-2 pt-1 border-t uppercase tracking-wide text-gray-500 border-gray-200">Question Responses</h4>
                   <div className="space-y-2">
-                    <div className="text-sm pb-2 border-b border-gray-200">
-                      <div className="text-xs font-medium flex items-center gap-1 text-gray-500">
+                    <div className="text-xs pb-2 border-b border-gray-200">
+                      <div className="text-[10px] font-medium flex items-center gap-1 text-gray-500">
                         <svg className="w-1.5 h-1.5" fill="currentColor" viewBox="0 0 20 20">
                           <circle cx="10" cy="10" r="3" />
                         </svg>
                         What is your preferred timeline for completion?
                       </div>
-                      <div className="font-medium text-sm pl-3">Within 4-6 weeks</div>
+                      <div className="font-medium text-xs pl-3">Within 4-6 weeks</div>
                     </div>
-                    <div className="text-sm pb-2 border-b border-gray-200">
-                      <div className="text-xs font-medium flex items-center gap-1 text-gray-500">
+                    <div className="text-xs pb-2 border-b border-gray-200">
+                      <div className="text-[10px] font-medium flex items-center gap-1 text-gray-500">
                         <svg className="w-1.5 h-1.5" fill="currentColor" viewBox="0 0 20 20">
                           <circle cx="10" cy="10" r="3" />
                         </svg>
                         Do you have existing content to migrate?
                       </div>
                       <div className="mt-1 pl-3">
-                        <div className="flex items-center gap-1 text-sm">
+                        <div className="flex items-center gap-1 text-xs">
                           <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
                           <span>Yes, I have existing content</span>
-                    </div>
-                    </div>
-                  </div>
+                     </div>
+                     </div>
+                   </div>
                 </div>
               </div>
 
                 {/* Requirements */}
-                <div className="p-4">
+                <div className="p-2">
                   <h4 className="text-[10px] font-medium mb-2 pt-1 border-t uppercase tracking-wide text-gray-500 border-gray-200">Requirements</h4>
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-sm">
-                      <div className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
-                        Confirmed
+                      <div className="flex items-center justify-center w-5 h-5 rounded-full bg-green-100">
+                        <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
                       </div>
                       <div className="flex-1">
                         <span className="text-xs text-gray-500">
@@ -589,8 +556,10 @@ export default function SectionRequestFeatures({ locale }) {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
-                      <div className="px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">
-                        Pending
+                      <div className="flex items-center justify-center w-5 h-5 rounded-full bg-red-100">
+                        <svg className="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                       </div>
                       <div className="flex-1">
                         <span className="text-xs text-gray-500">
@@ -599,17 +568,6 @@ export default function SectionRequestFeatures({ locale }) {
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <div className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
-                        Confirmed
-                      </div>
-                      <div className="flex-1">
-                        <span className="text-xs text-gray-500">
-                          <span className="font-medium">Content: </span>
-                          All text content ready for implementation
-                        </span>
-                </div>
-                </div>
                 </div>
                 </div>
               </div>
