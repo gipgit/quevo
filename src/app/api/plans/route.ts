@@ -1,28 +1,23 @@
 // src/app/api/plans/route.ts
 
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { getAllPlans } from '@/lib/plan-features';
 
 export const dynamic = 'force-dynamic'; // Ensures this route is not cached
 
 export async function GET() {
   try {
-    // Fetch all plans from your database, ordered by plan_id
-    const plans = await prisma.plan.findMany({
-      orderBy: {
-        plan_id: 'asc', // Use plan_id for ordering
-      },
-      select: {
-        plan_id: true,
-        plan_name: true,
-        display_price: true,
-        display_frequency: true,
-        plan_description: true,
-        stripe_price_id: true,
-        stripe_product_id: true,
-        plan_features: true,
-      },
-    });
+    // Get all plans from static configuration
+    const plans = getAllPlans().map(plan => ({
+      plan_id: parseInt(plan.id),
+      plan_name: plan.name,
+      display_price: plan.display_price,
+      display_frequency: plan.display_frequency,
+      plan_description: plan.description,
+      stripe_price_id: plan.stripe_price_id,
+      stripe_product_id: plan.stripe_product_id,
+      plan_features: plan.features,
+    }));
 
     return NextResponse.json({ plans }, { status: 200 });
   } catch (error: any) {

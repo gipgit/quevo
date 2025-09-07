@@ -16,35 +16,21 @@ export const getPlanColors = (planName: string) => {
         overflow: 'hidden' as const
       }
     };
-  } else if (planNameLower.includes('starter')) {
+  } else if (planNameLower.includes('pro plus')) {
     return {
-      gradient: 'bg-green-500',
+      gradient: 'bg-purple-500',
       textColor: 'text-white',
-      showStar: false,
+      showStar: true,
       style: {
-        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-        border: '2px solid #047857',
-        boxShadow: 'none',
-        textShadow: 'none',
-        position: 'relative' as const,
-        overflow: 'hidden' as const
-      }
-    };
-  } else if (planNameLower.includes('growth')) {
-    return {
-      gradient: 'bg-blue-500',
-      textColor: 'text-white',
-      showStar: false,
-      style: {
-        background: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 25%, #2563eb 50%, #1d4ed8 75%, #1e40af 100%)',
-        border: '2px solid #2563eb',
-        boxShadow: '0 4px 15px rgba(59, 130, 246, 0.4), 0 0 30px rgba(59, 130, 246, 0.2)',
+        background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #ef4444 100%)',
+        border: '2px solid #9333ea',
+        boxShadow: '0 4px 15px rgba(168, 85, 247, 0.4), 0 0 30px rgba(168, 85, 247, 0.2)',
         textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
         position: 'relative' as const,
         overflow: 'hidden' as const
       }
     };
-  } else if (planNameLower.includes('pro')) {
+  } else if (planNameLower.includes('pro unlimited')) {
     return {
       gradient: 'bg-yellow-500',
       textColor: 'text-white',
@@ -58,16 +44,16 @@ export const getPlanColors = (planName: string) => {
         overflow: 'hidden' as const
       }
     };
-  } else if (planNameLower.includes('premium')) {
+  } else if (planNameLower.includes('pro')) {
     return {
-      gradient: 'bg-purple-500',
+      gradient: 'bg-blue-500',
       textColor: 'text-white',
       showStar: false,
       style: {
-        background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #ef4444 100%)',
-        border: '2px solid #9333ea',
-        boxShadow: 'none',
-        textShadow: 'none',
+        background: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 25%, #2563eb 50%, #1d4ed8 75%, #1e40af 100%)',
+        border: '2px solid #2563eb',
+        boxShadow: '0 4px 15px rgba(59, 130, 246, 0.4), 0 0 30px rgba(59, 130, 246, 0.2)',
+        textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
         position: 'relative' as const,
         overflow: 'hidden' as const
       }

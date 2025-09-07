@@ -33,7 +33,7 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
           />
           
           {/* Profile Image */}
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full overflow-hidden bg-gray-100 border-2 border-white shadow-lg">
+          <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full overflow-hidden bg-gray-100 border-2 border-white shadow-lg">
             {business.profileImage ? (
               <Image
                 src={business.profileImage}
@@ -59,23 +59,25 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
             <h2 className="text-sm font-medium text-gray-600 mb-0.5" style={{ color: theme?.textColor || '#1F2937' }}>
               {business.boardTitle || 'Service Board'}
             </h2>
-            <h3 className="text-xs font-medium mb-1" style={{ color: theme?.textColor || '#1F2937' }}>
-              {business.name}
-            </h3>
-            <span className="inline-block px-3 py-1 text-xs font-mono font-bold bg-gray-100 text-gray-700 rounded">
-              {business.boardRef}
-            </span>
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <h3 className="text-xs font-medium" style={{ color: theme?.textColor || '#1F2937' }}>
+                {business.name}
+              </h3>
+              <span className="text-xs font-mono text-gray-500">
+                {business.boardRef}
+              </span>
+            </div>
           </div>
 
           {/* Navigation Tabs */}
           <div className="flex border-b border-gray-200 mb-4">
-            <div className="flex-1 text-center py-2 px-3 text-xs font-bold border-b-2" style={{ color: theme?.primaryColor || '#3B82F6', borderColor: theme?.primaryColor || '#3B82F6' }}>
+            <div className="flex-1 text-center py-2 px-3 text-[10px] font-bold border-b-2" style={{ color: theme?.primaryColor || '#3B82F6', borderColor: theme?.primaryColor || '#3B82F6' }}>
               Timeline
             </div>
-            <div className="flex-1 text-center py-2 px-3 text-xs font-medium text-gray-600">
+            <div className="flex-1 text-center py-2 px-3 text-[10px] font-medium text-gray-600">
               Appointments
             </div>
-            <div className="flex-1 text-center py-2 px-3 text-xs font-medium text-gray-600">
+            <div className="flex-1 text-center py-2 px-3 text-[10px] font-medium text-gray-600">
               Info
             </div>
           </div>
@@ -83,42 +85,66 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
           {/* Timeline Preview */}
           <div className="relative">
             {/* Timeline Line */}
-            <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-300"></div>
+            <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-300"></div>
             
           <div className="space-y-3">
               {/* Timeline Item 1 - Payment Request */}
-            <div className="flex items-start space-x-3">
+            <div className="flex items-start space-x-2">
                 <div className="w-3 h-3 rounded-full bg-yellow-500 border-2 border-yellow-600 mt-2 flex-shrink-0 relative z-10"></div>
-                <div className="flex-1 bg-white border border-gray-200 rounded-lg p-2 ml-2 text-center">
-                  <div className="text-sm font-medium text-gray-900 mb-1">Payment Request</div>
+                <div className="flex-1 bg-white border border-gray-200 rounded-lg p-2 text-center">
+                  <div className="text-xs font-medium text-gray-900 mb-1">Payment Request</div>
+                  <div className="bg-gray-50 rounded-lg p-2 mb-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] font-medium text-gray-600">Reason of payment</span>
+                      <button className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors">
+                        <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                      </button>
+                    </div>
+                    <div className="text-[10px] text-gray-800 mb-2">Service consultation fee</div>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] font-medium text-gray-600">IBAN</span>
+                      <button className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors">
+                        <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                      </button>
+                    </div>
+                    <div className="text-[10px] text-gray-800">IT60X0542811101000000123456</div>
+                  </div>
                   <div className="flex items-center justify-center gap-2 mb-1">
-                    <div className="text-base font-bold text-gray-900">€ 150.00</div>
+                    <div className="text-sm font-bold text-gray-900">€ 150.00</div>
                     <span className="px-1.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">pending</span>
                   </div>
-                  <div className="text-xs text-gray-600 mb-1">Service consultation fee</div>
-                  <div className="text-xs text-gray-500">2 hours ago</div>
+                  <div className="text-[10px] text-gray-500">2 hours ago</div>
                 </div>
               </div>
 
               {/* Timeline Item 2 - Document Download */}
-              <div className="flex items-start space-x-3">
+              <div className="flex items-start space-x-2">
                 <div className="w-3 h-3 rounded-full bg-red-500 border-2 border-red-600 mt-2 flex-shrink-0 relative z-10"></div>
-                <div className="flex-1 bg-white border border-gray-200 rounded-lg p-2 ml-2 text-center">
-                  <div className="text-sm font-medium text-gray-900 mb-1">Document Download</div>
+                <div className="flex-1 bg-white border border-gray-200 rounded-lg p-2 text-center">
+                  <div className="text-[10px] font-medium text-gray-900 mb-1">Document Download</div>
                   <div className="flex items-center justify-center gap-2 mb-1">
-                    <span className="inline-flex items-center px-1.5 py-0.5 rounded-lg text-xs font-medium bg-red-100 text-red-800">PDF</span>
+                    <span className="inline-flex items-center px-1 py-0.5 rounded-lg text-[10px] font-medium bg-red-100 text-red-800">PDF</span>
                     <h4 className="text-xs font-medium text-gray-900">Service Agreement</h4>
+                    <button className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+                      <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </button>
                   </div>
                   <div className="text-xs text-gray-600 mb-1">Contract and terms document</div>
-                  <div className="text-xs text-gray-500">1 day ago</div>
+                  <div className="text-[10px] text-gray-500">1 day ago</div>
                 </div>
               </div>
 
               {/* Timeline Item 3 - Milestone Update */}
-              <div className="flex items-start space-x-3">
+              <div className="flex items-start space-x-2">
                 <div className="w-3 h-3 rounded-full bg-blue-500 border-2 border-blue-600 mt-2 flex-shrink-0 relative z-10"></div>
-                <div className="flex-1 bg-white border border-gray-200 rounded-lg p-2 ml-2 text-center">
-                  <div className="text-sm font-medium text-gray-900 mb-1">Milestone Update</div>
+                <div className="flex-1 bg-white border border-gray-200 rounded-lg p-2 text-center">
+                  <div className="text-xs font-medium text-gray-900 mb-1">Milestone Update</div>
                   <div className="flex items-center justify-center gap-2 mb-1">
                     <h3 className="text-xs font-semibold text-gray-900">Initial Consultation</h3>
                     <div className="h-5 w-5 rounded-full bg-blue-100 flex items-center justify-center">
@@ -128,21 +154,21 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
                     </div>
                   </div>
                   <div className="text-xs text-gray-600 mb-1">Project milestone in progress</div>
-                  <div className="text-xs text-gray-500">2 days ago</div>
+                  <div className="text-[10px] text-gray-500">2 days ago</div>
               </div>
             </div>
 
               {/* Timeline Item 4 - Checklist */}
-            <div className="flex items-start space-x-3">
+            <div className="flex items-start space-x-2">
                 <div className="w-3 h-3 rounded-full bg-green-500 border-2 border-green-600 mt-2 flex-shrink-0 relative z-10"></div>
-                <div className="flex-1 bg-white border border-gray-200 rounded-lg p-2 ml-2 text-center">
-                  <div className="text-sm font-medium text-gray-900 mb-1">Checklist</div>
+                <div className="flex-1 bg-white border border-gray-200 rounded-lg p-2 text-center">
+                  <div className="text-xs font-medium text-gray-900 mb-1">Checklist</div>
                   <div className="flex items-center justify-center gap-2 mb-1">
                     <h3 className="text-xs font-semibold text-gray-900">Requirements</h3>
                     <span className="text-xs font-medium text-gray-700">75%</span>
                   </div>
                   <div className="text-xs text-gray-600 mb-1">Project requirements verification</div>
-                  <div className="text-xs text-gray-500">3 days ago</div>
+                  <div className="text-[10px] text-gray-500">3 days ago</div>
                 </div>
               </div>
             </div>
@@ -211,7 +237,7 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
             <div className="col-span-4 p-3">
               <div className="relative">
                 {/* Timeline Line */}
-                <div className="absolute left-3 top-0 bottom-0 w-0.5 bg-gray-300"></div>
+                <div className="absolute left-7 top-0 bottom-0 w-0.5 bg-gray-300"></div>
                 
               <div className="space-y-2">
                 <div className="bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
@@ -219,11 +245,31 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
                       <div className="w-3 h-3 rounded-full bg-yellow-500 border-2 border-yellow-600 mt-1 flex-shrink-0 relative z-10"></div>
                       <div className="flex-1 ml-1">
                         <div className="text-sm font-medium text-gray-900 mb-1">Payment Request</div>
+                        <div className="bg-gray-50 rounded-lg p-2 mb-2">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-[10px] font-medium text-gray-600">Reason of payment</span>
+                            <button className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors">
+                              <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                              </svg>
+                            </button>
+                          </div>
+                          <div className="text-[10px] text-gray-800 mb-2">Service consultation fee</div>
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-[10px] font-medium text-gray-600">IBAN</span>
+                            <button className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors">
+                              <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                              </svg>
+                            </button>
+                          </div>
+                          <div className="text-[10px] text-gray-800">IT60X0542811101000000123456</div>
+                        </div>
                         <div className="flex items-center gap-2 mb-1">
-                          <div className="text-lg font-bold text-gray-900">€ 150.00</div>
+                          <div className="text-base font-bold text-gray-900">€ 150.00</div>
                           <span className="px-1.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">pending</span>
                         </div>
-                      <div className="text-xs text-gray-500">2 hours ago</div>
+                        <div className="text-xs text-gray-500">2 hours ago</div>
                     </div>
                   </div>
                 </div>
@@ -233,8 +279,13 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
                       <div className="flex-1 ml-1">
                         <div className="text-sm font-medium text-gray-900 mb-1">Document Download</div>
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-lg text-xs font-medium bg-red-100 text-red-800">PDF</span>
+                          <span className="inline-flex items-center px-1 py-0.5 rounded-lg text-[10px] font-medium bg-red-100 text-red-800">PDF</span>
                           <h4 className="text-sm font-medium text-gray-900">Service Agreement</h4>
+                          <button className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+                            <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                          </button>
                         </div>
                         <div className="text-xs text-gray-500">1 day ago</div>
                       </div>

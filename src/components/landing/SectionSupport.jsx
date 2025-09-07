@@ -137,8 +137,8 @@ export default function SectionSupport({ locale }) {
                   </div>
                   <p className="text-sm text-gray-700 mb-1">"hi i hav a problem with my acount i cant login and i dont no why pls help me asap its urgent"</p>
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full">8 errors</span>
-                    <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded-full">Poor readability</span>
+                    <span className="px-1.5 py-0.5 bg-gray-100/50 text-gray-600 rounded-full text-[10px]">8 errors</span>
+                    <span className="px-1.5 py-0.5 bg-gray-100/50 text-gray-600 rounded-full text-[10px]">Poor readability</span>
                   </div>
                 </div>
 
@@ -149,8 +149,8 @@ export default function SectionSupport({ locale }) {
                   </div>
                   <p className="text-sm text-gray-700 mb-1">"Hi, I have a problem with my account. I can't login and I don't know why. Please help me as soon as possible, it's urgent."</p>
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full">8 fixes</span>
-                    <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full">Excellent readability</span>
+                    <span className="px-1.5 py-0.5 bg-gray-100/50 text-gray-600 rounded-full text-[10px]">8 fixes</span>
+                    <span className="px-1.5 py-0.5 bg-gray-100/50 text-gray-600 rounded-full text-[10px]">Excellent readability</span>
                   </div>
                 </div>
               </div>
@@ -194,8 +194,15 @@ export default function SectionSupport({ locale }) {
 
         {/* 2-Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8 max-w-7xl mx-auto">
-          {/* Left Column - Features List */}
-          <div className="lg:col-span-2 space-y-6">
+          {/* Mobile Preview - Show first on mobile */}
+          <div className="lg:col-span-3 lg:order-2 flex justify-center">
+            <div className="w-full max-w-xl">
+              {renderFeaturePreview()}
+            </div>
+          </div>
+
+          {/* Features List - Show second on mobile */}
+          <div className="lg:col-span-2 lg:order-1 space-y-3 lg:space-y-6">
             {supportFeatures.map((feature, index) => (
               <div
                 key={index}
@@ -221,26 +228,12 @@ export default function SectionSupport({ locale }) {
                   }`}>
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-gray-300 leading-relaxed">
+                  <p className="text-xs lg:text-sm text-gray-300 leading-tight lg:leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
               </div>
             ))}
-          </div>
-
-          {/* Right Column - Feature Preview */}
-          <div className="lg:col-span-3 hidden lg:flex justify-center">
-            <div className="w-full max-w-xl">
-              {renderFeaturePreview()}
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Preview - Show below cards on mobile */}
-        <div className="lg:hidden mt-8 flex justify-center">
-          <div className="w-full max-w-lg">
-            {renderFeaturePreview()}
           </div>
         </div>
       </div>

@@ -541,8 +541,8 @@ export default function SectionHero({ locale }) {
             // Only apply effect when section is in view
             if (sectionTop < windowHeight && sectionTop + sectionHeight > 0) {
                 // Calculate progress: 0 when section is at top, 1 when section is at bottom
-                // Start movement later by reducing the early start offset
-                const progress = Math.max(0, Math.min(1, (windowHeight - sectionTop - 100) / (windowHeight + sectionHeight - 200)));
+                // Start movement even later by increasing the early start offset more
+                const progress = Math.max(0, Math.min(1, (windowHeight - sectionTop - 350) / (windowHeight + sectionHeight - 450)));
                 setScrollProgress(progress);
             } else {
                 setScrollProgress(0);
@@ -568,7 +568,7 @@ export default function SectionHero({ locale }) {
     const progressPercentage = ((3000 - timeRemaining) / 3000) * 100;
 
     return (
-        <section ref={sectionRef} className="min-h-screen flex items-center" style={{
+        <section ref={sectionRef} className="min-h-screen flex items-center overflow-x-hidden" style={{
           background: 'radial-gradient(circle at center 150%, #fefefe 0%, #fafafa 50%, #f5f5f5 70%, #ffffff 85%)'
         }}>
             <div className="container mx-auto px-12 py-16 max-w-[1480px]">
@@ -672,7 +672,7 @@ export default function SectionHero({ locale }) {
                                             // Use cubic-bezier for rounder movement curve
                                             // Only apply transform on mobile screens
                                             transform: isMobile 
-                                                ? `translateX(${1200 + Math.pow(scrollProgress, 0.7) * -2000}px) scale(0.75)`
+                                                ? `translateX(${1200 + Math.pow(scrollProgress, 0.7) * -1600}px) scale(0.75)`
                                                 : 'translateX(0px) scale(1)',
                                         }}
                                     >

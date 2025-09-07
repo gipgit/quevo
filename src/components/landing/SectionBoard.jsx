@@ -410,8 +410,8 @@ export default function SectionBoard({ locale }) {
             // Only apply effect when section is in view
             if (sectionTop < windowHeight && sectionTop + sectionHeight > 0) {
                 // Calculate progress: 0 when section is at top, 1 when section is at bottom
-                // Start movement at middle point between previous settings
-                const progress = Math.max(0, Math.min(1, (windowHeight - sectionTop - 450) / (windowHeight + sectionHeight - 650)));
+                // Start movement earlier by reducing the early start offset
+                const progress = Math.max(0, Math.min(1, (windowHeight - sectionTop - 500) / (windowHeight + sectionHeight - 700)));
                 setScrollProgress(progress);
             } else {
                 setScrollProgress(0);
@@ -518,7 +518,7 @@ export default function SectionBoard({ locale }) {
 
     return (
 
-        <section ref={sectionRef} className="min-h-screen bg-white flex items-center">
+        <section ref={sectionRef} className="min-h-screen bg-white flex items-center overflow-x-hidden">
 
             <div className="container mx-auto px-6 py-16 max-w-[1300px]">
 
@@ -797,7 +797,7 @@ export default function SectionBoard({ locale }) {
                                                 // Use cubic-bezier for rounder movement curve
                                                 // Only apply transform on mobile screens
                                                 transform: isMobile 
-                                                    ? `translateX(${1200 + Math.pow(scrollProgress, 0.7) * -1400}px) scale(0.75)`
+                                                    ? `translateX(${1200 + Math.pow(scrollProgress, 0.7) * -1500}px) scale(0.75)`
                                                     : 'translateX(0px) scale(1)',
                                             }}
                                         >
