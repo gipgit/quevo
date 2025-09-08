@@ -81,6 +81,7 @@ export default function ServiceRequestModal({
     business,
     themeColorText,
     themeColorBackgroundCard,
+    themeColorBackgroundSecondary,
     themeColorButton,
     themeColorBorder,
     themeColorBackground,
@@ -117,6 +118,7 @@ export default function ServiceRequestModal({
     const [isRedirecting, setIsRedirecting] = useState(false);
     const [showErrorModal, setShowErrorModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [isLoadingSteps, setIsLoadingSteps] = useState(true);
 
     const fetchServiceEvents = useCallback(async (serviceId) => {
         setIsLoadingEvents(true);
@@ -150,14 +152,23 @@ export default function ServiceRequestModal({
             // Merge the original service data with the enriched details
             const enrichedService = {
                 ...service,
-                ...data.service // This includes consent fields and other details
+                ...data.service, // This includes consent fields and other details
+                has_requirements: (data.requirements || []).length > 0,
+                has_questions: (data.questions || []).length > 0
             };
             
             console.log('Enriched service details:', enrichedService);
             setEnrichedServiceDetails(enrichedService);
+            
+            // Add a small delay to ensure smooth step loading
+            setTimeout(() => {
+                setIsLoadingSteps(false);
+            }, 500);
+            
             return enrichedService;
         } catch (error) {
             console.error('Error fetching enriched service details:', error);
+            setIsLoadingSteps(false);
             return service; // Fallback to original service data
         }
     }, []);
@@ -276,6 +287,41 @@ export default function ServiceRequestModal({
         setCheckboxResponses(cResps);
         
         // Check if service has active_booking to determine next step
+        if (selectedService.active_booking) {
+            const result = await fetchServiceEvents(selectedService.service_id);
+            
+            if (!result.success) {
+                setErrorMessage(result.error || t('failedToLoadEvents'));
+                setShowErrorModal(true);
+                return;
+            }
+            
+            const events = result.events;
+            setServiceEvents(events);
+            
+            if (events.length === 0) {
+                // No events available, go directly to customer details
+                setStep(8);
+            } else if (events.length === 1) {
+                // One event found, set it as selected and go to date time selection
+                const singleEvent = events[0];
+                setSelectedEvent(singleEvent);
+                const eventDuration = singleEvent.duration_minutes || 0;
+                const eventBuffer = singleEvent.buffer_minutes || 0;
+                setTotalOccupancyDuration(eventDuration + eventBuffer);
+                setStep(7); // Date time selection
+            } else {
+                // Multiple events found, go to event selection step
+                setStep(6); // Event selection
+            }
+        } else {
+            // No date selection required, go directly to customer details
+            setStep(8);
+        }
+    }, [selectedService, fetchServiceEvents, t]);
+
+    const handleQuestionsSkip = useCallback(async () => {
+        // Skip questions step - go to next step based on service configuration
         if (selectedService.active_booking) {
             const result = await fetchServiceEvents(selectedService.service_id);
             
@@ -482,7 +528,62 @@ export default function ServiceRequestModal({
         setErrorMessage('');
         setIsSubmitting(false);
         setIsRedirecting(false);
+        setIsLoadingSteps(true);
     }, [onClose]);
+
+    // Function to get step configuration based on service settings
+    const getStepConfiguration = useCallback(() => {
+        if (!selectedService) return { steps: [], currentStepIndex: 0 };
+        
+        const steps = [
+            { id: 1, name: 'Overview', label: 'Overview' }
+        ];
+        
+        // Use enriched service details if available, otherwise fall back to selectedService
+        const serviceData = enrichedServiceDetails || selectedService;
+        
+        // Add steps based on actual service configuration
+        if (serviceData.has_items) {
+            steps.push({ id: 2, name: 'Items', label: 'Items' });
+        }
+        
+        if (serviceData.has_extras) {
+            steps.push({ id: 3, name: 'Extras', label: 'Extras' });
+        }
+        
+        // Add requirements step if we have enriched data and requirements exist
+        if (enrichedServiceDetails && enrichedServiceDetails.has_requirements) {
+            steps.push({ id: 4, name: 'Requirements', label: 'Requirements' });
+        }
+        
+        // Add questions step if we have enriched data and questions exist
+        if (enrichedServiceDetails && enrichedServiceDetails.has_questions) {
+            steps.push({ id: 5, name: 'Questions', label: 'Questions' });
+        }
+        
+        // Add booking steps if service has active booking
+        if (selectedService.active_booking) {
+            steps.push({ id: 6, name: 'Event', label: 'Event' });
+            steps.push({ id: 7, name: 'DateTime', label: 'Date & Time' });
+        }
+        
+        // Always add customer details as the final step
+        steps.push({ id: 8, name: 'Details', label: 'Details' });
+        
+        const currentStepIndex = steps.findIndex(s => s.id === step);
+        
+        return { steps, currentStepIndex: currentStepIndex >= 0 ? currentStepIndex : 0 };
+    }, [selectedService, step, enrichedServiceDetails]);
+
+    // Function to get total number of steps
+    const getTotalSteps = useCallback(() => {
+        return getStepConfiguration().steps.length;
+    }, [getStepConfiguration]);
+
+    // Function to get current step number (1-based)
+    const getCurrentStepNumber = useCallback(() => {
+        return getStepConfiguration().currentStepIndex + 1;
+    }, [getStepConfiguration]);
 
          // Reset state when modal opens - moved after all function definitions
      useEffect(() => {
@@ -518,13 +619,70 @@ export default function ServiceRequestModal({
     }
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex justify-center items-center z-50 p-2 lg:p-4">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
-                {/* Modal Header */}
-                <div className="flex justify-between items-center py-2 lg:py-4 px-6 border-b border-gray-200">
-                    <h2 className="text-lg lg:text-2xl font-semibold">
-                        {selectedService.service_name}
-                    </h2>
+        <div className="fixed inset-0 backdrop-blur-sm flex justify-center items-center z-50 p-2 lg:p-4" style={{ backgroundColor: `${themeColorText}70` }}>
+            <div className="rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden lg:p-6" style={{ backgroundColor: themeColorBackgroundSecondary }}>
+                 {/* Modal Header */}
+                 <div className="flex justify-between items-center pb-2 lg:pb-4" style={{ backgroundColor: themeColorBackgroundSecondary }}>
+                    <div className="flex items-center space-x-4">
+                        <h2 className="text-lg lg:text-2xl font-semibold">
+                            {selectedService.service_name}
+                        </h2>
+                        
+                         {/* Step Navigation Progress */}
+                         {!isLoadingSteps && (
+                             <div className="flex items-center space-x-3">
+                                 {getStepConfiguration().steps.map((stepConfig, index) => {
+                                     const isActive = index === getStepConfiguration().currentStepIndex;
+                                     const isCompleted = index < getStepConfiguration().currentStepIndex;
+                                     
+                                     return (
+                                         <div key={stepConfig.id} className="flex items-center space-x-2">
+                                             <div
+                                                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                                                     isActive 
+                                                         ? 'scale-125' 
+                                                         : isCompleted 
+                                                             ? 'scale-110' 
+                                                             : 'scale-100'
+                                                 }`}
+                                                 style={{
+                                                     backgroundColor: isActive 
+                                                         ? themeColorButton 
+                                                         : isCompleted 
+                                                             ? themeColorButton 
+                                                             : `${themeColorText}40`
+                                                 }}
+                                             />
+                                             <span 
+                                                 className={`text-xs transition-all duration-300 hidden lg:inline ${
+                                                     isActive ? 'font-semibold' : 'font-normal'
+                                                 }`}
+                                                 style={{
+                                                     color: isActive 
+                                                         ? themeColorButton 
+                                                         : isCompleted 
+                                                             ? themeColorButton 
+                                                             : `${themeColorText}80`
+                                                 }}
+                                             >
+                                                 {stepConfig.label}
+                                             </span>
+                                         </div>
+                                     );
+                                 })}
+                             </div>
+                         )}
+                        
+                        {/* Loading placeholder for steps */}
+                        {isLoadingSteps && (
+                            <div className="flex items-center space-x-3">
+                                <div className="w-2 h-2 rounded-full bg-gray-300 animate-pulse"></div>
+                                <div className="w-2 h-2 rounded-full bg-gray-300 animate-pulse"></div>
+                                <div className="w-2 h-2 rounded-full bg-gray-300 animate-pulse"></div>
+                            </div>
+                        )}
+                    </div>
+                    
                     <button
                         onClick={handleCloseModal}
                         className="p-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -538,7 +696,7 @@ export default function ServiceRequestModal({
                 {/* Modal Content */}
                 <div className="flex flex-col lg:flex-row h-full max-h-[calc(90vh-80px)]">
                     {/* Left Column - Service Image (Always Visible) */}
-                    <div className="lg:w-1/3 p-0 lg:p-6">
+                    <div className="lg:w-1/3">
                         <div className="w-full h-[80px] lg:h-[500px] lg:rounded-2xl overflow-hidden bg-gray-100 relative">
                             <ServiceImage 
                                 serviceId={selectedService.service_id} 
@@ -554,7 +712,7 @@ export default function ServiceRequestModal({
                     </div>
 
                                          {/* Right Column - Step Content */}
-                     <div className="lg:w-2/3 overflow-y-auto">
+                     <div className="lg:w-2/3 overflow-y-auto lg:ml-6">
                          {/* Service Overview Step */}
                          {step === 1 && selectedService && (
                              <ServiceOverviewStep
@@ -563,6 +721,7 @@ export default function ServiceRequestModal({
                                  onBack={handleBack}
                                  themeColorText={themeColorText}
                                  themeColorBackgroundCard={themeColorBackgroundCard}
+                                 themeColorBackgroundSecondary={themeColorBackgroundSecondary}
                                  themeColorButton={themeColorButton}
                                  themeColorBorder={themeColorBorder}
                              />
@@ -577,6 +736,7 @@ export default function ServiceRequestModal({
                                   onBack={handleBack}
                                   themeColorText={themeColorText}
                                   themeColorBackgroundCard={themeColorBackgroundCard}
+                                  themeColorBackgroundSecondary={themeColorBackgroundSecondary}
                                   themeColorButton={themeColorButton}
                                   themeColorBorder={themeColorBorder}
                               />
@@ -591,6 +751,7 @@ export default function ServiceRequestModal({
                                   onBack={handleBack}
                                   themeColorText={themeColorText}
                                   themeColorBackgroundCard={themeColorBackgroundCard}
+                                  themeColorBackgroundSecondary={themeColorBackgroundSecondary}
                                   themeColorButton={themeColorButton}
                                   themeColorBorder={themeColorBorder}
                               />
@@ -604,24 +765,26 @@ export default function ServiceRequestModal({
                                 onBack={handleBack}
                                  themeColorText={themeColorText}
                                  themeColorBackgroundCard={themeColorBackgroundCard}
+                                 themeColorBackgroundSecondary={themeColorBackgroundSecondary}
                                  themeColorButton={themeColorButton}
                                  themeColorBorder={themeColorBorder}
                              />
                          )}
 
-                         {/* Questions Step */}
-                         {step === 5 && selectedService && (
-                             <QuestionsStep
-                                 selectedService={enrichedServiceDetails || selectedService}
-                                 onNext={handleQuestionsNext}
-                                 onSkip={handleQuestionsNext}
-                                 onBack={handleBack}
-                                 themeColorText={themeColorText}
-                                 themeColorBackgroundCard={themeColorBackgroundCard}
-                                 themeColorButton={themeColorButton}
-                                 themeColorBorder={themeColorBorder}
-                             />
-                         )}
+                          {/* Questions Step */}
+                          {step === 5 && selectedService && (
+                              <QuestionsStep
+                                  selectedService={enrichedServiceDetails || selectedService}
+                                  onNext={handleQuestionsNext}
+                                  onSkip={handleQuestionsSkip}
+                                  onBack={handleBack}
+                                  themeColorText={themeColorText}
+                                  themeColorBackgroundCard={themeColorBackgroundCard}
+                                  themeColorBackgroundSecondary={themeColorBackgroundSecondary}
+                                  themeColorButton={themeColorButton}
+                                  themeColorBorder={themeColorBorder}
+                              />
+                          )}
 
                          {/* Event Selection Step */}
                           {step === 6 && selectedService && !isLoadingEvents && serviceEvents.length > 1 && (
@@ -631,6 +794,7 @@ export default function ServiceRequestModal({
                                 onEventSelect={handleEventSelect}
                                 themeColorText={themeColorText}
                                 themeColorBackgroundCard={themeColorBackgroundCard}
+                                themeColorBackgroundSecondary={themeColorBackgroundSecondary}
                                 themeColorButton={themeColorButton}
                                 themeColorBorder={themeColorBorder}
                             />
@@ -662,6 +826,7 @@ export default function ServiceRequestModal({
                                 onBack={handleBack}
                                 themeColorText={themeColorText}
                                 themeColorBackgroundCard={themeColorBackgroundCard}
+                                themeColorBackgroundSecondary={themeColorBackgroundSecondary}
                                 themeColorButton={themeColorButton}
                                 themeColorBorder={themeColorBorder}
                             />

@@ -10,6 +10,7 @@ export default function ServiceItemsStep({
     onBack,
     themeColorText,
     themeColorBackgroundCard,
+    themeColorBackgroundSecondary,
     themeColorButton,
     themeColorBorder
 }) {
@@ -174,12 +175,12 @@ export default function ServiceItemsStep({
                 
                 <div className="flex-1 flex items-center justify-center">
                     <div className="text-center">
-                        <p className="text-gray-500 mb-4">{t('noServiceItemsAvailable')}</p>
+                        <p className="mb-4 opacity-60" style={{ color: themeColorText }}>{t('noServiceItemsAvailable')}</p>
                     </div>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex justify-between pt-4 mt-auto sticky bottom-0 bg-gradient-to-t from-white via-white/95 to-transparent border-t border-gray-200 -mx-6 px-6 py-4">
+                <div className="flex justify-between pt-4 mt-auto sticky bottom-0 border-t border-gray-200 -mx-6 px-6 py-4" style={{ background: `linear-gradient(to top, ${themeColorBackgroundSecondary}, ${themeColorBackgroundSecondary}95, transparent)`, borderColor: themeColorBorder }}>
                     <button
                         onClick={handleBack}
                         className="px-4 py-2 rounded-md text-sm font-medium"
@@ -229,7 +230,7 @@ export default function ServiceItemsStep({
                                              <button
                                                  type="button"
                                                  onClick={() => toggleDescription(item.service_item_id)}
-                                                 className="text-gray-400 hover:text-gray-600 transition-colors"
+                                                 className="opacity-60 hover:opacity-80 transition-opacity"
                                              >
                                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -299,14 +300,14 @@ export default function ServiceItemsStep({
                         <p className="font-bold text-2xl" style={{color: themeColorButton}}>€ {totalQuotationPrice.toFixed(2)}</p>
                     </div>
                     <div className="">
-                        <p className="text-xs leading-none opacity-50">{t('optionalItemsDescription')}</p>
+                        <p className="text-xs leading-none opacity-50" style={{ color: themeColorText }}>{t('optionalItemsDescription')}</p>
                     </div>
                 </div>
             </div>
         </div>
 
         {/* Action Buttons */}
-            <div className="sticky bottom-0 p-6 border-t bg-white" style={{ borderColor: themeColorBorder }}>
+            <div className="sticky bottom-0 p-6 border-t" style={{ borderColor: themeColorBorder, backgroundColor: themeColorBackgroundSecondary }}>
                 <div className="flex justify-between items-center">
                     <button
                         onClick={handleBack}

@@ -9,7 +9,7 @@ export default function SectionCTA() {
     return (
         <section className="py-16 px-4 lg:px-8">
             <div className="max-w-6xl mx-auto">
-                <div className="relative bg-gradient-to-br from-slate-900 via-gray-900 to-black rounded-3xl p-8 lg:p-16 overflow-hidden">
+                <div className="relative bg-gradient-to-br from-blue-950 via-green-900 to-yellow-800 rounded-3xl p-8 lg:p-16 overflow-hidden">
                     {/* AI Pattern Overlay */}
                     <div className="absolute inset-0 opacity-15">
                         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[length:20px_20px]"></div>
@@ -24,7 +24,7 @@ export default function SectionCTA() {
                     
                     <div className="relative z-10 text-center">
                         <h2 className="text-3xl lg:text-5xl font-bold leading-tight mb-4 drop-shadow-lg">
-                            <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">Ready to Transform</span> <span className="text-white">Your Business?</span>
+                            <span className="text-white">Ready to Transform</span> <span className="text-white">Your Business?</span>
                         </h2>
                         <p className="text-lg lg:text-2xl mb-8 text-gray-300 leading-tight lg:leading-relaxed max-w-3xl mx-auto drop-shadow-md">
                             Join thousands of businesses already using AI to streamline their operations and boost productivity

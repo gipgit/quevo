@@ -9,6 +9,7 @@ export default function ServiceOverviewStep({
     onBack,
     themeColorText,
     themeColorBackgroundCard,
+    themeColorBackgroundSecondary,
     themeColorButton,
     themeColorBorder
 }) {
@@ -58,7 +59,7 @@ export default function ServiceOverviewStep({
                 </div>
             </div>
 
-            <div className="sticky bottom-0 p-6 border-t bg-white" style={{ borderColor: themeColorBorder }}>
+            <div className="sticky bottom-0 p-6 border-t" style={{ borderColor: themeColorBorder, backgroundColor: themeColorBackgroundSecondary }}>
                 <div className="flex justify-between items-center">
                     <button
                         onClick={onBack}

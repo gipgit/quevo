@@ -13,7 +13,7 @@ export default function ServiceRequestPageClientContent({
     categories: rawCategories,
     isLoading = false
 }) {
-    const { locale, themeColorText, themeColorButton, themeColorBackgroundCard, themeColorBorder, themeColorBackground  } = useBusinessProfile();
+    const { locale, themeColorText, themeColorButton, themeColorBackgroundCard, themeColorBackgroundSecondary, themeColorBorder, themeColorBackground  } = useBusinessProfile();
     const t = useTranslations('ServiceRequest');
 
     const [selectedService, setSelectedService] = useState(null);
@@ -81,6 +81,7 @@ export default function ServiceRequestPageClientContent({
                 business={business}
                 themeColorText={themeColorText}
                 themeColorBackgroundCard={themeColorBackgroundCard}
+                themeColorBackgroundSecondary={themeColorBackgroundSecondary}
                 themeColorButton={themeColorButton}
                 themeColorBorder={themeColorBorder}
                 themeColorBackground={themeColorBackground}

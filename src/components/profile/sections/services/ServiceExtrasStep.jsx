@@ -10,6 +10,7 @@ export default function ServiceExtrasStep({
     onBack,
     themeColorText,
     themeColorBackgroundCard,
+    themeColorBackgroundSecondary,
     themeColorButton,
     themeColorBorder
 }) {
@@ -167,7 +168,7 @@ export default function ServiceExtrasStep({
                         <h3 className="text-lg font-semibold mb-4" style={{ color: themeColorText }}>
                             {t('serviceExtrasTitle') || 'Service Extras'}
                         </h3>
-                        <p className="text-gray-600 mb-6">{t('noExtrasAvailable') || 'No additional extras available for this service.'}</p>
+                        <p className="mb-6 opacity-70" style={{ color: themeColorText }}>{t('noExtrasAvailable') || 'No additional extras available for this service.'}</p>
                         <button
                             onClick={handleSkip}
                             className="px-6 py-3 rounded-lg font-medium"
@@ -213,7 +214,7 @@ export default function ServiceExtrasStep({
                                                 {extra.extra_name}
                                             </h4>
                                             {extra.extra_description && (
-                                                <p className="text-xs lg:text-sm text-gray-600 mt-1">
+                                                <p className="text-xs lg:text-sm mt-1 opacity-70" style={{ color: themeColorText }}>
                                                     {extra.extra_description}
                                                 </p>
                                             )}
@@ -227,7 +228,7 @@ export default function ServiceExtrasStep({
                                             }
                                         </span>
                                         {extra.price_unit && extra.price_type === 'per_unit' && (
-                                            <span className="text-xs text-gray-500 block">
+                                            <span className="text-xs block opacity-60" style={{ color: themeColorText }}>
                                                 per {extra.price_unit}
                                             </span>
                                         )}
@@ -239,8 +240,8 @@ export default function ServiceExtrasStep({
                                         <button
                                             type="button"
                                             onClick={(e) => { e.stopPropagation(); handleServiceExtraQuantityChange(extra.service_extra_id, -1); }}
-                                            className="bg-white px-2 py-1 rounded-full text-sm font-bold shadow-sm"
-                                            style={{ color: themeColorButton, border: `1px solid ${themeColorButton}` }}
+                                            className="px-2 py-1 rounded-full text-sm font-bold shadow-sm"
+                                            style={{ color: themeColorButton, border: `1px solid ${themeColorButton}`, backgroundColor: themeColorBackgroundCard }}
                                         >
                                             -
                                         </button>
@@ -251,8 +252,8 @@ export default function ServiceExtrasStep({
                                         <button
                                             type="button"
                                             onClick={(e) => { e.stopPropagation(); handleServiceExtraQuantityChange(extra.service_extra_id, 1); }}
-                                            className="bg-white px-2 py-1 rounded-full text-sm font-bold shadow-sm"
-                                            style={{ color: themeColorButton, border: `1px solid ${themeColorButton}` }}
+                                            className="px-2 py-1 rounded-full text-sm font-bold shadow-sm"
+                                            style={{ color: themeColorButton, border: `1px solid ${themeColorButton}`, backgroundColor: themeColorBackgroundCard }}
                                         >
                                             +
                                         </button>
@@ -277,7 +278,7 @@ export default function ServiceExtrasStep({
                 )}
             </div>
 
-            <div className="sticky bottom-0 p-6 border-t bg-white" style={{ borderColor: themeColorBorder }}>
+            <div className="sticky bottom-0 p-6 border-t" style={{ borderColor: themeColorBorder, backgroundColor: themeColorBackgroundSecondary }}>
                 <div className="flex justify-between items-center">
                     <button
                         onClick={onBack}

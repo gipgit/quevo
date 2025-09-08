@@ -10,6 +10,7 @@ export default function QuestionsStep({
     onBack,
     themeColorText,
     themeColorBackgroundCard,
+    themeColorBackgroundSecondary,
     themeColorButton,
     themeColorBorder
 }) {
@@ -144,6 +145,9 @@ export default function QuestionsStep({
     const handleSkip = () => {
         onSkip();
     };
+
+    // Check if there are any required questions
+    const hasRequiredQuestions = questions.some(q => q.is_required === true || q.is_required === 'true');
 
     const handleBack = () => {
         onBack();
@@ -319,7 +323,7 @@ export default function QuestionsStep({
             </div>
 
             {/* Action Buttons */}
-            <div className="sticky bottom-0 p-6 border-t bg-white" style={{ borderColor: themeColorBorder }}>
+            <div className="sticky bottom-0 p-6 border-t" style={{ borderColor: themeColorBorder, backgroundColor: themeColorBackgroundSecondary }}>
                 <div className="flex justify-between items-center">
                     <button
                         onClick={handleBack}
@@ -332,13 +336,15 @@ export default function QuestionsStep({
                         <span className="hidden lg:inline">{t('back')}</span>
                     </button>
                     <div className="flex gap-3">
-                        <button
-                            onClick={handleSkip}
-                            className="px-4 py-2 rounded-lg text-sm"
-                            style={{ borderColor: themeColorBorder, color: themeColorText }}
-                        >
-                            {t('skip')}
-                        </button>
+                        {!hasRequiredQuestions && (
+                            <button
+                                onClick={handleSkip}
+                                className="px-4 py-2 rounded-lg text-sm"
+                                style={{ borderColor: themeColorBorder, color: themeColorText }}
+                            >
+                                {t('skip')}
+                            </button>
+                        )}
                         <button
                             onClick={handleNext}
                             className="px-6 py-2 rounded-lg font-medium"

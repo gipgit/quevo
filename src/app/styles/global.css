@@ -345,7 +345,8 @@ body{
     overflow-x: hidden;
     box-sizing: border-box;
     font-size: 100%;
-    font-size: 15.5px;
+    font-size: 15px;
+    letter-spacing: 0.0025em;
     font-family: "FontMain", sans-serif;
     -webkit-tap-highlight-color: transparent;
     overflow-x: hidden;
@@ -495,7 +496,6 @@ body.bg-transition {
     font-family: "FontButton";
     src: url("../../../public/fonts/custom/Geist-Regular.otf") format("truetype");
 }
-
 
 @font-face {
     font-family: "FontItalic";
@@ -981,6 +981,17 @@ background: radial-gradient(circle at top center,rgba(255, 255, 153, 0.3) 0,tran
 
 .bg-white{
     background: #fff;
+}
+
+/* Selection indicators - neutral gray colors */
+.w-6.h-6.rounded-full {
+    border-color: #d1d5db;
+    background-color: transparent;
+}
+
+.selected .w-6.h-6.rounded-full {
+    border-color: #374151;
+    background-color: #374151;
 }
 
 .text-black{
