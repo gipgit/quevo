@@ -15,8 +15,8 @@ export default function EventSelectionStep({
     const t = useTranslations('ServiceRequest');
 
     return (
-        <div className="space-y-4 p-6">
-            <h2 className="text-xl lg:text-2xl font-bold" style={{ color: themeColorText }}>
+        <div className="space-y-4 px-4 py-3 md:px-6 md:py-4 lg:p-6">
+            <h2 className="text-base md:text-lg lg:text-2xl font-bold mb-1 md:mb-2 lg:mb-2" style={{ color: themeColorText }}>
                 {t('selectEvent')}
             </h2>
             

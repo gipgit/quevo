@@ -179,9 +179,9 @@ export default function QuestionsStep({
     // If no questions, show a message and allow continue
     if (questions.length === 0) {
         return (
-            <div className="space-y-6 flex flex-col h-full p-6">
+            <div className="space-y-2 md:space-y-3 lg:space-y-6 flex flex-col h-full px-4 py-3 md:px-6 md:py-4 lg:p-6">
                 <div>
-                    <h2 className="text-xl lg:text-2xl font-bold mb-2" style={{ color: themeColorText }}>
+                    <h2 className="text-base md:text-lg lg:text-2xl font-bold mb-1 md:mb-2 lg:mb-2" style={{ color: themeColorText }}>
                         {t('questionsTitle')}
                     </h2>
                 </div>
@@ -218,9 +218,9 @@ export default function QuestionsStep({
 
     return (
         <div className="flex flex-col h-full">
-            <div className="flex-1 p-6 space-y-6 lg:space-y-8">
+            <div className="flex-1 px-4 py-3 md:px-6 md:py-4 lg:p-6 space-y-2 md:space-y-3 lg:space-y-6">
                 <div>
-                    <h2 className="text-xl lg:text-2xl font-bold mb-2" style={{ color: themeColorText }}>
+                    <h2 className="text-base md:text-lg lg:text-2xl font-bold mb-1 md:mb-2 lg:mb-2" style={{ color: themeColorText }}>
                         {t('questionsTitle')}
                     </h2>
                 </div>
@@ -323,7 +323,7 @@ export default function QuestionsStep({
             </div>
 
             {/* Action Buttons */}
-            <div className="sticky bottom-0 p-6 border-t" style={{ borderColor: themeColorBorder, backgroundColor: themeColorBackgroundSecondary }}>
+            <div className="sticky bottom-0 px-4 py-3 md:px-6 md:py-4 lg:p-6 border-t" style={{ borderColor: themeColorBorder, backgroundColor: themeColorBackgroundSecondary }}>
                 <div className="flex justify-between items-center">
                     <button
                         onClick={handleBack}

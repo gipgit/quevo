@@ -621,8 +621,8 @@ export default function ServiceRequestModal({
     return (
         <div className="fixed inset-0 backdrop-blur-sm flex justify-center items-center z-50 p-2 lg:p-4" style={{ backgroundColor: `${themeColorText}70` }}>
             <div className="rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden lg:p-6" style={{ backgroundColor: themeColorBackgroundSecondary }}>
-                 {/* Modal Header */}
-                 <div className="flex justify-between items-center pb-2 lg:pb-4" style={{ backgroundColor: themeColorBackgroundSecondary }}>
+                 {/* Modal Header - Hidden on mobile, shown on lg+ */}
+                 <div className="hidden lg:flex justify-between items-center pb-4" style={{ backgroundColor: themeColorBackgroundSecondary }}>
                     <div className="flex items-center space-x-4">
                         <h2 className="text-lg lg:text-2xl font-semibold">
                             {selectedService.service_name}
@@ -630,31 +630,17 @@ export default function ServiceRequestModal({
                         
                          {/* Step Navigation Progress */}
                          {!isLoadingSteps && (
-                             <div className="flex items-center space-x-3">
-                                 {getStepConfiguration().steps.map((stepConfig, index) => {
-                                     const isActive = index === getStepConfiguration().currentStepIndex;
-                                     const isCompleted = index < getStepConfiguration().currentStepIndex;
-                                     
-                                     return (
-                                         <div key={stepConfig.id} className="flex items-center space-x-2">
-                                             <div
-                                                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                                                     isActive 
-                                                         ? 'scale-125' 
-                                                         : isCompleted 
-                                                             ? 'scale-110' 
-                                                             : 'scale-100'
-                                                 }`}
-                                                 style={{
-                                                     backgroundColor: isActive 
-                                                         ? themeColorButton 
-                                                         : isCompleted 
-                                                             ? themeColorButton 
-                                                             : `${themeColorText}40`
-                                                 }}
-                                             />
+                             <div className="flex flex-col space-y-2">
+                                 {/* Step Names - Desktop Only */}
+                                 <div className="flex items-center justify-between">
+                                     {getStepConfiguration().steps.map((stepConfig, index) => {
+                                         const isActive = index === getStepConfiguration().currentStepIndex;
+                                         const isCompleted = index < getStepConfiguration().currentStepIndex;
+                                         
+                                         return (
                                              <span 
-                                                 className={`text-xs transition-all duration-300 hidden lg:inline ${
+                                                 key={`name-${stepConfig.id}`}
+                                                 className={`text-xs transition-all duration-300 ${
                                                      isActive ? 'font-semibold' : 'font-normal'
                                                  }`}
                                                  style={{
@@ -667,18 +653,70 @@ export default function ServiceRequestModal({
                                              >
                                                  {stepConfig.label}
                                              </span>
-                                         </div>
-                                     );
-                                 })}
+                                         );
+                                     })}
+                                 </div>
+                                 
+                                 {/* Progress Lines */}
+                                 <div className="flex items-center">
+                                     {getStepConfiguration().steps.map((stepConfig, index) => {
+                                         const isActive = index === getStepConfiguration().currentStepIndex;
+                                         const isCompleted = index < getStepConfiguration().currentStepIndex;
+                                         const isLast = index === getStepConfiguration().steps.length - 1;
+                                         
+                                         return (
+                                             <div key={`line-${stepConfig.id}`} className="flex items-center">
+                                                 {/* Step Circle */}
+                                                 <div
+                                                     className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                                                         isActive 
+                                                             ? 'scale-125' 
+                                                             : isCompleted 
+                                                                 ? 'scale-110' 
+                                                                 : 'scale-100'
+                                                     }`}
+                                                     style={{
+                                                         backgroundColor: isActive 
+                                                             ? themeColorButton 
+                                                             : isCompleted 
+                                                                 ? themeColorButton 
+                                                                 : `${themeColorText}40`
+                                                     }}
+                                                 />
+                                                 
+                                                 {/* Connecting Line */}
+                                                 {!isLast && (
+                                                     <div 
+                                                         className="h-0.5 w-16 transition-all duration-300"
+                                                         style={{
+                                                             backgroundColor: index < getStepConfiguration().currentStepIndex 
+                                                                 ? themeColorButton 
+                                                                 : `${themeColorText}20`
+                                                         }}
+                                                     />
+                                                 )}
+                                             </div>
+                                         );
+                                     })}
+                                 </div>
                              </div>
                          )}
                         
                         {/* Loading placeholder for steps */}
                         {isLoadingSteps && (
-                            <div className="flex items-center space-x-3">
-                                <div className="w-2 h-2 rounded-full bg-gray-300 animate-pulse"></div>
-                                <div className="w-2 h-2 rounded-full bg-gray-300 animate-pulse"></div>
-                                <div className="w-2 h-2 rounded-full bg-gray-300 animate-pulse"></div>
+                            <div className="flex flex-col space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <div className="h-3 w-12 bg-gray-300 animate-pulse rounded"></div>
+                                    <div className="h-3 w-12 bg-gray-300 animate-pulse rounded"></div>
+                                    <div className="h-3 w-12 bg-gray-300 animate-pulse rounded"></div>
+                                </div>
+                                <div className="flex items-center">
+                                    <div className="w-2 h-2 rounded-full bg-gray-300 animate-pulse"></div>
+                                    <div className="h-0.5 w-16 bg-gray-300 animate-pulse"></div>
+                                    <div className="w-2 h-2 rounded-full bg-gray-300 animate-pulse"></div>
+                                    <div className="h-0.5 w-16 bg-gray-300 animate-pulse"></div>
+                                    <div className="w-2 h-2 rounded-full bg-gray-300 animate-pulse"></div>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -694,10 +732,10 @@ export default function ServiceRequestModal({
                 </div>
 
                 {/* Modal Content */}
-                <div className="flex flex-col lg:flex-row h-full max-h-[calc(90vh-80px)]">
+                <div className="flex flex-col lg:flex-row h-full max-h-[90vh] lg:max-h-[calc(90vh-80px)]">
                     {/* Left Column - Service Image (Always Visible) */}
                     <div className="lg:w-1/3">
-                        <div className="w-full h-[80px] lg:h-[500px] lg:rounded-2xl overflow-hidden bg-gray-100 relative">
+                        <div className="w-full h-[120px] lg:h-[500px] lg:rounded-2xl overflow-hidden bg-gray-100 relative">
                             <ServiceImage 
                                 serviceId={selectedService.service_id} 
                                 serviceName={selectedService.service_name}
@@ -707,7 +745,83 @@ export default function ServiceRequestModal({
                                 themeColorBackgroundCard={themeColorBackgroundCard}
                                 themeColorButton={themeColorButton}
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/20 to-transparent"></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/30 to-transparent"></div>
+                            
+                            {/* Mobile Header Overlay */}
+                            <div className="absolute inset-0 flex flex-col justify-between p-4 lg:hidden">
+                                <div className="flex justify-between items-start">
+                                    <div className="flex-1">
+                                        <h2 className="text-white text-lg font-semibold mb-2">
+                                            {selectedService.service_name}
+                                        </h2>
+                                        
+                                        {/* Step Navigation Progress - Mobile */}
+                                        {!isLoadingSteps && (
+                                            <div className="flex items-center">
+                                                {getStepConfiguration().steps.map((stepConfig, index) => {
+                                                    const isActive = index === getStepConfiguration().currentStepIndex;
+                                                    const isCompleted = index < getStepConfiguration().currentStepIndex;
+                                                    const isLast = index === getStepConfiguration().steps.length - 1;
+                                                    
+                                                    return (
+                                                        <div key={stepConfig.id} className="flex items-center">
+                                                            {/* Step Circle */}
+                                                            <div
+                                                                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                                                                    isActive 
+                                                                        ? 'scale-125' 
+                                                                        : isCompleted 
+                                                                            ? 'scale-110' 
+                                                                            : 'scale-100'
+                                                                }`}
+                                                                style={{
+                                                                    backgroundColor: isActive 
+                                                                        ? 'white' 
+                                                                        : isCompleted 
+                                                                            ? 'white' 
+                                                                            : 'rgba(255,255,255,0.4)'
+                                                                }}
+                                                            />
+                                                            
+                                                            {/* Connecting Line */}
+                                                            {!isLast && (
+                                                                <div 
+                                                                    className="h-0.5 w-4 transition-all duration-300"
+                                                                    style={{
+                                                                        backgroundColor: index < getStepConfiguration().currentStepIndex 
+                                                                            ? 'white' 
+                                                                            : 'rgba(255,255,255,0.2)'
+                                                                    }}
+                                                                />
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                        
+                                        {/* Loading placeholder for steps - Mobile */}
+                                        {isLoadingSteps && (
+                                            <div className="flex items-center">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-white/40 animate-pulse"></div>
+                                                <div className="h-0.5 w-4 bg-white/20 animate-pulse"></div>
+                                                <div className="w-1.5 h-1.5 rounded-full bg-white/40 animate-pulse"></div>
+                                                <div className="h-0.5 w-4 bg-white/20 animate-pulse"></div>
+                                                <div className="w-1.5 h-1.5 rounded-full bg-white/40 animate-pulse"></div>
+                                            </div>
+                                        )}
+                                    </div>
+                                    
+                                    <button
+                                        onClick={handleCloseModal}
+                                        className="p-2 rounded-full hover:bg-white/20 transition-colors ml-2"
+                                    >
+                                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

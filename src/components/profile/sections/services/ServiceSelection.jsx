@@ -240,9 +240,9 @@ export default function ServiceSelection({
                                 {/* Service content in overlay */}
                                 <div className="absolute inset-0 p-4 lg:p-6 flex flex-col justify-end">
                                     {/* Service details */}
-                                    <div className="space-y-1 lg:space-y-2">
+                                    <div>
                                         {/* Service title */}
-                                        <p className="text-white text-lg lg:text-xl font-bold leading-tight" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
+                                        <p className="text-white text-lg lg:text-xl font-bold leading-tight mb-1" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
                                             {service.service_name}
                                         </p>
                                         
@@ -274,9 +274,20 @@ export default function ServiceSelection({
                                                 </div>
                                             </div>
                                             
-                                            {/* Book button */}
-                                            <button className='bg-white/20 backdrop-blur-sm text-white px-3 py-1.5 lg:px-4 lg:py-2 text-xs lg:text-sm rounded-lg font-medium hover:bg-white/30 transition-colors' style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
-                                                {t('book')}
+                                            {/* Request button */}
+                                            <button 
+                                                className='px-4 py-2 lg:px-5 lg:py-2.5 text-sm lg:text-base rounded-lg font-medium transition-colors flex items-center gap-2' 
+                                                style={{ 
+                                                    backgroundColor: themeColorButton,
+                                                    color: 'white',
+                                                    textShadow: '0 1px 2px rgba(0,0,0,0.8)',
+                                                    boxShadow: `0 0 0 1px rgba(0,0,0,0.1), 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06), 0 8px 25px ${themeColorText}80`
+                                                }}
+                                            >
+                                                {t('request')}
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                </svg>
                                             </button>
                                         </div>
                                     </div>

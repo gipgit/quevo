@@ -22,13 +22,13 @@ export default function ServiceOverviewStep({
 
     return (
         <div className="flex flex-col h-full">
-            <div className="flex-1 p-6">
-                <div className="mb-6">
-                    <h3 className="text-2xl font-semibold mb-4" style={{ color: themeColorText }}>
+            <div className="flex-1 px-4 py-3 md:px-6 md:py-4 lg:p-6">
+                <div className="mb-2 md:mb-4 lg:mb-6">
+                    <h3 className="text-lg md:text-xl lg:text-2xl font-semibold mb-2 md:mb-3 lg:mb-4" style={{ color: themeColorText }}>
                         {selectedService.service_name}
                     </h3>
                     {selectedService.description && (
-                        <p className="text-gray-600 text-base leading-relaxed mb-6">
+                        <p className="text-base leading-relaxed mb-6 opacity-70" style={{ color: themeColorText }}>
                             {selectedService.description}
                         </p>
                     )}
@@ -48,7 +48,7 @@ export default function ServiceOverviewStep({
 
                     {selectedService.duration_minutes && (
                         <div className="flex items-center justify-between py-3">
-                            <span className="text-sm text-gray-600">
+                            <span className="text-sm opacity-70" style={{ color: themeColorText }}>
                                 {t('duration')}:
                             </span>
                             <span className="text-sm font-medium" style={{ color: themeColorText }}>
@@ -59,7 +59,7 @@ export default function ServiceOverviewStep({
                 </div>
             </div>
 
-            <div className="sticky bottom-0 p-6 border-t" style={{ borderColor: themeColorBorder, backgroundColor: themeColorBackgroundSecondary }}>
+            <div className="sticky bottom-0 px-4 py-3 md:px-6 md:py-4 lg:p-6 border-t" style={{ borderColor: themeColorBorder, backgroundColor: themeColorBackgroundSecondary }}>
                 <div className="flex justify-between items-center">
                     <button
                         onClick={onBack}

@@ -242,6 +242,7 @@
     "additionalNotesPlaceholder": "Fügen Sie zusätzliche Notizen oder besondere Anfragen hinzu...",
     "allServices": "Alle Dienstleistungen",
     "book": "Buchen",
+    "request": "Anfragen",
     "dateTimeRequired": "Die Auswahl von Datum und Uhrzeit ist für diesen Service erforderlich.",
     "priceOnRequest": "Preis auf Anfrage",
     "quotationAvailable": "Simulierbares Angebot",

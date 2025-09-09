@@ -30,16 +30,26 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
     
     // Loading animation state
     const [isLoading, setIsLoading] = useState(true);
+    const [imageOpacity, setImageOpacity] = useState(1);
 
     const t = useTranslations('Common'); // Initialize translations
 
     // Handle loading animation
     useEffect(() => {
-        const timer = setTimeout(() => {
+        // Start fading out the image after 1 second
+        const imageFadeTimer = setTimeout(() => {
+            setImageOpacity(0);
+        }, 1000);
+        
+        // Start the main loading animation after 1.5 seconds
+        const loadingTimer = setTimeout(() => {
             setIsLoading(false);
-        }, 1500); // Show loading for 1.5 seconds
+        }, 1500);
 
-        return () => clearTimeout(timer);
+        return () => {
+            clearTimeout(imageFadeTimer);
+            clearTimeout(loadingTimer);
+        };
     }, []);
 
 
@@ -161,7 +171,12 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
                             <div className="relative">
                                 {initialServerData.businessData.business_img_profile ? (
                                     <div className="w-24 h-24 rounded-full mx-auto overflow-hidden relative flex items-center justify-center">
-                                        <div className="w-20 h-20 rounded-full overflow-hidden">
+                                        <div 
+                                            className="w-20 h-20 rounded-full overflow-hidden transition-all duration-500 ease-in-out"
+                                            style={{ 
+                                                opacity: imageOpacity
+                                            }}
+                                        >
                                             <Image
                                                 src={initialServerData.businessData.business_img_profile}
                                                 alt={initialServerData.businessData.business_name}
@@ -181,10 +196,11 @@ export function BusinessProfileClientWrapper({ initialServerData, children, cssV
                                 ) : (
                                     <div className="w-24 h-24 rounded-full mx-auto overflow-hidden relative flex items-center justify-center">
                                         <div 
-                                            className="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold"
+                                            className="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold transition-all duration-500 ease-in-out"
                                             style={{ 
                                                 backgroundColor: initialServerData.themeColorBackground || '#ffffff',
-                                                color: initialServerData.themeColorButton || '#302318'
+                                                color: initialServerData.themeColorButton || '#302318',
+                                                opacity: imageOpacity
                                             }}
                                         >
                                             {initialServerData.businessData.business_name?.charAt(0)?.toUpperCase() || 'B'}

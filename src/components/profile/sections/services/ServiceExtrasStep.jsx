@@ -132,7 +132,7 @@ export default function ServiceExtrasStep({
     if (isLoadingDetails) {
         return (
             <div className="flex flex-col h-full">
-                <div className="flex-1 p-6">
+                <div className="flex-1 px-4 py-3 md:px-6 md:py-4 lg:p-6">
                     <div className="flex items-center justify-center h-32">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: themeColorButton }}></div>
                     </div>
@@ -144,7 +144,7 @@ export default function ServiceExtrasStep({
     if (fetchError) {
         return (
             <div className="flex flex-col h-full">
-                <div className="flex-1 p-6">
+                <div className="flex-1 px-4 py-3 md:px-6 md:py-4 lg:p-6">
                     <div className="text-center text-red-600">
                         <p>{fetchError}</p>
                         <button
@@ -163,7 +163,7 @@ export default function ServiceExtrasStep({
     if (serviceExtras.length === 0) {
         return (
             <div className="flex flex-col h-full">
-                <div className="flex-1 p-6">
+                <div className="flex-1 px-4 py-3 md:px-6 md:py-4 lg:p-6">
                     <div className="text-center">
                         <h3 className="text-lg font-semibold mb-4" style={{ color: themeColorText }}>
                             {t('serviceExtrasTitle') || 'Service Extras'}
@@ -184,9 +184,9 @@ export default function ServiceExtrasStep({
 
     return (
         <div className="flex flex-col h-full">
-            <div className="flex-1 p-6">
-                <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-2" style={{ color: themeColorText }}>
+            <div className="flex-1 px-4 py-2 md:px-6 md:py-4 lg:p-6">
+                <div className="mb-2 md:mb-4 lg:mb-6">
+                    <h3 className="text-base md:text-lg lg:text-lg font-semibold mb-1 md:mb-2 lg:mb-2" style={{ color: themeColorText }}>
                         {t('serviceExtrasTitle') || 'Service Extras'}
                     </h3>
                 </div>
@@ -278,7 +278,7 @@ export default function ServiceExtrasStep({
                 )}
             </div>
 
-            <div className="sticky bottom-0 p-6 border-t" style={{ borderColor: themeColorBorder, backgroundColor: themeColorBackgroundSecondary }}>
+            <div className="sticky bottom-0 px-4 py-3 md:px-6 md:py-4 lg:p-6 border-t" style={{ borderColor: themeColorBorder, backgroundColor: themeColorBackgroundSecondary }}>
                 <div className="flex justify-between items-center">
                     <button
                         onClick={onBack}

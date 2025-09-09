@@ -3,6 +3,7 @@
 import SectionBoard from '@/components/landing/SectionBoard';
 import SectionActions from '@/components/landing/SectionActions';
 import SectionRequestFeatures from '@/components/landing/SectionRequestFeatures';
+import SectionSupportFeatures from '@/components/landing/SectionSupportFeatures';
 import SectionSupport from '@/components/landing/SectionSupport';
 import SectionHero from '@/components/landing/SectionHero';
 import SectionSteps from '@/components/landing/SectionSteps'; 
@@ -36,11 +37,13 @@ export default function HomePage({ params }: HomePageProps) {
 
                 <SectionRequestFeatures locale={params.locale} />
 
-                <SectionSupport locale={params.locale} />
+                <SectionSupportFeatures locale={params.locale} />
 
                 <SectionMarketingFeatures locale={params.locale} />
 
                 <SectionCategories/>
+
+                <SectionSupport locale={params.locale} />
                 
                 <SectionFaqs />
 

@@ -166,7 +166,7 @@ export default function ServiceItemsStep({
     // If no service items, show a message and allow skip
     if (serviceItems.length === 0) {
         return (
-            <div className="space-y-6 flex flex-col h-full p-6">
+            <div className="space-y-6 flex flex-col h-full px-4 py-3 md:px-6 md:py-4 lg:p-6">
                 <div>
                     <h2 className="text-xl lg:text-2xl font-bold mb-2" style={{ color: themeColorText }}>
                         {t('serviceItemsTitle')}
@@ -202,9 +202,9 @@ export default function ServiceItemsStep({
 
     return (
         <div className="flex flex-col h-full">
-            <div className="flex-1 p-6">
-                <div className="mb-6">
-                    <h2 className="text-lg lg:text-2xl font-bold mb-1 lg:mb-2" style={{ color: themeColorText }}>
+            <div className="flex-1 px-4 py-3 md:px-6 md:py-4 lg:p-6">
+                <div className="mb-2 md:mb-4 lg:mb-6">
+                    <h2 className="text-base md:text-lg lg:text-2xl font-bold mb-1 lg:mb-2" style={{ color: themeColorText }}>
                         {t('serviceItemsTitle')}
                     </h2>
                 </div>
@@ -307,7 +307,7 @@ export default function ServiceItemsStep({
         </div>
 
         {/* Action Buttons */}
-            <div className="sticky bottom-0 p-6 border-t" style={{ borderColor: themeColorBorder, backgroundColor: themeColorBackgroundSecondary }}>
+            <div className="sticky bottom-0 px-4 py-3 md:px-6 md:py-4 lg:p-6 border-t" style={{ borderColor: themeColorBorder, backgroundColor: themeColorBackgroundSecondary }}>
                 <div className="flex justify-between items-center">
                     <button
                         onClick={handleBack}

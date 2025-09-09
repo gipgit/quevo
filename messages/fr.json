@@ -242,6 +242,7 @@
     "additionalNotesPlaceholder": "Ajoutez des notes supplémentaires ou des demandes spéciales...",
     "allServices": "Tous les Services",
     "book": "Réserver",
+    "request": "Demander",
     "dateTimeRequired": "La sélection de date et heure est obligatoire pour ce service.",
     "priceOnRequest": "Prix sur demande",
     "quotationAvailable": "Devis Simulable",
