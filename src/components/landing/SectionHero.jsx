@@ -11,12 +11,12 @@ const exampleBusinesses = {
   it: [
     {
       id: 1,
-      name: "Traslochi Express",
-      url: "traslochi_express",
-      category: "Traslochi",
-      description: "Servizi rapidi di traslochi.",
-      coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
-      profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
+      name: "Azienda Edilizia",
+      url: "azienda_edilizia",
+      category: "Edilizia",
+      description: "Servizi di edilizia e ristrutturazione per la casa e l'ufficio.",
+      coverImage: "/uploads/business/e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b/cover-desktop.webp",
+      profileImage: "/uploads/business/e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b/profile.webp",
       socialLinks: [
         { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
         { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
@@ -24,24 +24,24 @@ const exampleBusinesses = {
         { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
-        primaryColor: "#3B82F6", // Blue
-        secondaryColor: "#1E40AF", // Darker blue
-        accentColor: "#60A5FA", // Light blue
-        backgroundColor: "#F8FAFC", // Light gray
-        textColor: "#374151", // Neutral dark gray
-        buttonBgColor: "#3B82F6", // Blue
+        primaryColor: "#262625", // From BusinessProfileSettings theme_color_button
+        secondaryColor: "#1a1a19", // Darker version
+        accentColor: "#404040", // Medium gray
+        backgroundColor: "#F5F5F5", // From BusinessProfileSettings theme_color_background
+        textColor: "#333333", // From BusinessProfileSettings theme_color_text
+        buttonBgColor: "#262625", // From BusinessProfileSettings theme_color_button
         buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Inter"
+        fontFamily: "Font1"
       }
     },
     {
       id: 2,
-      name: "Edilizia Premium",
-      url: "edilizia_premium",
-      category: "Edilizia",
-      description: "Ristrutturazioni e costruzioni di qualità.",
-      coverImage: "/uploads/business/e5f6a7b8-9c0d-1e2f-3a4b-5c6d7e8f9a0b/cover-desktop.webp",
-      profileImage: "/uploads/business/e5f6a7b8-9c0d-1e2f-3a4b-5c6d7e8f9a0b/profile.webp",
+      name: "Azienda Traslochi",
+      url: "azienda_traslochi",
+      category: "Traslochi",
+      description: "Servizi di traslochi e trasporti per casa e ufficio.",
+      coverImage: "/uploads/business/b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6f/cover-desktop.webp",
+      profileImage: "/uploads/business/b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6f/profile.webp",
       socialLinks: [
         { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
         { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
@@ -49,20 +49,20 @@ const exampleBusinesses = {
         { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
-        primaryColor: "#059669", // Green
-        secondaryColor: "#047857", // Darker green
-        accentColor: "#10B981", // Light green
-        backgroundColor: "#F0FDF4", // Light green
-        textColor: "#374151", // Neutral dark gray
-        buttonBgColor: "#059669", // Green
+        primaryColor: "#262625", // From BusinessProfileSettings theme_color_button
+        secondaryColor: "#1a1a19", // Darker version
+        accentColor: "#404040", // Medium gray
+        backgroundColor: "#F5F5F5", // From BusinessProfileSettings theme_color_background
+        textColor: "#333333", // From BusinessProfileSettings theme_color_text
+        buttonBgColor: "#262625", // From BusinessProfileSettings theme_color_button
         buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Poppins"
+        fontFamily: "Font1"
       }
     },
     {
       id: 3,
-      name: "Digital Marketing Solutions",
-      url: "digital_marketing_solutions",
+      name: "Digital Marketing Agency",
+      url: "digital_marketing_agency",
       category: "Marketing Digitale",
       description: "Agenzia di marketing digitale e comunicazione strategica.",
       coverImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/cover-desktop.webp",
@@ -74,20 +74,95 @@ const exampleBusinesses = {
         { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
-        primaryColor: "#8B5CF6", // Purple
-        secondaryColor: "#7C3AED", // Darker purple
-        accentColor: "#A78BFA", // Light purple
-        backgroundColor: "#FAF5FF", // Light purple
-        textColor: "#374151", // Neutral dark gray
-        buttonBgColor: "#8B5CF6", // Purple
+        primaryColor: "#8826ff", // From BusinessProfileSettings theme_color_button
+        secondaryColor: "#6b1fcc", // Darker purple
+        accentColor: "#a855f7", // Light purple
+        backgroundColor: "#212121", // From BusinessProfileSettings theme_color_background
+        textColor: "#C4E8FF", // From BusinessProfileSettings theme_color_text
+        buttonBgColor: "#8826ff", // From BusinessProfileSettings theme_color_button
         buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Roboto"
+        fontFamily: "Font4"
       }
     },
     {
       id: 4,
-      name: "Agenzia Immobiliare Roma",
-      url: "agenzia_immobiliare_roma",
+      name: "Studio Commercialista",
+      url: "studio_commercialista",
+      category: "Consulenza",
+      description: "Consulenza fiscale, bilanci, dichiarazioni e pianificazione.",
+      coverImage: "/uploads/business/b8e2f3a4-5c6d-7e8f-9a0b-1c2d3e4f5a6b/cover-desktop.webp",
+      profileImage: "/uploads/business/b8e2f3a4-5c6d-7e8f-9a0b-1c2d3e4f5a6b/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#1E40AF", // From BusinessProfileSettings theme_color_button
+        secondaryColor: "#1e3a8a", // Darker blue
+        accentColor: "#3b82f6", // Light blue
+        backgroundColor: "#FFFFFF", // From BusinessProfileSettings theme_color_background
+        textColor: "#0B0B0B", // From BusinessProfileSettings theme_color_text
+        buttonBgColor: "#1E40AF", // From BusinessProfileSettings theme_color_button
+        buttonTextColor: "#FFFFFF", // White
+        fontFamily: "Font3"
+      }
+    },
+    {
+      id: 5,
+      name: "Studio Legale",
+      url: "studio_legale",
+      category: "Consulenza Legale",
+      description: "Consulenza legale specializzata in diritto civile, commerciale e del lavoro.",
+      coverImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/cover-desktop.webp",
+      profileImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#313131", // From BusinessProfileSettings theme_color_button
+        secondaryColor: "#1f1f1f", // Darker gray
+        accentColor: "#525252", // Medium gray
+        backgroundColor: "#F8F8F7", // From BusinessProfileSettings theme_color_background
+        textColor: "#725D58", // From BusinessProfileSettings theme_color_text
+        buttonBgColor: "#313131", // From BusinessProfileSettings theme_color_button
+        buttonTextColor: "#FFFFFF", // White
+        fontFamily: "Font5"
+      }
+    },
+    {
+      id: 6,
+      name: "Studio Notarile",
+      url: "studio_notarile",
+      category: "Servizi Notarili",
+      description: "Atti notarili, autenticazioni, stipule e consulenze.",
+      coverImage: "/uploads/business/a7f1e2d3-4c5b-6a7d-8e9f-0a1b2c3d4e5f/cover-desktop.webp",
+      profileImage: "/uploads/business/a7f1e2d3-4c5b-6a7d-8e9f-0a1b2c3d4e5f/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#1E40AF", // From BusinessProfileSettings theme_color_button
+        secondaryColor: "#1e3a8a", // Darker blue
+        accentColor: "#3b82f6", // Light blue
+        backgroundColor: "#FFFFFF", // From BusinessProfileSettings theme_color_background
+        textColor: "#0B0B0B", // From BusinessProfileSettings theme_color_text
+        buttonBgColor: "#1E40AF", // From BusinessProfileSettings theme_color_button
+        buttonTextColor: "#FFFFFF", // White
+        fontFamily: "Font1"
+      }
+    },
+    {
+      id: 7,
+      name: "Agenzia Immobiliare",
+      url: "agenzia_immobiliare",
       category: "Immobiliare",
       description: "Servizi immobiliari completi a Roma.",
       coverImage: "/uploads/business/b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e/cover-desktop.webp",
@@ -99,99 +174,24 @@ const exampleBusinesses = {
         { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
-        primaryColor: "#DC2626", // Red
-        secondaryColor: "#B91C1C", // Darker red
-        accentColor: "#EF4444", // Light red
-        backgroundColor: "#FEF2F2", // Light red
-        textColor: "#374151", // Neutral dark gray
-        buttonBgColor: "#DC2626", // Red
+        primaryColor: "#6C757D", // From BusinessProfileSettings theme_color_button
+        secondaryColor: "#495057", // Darker gray
+        accentColor: "#868e96", // Light gray
+        backgroundColor: "#F8F9FA", // From BusinessProfileSettings theme_color_background
+        textColor: "#495057", // From BusinessProfileSettings theme_color_text
+        buttonBgColor: "#6C757D", // From BusinessProfileSettings theme_color_button
         buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Open Sans"
-      }
-    },
-    {
-      id: 5,
-      name: "Concessionaria Auto Milano",
-      url: "concessionaria_auto_milano",
-      category: "Auto",
-      description: "Auto nuove e usate delle migliori marche.",
-      coverImage: "/uploads/business/33445566-7788-9900-1122-ddeeffaabbcc/cover-desktop.webp",
-      profileImage: "/uploads/business/33445566-7788-9900-1122-ddeeffaabbcc/profile.webp",
-      socialLinks: [
-        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
-        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
-        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
-        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
-      ],
-      theme: {
-        primaryColor: "#F59E0B", // Amber
-        secondaryColor: "#D97706", // Darker amber
-        accentColor: "#FBBF24", // Light amber
-        backgroundColor: "#FFFBEB", // Light amber
-        textColor: "#374151", // Neutral dark gray
-        buttonBgColor: "#1F2937", // Dark gray instead of amber
-        buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Montserrat"
-      }
-    },
-    {
-      id: 6,
-      name: "Studio Commercialista Roma",
-      url: "studio_commercialista_roma",
-      category: "Consulenza",
-      description: "Consulenza fiscale e commerciale professionale.",
-      coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
-      profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
-      socialLinks: [
-        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
-        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
-        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
-        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
-      ],
-      theme: {
-        primaryColor: "#6B7280", // Gray
-        secondaryColor: "#4B5563", // Darker gray
-        accentColor: "#9CA3AF", // Light gray
-        backgroundColor: "#F9FAFB", // Light gray
-        textColor: "#374151", // Neutral dark gray
-        buttonBgColor: "#6B7280", // Gray
-        buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Source Sans Pro"
-      }
-    },
-    {
-      id: 7,
-      name: "Centro Medicina Estetica",
-      url: "centro_medicina_estetica",
-      category: "Salute",
-      description: "Trattamenti di medicina estetica avanzati.",
-      coverImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/cover-desktop.webp",
-      profileImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/profile.webp",
-      socialLinks: [
-        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
-        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
-        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
-        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
-      ],
-      theme: {
-        primaryColor: "#EC4899", // Pink
-        secondaryColor: "#BE185D", // Darker pink
-        accentColor: "#F472B6", // Light pink
-        backgroundColor: "#FDF2F8", // Light pink
-        textColor: "#374151", // Neutral dark gray
-        buttonBgColor: "#1F2937", // Dark gray instead of pink
-        buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Lato"
+        fontFamily: "Font1"
       }
     },
     {
       id: 8,
-      name: "Ristorante Italiano",
-      url: "ristorante_italiano",
-      category: "Ristorazione",
-      description: "Cucina tradizionale italiana di qualità.",
-      coverImage: "/uploads/business/7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b/cover-desktop.webp",
-      profileImage: "/uploads/business/7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b/profile.webp",
+      name: "Concessionaria Auto",
+      url: "concessionaria_auto",
+      category: "Auto",
+      description: "Vendita e assistenza auto nuove e usate.",
+      coverImage: "/uploads/business/c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f/cover-desktop.webp",
+      profileImage: "/uploads/business/c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f/profile.webp",
       socialLinks: [
         { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
         { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
@@ -199,26 +199,26 @@ const exampleBusinesses = {
         { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
-        primaryColor: "#16A34A", // Green
-        secondaryColor: "#15803D", // Darker green
-        accentColor: "#22C55E", // Light green
-        backgroundColor: "#F0FDF4", // Light green
-        textColor: "#374151", // Neutral dark gray
-        buttonBgColor: "#16A34A", // Green
+        primaryColor: "#6C757D", // From BusinessProfileSettings theme_color_button
+        secondaryColor: "#495057", // Darker gray
+        accentColor: "#868e96", // Light gray
+        backgroundColor: "#F8F9FA", // From BusinessProfileSettings theme_color_background
+        textColor: "#495057", // From BusinessProfileSettings theme_color_text
+        buttonBgColor: "#6C757D", // From BusinessProfileSettings theme_color_button
         buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Playfair Display"
+        fontFamily: "Font1"
       }
     }
   ],
   en: [
     {
       id: 1,
-      name: "Express Moving Services",
-      url: "traslochi_express",
-      category: "Moving Services",
-      description: "Fast moving services.",
-      coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
-      profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
+      name: "Construction Company",
+      url: "azienda_edilizia",
+      category: "Construction",
+      description: "Construction and renovation services for home and office.",
+      coverImage: "/uploads/business/e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b/cover-desktop.webp",
+      profileImage: "/uploads/business/e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b/profile.webp",
       socialLinks: [
         { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
         { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
@@ -226,199 +226,392 @@ const exampleBusinesses = {
         { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
-        primaryColor: "#3B82F6", // Blue
-        secondaryColor: "#1E40AF", // Darker blue
-        accentColor: "#60A5FA", // Light blue
-        backgroundColor: "#F8FAFC", // Light gray
-        textColor: "#374151", // Neutral dark gray
-        buttonBgColor: "#3B82F6", // Blue
-        buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Inter"
+        primaryColor: "#262625",
+        secondaryColor: "#1a1a19",
+        accentColor: "#404040",
+        backgroundColor: "#F5F5F5",
+        textColor: "#333333",
+        buttonBgColor: "#262625",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
       }
     },
     {
       id: 2,
-      name: "Premium Construction",
-      url: "edilizia_premium",
-      category: "Construction",
-      description: "Quality renovations and constructions.",
-      coverImage: "/uploads/business/e5f6a7b8-9c0d-1e2f-3a4b-5c6d7e8f9a0b/cover-desktop.webp",
-      profileImage: "/uploads/business/e5f6a7b8-9c0d-1e2f-3a4b-5c6d7e8f9a0b/profile.webp",
+      name: "Moving Company",
+      url: "azienda_traslochi",
+      category: "Moving Services",
+      description: "Moving and transport services for home and office.",
+      coverImage: "/uploads/business/b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6f/cover-desktop.webp",
+      profileImage: "/uploads/business/b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6f/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
-      ]
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#262625",
+        secondaryColor: "#1a1a19",
+        accentColor: "#404040",
+        backgroundColor: "#F5F5F5",
+        textColor: "#333333",
+        buttonBgColor: "#262625",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
+      }
     },
     {
       id: 3,
-      name: "Digital Marketing Solutions",
-      url: "digital_marketing_solutions",
+      name: "Digital Marketing Agency",
+      url: "digital_marketing_agency",
       category: "Digital Marketing",
       description: "Digital marketing agency and strategic communication.",
       coverImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/cover-desktop.webp",
       profileImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
-      ]
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#8826ff",
+        secondaryColor: "#6b1fcc",
+        accentColor: "#a855f7",
+        backgroundColor: "#212121",
+        textColor: "#C4E8FF",
+        buttonBgColor: "#8826ff",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font2"
+      }
     },
     {
       id: 4,
-      name: "Roma Real Estate Agency",
-      url: "agenzia_immobiliare_roma",
+      name: "Accounting Studio",
+      url: "studio_commercialista",
+      category: "Consulting",
+      description: "Tax consulting, financial statements, declarations and planning.",
+      coverImage: "/uploads/business/b8e2f3a4-5c6d-7e8f-9a0b-1c2d3e4f5a6b/cover-desktop.webp",
+      profileImage: "/uploads/business/b8e2f3a4-5c6d-7e8f-9a0b-1c2d3e4f5a6b/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#1E40AF",
+        secondaryColor: "#1e3a8a",
+        accentColor: "#3b82f6",
+        backgroundColor: "#FFFFFF",
+        textColor: "#0B0B0B",
+        buttonBgColor: "#1E40AF",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font3"
+      }
+    },
+    {
+      id: 5,
+      name: "Law Firm",
+      url: "studio_legale",
+      category: "Legal Consulting",
+      description: "Legal consulting specialized in civil, commercial and labor law.",
+      coverImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/cover-desktop.webp",
+      profileImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#313131",
+        secondaryColor: "#1f1f1f",
+        accentColor: "#525252",
+        backgroundColor: "#F8F8F7",
+        textColor: "#725D58",
+        buttonBgColor: "#313131",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
+      }
+    },
+    {
+      id: 6,
+      name: "Notary Office",
+      url: "studio_notarile",
+      category: "Notary Services",
+      description: "Notarial acts, authentications, stipulations and consultations.",
+      coverImage: "/uploads/business/a7f1e2d3-4c5b-6a7d-8e9f-0a1b2c3d4e5f/cover-desktop.webp",
+      profileImage: "/uploads/business/a7f1e2d3-4c5b-6a7d-8e9f-0a1b2c3d4e5f/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#1E40AF",
+        secondaryColor: "#1e3a8a",
+        accentColor: "#3b82f6",
+        backgroundColor: "#FFFFFF",
+        textColor: "#0B0B0B",
+        buttonBgColor: "#1E40AF",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
+      }
+    },
+    {
+      id: 7,
+      name: "Real Estate Agency",
+      url: "agenzia_immobiliare",
       category: "Real Estate",
       description: "Complete real estate services in Rome.",
       coverImage: "/uploads/business/b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e/cover-desktop.webp",
       profileImage: "/uploads/business/b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
-      ]
-    },
-    {
-      id: 6,
-      name: "Milan Auto Dealership",
-      url: "concessionaria_auto_milano",
-      category: "Automotive",
-      description: "New and used cars from the best brands.",
-      coverImage: "/uploads/business/33445566-7788-9900-1122-ddeeffaabbcc/cover-desktop.webp",
-      profileImage: "/uploads/business/33445566-7788-9900-1122-ddeeffaabbcc/profile.webp",
-      socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
-      ]
-    },
-    {
-      id: 7,
-      name: "Roma Accounting Studio",
-      url: "studio_commercialista_roma",
-      category: "Consulting",
-      description: "Professional tax and business consulting.",
-      coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
-      profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
-      socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
-      ]
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#6C757D",
+        secondaryColor: "#495057",
+        accentColor: "#868e96",
+        backgroundColor: "#F8F9FA",
+        textColor: "#495057",
+        buttonBgColor: "#6C757D",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
+      }
     },
     {
       id: 8,
-      name: "Aesthetic Medicine Center",
-      url: "centro_medicina_estetica",
-      category: "Health",
-      description: "Advanced aesthetic medicine treatments.",
-      coverImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/cover-desktop.webp",
-      profileImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/profile.webp",
+      name: "Auto Dealership",
+      url: "concessionaria_auto",
+      category: "Automotive",
+      description: "New and used car sales and service.",
+      coverImage: "/uploads/business/c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f/cover-desktop.webp",
+      profileImage: "/uploads/business/c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
-      ]
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#6C757D",
+        secondaryColor: "#495057",
+        accentColor: "#868e96",
+        backgroundColor: "#F8F9FA",
+        textColor: "#495057",
+        buttonBgColor: "#6C757D",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
+      }
     }
   ],
   es: [
     {
       id: 1,
-      name: "Traslados Express",
-      url: "traslochi_express",
-      category: "Traslados",
-      description: "Servicios rápidos de mudanza.",
-      coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
-      profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
+      name: "Empresa de Construcción",
+      url: "azienda_edilizia",
+      category: "Construcción",
+      description: "Servicios de construcción y renovación para hogar y oficina.",
+      coverImage: "/uploads/business/e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b/cover-desktop.webp",
+      profileImage: "/uploads/business/e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
-      ]
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#262625",
+        secondaryColor: "#1a1a19",
+        accentColor: "#404040",
+        backgroundColor: "#F5F5F5",
+        textColor: "#333333",
+        buttonBgColor: "#262625",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
+      }
     },
     {
       id: 2,
-      name: "Construcción Premium",
-      url: "edilizia_premium",
-      category: "Construcción",
-      description: "Renovaciones y construcciones de calidad.",
-      coverImage: "/uploads/business/e5f6a7b8-9c0d-1e2f-3a4b-5c6d7e8f9a0b/cover-desktop.webp",
-      profileImage: "/uploads/business/e5f6a7b8-9c0d-1e2f-3a4b-5c6d7e8f9a0b/profile.webp",
+      name: "Empresa de Mudanzas",
+      url: "azienda_traslochi",
+      category: "Mudanzas",
+      description: "Servicios de mudanzas y transporte para hogar y oficina.",
+      coverImage: "/uploads/business/b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6f/cover-desktop.webp",
+      profileImage: "/uploads/business/b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6f/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
-      ]
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#262625",
+        secondaryColor: "#1a1a19",
+        accentColor: "#404040",
+        backgroundColor: "#F5F5F5",
+        textColor: "#333333",
+        buttonBgColor: "#262625",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
+      }
     },
     {
       id: 3,
-      name: "Soluciones de Marketing Digital",
-      url: "digital_marketing_solutions",
+      name: "Agencia de Marketing Digital",
+      url: "digital_marketing_agency",
       category: "Marketing Digital",
       description: "Agencia de marketing digital y comunicación estratégica.",
       coverImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/cover-desktop.webp",
       profileImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
-      ]
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#8826ff",
+        secondaryColor: "#6b1fcc",
+        accentColor: "#a855f7",
+        backgroundColor: "#212121",
+        textColor: "#C4E8FF",
+        buttonBgColor: "#8826ff",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font2"
+      }
     },
     {
       id: 4,
-      name: "Agencia Inmobiliaria Roma",
-      url: "agenzia_immobiliare_roma",
+      name: "Estudio Contable",
+      url: "studio_commercialista",
+      category: "Consultoría",
+      description: "Consultoría fiscal, balances, declaraciones y planificación.",
+      coverImage: "/uploads/business/b8e2f3a4-5c6d-7e8f-9a0b-1c2d3e4f5a6b/cover-desktop.webp",
+      profileImage: "/uploads/business/b8e2f3a4-5c6d-7e8f-9a0b-1c2d3e4f5a6b/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#1E40AF",
+        secondaryColor: "#1e3a8a",
+        accentColor: "#3b82f6",
+        backgroundColor: "#FFFFFF",
+        textColor: "#0B0B0B",
+        buttonBgColor: "#1E40AF",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font3"
+      }
+    },
+    {
+      id: 5,
+      name: "Bufete de Abogados",
+      url: "studio_legale",
+      category: "Consultoría Legal",
+      description: "Consultoría legal especializada en derecho civil, comercial y laboral.",
+      coverImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/cover-desktop.webp",
+      profileImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#313131",
+        secondaryColor: "#1f1f1f",
+        accentColor: "#525252",
+        backgroundColor: "#F8F8F7",
+        textColor: "#725D58",
+        buttonBgColor: "#313131",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
+      }
+    },
+    {
+      id: 6,
+      name: "Notaría",
+      url: "studio_notarile",
+      category: "Servicios Notariales",
+      description: "Actos notariales, autenticaciones, estipulaciones y consultas.",
+      coverImage: "/uploads/business/a7f1e2d3-4c5b-6a7d-8e9f-0a1b2c3d4e5f/cover-desktop.webp",
+      profileImage: "/uploads/business/a7f1e2d3-4c5b-6a7d-8e9f-0a1b2c3d4e5f/profile.webp",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#1E40AF",
+        secondaryColor: "#1e3a8a",
+        accentColor: "#3b82f6",
+        backgroundColor: "#FFFFFF",
+        textColor: "#0B0B0B",
+        buttonBgColor: "#1E40AF",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
+      }
+    },
+    {
+      id: 7,
+      name: "Agencia Inmobiliaria",
+      url: "agenzia_immobiliare",
       category: "Inmobiliaria",
       description: "Servicios inmobiliarios completos en Roma.",
       coverImage: "/uploads/business/b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e/cover-desktop.webp",
       profileImage: "/uploads/business/b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
-      ]
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#6C757D",
+        secondaryColor: "#495057",
+        accentColor: "#868e96",
+        backgroundColor: "#F8F9FA",
+        textColor: "#495057",
+        buttonBgColor: "#6C757D",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
+      }
     },
     {
-      id: 5,
-      name: "Concesionario Auto Milán",
-      url: "concessionaria_auto_milano",
+      id: 8,
+      name: "Concesionario Auto",
+      url: "concessionaria_auto",
       category: "Automóviles",
-      description: "Autos nuevos y usados de las mejores marcas.",
-      coverImage: "/uploads/business/33445566-7788-9900-1122-ddeeffaabbcc/cover-desktop.webp",
-      profileImage: "/uploads/business/33445566-7788-9900-1122-ddeeffaabbcc/profile.webp",
+      description: "Venta y asistencia de autos nuevos y usados.",
+      coverImage: "/uploads/business/c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f/cover-desktop.webp",
+      profileImage: "/uploads/business/c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
-      ]
-    },
-    {
-      id: 6,
-      name: "Estudio Contable Roma",
-      url: "studio_commercialista_roma",
-      category: "Consultoría",
-      description: "Consultoría fiscal y comercial profesional.",
-      coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
-      profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
-      socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
-      ]
-    },
-    {
-      id: 7,
-      name: "Centro de Medicina Estética",
-      url: "centro_medicina_estetica",
-      category: "Salud",
-      description: "Tratamientos avanzados de medicina estética.",
-      coverImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/cover-desktop.webp",
-      profileImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/profile.webp",
-      socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
-      ]
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#6C757D",
+        secondaryColor: "#495057",
+        accentColor: "#868e96",
+        backgroundColor: "#F8F9FA",
+        textColor: "#495057",
+        buttonBgColor: "#6C757D",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
+      }
     }
   ]
 };

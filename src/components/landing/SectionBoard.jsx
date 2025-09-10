@@ -86,7 +86,7 @@ const exampleBusinesses = {
 
       name: "Digital Marketing Solutions",
 
-      url: "digital_marketing_solutions",
+      url: "digital_marketing_agency",
 
         category: "Marketing Digitale",
         description: "Strategie di marketing digitale innovative.",
@@ -183,7 +183,7 @@ const exampleBusinesses = {
 
       name: "Digital Marketing Solutions",
 
-      url: "digital_marketing_solutions",
+      url: "digital_marketing_agency",
 
       category: "Digital Marketing",
       description: "Innovative digital marketing strategies.",
@@ -280,7 +280,7 @@ const exampleBusinesses = {
 
       name: "Soluciones de Marketing Digital",
 
-      url: "digital_marketing_solutions",
+      url: "digital_marketing_agency",
 
       category: "Marketing Digital",
       description: "Estrategias innovadoras de marketing digital.",
