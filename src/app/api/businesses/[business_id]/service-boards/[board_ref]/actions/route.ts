@@ -351,7 +351,7 @@ export async function POST(
            html: customerEmailHtml,
           headers: {
             'X-Entity-Ref-ID': 'my-id-123',
-            'X-Mailer': 'Quevo Email System'
+            'X-Mailer': 'Flowia Email System'
           }
         });
 

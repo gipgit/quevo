@@ -1,7 +1,7 @@
 {
   "Header": {
-    "brandName": "Quevo",
-    "logoAlt": "Logo Quevo",
+    "brandName": "Flowia",
+    "logoAlt": "Logo Flowia",
     "toggleMobileMenu": "Basculer le menu mobile",
     "closeMobileMenu": "Fermer le menu mobile",
     "features": "Fonctionnalités",
@@ -10,13 +10,13 @@
     "signIn": "Se connecter"
   },
   "Footer": {
-    "brandName": "Quevo",
+    "brandName": "Flowia",
     "features": "Fonctionnalités",
     "pricing": "Tarifs",
     "contact": "Contact",
     "privacyPolicy": "Politique de confidentialité",
     "termsOfService": "Conditions d'utilisation",
-    "copyright": "© 2025 Quevo. Tous droits réservés."
+    "copyright": "© 2025 Flowia. Tous droits réservés."
   },
   "Common": {
     "coverPhotoAlt": "Photo de couverture de l'entreprise",
@@ -279,10 +279,10 @@
   },
   "BusinessSignup": {
     "pageTitle": "Créer votre compte",
-    "brandTitle": "Quevo Business",
-    "rightSideTitle": "Créez votre compte Quevo Business",
+    "brandTitle": "Flowia",
+    "rightSideTitle": "Créez votre compte Flowia",
     "rightSideSubtitle": "Pas un propriétaire d'entreprise ?",
-    "rightSideLink": "Créez votre Quevo",
+    "rightSideLink": "Créez votre Flowia",
     "nameLabel": "Nom",
     "namePlaceholder": "Entrez votre nom",
     "nameRequired": "Le nom est obligatoire",
@@ -321,7 +321,7 @@
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
     "signInLink": "Connectez-vous ici",
     "benefits": {
-      "title": "Pourquoi choisir Quevo Business ?",
+      "title": "Pourquoi choisir Flowia ?",
       "freePlan": "1 plan toujours gratuit",
       "noPaymentDetails": "Commencez gratuitement sans détails de paiement",
       "cancelAnytime": "Changez ou annulez à tout moment",
@@ -340,7 +340,7 @@
     "contactSupport": "Contacter le support"
   },
   "SignIn": {
-    "brandTitle": "Quevo Business",
+    "brandTitle": "Flowia",
     "pageTitle": "Se connecter",
     "emailPlaceholder": "votre@email.com",
     "passwordPlaceholder": "••••••••",
@@ -350,7 +350,7 @@
     "connectionError": "Erreur de connexion",
     "createBusinessAccount": "Créer un compte entreprise",
     "generalAccess": "Accès général",
-    "discoverQuevo": "Découvrir Quevo"
+    "discoverFlowia": "Découvrir Flowia"
   },
   "BusinessSignIn": {
     "subtitle": "Connectez-vous à votre compte entreprise",
@@ -370,24 +370,24 @@
     "emailInvalid": "Format d'e-mail invalide"
   },
   "UserManagerActivation": {
-    "subject": "Activez votre compte Quevo Business",
+    "subject": "Activez votre compte Flowia",
     "welcome_heading": "Bonjour {recipientName} !",
-    "confirm_email_prompt": "Merci de vous être inscrit à Quevo Business. Pour compléter votre inscription, veuillez confirmer votre adresse e-mail en cliquant sur le bouton ci-dessous.",
-    "after_confirmation_note": "Une fois confirmé, vous pourrez accéder à toutes les fonctionnalités Quevo Business et commencer à gérer votre entreprise.",
+    "confirm_email_prompt": "Merci de vous être inscrit à Flowia. Pour compléter votre inscription, veuillez confirmer votre adresse e-mail en cliquant sur le bouton ci-dessous.",
+    "after_confirmation_note": "Une fois confirmé, vous pourrez accéder à toutes les fonctionnalités Flowia et commencer à gérer votre entreprise.",
     "confirm_button_text": "Confirmer l'e-mail",
     "fallback_link_instruction": "Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :",
     "closing_salutation": "Cordialement,",
-    "team_name": "L'équipe Quevo",
+    "team_name": "L'équipe Flowia",
     "logo_url": "https://quevo.com/logo.png"
   },
   "UserCustomerActivation": {
-    "subject": "Activez votre compte client Quevo",
-    "welcome_heading": "Bienvenue chez Quevo, {recipientName} !",
+    "subject": "Activez votre compte client Flowia",
+    "welcome_heading": "Bienvenue chez Flowia, {recipientName} !",
     "confirm_email_prompt": "Confirmez votre e-mail pour accéder à toutes les fonctionnalités.",
     "confirm_button_text": "Activer mon compte",
     "fallback_link_instruction": "Si le bouton ne fonctionne pas, vous pouvez également copier et coller ce lien dans votre navigateur :",
     "closing_salutation": "Cordialement,",
-    "team_name": "L'équipe Quevo",
+    "team_name": "L'équipe Flowia",
     "logo_url": "https://yourwebsite.com/logo.png"
   },
   "BusinessActivationPage": {
@@ -396,7 +396,7 @@
     "pleaseWait": "Veuillez patienter pendant que nous vérifions votre e-mail.",
     "activationSuccessful": "Activation terminée !",
     "activationSuccessDefault": "Votre compte a été activé avec succès !",
-    "welcomeMessage": "Bienvenue chez Quevo, {recipientName}.",
+    "welcomeMessage": "Bienvenue chez Flowia, {recipientName}.",
     "accountActiveMessage": "Votre compte Business est actif et votre profil est en ligne.",
     "verificationNote": "Nous effectuons des vérifications pour éviter l'utilisation non autorisée des identités d'entreprise. Si nous avons des questions, nous vous le ferons savoir.",
     "yourUserId": "Votre ID utilisateur",
@@ -441,10 +441,21 @@
     "serviceLimitReached": "Vous avez atteint le nombre maximum de services pour votre plan.",
     "maxQuestionsReached": "Vous avez atteint le nombre maximum de questions pour ce service.",
     "createService": "Créer un service",
+    "editService": "Modifier le service",
     "serviceNameRequired": "Le nom du service est obligatoire.",
     "createError": "Erreur lors de la création du service.",
     "cancel": "Annuler",
+    "save": "Enregistrer",
     "creating": "Création en cours...",
+    "tabs": {
+      "basicInfo": "Info de Base",
+      "extras": "Extras",
+      "items": "Articles",
+      "questions": "Questions",
+      "requirements": "Exigences",
+      "events": "Événements",
+      "consent": "Consentement"
+    },
     "additionalItems": "Articles supplémentaires",
     "addItem": "Ajouter un article",
     "item": "Article",
@@ -729,9 +740,11 @@
     "openProfile": "Ouvrir le profil",
     "tabs": {
       "information": "Informations",
+      "info": "Informations",
       "images": "Images",
       "links": "Liens",
       "paymentMethods": "Méthodes de paiement",
+      "payments": "Paiements",
       "settings": "Paramètres",
       "appearance": "Apparence"
     },
@@ -783,10 +796,23 @@
         "message": "Modifications enregistrées avec succès"
       },
       "error": {
+        "title": "Il y a eu un problème",
         "saveFailed": {
           "title": "Échec de l'enregistrement",
           "message": "Impossible d'enregistrer les modifications. Veuillez réessayer."
+        },
+        "uploadFailed": {
+          "title": "Échec du téléchargement",
+          "message": "Impossible de télécharger l'image. Veuillez réessayer."
+        },
+        "networkError": {
+          "title": "Erreur réseau",
+          "message": "Impossible de se connecter au serveur. Veuillez vérifier votre connexion."
         }
+      },
+      "noChanges": {
+        "title": "Aucun changement",
+        "message": "Aucune modification à enregistrer."
       }
     }
   },

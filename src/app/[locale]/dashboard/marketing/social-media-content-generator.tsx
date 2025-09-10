@@ -56,8 +56,6 @@ interface Service {
   service_id: string
   service_name: string
   description: string | null
-  duration_minutes: number | null
-  buffer_minutes: number | null
   price_base: number | null
   price_type: string | null
   has_items: boolean | null

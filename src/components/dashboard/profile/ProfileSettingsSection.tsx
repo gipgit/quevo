@@ -20,9 +20,9 @@ export default function ProfileSettingsSection({ profileSettings, onToggle, onDe
             onChange={(e) => onDefaultPageChange(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
-            <option value="bookings">Home</option>
-            <option value="menu">Menu</option>
-            <option value="about">About</option>
+            <option value="services">Services</option>
+            <option value="promotions">Promotions</option>
+            <option value="rewards">Rewards</option>
           </select>
         </div>
       </div>

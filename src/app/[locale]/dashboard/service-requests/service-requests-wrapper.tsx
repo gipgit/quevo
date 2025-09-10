@@ -423,9 +423,9 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
     <DashboardLayout>
       <div className="max-w-7xl mx-auto flex flex-col h-full">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6 flex-shrink-0">
+        <div className="flex justify-between items-center mb-1 lg:mb-6 flex-shrink-0">
           <div>
-            <h1 className={`text-2xl font-bold ${
+            <h1 className={`text-xl lg:text-2xl font-bold ${
               theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
             }`}>{t("title")}</h1>
           </div>
@@ -509,9 +509,9 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
 
         {/* Main Content - Outlook-like Layout */}
-        <div className="flex-1 flex gap-6 overflow-hidden">
+        <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-6 overflow-hidden">
           {/* Left Panel - Request List */}
-          <div className={`w-72 border-r ${
+          <div className={`w-full lg:w-72 border-b lg:border-b-0 lg:border-r ${
             theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
           } flex flex-col`}>
             {/* Progress Bar */}
@@ -539,8 +539,8 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
             </div>
             
             {/* Request List */}
-            <div className="flex-1 overflow-y-auto">
-              <div className="space-y-1 p-2">
+            <div className="flex-1 overflow-y-auto lg:overflow-y-auto overflow-x-auto lg:overflow-x-visible">
+              <div className="flex lg:flex-col space-x-2 lg:space-x-0 lg:space-y-1 p-2 min-w-max lg:min-w-0">
               {serviceRequests.map((request, index) => {
                 const { day, month } = formatDate(request.date_created)
                 const time = new Date(request.date_created).toLocaleTimeString('it-IT', {
@@ -556,7 +556,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                         setSelectedRequest(request)
                         setSelectedIndex(index)
                       }}
-                      className={`p-3 rounded-lg cursor-pointer transition-all ${
+                      className={`p-3 rounded-lg cursor-pointer transition-all flex-shrink-0 w-64 lg:w-auto ${
                         isSelected
                           ? theme === 'dark'
                             ? 'bg-blue-600 text-white'
@@ -604,15 +604,15 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
           </div>
 
           {/* Right Panel - Request Details */}
-          <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex-1 flex flex-col min-h-0 lg:min-h-0 h-96 lg:h-auto p-2 lg:p-6 space-y-4 lg:space-y-5">
             {selectedRequest ? (
               <>
                 {/* Request Header with Action Buttons */}
-                <div className={`p-6 border-b ${
+                <div className={`border-b ${
                   theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
                 }`}>
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
+                  <div className="flex flex-col lg:flex-row items-start justify-between gap-2 lg:gap-4">
+                    <div className="flex-1 min-w-0 w-full lg:w-auto">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <h2 className={`text-2xl font-bold ${
@@ -639,10 +639,10 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-2 flex-wrap max-w-sm">
+                    <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto lg:max-w-sm">
                       <button
                         onClick={() => markAsHandled(selectedRequest.request_id)}
-                        className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 text-sm ${
+                        className={`px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm ${
                           isRequestHandled(selectedRequest)
                             ? 'bg-green-100 text-green-800'
                             : 'bg-green-600 text-white hover:bg-green-700'
@@ -659,7 +659,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       
                       <button
                         onClick={() => toggleUrgencyFlag(selectedRequest.request_id)}
-                        className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 text-sm ${
+                        className={`px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm ${
                           selectedRequest.urgency_flag
                             ? 'bg-red-100 text-red-800'
                             : 'bg-black text-white hover:bg-gray-800'
@@ -672,7 +672,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       
                       <button
                         onClick={() => toggleClosedStatus(selectedRequest.request_id)}
-                        className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 text-sm ${
+                        className={`px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm ${
                           selectedRequest.is_closed
                             ? 'bg-gray-100 text-gray-800'
                             : 'bg-orange-600 text-white hover:bg-orange-700'
@@ -692,14 +692,14 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
                 {/* Action Buttons */}
                 {selectedRequest.serviceboard?.[0] && (
-                  <div className="p-6 pb-4">
+                    <div>
                     <h3 className={`text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide ${
                       theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
                     }`}>Quick Actions</h3>
                     <div className="flex flex-wrap gap-2">
                       <button
                         onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}`, '_blank')}
-                        className="px-3 py-1.5 rounded-lg bg-gray-600 text-white hover:bg-gray-700 transition-colors flex items-center gap-1.5 text-sm"
+                        className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-gray-600 text-white hover:bg-gray-700 transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm"
                         title="Open service board"
                       >
                         <ArrowTopRightOnSquareIcon className="w-3.5 h-3.5" />
@@ -708,7 +708,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       
                       <button
                         onClick={() => generateQuotation(selectedRequest.request_id)}
-                        className="px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center gap-1.5 text-sm"
+                        className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm"
                         title="Generate quotation (Ctrl+Q)"
                       >
                         <DocumentArrowUpIcon className="w-3.5 h-3.5" />
@@ -717,7 +717,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       
                       <button
                         onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=appointment_scheduling`, '_blank')}
-                        className="px-3 py-1.5 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors flex items-center gap-1.5 text-sm"
+                        className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm"
                         title="Create appointment on service board"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -728,7 +728,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       
                       <button
                         onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=information_request`, '_blank')}
-                        className="px-3 py-1.5 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors flex items-center gap-1.5 text-sm"
+                        className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm"
                         title="Add information request"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -739,7 +739,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       
                       <button
                         onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=checklist`, '_blank')}
-                        className="px-3 py-1.5 rounded-lg bg-orange-600 text-white hover:bg-orange-700 transition-colors flex items-center gap-1.5 text-sm"
+                        className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-orange-600 text-white hover:bg-orange-700 transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm"
                         title="Add checklist"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -753,7 +753,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
                 {/* Service Board Actions */}
                 {selectedRequest.serviceboard?.[0] && selectedRequest.serviceboard[0].serviceboardaction && selectedRequest.serviceboard[0].serviceboardaction.length > 0 && (
-                  <div className="p-6 pb-4">
+                    <div>
                     <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
                       theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
                     }`}>Service Board Actions</h3>
@@ -762,7 +762,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                         <div key={action.action_id} className={`p-3 rounded-lg border ${
                           theme === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
                         }`}>
-                          <div className="grid grid-cols-[120px_1fr_auto] gap-4 items-center">
+                          <div className="grid grid-cols-[120px_1fr_auto] lg:grid-cols-[120px_1fr_auto] gap-4 items-center">
                             {/* Column 1: Date and Time */}
                             <div className="text-xs text-gray-500">
                               {action.created_at ? (
@@ -773,10 +773,15 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                               ) : (
                                 <span className="text-gray-400">No date</span>
                               )}
+                              {/* Mobile: Action details in same column */}
+                              <div className="lg:hidden mt-2">
+                                <div className="font-medium text-xs">{action.action_title}</div>
+                                <div className="text-xs opacity-75">{action.action_type}</div>
+                              </div>
                             </div>
                             
-                            {/* Column 2: Action Title and Type */}
-                            <div className="col-span-1">
+                            {/* Column 2: Action Title and Type (Desktop only) */}
+                            <div className="hidden lg:block col-span-1">
                               <div className="font-medium text-sm">{action.action_title}</div>
                               <div className="text-xs opacity-75">{action.action_type}</div>
                             </div>
@@ -799,7 +804,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                 )}
 
                 {/* Customer Details */}
-                <div className="p-6 pb-4">
+                    <div>
                   <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
                     theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
                   }`}>Customer Details</h3>
@@ -881,11 +886,11 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
                 {/* Customer Notes */}
                 {selectedRequest.customer_notes && (
-                  <div className="p-6 pt-0">
+                    <div>
                     <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
                       theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
                     }`}>Customer Notes</h3>
-                    <div className={`p-4 rounded-lg border ${
+                    <div className={`p-3 rounded-lg border ${
                       theme === 'dark' ? 'border-gray-600 bg-gray-800' : 'border-gray-200 bg-white'
                     }`}>
                       <div className={`text-sm ${
@@ -898,8 +903,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                 )}
 
                 {/* Request Content - Flexible without overflow scroll */}
-                <div className="flex-1 p-6 pt-0 overflow-y-auto">
-                  <div className="space-y-5">
+                <div className="flex-1 overflow-y-auto">
 
                     {/* Event and Datetime Information */}
                     {(selectedRequest.serviceevent || selectedRequest.request_datetimes) && (
@@ -908,7 +912,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
                         }`}>Event & Scheduling</h3>
                         
-                        <div className={`p-4 rounded-lg border ${
+                        <div className={`p-3 rounded-lg border ${
                           theme === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
                         }`}>
                           <div className="space-y-3">
@@ -984,7 +988,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       {selectedRequest.selected_service_items_snapshot && Array.isArray(selectedRequest.selected_service_items_snapshot) && selectedRequest.selected_service_items_snapshot.length > 0 ? (
                         <div className="space-y-2">
                           {selectedRequest.selected_service_items_snapshot.map((item: any, index: number) => (
-                            <div key={index} className={`p-2 rounded-lg border ${
+                            <div key={index} className={`p-3 rounded-lg border ${
                               theme === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
                             }`}>
                               <div className="flex items-center justify-between text-sm">
@@ -1126,7 +1130,6 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                         </div>
                       </div>
                     )}
-                  </div>
                 </div>
               </>
             ) : (

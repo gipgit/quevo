@@ -13,20 +13,20 @@ export default function SectionSupportFeatures({ locale }) {
     {
       id: 'aiTicketClassification',
       icon: "🤖",
-      title: "AI Ticket Classification",
-      description: "Automatically categorize and prioritize support tickets using machine learning. Route tickets to the right team members and set appropriate urgency levels."
+      title: t('SupportFeatures.features.aiTicketClassification.title'),
+      description: t('SupportFeatures.features.aiTicketClassification.description')
     },
     {
       id: 'smartResponseSuggestions',
       icon: "💡",
-      title: "Smart Response Suggestions",
-      description: "Get AI-powered response suggestions based on ticket content and customer history. Maintain consistent, professional communication across all support channels."
+      title: t('SupportFeatures.features.smartResponseSuggestions.title'),
+      description: t('SupportFeatures.features.smartResponseSuggestions.description')
     },
     {
       id: 'textCorrection',
       icon: "✏️",
-      title: "Text Correction & Enhancement",
-      description: "AI automatically corrects grammar, spelling, and formatting in customer messages to make them easier to read and understand. Improves communication clarity."
+      title: t('SupportFeatures.features.textCorrection.title'),
+      description: t('SupportFeatures.features.textCorrection.description')
     }
   ];
 
@@ -185,10 +185,10 @@ export default function SectionSupportFeatures({ locale }) {
         {/* Title Section */}
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-5xl font-bold leading-tight mb-4 drop-shadow-lg">
-            <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">AI-Powered</span> <span className="text-white">Support Management</span>
+            <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">{t('SupportFeatures.title.highlighted')}</span> <span className="text-white">{t('SupportFeatures.title.rest')}</span>
           </h2>
           <p className="text-lg lg:text-xl text-gray-300 leading-tight lg:leading-relaxed max-w-3xl mx-auto mb-8 drop-shadow-md">
-            Transform your customer support with intelligent automation, smart routing, and AI-driven insights
+            {t('SupportFeatures.subtitle')}
           </p>
         </div>
 

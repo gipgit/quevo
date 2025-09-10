@@ -53,8 +53,6 @@ export async function PUT(
         data: {
           service_name: data.service_name,
           description: data.description,
-          duration_minutes: data.duration_minutes ? parseInt(data.duration_minutes) : null,
-          buffer_minutes: data.buffer_minutes ? parseInt(data.buffer_minutes) : 0,
           price_base: data.price_base ? parseFloat(data.price_base) : null,
           price_type: data.price_type || "fixed",
           price_unit: data.price_unit,

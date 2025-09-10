@@ -90,7 +90,6 @@ export default function Header() {
 
               {/* Logo */}
               <Link href="/" className="flex items-center space-x-2">
-                <img src="/icons/home.png" alt={tHeader('logoAlt')} className="h-4 w-4 lg:h-8 lg:w-8" />
                 <span className="text-xl font-bold text-gray-900">{tHeader('brandName')}</span>
               </Link>
 

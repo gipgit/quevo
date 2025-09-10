@@ -32,7 +32,6 @@ export async function GET(
             service_id: true,
             service_name: true,
             description: true,
-            duration_minutes: true
           }
         },
         business: {

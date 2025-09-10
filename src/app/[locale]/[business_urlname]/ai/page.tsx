@@ -15,7 +15,7 @@ export const fetchCache = 'force-no-store';
 
 export async function generateMetadata({ params }: { params: AIChatPageParams }) {
     return {
-        title: "AI Assistant - Quevo",
+        title: "AI Assistant - Flowia",
         description: "Chat with our AI assistant to explore services, get quotes, and more",
     };
 }

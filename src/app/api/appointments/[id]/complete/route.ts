@@ -44,7 +44,6 @@ export async function POST(request: Request, { params }: RouteParams) {
             service: {
               select: {
                 service_name: true,
-                duration_minutes: true,
               },
             },
           },

@@ -1270,7 +1270,7 @@ div.data-chart-card .chart-title{
 
 
 
-    .twenter-card{
+    .Flowia-card{
             padding: 1.35em 1.35em;
             display: flex;
             flex-direction: column;
@@ -1285,12 +1285,12 @@ div.data-chart-card .chart-title{
             min-height: 200px;
       }
 
-      .twenter-card .container-profile-pic{
+      .Flowia-card .container-profile-pic{
         display: none;
       }
 
   
-        .twenter-card .card-top {
+        .Flowia-card .card-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -1298,20 +1298,20 @@ div.data-chart-card .chart-title{
             gap: 1em;
         }
 
-        .twenter-card .circuit-logo {
+        .Flowia-card .circuit-logo {
             display: flex;
             gap: 2px;
             width: 100%;
         }
 
-        .twenter-card .logo-circle {
+        .Flowia-card .logo-circle {
             width: 100%;
             height: 3px;
             border-radius: 15px;
             background: linear-gradient(to right, #ffffff7f,aliceblue);
         }
 
-        .twenter-card .card-info {
+        .Flowia-card .card-info {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -1321,17 +1321,17 @@ div.data-chart-card .chart-title{
             gap: .25em;
         }
 
-        .twenter-card .expiry-date {
+        .Flowia-card .expiry-date {
             font-size: .7em;
             opacity: .5;
         }
 
-         .twenter-card .card-holder-name{
+         .Flowia-card .card-holder-name{
             font-size: 1.45em;
             font-family: "FontBold";
         }
 
-         .twenter-card .card-number {
+         .Flowia-card .card-number {
             font-size: 1.25em;
             letter-spacing: 1.5px;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);

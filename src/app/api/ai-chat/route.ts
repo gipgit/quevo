@@ -42,7 +42,6 @@ export async function POST(request: NextRequest) {
           service_id: true,
           service_name: true,
           description: true,
-          duration_minutes: true,
           active_booking: true
         }
       });

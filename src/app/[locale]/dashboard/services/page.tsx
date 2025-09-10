@@ -22,7 +22,7 @@ export default async function ServicesPage() {
   const services = await prisma.service.findMany({
     where: {
       business_id: currentBusinessId,
-      is_active: true
+      // Show both active and inactive services in dashboard
     },
     include: {
       servicecategory: {
@@ -118,8 +118,6 @@ export default async function ServicesPage() {
     })),
     serviceevent: service.serviceevent.map(event => ({
       ...event,
-      duration_minutes: event.duration_minutes || 60,
-      buffer_minutes: event.buffer_minutes || 0,
       is_active: event.is_active || true,
       display_order: event.display_order || 0,
       is_required: event.is_required || true,

@@ -12,8 +12,8 @@ interface ServiceRequestPageParams {
 
 export async function generateMetadata({ params }: { params: ServiceRequestPageParams }) {
     return {
-        title: "Quevo",
-        description: "Quevo",
+        title: "Flowia",
+        description: "Flowia",
     };
 }
 

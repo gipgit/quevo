@@ -333,6 +333,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           {/* Theme Toggle, Locale Switcher and Support Buttons */}
           <div className="mt-auto">
             <div className="flex items-center gap-4">
+              <LocaleSwitcherButton 
+                onClick={() => setIsModalOpen(true)}
+                className=""
+              />
+              <SupportButton 
+                onClick={handleSupportRequest}
+                className=""
+              />
               <div className="flex items-center gap-2">
                 <SunIcon className="h-4 w-4 text-gray-500" />
                 <button
@@ -340,7 +348,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                     theme === 'dark' 
                       ? 'bg-blue-600' 
-                      : 'bg-zinc-200'
+                      : 'bg-zinc-400'
                   }`}
                   title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
                 >
@@ -355,14 +363,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 </button>
                 <MoonIcon className="h-4 w-4 text-gray-500" />
               </div>
-              <LocaleSwitcherButton 
-                onClick={() => setIsModalOpen(true)}
-                className=""
-              />
-              <SupportButton 
-                onClick={handleSupportRequest}
-                className=""
-              />
             </div>
           </div>
         </div>
@@ -375,12 +375,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
       {/* Mobile Sidebar */}
       <div 
-        className="lg:hidden fixed inset-x-0 z-50 h-[70vh] transition-all duration-300 ease-in-out"
+        className="lg:hidden fixed inset-x-0 z-50 h-screen transition-all duration-300 ease-in-out"
         style={{ 
-          bottom: isMobileMenuOpen ? '0' : '-70vh'
+          bottom: isMobileMenuOpen ? '0' : '-100vh'
         }}
       >
-        <div className={`flex h-full flex-col px-6 py-6 rounded-t-3xl ${
+        <div className={`flex h-full flex-col px-6 py-6 ${
           theme === 'dark' ? 'bg-zinc-800' : 'bg-zinc-200'
         }`}>
           {/* Close Button */}
@@ -400,10 +400,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
 
           {/* Business Info Card */}
-          <div className={`rounded-lg p-4 cursor-pointer transition-colors mb-4 ${
+          <div className={`p-4 cursor-pointer transition-colors mb-4 ${
             theme === 'dark' 
-              ? 'bg-zinc-700 hover:bg-zinc-600' 
-              : 'bg-zinc-50 hover:bg-zinc-100'
+              ? 'hover:bg-zinc-700/50' 
+              : 'hover:bg-zinc-100/50'
           }`} onClick={() => {
             setShowBusinessModal(true)
             setIsMobileMenuOpen(false)
@@ -473,31 +473,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           {/* Theme Toggle, Locale Switcher and Support Buttons */}
           <div className="mt-auto">
             <div className="flex gap-2">
-              <div className="flex items-center gap-2">
-                <SunIcon className="h-4 w-4 text-gray-500" />
-                <button
-                  onClick={() => {
-                    toggleTheme()
-                    setIsMobileMenuOpen(false)
-                  }}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                    theme === 'dark' 
-                      ? 'bg-blue-600' 
-                      : 'bg-zinc-200'
-                  }`}
-                  title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
-                      theme === 'dark' ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                  <span className="sr-only">
-                    {theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-                  </span>
-                </button>
-                <MoonIcon className="h-4 w-4 text-gray-500" />
-              </div>
               <LocaleSwitcherButton 
                 onClick={() => {
                   setIsModalOpen(true)
@@ -512,6 +487,31 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 }}
                 className="flex-1"
               />
+              <div className="flex items-center gap-2">
+                <SunIcon className="h-4 w-4 text-gray-500" />
+                <button
+                  onClick={() => {
+                    toggleTheme()
+                    setIsMobileMenuOpen(false)
+                  }}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                    theme === 'dark' 
+                      ? 'bg-blue-600' 
+                      : 'bg-zinc-400'
+                  }`}
+                  title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
+                      theme === 'dark' ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                  <span className="sr-only">
+                    {theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                  </span>
+                </button>
+                <MoonIcon className="h-4 w-4 text-gray-500" />
+              </div>
             </div>
           </div>
         </div>

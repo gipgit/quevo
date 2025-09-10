@@ -64,8 +64,8 @@ interface ServiceEvent {
   event_name: string
   event_description: string | null
   event_type: string
-  duration_minutes: number
-  buffer_minutes: number
+  duration_minutes: number | null
+  buffer_minutes: number | null
   is_required: boolean
   display_order: number
   is_active: boolean
@@ -76,8 +76,6 @@ interface Service {
   service_id: string
   service_name: string
   description: string | null
-  duration_minutes: number | null
-  buffer_minutes: number | null
   price_base: number | null
   price_type: string | null
   price_unit: string | null
@@ -310,26 +308,12 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                             </div>
                           )}
                           
-                          {/* Price and duration in same line */}
+                          {/* Price display */}
                           <div className="flex items-center gap-3">
                             {service.price_base !== null && (
                               <div className={`text-lg font-semibold ${
                                 theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
                               }`}>€{service.price_base}</div>
-                            )}
-                            {service.duration_minutes && (
-                              <span className={`px-3 py-1 text-sm rounded-full ${
-                                theme === 'dark' ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-800'
-                              }`}>
-                                {service.duration_minutes} {t("minutes")}
-                              </span>
-                            )}
-                            {service.buffer_minutes && service.buffer_minutes > 0 && (
-                              <span className={`px-3 py-1 text-sm rounded-full ${
-                                theme === 'dark' ? 'bg-purple-900 text-purple-300' : 'bg-purple-100 text-purple-800'
-                              }`}>
-                                +{service.buffer_minutes} {t("buffer")}
-                              </span>
                             )}
                           </div>
                         </div>

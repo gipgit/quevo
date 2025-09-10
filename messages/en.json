@@ -1,7 +1,7 @@
 {
   "Header": {
-    "brandName": "Quevo",
-    "logoAlt": "Quevo Logo",
+    "brandName": "Flowia",
+    "logoAlt": "Flowia Logo",
     "toggleMobileMenu": "Toggle mobile menu",
     "closeMobileMenu": "Close mobile menu",
     "features": "Features",
@@ -10,13 +10,13 @@
     "signIn": "Sign In"
   },
   "Footer": {
-    "brandName": "Quevo",
+    "brandName": "Flowia",
     "features": "Features",
     "pricing": "Pricing",
     "contact": "Contact",
     "privacyPolicy": "Privacy Policy",
     "termsOfService": "Terms of Service",
-    "copyright": "© 2025 Quevo. All rights reserved."
+    "copyright": "© 2025 Flowia. All rights reserved."
   },
   "Common": {
     "coverPhotoAlt": "Business Cover Photo",
@@ -276,10 +276,10 @@
   },
   "BusinessSignup": {
     "pageTitle": "Create your account",
-    "brandTitle": "twenter Business",
-    "rightSideTitle": "Create your Quevo Business account",
+    "brandTitle": "Flowia",
+    "rightSideTitle": "Create your Flowia account",
     "rightSideSubtitle": "Not a Business Owner?",
-    "rightSideLink": "Create your Quevo",
+    "rightSideLink": "Create your Flowia",
     "nameLabel": "Name",
     "namePlaceholder": "Enter your name",
     "nameRequired": "Name is required",
@@ -318,7 +318,7 @@
     "alreadyHaveAccount": "Already have an account?",
     "signInLink": "Sign in here",
     "benefits": {
-      "title": "Why choose Quevo Business?",
+      "title": "Why choose Flowia?",
       "freePlan": "1 plan always free",
       "noPaymentDetails": "Start free without payment details",
       "cancelAnytime": "Change or cancel anytime",
@@ -337,7 +337,7 @@
     "contactSupport": "Contact support"
   },
   "SignIn": {
-    "brandTitle": "Quevo Business",
+    "brandTitle": "Flowia",
     "pageTitle": "Sign In",
     "emailPlaceholder": "your@email.com",
     "passwordPlaceholder": "••••••••",
@@ -347,7 +347,7 @@
     "connectionError": "Connection error",
     "createBusinessAccount": "Create a Business Account",
     "generalAccess": "General Access",
-    "discoverQuevo": "Discover Quevo"
+    "discoverFlowia": "Discover Flowia"
   },
   "BusinessSignIn": {
     "subtitle": "Sign in to your business account",
@@ -367,24 +367,24 @@
     "emailInvalid": "Invalid email format"
   },
   "UserManagerActivation": {
-    "subject": "Activate Your Quevo Business Account",
+    "subject": "Activate Your Flowia Account",
     "welcome_heading": "Hello {recipientName}!",
-    "confirmation_message": "Thank you for signing up for Quevo Business. To complete your registration, please confirm your email address by clicking the button below. Once confirmed, you'll be able to access all Quevo Business features and start managing your business.",
+    "confirmation_message": "Thank you for signing up for Flowia. To complete your registration, please confirm your email address by clicking the button below. Once confirmed, you'll be able to access all Flowia features and start managing your business.",
     "confirm_button_text": "Confirm Email",
     "fallback_link_instruction": "If the button doesn't work, copy and paste this link into your browser:",
     "help_message": "If you need any help, don't hesitate to contact us.",
     "closing_salutation": "Best regards,",
-    "team_name": "The Quevo team",
+    "team_name": "The Flowia team",
     "logo_url": "https://quevo.com/logo.png"
   },
     "UserCustomerActivation": {
-    "subject": "Activate your Quevo Customer account",
-    "welcome_heading": "Welcome to Quevo, {recipientName}!",
+    "subject": "Activate your Flowia Customer account",
+    "welcome_heading": "Welcome to Flowia, {recipientName}!",
     "confirm_email_prompt": "Confirm your email to access all features.",
     "confirm_button_text": "Activate my account",
     "fallback_link_instruction": "If the button doesn't work, you can also copy and paste this link into your browser:",
     "closing_salutation": "Regards,",
-    "team_name": "The Quevo Team",
+    "team_name": "The Flowia Team",
     "logo_url": "https://yourwebsite.com/logo.png"
   },
   "BusinessActivationPage": {
@@ -393,7 +393,7 @@
     "pleaseWait": "Attendi mentre verifichiamo la tua email.",
     "activationSuccessful": "Attivazione Completata!",
     "activationSuccessDefault": "Il tuo account è stato attivato con successo!",
-    "welcomeMessage": "Benvenuto su Quevo, {recipientName}.",
+    "welcomeMessage": "Benvenuto su Flowia, {recipientName}.",
     "accountActiveMessage": "Il tuo account Business è attivo e il tuo profilo è online.",
     "verificationNote": "Effettuiamo delle verifiche per evitare utilizzi non autorizzati delle identità delle aziende. Se abbiamo domande, te lo faremo sapere.",
     "yourUserId": "Il tuo User ID",
@@ -438,10 +438,21 @@
     "serviceLimitReached": "You have reached the maximum number of services for your plan.",
     "maxQuestionsReached": "You have reached the maximum number of questions for this service.",
     "createService": "Create Service",
+    "editService": "Edit Service",
     "serviceNameRequired": "Service name is required.",
     "createError": "Error creating service.",
     "cancel": "Cancel",
+    "save": "Save",
     "creating": "Creating...",
+    "tabs": {
+      "basicInfo": "Basic Info",
+      "extras": "Extras",
+      "items": "Items",
+      "questions": "Questions",
+      "requirements": "Requirements",
+      "events": "Events",
+      "consent": "Consent"
+    },
     "additionalItems": "Additional Items",
     "addItem": "Add Item",
     "item": "Item",
@@ -854,9 +865,11 @@
     "openProfile": "Open Profile",
     "tabs": {
       "information": "Information",
+      "info": "Information",
       "images": "Images",
       "links": "Links",
       "paymentMethods": "Payment Methods",
+      "payments": "Payments",
       "settings": "Settings",
       "appearance": "Appearance"
     },
@@ -908,10 +921,23 @@
         "message": "Changes saved successfully"
       },
       "error": {
+        "title": "There was a problem",
         "saveFailed": {
           "title": "Save Failed",
           "message": "Failed to save changes. Please try again."
+        },
+        "uploadFailed": {
+          "title": "Upload Failed",
+          "message": "Failed to upload image. Please try again."
+        },
+        "networkError": {
+          "title": "Network Error",
+          "message": "Failed to connect to server. Please check your connection."
         }
+      },
+      "noChanges": {
+        "title": "No Changes",
+        "message": "No changes to save."
       }
     }
   },
@@ -1273,8 +1299,8 @@
   },
   "Landing": {
     "Hero": {
-      "title": "Give your customers everything they need, all in one single, intuitive screen.",
-      "subtitle": "Simplify every interaction and increase conversions and satisfaction. Easily showcase your brand and services, manage inquiries, streamline service operations like payment requests and appoinments.",
+      "title": "AI-Powered Customer Experience and Marketing Platform That Grows With You",
+      "subtitle": "Simplify complex service interactions and amplify your marketing with intelligent automation. From customer guidance and support to AI-generated content and evolving features - your business platform adapts and grows with your needs.",
       "startFree": "Start FREE. No payment details required.",
       "viewExample": "View Example",
       "getStarted": "Get Started",
@@ -1481,10 +1507,103 @@
         }
       }
     },
+    "MarketingFeatures": {
+      "title": {
+        "highlighted": "AI-Powered",
+        "rest": "Marketing Features"
+      },
+      "subtitle": "Transform your marketing strategy with intelligent automation, smart content generation, and AI-driven insights",
+      "cards": {
+        "socialMedia": {
+          "title": "Social Media Content Creator",
+          "description": "AI generates engaging social media posts for Facebook, Instagram, LinkedIn, Twitter, and TikTok. Includes posting schedules and optimal timing recommendations."
+        },
+        "emailMarketing": {
+          "title": "Email Marketing Assistant",
+          "description": "Create targeted email campaigns with AI-generated content. Segment customers, schedule sends, and track engagement with professional email templates."
+        }
+      }
+    },
+    "RequestFeatures": {
+      "title": "Request Management Features",
+      "subtitle": "Streamline your service request workflow with intelligent automation and professional tools",
+      "features": {
+        "requestManagement": {
+          "title": "Smart Request Management",
+          "description": "Organize and prioritize service requests with intelligent categorization, status tracking, and automated follow-ups."
+        },
+        "quotationGenerator": {
+          "title": "AI-Powered Quotation Generator",
+          "description": "Pre-built quotations with customer name and selected items/extras from service requests. Everything remains fully customizable and editable before export to PDF with your business branding."
+        }
+      }
+    },
+    "SupportFeatures": {
+      "title": {
+        "highlighted": "AI-Powered",
+        "rest": "Support Management"
+      },
+      "subtitle": "Transform your customer support with intelligent automation, smart routing, and AI-driven insights",
+      "features": {
+        "aiTicketClassification": {
+          "title": "AI Ticket Classification",
+          "description": "Automatically categorize and prioritize support tickets using machine learning. Route tickets to the right team members and set appropriate urgency levels."
+        },
+        "smartResponseSuggestions": {
+          "title": "Smart Response Suggestions",
+          "description": "Get AI-powered response suggestions based on ticket content and customer history. Maintain consistent, professional communication across all support channels."
+        },
+        "textCorrection": {
+          "title": "Text Correction & Enhancement",
+          "description": "AI automatically corrects grammar, spelling, and formatting in customer messages to make them easier to read and understand. Improves communication clarity."
+        }
+      }
+    },
+    "Support": {
+      "title": {
+        "prefix": "World-Class",
+        "highlighted": "Support"
+      },
+      "subtitle": "Experience support that goes beyond expectations. From 24/7 premium assistance to multi-language expertise, we're here to ensure your success every step of the way.",
+      "features": {
+        "knowledgeBase": {
+          "title": "Comprehensive Knowledge Base",
+          "description": "Access to detailed documentation, video tutorials, and step-by-step guides. Self-service resources for common questions.",
+          "badge": "All Plans"
+        },
+        "premiumSupport": {
+          "title": "24/7 Premium Support",
+          "description": "Round-the-clock assistance for Pro and Enterprise plans. Get help whenever you need it, no matter your timezone.",
+          "badge": "Pro+"
+        },
+        "multiLanguage": {
+          "title": "Multi-Language Support",
+          "description": "Get support in your native language. Our team speaks 15+ languages including English, Spanish, French, German, Italian, and more.",
+          "badge": "All Plans"
+        },
+        "fastResponse": {
+          "title": "Fast Response",
+          "description": "Average response time under 2 hours for Pro plans, 4 hours for standard plans. Critical issues get priority handling.",
+          "badge": "All Plans"
+        },
+        "multipleChannels": {
+          "title": "Multiple Support Channels",
+          "description": "Choose your preferred way to get help: live chat, email, phone, or video calls. We adapt to your communication style.",
+          "badge": "All Plans"
+        }
+      },
+      "testimonials": {
+        "title": "What Our Customers Say",
+        "subtitle": "Don't just take our word for it - hear from businesses that trust our support"
+      }
+    },
     "CTA": {
-      "title": "Create your professional website in minutes",
-      "subtitle": "Start now with the free plan",
-      "button": "Get Started"
+      "title": {
+        "part1": "Ready to Transform",
+        "part2": "Your Business?"
+      },
+      "subtitle": "Join thousands of businesses already using AI to streamline their operations and boost productivity",
+      "button": "Get Started Free"
     }
   }
 }

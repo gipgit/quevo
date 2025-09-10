@@ -9,33 +9,33 @@ export default function SectionSupport({ locale }) {
   const supportFeatures = [
     {
       icon: "📚",
-      title: "Comprehensive Knowledge Base",
-      description: "Access to detailed documentation, video tutorials, and step-by-step guides. Self-service resources for common questions.",
-      badge: "All Plans"
+      title: t('Support.features.knowledgeBase.title'),
+      description: t('Support.features.knowledgeBase.description'),
+      badge: t('Support.features.knowledgeBase.badge')
     },
     {
       icon: "🕐",
-      title: "24/7 Premium Support",
-      description: "Round-the-clock assistance for Pro and Enterprise plans. Get help whenever you need it, no matter your timezone.",
-      badge: "Pro+"
+      title: t('Support.features.premiumSupport.title'),
+      description: t('Support.features.premiumSupport.description'),
+      badge: t('Support.features.premiumSupport.badge')
     },
     {
       icon: "🌍",
-      title: "Multi-Language Support",
-      description: "Get support in your native language. Our team speaks 15+ languages including English, Spanish, French, German, Italian, and more.",
-      badge: "All Plans"
+      title: t('Support.features.multiLanguage.title'),
+      description: t('Support.features.multiLanguage.description'),
+      badge: t('Support.features.multiLanguage.badge')
     },
     {
       icon: "⚡",
-      title: "Fast Response",
-      description: "Average response time under 2 hours for Pro plans, 4 hours for standard plans. Critical issues get priority handling.",
-      badge: "All Plans"
+      title: t('Support.features.fastResponse.title'),
+      description: t('Support.features.fastResponse.description'),
+      badge: t('Support.features.fastResponse.badge')
     },
     {
       icon: "💬",
-      title: "Multiple Support Channels",
-      description: "Choose your preferred way to get help: live chat, email, phone, or video calls. We adapt to your communication style.",
-      badge: "All Plans"
+      title: t('Support.features.multipleChannels.title'),
+      description: t('Support.features.multipleChannels.description'),
+      badge: t('Support.features.multipleChannels.badge')
     },
   ];
 
@@ -72,11 +72,10 @@ export default function SectionSupport({ locale }) {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
-            World-Class <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Support</span>
+            {t('Support.title.prefix')} <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{t('Support.title.highlighted')}</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Experience support that goes beyond expectations. From 24/7 premium assistance to multi-language expertise, 
-            we're here to ensure your success every step of the way.
+            {t('Support.subtitle')}
           </p>
         </div>
 
@@ -114,10 +113,10 @@ export default function SectionSupport({ locale }) {
         <div className="bg-white rounded-3xl p-8 lg:p-12 shadow-xl border border-gray-100">
           <div className="text-center mb-12">
             <h3 className="text-3xl font-bold text-gray-900 mb-4">
-              What Our Customers Say
+              {t('Support.testimonials.title')}
             </h3>
             <p className="text-gray-600 text-lg">
-              Don't just take our word for it - hear from businesses that trust our support
+              {t('Support.testimonials.subtitle')}
             </p>
           </div>
 

@@ -26,6 +26,20 @@ export default function BusinessSelectionModal({ isOpen, onClose }: BusinessSele
   const [avatarError, setAvatarError] = useState<{ [id: string]: boolean }>({})
   const [selectingBusiness, setSelectingBusiness] = useState<string | null>(null)
 
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isOpen])
+
   if (!isOpen) return null
 
   const handleBusinessSelect = async (businessId: string) => {
@@ -68,15 +82,15 @@ export default function BusinessSelectionModal({ isOpen, onClose }: BusinessSele
 
   return (
          <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900 bg-opacity-40">
-       <div className="bg-zinc-800 w-full max-h-screen lg:rounded-xl lg:p-8 lg:shadow-lg relative">
+       <div className="bg-gray-900 w-full max-h-screen lg:rounded-xl lg:p-16 lg:shadow-lg relative">
          <button 
-           className="absolute top-4 right-4 lg:top-2 lg:right-2 text-zinc-400 hover:text-zinc-600 z-10" 
+           className="absolute top-4 right-4 lg:top-2 lg:right-2 text-gray-400 hover:text-gray-600 z-10" 
            onClick={onClose}
          >
            <XMarkIcon className="h-6 w-6" />
          </button>
          <div className="p-4 lg:p-0 h-full flex flex-col max-h-screen overflow-hidden">
-           <h2 className="text-xl font-bold mb-4 text-center mt-8 lg:mt-0 flex-shrink-0">{t("currentBusiness.selectBusiness")}</h2>
+           <h2 className="text-xl lg:text-3xl font-bold mb-4 text-center mt-8 lg:mt-0 flex-shrink-0 text-white">{t("currentBusiness.selectBusiness")}</h2>
            {selectingBusiness && (
              <div className="text-blue-400 text-sm font-medium animate-pulse text-center mb-4">
                Switching to business...
@@ -86,14 +100,14 @@ export default function BusinessSelectionModal({ isOpen, onClose }: BusinessSele
           {businesses.map((b) => (
                          <div
                key={b.business_id}
-               className={`relative rounded-lg p-2 transition-all flex-shrink-0 flex flex-row lg:flex-col items-center justify-center min-w-[120px] min-h-[60px] lg:min-w-[160px] lg:min-h-[160px] ${
+               className={`relative rounded-2xl p-4 lg:p-4 transition-all flex-shrink-0 flex flex-row lg:flex-col items-center justify-center min-w-[120px] min-h-[60px] lg:min-w-[200px] lg:min-h-[140px] ${
                  selectingBusiness 
                    ? "opacity-50 cursor-not-allowed" 
                    : "cursor-pointer"
                } ${
                  currentBusiness?.business_id === b.business_id 
-                   ? "bg-blue-600" 
-                   : "bg-zinc-700 hover:bg-zinc-600"
+                   ? "bg-blue-500 ring-2 ring-blue-500" 
+                   : "bg-white hover:bg-gray-100 hover:shadow-lg"
                }`}
                onClick={() => !selectingBusiness && handleBusinessSelect(b.business_id)}
              >
@@ -108,18 +122,22 @@ export default function BusinessSelectionModal({ isOpen, onClose }: BusinessSele
                    <img
                      src={getProfileImageUrl(b)}
                      alt={b.business_name}
-                     className="w-8 h-8 lg:w-16 lg:h-16 rounded-full object-cover bg-zinc-100"
+                     className="w-8 h-8 lg:w-16 lg:h-16 rounded-full object-cover bg-gray-200"
                      onError={() => setAvatarError(errs => ({ ...errs, [b.business_id]: true }))}
                    />
                  ) : (
                    <div
-                     className="w-8 h-8 lg:w-16 lg:h-16 rounded-full bg-blue-200 text-blue-700 flex items-center justify-center font-bold text-sm lg:text-2xl"
+                     className="w-8 h-8 lg:w-16 lg:h-16 rounded-full bg-blue-200 text-blue-700 flex items-center justify-center font-bold text-sm lg:text-lg"
                    >
                      {getInitial(b.business_name)}
                    </div>
                  )}
                </div>
-                               <div className="text-zinc-100 text-center w-full truncate text-sm lg:text-base pl-8 lg:pl-0">{b.business_name}</div>
+                               <div className={`text-center w-full truncate text-sm lg:text-base pl-8 lg:pl-0 font-medium leading-tight ${
+                                 currentBusiness?.business_id === b.business_id 
+                                   ? "text-white" 
+                                   : "text-gray-900"
+                               }`}>{b.business_name}</div>
             </div>
           ))}
           </div>

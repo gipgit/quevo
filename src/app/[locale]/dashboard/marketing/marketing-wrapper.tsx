@@ -31,8 +31,6 @@ interface Service {
   service_id: string
   service_name: string
   description: string | null
-  duration_minutes: number | null
-  buffer_minutes: number | null
   price_base: number | null
   price_type: string | null
   has_items: boolean | null
@@ -40,6 +38,8 @@ interface Service {
   active_quotation: boolean | null
   is_active: boolean | null
   display_order: number | null
+  date_created: Date | null
+  date_updated: Date | null
   servicecategory: {
     category_name: string
   } | null

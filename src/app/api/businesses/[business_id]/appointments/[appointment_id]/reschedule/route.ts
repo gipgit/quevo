@@ -52,7 +52,7 @@ export async function POST(
     const newBookingStart = toZonedTime(parseISO(fullBookingDateTimeStr), BUSINESS_TIMEZONE);
     const newBookingEnd = addMinutes(
       newBookingStart, 
-      (appointment.serviceboard.service?.duration_minutes || 60) + (appointment.serviceboard.service?.buffer_minutes || 0)
+      60 // Default duration since duration_minutes and buffer_minutes were removed
     );
 
     // Check for time slot availability

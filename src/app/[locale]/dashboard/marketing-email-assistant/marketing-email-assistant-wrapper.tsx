@@ -86,12 +86,11 @@ interface Customer {
   lastActivity: Date
 }
 
+// Updated Service interface without duration_minutes and buffer_minutes - FIXED
 interface Service {
   service_id: string
   service_name: string
   description: string | null
-  duration_minutes: number | null
-  buffer_minutes: number | null
   price_base: any
   price_type: string | null
   has_items: boolean | null
@@ -455,22 +454,42 @@ export default function MarketingEmailAssistantWrapper({
     <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Marketing Email Assistant</h1>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="text-right">
-              <p className="text-sm text-gray-600">Email Credits</p>
-              <p className="text-lg font-semibold">
-                {rateLimitStatus.tokensRemaining} / {rateLimitStatus.tokensCapacity}
-              </p>
+        <div className="mb-6">
+          <div className="bg-gradient-to-br from-purple-900 via-blue-800 to-blue-400 rounded-xl p-6 shadow-lg relative overflow-hidden">
+            {/* AI Pattern Overlay */}
+            <div className="absolute inset-0 opacity-20">
+              <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,0,0.08)_1px,transparent_1px)] bg-[length:25px_25px]"></div>
+              <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_75%_25%,rgba(0,255,255,0.06)_2px,transparent_2px)] bg-[length:35px_35px]"></div>
+              <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_25%_75%,rgba(255,255,0,0.04)_1.5px,transparent_1.5px)] bg-[length:30px_30px]"></div>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-600">AI Generations</p>
-              <p className="text-lg font-semibold">
-                {aiContentGenerationRateLimitStatus.generationsAvailable}
-              </p>
+            <div className="relative z-10 flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl lg:text-3xl font-bold text-white mb-1 drop-shadow-lg">
+                  Marketing Email Assistant
+                </h1>
+                <p className="text-sm text-purple-100 drop-shadow-md">
+                  Create and send professional email campaigns with AI-powered content generation
+                </p>
+              </div>
+              <div className="flex items-center space-x-6">
+                <div className="text-right">
+                  <p className="text-sm text-purple-100 drop-shadow-md">Email Credits</p>
+                  <p className="text-lg font-semibold text-white drop-shadow-lg">
+                    {rateLimitStatus.tokensRemaining} / {rateLimitStatus.tokensCapacity}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-purple-100 drop-shadow-md">AI Generations</p>
+                  <p className="text-lg font-semibold text-white drop-shadow-lg">
+                    {aiContentGenerationRateLimitStatus.generationsAvailable}
+                  </p>
+                </div>
+                <div className="hidden lg:block">
+                  <div className="w-16 h-16 bg-purple-500/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-purple-400/40">
+                    <MailIcon className="w-8 h-8 text-purple-300" />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -505,12 +524,12 @@ export default function MarketingEmailAssistantWrapper({
               
               {!isManualMode ? (
                 // AI Generation Settings
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {/* Business Qualities */}
                   <div>
-                    <div className="flex items-center space-x-4 mb-3">
-                      <div className="flex items-center space-x-2">
-                        <Label className="text-base font-medium">Business Qualities</Label>
+                    <div className="mb-3">
+                      <div className="flex items-center space-x-2 mb-3">
+                        <Label className="text-xs xs:text-xs sm:text-xs md:text-sm font-medium opacity-70">Business Qualities</Label>
                         <button
                           className="text-gray-400 hover:text-gray-600 transition-colors"
                           title="Select the qualities that best represent your business"
@@ -563,9 +582,9 @@ export default function MarketingEmailAssistantWrapper({
 
                   {/* Tone Selection */}
                   <div>
-                    <div className="flex items-center space-x-4 mb-3">
-                      <div className="flex items-center space-x-2">
-                        <Label className="text-base font-medium">Email Tone</Label>
+                    <div className="mb-3">
+                      <div className="flex items-center space-x-2 mb-3">
+                        <Label className="text-xs xs:text-xs sm:text-xs md:text-sm font-medium opacity-70">Email Tone</Label>
                         <button
                           className="text-gray-400 hover:text-gray-600 transition-colors"
                           title="Choose the tone that matches your brand voice"
@@ -602,90 +621,93 @@ export default function MarketingEmailAssistantWrapper({
                     </div>
                   </div>
 
-                  {/* Promotion Settings */}
-                  <div>
-                    <div className="flex items-center space-x-4 mb-3">
-                      <div className="flex items-center space-x-2">
-                        <Label className="text-base font-medium">Include Promotion</Label>
-                        <button
-                          className="text-gray-400 hover:text-gray-600 transition-colors"
-                          title="Add a special offer to encourage engagement"
-                        >
-                          <Info className="w-4 h-4" />
-                        </button>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <label className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            checked={aiGenerationSettings.includePromotion}
-                            onChange={(e) => setAiGenerationSettings(prev => ({ ...prev, includePromotion: e.target.checked }))}
-                            className="rounded"
-                          />
-                          <span className="text-sm">Include a promotional offer</span>
-                        </label>
-                        
-                        {aiGenerationSettings.includePromotion && (
-                          <div className="flex items-center space-x-2">
-                            <span className="text-sm text-gray-600">Type:</span>
-                            <Select
-                              value={aiGenerationSettings.promotionType}
-                              onValueChange={(value) => setAiGenerationSettings(prev => ({ ...prev, promotionType: value }))}
-                            >
-                              <SelectTrigger className="w-auto min-w-[140px]">
-                                <SelectValue placeholder="Select type" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="discount">Percentage Discount</SelectItem>
-                                <SelectItem value="fixed_discount">Fixed Amount Discount</SelectItem>
-                                <SelectItem value="free_service">Free Service</SelectItem>
-                                <SelectItem value="limited_time">Limited Time Offer</SelectItem>
-                                <SelectItem value="referral_bonus">Referral Bonus</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        )}
+                  {/* Call to Action and Promotion Settings - Side by side on lg+ */}
+                  <div className="flex flex-col lg:flex-row lg:space-x-6 space-y-4 lg:space-y-0">
+                    {/* Call to Action - More width */}
+                    <div className="lg:flex-[2]">
+                      <div className="mb-3">
+                        <div className="flex items-center space-x-2 mb-3">
+                          <Label className="text-xs xs:text-xs sm:text-xs md:text-sm font-medium opacity-70">Call to Action</Label>
+                          <button
+                            className="text-gray-400 hover:text-gray-600 transition-colors"
+                            title="What action do you want recipients to take?"
+                          >
+                            <Info className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {[
+                            { value: 'book_appointment', label: 'Book Appointment' },
+                            { value: 'learn_more', label: 'Learn More' },
+                            { value: 'contact_us', label: 'Contact Us' },
+                            { value: 'custom', label: 'Custom' }
+                          ].map((cta) => (
+                            <label key={cta.value} className="cursor-pointer">
+                              <input
+                                type="radio"
+                                name="cta"
+                                value={cta.value}
+                                checked={aiGenerationSettings.callToAction === cta.value}
+                                onChange={(e) => setAiGenerationSettings(prev => ({ ...prev, callToAction: e.target.value as any }))}
+                                className="sr-only"
+                              />
+                              <div className={`border-2 rounded-full px-3 py-1 text-center transition-colors whitespace-nowrap ${
+                                aiGenerationSettings.callToAction === cta.value 
+                                  ? 'border-blue-500 bg-blue-50' 
+                                  : 'border-gray-400 hover:border-gray-500 hover:bg-gray-50'
+                              }`}>
+                                <div className="font-medium text-xs">{cta.label}</div>
+                              </div>
+                            </label>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Call to Action */}
-                  <div>
-                    <div className="flex items-center space-x-4 mb-3">
-                      <div className="flex items-center space-x-2">
-                        <Label className="text-base font-medium">Call to Action</Label>
-                        <button
-                          className="text-gray-400 hover:text-gray-600 transition-colors"
-                          title="What action do you want recipients to take?"
-                        >
-                          <Info className="w-4 h-4" />
-                        </button>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {[
-                          { value: 'book_appointment', label: 'Book Appointment' },
-                          { value: 'learn_more', label: 'Learn More' },
-                          { value: 'contact_us', label: 'Contact Us' },
-                          { value: 'custom', label: 'Custom' }
-                        ].map((cta) => (
-                          <label key={cta.value} className="cursor-pointer">
+                    {/* Promotion Settings - Less width */}
+                    <div className="lg:flex-1">
+                      <div className="mb-3">
+                        <div className="flex items-center space-x-2 mb-3">
+                          <Label className="text-xs xs:text-xs sm:text-xs md:text-sm font-medium opacity-70">Include Promotion</Label>
+                          <button
+                            className="text-gray-400 hover:text-gray-600 transition-colors"
+                            title="Add a special offer to encourage engagement"
+                          >
+                            <Info className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="flex flex-col space-y-3">
+                          <div className="flex items-center space-x-2">
                             <input
-                              type="radio"
-                              name="cta"
-                              value={cta.value}
-                              checked={aiGenerationSettings.callToAction === cta.value}
-                              onChange={(e) => setAiGenerationSettings(prev => ({ ...prev, callToAction: e.target.value as any }))}
-                              className="sr-only"
+                              type="checkbox"
+                              checked={aiGenerationSettings.includePromotion}
+                              onChange={(e) => setAiGenerationSettings(prev => ({ ...prev, includePromotion: e.target.checked }))}
+                              className="rounded"
                             />
-                            <div className={`border-2 rounded-full px-3 py-1 text-center transition-colors whitespace-nowrap ${
-                              aiGenerationSettings.callToAction === cta.value 
-                                ? 'border-blue-500 bg-blue-50' 
-                                : 'border-gray-400 hover:border-gray-500 hover:bg-gray-50'
-                            }`}>
-                              <div className="font-medium text-xs">{cta.label}</div>
+                            <span className="text-sm">Include a promotional offer</span>
+                          </div>
+                          
+                          {aiGenerationSettings.includePromotion && (
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm text-gray-600">Type:</span>
+                              <Select
+                                value={aiGenerationSettings.promotionType}
+                                onValueChange={(value) => setAiGenerationSettings(prev => ({ ...prev, promotionType: value }))}
+                              >
+                                <SelectTrigger className="w-auto min-w-[140px]">
+                                  <SelectValue placeholder="Select type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="discount">Percentage Discount</SelectItem>
+                                  <SelectItem value="fixed_discount">Fixed Amount Discount</SelectItem>
+                                  <SelectItem value="free_service">Free Service</SelectItem>
+                                  <SelectItem value="limited_time">Limited Time Offer</SelectItem>
+                                  <SelectItem value="referral_bonus">Referral Bonus</SelectItem>
+                                </SelectContent>
+                              </Select>
                             </div>
-                          </label>
-                        ))}
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

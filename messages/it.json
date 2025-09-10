@@ -1,7 +1,7 @@
 {
   "Header": {
-    "brandName": "Quevo",
-    "logoAlt": "Logo Quevo",
+    "brandName": "Flowia",
+    "logoAlt": "Logo Flowia",
     "toggleMobileMenu": "Apri/chiudi menu mobile",
     "closeMobileMenu": "Chiudi menu mobile",
     "features": "Funzionalità",
@@ -10,13 +10,13 @@
     "signIn": "Accedi"
   },
   "Footer": {
-    "brandName": "Quevo",
+    "brandName": "Flowia",
     "features": "Funzionalità",
     "pricing": "Prezzi",
     "contact": "Contatti",
     "privacyPolicy": "Informativa Privacy",
     "termsOfService": "Termini di Servizio",
-    "copyright": "© 2025 Quevo. Tutti i diritti riservati."
+    "copyright": "© 2025 Flowia. Tutti i diritti riservati."
   },
   "Common": {
     "coverPhotoAlt": "Foto di Copertina dell'Attività",
@@ -280,10 +280,10 @@
   },
   "BusinessSignup": {
     "pageTitle": "Crea il tuo account",
-    "brandTitle": "twenter Business",
-    "rightSideTitle": "Crea il tuo account Quevo Business",
+    "brandTitle": "Flowia",
+    "rightSideTitle": "Crea il tuo account Flowia",
     "rightSideSubtitle": "Non sei un Proprietario?",
-    "rightSideLink": "Crea il tuo Quevo",
+    "rightSideLink": "Crea il tuo Flowia",
     "nameLabel": "Nome",
     "namePlaceholder": "Inserisci il tuo nome",
     "nameRequired": "Nome richiesto",
@@ -322,7 +322,7 @@
     "alreadyHaveAccount": "Hai già un account?",
     "signInLink": "Accedi qui",
     "benefits": {
-      "title": "Perché scegliere Quevo Business?",
+      "title": "Perché scegliere Flowia?",
       "freePlan": "1 piano sempre gratuito",
       "noPaymentDetails": "Inizia gratis senza dati di pagamento",
       "cancelAnytime": "Cambia o cancella in qualsiasi momento",
@@ -341,7 +341,7 @@
     "contactSupport": "Contatta il supporto"
   },
   "SignIn": {
-    "brandTitle": "Quevo Business",
+    "brandTitle": "Flowia",
     "pageTitle": "Accedi",
     "emailPlaceholder": "tua@email.com",
     "passwordPlaceholder": "••••••••",
@@ -351,7 +351,7 @@
     "connectionError": "Errore di connessione",
     "createBusinessAccount": "Crea un account Business",
     "generalAccess": "Accesso Generale",
-    "discoverQuevo": "Scopri Quevo"
+    "discoverFlowia": "Scopri Flowia"
   },
   "BusinessSignIn": {
     "subtitle": "Accedi al tuo account business",
@@ -381,7 +381,7 @@
     "pleaseWait": "Attendi mentre verifichiamo la tua email.",
     "activationSuccessful": "Attivazione Completata!",
     "activationSuccessDefault": "Il tuo account è stato attivato con successo!",
-    "welcomeMessage": "Benvenuto su Quevo, {recipientName}.",
+    "welcomeMessage": "Benvenuto su Flowia, {recipientName}.",
     "accountActiveMessage": "Il tuo account Business è attivo e il tuo profilo è online.",
     "verificationNote": "Effettuiamo delle verifiche per evitare utilizzi non autorizzati delle identità delle aziende. Se abbiamo domande, te lo faremo sapere.",
     "yourUserId": "Il tuo User ID",
@@ -397,24 +397,24 @@
     "redirectingToDashboard": "Reindirizzamento alla dashboard..."
   },
   "UserManagerActivation": {
-    "subject": "Attiva il tuo account Business Quevo",
-    "welcome_heading": "Benvenuto su Quevo, {recipientName}!",
+    "subject": "Attiva il tuo account Business Flowia",
+    "welcome_heading": "Benvenuto su Flowia, {recipientName}!",
     "confirmation_message": "Conferma la tua email per iniziare subito a configurare e gestire il tuo nuovo spazio online.",
     "confirm_button_text": "Conferma e inizia",
     "fallback_link_instruction": "Se il pulsante non funziona, puoi anche copiare e incollare questo link nel tuo browser:",
     "help_message": "Se hai bisogno di aiuto, non esitare a contattarci.",
     "closing_salutation": "A presto,",
-    "team_name": "Il team di Quevo",
+    "team_name": "Il team di Flowia",
     "logo_url": "https://yourwebsite.com/logo.png"
   },
   "UserCustomerActivation": {
-    "subject": "Attiva il tuo account Cliente Quevo",
-    "welcome_heading": "Benvenuto su Quevo, {recipientName}!",
+    "subject": "Attiva il tuo account Cliente Flowia",
+    "welcome_heading": "Benvenuto su Flowia, {recipientName}!",
     "confirm_email_prompt": "Conferma la tua email per accedere a tutte le funzionalità.",
     "confirm_button_text": "Attiva il mio account",
     "fallback_link_instruction": "Se il pulsante non funziona, puoi anche copiare e incollare questo link nel tuo browser:",
     "closing_salutation": "Saluti,",
-    "team_name": "Il team di Quevo",
+    "team_name": "Il team di Flowia",
     "logo_url": "https://yourwebsite.com/logo.png"
   },
   "BusinessActivationPage": {
@@ -423,7 +423,7 @@
     "pleaseWait": "Attendi mentre verifichiamo la tua email.",
     "activationSuccessful": "Attivazione Completata!",
     "activationSuccessDefault": "Il tuo account è stato attivato con successo!",
-    "welcomeMessage": "Benvenuto su Quevo, {recipientName}.",
+    "welcomeMessage": "Benvenuto su Flowia, {recipientName}.",
     "accountActiveMessage": "Il tuo account Business è attivo e il tuo profilo è online.",
     "verificationNote": "Effettuiamo delle verifiche per evitare utilizzi non autorizzati delle identità delle aziende. Se abbiamo domande, te lo faremo sapere.",
     "yourUserId": "Il tuo User ID",
@@ -468,10 +468,21 @@
     "serviceLimitReached": "Hai raggiunto il numero massimo di servizi per il tuo piano.",
     "maxQuestionsReached": "Hai raggiunto il numero massimo di domande per questo servizio.",
     "createService": "Crea Servizio",
+    "editService": "Modifica Servizio",
     "serviceNameRequired": "Il nome del servizio è obbligatorio.",
     "createError": "Errore nella creazione del servizio.",
     "cancel": "Annulla",
+    "save": "Salva",
     "creating": "Creazione...",
+    "tabs": {
+      "basicInfo": "Info Base",
+      "extras": "Extra",
+      "items": "Elementi",
+      "questions": "Domande",
+      "requirements": "Requisiti",
+      "events": "Eventi",
+      "consent": "Consenso"
+    },
     "additionalItems": "Elementi Aggiuntivi",
     "addItem": "Aggiungi Elemento",
     "item": "Elemento",
@@ -777,9 +788,11 @@
     "openProfile": "Apri Profilo",
     "tabs": {
       "information": "Informazioni",
+      "info": "Informazioni",
       "images": "Immagini",
       "links": "Link",
       "paymentMethods": "Metodi Pagamento",
+      "payments": "Pagamenti",
       "settings": "Impostazioni",
       "appearance": "Aspetto"
     },
@@ -831,10 +844,23 @@
         "message": "Modifiche salvate con successo"
       },
       "error": {
+        "title": "C'è stato un problema",
         "saveFailed": {
           "title": "Salvataggio Fallito",
           "message": "Impossibile salvare le modifiche. Riprova."
+        },
+        "uploadFailed": {
+          "title": "Caricamento Fallito",
+          "message": "Impossibile caricare l'immagine. Riprova."
+        },
+        "networkError": {
+          "title": "Errore di Rete",
+          "message": "Impossibile connettersi al server. Controlla la connessione."
         }
+      },
+      "noChanges": {
+        "title": "Nessuna Modifica",
+        "message": "Nessuna modifica da salvare."
       }
     }
   },
@@ -1176,8 +1202,8 @@
   },
   "Landing": {
     "Hero": {
-      "title": "Dai ai tuoi clienti tutto quello che serve, tutto in un unico schermo intuitivo.",
-      "subtitle": "Semplifica ogni interazione e aumenta conversioni e soddisfazione. Mostra facilmente il tuo brand e servizi, gestisci richieste, ottimizza le operazioni di servizio come richieste di pagamento e appuntamenti.",
+      "title": "Piattaforma di Esperienza Clienti e Marketing Alimentata da AI Che Cresce Con Te",
+      "subtitle": "Semplifica le interazioni complesse dei servizi e amplifica il tuo marketing con automazione intelligente. Dalla guida e supporto clienti ai contenuti generati da AI e funzionalità in evoluzione - la tua piattaforma aziendale si adatta e cresce con le tue esigenze.",
       "startFree": "Inizia GRATIS. Nessun dato di pagamento richiesto.",
       "viewExample": "Vedi Esempio",
       "getStarted": "Inizia Ora",
@@ -1384,10 +1410,103 @@
         }
       }
     },
+    "MarketingFeatures": {
+      "title": {
+        "highlighted": "Alimentata dall'AI",
+        "rest": "Funzionalità di Marketing"
+      },
+      "subtitle": "Trasforma la tua strategia di marketing con automazione intelligente, generazione di contenuti smart e insights guidati dall'AI",
+      "cards": {
+        "socialMedia": {
+          "title": "Creatore di Contenuti Social Media",
+          "description": "L'AI genera post coinvolgenti per Facebook, Instagram, LinkedIn, Twitter e TikTok. Include programmazioni di pubblicazione e raccomandazioni sui tempi ottimali."
+        },
+        "emailMarketing": {
+          "title": "Assistente Email Marketing",
+          "description": "Crea campagne email mirate con contenuti generati dall'AI. Segmenta i clienti, programma l'invio e monitora l'engagement con template email professionali."
+        }
+      }
+    },
+    "RequestFeatures": {
+      "title": "Funzionalità di Gestione Richieste",
+      "subtitle": "Semplifica il flusso di lavoro delle richieste di servizio con automazione intelligente e strumenti professionali",
+      "features": {
+        "requestManagement": {
+          "title": "Gestione Intelligente delle Richieste",
+          "description": "Organizza e prioritizza le richieste di servizio con categorizzazione intelligente, tracciamento dello stato e follow-up automatizzati."
+        },
+        "quotationGenerator": {
+          "title": "Generatore di Preventivi Alimentato dall'AI",
+          "description": "Preventivi pre-costruiti con nome cliente e articoli/extra selezionati dalle richieste di servizio. Tutto rimane completamente personalizzabile e modificabile prima dell'esportazione in PDF con il branding della tua azienda."
+        }
+      }
+    },
+    "SupportFeatures": {
+      "title": {
+        "highlighted": "Alimentata dall'AI",
+        "rest": "Gestione del Supporto"
+      },
+      "subtitle": "Trasforma il tuo supporto clienti con automazione intelligente, routing smart e insights guidati dall'AI",
+      "features": {
+        "aiTicketClassification": {
+          "title": "Classificazione AI dei Ticket",
+          "description": "Categorizza e prioritizza automaticamente i ticket di supporto utilizzando il machine learning. Instrada i ticket ai membri del team giusti e imposta livelli di urgenza appropriati."
+        },
+        "smartResponseSuggestions": {
+          "title": "Suggerimenti di Risposta Intelligenti",
+          "description": "Ottieni suggerimenti di risposta alimentati dall'AI basati sul contenuto del ticket e sulla cronologia del cliente. Mantieni una comunicazione coerente e professionale su tutti i canali di supporto."
+        },
+        "textCorrection": {
+          "title": "Correzione e Miglioramento del Testo",
+          "description": "L'AI corregge automaticamente grammatica, ortografia e formattazione nei messaggi dei clienti per renderli più facili da leggere e comprendere. Migliora la chiarezza della comunicazione."
+        }
+      }
+    },
+    "Support": {
+      "title": {
+        "prefix": "Supporto di",
+        "highlighted": "Classe Mondiale"
+      },
+      "subtitle": "Sperimenta un supporto che va oltre le aspettative. Dall'assistenza premium 24/7 all'esperienza multilingue, siamo qui per garantire il tuo successo ad ogni passo.",
+      "features": {
+        "knowledgeBase": {
+          "title": "Knowledge Base Completa",
+          "description": "Accesso a documentazione dettagliata, tutorial video e guide passo-passo. Risorse self-service per domande comuni.",
+          "badge": "Tutti i Piani"
+        },
+        "premiumSupport": {
+          "title": "Supporto Premium 24/7",
+          "description": "Assistenza 24 ore su 24 per piani Pro ed Enterprise. Ottieni aiuto quando ne hai bisogno, indipendentemente dal tuo fuso orario.",
+          "badge": "Pro+"
+        },
+        "multiLanguage": {
+          "title": "Supporto Multilingue",
+          "description": "Ottieni supporto nella tua lingua madre. Il nostro team parla oltre 15 lingue tra cui inglese, spagnolo, francese, tedesco, italiano e molte altre.",
+          "badge": "Tutti i Piani"
+        },
+        "fastResponse": {
+          "title": "Risposta Veloce",
+          "description": "Tempo di risposta medio sotto le 2 ore per piani Pro, 4 ore per piani standard. I problemi critici ricevono gestione prioritaria.",
+          "badge": "Tutti i Piani"
+        },
+        "multipleChannels": {
+          "title": "Canali di Supporto Multipli",
+          "description": "Scegli il modo preferito per ottenere aiuto: chat live, email, telefono o videochiamate. Ci adattiamo al tuo stile di comunicazione.",
+          "badge": "Tutti i Piani"
+        }
+      },
+      "testimonials": {
+        "title": "Cosa Dicono i Nostri Clienti",
+        "subtitle": "Non prendere solo la nostra parola - ascolta le aziende che si fidano del nostro supporto"
+      }
+    },
     "CTA": {
-      "title": "Crea il tuo sito web professionale in pochi minuti",
-      "subtitle": "Inizia subito con il piano gratuito",
-      "button": "Inizia Ora"
+      "title": {
+        "part1": "Pronto a Trasformare",
+        "part2": "la Tua Azienda?"
+      },
+      "subtitle": "Unisciti a migliaia di aziende che già utilizzano l'AI per semplificare le loro operazioni e aumentare la produttività",
+      "button": "Inizia Gratis"
     }
   }
 }

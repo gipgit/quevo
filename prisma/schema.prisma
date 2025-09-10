@@ -578,7 +578,6 @@ model service {
   service_name                    String                    @db.VarChar(255)
   description                     String?
   duration_minutes                Int?
-  buffer_minutes                  Int?
   price_base                      Decimal?                  @db.Decimal(10, 2)
   price_type                      String?                   @default("fixed") @db.VarChar(50)
   price_unit                      String?                   @db.VarChar(50)

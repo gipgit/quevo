@@ -9,6 +9,7 @@ export default function CustomerDetailsStep({
     onBack,
     themeColorText,
     themeColorBackgroundCard,
+    themeColorBackgroundSecondary,
     themeColorButton,
     themeColorBorder
 }) {
@@ -123,9 +124,9 @@ export default function CustomerDetailsStep({
 
     return (
         <div className="flex flex-col h-full">
-            <div className="flex-1 p-6">
-                <div className="mb-6 flex items-center justify-between">
-                    <h2 className="text-xl lg:text-2xl font-bold" style={{ color: themeColorText }}>
+            <div className="flex-1 px-4 py-3 md:px-6 md:py-4 lg:p-6">
+                <div className="mb-2 md:mb-4 lg:mb-6 flex items-center justify-between">
+                    <h2 className="text-base md:text-lg lg:text-2xl font-bold mb-1 md:mb-2 lg:mb-2" style={{ color: themeColorText }}>
                         {t('yourDetails')}
                     </h2>
                     
@@ -267,7 +268,7 @@ export default function CustomerDetailsStep({
             </div>
 
             {/* Action Buttons */}
-            <div className="sticky bottom-0 p-6 border-t bg-white" style={{ borderColor: themeColorBorder }}>
+            <div className="sticky bottom-0 px-4 py-3 md:px-6 md:py-4 lg:p-6 border-t" style={{ borderColor: themeColorBorder, backgroundColor: themeColorBackgroundSecondary }}>
                 <div className="flex justify-between items-center">
                     <button
                         type="button"

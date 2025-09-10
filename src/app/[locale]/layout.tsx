@@ -9,8 +9,8 @@ import { ToasterProvider } from '@/components/ui/ToasterProvider';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 
 export const metadata = {
-  title: 'Quevo App',
-  description: 'Quevo Profile Application',
+  title: 'Flowia App',
+  description: 'Flowia Profile Application',
 };
 
 // This function is required by Next.js App Router for static rendering.

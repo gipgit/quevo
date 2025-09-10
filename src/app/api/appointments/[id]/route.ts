@@ -29,7 +29,6 @@ export async function GET(request: Request, { params }: RouteParams) {
             service: {
               select: {
                 service_name: true,
-                duration_minutes: true,
               },
             },
           },
@@ -92,7 +91,6 @@ export async function PUT(request: Request, { params }: RouteParams) {
             service: {
               select: {
                 service_name: true,
-                duration_minutes: true,
               },
             },
           },

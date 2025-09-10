@@ -628,115 +628,190 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="p-6 pb-4">
-                  <h3 className={`text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide ${
-                    theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
-                  }`}>AI Actions</h3>
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={() => setShowGenerateResponseModal(true)}
-                      className="px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center gap-1.5 text-sm"
-                      title="Generate AI response (Ctrl+R)"
-                    >
-                      <SparklesIcon className="w-3.5 h-3.5" />
-                      Generate Response
-                    </button>
-                    
-                    <button
-                      onClick={() => setShowTextEnhancementModal(true)}
-                      className="px-3 py-1.5 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors flex items-center gap-1.5 text-sm"
-                      title="Enhance text (Ctrl+E)"
-                    >
-                      <WrenchScrewdriverIcon className="w-3.5 h-3.5" />
-                      Apply Text Enhancement
-                    </button>
-                  </div>
-                </div>
-
-                {/* Customer Details */}
-                <div className="p-6 pb-4">
-                  <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
-                    theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
-                  }`}>Customer Details</h3>
-                  <div className="flex items-center gap-6 text-sm">
-                    {selectedRequest.usercustomer && (
-                      <>
-                        <div className="flex items-center gap-2">
-                          <span>{selectedRequest.usercustomer.name_first} {selectedRequest.usercustomer.name_last}</span>
-                          <button
-                            onClick={() => navigator.clipboard.writeText(`${selectedRequest.usercustomer.name_first} ${selectedRequest.usercustomer.name_last}`)}
-                            className={`p-1 rounded transition-colors ${
-                              theme === 'dark' 
-                                ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
-                                : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                            }`}
-                            title="Copy name"
-                          >
-                            <ClipboardDocumentIcon className="w-3 h-3" />
-                          </button>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span>{selectedRequest.usercustomer.email}</span>
-                          <button
-                            onClick={() => navigator.clipboard.writeText(selectedRequest.usercustomer.email)}
-                            className={`p-1 rounded transition-colors ${
-                              theme === 'dark' 
-                                ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
-                                : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                            }`}
-                            title="Copy email"
-                          >
-                            <ClipboardDocumentIcon className="w-3 h-3" />
-                          </button>
-                          <a
-                            href={`mailto:${selectedRequest.usercustomer.email}`}
-                            className={`p-1 rounded transition-colors ${
-                              theme === 'dark' 
-                                ? 'text-blue-400 hover:text-blue-300 hover:bg-gray-700' 
-                                : 'text-blue-600 hover:text-blue-700 hover:bg-blue-50'
-                            }`}
-                            title="Send email"
-                          >
-                            <EnvelopeIcon className="w-3 h-3" />
-                          </a>
-                        </div>
-                        {selectedRequest.usercustomer.phone && (
-                          <div className="flex items-center gap-2">
-                            <span>{selectedRequest.usercustomer.phone}</span>
-                            <button
-                              onClick={() => navigator.clipboard.writeText(selectedRequest.usercustomer.phone)}
-                              className={`p-1 rounded transition-colors ${
-                                theme === 'dark' 
-                                  ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
-                                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                              }`}
-                              title="Copy phone"
-                            >
-                              <ClipboardDocumentIcon className="w-3 h-3" />
-                            </button>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Support Message */}
+                {/* Support Message - Moved to top and made more prominent */}
                 <div className="flex-1 p-6 pt-0 overflow-y-auto">
                   <div className="space-y-5">
                     <div>
-                      <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
+                      <h3 className={`text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide ${
                         theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
                       }`}>Support Message</h3>
-                      <div className={`p-4 rounded-lg border ${
-                        theme === 'dark' ? 'border-gray-600 bg-gray-800' : 'border-gray-200 bg-white'
+                      <div className={`p-6 rounded-xl border-2 shadow-sm ${
+                        theme === 'dark' ? 'border-gray-600 bg-gray-800' : 'border-gray-200 bg-white shadow-md'
                       }`}>
-                        <div className={`text-sm ${
-                          theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                        <div className={`text-base leading-relaxed mb-4 ${
+                          theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
                         }`}>
                           {selectedRequest.message}
                         </div>
+                        
+                        {/* AI Actions - Integrated inside message card */}
+                        <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-200 dark:border-gray-600">
+                          <button
+                            onClick={() => setShowGenerateResponseModal(true)}
+                            className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center gap-2 text-sm font-medium"
+                            title="Generate AI response (Ctrl+R)"
+                          >
+                            <SparklesIcon className="w-4 h-4" />
+                            Generate Response
+                          </button>
+                          
+                          <button
+                            onClick={() => setShowTextEnhancementModal(true)}
+                            className="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors flex items-center gap-2 text-sm font-medium"
+                            title="Enhance text (Ctrl+E)"
+                          >
+                            <WrenchScrewdriverIcon className="w-4 h-4" />
+                            Apply Text Enhancement
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Open Board Button */}
+                    {selectedRequest.board_ref && (
+                      <div>
+                        <h3 className={`text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide ${
+                          theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
+                        }`}>Service Board</h3>
+                        <div className="flex items-center gap-3">
+                          <a
+                            href={`/${currentBusiness?.business_urlname}/s/${selectedRequest.board_ref}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors flex items-center gap-2 text-sm font-medium"
+                          >
+                            <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                            Open Board
+                          </a>
+                          <span className={`text-sm ${
+                            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                          }`}>
+                            Board Reference: {selectedRequest.board_ref}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Related Action Display */}
+                    {selectedRequest.serviceboardaction && (
+                      <div>
+                        <h3 className={`text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide ${
+                          theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
+                        }`}>Related Action</h3>
+                        <div className={`p-4 rounded-lg border ${
+                          theme === 'dark' ? 'border-gray-600 bg-gray-800' : 'border-gray-200 bg-white'
+                        }`}>
+                          <div className="space-y-3">
+                            {/* Title row */}
+                            <div className="flex items-center justify-between">
+                              <h4 className={`font-medium ${
+                                theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                              }`}>
+                                {selectedRequest.serviceboardaction.action_title}
+                              </h4>
+                              <span className={`px-2 py-1 rounded-full text-xs ${
+                                selectedRequest.serviceboardaction.action_status === 'completed' 
+                                  ? 'bg-green-100 text-green-800'
+                                  : selectedRequest.serviceboardaction.action_status === 'in_progress'
+                                  ? 'bg-blue-100 text-blue-800'
+                                  : 'bg-yellow-100 text-yellow-800'
+                              }`}>
+                                {selectedRequest.serviceboardaction.action_status}
+                              </span>
+                            </div>
+                            
+                            {/* Details in one compact row */}
+                            <div className={`text-sm flex flex-wrap items-center gap-4 ${
+                              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                            }`}>
+                              <span><strong>Type:</strong> {selectedRequest.serviceboardaction.action_type}</span>
+                              <span><strong>Priority:</strong> {selectedRequest.serviceboardaction.action_priority}</span>
+                              {selectedRequest.serviceboardaction.due_date && (
+                                <span><strong>Due:</strong> {new Date(selectedRequest.serviceboardaction.due_date).toLocaleDateString()}</span>
+                              )}
+                              {selectedRequest.serviceboardaction.is_customer_action_required && (
+                                <span className="text-orange-600 font-medium">⚠️ Customer action required</span>
+                              )}
+                            </div>
+                            
+                            {/* Description on separate line if available */}
+                            {selectedRequest.serviceboardaction.action_description && (
+                              <div className={`text-sm ${
+                                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                              }`}>
+                                <strong>Description:</strong> {selectedRequest.serviceboardaction.action_description}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Customer Details - Moved below message */}
+                    <div>
+                      <h3 className={`text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide ${
+                        theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
+                      }`}>Customer Details</h3>
+                      <div className="flex items-center gap-6 text-sm">
+                        {selectedRequest.usercustomer && (
+                          <>
+                            <div className="flex items-center gap-2">
+                              <span>{selectedRequest.usercustomer.name_first} {selectedRequest.usercustomer.name_last}</span>
+                              <button
+                                onClick={() => navigator.clipboard.writeText(`${selectedRequest.usercustomer.name_first} ${selectedRequest.usercustomer.name_last}`)}
+                                className={`p-1 rounded transition-colors ${
+                                  theme === 'dark' 
+                                    ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
+                                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                                }`}
+                                title="Copy name"
+                              >
+                                <ClipboardDocumentIcon className="w-3 h-3" />
+                              </button>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span>{selectedRequest.usercustomer.email}</span>
+                              <button
+                                onClick={() => navigator.clipboard.writeText(selectedRequest.usercustomer.email)}
+                                className={`p-1 rounded transition-colors ${
+                                  theme === 'dark' 
+                                    ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
+                                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                                }`}
+                                title="Copy email"
+                              >
+                                <ClipboardDocumentIcon className="w-3 h-3" />
+                              </button>
+                              <a
+                                href={`mailto:${selectedRequest.usercustomer.email}`}
+                                className={`p-1 rounded transition-colors ${
+                                  theme === 'dark' 
+                                    ? 'text-blue-400 hover:text-blue-300 hover:bg-gray-700' 
+                                    : 'text-blue-600 hover:text-blue-700 hover:bg-blue-50'
+                                }`}
+                                title="Send email"
+                              >
+                                <EnvelopeIcon className="w-3 h-3" />
+                              </a>
+                            </div>
+                            {selectedRequest.usercustomer.phone && (
+                              <div className="flex items-center gap-2">
+                                <span>{selectedRequest.usercustomer.phone}</span>
+                                <button
+                                  onClick={() => navigator.clipboard.writeText(selectedRequest.usercustomer.phone)}
+                                  className={`p-1 rounded transition-colors ${
+                                    theme === 'dark' 
+                                      ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
+                                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                                  }`}
+                                  title="Copy phone"
+                                >
+                                  <ClipboardDocumentIcon className="w-3 h-3" />
+                                </button>
+                              </div>
+                            )}
+                          </>
+                        )}
                       </div>
                     </div>
 

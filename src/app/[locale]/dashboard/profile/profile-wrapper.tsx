@@ -229,7 +229,7 @@ export default function ProfileWrapper({
         type: "info",
         title: t("toasts.noChanges.title"),
         message: t("toasts.noChanges.message"),
-        duration: 3000
+        duration: 5000
       })
       return;
     }
@@ -252,27 +252,26 @@ export default function ProfileWrapper({
       if (res.ok) {
         showToast({
           type: "success",
-          title: t("toasts.success.title"),
+          title: "", // No title for success
           message: t("toasts.success.message"),
-          duration: 4000
+          duration: 8000
         })
         setOriginalProfileData(JSON.parse(JSON.stringify(currentProfileData)));
       } else {
         const { userMessage, technicalMessage } = await parseApiError(res)
         showToast({
           type: "error",
-          title: t("toasts.error.saveFailed.title"),
-          message: userMessage || t("toasts.error.saveFailed.message"),
-          technicalDetails: technicalMessage,
-          duration: 8000
+          title: t("toasts.error.title"),
+          message: technicalMessage || userMessage || t("toasts.error.saveFailed.message"),
+          duration: 10000
         })
       }
     } catch (error) {
       showToast({
         type: "error",
-        title: "Network Error",
-        message: "Failed to connect to server. Please check your connection.",
-        duration: 6000
+        title: "There was a problem",
+        message: t("toasts.error.networkError.message"),
+        duration: 8000
       })
     } finally {
       setSaving(null);
@@ -287,7 +286,7 @@ export default function ProfileWrapper({
         type: "info",
         title: t("toasts.noChanges.title"),
         message: t("toasts.noChanges.message"),
-        duration: 3000
+        duration: 5000
       })
       return;
     }
@@ -312,27 +311,26 @@ export default function ProfileWrapper({
       if (res.ok) {
         showToast({
           type: "success",
-          title: t("toasts.success.title"),
+          title: "", // No title for success
           message: t("toasts.success.message"),
-          duration: 4000
+          duration: 8000
         })
         setOriginalSocialLinks(JSON.parse(JSON.stringify(currentSocialLinks)));
       } else {
         const { userMessage, technicalMessage } = await parseApiError(res)
         showToast({
           type: "error",
-          title: t("toasts.error.saveFailed.title"),
-          message: userMessage || t("toasts.error.saveFailed.message"),
-          technicalDetails: technicalMessage,
-          duration: 8000
+          title: t("toasts.error.title"),
+          message: technicalMessage || userMessage || t("toasts.error.saveFailed.message"),
+          duration: 10000
         })
       }
     } catch (error) {
       showToast({
         type: "error",
-        title: "Network Error",
-        message: "Failed to connect to server. Please check your connection.",
-        duration: 6000
+        title: "There was a problem",
+        message: t("toasts.error.networkError.message"),
+        duration: 8000
       })
     } finally {
       setSaving(null);
@@ -347,7 +345,7 @@ export default function ProfileWrapper({
         type: "info",
         title: t("toasts.noChanges.title"),
         message: t("toasts.noChanges.message"),
-        duration: 3000
+        duration: 5000
       })
       return;
     }
@@ -364,27 +362,26 @@ export default function ProfileWrapper({
       if (res.ok) {
         showToast({
           type: "success",
-          title: t("toasts.success.title"),
+          title: "", // No title for success
           message: t("toasts.success.message"),
-          duration: 4000
+          duration: 8000
         })
         setOriginalPaymentMethods(JSON.parse(JSON.stringify(currentPaymentMethods)));
       } else {
         const { userMessage, technicalMessage } = await parseApiError(res)
         showToast({
           type: "error",
-          title: t("toasts.error.saveFailed.title"),
-          message: userMessage || t("toasts.error.saveFailed.message"),
-          technicalDetails: technicalMessage,
-          duration: 8000
+          title: t("toasts.error.title"),
+          message: technicalMessage || userMessage || t("toasts.error.saveFailed.message"),
+          duration: 10000
         })
       }
     } catch (error) {
       showToast({
         type: "error",
-        title: "Network Error",
-        message: "Failed to connect to server. Please check your connection.",
-        duration: 6000
+        title: "There was a problem",
+        message: t("toasts.error.networkError.message"),
+        duration: 8000
       })
     } finally {
       setSaving(null);
@@ -399,7 +396,7 @@ export default function ProfileWrapper({
         type: "info",
         title: t("toasts.noChanges.title"),
         message: t("toasts.noChanges.message"),
-        duration: 3000
+        duration: 5000
       })
       return;
     }
@@ -422,27 +419,26 @@ export default function ProfileWrapper({
       if (res.ok) {
         showToast({
           type: "success",
-          title: t("toasts.success.title"),
+          title: "", // No title for success
           message: t("toasts.success.message"),
-          duration: 4000
+          duration: 8000
         })
         setOriginalProfileSettings(JSON.parse(JSON.stringify(currentProfileSettings)));
       } else {
         const { userMessage, technicalMessage } = await parseApiError(res)
         showToast({
           type: "error",
-          title: t("toasts.error.saveFailed.title"),
-          message: userMessage || t("toasts.error.saveFailed.message"),
-          technicalDetails: technicalMessage,
-          duration: 8000
+          title: t("toasts.error.title"),
+          message: technicalMessage || userMessage || t("toasts.error.saveFailed.message"),
+          duration: 10000
         })
       }
     } catch (error) {
       showToast({
         type: "error",
-        title: "Network Error",
-        message: "Failed to connect to server. Please check your connection.",
-        duration: 6000
+        title: "There was a problem",
+        message: t("toasts.error.networkError.message"),
+        duration: 8000
       })
     } finally {
       setSaving(null);
@@ -457,7 +453,7 @@ export default function ProfileWrapper({
         type: "info",
         title: t("toasts.noChanges.title"),
         message: t("toasts.noChanges.message"),
-        duration: 3000
+        duration: 5000
       })
       return;
     }
@@ -496,24 +492,23 @@ export default function ProfileWrapper({
         
         showToast({
           type: "success",
-          title: t("toasts.success.title"),
+          title: "", // No title for success
           message: t("toasts.success.message"),
-          duration: 4000
+          duration: 8000
         })
       } else {
         const { userMessage, technicalMessage } = await parseApiError(res)
         showToast({
           type: "error",
-          title: t("toasts.error.uploadFailed.title"),
-          message: userMessage || t("toasts.error.uploadFailed.message"),
-          technicalDetails: technicalMessage,
-          duration: 8000
+          title: t("toasts.error.title"),
+          message: technicalMessage || userMessage || t("toasts.error.uploadFailed.message"),
+          duration: 10000
         })
       }
     } catch (error) {
       showToast({
         type: "error",
-        title: t("toasts.error.networkError.title"),
+        title: "There was a problem",
         message: t("toasts.error.networkError.message"),
         duration: 8000
       })

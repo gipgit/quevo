@@ -95,36 +95,6 @@ export default async function ClientsPage({
     }
   })
 
-  // Get user's plan ID
-  const userManager = await prisma.usermanager.findFirst({
-    where: {
-      user_id: session.user.id
-    },
-    select: {
-      plan_id: true
-    }
-  })
-
-  const userPlanId = userManager?.plan_id || 1
-
-  // Get email rate limit status
-  const { EmailRateLimiter } = await import("@/lib/email-rate-limit")
-  const rateLimitStatus = await EmailRateLimiter.getRateLimitStatus(
-    currentBusiness.business_id,
-    userPlanId
-  )
-
-  // Get AI content generation rate limit status
-  const { AIContentGenerationRateLimiter } = await import("@/lib/ai-content-generation-rate-limit")
-  const aiContentGenerationRateLimitStatus = await AIContentGenerationRateLimiter.getRateLimitStatus(
-    currentBusiness.business_id,
-    userPlanId
-  )
-
-  // Get AI generation history
-  const { getAIGenerationHistory } = await import("./actions")
-  const aiGenerationHistory = await getAIGenerationHistory()
-
   // Process customers data
   const customersMap = new Map()
 
@@ -196,17 +166,24 @@ export default async function ClientsPage({
     return !hasActiveOrInProgressBoard && !hasCompletedBoard && allBoardsPending
   })
 
+  // Get customers with newsletter consent
+  const newsletterConsentCustomers = customers.filter(customer => {
+    // Check if any of their requests have consent_newsletter = true
+    return customer.requests.some((request: any) => {
+      const originalRequest = serviceRequests.find(r => r.request_id === request.request_id)
+      return originalRequest?.consent_newsletter === true
+    })
+  })
+
   return (
     <ClientsWrapper 
       currentBusiness={currentBusiness}
       activeCustomers={activeCustomers}
       pastCustomers={pastCustomers}
       uncommittedCustomers={uncommittedCustomers}
+      newsletterConsentCustomers={newsletterConsentCustomers}
       usage={usage}
       planLimits={planLimits}
-      rateLimitStatus={rateLimitStatus}
-      aiContentGenerationRateLimitStatus={aiContentGenerationRateLimitStatus}
-      aiGenerationHistory={aiGenerationHistory.success ? aiGenerationHistory.data || [] : []}
       locale={params.locale}
     />
   )

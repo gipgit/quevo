@@ -1,3 +1,4 @@
+// FIXED: Updated to remove duration_minutes and buffer_minutes references
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import prisma from "@/lib/prisma"
@@ -71,13 +72,23 @@ export default async function MarketingEmailAssistantPage({
     }
   })
 
-  // Fetch services for AI content generation
+  // Fetch services for AI content generation - FIXED: removed duration_minutes and buffer_minutes
   const services = await prisma.service.findMany({
     where: {
       business_id: currentBusiness.business_id,
       is_active: true
     },
-    include: {
+    select: {
+      service_id: true,
+      service_name: true,
+      description: true,
+      price_base: true,
+      price_type: true,
+      has_items: true,
+      active_booking: true,
+      active_quotation: true,
+      is_active: true,
+      display_order: true,
       servicecategory: {
         select: {
           category_name: true
@@ -226,12 +237,12 @@ export default async function MarketingEmailAssistantPage({
     id: Number(campaign.id),
     created_at: campaign.created_at || new Date(),
     updated_at: campaign.updated_at || new Date()
-  })))
+  })));
 
   return (
     <MarketingEmailAssistantWrapper 
       currentBusiness={currentBusiness}
-      services={services}
+      services={services as any}
       activeCustomers={activeCustomers}
       pastCustomers={pastCustomers}
       uncommittedCustomers={uncommittedCustomers}

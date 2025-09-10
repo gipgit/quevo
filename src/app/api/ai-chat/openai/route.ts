@@ -172,7 +172,6 @@ export async function POST(request: NextRequest) {
         service_name: true,
         description: true,
         price_base: true,
-        duration_minutes: true,
         active_booking: true,
         active_quotation: true
       }
@@ -189,7 +188,7 @@ INFORMAZIONI AZIENDA:
 
 SERVIZI DISPONIBILI:
 ${services.map(service => 
-  `- ${service.service_name}: ${service.description || 'Nessuna descrizione'} (€${service.price_base || 'Prezzo su richiesta'}, ${service.duration_minutes || 'Durata variabile'} min)
+  `- ${service.service_name}: ${service.description || 'Nessuna descrizione'} (€${service.price_base || 'Prezzo su richiesta'}, Durata variabile)
    - Prenotabile: ${service.active_booking ? 'Sì' : 'No'}
    - Preventivo automatico: ${service.active_quotation ? 'Sì' : 'No'}`
 ).join('\n')}

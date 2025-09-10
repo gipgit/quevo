@@ -119,7 +119,7 @@ export async function generateMetadata({ params }: { params: { business_urlname:
             title: business.business_name,
             description: business.business_descr || t('defaultBusinessDescription', { businessName: business.business_name }),
             url: `https://quevo.vercel.app/${business_urlname}`,
-            siteName: 'Quevo',
+            siteName: 'Flowia',
             images: [{ url: profileImageUrl, width: 800, height: 600, alt: `${business.business_name} Profile` }],
             type: 'website',
         },

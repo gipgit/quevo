@@ -17,7 +17,7 @@ const createBusinessSchema = z.object({
   selected_links: z.array(z.string()).optional(),
   link_urls: z.record(z.string()).optional(),
   settings: z.object({
-    default_page: z.string().default("bookings"),
+    default_page: z.string().default("services"),
     theme_color_background: z.string().default("#FFFFFF"),
     theme_color_text: z.string().default("#000000"),
     theme_color_button: z.string().default("#000000"),
@@ -254,7 +254,7 @@ export async function POST(request: Request) {
         await tx.businessprofilesettings.create({
           data: {
             business_id: business.business_id,
-            default_page: validatedData.settings.default_page || "bookings",
+            default_page: validatedData.settings.default_page || "services",
             theme_color_background: validatedData.settings.theme_color_background || "#FFFFFF",
             theme_color_text: validatedData.settings.theme_color_text || "#000000",
             theme_color_button: validatedData.settings.theme_color_button || "#000000",

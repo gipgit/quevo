@@ -131,22 +131,14 @@ export default function BusinessSelectionPage() {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-12">
-        <div className="text-center mb-12">
-          <p className="text-xl mb-6">
+        <div className="text-center mb-8">
+          <p className="text-lg lg:text-xl mb-2">
             {t("welcome", { name: session.user?.name?.split(" ")[0] || "" })}
           </p>
-          <h2 className="text-3xl font-bold mb-12">{t("whatToManage")}</h2>
-          {selectingBusiness && (
-            <div className="text-blue-400 text-lg font-medium animate-pulse">
-              <div className="flex items-center justify-center space-x-2">
-                <LoadingSpinner size="sm" color="blue" />
-                <span>Switching to business...</span>
-              </div>
-            </div>
-          )}
+          <p className="text-2xl lg:text-3xl font-medium mb-12">{t("whatToManage")}</p>
         </div>
 
-        <div className="flex flex-wrap gap-4 lg:gap-6 max-w-6xl justify-center items-center mx-auto">
+        <div className="flex flex-wrap gap-3 lg:gap-4 max-w-6xl justify-center items-center mx-auto">
           {businesses.map((business) => {
             const isSelecting = selectingBusiness === business.business_id
             const isDisabled = selectingBusiness !== null
@@ -165,9 +157,9 @@ export default function BusinessSelectionPage() {
                 }`}
               >
                 <div className="flex flex-col items-center text-center">
-                  <div className="w-16 h-16 rounded-full bg-gray-200 mb-2 lg:mb-4 overflow-hidden relative">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-gray-200 mb-2 lg:mb-4 overflow-hidden relative">
                     {isSelecting && (
-                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10">
+                      <div className="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center z-10">
                         <LoadingSpinner size="sm" color="white" />
                       </div>
                     )}
@@ -175,13 +167,13 @@ export default function BusinessSelectionPage() {
                       <Image
                         src={getProfileImageUrl(business)}
                         alt={business.business_name}
-                        width={64}
-                        height={64}
+                        width={isSelecting ? 48 : 64}
+                        height={isSelecting ? 48 : 64}
                         className="w-full h-full object-cover"
                         onError={() => setAvatarError(errs => ({ ...errs, [business.business_id]: true }))}
                       />
                     ) : (
-                      <div className="w-full h-full rounded-full bg-blue-200 text-blue-700 flex items-center justify-center font-bold text-lg">
+                      <div className="w-full h-full rounded-full bg-blue-200 text-blue-700 flex items-center justify-center font-bold text-sm md:text-lg">
                         {getInitial(business.business_name)}
                       </div>
                     )}

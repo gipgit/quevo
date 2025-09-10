@@ -57,8 +57,8 @@ interface ServiceEvent {
   event_name: string
   event_description: string | null
   event_type: string
-  duration_minutes: number
-  buffer_minutes: number
+  duration_minutes: number | null
+  buffer_minutes: number | null
   is_required: boolean
   display_order: number
   is_active: boolean
@@ -69,8 +69,6 @@ interface Service {
   service_id: string
   service_name: string
   description: string | null
-  duration_minutes: number | null
-  buffer_minutes: number | null
   price_base: number | null
   price_type: string | null
   price_unit: string | null
@@ -625,7 +623,7 @@ export default function ServiceEditModal({
                     : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
               }`}
             >
-              Basic Info
+              {t("tabs.basicInfo")}
             </button>
             <button
               onClick={() => setActiveTab('extras')}
@@ -639,7 +637,7 @@ export default function ServiceEditModal({
                     : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
               }`}
             >
-              Extras ({extras.length})
+              {t("tabs.extras")} ({extras.length})
             </button>
             <button
               onClick={() => setActiveTab('items')}
@@ -653,7 +651,7 @@ export default function ServiceEditModal({
                     : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
               }`}
             >
-              Items ({items.length})
+              {t("tabs.items")} ({items.length})
             </button>
             <button
               onClick={() => setActiveTab('questions')}
@@ -667,7 +665,7 @@ export default function ServiceEditModal({
                     : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
               }`}
             >
-              Questions ({questions.length})
+              {t("tabs.questions")} ({questions.length})
             </button>
             <button
               onClick={() => setActiveTab('requirements')}
@@ -681,7 +679,7 @@ export default function ServiceEditModal({
                     : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
               }`}
             >
-              Requirements ({requirements.length})
+              {t("tabs.requirements")} ({requirements.length})
             </button>
             <button
               onClick={() => setActiveTab('events')}
@@ -695,7 +693,7 @@ export default function ServiceEditModal({
                     : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
               }`}
             >
-              Events ({events.length})
+              {t("tabs.events")} ({events.length})
             </button>
             <button
               onClick={() => setActiveTab('consent')}
@@ -709,7 +707,7 @@ export default function ServiceEditModal({
                     : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
               }`}
             >
-              Consent
+              {t("tabs.consent")}
             </button>
           </div>
         </div>
@@ -788,7 +786,7 @@ export default function ServiceEditModal({
                       }`}
                      >
                        <option value="fixed">{t("fixed")}</option>
-                       <option value="percentage">{t("percentage")}</option>
+                       <option value="per_unit">{t("perUnit")}</option>
                      </select>
                 </div>
 
@@ -997,7 +995,7 @@ export default function ServiceEditModal({
                          }`}
                        >
                        <option value="fixed">{t("fixed")}</option>
-                       <option value="percentage">{t("percentage")}</option>
+                       <option value="per_unit">{t("perUnit")}</option>
                      </select>
                      <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
                        theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
@@ -1255,7 +1253,7 @@ export default function ServiceEditModal({
                }`}
             >
                        <option value="fixed">{t("fixed")}</option>
-                       <option value="percentage">{t("percentage")}</option>
+                       <option value="per_unit">{t("perUnit")}</option>
                      </select>
                      <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
                        theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
@@ -1997,7 +1995,7 @@ export default function ServiceEditModal({
                       <div className="w-full lg:w-24 flex-shrink-0 relative">
                        <input
                          type="number"
-                         value={event.duration_minutes}
+                         value={event.duration_minutes || 60}
                          onChange={(e) => {
                            const updatedEvents = [...events]
                            updatedEvents[index] = { ...updatedEvents[index], duration_minutes: parseInt(e.target.value) || 60 }
@@ -2024,7 +2022,7 @@ export default function ServiceEditModal({
                           }`}>Buffer (min)</label>
                        <input
                          type="number"
-                         value={event.buffer_minutes}
+                         value={event.buffer_minutes || 0}
                          onChange={(e) => {
                            const updatedEvents = [...events]
                            updatedEvents[index] = { ...updatedEvents[index], buffer_minutes: parseInt(e.target.value) || 0 }

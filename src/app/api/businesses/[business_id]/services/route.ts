@@ -22,7 +22,7 @@ export async function GET(request: Request, { params }: { params: { business_id:
     const services = await prisma.service.findMany({
       where: {
         business_id: business_id,
-        is_active: true,
+        // Show both active and inactive services in dashboard
       },
       include: {
         servicecategory: {

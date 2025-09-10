@@ -11,10 +11,7 @@ import {
   PhoneIcon, 
   CalendarIcon,
   DocumentArrowDownIcon,
-  PaperAirplaneIcon,
-  PlusIcon,
-  MagnifyingGlassIcon,
-  FunnelIcon
+  MagnifyingGlassIcon
 } from "@heroicons/react/24/outline"
 import { formatUsageDisplay } from "@/lib/usage-utils"
 
@@ -69,28 +66,9 @@ interface ClientsWrapperProps {
   activeCustomers: Customer[]
   pastCustomers: Customer[]
   uncommittedCustomers: Customer[]
+  newsletterConsentCustomers: Customer[]
   usage: Usage
   planLimits: PlanLimit[]
-  rateLimitStatus: {
-    allowed: boolean
-    tokensRemaining: number
-    tokensCapacity: number
-    nextRefillTime?: Date
-  }
-  aiContentGenerationRateLimitStatus: {
-    allowed: boolean
-    generationsAvailable: number
-    fillRate: number
-    nextRefillTime?: Date
-  }
-  aiGenerationHistory: Array<{
-    id: number
-    generation_date: Date
-    past_customers_subject: string | null
-    past_customers_body: string | null
-    uncommitted_customers_subject: string | null
-    uncommitted_customers_body: string | null
-  }>
   locale: string
 }
 
@@ -99,34 +77,17 @@ export default function ClientsWrapper({
   activeCustomers, 
   pastCustomers, 
   uncommittedCustomers, 
+  newsletterConsentCustomers,
   usage, 
   planLimits,
-  rateLimitStatus,
-  aiContentGenerationRateLimitStatus,
-  aiGenerationHistory,
   locale
 }: ClientsWrapperProps) {
   const t = useTranslations("clients")
   const { theme } = useTheme()
   
   // State for UI interactions
-  const [activeTab, setActiveTab] = useState<'active' | 'past' | 'uncommitted' | 'ai-history'>('active')
+  const [activeTab, setActiveTab] = useState<'active' | 'past' | 'uncommitted' | 'newsletter'>('active')
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCustomers, setSelectedCustomers] = useState<string[]>([])
-  const [showCampaignModal, setShowCampaignModal] = useState(false)
-  const [showAIContentModal, setShowAIContentModal] = useState(false)
-  const [isGeneratingContent, setIsGeneratingContent] = useState(false)
-  const [generatedContent, setGeneratedContent] = useState<{
-    pastCustomersEmail?: { subject: string; body: string }
-    uncommittedCustomersEmail?: { subject: string; body: string }
-  } | null>(null)
-  const [campaignData, setCampaignData] = useState({
-    subject: '',
-    content: '',
-    fromName: currentBusiness.business_name || '',
-    fromEmail: '',
-    replyTo: ''
-  })
 
   // Filter customers based on search term
   const filteredActiveCustomers = useMemo(() => {
@@ -153,11 +114,21 @@ export default function ClientsWrapper({
     )
   }, [uncommittedCustomers, searchTerm])
 
+  const filteredNewsletterCustomers = useMemo(() => {
+    return newsletterConsentCustomers.filter(customer => 
+      customer.name_first?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      customer.name_last?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      customer.email?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  }, [newsletterConsentCustomers, searchTerm])
+
   const currentCustomers = activeTab === 'active' 
     ? filteredActiveCustomers 
     : activeTab === 'past' 
       ? filteredPastCustomers 
-      : filteredUncommittedCustomers
+      : activeTab === 'uncommitted'
+        ? filteredUncommittedCustomers
+        : filteredNewsletterCustomers
 
   // Helper functions
   const getCustomerFullName = (customer: Customer) => {
@@ -169,21 +140,6 @@ export default function ClientsWrapper({
     return new Date(date).toLocaleDateString()
   }
 
-  const handleCustomerSelect = (customerId: string) => {
-    setSelectedCustomers(prev => 
-      prev.includes(customerId) 
-        ? prev.filter(id => id !== customerId)
-        : [...prev, customerId]
-    )
-  }
-
-  const handleSelectAll = () => {
-    if (selectedCustomers.length === currentCustomers.length) {
-      setSelectedCustomers([])
-    } else {
-      setSelectedCustomers(currentCustomers.map(c => c.id))
-    }
-  }
 
   // Export functions
   const exportToCSV = (customers: Customer[]) => {
@@ -223,100 +179,6 @@ export default function ClientsWrapper({
     window.URL.revokeObjectURL(url)
   }
 
-  // Campaign functions
-  const handleGenerateEmailContent = async () => {
-    console.log("🖱️ [handleGenerateEmailContent] Button clicked!")
-    console.log("📊 [handleGenerateEmailContent] Rate limit status:", aiContentGenerationRateLimitStatus)
-    
-    if (!aiContentGenerationRateLimitStatus.allowed) {
-      const nextRefill = aiContentGenerationRateLimitStatus.nextRefillTime 
-        ? new Date(aiContentGenerationRateLimitStatus.nextRefillTime).toLocaleDateString()
-        : 'soon'
-      console.log("❌ [handleGenerateEmailContent] Rate limit exceeded, next refill:", nextRefill)
-      alert(`AI content generation rate limit exceeded. You can generate ${aiContentGenerationRateLimitStatus.fillRate} content pieces per week. Next refill on ${nextRefill}`)
-      return
-    }
-
-    console.log("✅ [handleGenerateEmailContent] Rate limit check passed, starting generation...")
-    setIsGeneratingContent(true)
-    
-    try {
-      console.log("📡 [handleGenerateEmailContent] Importing and calling generateEmailContentAction...")
-      const { generateEmailContentAction } = await import('./actions')
-      
-      const result = await generateEmailContentAction(locale)
-      console.log("📨 [handleGenerateEmailContent] Server action result:", result)
-
-      if (result.success) {
-        console.log("✅ [handleGenerateEmailContent] Generation successful, setting content and showing modal")
-        setGeneratedContent({
-          pastCustomersEmail: result.pastCustomersEmail,
-          uncommittedCustomersEmail: result.uncommittedCustomersEmail
-        })
-        setShowAIContentModal(true)
-      } else {
-        console.log("❌ [handleGenerateEmailContent] Generation failed:", result.message)
-        alert(`Error: ${result.message}`)
-      }
-    } catch (error) {
-      console.error('❌ [handleGenerateEmailContent] Error generating email content:', error)
-      alert('Error generating email content')
-    } finally {
-      console.log("🏁 [handleGenerateEmailContent] Generation process completed")
-      setIsGeneratingContent(false)
-    }
-  }
-
-  const handleSendCampaign = async () => {
-    if (!campaignData.subject || !campaignData.content) {
-      alert('Please fill in all required fields')
-      return
-    }
-
-    if (selectedCustomers.length === 0) {
-      alert('Please select at least one customer')
-      return
-    }
-
-    if (!rateLimitStatus.allowed) {
-      const nextRefill = rateLimitStatus.nextRefillTime 
-        ? new Date(rateLimitStatus.nextRefillTime).toLocaleTimeString()
-        : 'soon'
-      alert(`Rate limit exceeded. You can send ${rateLimitStatus.tokensCapacity} emails per hour. Next refill at ${nextRefill}`)
-      return
-    }
-
-    try {
-      const { sendEmailCampaign } = await import('./actions')
-      
-      const result = await sendEmailCampaign({
-        subject: campaignData.subject,
-        content: campaignData.content,
-        fromName: campaignData.fromName,
-        fromEmail: campaignData.fromEmail,
-        replyTo: campaignData.replyTo,
-        recipientIds: selectedCustomers
-      })
-
-      if (result.success) {
-        alert(result.message)
-        setShowCampaignModal(false)
-        setSelectedCustomers([])
-        setCampaignData({
-          subject: '',
-          content: '',
-          fromName: currentBusiness.business_name || '',
-          fromEmail: '',
-          replyTo: ''
-        })
-      } else {
-        alert(`Error: ${result.message}`)
-      }
-    } catch (error) {
-      console.error('Error sending campaign:', error)
-      alert('Error sending campaign')
-    }
-  }
 
   return (
     <DashboardLayout>
@@ -328,139 +190,71 @@ export default function ClientsWrapper({
               <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100">
                 {t("title")}
               </h1>
-              <p className="text-sm mt-1 text-gray-600 dark:text-gray-400">
-                {t("subtitle")}
-              </p>
             </div>
             
             {/* Action Buttons */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
                <button
                  onClick={() => exportToCSV(currentCustomers)}
-                 className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                 className="flex items-center gap-1 md:gap-2 px-2 md:px-4 py-1.5 md:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm md:text-base"
                >
-                 <DocumentArrowDownIcon className="w-4 h-4" />
-                 Export CSV
+                 <DocumentArrowDownIcon className="w-3 h-3 md:w-4 md:h-4" />
+                 <span className="hidden sm:inline">Export CSV</span>
+                 <span className="sm:hidden">CSV</span>
                </button>
                <button
                  onClick={() => exportToTXT(currentCustomers)}
-                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                 className="flex items-center gap-1 md:gap-2 px-2 md:px-4 py-1.5 md:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm md:text-base"
                >
-                 <DocumentArrowDownIcon className="w-4 h-4" />
-                 Export TXT
-               </button>
-               <button
-                 onClick={handleGenerateEmailContent}
-                 disabled={!aiContentGenerationRateLimitStatus.allowed || isGeneratingContent}
-                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                   aiContentGenerationRateLimitStatus.allowed && !isGeneratingContent
-                     ? 'bg-orange-600 text-white hover:bg-orange-700' 
-                     : 'bg-gray-400 text-gray-200 cursor-not-allowed'
-                 }`}
-               >
-                 {isGeneratingContent ? (
-                   <>
-                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                     {t("aiContentGeneration.generating")}
-                   </>
-                 ) : (
-                   <>
-                     <PlusIcon className="w-4 h-4" />
-                     {t("aiContentGeneration.generateEmailContent")}
-                   </>
-                 )}
-                 {!aiContentGenerationRateLimitStatus.allowed && (
-                   <span className="text-xs">({t("aiContentGeneration.rateLimited")})</span>
-                 )}
-               </button>
-               <button
-                 onClick={() => setShowCampaignModal(true)}
-                 disabled={!rateLimitStatus.allowed}
-                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                   rateLimitStatus.allowed 
-                     ? 'bg-purple-600 text-white hover:bg-purple-700' 
-                     : 'bg-gray-400 text-gray-200 cursor-not-allowed'
-                 }`}
-               >
-                 <PaperAirplaneIcon className="w-4 h-4" />
-                 Send Campaign
-                 {!rateLimitStatus.allowed && (
-                   <span className="text-xs">({t("rateLimit.rateLimited")})</span>
-                 )}
+                 <DocumentArrowDownIcon className="w-3 h-3 md:w-4 md:h-4" />
+                 <span className="hidden sm:inline">Export TXT</span>
+                 <span className="sm:hidden">TXT</span>
                </button>
              </div>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-6">
-             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
-               <div className="flex items-center gap-3">
-                 <UserGroupIcon className="w-8 h-8 text-green-600" />
+          <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-4 mb-6">
+             <div className="bg-white dark:bg-gray-800 p-2 md:p-4 rounded-lg border">
+               <div className="flex items-center gap-2 md:gap-3">
+                 <UserGroupIcon className="w-6 h-6 md:w-8 md:h-8 text-green-600" />
                  <div>
-                   <p className="text-sm text-gray-600 dark:text-gray-400">Active Clients</p>
-                   <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                   <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400">Active</p>
+                   <p className="text-lg md:text-2xl font-bold text-gray-900 dark:text-gray-100">
                      {activeCustomers.length}
                    </p>
                  </div>
                </div>
              </div>
-             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
-               <div className="flex items-center gap-3">
-                 <UsersIcon className="w-8 h-8 text-blue-600" />
+             <div className="bg-white dark:bg-gray-800 p-2 md:p-4 rounded-lg border">
+               <div className="flex items-center gap-2 md:gap-3">
+                 <UsersIcon className="w-6 h-6 md:w-8 md:h-8 text-blue-600" />
                  <div>
-                   <p className="text-sm text-gray-600 dark:text-gray-400">Past Clients</p>
-                   <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                   <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400">Past</p>
+                   <p className="text-lg md:text-2xl font-bold text-gray-900 dark:text-gray-100">
                      {pastCustomers.length}
                    </p>
                  </div>
                </div>
              </div>
-             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
-               <div className="flex items-center gap-3">
-                 <UsersIcon className="w-8 h-8 text-orange-600" />
+             <div className="bg-white dark:bg-gray-800 p-2 md:p-4 rounded-lg border">
+               <div className="flex items-center gap-2 md:gap-3">
+                 <UsersIcon className="w-6 h-6 md:w-8 md:h-8 text-orange-600" />
                  <div>
-                   <p className="text-sm text-gray-600 dark:text-gray-400">Uncommitted</p>
-                   <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                   <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400">Uncommitted</p>
+                   <p className="text-lg md:text-2xl font-bold text-gray-900 dark:text-gray-100">
                      {uncommittedCustomers.length}
                    </p>
                  </div>
                </div>
              </div>
-             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
-               <div className="flex items-center gap-3">
-                 <EnvelopeIcon className="w-8 h-8 text-purple-600" />
+             <div className="bg-white dark:bg-gray-800 p-2 md:p-4 rounded-lg border col-span-3 md:col-span-1">
+               <div className="flex items-center gap-2 md:gap-3">
+                 <EnvelopeIcon className="w-6 h-6 md:w-8 md:h-8 text-purple-600" />
                  <div>
-                   <p className="text-sm text-gray-600 dark:text-gray-400">Total Clients</p>
-                   <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                     {activeCustomers.length + pastCustomers.length + uncommittedCustomers.length}
-                   </p>
-                 </div>
-               </div>
-             </div>
-             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
-               <div className="flex items-center gap-3">
-                 <PaperAirplaneIcon className={`w-8 h-8 ${rateLimitStatus.allowed ? 'text-green-600' : 'text-red-600'}`} />
-                 <div>
-                   <p className="text-sm text-gray-600 dark:text-gray-400">Email Rate Limit</p>
-                   <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                     {rateLimitStatus.tokensRemaining}/{rateLimitStatus.tokensCapacity}
-                   </p>
-                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                     {rateLimitStatus.allowed ? 'Available' : 'Rate Limited'}
-                   </p>
-                 </div>
-               </div>
-             </div>
-             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border">
-               <div className="flex items-center gap-3">
-                 <PlusIcon className={`w-8 h-8 ${aiContentGenerationRateLimitStatus.allowed ? 'text-green-600' : 'text-red-600'}`} />
-                 <div>
-                   <p className="text-sm text-gray-600 dark:text-gray-400">{t("aiContentGeneration.title")}</p>
-                   <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                     {aiContentGenerationRateLimitStatus.generationsAvailable}/{aiContentGenerationRateLimitStatus.fillRate}
-                   </p>
-                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                     {aiContentGenerationRateLimitStatus.allowed ? t("rateLimit.available") : t("aiContentGeneration.rateLimited")}
+                   <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400">Newsletter</p>
+                   <p className="text-lg md:text-2xl font-bold text-gray-900 dark:text-gray-100">
+                     {newsletterConsentCustomers.length}
                    </p>
                  </div>
                </div>
@@ -471,52 +265,55 @@ export default function ClientsWrapper({
                  {/* Tabs */}
          <div className="mb-6">
            <div className="border-b border-gray-200 dark:border-gray-700">
-             <nav className="-mb-px flex space-x-8">
+             <nav className="-mb-px flex space-x-4 md:space-x-8">
                <button
                  onClick={() => setActiveTab('active')}
-                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                 className={`py-2 px-1 border-b-2 font-medium text-xs md:text-sm ${
                    activeTab === 'active'
                      ? 'border-green-500 text-green-600 dark:text-green-400'
                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                  }`}
                >
-                 Active Clients ({activeCustomers.length})
+                 <span className="hidden sm:inline">Active Clients</span>
+                 <span className="sm:hidden">Active</span> ({activeCustomers.length})
                </button>
                <button
                  onClick={() => setActiveTab('past')}
-                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                 className={`py-2 px-1 border-b-2 font-medium text-xs md:text-sm ${
                    activeTab === 'past'
                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                  }`}
                >
-                 Past Clients ({pastCustomers.length})
+                 <span className="hidden sm:inline">Past Clients</span>
+                 <span className="sm:hidden">Past</span> ({pastCustomers.length})
                </button>
-                               <button
-                  onClick={() => setActiveTab('uncommitted')}
-                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                    activeTab === 'uncommitted'
-                      ? 'border-orange-500 text-orange-600 dark:text-orange-400'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
-                >
-                  Uncommitted ({uncommittedCustomers.length})
-                </button>
-                <button
-                  onClick={() => setActiveTab('ai-history')}
-                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                    activeTab === 'ai-history'
-                      ? 'border-purple-500 text-purple-600 dark:text-purple-400'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
-                >
-                  {t("aiHistory.title")} ({aiGenerationHistory.length})
-                </button>
+               <button
+                 onClick={() => setActiveTab('uncommitted')}
+                 className={`py-2 px-1 border-b-2 font-medium text-xs md:text-sm ${
+                   activeTab === 'uncommitted'
+                     ? 'border-orange-500 text-orange-600 dark:text-orange-400'
+                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                 }`}
+               >
+                 Uncommitted ({uncommittedCustomers.length})
+               </button>
+               <button
+                 onClick={() => setActiveTab('newsletter')}
+                 className={`py-2 px-1 border-b-2 font-medium text-xs md:text-sm ${
+                   activeTab === 'newsletter'
+                     ? 'border-purple-500 text-purple-600 dark:text-purple-400'
+                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                 }`}
+               >
+                 <span className="hidden sm:inline">Newsletter Consent</span>
+                 <span className="sm:hidden">Newsletter</span> ({newsletterConsentCustomers.length})
+               </button>
              </nav>
            </div>
          </div>
 
-        {/* Search and Filters */}
+        {/* Search */}
         <div className="mb-6 flex items-center gap-4">
           <div className="flex-1 relative">
             <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -528,33 +325,18 @@ export default function ClientsWrapper({
               className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             />
           </div>
-          
-          {selectedCustomers.length > 0 && (
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-              <span>{selectedCustomers.length} selected</span>
-              <button
-                onClick={() => setSelectedCustomers([])}
-                className="text-red-600 hover:text-red-700"
-              >
-                Clear
-              </button>
-            </div>
-          )}
         </div>
 
         {/* Customers List */}
         <div className="bg-white dark:bg-gray-800 rounded-lg border">
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
-                             <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                 {activeTab === 'active' ? 'Active' : activeTab === 'past' ? 'Past' : 'Uncommitted'} Customers
-               </h3>
-              <button
-                onClick={handleSelectAll}
-                className="text-sm text-blue-600 hover:text-blue-700"
-              >
-                {selectedCustomers.length === currentCustomers.length ? 'Deselect All' : 'Select All'}
-              </button>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                {activeTab === 'active' ? 'Active' : 
+                 activeTab === 'past' ? 'Past' : 
+                 activeTab === 'uncommitted' ? 'Uncommitted' : 
+                 'Newsletter Consent'} Customers
+              </h3>
             </div>
           </div>
 
@@ -562,32 +344,28 @@ export default function ClientsWrapper({
             {currentCustomers.map((customer) => (
               <div
                 key={customer.id}
-                className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
-                  selectedCustomers.includes(customer.id) ? 'bg-blue-50 dark:bg-blue-900/20' : ''
-                }`}
+                className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 <div className="flex items-center gap-4">
-                  <input
-                    type="checkbox"
-                    checked={selectedCustomers.includes(customer.id)}
-                    onChange={() => handleCustomerSelect(customer.id)}
-                    className="w-4 h-4 text-blue-600 rounded"
-                  />
-                  
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                         {getCustomerFullName(customer)}
                       </h4>
-                                             <span className={`px-2 py-1 text-xs rounded-full ${
-                         activeTab === 'active'
-                           ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                           : activeTab === 'past'
-                           ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                           : 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
-                       }`}>
-                         {activeTab === 'active' ? 'Active' : activeTab === 'past' ? 'Past' : 'Uncommitted'}
-                       </span>
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        activeTab === 'active'
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                          : activeTab === 'past'
+                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                          : activeTab === 'uncommitted'
+                          ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
+                          : 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+                      }`}>
+                        {activeTab === 'active' ? 'Active' : 
+                         activeTab === 'past' ? 'Past' : 
+                         activeTab === 'uncommitted' ? 'Uncommitted' : 
+                         'Newsletter Consent'}
+                      </span>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 dark:text-gray-400">
@@ -617,344 +395,15 @@ export default function ClientsWrapper({
 
             {currentCustomers.length === 0 && (
               <div className="p-8 text-center text-gray-500 dark:text-gray-400">
-                No {activeTab === 'active' ? 'active' : activeTab === 'past' ? 'past' : 'uncommitted'} customers found.
+                No {activeTab === 'active' ? 'active' : 
+                    activeTab === 'past' ? 'past' : 
+                    activeTab === 'uncommitted' ? 'uncommitted' : 
+                    'newsletter consent'} customers found.
               </div>
             )}
 
-          {/* AI History Content */}
-          {activeTab === 'ai-history' && (
-            <div className="divide-y divide-gray-200 dark:divide-gray-700">
-              {aiGenerationHistory.length === 0 ? (
-                <div className="p-8 text-center text-gray-500 dark:text-gray-400">
-                  {t("aiHistory.noHistory")}
-                </div>
-              ) : (
-                aiGenerationHistory.map((generation) => (
-                  <div key={generation.id} className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        {t("aiHistory.generatedOn")} {new Date(generation.generation_date).toLocaleDateString()} at {new Date(generation.generation_date).toLocaleTimeString()}
-                      </h3>
-                      <button
-                        onClick={() => {
-                          setGeneratedContent({
-                            pastCustomersEmail: {
-                              subject: generation.past_customers_subject || '',
-                              body: generation.past_customers_body || ''
-                            },
-                            uncommittedCustomersEmail: {
-                              subject: generation.uncommitted_customers_subject || '',
-                              body: generation.uncommitted_customers_body || ''
-                            }
-                          })
-                          setShowAIContentModal(true)
-                        }}
-                        className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
-                      >
-                        {t("aiHistory.viewContent")}
-                      </button>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Past Customers Email Preview */}
-                      {generation.past_customers_subject && (
-                        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                          <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">{t("aiHistory.pastCustomersEmail")}</h4>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                            <strong>{t("aiHistory.subject")}:</strong> {generation.past_customers_subject}
-                          </p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
-                            <strong>{t("aiHistory.preview")}:</strong> {generation.past_customers_body?.substring(0, 100)}...
-                          </p>
-                        </div>
-                      )}
-
-                      {/* Uncommitted Customers Email Preview */}
-                      {generation.uncommitted_customers_subject && (
-                        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                          <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">{t("aiHistory.uncommittedCustomersEmail")}</h4>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                            <strong>{t("aiHistory.subject")}:</strong> {generation.uncommitted_customers_subject}
-                          </p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
-                            <strong>{t("aiHistory.preview")}:</strong> {generation.uncommitted_customers_body?.substring(0, 100)}...
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
         </div>
 
-        {/* Campaign Modal */}
-        {showCampaignModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                    Send Mass Email Campaign
-                  </h2>
-                  <button
-                    onClick={() => setShowCampaignModal(false)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      From Name
-                    </label>
-                    <input
-                      type="text"
-                      value={campaignData.fromName}
-                      onChange={(e) => setCampaignData(prev => ({ ...prev, fromName: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      From Email
-                    </label>
-                    <input
-                      type="email"
-                      value={campaignData.fromEmail}
-                      onChange={(e) => setCampaignData(prev => ({ ...prev, fromEmail: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                      placeholder="noreply@yourdomain.com"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Reply To
-                    </label>
-                    <input
-                      type="email"
-                      value={campaignData.replyTo}
-                      onChange={(e) => setCampaignData(prev => ({ ...prev, replyTo: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                      placeholder="support@yourdomain.com"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Subject Line
-                    </label>
-                    <input
-                      type="text"
-                      value={campaignData.subject}
-                      onChange={(e) => setCampaignData(prev => ({ ...prev, subject: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                      placeholder="Your email subject..."
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Email Content
-                    </label>
-                    <textarea
-                      value={campaignData.content}
-                      onChange={(e) => setCampaignData(prev => ({ ...prev, content: e.target.value }))}
-                      rows={8}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                      placeholder="Write your email content here..."
-                    />
-                  </div>
-
-                                     <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                     <p className="text-sm text-blue-800 dark:text-blue-200">
-                       This campaign will be sent to {selectedCustomers.length} selected customer{selectedCustomers.length !== 1 ? 's' : ''}.
-                     </p>
-                   </div>
-
-                   {!rateLimitStatus.allowed && (
-                     <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
-                       <p className="text-sm text-red-800 dark:text-red-200">
-                         ⚠️ Rate limit exceeded. You can send {rateLimitStatus.tokensCapacity} emails per hour. 
-                         {rateLimitStatus.nextRefillTime && (
-                           <span> Next refill at {new Date(rateLimitStatus.nextRefillTime).toLocaleTimeString()}</span>
-                         )}
-                       </p>
-                     </div>
-                   )}
-
-                   {rateLimitStatus.allowed && rateLimitStatus.tokensRemaining < selectedCustomers.length && (
-                     <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg">
-                       <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                         ⚠️ You have {rateLimitStatus.tokensRemaining} emails remaining this hour, but {selectedCustomers.length} customers selected. 
-                         Only the first {rateLimitStatus.tokensRemaining} emails will be sent.
-                       </p>
-                     </div>
-                   )}
-
-                  <div className="flex items-center justify-end gap-3 pt-4">
-                    <button
-                      onClick={() => setShowCampaignModal(false)}
-                      className="px-4 py-2 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleSendCampaign}
-                      className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
-                    >
-                      <PaperAirplaneIcon className="w-4 h-4" />
-                      Send Campaign
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* AI Content Generation Modal */}
-        {showAIContentModal && generatedContent && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                                     <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                     {t("aiContentGeneration.modalTitle")}
-                   </h2>
-                  <button
-                    onClick={() => setShowAIContentModal(false)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                <div className="space-y-6">
-                  {/* Past Customers Email */}
-                  {generatedContent.pastCustomersEmail && (
-                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                                             <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">
-                         {t("aiContentGeneration.pastCustomersEmail")}
-                       </h3>
-                      <div className="space-y-3">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            {t("aiContentGeneration.subjectLine")}
-                          </label>
-                          <input
-                            type="text"
-                            value={generatedContent.pastCustomersEmail.subject}
-                            readOnly
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            {t("aiContentGeneration.emailBody")}
-                          </label>
-                          <textarea
-                            value={generatedContent.pastCustomersEmail.body}
-                            readOnly
-                            rows={8}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                          />
-                        </div>
-                        <button
-                          onClick={() => {
-                            console.log("🖱️ [Use for Campaign - Past] Button clicked!")
-                            console.log("📧 [Use for Campaign - Past] Content:", {
-                              subject: generatedContent.pastCustomersEmail!.subject,
-                              bodyPreview: generatedContent.pastCustomersEmail!.body.substring(0, 100) + "..."
-                            })
-                            setCampaignData({
-                              ...campaignData,
-                              subject: generatedContent.pastCustomersEmail!.subject,
-                              content: generatedContent.pastCustomersEmail!.body
-                            })
-                            setShowAIContentModal(false)
-                            setShowCampaignModal(true)
-                            console.log("✅ [Use for Campaign - Past] Modal transition completed")
-                          }}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                        >
-                          {t("aiContentGeneration.useForCampaign")}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Uncommitted Customers Email */}
-                  {generatedContent.uncommittedCustomersEmail && (
-                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">
-                        {t("aiContentGeneration.uncommittedCustomersEmail")}
-                      </h3>
-                      <div className="space-y-3">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            {t("aiContentGeneration.subjectLine")}
-                          </label>
-                          <input
-                            type="text"
-                            value={generatedContent.uncommittedCustomersEmail.subject}
-                            readOnly
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            {t("aiContentGeneration.emailBody")}
-                          </label>
-                          <textarea
-                            value={generatedContent.uncommittedCustomersEmail.body}
-                            readOnly
-                            rows={8}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                          />
-                        </div>
-                        <button
-                          onClick={() => {
-                            console.log("🖱️ [Use for Campaign - Uncommitted] Button clicked!")
-                            console.log("📧 [Use for Campaign - Uncommitted] Content:", {
-                              subject: generatedContent.uncommittedCustomersEmail!.subject,
-                              bodyPreview: generatedContent.uncommittedCustomersEmail!.body.substring(0, 100) + "..."
-                            })
-                            setCampaignData({
-                              ...campaignData,
-                              subject: generatedContent.uncommittedCustomersEmail!.subject,
-                              content: generatedContent.uncommittedCustomersEmail!.body
-                            })
-                            setShowAIContentModal(false)
-                            setShowCampaignModal(true)
-                            console.log("✅ [Use for Campaign - Uncommitted] Modal transition completed")
-                          }}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                        >
-                          {t("aiContentGeneration.useForCampaign")}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex items-center justify-end gap-3 pt-4">
-                    <button
-                      onClick={() => setShowAIContentModal(false)}
-                      className="px-4 py-2 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
-                    >
-                      {t("aiContentGeneration.close")}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </DashboardLayout>
   )

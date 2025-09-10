@@ -16,8 +16,8 @@ interface BusinessPageParams {
 export async function generateMetadata({ params }: { params: BusinessPageParams }) {
     // Hardcoded static metadata as requested
     return {
-        title: "Quevo",
-        description: "Quevo",
+        title: "Flowia",
+        description: "Flowia",
     };
 }
 

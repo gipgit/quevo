@@ -13,14 +13,14 @@ export default function SectionRequestFeatures({ locale }) {
     {
       id: 'requestManagement',
       icon: "📋",
-      title: "Smart Request Management",
-      description: "Organize and prioritize service requests with intelligent categorization, status tracking, and automated follow-ups."
+      title: t('RequestFeatures.features.requestManagement.title'),
+      description: t('RequestFeatures.features.requestManagement.description')
     },
     {
       id: 'quotationGenerator',
       icon: "📄",
-      title: "AI-Powered Quotation Generator",
-      description: "Pre-built quotations with customer name and selected items/extras from service requests. Everything remains fully customizable and editable before export to PDF with your business branding."
+      title: t('RequestFeatures.features.quotationGenerator.title'),
+      description: t('RequestFeatures.features.quotationGenerator.description')
     }
   ];
 
@@ -587,10 +587,10 @@ export default function SectionRequestFeatures({ locale }) {
         {/* Title Section */}
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4">
-            Request Management Features
+            {t('RequestFeatures.title')}
           </h2>
           <p className="text-lg lg:text-xl text-gray-600 leading-tight lg:leading-relaxed max-w-3xl mx-auto mb-8">
-            Streamline your service request workflow with intelligent automation and professional tools
+            {t('RequestFeatures.subtitle')}
           </p>
         </div>
 

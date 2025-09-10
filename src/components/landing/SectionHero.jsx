@@ -18,9 +18,10 @@ const exampleBusinesses = {
       coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
       profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
         primaryColor: "#3B82F6", // Blue
@@ -42,9 +43,10 @@ const exampleBusinesses = {
       coverImage: "/uploads/business/e5f6a7b8-9c0d-1e2f-3a4b-5c6d7e8f9a0b/cover-desktop.webp",
       profileImage: "/uploads/business/e5f6a7b8-9c0d-1e2f-3a4b-5c6d7e8f9a0b/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
         primaryColor: "#059669", // Green
@@ -66,9 +68,10 @@ const exampleBusinesses = {
       coverImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/cover-desktop.webp",
       profileImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
         primaryColor: "#8B5CF6", // Purple
@@ -90,9 +93,10 @@ const exampleBusinesses = {
       coverImage: "/uploads/business/b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e/cover-desktop.webp",
       profileImage: "/uploads/business/b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
         primaryColor: "#DC2626", // Red
@@ -114,9 +118,10 @@ const exampleBusinesses = {
       coverImage: "/uploads/business/33445566-7788-9900-1122-ddeeffaabbcc/cover-desktop.webp",
       profileImage: "/uploads/business/33445566-7788-9900-1122-ddeeffaabbcc/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
         primaryColor: "#F59E0B", // Amber
@@ -138,9 +143,10 @@ const exampleBusinesses = {
       coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
       profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
         primaryColor: "#6B7280", // Gray
@@ -162,9 +168,10 @@ const exampleBusinesses = {
       coverImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/cover-desktop.webp",
       profileImage: "/uploads/business/f8a5c3b9-1e7d-4c0a-9d2e-0f1a2b3c4d5e/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
         primaryColor: "#EC4899", // Pink
@@ -186,9 +193,10 @@ const exampleBusinesses = {
       coverImage: "/uploads/business/7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b/cover-desktop.webp",
       profileImage: "/uploads/business/7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
         primaryColor: "#16A34A", // Green
@@ -212,9 +220,10 @@ const exampleBusinesses = {
       coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
       profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
         primaryColor: "#3B82F6", // Blue
@@ -428,6 +437,55 @@ export default function SectionHero({ locale }) {
     const currentLocale = ['it', 'en', 'es', 'de', 'fr'].includes(locale) ? locale : 'it';
     const businesses = exampleBusinesses[currentLocale] || exampleBusinesses.it;
 
+    const renderTitleWithHighlighting = (text) => {
+        const words = text.split(' ');
+        return (
+            <span>
+                {words.map((word, index) => {
+                    const cleanWord = word.replace(/[.,]/g, '');
+                    
+                    // AI-related word to highlight in blue
+                    const isAIWord = cleanWord === 'AI-Powered' || 
+                                   cleanWord === 'AI' ||
+                                   cleanWord === 'Intelligent' ||
+                                   cleanWord === 'Smart' ||
+                                   cleanWord === 'Alimentata' ||
+                                   cleanWord === 'Impulsada' ||
+                                   cleanWord === 'intelligente' ||
+                                   cleanWord === 'inteligente';
+                    
+                    // Word to highlight in italic
+                    const isItalicWord = cleanWord === 'Grows' || 
+                                       cleanWord === 'Grow' ||
+                                       cleanWord === 'Growing' ||
+                                       cleanWord === 'Evolves' ||
+                                       cleanWord === 'Evolving' ||
+                                       cleanWord === 'Adapts' ||
+                                       cleanWord === 'Adapting' ||
+                                       cleanWord === 'Cresce' ||
+                                       cleanWord === 'Crece' ||
+                                       cleanWord === 'Crescendo' ||
+                                       cleanWord === 'Creciendo' ||
+                                       cleanWord === 'Con' ||
+                                       cleanWord === 'Contigo';
+                    
+                    return (
+                        <span key={index}>
+                            {isAIWord ? (
+                                <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">{word}</span>
+                            ) : isItalicWord ? (
+                                <em className="font-italic">{word}</em>
+                            ) : (
+                                word
+                            )}
+                            {index < words.length - 1 && ' '}
+                        </span>
+                    );
+                })}
+            </span>
+        );
+    };
+
     const renderTextWithItalic = (text) => {
         const words = text.split(' ');
         return (
@@ -568,19 +626,86 @@ export default function SectionHero({ locale }) {
     const progressPercentage = ((3000 - timeRemaining) / 3000) * 100;
 
     return (
-        <section ref={sectionRef} className="min-h-screen flex items-center overflow-x-hidden" style={{
-          background: 'radial-gradient(circle at center 150%, #fefefe 0%, #fafafa 50%, #f5f5f5 70%, #ffffff 85%)'
-        }}>
-            <div className="container mx-auto px-12 py-16 max-w-[1480px]">
+        <section ref={sectionRef} className="min-h-screen flex items-center overflow-x-hidden relative">
+            {/* Light Gradient Background Layers */}
+            <div 
+                className="absolute inset-0 z-0"
+                style={{ 
+                    background: 'linear-gradient(to bottom, #ffffff 0%, #ffffff 20%, rgb(250, 250, 252) 100%)'
+                }}
+            >
+                {/* Gradient Layer 1 */}
+                <div 
+                    className="absolute z-1"
+                    style={{
+                        background: 'linear-gradient(143.241deg, rgb(240, 248, 255) 0%, rgb(245, 240, 255) 31.087%, rgb(255, 248, 240) 70.4599%, rgb(255, 240, 248) 100%)',
+                        filter: 'blur(120px)',
+                        borderRadius: '100%',
+                        opacity: 0.8,
+                        height: '800px',
+                        left: '-300px',
+                        top: '-200px',
+                        width: '900px'
+                    }}
+                ></div>
+                
+                {/* Gradient Layer 2 */}
+                <div 
+                    className="absolute z-1"
+                    style={{
+                        background: 'linear-gradient(143.241deg, rgb(240, 255, 248) 0%, rgb(248, 240, 255) 31.087%, rgb(255, 248, 240) 70.4599%, rgb(248, 240, 255) 100%)',
+                        filter: 'blur(100px)',
+                        borderRadius: '100%',
+                        opacity: 0.7,
+                        height: '700px',
+                        right: '-250px',
+                        bottom: '-200px',
+                        width: '800px'
+                    }}
+                ></div>
+                
+                {/* Gradient Layer 3 */}
+                <div 
+                    className="absolute z-1"
+                    style={{
+                        background: 'linear-gradient(143.241deg, rgb(255, 248, 240) 0%, rgb(240, 248, 255) 31.087%, rgb(245, 240, 255) 70.4599%, rgb(240, 255, 248) 100%)',
+                        filter: 'blur(140px)',
+                        borderRadius: '100%',
+                        opacity: 0.6,
+                        height: '1000px',
+                        left: '50%',
+                        top: '10%',
+                        transform: 'translateX(-50%)',
+                        width: '1200px'
+                    }}
+                ></div>
+                
+                {/* Prominent Light Blue Layer */}
+                <div 
+                    className="absolute z-1"
+                    style={{
+                        background: 'linear-gradient(135deg, rgb(219, 234, 254) 0%, rgb(191, 219, 254) 50%, rgb(147, 197, 253) 100%)',
+                        filter: 'blur(80px)',
+                        borderRadius: '100%',
+                        opacity: 0.7,
+                        height: '600px',
+                        left: '30%',
+                        top: '30%',
+                        transform: 'translateX(-50%)',
+                        width: '800px'
+                    }}
+                ></div>
+            </div>
+            <div className="container mx-auto px-12 py-16 max-w-[1480px] relative z-10">
                 <div className="flex flex-col gap-12 items-center">
                     
                     {/* Top Row - Content */}
                      <div className="space-y-6 max-w-[1000px] text-center">
-                         <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-none mb-6">
-                             <em className="text-blue-600">AI-Powered</em> {renderTextWithItalic("Business Platform That Grows With You")}
+                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-none mb-6">
+                             {renderTitleWithHighlighting(t('Hero.title'))}
                          </h1>
-                         <p className="text-lg text-gray-600 leading-tight lg:leading-relaxed">
-                             {renderTextWithItalic("Simplify complex service interactions and amplify your marketing with intelligent automation. From customer guidance and support to AI-generated content and evolving features - your business platform adapts and grows with your needs.")}
+                         <p className="text-base md:text-lg text-gray-600 leading-tight lg:leading-relaxed">
+                             {t('Hero.subtitle')}
                          </p>
                          
                          {/* 3 Horizontal List Items */}
@@ -607,9 +732,9 @@ export default function SectionHero({ locale }) {
 
                         {/* Example URL Link Pill and Get Started Button */}
                         <div className="inline-flex flex-col sm:flex-row gap-4 items-center justify-center max-w-[90vw] lg:max-w-[700px]">
-                               <div className="w-full inline-flex items-center gap-3 bg-gradient-to-r from-blue-100 via-indigo-100 to-purple-100 rounded-full px-3 lg:px-6 py-2 lg:py-3 shadow-lg relative" style={{
-                               background: 'linear-gradient(white, white) padding-box, linear-gradient(to right, #60a5fa, #8b5cf6, #ec4899, #f59e0b, #10b981, #3b82f6) border-box',
-                               border: '3px solid transparent'
+                               <div className="w-full inline-flex items-center gap-3 bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 rounded-full px-3 lg:px-6 py-2 lg:py-3 shadow-lg relative" style={{
+                               background: 'linear-gradient(white, white) padding-box, linear-gradient(to right, #9ca3af, #6b7280, #4b5563) border-box',
+                               border: '2px solid transparent'
                              }}>
                                 <div className="flex items-center gap-2 min-w-0 flex-1">
                                     <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
@@ -644,7 +769,11 @@ export default function SectionHero({ locale }) {
                     <div className="relative">
                         {/* Gradient Background Container */}
                         <div className="relative rounded-3xl p-8 lg:p-12 overflow-hidden" style={{
-                          background: 'linear-gradient(135deg, #1f2937 0%, #374151 20%, #4b5563 40%, #6b7280 60%, #9ca3af 80%, #1f2937 100%)'
+                          background: 'linear-gradient(135deg, #111827 0%, #1f2937 20%, #374151 40%, #4b5563 60%, #6b7280 80%, #111827 100%)',
+                          border: '4px solid transparent',
+                          backgroundImage: 'linear-gradient(135deg, #111827 0%, #1f2937 20%, #374151 40%, #4b5563 60%, #6b7280 80%, #111827 100%), linear-gradient(to right, #60a5fa, #8b5cf6, #ec4899, #f59e0b, #10b981, #3b82f6)',
+                          backgroundOrigin: 'border-box',
+                          backgroundClip: 'padding-box, border-box'
                         }}>
                           {/* Subtle overlay for better readability */}
                           <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>

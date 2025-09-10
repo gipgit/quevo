@@ -9,13 +9,13 @@ export default function SectionMarketingFeatures({ locale }) {
   const marketingCards = [
     {
       icon: "📱",
-      title: "Social Media Content Creator",
-      description: "AI generates engaging social media posts for Facebook, Instagram, LinkedIn, Twitter, and TikTok. Includes posting schedules and optimal timing recommendations."
+      title: t('MarketingFeatures.cards.socialMedia.title'),
+      description: t('MarketingFeatures.cards.socialMedia.description')
     },
     {
       icon: "📧",
-      title: "Email Marketing Assistant",
-      description: "Create targeted email campaigns with AI-generated content. Segment customers, schedule sends, and track engagement with professional email templates."
+      title: t('MarketingFeatures.cards.emailMarketing.title'),
+      description: t('MarketingFeatures.cards.emailMarketing.description')
     }
   ];
 
@@ -36,10 +36,10 @@ export default function SectionMarketingFeatures({ locale }) {
       <div className="container mx-auto px-6 lg:px-12 py-16 max-w-7xl relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-5xl font-bold leading-tight mb-4 drop-shadow-lg">
-            <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">AI-Powered</span> <span className="text-white">Marketing Features</span>
+            <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">{t('MarketingFeatures.title.highlighted')}</span> <span className="text-white">{t('MarketingFeatures.title.rest')}</span>
           </h2>
           <p className="text-lg lg:text-xl text-gray-300 leading-tight lg:leading-relaxed max-w-3xl mx-auto mb-8 drop-shadow-md">
-            Transform your marketing strategy with intelligent automation, smart content generation, and AI-driven insights
+            {t('MarketingFeatures.subtitle')}
           </p>
         </div>
 

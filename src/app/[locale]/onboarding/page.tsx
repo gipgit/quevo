@@ -133,7 +133,7 @@ export default function OnboardingPage() {
       <div className="px-4 lg:px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex-1 opacity-50">
-            <h1 className="text-md lg:text-2xl font-bold text-gray-900">Quevo</h1>
+            <h1 className="text-md lg:text-2xl font-bold text-gray-900">Flowia</h1>
           </div>
           <div className="flex-1 text-sm text-gray-800 text-center">
               {t("createBusinessTitle")}
