@@ -15,297 +15,336 @@ import ServiceBoardScreenshot from './ServiceBoardScreenshot';
 
 // Example businesses data - same structure as SectionHero
 const exampleBusinesses = {
-
   it: [
-
     {
-
       id: 1,
-
-      name: "Traslochi Express",
-
-      url: "traslochi_express",
-
-        category: "Traslochi",
-        description: "Servizi rapidi di traslochi.",
-        coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
-        profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
-        boardRef: "ABC123",
-        boardTitle: "Trasloco Casa Milano",
+      name: "Azienda Edilizia",
+      url: "azienda_edilizia",
+      category: "Edilizia",
+      description: "Servizi di edilizia e ristrutturazione per la casa e l'ufficio.",
+      coverImage: "/uploads/business/e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b/cover-desktop.webp",
+      profileImage: "/uploads/business/e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b/profile.webp",
+      boardRef: "ABC123",
+      boardTitle: "Ristrutturazione Casa",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
-        primaryColor: "#3B82F6", // Blue
-        secondaryColor: "#1E40AF", // Darker blue
-        accentColor: "#60A5FA", // Light blue
-        backgroundColor: "#F8FAFC", // Light gray
-        textColor: "#1F2937", // Dark gray
-        buttonBgColor: "#3B82F6", // Blue
-        buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Inter"
+        primaryColor: "#262625",
+        secondaryColor: "#1a1a19",
+        accentColor: "#404040",
+        backgroundColor: "#F5F5F5",
+        textColor: "#333333",
+        buttonBgColor: "#262625",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
       }
     },
-
     {
-
       id: 2,
-
-      name: "Edilizia Premium",
-
-      url: "edilizia_premium",
-
-        category: "Edilizia",
-        description: "Soluzioni edili di alta qualità.",
-        coverImage: "/uploads/business/22334455-6677-8899-0011-bbccddeeff00/cover-desktop.webp",
-        profileImage: "/uploads/business/22334455-6677-8899-0011-bbccddeeff00/profile.webp",
-        boardRef: "DEF456",
-        boardTitle: "Ristrutturazione Bagno",
+      name: "Azienda Traslochi",
+      url: "azienda_traslochi",
+      category: "Traslochi",
+      description: "Servizi di traslochi e trasporti per casa e ufficio.",
+      coverImage: "/uploads/business/b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6f/cover-desktop.webp",
+      profileImage: "/uploads/business/b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6f/profile.webp",
+      boardRef: "DEF456",
+      boardTitle: "Trasloco Ufficio",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
-        primaryColor: "#059669", // Green
-        secondaryColor: "#047857", // Darker green
-        accentColor: "#10B981", // Light green
-        backgroundColor: "#F0FDF4", // Light green
-        textColor: "#064E3B", // Dark green
-        buttonBgColor: "#059669", // Green
-        buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Inter"
+        primaryColor: "#262625",
+        secondaryColor: "#1a1a19",
+        accentColor: "#404040",
+        backgroundColor: "#F5F5F5",
+        textColor: "#333333",
+        buttonBgColor: "#262625",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
       }
     },
-
     {
-
       id: 3,
-
-      name: "Digital Marketing Solutions",
-
+      name: "Digital Marketing Agency",
       url: "digital_marketing_agency",
-
-        category: "Marketing Digitale",
-        description: "Strategie di marketing digitale innovative.",
-        coverImage: "/uploads/business/33445566-7788-9900-1122-ccddeeff0011/cover-desktop.webp",
-        profileImage: "/uploads/business/33445566-7788-9900-1122-ccddeeff0011/profile.webp",
-        boardRef: "GHI789",
-        boardTitle: "Campagna Social Media",
+      category: "Marketing Digitale",
+      description: "Agenzia di marketing digitale e comunicazione strategica.",
+      coverImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/cover-desktop.webp",
+      profileImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/profile.webp",
+      boardRef: "GHI789",
+      boardTitle: "Campagna Social Media",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
-        primaryColor: "#7C3AED", // Purple
-        secondaryColor: "#5B21B6", // Darker purple
-        accentColor: "#A78BFA", // Light purple
-        backgroundColor: "#FAF5FF", // Light purple
-        textColor: "#2E1065", // Dark purple
-        buttonBgColor: "#7C3AED", // Purple
-        buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Inter"
+        primaryColor: "#8826ff",
+        secondaryColor: "#6b1fcc",
+        accentColor: "#a855f7",
+        backgroundColor: "#212121",
+        textColor: "#C4E8FF",
+        buttonBgColor: "#8826ff",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font4"
+      }
+    },
+    {
+      id: 4,
+      name: "Studio Commercialista",
+      url: "studio_commercialista",
+      category: "Consulenza",
+      description: "Consulenza fiscale, bilanci, dichiarazioni e pianificazione.",
+      coverImage: "/uploads/business/b8e2f3a4-5c6d-7e8f-9a0b-1c2d3e4f5a6b/cover-desktop.webp",
+      profileImage: "/uploads/business/b8e2f3a4-5c6d-7e8f-9a0b-1c2d3e4f5a6b/profile.webp",
+      boardRef: "JKL012",
+      boardTitle: "Consulenza Fiscale",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#1E40AF",
+        secondaryColor: "#1e3a8a",
+        accentColor: "#3b82f6",
+        backgroundColor: "#FFFFFF",
+        textColor: "#0B0B0B",
+        buttonBgColor: "#1E40AF",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font3"
       }
     }
-
   ],
-
   en: [
-
     {
-
       id: 1,
-
-      name: "Express Moving Services",
-
-      url: "traslochi_express",
-
-      category: "Moving Services",
-      description: "Fast and reliable moving services.",
-      coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
-      profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
-      boardRef: "ABC123",
-      boardTitle: "Home Relocation NYC",
-      socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
-      ],
-      theme: {
-        primaryColor: "#3B82F6", // Blue
-        secondaryColor: "#1E40AF", // Darker blue
-        accentColor: "#60A5FA", // Light blue
-        backgroundColor: "#F8FAFC", // Light gray
-        textColor: "#1F2937", // Dark gray
-        buttonBgColor: "#3B82F6", // Blue
-        buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Inter"
-      }
-    },
-
-    {
-
-      id: 2,
-
-      name: "Premium Construction",
-
-      url: "edilizia_premium",
-
+      name: "Construction Company",
+      url: "azienda_edilizia",
       category: "Construction",
-      description: "High-quality construction solutions.",
-      coverImage: "/uploads/business/22334455-6677-8899-0011-bbccddeeff00/cover-desktop.webp",
-      profileImage: "/uploads/business/22334455-6677-8899-0011-bbccddeeff00/profile.webp",
-      boardRef: "DEF456",
-      boardTitle: "Kitchen Renovation",
+      description: "Construction and renovation services for home and office.",
+      coverImage: "/uploads/business/e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b/cover-desktop.webp",
+      profileImage: "/uploads/business/e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b/profile.webp",
+      boardRef: "ABC123",
+      boardTitle: "Home Renovation",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
-        primaryColor: "#059669", // Green
-        secondaryColor: "#047857", // Darker green
-        accentColor: "#10B981", // Light green
-        backgroundColor: "#F0FDF4", // Light green
-        textColor: "#064E3B", // Dark green
-        buttonBgColor: "#059669", // Green
-        buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Inter"
+        primaryColor: "#262625",
+        secondaryColor: "#1a1a19",
+        accentColor: "#404040",
+        backgroundColor: "#F5F5F5",
+        textColor: "#333333",
+        buttonBgColor: "#262625",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
       }
     },
-
     {
-
+      id: 2,
+      name: "Moving Company",
+      url: "azienda_traslochi",
+      category: "Moving Services",
+      description: "Moving and transport services for home and office.",
+      coverImage: "/uploads/business/b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6f/cover-desktop.webp",
+      profileImage: "/uploads/business/b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6f/profile.webp",
+      boardRef: "DEF456",
+      boardTitle: "Office Relocation",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#262625",
+        secondaryColor: "#1a1a19",
+        accentColor: "#404040",
+        backgroundColor: "#F5F5F5",
+        textColor: "#333333",
+        buttonBgColor: "#262625",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
+      }
+    },
+    {
       id: 3,
-
-      name: "Digital Marketing Solutions",
-
+      name: "Digital Marketing Agency",
       url: "digital_marketing_agency",
-
       category: "Digital Marketing",
-      description: "Innovative digital marketing strategies.",
-      coverImage: "/uploads/business/33445566-7788-9900-1122-ccddeeff0011/cover-desktop.webp",
-      profileImage: "/uploads/business/33445566-7788-9900-1122-ccddeeff0011/profile.webp",
+      description: "Digital marketing agency and strategic communication.",
+      coverImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/cover-desktop.webp",
+      profileImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/profile.webp",
       boardRef: "GHI789",
       boardTitle: "Social Media Campaign",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
-        primaryColor: "#7C3AED", // Purple
-        secondaryColor: "#5B21B6", // Darker purple
-        accentColor: "#A78BFA", // Light purple
-        backgroundColor: "#FAF5FF", // Light purple
-        textColor: "#2E1065", // Dark purple
-        buttonBgColor: "#7C3AED", // Purple
-        buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Inter"
+        primaryColor: "#8826ff",
+        secondaryColor: "#6b1fcc",
+        accentColor: "#a855f7",
+        backgroundColor: "#212121",
+        textColor: "#C4E8FF",
+        buttonBgColor: "#8826ff",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font2"
+      }
+    },
+    {
+      id: 4,
+      name: "Accounting Studio",
+      url: "studio_commercialista",
+      category: "Consulting",
+      description: "Tax consulting, financial statements, declarations and planning.",
+      coverImage: "/uploads/business/b8e2f3a4-5c6d-7e8f-9a0b-1c2d3e4f5a6b/cover-desktop.webp",
+      profileImage: "/uploads/business/b8e2f3a4-5c6d-7e8f-9a0b-1c2d3e4f5a6b/profile.webp",
+      boardRef: "JKL012",
+      boardTitle: "Tax Consultation",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#1E40AF",
+        secondaryColor: "#1e3a8a",
+        accentColor: "#3b82f6",
+        backgroundColor: "#FFFFFF",
+        textColor: "#0B0B0B",
+        buttonBgColor: "#1E40AF",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font3"
       }
     }
-
   ],
-
   es: [
-
     {
-
       id: 1,
-
-      name: "Traslados Express",
-
-      url: "traslochi_express",
-
-      category: "Traslados",
-      description: "Servicios rápidos de traslados.",
-      coverImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/cover-desktop.webp",
-      profileImage: "/uploads/business/11223344-5566-7788-9900-aabbccddeeff/profile.webp",
-      boardRef: "ABC123",
-      boardTitle: "Traslado Casa Madrid",
-      socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
-      ],
-      theme: {
-        primaryColor: "#3B82F6", // Blue
-        secondaryColor: "#1E40AF", // Darker blue
-        accentColor: "#60A5FA", // Light blue
-        backgroundColor: "#F8FAFC", // Light gray
-        textColor: "#1F2937", // Dark gray
-        buttonBgColor: "#3B82F6", // Blue
-        buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Inter"
-      }
-    },
-
-    {
-
-      id: 2,
-
-      name: "Construcción Premium",
-
-      url: "edilizia_premium",
-
+      name: "Empresa de Construcción",
+      url: "azienda_edilizia",
       category: "Construcción",
-      description: "Soluciones de construcción de alta calidad.",
-      coverImage: "/uploads/business/22334455-6677-8899-0011-bbccddeeff00/cover-desktop.webp",
-      profileImage: "/uploads/business/22334455-6677-8899-0011-bbccddeeff00/profile.webp",
-      boardRef: "DEF456",
-      boardTitle: "Reformas Baño",
+      description: "Servicios de construcción y renovación para hogar y oficina.",
+      coverImage: "/uploads/business/e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b/cover-desktop.webp",
+      profileImage: "/uploads/business/e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b/profile.webp",
+      boardRef: "ABC123",
+      boardTitle: "Renovación Hogar",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
-        primaryColor: "#059669", // Green
-        secondaryColor: "#047857", // Darker green
-        accentColor: "#10B981", // Light green
-        backgroundColor: "#F0FDF4", // Light green
-        textColor: "#064E3B", // Dark green
-        buttonBgColor: "#059669", // Green
-        buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Inter"
+        primaryColor: "#262625",
+        secondaryColor: "#1a1a19",
+        accentColor: "#404040",
+        backgroundColor: "#F5F5F5",
+        textColor: "#333333",
+        buttonBgColor: "#262625",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
       }
     },
-
     {
-
-      id: 3,
-
-      name: "Soluciones de Marketing Digital",
-
-      url: "digital_marketing_agency",
-
-      category: "Marketing Digital",
-      description: "Estrategias innovadoras de marketing digital.",
-      coverImage: "/uploads/business/33445566-7788-9900-1122-ccddeeff0011/cover-desktop.webp",
-      profileImage: "/uploads/business/33445566-7788-9900-1122-ccddeeff0011/profile.webp",
-      boardRef: "GHI789",
+      id: 2,
+      name: "Empresa de Mudanzas",
+      url: "azienda_traslochi",
+      category: "Mudanzas",
+      description: "Servicios de mudanzas y transporte para hogar y oficina.",
+      coverImage: "/uploads/business/b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6f/cover-desktop.webp",
+      profileImage: "/uploads/business/b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6f/profile.webp",
+      boardRef: "DEF456",
+      boardTitle: "Traslado Oficina",
       socialLinks: [
-        { type: 'facebook', icon: '/icons/facebook.png', url: '#' },
-        { type: 'instagram', icon: '/icons/instagram.svg', url: '#' },
-        { type: 'web', icon: '/icons/web.png', url: '#' }
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
       ],
       theme: {
-        primaryColor: "#7C3AED", // Purple
-        secondaryColor: "#5B21B6", // Darker purple
-        accentColor: "#A78BFA", // Light purple
-        backgroundColor: "#FAF5FF", // Light purple
-        textColor: "#2E1065", // Dark purple
-        buttonBgColor: "#7C3AED", // Purple
-        buttonTextColor: "#FFFFFF", // White
-        fontFamily: "Inter"
+        primaryColor: "#262625",
+        secondaryColor: "#1a1a19",
+        accentColor: "#404040",
+        backgroundColor: "#F5F5F5",
+        textColor: "#333333",
+        buttonBgColor: "#262625",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font1"
+      }
+    },
+    {
+      id: 3,
+      name: "Agencia de Marketing Digital",
+      url: "digital_marketing_agency",
+      category: "Marketing Digital",
+      description: "Agencia de marketing digital y comunicación estratégica.",
+      coverImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/cover-desktop.webp",
+      profileImage: "/uploads/business/5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a/profile.webp",
+      boardRef: "GHI789",
+      boardTitle: "Campaña Redes Sociales",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#8826ff",
+        secondaryColor: "#6b1fcc",
+        accentColor: "#a855f7",
+        backgroundColor: "#212121",
+        textColor: "#C4E8FF",
+        buttonBgColor: "#8826ff",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font2"
+      }
+    },
+    {
+      id: 4,
+      name: "Estudio Contable",
+      url: "studio_commercialista",
+      category: "Consultoría",
+      description: "Consultoría fiscal, balances, declaraciones y planificación.",
+      coverImage: "/uploads/business/b8e2f3a4-5c6d-7e8f-9a0b-1c2d3e4f5a6b/cover-desktop.webp",
+      profileImage: "/uploads/business/b8e2f3a4-5c6d-7e8f-9a0b-1c2d3e4f5a6b/profile.webp",
+      boardRef: "JKL012",
+      boardTitle: "Consultoría Fiscal",
+      socialLinks: [
+        { type: 'facebook', icon: '/icons/links-icons/facebook.svg', url: '#' },
+        { type: 'instagram', icon: '/icons/links-icons/instagram.svg', url: '#' },
+        { type: 'tiktok', icon: '/icons/links-icons/tiktok.svg', url: '#' },
+        { type: 'web', icon: '/icons/links-icons/google.svg', url: '#' }
+      ],
+      theme: {
+        primaryColor: "#1E40AF",
+        secondaryColor: "#1e3a8a",
+        accentColor: "#3b82f6",
+        backgroundColor: "#FFFFFF",
+        textColor: "#0B0B0B",
+        buttonBgColor: "#1E40AF",
+        buttonTextColor: "#FFFFFF",
+        fontFamily: "Font3"
       }
     }
-
   ]
-
 };
 
 
@@ -771,7 +810,16 @@ export default function SectionBoard({ locale }) {
                     <div className="relative">
 
                         {/* Gradient Container */}
-                        <div className="bg-gradient-to-b from-slate-600 via-slate-500 to-slate-800 rounded-3xl p-8 lg:p-12 overflow-hidden">
+                        <div 
+                            className="rounded-3xl p-8 lg:p-12 overflow-hidden"
+                            style={{
+                                background: 'linear-gradient(to bottom, #374151, #4b5563, #111827)',
+                                border: '4px solid transparent',
+                                backgroundImage: 'linear-gradient(to bottom, #374151, #4b5563, #111827), linear-gradient(to right, #60a5fa, #8b5cf6, #ec4899, #f59e0b, #10b981, #3b82f6)',
+                                backgroundOrigin: 'border-box',
+                                backgroundClip: 'padding-box, border-box'
+                            }}
+                        >
                             <div className="backdrop-blur-sm rounded-3xl p-8 lg:p-12">
                         {/* Desktop and Smartphone Views */}
 
@@ -812,7 +860,7 @@ export default function SectionBoard({ locale }) {
 
                                 {/* Board Pill Link Example */}
                                 <div className="flex justify-center mt-8">
-                                    <div className="w-full max-w-[90vw] lg:w-[500px] inline-flex items-center gap-2 rounded-full px-3 lg:px-4 py-2 lg:py-2 border border-gray-300/50 bg-white/30 backdrop-blur-sm hover:bg-white/40 transition-all duration-200">
+                                    <div className="w-full max-w-[90vw] lg:w-[500px] inline-flex items-center gap-2 rounded-full px-3 lg:px-4 py-2 lg:py-2 border border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-200">
                                         <div className="flex items-center gap-1 min-w-0 flex-1">
                                             <svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 text-gray-600">
                                                 <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="2" />
@@ -820,13 +868,13 @@ export default function SectionBoard({ locale }) {
                                                 <line x1="1" y1="10" x2="19" y2="10" stroke="currentColor" strokeWidth="2" />
                                                 <line x1="10" y1="1" x2="10" y2="19" stroke="currentColor" strokeWidth="2" />
                                             </svg>
-                                            <span className="text-gray-600 font-medium text-xs lg:text-sm">{tCommon('domainPrefix')}</span>
-                                            <span className="text-gray-800 font-semibold -ml-1 text-xs lg:text-sm">{currentBusiness.url}</span>
-                                            <span className="text-gray-600 truncate -ml-1 text-xs lg:text-sm">/s/{currentBusiness.boardRef}</span>
+                                            <span className="text-white/80 font-medium text-xs lg:text-sm">{tCommon('domainPrefix')}</span>
+                                            <span className="text-white font-semibold -ml-1 text-xs lg:text-sm">{currentBusiness.url}</span>
+                                            <span className="text-white/80 truncate -ml-1 text-xs lg:text-sm">/s/{currentBusiness.boardRef}</span>
                                         </div>
                                         <Link 
                                             href={`/${locale}/${currentBusiness.url}/s/${currentBusiness.boardRef}`}
-                                            className="inline-flex items-center gap-1 bg-gray-200/80 hover:bg-gray-300/80 text-gray-700 px-2 py-1 lg:px-3 lg:py-1.5 rounded-full text-xs font-medium transition-colors flex-shrink-0"
+                                            className="inline-flex items-center gap-1 bg-white/20 hover:bg-white/30 text-white px-2 py-1 lg:px-3 lg:py-1.5 rounded-full text-xs font-medium transition-colors flex-shrink-0"
                                         >
                                             {t('viewExample')}
                                             <svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
