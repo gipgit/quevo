@@ -41,21 +41,21 @@ export default function SectionBenefitCards() {
         <section className="container-x-lg py-8 lg:py-8 bg-gradient-blue" ref={sectionRef}>
             <div className="rounded-xl">
                 <h5 className="text-center mb-2">Cosa puoi aumentare</h5>
-                <p className="text-center mb-5">Alcuni modi in cui Queva può subito aiutare la tua attività</p>
+                <p className="text-center mb-5">Alcuni modi in cui Flowia può subito aiutare la tua attività</p>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3 items-center justify-between feature-cards-section">
                     {/* Card 1 */}
                     <div className="flex-1 flex-grow py-5 px-5 rounded-lg text-center animated-element bg-white">
                         <span className="rounded-full bg-white border font-bold p-3 d-inline-flex items-center justify-center" style={{ width: '30px', height: '30px' }}>+</span> 
                         <p className="mt-2 text-md font-bold mb-3 leading-none">Nuovi Clienti</p>
-                        <p className="text-sm text-black-600">Con Queva, ogni visita al tuo Locale si trasforma in un'opportunità di guadagnare punti per vincere premi.</p>
+                        <p className="text-sm text-black-600">Con Flowia, ogni visita al tuo Locale si trasforma in un'opportunità di guadagnare punti per vincere premi.</p>
                     </div>
 
                     {/* Card 2 */}
                     <div className="flex-1 flex-grow py-5 px-5 rounded-lg text-center animated-element bg-white">
                         <span className="rounded-full bg-white border font-bold p-3 d-inline-flex items-center justify-center" style={{ width: '30px', height: '30px' }}>+</span> 
                         <p className="mt-2 text-md font-bold mb-3 leading-none">Fedeltà dei Clienti Esistenti</p>
-                        <p className="text-sm text-black-600">Con Queva, ogni visita al tuo Locale si trasforma in un'opportunità di guadagnare punti per vincere premi.</p>
+                        <p className="text-sm text-black-600">Con Flowia, ogni visita al tuo Locale si trasforma in un'opportunità di guadagnare punti per vincere premi.</p>
                     </div>
 
                     {/* Card 3 */}

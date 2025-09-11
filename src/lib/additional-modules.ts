@@ -90,6 +90,22 @@ export const ADDITIONAL_MODULES: AdditionalModule[] = [
     aiCredits: '1,000 AI credits / month',
     icon: '✨',
     stripe_price_id: 'price_ai_support_monthly' // Replace with actual Stripe price ID
+  },
+  {
+    id: 'response-assistant',
+    name: 'Response Assistant',
+    price: '$8',
+    frequency: 'month',
+    description: 'AI-powered response generation for customer inquiries',
+    features: [
+      'Automatically generates professional responses to customer inquiries',
+      'Matches your brand tone and communication style',
+      'Context-aware responses based on customer history',
+      '500 AI credits / month'
+    ],
+    aiCredits: '500 AI credits / month',
+    icon: '💬',
+    stripe_price_id: 'price_response_assistant_monthly' // Replace with actual Stripe price ID
   }
 ];
 

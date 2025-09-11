@@ -17,6 +17,7 @@ export default function PlanSelector({ plans, modules, onPlanSelect, onBack, loc
   const [selectedPlan, setSelectedPlan] = useState<PlanFeature | null>(null)
   const [selectedModules, setSelectedModules] = useState<AdditionalModule[]>([])
 
+
   const handlePlanSelect = (plan: PlanFeature) => {
     setSelectedPlan(plan)
   }
@@ -52,26 +53,13 @@ export default function PlanSelector({ plans, modules, onPlanSelect, onBack, loc
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Back Button */}
-      <div className="mb-6">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back to Plans
-        </button>
-      </div>
-      
       {/* Shopify-style Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column - Plan and Module Selection */}
         <div className="lg:col-span-2">
           {/* Plan Selection */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">
               Choose Your Plan
             </h2>
             <div className="space-y-4">
@@ -83,8 +71,8 @@ export default function PlanSelector({ plans, modules, onPlanSelect, onBack, loc
                     key={plan.id}
                     className={`rounded-xl border p-6 cursor-pointer transition-all duration-300 hover:shadow-lg ${
                       isSelected
-                        ? "border-blue-500 shadow-lg ring-2 ring-blue-200"
-                        : "border-gray-200 hover:border-gray-300"
+                        ? "selected border-gray-400 shadow-lg ring-2 ring-gray-200 bg-white"
+                        : "border-gray-200 hover:border-gray-300 bg-white"
                     }`}
                     onClick={() => handlePlanSelect(plan)}
                   >
@@ -92,8 +80,9 @@ export default function PlanSelector({ plans, modules, onPlanSelect, onBack, loc
                       <div className="flex items-center gap-4">
                         {/* Selection Indicator - Moved to left */}
                         <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                          isSelected ? 'border-blue-500 bg-blue-500' : 'border-gray-300'
-                        }`}>
+                          isSelected ? 'border-gray-600 bg-gray-600' : 'border-gray-300'
+                        }`}
+>
                           {isSelected && (
                             <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -104,7 +93,7 @@ export default function PlanSelector({ plans, modules, onPlanSelect, onBack, loc
                         {/* Plan Color Pill and Description */}
                         <div className="flex items-center gap-3">
                           <span 
-                            className={`inline-block px-4 py-2 text-sm font-semibold rounded-lg shadow-sm flex items-center gap-2 ${planColors.textColor}`}
+                            className={`inline-flex px-4 py-2 text-sm font-semibold rounded-lg shadow-sm items-center gap-2 ${planColors.textColor}`}
                             style={planColors.style}
                           >
                             {planColors.showStar && (
@@ -126,22 +115,6 @@ export default function PlanSelector({ plans, modules, onPlanSelect, onBack, loc
                         <div className="text-sm text-gray-500">/ {plan.display_frequency}</div>
                       </div>
                     </div>
-                    
-                    {/* Features - Only show when selected */}
-                    {isSelected && (
-                      <div className="mt-6 pt-6 border-t border-gray-200">
-                        <ul className="space-y-2">
-                          {plan.features.map((feature, index) => (
-                            <li key={index} className="flex items-center gap-2 text-sm text-gray-700">
-                              <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
-                              <span>{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
                   </div>
                 )
               })}
@@ -162,8 +135,8 @@ export default function PlanSelector({ plans, modules, onPlanSelect, onBack, loc
                       key={module.id}
                       className={`rounded-lg border p-4 cursor-pointer transition-all duration-300 ${
                         isSelected
-                          ? "border-blue-500 bg-blue-50 shadow-sm"
-                          : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
+                          ? "selected border-gray-400 bg-white shadow-sm"
+                          : "border-gray-200 hover:border-gray-300 hover:shadow-sm bg-white"
                       }`}
                       onClick={() => handleModuleToggle(module)}
                     >
@@ -171,8 +144,9 @@ export default function PlanSelector({ plans, modules, onPlanSelect, onBack, loc
                         <div className="flex items-center gap-3">
                           {/* Selection Indicator - Consistent with plan cards */}
                           <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                            isSelected ? 'border-blue-500 bg-blue-500' : 'border-gray-300'
-                          }`}>
+                            isSelected ? 'border-gray-600 bg-gray-600' : 'border-gray-300'
+                          }`}
+>
                             {isSelected && (
                               <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -234,6 +208,21 @@ export default function PlanSelector({ plans, modules, onPlanSelect, onBack, loc
                         <span className="text-xl font-bold text-blue-600">${calculateTotalPrice()}/month</span>
                       </div>
                     </div>
+                  </div>
+                  
+                  {/* Selected Plan Features */}
+                  <div className="mb-6 bg-green-50 p-3 rounded border border-green-200">
+                    <h4 className="text-sm font-semibold text-gray-900 mb-3">Plan Features</h4>
+                    <ul className="space-y-2">
+                      {selectedPlan.features.map((feature, index) => (
+                        <li key={index} className="flex items-center gap-2 text-sm text-gray-700">
+                          <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                   
                   <button

@@ -71,28 +71,30 @@ export default function SectionSupport({ locale }) {
       <div className="container mx-auto px-6 lg:px-12 max-w-7xl relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
             {t('Support.title.prefix')} <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{t('Support.title.highlighted')}</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-snug">
             {t('Support.subtitle')}
           </p>
         </div>
 
         {/* Support Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2 md:gap-4 mb-20">
           {supportFeatures.map((feature, index) => (
             <div
               key={index}
-              className="group relative p-4 transition-all duration-300 hover:-translate-y-1"
+              className="group relative p-3 md:p-4 transition-all duration-300 hover:-translate-y-1 text-center"
             >
-              <div className="text-3xl mb-3">{feature.icon}</div>
+              {/* Icon and title in same row for mobile */}
+              <div className="flex items-center justify-center lg:flex-col mb-2 lg:mb-3">
+                <div className="text-2xl md:text-3xl lg:mb-3 mr-3 lg:mr-0">{feature.icon}</div>
+                <h3 className="text-base md:text-lg font-semibold text-gray-900">
+                  {feature.title}
+                </h3>
+              </div>
               
-              <h3 className="text-lg font-semibold mb-2 text-gray-900">
-                {feature.title}
-              </h3>
-              
-              <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium mb-3 ${
+              <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium mb-2 ${
                 feature.badge === 'Pro+' 
                   ? 'bg-blue-100 text-blue-700' 
                   : feature.badge === 'Enterprise'
@@ -102,7 +104,7 @@ export default function SectionSupport({ locale }) {
                 {feature.badge}
               </div>
               
-              <p className="text-sm leading-relaxed text-gray-600">
+              <p className="text-xs md:text-sm leading-relaxed text-gray-600">
                 {feature.description}
               </p>
             </div>

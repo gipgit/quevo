@@ -24,16 +24,16 @@ export default function SectionFaqs() {
       answer: t('FAQ.questions.freePlan.answer')
     },
     {
-      question: t('FAQ.questions.pointsSystem.question'),
-      answer: t('FAQ.questions.pointsSystem.answer')
+      question: t('FAQ.questions.serviceBoards.question'),
+      answer: t('FAQ.questions.serviceBoards.answer')
     },
     {
-      question: t('FAQ.questions.mobileMenu.question'),
-      answer: t('FAQ.questions.mobileMenu.answer')
+      question: t('FAQ.questions.aiFeatures.question'),
+      answer: t('FAQ.questions.aiFeatures.answer')
     },
     {
-      question: t('FAQ.questions.profileSupport.question'),
-      answer: t('FAQ.questions.profileSupport.answer')
+      question: t('FAQ.questions.appointmentScheduling.question'),
+      answer: t('FAQ.questions.appointmentScheduling.answer')
     },
     {
       question: t('FAQ.questions.dataSecurity.question'),
@@ -44,8 +44,8 @@ export default function SectionFaqs() {
       answer: t('FAQ.questions.customerSupport.answer')
     },
     {
-      question: t('FAQ.questions.integration.question'),
-      answer: t('FAQ.questions.integration.answer')
+      question: t('FAQ.questions.multiLanguage.question'),
+      answer: t('FAQ.questions.multiLanguage.answer')
     },
     {
       question: t('FAQ.questions.pricing.question'),

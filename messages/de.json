@@ -79,7 +79,7 @@
   },
   "FAQ": {
     "title": "Häufig gestellte Fragen",
-    "subtitle": "Alles, was Sie über Queva wissen müssen",
+    "subtitle": "Alles, was Sie über Quevo wissen müssen",
     "showMore": "Weitere Fragen anzeigen",
     "showLess": "Weniger Fragen anzeigen",
     "questions": {
@@ -88,40 +88,40 @@
         "answer": "Sie können Ihr Konto erstellen, indem Sie auf den Link \"Konto erstellen\" im Hauptbereich klicken oder die Registrierungsseite besuchen. Der Prozess ist einfach und schnell und dauert nur wenige Minuten."
       },
       "freePlan": {
-        "question": "Ist Queva kostenlos?",
-        "answer": "Ja, wir bieten einen kostenlosen Plan, der es Ihnen ermöglicht, die grundlegenden Funktionen zu testen. Sie können auch Queva Premium einen Monat lang kostenlos ohne Verpflichtung testen. Der kostenlose Plan enthält alle wesentlichen Funktionen zum Einstieg."
+        "question": "Ist Quevo kostenlos?",
+        "answer": "Ja, wir bieten einen kostenlosen Plan, der es Ihnen ermöglicht, die grundlegenden Funktionen zu testen. Sie können auch Quevo Premium einen Monat lang kostenlos ohne Verpflichtung testen. Der kostenlose Plan enthält alle wesentlichen Funktionen zum Einstieg in die Serviceverwaltung und grundlegende KI-Funktionen."
       },
-      "pointsSystem": {
-        "question": "Wie funktioniert das Punkte- und Belohnungssystem?",
-        "answer": "Ihre Kunden verdienen Punkte jedes Mal, wenn sie Ihr Unternehmen besuchen und ihren persönlichen QR-Code scannen. Sie können die Belohnungen definieren, die sie einlösen können, sobald sie bestimmte Punkte erreichen. Das System ist vollständig anpassbar und ermöglicht es Ihnen, maßgeschneiderte Treueprogramme zu erstellen."
+      "serviceBoards": {
+        "question": "Was sind Service Boards und wie funktionieren sie?",
+        "answer": "Service Boards sind unsere Hauptfunktion, die eine einheitliche und transparente Sicht auf Ihren Serviceprozess sowohl für Sie als auch für Ihre Kunden bietet. Sie ermöglichen es Ihnen, komplexe, mehrstufige Services mit vordefinierten Aktionen, Echtzeit-Updates und sicherem Zugang zu verwalten. Kunden können genau sehen, was passiert, was bereits erledigt wurde und was als nächstes kommt."
       },
-      "mobileMenu": {
-        "question": "Kann ich die digitale Speisekarte von meinem Handy aus verwalten?",
-        "answer": "Absolut ja! Ihre digitale Speisekarte ist vollständig anpassbar und kann bequem von Ihrem Handy oder Tablet aus verwaltet werden, mit Echtzeit-Updates für Ihre Kunden. Sie können Preise ändern, neue Gerichte hinzufügen und die Verfügbarkeit von überall aus verwalten."
+      "aiFeatures": {
+        "question": "Welche KI-Funktionen bietet Quevo?",
+        "answer": "Quevo umfasst KI-gestützte Social-Media-Content-Generierung, E-Mail-Marketing-Unterstützung, Angebotserstellung, Support-Ticket-Klassifizierung und intelligente Antwortvorschläge. Unsere KI hilft bei der Automatisierung der Content-Erstellung, verbessert die Kundenkommunikation und rationalisiert Ihre Geschäftsabläufe."
       },
-      "profileSupport": {
-        "question": "Bieten Sie Unterstützung bei der Profilerstellung?",
-        "answer": "Natürlich! Wenn Sie Hilfe benötigen, können wir Ihr Profil erstellen, die Speisekarte hochladen und erste Aktionen für Sie einrichten. Wir bieten auch Schulungen an, um sicherzustellen, dass Sie bei der Verwaltung autonom sind. Unser Support-Team steht Ihnen immer zur Verfügung."
+      "appointmentScheduling": {
+        "question": "Wie funktioniert das Terminbuchungssystem?",
+        "answer": "Unser Terminbuchungssystem ermöglicht es Kunden, Termine online über Ihr Geschäftsprofil zu buchen. Sie können verfügbare Zeitslots festlegen, Ihren Kalender verwalten und Kunden erhalten automatische Bestätigungen. Das System integriert sich nahtlos mit Service Boards für eine vollständige Serviceverwaltung."
       },
       "dataSecurity": {
         "question": "Sind meine Daten sicher?",
-        "answer": "Absolut ja. Wir verwenden die fortschrittlichsten Sicherheitstechnologien, um Ihre Daten und die Ihrer Kunden zu schützen. Alle Informationen sind verschlüsselt und wir halten uns strikt an Datenschutzvorschriften, einschließlich der DSGVO."
+        "answer": "Absolut ja. Wir verwenden die fortschrittlichsten Sicherheitstechnologien, um Ihre Daten und die Ihrer Kunden zu schützen. Alle Informationen sind verschlüsselt und wir halten uns strikt an Datenschutzvorschriften, einschließlich der DSGVO. Service Boards bieten auch optionalen Passwortschutz für sensible Services."
       },
       "customerSupport": {
         "question": "Wie kann ich den Kundensupport kontaktieren?",
-        "answer": "Unser Support-Team ist 24/7 über E-Mail, Live-Chat und Telefon erreichbar. Wir antworten innerhalb weniger Stunden und sind immer bereit, Ihnen bei Fragen oder technischen Problemen zu helfen."
+        "answer": "Unser Support-Team ist 24/7 über E-Mail, Live-Chat und Telefon erreichbar. Wir bieten mehrsprachigen Support in 15+ Sprachen einschließlich Englisch, Spanisch, Französisch, Deutsch und Italienisch. Wir antworten innerhalb weniger Stunden und sind immer bereit, Ihnen bei Fragen oder technischen Problemen zu helfen."
       },
-      "integration": {
-        "question": "Integriert sich Queva mit anderen Systemen?",
-        "answer": "Ja, Queva integriert sich perfekt mit den wichtigsten Restaurant-Management-Systemen, POS und Lieferplattformen. Wir bieten offene APIs und native Integrationen, um einen reibungslosen Übergang ohne Unterbrechung Ihres Arbeitsablaufs zu gewährleisten."
+      "multiLanguage": {
+        "question": "Unterstützt Quevo mehrere Sprachen?",
+        "answer": "Ja, Quevo unterstützt nativ 5 Sprachen: Italienisch, Englisch, Spanisch, Deutsch und Französisch. Alle Funktionen, einschließlich Service Boards, KI-Content-Generierung und Kundensupport, sind in mehreren Sprachen verfügbar. Sie können die Sprache einfach in Ihren Kontoeinstellungen wechseln."
       },
       "pricing": {
         "question": "Was kosten die Premium-Pläne?",
-        "answer": "Unsere Premium-Pläne beginnen bei 29€/Monat und umfassen erweiterte Funktionen wie detaillierte Analysen, automatisierte Marketing, Prioritäts-Support und erweiterte Anpassungen. Wir bieten auch Rabatte für Jahreszahlungen und maßgeschneiderte Pläne für große Unternehmen."
+        "answer": "Unsere Premium-Pläne beginnen bei 29€/Monat und umfassen erweiterte Funktionen wie unbegrenzte Service Boards, KI-gestützte Marketing-Tools, Prioritäts-Support, erweiterte Analysen und benutzerdefinierte Integrationen. Wir bieten auch Rabatte für Jahreszahlungen und maßgeschneiderte Pläne für große Unternehmen."
       },
       "technicalRequirements": {
         "question": "Was sind die technischen Anforderungen?",
-        "answer": "Queva funktioniert auf jedem Gerät mit einem modernen Webbrowser. Keine komplexen Software-Installationen erforderlich. Für Kunden nur ein Smartphone mit Kamera zum Scannen von QR-Codes. Das System ist optimiert, um auch bei langsamen Internetverbindungen zu funktionieren."
+        "answer": "Quevo funktioniert auf jedem Gerät mit einem modernen Webbrowser. Keine komplexen Software-Installationen erforderlich. Service Boards sind mobiloptimiert und Kunden können über QR-Codes oder direkte Links darauf zugreifen. Das System ist optimiert, um auch bei langsamen Internetverbindungen zu funktionieren."
       }
     }
   },
@@ -1330,7 +1330,7 @@
     },
     "Categories": {
       "title": "Entworfen für viele Arten von Aktivitäten",
-      "subtitle": "Sie können es auf verschiedene Weise verwenden und es gibt immer einen kostenlosen Plan. Entdecken Sie, wie Queva die Erfahrung Ihrer Kunden vereinfachen, Ihnen helfen kann, ihre Loyalität aufzubauen und wertvolles Feedback direkt von ihnen zu erhalten."
+      "subtitle": "Sie können es auf verschiedene Weise verwenden und es gibt immer einen kostenlosen Plan. Entdecken Sie, wie Flowia die Erfahrung Ihrer Kunden vereinfachen, Ihnen helfen kann, ihre Loyalität aufzubauen und wertvolles Feedback direkt von ihnen zu erhalten."
     },
     "FAQ": {
       "title": "Häufig gestellte Fragen",
@@ -1342,8 +1342,8 @@
           "answer": "Sie können Ihr Konto erstellen, indem Sie auf den Link \"Konto erstellen\" im Hauptbereich klicken oder die Registrierungsseite besuchen. Der Prozess ist einfach und schnell und dauert nur wenige Minuten."
         },
         "freePlan": {
-          "question": "Ist Queva kostenlos?",
-          "answer": "Ja, wir bieten einen kostenlosen Plan, der es Ihnen ermöglicht, die grundlegenden Funktionen zu testen. Sie können auch Queva Premium einen Monat lang kostenlos ohne Verpflichtung testen. Der kostenlose Plan enthält alle wesentlichen Funktionen zum Einstieg."
+          "question": "Ist Flowia kostenlos?",
+          "answer": "Ja, wir bieten einen kostenlosen Plan, der es Ihnen ermöglicht, die grundlegenden Funktionen zu testen. Sie können auch Flowia Premium einen Monat lang kostenlos ohne Verpflichtung testen. Der kostenlose Plan enthält alle wesentlichen Funktionen zum Einstieg."
         },
         "pointsSystem": {
           "question": "Wie funktioniert das Punkte- und Belohnungssystem?",
@@ -1366,8 +1366,8 @@
           "answer": "Unser Support-Team ist 24/7 über E-Mail, Live-Chat und Telefon erreichbar. Wir antworten innerhalb weniger Stunden und sind immer bereit, Ihnen bei Fragen oder technischen Problemen zu helfen."
         },
         "integration": {
-          "question": "Integriert sich Queva mit anderen Systemen?",
-          "answer": "Ja, Queva integriert sich perfekt mit den wichtigsten Restaurant-Management-Systemen, POS und Lieferplattformen. Wir bieten offene APIs und native Integrationen, um einen reibungslosen Übergang ohne Unterbrechung Ihres Arbeitsablaufs zu gewährleisten."
+          "question": "Integriert sich Flowia mit anderen Systemen?",
+          "answer": "Ja, Flowia integriert sich perfekt mit den wichtigsten Restaurant-Management-Systemen, POS und Lieferplattformen. Wir bieten offene APIs und native Integrationen, um einen reibungslosen Übergang ohne Unterbrechung Ihres Arbeitsablaufs zu gewährleisten."
         },
         "pricing": {
           "question": "Was kosten die Premium-Pläne?",
@@ -1375,7 +1375,7 @@
         },
         "technicalRequirements": {
           "question": "Was sind die technischen Anforderungen?",
-          "answer": "Queva funktioniert auf jedem Gerät mit einem modernen Webbrowser. Keine komplexen Software-Installationen erforderlich. Für Kunden nur ein Smartphone mit Kamera zum Scannen von QR-Codes. Das System ist optimiert, um auch bei langsamen Internetverbindungen zu funktionieren."
+          "answer": "Flowia funktioniert auf jedem Gerät mit einem modernen Webbrowser. Keine komplexen Software-Installationen erforderlich. Für Kunden nur ein Smartphone mit Kamera zum Scannen von QR-Codes. Das System ist optimiert, um auch bei langsamen Internetverbindungen zu funktionieren."
         }
       }
     },
