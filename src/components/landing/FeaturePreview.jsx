@@ -1,6 +1,7 @@
 // components/landing/FeaturePreview.jsx
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 
 export default function FeaturePreview({ featureType, locale }) {
@@ -9,30 +10,7 @@ export default function FeaturePreview({ featureType, locale }) {
   const getPreviewContent = () => {
     switch (featureType) {
       case 'serviceRequests':
-        return (
-          <div className="bg-white rounded-lg shadow-lg p-4 lg:p-6 border max-w-2xl min-w-[20rem] lg:min-w-[28rem]">
-            <div className="flex items-center justify-between mb-3 lg:mb-4">
-              <h3 className="text-base lg:text-lg font-semibold text-gray-900">Richiesta Servizio</h3>
-              <span className="px-2 py-1 lg:px-3 lg:py-1 bg-green-100 text-green-800 text-xs lg:text-sm rounded-full">Attivo</span>
-            </div>
-            <div className="space-y-2 lg:space-y-3">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm lg:text-base font-medium text-gray-900">Mario Rossi</p>
-                  <p className="text-xs lg:text-sm text-gray-500">Richiesta: Consulenza legale</p>
-                </div>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-2 lg:p-3">
-                <p className="text-xs lg:text-sm text-gray-700">Ho bisogno di una consulenza per un contratto di lavoro. Quando possiamo incontrarci?</p>
-              </div>
-            </div>
-          </div>
-        );
+        return <GuidedRequestPreview />;
 
       case 'appointmentsScheduling':
         return (
@@ -154,8 +132,363 @@ export default function FeaturePreview({ featureType, locale }) {
 
   return (
     <div className="sticky top-8">
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-4 lg:p-10 border border-blue-200 flex justify-center">
+      <div className="bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 rounded-3xl p-4 lg:p-10 border border-gray-400 flex justify-center">
         {getPreviewContent()}
+      </div>
+    </div>
+  );
+}
+
+// Guided Request Preview Component
+function GuidedRequestPreview() {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const steps = [
+    { id: 'overview', name: 'Overview', label: 'Overview' },
+    { id: 'extras', name: 'Extras', label: 'Extras' },
+    { id: 'items', name: 'Items', label: 'Items' },
+    { id: 'datetime', name: 'DateTime', label: 'Date & Time' },
+    { id: 'questions', name: 'Questions', label: 'Questions' },
+    { id: 'requirements', name: 'Requirements', label: 'Requirements' },
+    { id: 'details', name: 'Details', label: 'Details' }
+  ];
+
+  // Auto-advance through steps
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setCurrentStep((prev) => (prev + 1) % steps.length);
+        setIsAnimating(false);
+      }, 300);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [steps.length]);
+
+  // Function to determine if skip button should be shown
+  const shouldShowSkipButton = () => {
+    const currentStepId = steps[currentStep]?.id;
+    return ['extras', 'items', 'datetime'].includes(currentStepId);
+  };
+
+  const getStepContent = () => {
+    const step = steps[currentStep];
+    
+    switch (step.id) {
+      case 'overview':
+        return (
+          <div className="w-full px-4 pt-2 pb-4">
+            <h3 className="text-base font-semibold text-gray-900 mb-1">Consulenza Legale</h3>
+            <p className="text-sm text-gray-600 leading-relaxed mb-4">
+              Servizio di consulenza legale specializzato in diritto del lavoro. 
+              Analisi approfondita dei contratti e assistenza nella risoluzione di controversie.
+            </p>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Prezzo base:</span>
+                <span className="font-semibold text-gray-900">€80.00</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Durata:</span>
+                <span className="text-gray-900">60 minuti</span>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'extras':
+        return (
+          <div className="w-full px-4 pt-2 pb-4">
+            <h3 className="text-base font-semibold text-gray-900 mb-2">Servizi Aggiuntivi</h3>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between p-2 border rounded-lg">
+                <div className="flex items-center space-x-2 flex-1">
+                  <input type="checkbox" className="w-4 h-4 text-blue-600 flex-shrink-0" defaultChecked />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">Analisi documenti</p>
+                    <p className="text-xs text-gray-500">Revisione completa dei contratti</p>
+                  </div>
+                </div>
+                <span className="text-sm font-semibold text-gray-900 flex-shrink-0">€25.00</span>
+              </div>
+              <div className="flex items-center justify-between p-2 border rounded-lg">
+                <div className="flex items-center space-x-2 flex-1">
+                  <input type="checkbox" className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">Assistenza telefonica</p>
+                    <p className="text-xs text-gray-500">Supporto post-consulenza</p>
+                  </div>
+                </div>
+                <span className="text-sm font-semibold text-gray-900 flex-shrink-0">€15.00</span>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'items':
+        return (
+          <div className="w-full px-4 pt-2 pb-4">
+            <h3 className="text-base font-semibold text-gray-900 mb-2">Elementi del Servizio</h3>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between p-2 border rounded-lg bg-blue-50 border-blue-200">
+                <div className="flex items-center space-x-2 flex-1">
+                  <div className="w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-xs">2</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">Consulenza base</p>
+                    <p className="text-xs text-gray-500">€40.00 per ora</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2 flex-shrink-0">
+                  <button className="w-5 h-5 bg-blue-600 text-white rounded-full text-xs">-</button>
+                  <span className="text-sm font-medium">2 ore</span>
+                  <button className="w-5 h-5 bg-blue-600 text-white rounded-full text-xs">+</button>
+                </div>
+              </div>
+              <div className="flex items-center justify-between p-2 border rounded-lg">
+                <div className="flex items-center space-x-2 flex-1">
+                  <div className="w-4 h-4 border border-gray-300 rounded-full flex-shrink-0"></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">Redazione contratto</p>
+                    <p className="text-xs text-gray-500">€120.00 per contratto</p>
+                  </div>
+                </div>
+                <button className="px-2 py-1 text-xs border border-gray-300 rounded-md text-gray-600 flex-shrink-0">Aggiungi</button>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'datetime':
+        return (
+          <div className="w-full px-4 pt-2 pb-4">
+            <h3 className="text-base font-semibold text-gray-900 mb-2">Seleziona Data e Ora</h3>
+            <div className="grid grid-cols-7 gap-1 mb-3">
+              {['L', 'M', 'M', 'G', 'V', 'S', 'D'].map((day, i) => (
+                <div key={i} className="text-center text-xs font-medium text-gray-500 py-1">
+                  {day}
+                </div>
+              ))}
+              {Array.from({ length: 28 }, (_, i) => (
+                <div key={i} className={`text-center py-1 text-xs rounded ${
+                  i === 15 ? 'bg-blue-500 text-white' : 
+                  i > 10 && i < 20 ? 'bg-gray-100 text-gray-700' : 
+                  'text-gray-400'
+                }`}>
+                  {i + 1}
+                </div>
+              ))}
+            </div>
+            <div className="space-y-1">
+              <div className="flex justify-between text-sm p-2 bg-blue-50 rounded">
+                <span className="text-gray-600">14:00 - 15:00</span>
+                <span className="text-green-600 font-medium">Disponibile</span>
+              </div>
+              <div className="flex justify-between text-sm p-2">
+                <span className="text-gray-600">15:00 - 16:00</span>
+                <span className="text-gray-500">Occupato</span>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'questions':
+        return (
+          <div className="w-full px-4 pt-2 pb-4">
+            <h3 className="text-base font-semibold text-gray-900 mb-2">Domande Aggiuntive</h3>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Qual è la natura del tuo problema legale?
+                </label>
+                <textarea 
+                  className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                  rows="2"
+                  placeholder="Descrivi brevemente la situazione..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Hai già documenti da analizzare?
+                </label>
+                <div className="space-y-1">
+                  <label className="flex items-center">
+                    <input type="radio" name="documents" className="mr-2" />
+                    <span className="text-sm text-gray-700">Sì, ho contratti da rivedere</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input type="radio" name="documents" className="mr-2" defaultChecked />
+                    <span className="text-sm text-gray-700">No, partiamo da zero</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'requirements':
+        return (
+          <div className="w-full px-4 pt-2 pb-4">
+            <h3 className="text-base font-semibold text-gray-900 mb-2">Requisiti del Servizio</h3>
+            <div className="space-y-2">
+              <div className="flex items-start space-x-2 p-2 border rounded-lg">
+                <input type="checkbox" className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" defaultChecked />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900">Accetto i termini di servizio</p>
+                  <p className="text-xs text-gray-500">Confermo di aver letto e accettato i termini e condizioni</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-2 p-2 border rounded-lg">
+                <input type="checkbox" className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" defaultChecked />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900">Consenso al trattamento dati</p>
+                  <p className="text-xs text-gray-500">Autorizzo il trattamento dei miei dati personali</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-2 p-2 border rounded-lg">
+                <input type="checkbox" className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900">Newsletter</p>
+                  <p className="text-xs text-gray-500">Desidero ricevere aggiornamenti e promozioni</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'details':
+        return (
+          <div className="w-full px-4 pt-2 pb-4">
+            <h3 className="text-base font-semibold text-gray-900 mb-2">I Tuoi Dettagli</h3>
+            <div className="space-y-2">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nome completo</label>
+                <input 
+                  type="text" 
+                  className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                  placeholder="Mario Rossi"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input 
+                  type="email" 
+                  className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                  placeholder="mario.rossi@email.com"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Telefono</label>
+                <input 
+                  type="tel" 
+                  className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                  placeholder="+39 123 456 7890"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Note aggiuntive</label>
+                <textarea 
+                  className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                  rows="2"
+                  placeholder="Informazioni aggiuntive..."
+                />
+              </div>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-2xl shadow-lg border max-w-4xl w-full min-w-[20rem] lg:min-w-[32rem] overflow-hidden h-[300px] flex flex-col">
+      {/* Modal Header */}
+      <div className="flex justify-between items-center p-4 border-b border-gray-200 flex-shrink-0">
+        <div className="flex items-center space-x-4">
+          <h3 className="text-lg font-semibold text-gray-900">Consulenza Legale</h3>
+          
+          {/* Step Navigation Progress */}
+          <div className="flex items-center">
+            {steps.map((step, index) => {
+              const isActive = index === currentStep;
+              const isCompleted = index < currentStep;
+              
+              return (
+                <div key={step.id} className="flex items-center">
+                  <div
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      isActive ? 'scale-125' : isCompleted ? 'scale-110' : 'scale-100'
+                    }`}
+                    style={{
+                      backgroundColor: isActive 
+                        ? '#3B82F6' 
+                        : isCompleted 
+                          ? '#3B82F6' 
+                          : '#E5E7EB'
+                    }}
+                  />
+                  {index < steps.length - 1 && (
+                    <div 
+                      className="h-0.5 w-4 transition-all duration-300"
+                      style={{
+                        backgroundColor: index < currentStep ? '#3B82F6' : '#E5E7EB'
+                      }}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        
+        <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
+          <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Modal Content - 2 Column Layout with padding */}
+      <div className="flex flex-1 p-4 gap-4 w-full min-h-0">
+        {/* Left Column - Image Placeholder (30%) */}
+        <div className="w-[30%] flex-shrink-0">
+          <div className="h-full rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+            <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Right Column - Step Content (70%) */}
+        <div className="w-[70%] flex flex-col min-h-0">
+          <div className="flex-1 overflow-hidden min-h-0">
+            <div className={`w-full transition-all duration-300 ${isAnimating ? 'opacity-0 transform translate-y-2' : 'opacity-100 transform translate-y-0'}`}>
+              {getStepContent()}
+            </div>
+          </div>
+          
+          {/* Step Navigation Buttons - Fixed at bottom of right column */}
+          <div className="flex justify-between items-center pt-4 border-t border-gray-200 flex-shrink-0 bg-white">
+            <button className="px-4 py-2 text-sm border border-gray-300 rounded-lg text-gray-600 cursor-default">
+              Indietro
+            </button>
+            <div className="flex gap-2">
+              {shouldShowSkipButton() && (
+                <button className="px-4 py-2 text-sm border border-gray-300 rounded-lg text-gray-600 cursor-default">
+                  Salta
+                </button>
+              )}
+              <button className="px-6 py-2 text-sm bg-blue-600 text-white rounded-lg cursor-default">
+                Continua
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
