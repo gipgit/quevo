@@ -397,7 +397,7 @@
     "redirectingToDashboard": "Reindirizzamento alla dashboard..."
   },
   "UserManagerActivation": {
-    "subject": "Attiva il tuo account Business Flowia",
+    "subject": "Attiva il tuo account Flowia",
     "welcome_heading": "Benvenuto su Flowia, {recipientName}!",
     "confirmation_message": "Conferma la tua email per iniziare subito a configurare e gestire il tuo nuovo spazio online.",
     "confirm_button_text": "Conferma e inizia",
@@ -405,7 +405,14 @@
     "help_message": "Se hai bisogno di aiuto, non esitare a contattarci.",
     "closing_salutation": "A presto,",
     "team_name": "Il team di Flowia",
-    "logo_url": "https://yourwebsite.com/logo.png"
+    "logo_url": "https://yourwebsite.com/logo.png",
+    "privacy_disclaimer": "Questa email ti è stata inviata perché abbiamo ricevuto una richiesta di registrazione per questo indirizzo email. Se non hai richiesto questa registrazione, ignora questa email.",
+    "brand_name": "Flowia",
+    "website_url": "www.flowia.com",
+    "facebook_url": "https://facebook.com/flowia",
+    "tiktok_url": "https://tiktok.com/@flowia",
+    "instagram_url": "https://instagram.com/flowia",
+    "linkedin_url": "https://linkedin.com/company/flowia"
   },
   "UserCustomerActivation": {
     "subject": "Attiva il tuo account Cliente Flowia",

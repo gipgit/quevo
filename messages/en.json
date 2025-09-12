@@ -369,15 +369,22 @@
   "UserManagerActivation": {
     "subject": "Activate Your Flowia Account",
     "welcome_heading": "Hello {recipientName}!",
-    "confirmation_message": "Thank you for signing up for Flowia. To complete your registration, please confirm your email address by clicking the button below. Once confirmed, you'll be able to access all Flowia features and start managing your business.",
+    "confirmation_message": "Confirm your email to start configuring and managing your new online space right away.",
     "confirm_button_text": "Confirm Email",
     "fallback_link_instruction": "If the button doesn't work, copy and paste this link into your browser:",
     "help_message": "If you need any help, don't hesitate to contact us.",
     "closing_salutation": "Best regards,",
     "team_name": "The Flowia team",
-    "logo_url": "https://quevo.com/logo.png"
+    "logo_url": "https://quevo.com/logo.png",
+    "privacy_disclaimer": "This email was sent to you because we received a registration request for this email address. If you didn't request this registration, please ignore this email.",
+    "brand_name": "Flowia",
+    "website_url": "www.flowia.com",
+    "facebook_url": "https://facebook.com/flowia",
+    "tiktok_url": "https://tiktok.com/@flowia",
+    "instagram_url": "https://instagram.com/flowia",
+    "linkedin_url": "https://linkedin.com/company/flowia"
   },
-    "UserCustomerActivation": {
+  "UserCustomerActivation": {
     "subject": "Activate your Flowia Customer account",
     "welcome_heading": "Welcome to Flowia, {recipientName}!",
     "confirm_email_prompt": "Confirm your email to access all features.",

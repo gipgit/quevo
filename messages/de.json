@@ -372,13 +372,20 @@
   "UserManagerActivation": {
     "subject": "Aktivieren Sie Ihr Flowia-Konto",
     "welcome_heading": "Hallo {recipientName}!",
-    "confirm_email_prompt": "Vielen Dank für die Registrierung bei Flowia. Um Ihre Registrierung abzuschließen, bestätigen Sie bitte Ihre E-Mail-Adresse, indem Sie auf die Schaltfläche unten klicken.",
-    "after_confirmation_note": "Nach der Bestätigung können Sie auf alle Flowia-Funktionen zugreifen und mit der Verwaltung Ihres Unternehmens beginnen.",
+    "confirmation_message": "Bestätigen Sie Ihre E-Mail, um sofort mit der Konfiguration und Verwaltung Ihres neuen Online-Bereichs zu beginnen.",
     "confirm_button_text": "E-Mail bestätigen",
     "fallback_link_instruction": "Wenn die Schaltfläche nicht funktioniert, kopieren Sie diesen Link und fügen Sie ihn in Ihren Browser ein:",
+    "help_message": "Wenn Sie Hilfe benötigen, zögern Sie nicht, uns zu kontaktieren.",
     "closing_salutation": "Mit freundlichen Grüßen,",
     "team_name": "Das Flowia-Team",
-    "logo_url": "https://quevo.com/logo.png"
+    "logo_url": "https://quevo.com/logo.png",
+    "privacy_disclaimer": "Diese E-Mail wurde Ihnen gesendet, weil wir eine Registrierungsanfrage für diese E-Mail-Adresse erhalten haben. Wenn Sie diese Registrierung nicht angefordert haben, ignorieren Sie diese E-Mail bitte.",
+    "brand_name": "Flowia",
+    "website_url": "www.flowia.com",
+    "facebook_url": "https://facebook.com/flowia",
+    "tiktok_url": "https://tiktok.com/@flowia",
+    "instagram_url": "https://instagram.com/flowia",
+    "linkedin_url": "https://linkedin.com/company/flowia"
   },
   "UserCustomerActivation": {
     "subject": "Aktivieren Sie Ihr Flowia Kundenkonto",

@@ -225,12 +225,15 @@ export default function BusinessSignupPage() {
         } else {
           setMessage(data.message || t("signupError"))
         }
+        // Only set loading to false on error - keep overlay visible during navigation
+        setLoading(false)
       } else {
+        // Keep loading state true during navigation - overlay will remain visible
         router.push(`/${currentLocale}/signup/business/confirmation?email=${encodeURIComponent(formData.email)}`)
       }
     } catch (error) {
       setMessage(t("connectionError"))
-    } finally {
+      // Only set loading to false on error
       setLoading(false)
     }
   }

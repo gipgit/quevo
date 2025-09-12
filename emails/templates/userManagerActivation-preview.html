@@ -11,8 +11,8 @@
             padding: 0;
         }
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f4f4;
+            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #fdfdfd;
             color: #333333;
             line-height: 1.6;
             -webkit-text-size-adjust: 100%;
@@ -25,20 +25,56 @@
     </style>
 </head>
 <body>
-    <div class="email-header" style="width: 100%; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #533483 75%, #7209b7 100%); margin: 0; padding: 35px 0; text-align: center;">
-        <img src="https://via.placeholder.com/150x50/ffffff/0d0d0e?text=LOGO" alt="Logo" class="logo" style="display: block; margin: 0 auto; width: 150px;">
+    <div class="email-header" style="width: 100%; background-color: rgb(15, 8, 25); margin: 0; padding: 35px 40px; text-align: left; position: relative; overflow: hidden; border-top: 8px solid; border-image: linear-gradient(90deg, #80a9fc 0%, #4e0aec 50%, #d388fb 100%) 1;">
+        <!-- Base dark gradient overlay -->
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 50%, rgba(51, 65, 85, 0.6) 100%); z-index: 1;"></div>
+        
+        <!-- Blur layer 1 - Neutral Gray -->
+        <div style="position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; background: radial-gradient(ellipse, rgba(107, 114, 128, 0.12) 0%, rgba(156, 163, 175, 0.08) 30%, rgba(156, 163, 175, 0.04) 50%, transparent 70%); z-index: 2;"></div>
+        
+        <!-- Blur layer 2 - Neutral Warm Gray -->
+        <div style="position: absolute; bottom: -10%; right: -10%; width: 120%; height: 120%; background: radial-gradient(ellipse, rgba(120, 113, 108, 0.10) 0%, rgba(168, 162, 158, 0.06) 35%, rgba(168, 162, 158, 0.03) 60%, transparent 80%); z-index: 2;"></div>
+        
+        <img src="https://via.placeholder.com/150x50/ffffff/0d0d0e?text=LOGO" alt="Quevo Logo" class="logo" style="display: block; width: 150px; height: auto; color: white; position: relative; z-index: 10;">
     </div>
-    <div class="email-container" style="width:95%; max-width: 580px; margin: 0 auto; padding: 15px; text-align: center;">
-        <div class="email-body" style="background-color: #ffffff; padding: 40px 25px; border-radius: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px;">
-            <h1 style="font-size:28px; margin-bottom: 15px;">Welcome to Quevo!</h1>
-            <p style="font-size:18px; margin-bottom: 15px;">Please confirm your email address to activate your account and start managing your business.</p>
-            <p style="font-size:13px; margin-bottom: 15px;">After confirmation, you'll be able to access all features and manage your business profile.</p>
-            <a href="#" style="display: inline-block; padding: 12px 35px; border: 1px solid #fff; background-color: #0d0d0e; color: white; font-size: 16px; border-radius: 35px; text-decoration: none; margin-top: 10px; margin-bottom: 10px;">Confirm Email Address</a>
-            <p style="font-size:13px; margin-top: 15px;color: #888888;">If the button doesn't work, copy and paste this link into your browser:</p>
-            <p style="font-size:11px"><a href="#">https://example.com/confirm?token=abc123</a></p>
+    <div class="email-container" style="max-width: 400px; margin: 0 auto; padding: 0; text-align: left;">
+        <div class="email-body" style="background-color: #ffffff; border-bottom: 1px solid #c7c7c7; padding: 55px 40px; border-radius: 35px; box-shadow: 0 2px 5px rgba(0,0,0,0); margin-bottom: 0;">
+            <h1 style="font-size:24px; margin-bottom: 15px;">Welcome to Quevo, <span style="background: linear-gradient(90deg, #80a9fc 0%, #4e0aec 50%, #d388fb 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{USER_NAME}}</span>!</h1>
+            <p style="font-size:14px; margin-bottom: 15px;">Please confirm your email address to activate your account and start managing your business.</p>
+            <a href="#" style="display: inline-block; padding: 10px 20px; border: 1px solid #fff; background-color: #121212; color: white; font-size: 13px; border-radius: 35px; text-decoration: none; margin-top: 10px; margin-bottom: 10px;">Confirm Email Address</a>
+            <p style="font-size:10px; margin-top: 15px;color: #888888;">If the button doesn't work, copy and paste this link into your browser:</p>
+            <p style="font-size:9px"><a href="#">https://example.com/confirm?token=abc123</a></p>
         </div>
-        <div class="email-footer" style="text-align: center; font-size: 15px; color: #888888;">
-            <p>Best regards,<br>Quevo Team</p>
+        <div class="email-footer" style="text-align: left; padding: 35px 40px;">
+            <!-- Section 1: Salutation + Support -->
+            <div style="margin-bottom: 20px; margin-top: 0; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
+                <p style="font-size: 13px; margin-bottom: 5px; color: #585858;">Need help? Contact our support team.</p>
+                <p style="font-size: 13px; color: #565656;">Best regards, Quevo Team</p>
+            </div>
+            
+            <!-- Section 2: Disclaimer -->
+            <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
+                <p style="font-size: 9px; color: #888888; line-height: 1.4;">This email was sent to you because we received a registration request for this email address. If you didn't request this registration, please ignore this email.</p>
+            </div>
+            
+            <!-- Section 3: Website details and socials -->
+            <div style="margin-bottom: 10px;">
+                <p style="font-size: 12px; color: #666666; margin-bottom: 15px;">Quevo <a href="#" style="color: #0078d7;">www.quevo.com</a></p>
+                <div style="margin-bottom: 10px;">
+                    <a href="#" style="display: inline-block; margin-right: 15px; text-decoration: none;">
+                        <img src="/icons/links-icons/facebook.svg" alt="Facebook" style="width: 20px; height: 20px;">
+                    </a>
+                    <a href="#" style="display: inline-block; margin-right: 15px; text-decoration: none;">
+                        <img src="/icons/links-icons/twitter.svg" alt="Twitter" style="width: 20px; height: 20px;">
+                    </a>
+                    <a href="#" style="display: inline-block; margin-right: 15px; text-decoration: none;">
+                        <img src="/icons/links-icons/instagram.svg" alt="Instagram" style="width: 20px; height: 20px;">
+                    </a>
+                    <a href="#" style="display: inline-block; text-decoration: none;">
+                        <img src="/icons/links-icons/linkedin.svg" alt="LinkedIn" style="width: 20px; height: 20px;">
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </body>

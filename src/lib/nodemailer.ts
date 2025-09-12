@@ -36,6 +36,7 @@ export async function sendMail({ to, subject, template, templateProps, locale }:
 
     const getTranslatedText = (key: string, section: string, replacements?: Record<string, string>) => {
       let text = messages?.[section]?.[key] || key;
+      
       if (replacements) {
         for (const [placeholder, value] of Object.entries(replacements)) {
           text = text.replace(`{${placeholder}}`, value);
@@ -64,6 +65,13 @@ export async function sendMail({ to, subject, template, templateProps, locale }:
       '{{CLOSING_SALUTATION}}': getTranslatedText('closing_salutation', template),
       '{{TEAM_NAME}}': getTranslatedText('team_name', template),
       '{{CONFIRMATION_LINK}}': templateProps.confirmationLink,
+      '{{BRAND_NAME}}': getTranslatedText('brand_name', template),
+      '{{PRIVACY_DISCLAIMER}}': getTranslatedText('privacy_disclaimer', template),
+      '{{WEBSITE_URL}}': getTranslatedText('website_url', template),
+      '{{FACEBOOK_URL}}': getTranslatedText('facebook_url', template),
+      '{{TIKTOK_URL}}': getTranslatedText('tiktok_url', template),
+      '{{INSTAGRAM_URL}}': getTranslatedText('instagram_url', template),
+      '{{LINKEDIN_URL}}': getTranslatedText('linkedin_url', template),
     };
 
     // --- START: Additional Debugging Logs for Replacements ---
