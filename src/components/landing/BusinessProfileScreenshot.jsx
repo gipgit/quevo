@@ -159,8 +159,8 @@ const BusinessProfileScreenshot = ({
                           <p className="text-white text-left" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)', fontSize: '10px' }}>€50</p>
                         </div>
                         <div className="flex items-center gap-1">
-                          <span className="text-white opacity-80" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)', fontSize: '10px' }}>Simula Preventivo</span>
-                          <span className="text-white opacity-80" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)', fontSize: '10px' }}>Prenotabile</span>
+                          <span className="text-white opacity-80" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)', fontSize: '8px' }}>Simula Preventivo</span>
+                          <span className="text-white opacity-80" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)', fontSize: '8px' }}>Prenotabile</span>
                         </div>
                       </div>
                       <button className="px-1.5 py-0.5 text-xs rounded-lg font-medium text-white flex-shrink-0 ml-2 flex items-center justify-center" style={{ backgroundColor: theme.buttonBgColor, textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
@@ -188,8 +188,8 @@ const BusinessProfileScreenshot = ({
                           <p className="text-white text-left" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)', fontSize: '10px' }}>€120</p>
                         </div>
                         <div className="flex items-center gap-1">
-                          <span className="text-white opacity-80" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)', fontSize: '10px' }}>Simula Preventivo</span>
-                          <span className="text-white opacity-80" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)', fontSize: '10px' }}>Prenotabile</span>
+                          <span className="text-white opacity-80" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)', fontSize: '8px' }}>Simula Preventivo</span>
+                          <span className="text-white opacity-80" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)', fontSize: '8px' }}>Prenotabile</span>
                         </div>
                       </div>
                       <button className="px-1.5 py-0.5 text-xs rounded-lg font-medium text-white flex-shrink-0 ml-2 flex items-center justify-center" style={{ backgroundColor: theme.buttonBgColor, textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>

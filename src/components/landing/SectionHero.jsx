@@ -889,7 +889,7 @@ export default function SectionHero({ locale }) {
                     }}
                 ></div>
             </div>
-            <div className="container mx-auto px-12 py-16 max-w-[1480px] relative z-10">
+            <div className="container mx-auto px-8 lg:px-12 py-16 max-w-[1480px] relative z-10">
                 <div className="flex flex-col gap-12 items-center">
                     
                     {/* Top Row - Content */}
@@ -926,8 +926,8 @@ export default function SectionHero({ locale }) {
                         {/* Example URL Link Pill and Get Started Button */}
                         <div className="inline-flex flex-col sm:flex-row gap-4 items-center justify-center max-w-[90vw] lg:max-w-[700px]">
                                <div className="w-full inline-flex items-center gap-3 bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 rounded-full px-3 lg:px-6 py-2 lg:py-3 shadow-lg relative" style={{
-                               background: 'linear-gradient(white, white) padding-box, linear-gradient(to right, #9ca3af, #6b7280, #4b5563) border-box',
-                               border: '2px solid transparent'
+                               background: 'linear-gradient(white, white) padding-box, linear-gradient(to right, #9d9fa3, #b3b5ba, #bbbfc7) border-box',
+                               border: '1px solid transparent'
                              }}>
                                 <div className="flex items-center gap-2 min-w-0 flex-1">
                                     <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
@@ -943,8 +943,8 @@ export default function SectionHero({ locale }) {
                                     href={`/${locale}/${currentBusiness.url}`}
                                     className="inline-flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-2 py-1 lg:px-4 lg:py-2 rounded-full text-xs lg:text-sm font-medium transition-colors flex-shrink-0"
                                 >
-                                    {t('Hero.viewExample')}
-                                    <svg className="hidden lg:block" width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <span className="text-[9px] lg:text-sm hidden lg:inline">{t('Hero.viewExample')}</span>
+                                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </Link>
@@ -994,7 +994,7 @@ export default function SectionHero({ locale }) {
                                             // Use cubic-bezier for rounder movement curve
                                             // Only apply transform on mobile screens
                                             transform: isMobile 
-                                                ? `translateX(${1200 + Math.pow(scrollProgress, 0.7) * -1600}px) scale(0.75)`
+                                                ? `translateX(${800 + Math.pow(scrollProgress, 0.7) * -1200}px) scale(0.75)`
                                                 : 'translateX(0px) scale(1)',
                                         }}
                                     >

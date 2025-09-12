@@ -845,7 +845,7 @@ export default function SectionBoard({ locale }) {
                                                 // Use cubic-bezier for rounder movement curve
                                                 // Only apply transform on mobile screens
                                                 transform: isMobile 
-                                                    ? `translateX(${1200 + Math.pow(scrollProgress, 0.7) * -1500}px) scale(0.75)`
+                                                    ? `translateX(${1400 + Math.pow(scrollProgress, 0.7) * -1700}px) scale(0.75)`
                                                     : 'translateX(0px) scale(1)',
                                             }}
                                         >
@@ -876,7 +876,7 @@ export default function SectionBoard({ locale }) {
                                             href={`/${locale}/${currentBusiness.url}/s/${currentBusiness.boardRef}`}
                                             className="inline-flex items-center gap-1 bg-white/20 hover:bg-white/30 text-white px-2 py-1 lg:px-3 lg:py-1.5 rounded-full text-xs font-medium transition-colors flex-shrink-0"
                                         >
-                                            {t('viewExample')}
+                                            <span className="hidden lg:inline">{t('viewExample')}</span>
                                             <svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                             </svg>
