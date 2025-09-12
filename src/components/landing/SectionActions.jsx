@@ -18,25 +18,24 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
         return (
           <div className="space-y-2 lg:space-y-3">
             {/* Address Section */}
-            <div className="p-2 lg:p-3 bg-gray-50 rounded-lg border">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <div>
-                    <span className="text-xs font-medium text-gray-900">123 Business St, Milan</span>
-                  </div>
-                </div>
-                <button className="flex items-center gap-1 px-2 py-1 lg:px-3 lg:py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700">
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                  Maps
-                </button>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span className="text-xs font-medium text-gray-900">123 Business St, Milan</span>
               </div>
+              <button className="flex items-center gap-1 px-2 py-1 text-gray-600 text-xs font-medium rounded border border-gray-300 hover:bg-gray-50">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Maps
+              </button>
             </div>
+            
+            {/* Date Selection Label */}
+            <div className="text-xs font-medium text-gray-600 mb-2">Select your preferred date</div>
             
             {/* Available Time Slots */}
             <div className="space-y-1 lg:space-y-2">
@@ -51,13 +50,13 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
                       <span className="text-xs font-medium text-gray-900">Dec 15, 2024</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-xs text-gray-700">2:00 PM</span>
+                      <span className="text-xs text-gray-600">2:00 PM</span>
                     </div>
                   </div>
-                  <button className="px-2 py-1 lg:px-3 lg:py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700">
+                  <button className="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700">
                     Select
                   </button>
                 </div>
@@ -74,13 +73,13 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
                       <span className="text-sm font-medium text-gray-900">Dec 16, 2024</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-xs text-gray-700">10:00 AM</span>
+                      <span className="text-xs text-gray-600">10:00 AM</span>
                     </div>
                   </div>
-                  <button className="px-2 py-1 lg:px-3 lg:py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700">
+                  <button className="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700">
                     Select
                   </button>
                 </div>
@@ -97,13 +96,13 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
                       <span className="text-sm font-medium text-gray-900">Dec 17, 2024</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-xs text-gray-700">4:00 PM</span>
+                      <span className="text-xs text-gray-600">4:00 PM</span>
                     </div>
                   </div>
-                  <button className="px-2 py-1 lg:px-3 lg:py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700">
+                  <button className="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700">
                     Select
                   </button>
                 </div>
@@ -115,27 +114,31 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
       case 'payment_request':
         return (
           <div className="space-y-2 lg:space-y-3">
-            <div className="flex items-center justify-center space-x-2 text-yellow-600">
-              <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-              <span className="text-xs lg:text-sm font-medium">Payment Pending</span>
-            </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-gray-600">Amount</span>
                 <span className="text-xs font-bold text-gray-900">€250.00</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-600">Due Date</span>
-                <span className="text-xs font-medium text-gray-900">Dec 20, 2024</span>
+                <span className="text-xs text-gray-600">Reason</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-gray-900">Website Development</span>
+                  <button className="p-1 text-gray-500 hover:text-gray-700">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
+            
+            {/* Payment Methods Label */}
+            <div className="text-xs font-medium text-gray-600 mb-2">Payment Methods</div>
             
             {/* Payment Methods */}
             <div className="space-y-1 lg:space-y-2">
               {/* Bank Transfer Card */}
-              <div className="p-2 lg:p-3 bg-gray-50 rounded-lg border">
+              <div className="p-2 lg:p-3 bg-white rounded-lg border">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -143,7 +146,7 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
                     </svg>
                     <span className="text-xs font-medium text-gray-900">Bank Transfer</span>
                   </div>
-                  <button className="p-1 text-gray-500 hover:text-gray-700">
+                  <button className="p-1 text-gray-500 hover:text-gray-600">
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                     </svg>
@@ -152,21 +155,17 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-gray-600">IBAN:</span>
-                    <span className="text-xs font-mono text-gray-900">IT60X0542811101000000123456</span>
+                    <span className="text-xs text-gray-900">IT60X0542811101000000123456</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-gray-600">Account Holder:</span>
                     <span className="text-xs text-gray-900">Acme Design Studio</span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-600">Reason:</span>
-                    <span className="text-xs text-gray-900">Website Development</span>
-                  </div>
                 </div>
               </div>
               
               {/* PayPal Card */}
-              <div className="p-2 lg:p-3 bg-gray-50 rounded-lg border">
+              <div className="p-2 lg:p-3 bg-white rounded-lg border">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
@@ -174,7 +173,7 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
                     </svg>
                     <span className="text-xs font-medium text-gray-900">PayPal</span>
                   </div>
-                  <button className="p-1 text-gray-500 hover:text-gray-700">
+                  <button className="p-1 text-gray-500 hover:text-gray-600">
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                     </svg>
@@ -185,6 +184,12 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
                   <span className="text-xs text-gray-900">payments@acmedesign.com</span>
                 </div>
               </div>
+            </div>
+            
+            {/* Due Date at Bottom */}
+            <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+              <span className="text-xs text-gray-600">Due Date</span>
+              <span className="text-xs font-medium text-gray-900">Dec 20, 2024</span>
             </div>
           </div>
         );
@@ -206,18 +211,12 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
                   </svg>
                 <span className="text-xs font-medium text-gray-900">Contract.pdf</span>
                 </div>
-                <button className="flex items-center gap-1 px-2 py-1 lg:px-3 lg:py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700">
+                <button className="flex items-center gap-1 px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
-                  Send
+                  Download
                 </button>
-              </div>
-              <div className="text-xs text-gray-600">
-                <span className="text-xs font-medium">Signature required to proceed</span>
-              </div>
-              <div className="text-xs text-gray-500 mt-1">
-                Send to: john.smith@company.com
               </div>
             </div>
           </div>
@@ -234,13 +233,13 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
             </div>
             <div className="space-y-2">
               <div className="space-y-1">
-                <label className="block text-xs font-medium text-gray-700">Company Name *</label>
+                <label className="block text-xs font-medium text-gray-600">Company Name *</label>
                 <div className="h-8 bg-gray-100 border border-gray-200 rounded px-2 flex items-center">
                   <span className="text-xs text-gray-400">Enter company name...</span>
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="block text-xs font-medium text-gray-700">Project Budget</label>
+                <label className="block text-xs font-medium text-gray-600">Project Budget</label>
                 <select className="h-8 w-full bg-gray-100 border border-gray-200 rounded px-2 text-xs">
                   <option>€0 - €10,000</option>
                   <option>€10,000 - €50,000</option>
@@ -263,7 +262,7 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <div className="w-4 h-4 border-2 border-gray-300 rounded"></div>
-                <span className="text-xs lg:text-sm text-gray-700">Review project requirements</span>
+                <span className="text-xs lg:text-sm text-gray-600">Review project requirements</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-4 h-4 border-2 border-green-500 bg-green-500 rounded flex items-center justify-center">
@@ -275,7 +274,7 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-4 h-4 border-2 border-gray-300 rounded"></div>
-                <span className="text-xs lg:text-sm text-gray-700">Schedule follow-up meeting</span>
+                <span className="text-xs lg:text-sm text-gray-600">Schedule follow-up meeting</span>
               </div>
             </div>
           </div>
@@ -309,24 +308,18 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
 
       case 'feedback_request':
         return (
-          <div className="space-y-3">
-            <div className="flex items-center justify-center space-x-2 text-blue-600">
-              <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
-              </svg>
-              <span className="font-medium">Awaiting Feedback</span>
-            </div>
+          <div className="space-y-3 text-center">
             <div className="space-y-2">
               <div className="space-y-1">
-                <label className="block text-xs font-medium text-gray-700">How was your experience?</label>
-                <div className="flex gap-1">
+                <label className="block text-xs font-medium text-gray-600">How was your experience?</label>
+                <div className="flex gap-1 justify-center">
                   {[1,2,3,4,5].map(i => (
                     <div key={i} className={`w-5 h-5 rounded-full border-2 ${i <= 4 ? 'border-yellow-400 bg-yellow-100' : 'border-gray-300'}`}></div>
                   ))}
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="block text-xs font-medium text-gray-700">Comments</label>
+                <label className="block text-xs font-medium text-gray-600">Comments</label>
                 <div className="h-16 bg-gray-100 border border-gray-200 rounded px-2 flex items-start pt-1">
                   <span className="text-xs text-gray-400">Share your thoughts...</span>
                 </div>
@@ -338,7 +331,7 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
       case 'document_download':
         return (
           <div className="space-y-3">
-            <div className="p-3 bg-gray-50 rounded-lg border">
+            <div className="p-3 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <svg className="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
@@ -346,7 +339,7 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
                   </svg>
                   <span className="text-sm font-medium text-gray-900">Project Report.pdf</span>
                 </div>
-                <button className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700">
+                <button className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-medium rounded-lg hover:from-blue-600 hover:to-blue-700">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
@@ -371,7 +364,7 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
                     <p className="text-xs text-gray-500">docs.company.com/project</p>
                   </div>
                 </div>
-                <button className="p-1 text-gray-500 hover:text-gray-700">
+                <button className="p-1 text-gray-500 hover:text-gray-600">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
@@ -387,7 +380,7 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
                     <p className="text-xs text-gray-500">youtube.com/playlist</p>
                   </div>
                 </div>
-                <button className="p-1 text-gray-500 hover:text-gray-700">
+                <button className="p-1 text-gray-500 hover:text-gray-600">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
@@ -447,15 +440,7 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
         return (
           <div className="space-y-3">
             <div className="p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center justify-center gap-3 mb-2">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-medium">AD</span>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Acme Design Studio</p>
-                </div>
-              </div>
-              <p className="text-sm text-gray-700">Hi! I wanted to follow up on our discussion about the project timeline. When do you think we can schedule the next review meeting?</p>
+              <p className="text-sm text-gray-600">Hi! I wanted to follow up on our discussion about the project timeline. When do you think we can schedule the next review meeting?</p>
             </div>
           </div>
         );
@@ -484,10 +469,10 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
 
   return (
     <div 
-      className={`w-[280px] h-[360px] max-h-[400px] lg:w-[320px] lg:h-[420px] lg:max-h-[460px] bg-white rounded-3xl shadow-2xl overflow-hidden relative ${className}`}
+      className={`w-[280px] h-[306px] max-h-[340px] lg:w-[320px] lg:h-[357px] lg:max-h-[391px] bg-white rounded-3xl shadow-2xl overflow-hidden relative ${className}`}
     >
       {/* Header with Action Icon and Title */}
-      <div className={`w-full h-20 lg:h-28 ${gradient} flex items-center justify-center relative`}>
+      <div className={`w-full h-16 lg:h-20 ${gradient} flex items-center justify-center relative pt-2`}>
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="w-full h-full" style={{
@@ -497,16 +482,16 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
         </div>
         
         {/* Action Icon */}
-        <div className="relative z-10 w-20 h-20 lg:w-24 lg:h-24 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+        <div className="relative z-10 w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
           {icon ? (
             <img
               src={icon}
               alt=""
-              className="w-10 h-10 lg:w-12 lg:h-12 object-contain"
+              className="w-8 h-8 lg:w-10 lg:h-10 object-contain"
             />
           ) : (
-            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-white/30 flex items-center justify-center">
-              <svg className="w-6 h-6 lg:w-7 lg:h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-lg bg-white/30 flex items-center justify-center">
+              <svg className="w-5 h-5 lg:w-6 lg:h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
               </svg>
             </div>
@@ -515,10 +500,10 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
       </div>
 
       {/* Content Area */}
-      <div className="px-6 pt-2 pb-6 lg:px-10 lg:pt-3 lg:pb-10 space-y-3 lg:space-y-4">
+      <div className="px-6 pt-1 pb-4 lg:px-10 lg:pt-1 lg:pb-6 space-y-1 lg:space-y-2">
         {/* Action Title */}
         <div className="text-center">
-          <h2 className="text-base lg:text-xl font-bold text-gray-900 mb-0">
+          <h2 className="text-sm lg:text-lg font-bold text-gray-900 mb-0">
             {action.title}
           </h2>
         </div>
@@ -527,18 +512,20 @@ const ActionCardScreenshot = ({ action, className = '' }) => {
         {renderActionSpecificContent()}
 
         {/* Action Buttons */}
-        {actionType !== 'milestone_update' && actionType !== 'generic_message' && (
+        {actionType !== 'milestone_update' && actionType !== 'generic_message' && actionType !== 'document_download' && actionType !== 'signature_request' && actionType !== 'resource_link' && (
         <div className="flex gap-2 pt-1 lg:pt-2">
           <div className="flex-1 py-1.5 lg:py-2 px-2 lg:px-3 bg-blue-500 text-white text-xs lg:text-sm font-medium rounded-lg text-center">
             {actionType === 'approval_request' ? 'Respond' : 
              actionType === 'checklist' ? 'Update' :
-             actionType === 'information_request' ? 'Submit' :
              actionType === 'feedback_request' ? 'Submit' :
+             actionType === 'information_request' ? 'Submit' :
              'View Details'}
           </div>
-          <div className="flex-1 py-1.5 lg:py-2 px-2 lg:px-3 bg-gray-100 text-gray-700 text-xs lg:text-sm font-medium rounded-lg text-center">
+          {actionType !== 'information_request' && (
+          <div className="flex-1 py-1.5 lg:py-2 px-2 lg:px-3 bg-gray-100 text-gray-600 text-xs lg:text-sm font-medium rounded-lg text-center">
             More Info
           </div>
+          )}
         </div>
         )}
       </div>
@@ -654,7 +641,7 @@ export default function SectionActions({ locale }) {
 
         {/* Primary Title Section */}
         <div className="text-center mb-8 lg:mb-16">
-          <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4">
+          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-4">
             {t('Actions.title')}
           </h1>
           <p className="text-md lg:text-xl text-gray-600 leading-tight lg:leading-relaxed max-w-3xl mx-auto mb-8">
@@ -717,7 +704,7 @@ export default function SectionActions({ locale }) {
                             {/* Circular Progress Background */}
                             <svg className="absolute inset-0 w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
                               <path
-                                className="text-gray-200"
+                                className="text-transparent"
                                 stroke="currentColor"
                                 strokeWidth="2"
                                 fill="none"
@@ -794,7 +781,7 @@ export default function SectionActions({ locale }) {
             </div>
 
             {/* Line Indicators */}
-            <div className="flex justify-center space-x-1 mt-4">
+            <div className="flex justify-center space-x-1 mt-2">
               {features.map((_, index) => (
                 <button
                   key={index}
@@ -809,17 +796,13 @@ export default function SectionActions({ locale }) {
 
           {/* Desktop Grid (lg+) */}
           <div className="hidden lg:block">
-            <div className="grid grid-cols-6 gap-3 max-w-7xl mx-auto">
+            <div className="grid grid-cols-6 gap-2 max-w-7xl mx-auto">
             {features.map((action, index) => {
               const localizedAction = getLocalizedAction(action);
               return (
                 <div
                   key={action.id}
-                  className={`border rounded-xl transition-all duration-300 cursor-pointer text-center ${
-                    index === currentActionIndex
-                      ? 'border-blue-400 bg-blue-50 shadow-md'
-                      : 'border-gray-100 hover:border-gray-200'
-                  }`}
+                  className="rounded-xl transition-all duration-300 cursor-pointer text-center"
                   onClick={() => handleActionSelect(index)}
                 >
                   {/* Action Header */}
@@ -829,7 +812,7 @@ export default function SectionActions({ locale }) {
                         {/* Circular Progress Background */}
                         <svg className="absolute inset-0 w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
                           <path
-                            className="text-gray-200"
+                            className="text-transparent"
                             stroke="currentColor"
                             strokeWidth="2"
                             fill="none"
@@ -892,7 +875,7 @@ export default function SectionActions({ locale }) {
 
         {/* Action Card Screenshot Preview - Now full width below the actions */}
         <div className="flex justify-center">
-          <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-3xl p-4 lg:p-12 overflow-hidden max-w-4xl w-full">
+          <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-3xl p-2 lg:p-6 overflow-hidden max-w-4xl w-full">
             <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-4 lg:p-12">
               {/* Action Card Screenshot */}
               <div className="flex justify-center mb-4 lg:mb-6">

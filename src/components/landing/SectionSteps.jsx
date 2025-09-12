@@ -371,11 +371,11 @@ export default function SectionSteps({ locale }) {
           ></div>
           
           
-          <div className="space-y-8 lg:space-y-10">
+          <div className="space-y-8 lg:space-y-8">
             {steps.map((step, index) => {
               const isVisible = visibleSteps.includes(index);
               const isEven = index % 2 === 0;
-              const timelineReached = timelineProgress >= (index + 0.2) / steps.length;
+              const timelineReached = timelineProgress >= (index + 0.1) / steps.length;
               
               return (
                 <div
@@ -400,17 +400,17 @@ export default function SectionSteps({ locale }) {
                     }`}
                     style={{
                       left: '0px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      transitionDelay: timelineReached ? `${index * 200}ms` : '0ms'
+                      top: '0%',
+                      transform: 'translateY(-0%)',
+                      transitionDelay: timelineReached ? `${index * 100}ms` : '0ms'
                     }}
                   >
                     {step.id}
                   </div>
                          
                   {/* Step content */}
-                  <div className={`w-3/4 lg:w-5/12 max-w-[200px] lg:max-w-[350px] transition-all duration-800 ease-out ${
-                    isEven ? 'ml-16 lg:ml-0 lg:pr-2 text-left lg:text-right' : 'ml-16 lg:ml-auto lg:pl-2 text-left'
+                  <div className={`w-[80%] lg:w-5/12 max-w-[250px] lg:max-w-[380px] transition-all duration-800 ease-out ${
+                    isEven ? 'ml-12 lg:ml-0 lg:pr-2 text-left lg:text-right' : 'ml-12 lg:ml-auto lg:pl-2 text-left'
                   } ${
                     isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'
                   }`}

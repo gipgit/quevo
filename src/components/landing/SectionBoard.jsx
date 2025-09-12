@@ -569,7 +569,7 @@ export default function SectionBoard({ locale }) {
 
                      <div className="space-y-6 max-w-[1000px] text-center">
 
-                         <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+                         <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
 
                              {renderTitleWithItalic(t('Board.title'))}
 

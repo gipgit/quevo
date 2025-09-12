@@ -34,7 +34,7 @@ export default function SectionMarketingFeatures({ locale }) {
       <div className="absolute top-1/2 right-1/3 w-48 h-48 bg-pink-500/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '4s'}}></div>
       
       <div className="container mx-auto px-6 lg:px-12 py-16 max-w-7xl relative z-10">
-        <div className="text-center mb-16">
+        <div className="text-center mb-8 lg:mb-16">
           <h2 className="text-3xl lg:text-5xl font-bold leading-tight mb-4 drop-shadow-lg">
             <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">{t('MarketingFeatures.title.highlighted')}</span> <span className="text-white">{t('MarketingFeatures.title.rest')}</span>
           </h2>

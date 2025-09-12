@@ -47,7 +47,7 @@ export default function SectionCTA() {
                         <h2 className="text-2xl md:text-3xl lg:text-5xl font-normal leading-tight mb-4 drop-shadow-lg">
                             <span className="text-white">{t('CTA.title.part1')}</span> <span className="text-white">{t('CTA.title.part2')}</span>
                         </h2>
-                        <p className="text-lg lg:text-2xl mb-8 text-gray-300 leading-tight lg:leading-relaxed max-w-3xl mx-auto drop-shadow-md">
+                        <p className="text-base lg:text-xl mb-8 text-gray-300 leading-tight lg:leading-relaxed max-w-3xl mx-auto drop-shadow-md">
                             {t('CTA.subtitle')}
                         </p>
                         <div className="flex flex-col gap-4 justify-center items-center">

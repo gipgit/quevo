@@ -131,7 +131,14 @@
     "needHelp": "Need Help?",
     "needHelpDescription": "Not sure which plan to choose? Our team is here to help you find the perfect solution for your business.",
     "contactSupport": "Contact Support",
-    "viewDemo": "View Demo"
+    "viewDemo": "View Demo",
+    "Hero": {
+      "benefits": {
+        "freePlan": "Free plan",
+        "noPaymentDetails": "No payment details required",
+        "cancelAnytime": "Cancel anytime"
+      }
+    }
   },
   "ServiceRequest": {
     "loadingCalendar": "Loading calendar",

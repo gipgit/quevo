@@ -70,17 +70,17 @@ export default function SectionSupport({ locale }) {
 
       <div className="container mx-auto px-6 lg:px-12 max-w-7xl relative z-10">
         {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
+        <div className="text-center mb-10 lg:mb-16">
+          <h2 className="text-2xl lg:text-4xl font-bold text-gray-900 mb-6">
             {t('Support.title.prefix')} <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{t('Support.title.highlighted')}</span>
           </h2>
-          <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-snug">
+          <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto leading-snug">
             {t('Support.subtitle')}
           </p>
         </div>
 
         {/* Support Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2 md:gap-4 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-1 md:gap-4 mb-20">
           {supportFeatures.map((feature, index) => (
             <div
               key={index}

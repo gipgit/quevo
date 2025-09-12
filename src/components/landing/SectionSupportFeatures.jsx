@@ -183,7 +183,7 @@ export default function SectionSupportFeatures({ locale }) {
       
       <div className="container mx-auto px-6 lg:px-12 py-16 max-w-7xl relative z-10">
         {/* Title Section */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-8 lg:mb-16">
           <h2 className="text-3xl lg:text-5xl font-bold leading-tight mb-4 drop-shadow-lg">
             <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">{t('SupportFeatures.title.highlighted')}</span> <span className="text-white">{t('SupportFeatures.title.rest')}</span>
           </h2>

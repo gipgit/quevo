@@ -585,17 +585,17 @@ export default function SectionRequestFeatures({ locale }) {
     <section className="min-h-screen bg-gray-50 flex items-center">
       <div className="container mx-auto px-6 lg:px-12 py-16 max-w-7xl">
         {/* Title Section */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4">
+        <div className="text-center mb-8 lg:mb-16">
+          <h2 className="text-2xl lg:text-4xl font-bold text-gray-900 leading-tight mb-4">
             {t('RequestFeatures.title')}
           </h2>
-          <p className="text-lg lg:text-xl text-gray-600 leading-tight lg:leading-relaxed max-w-3xl mx-auto mb-8">
+          <p className="text-base lg:text-lg text-gray-600 leading-tight lg:leading-relaxed max-w-3xl mx-auto mb-8">
             {t('RequestFeatures.subtitle')}
           </p>
         </div>
 
         {/* Mobile Layout - Preview First, then Cards */}
-        <div className="lg:hidden space-y-8">
+        <div className="lg:hidden space-y-6">
           {/* Mobile Preview - Show first on mobile */}
           <div>
             {renderFeaturePreview()}
