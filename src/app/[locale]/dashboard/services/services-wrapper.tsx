@@ -303,7 +303,7 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                           }`}>{service.service_name}</h3>
 
                           {service.description && (
-                            <div className="mb-3">
+                            <div className="mb-1 md:mb-3">
                               <RichTextDisplay content={service.description} />
                             </div>
                           )}
@@ -320,8 +320,8 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
 
                         {/* Column 3: Extras, items, requirements, questions counters */}
                         <div className="lg:w-1/4">
-                          <div className="space-y-2">
-                            <div className={`flex items-center gap-2 text-sm ${
+                          <div className="space-y-1 md:space-y-2">
+                            <div className={`flex items-center gap-2 text-xs md:text-sm leading-tight md:leading-normal ${
                               theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                             }`}>
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -329,7 +329,7 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                               </svg>
                               {t("serviceExtras")}: {service.serviceextra?.length || 0}
                             </div>
-                            <div className={`flex items-center gap-2 text-sm ${
+                            <div className={`flex items-center gap-2 text-xs md:text-sm leading-tight md:leading-normal ${
                               theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                             }`}>
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -337,7 +337,7 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                               </svg>
                               {t("serviceItems")}: {service.serviceitem.length}
                             </div>
-                            <div className={`flex items-center gap-2 text-sm ${
+                            <div className={`flex items-center gap-2 text-xs md:text-sm leading-tight md:leading-normal ${
                               theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                             }`}>
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -345,7 +345,7 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                               </svg>
                               {t("requirements")}: {service.servicerequirementblock.length}
                             </div>
-                            <div className={`flex items-center gap-2 text-sm ${
+                            <div className={`flex items-center gap-2 text-xs md:text-sm leading-tight md:leading-normal ${
                               theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                             }`}>
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -357,10 +357,10 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                         </div>
 
                         {/* Column 4: Status pill + Edit/delete buttons */}
-                        <div className="lg:w-1/6 flex flex-col justify-between items-end gap-3">
+                        <div className="lg:w-1/6 flex flex-row justify-between items-center gap-3">
                           {/* Status pill moved here */}
                           <div>
-                            <span className={`px-3 py-1 text-sm rounded-full ${
+                            <span className={`px-3 py-1 text-sm lg:px-4 lg:py-2 lg:text-base rounded-lg ${
                               service.is_active 
                                 ? (theme === 'dark' ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-800')
                                 : (theme === 'dark' ? 'bg-red-900 text-red-300' : 'bg-red-100 text-red-800')

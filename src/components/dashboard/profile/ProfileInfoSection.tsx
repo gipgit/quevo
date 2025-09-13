@@ -156,9 +156,9 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
     <div className="py-2 space-y-4">
       {/* Business URL Name */}
       <div>
-        <label className="block text-xs font-medium text-gray-500 mb-2">{t("businessUrlName")}</label>
+        <label className="block text-xs font-medium text-gray-500 mb-1">{t("businessUrlName")}</label>
         <div className="flex items-center rounded-full shadow-sm overflow-hidden bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200">
-          <div className="flex items-center px-4 py-3 bg-gradient-to-r from-gray-100 to-gray-200 border-r border-gray-300">
+          <div className="flex items-center px-3 py-2 md:px-4 md:py-3 bg-gradient-to-r from-gray-100 to-gray-200 border-r border-gray-300">
             <GlobeAltIcon className="w-5 h-5 text-gray-600 mr-2" />
             <span className="font-medium text-gray-700">
               quevo.app/
@@ -174,7 +174,7 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
                 handleUrlChange(e.target.value)
               }}
               onChange={(e) => handleUrlChange(e.target.value)}
-              className={`w-full p-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-transparent ${
+              className={`w-full p-2 md:p-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-transparent ${
                 urlValidation.status === "available"
                   ? "text-green-800 placeholder-green-400"
                   : urlValidation.status === "unavailable"
@@ -211,7 +211,7 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
 
       {/* Business Name */}
       <div>
-        <label className="block text-xs font-medium text-gray-500 mb-2">{t("businessName")}</label>
+        <label className="block text-xs font-medium text-gray-500 mb-1">{t("businessName")}</label>
         <input
           type="text"
           value={profileData.business_name || ""}
@@ -221,9 +221,9 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
       </div>
 
       {/* Business Location - Country, Region, City, Address */}
-      <div className="flex gap-2">
-        <div className="w-1/5">
-          <label className="block text-xs font-medium text-gray-500 mb-2">{t("businessCountry")}</label>
+      <div className="flex flex-col md:flex-row gap-2">
+        <div className="w-full md:w-1/5">
+          <label className="block text-xs font-medium text-gray-500 mb-1">{t("businessCountry")}</label>
           <input
             type="text"
             value={profileData.business_country || ""}
@@ -231,8 +231,8 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           />
         </div>
-        <div className="w-1/5">
-          <label className="block text-xs font-medium text-gray-500 mb-2">{t("businessRegion")}</label>
+        <div className="w-full md:w-1/5">
+          <label className="block text-xs font-medium text-gray-500 mb-1">{t("businessRegion")}</label>
           <input
             type="text"
             value={profileData.business_region || ""}
@@ -240,8 +240,8 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           />
         </div>
-        <div className="w-1/5">
-          <label className="block text-xs font-medium text-gray-500 mb-2">{t("businessCity")}</label>
+        <div className="w-full md:w-1/5">
+          <label className="block text-xs font-medium text-gray-500 mb-1">{t("businessCity")}</label>
           <input
             type="text"
             value={profileData.business_city || ""}
@@ -249,8 +249,8 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           />
         </div>
-        <div className="w-2/5">
-          <label className="block text-xs font-medium text-gray-500 mb-2">{t("businessAddress")}</label>
+        <div className="w-full md:w-2/5">
+          <label className="block text-xs font-medium text-gray-500 mb-1">{t("businessAddress")}</label>
           <input
             type="text"
             value={profileData.business_address || ""}
@@ -262,7 +262,7 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
 
       {/* Business Description */}
       <div>
-        <label className="block text-xs font-medium text-gray-500 mb-2">{t("businessDescr")}</label>
+        <label className="block text-xs font-medium text-gray-500 mb-1">{t("businessDescr")}</label>
         <textarea
           value={profileData.business_descr || ""}
           onChange={(e) => onChange("business_descr", e.target.value)}
@@ -271,36 +271,36 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
       </div>
       {/* Emails */}
       <div className="mt-6">
-        <div className="flex justify-between items-center mb-2">
+        <div className="flex justify-between items-center mb-1">
           <label className="block text-xs font-medium text-gray-500">{t("businessEmail")}</label>
           {emails.length < 3 && (
-            <button type="button" onClick={handleAddEmail} className="text-gray-600 text-sm">{t("addEmail")}</button>
+            <button type="button" onClick={handleAddEmail} className="text-gray-600 text-xs md:text-sm">{t("addEmail")}</button>
           )}
         </div>
         {emails.map((email, idx) => (
-          <div key={idx} className="flex gap-2 mb-2">
+          <div key={idx} className="flex gap-2 mb-2 items-center">
             <input
               type="email"
               value={email.value}
               onChange={(e) => handleEmailChange(idx, "value", e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-3/5 md:flex-none md:w-2/3 px-3 py-2 border border-gray-300 rounded-lg"
               placeholder={t("emailPlaceholder")}
             />
             <input
               type="text"
               value={email.title}
               onChange={(e) => handleEmailChange(idx, "title", e.target.value)}
-              className="w-32 px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-32 md:w-40 px-3 py-2 border border-gray-300 rounded-lg"
               placeholder={t("emailTitlePlaceholder")}
             />
             {emails.length > 1 && (
               <button 
                 type="button" 
                 onClick={() => handleRemoveEmail(idx)} 
-                className="bg-gray-400 hover:bg-gray-500 text-white p-2 rounded-full transition-colors"
+                className="bg-gray-400 hover:bg-gray-500 text-white w-[22px] h-[22px] md:w-[26px] md:h-[26px] aspect-square rounded-full transition-colors flex-shrink-0 flex items-center justify-center"
                 title={t("remove")}
               >
-                <XMarkIcon className="w-4 h-4" />
+                <XMarkIcon className="w-2.5 h-2.5 md:w-3 md:h-3" />
               </button>
             )}
           </div>
@@ -308,36 +308,36 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
       </div>
       {/* Phones */}
       <div className="mt-6">
-        <div className="flex justify-between items-center mb-2">
+        <div className="flex justify-between items-center mb-1">
           <label className="block text-xs font-medium text-gray-500">{t("businessPhone")}</label>
           {phones.length < 3 && (
-            <button type="button" onClick={handleAddPhone} className="text-gray-600 text-sm">{t("addPhone")}</button>
+            <button type="button" onClick={handleAddPhone} className="text-gray-600 text-xs md:text-sm">{t("addPhone")}</button>
           )}
         </div>
         {phones.map((phone, idx) => (
-          <div key={idx} className="flex gap-2 mb-2">
+          <div key={idx} className="flex gap-2 mb-2 items-center">
             <input
               type="text"
               value={phone.value}
               onChange={(e) => handlePhoneChange(idx, "value", e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-3/5 md:flex-none md:w-2/3 px-3 py-2 border border-gray-300 rounded-lg"
               placeholder={t("phonePlaceholder")}
             />
             <input
               type="text"
               value={phone.title}
               onChange={(e) => handlePhoneChange(idx, "title", e.target.value)}
-              className="w-32 px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-32 md:w-40 px-3 py-2 border border-gray-300 rounded-lg"
               placeholder={t("phoneTitlePlaceholder")}
             />
             {phones.length > 1 && (
               <button 
                 type="button" 
                 onClick={() => handleRemovePhone(idx)} 
-                className="bg-gray-400 hover:bg-gray-500 text-white p-2 rounded-full transition-colors"
+                className="bg-gray-400 hover:bg-gray-500 text-white w-[22px] h-[22px] md:w-[26px] md:h-[26px] aspect-square rounded-full transition-colors flex-shrink-0 flex items-center justify-center"
                 title={t("remove")}
               >
-                <XMarkIcon className="w-4 h-4" />
+                <XMarkIcon className="w-2.5 h-2.5 md:w-3 md:h-3" />
               </button>
             )}
           </div>

@@ -482,11 +482,11 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
         </div>
 
         {/* Main Content - Outlook-like Layout */}
-        <div className="flex-1 flex gap-6 overflow-hidden">
+        <div className="flex-1 flex flex-col lg:flex-row gap-6 overflow-hidden">
           {/* Left Panel - Request List */}
-          <div className={`w-72 border-r ${
+          <div className={`w-full lg:w-72 border-b lg:border-b-0 lg:border-r ${
             theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
-          } flex flex-col`}>
+          } flex flex-col h-64 lg:h-auto`}>
             {/* Progress Bar */}
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex justify-between items-center mb-2">
@@ -512,8 +512,8 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
             </div>
             
             {/* Request List */}
-            <div className="flex-1 overflow-y-auto">
-              <div className="space-y-1 p-2">
+            <div className="flex-1 overflow-y-auto lg:overflow-y-auto overflow-x-auto lg:overflow-x-visible">
+              <div className="flex lg:flex-col space-x-2 lg:space-x-0 lg:space-y-1 p-2 min-w-max lg:min-w-0">
                 {supportRequests.map((request, index) => {
                   const { day, month } = formatDate(request.created_at)
                   const time = new Date(request.created_at).toLocaleTimeString('it-IT', {
@@ -529,7 +529,7 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                         setSelectedRequest(request)
                         setSelectedIndex(index)
                       }}
-                      className={`p-3 rounded-lg cursor-pointer transition-all ${
+                      className={`p-3 rounded-lg cursor-pointer transition-all flex-shrink-0 w-64 lg:w-auto ${
                         isSelected
                           ? theme === 'dark'
                             ? 'bg-blue-600 text-white'
@@ -574,7 +574,7 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
           </div>
 
           {/* Right Panel - Request Details */}
-          <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex-1 flex flex-col min-h-0 lg:min-h-0 h-96 lg:h-auto">
             {selectedRequest ? (
               <>
                 {/* Request Header with Action Buttons */}

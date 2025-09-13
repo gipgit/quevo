@@ -52,22 +52,22 @@ export default function ProfileLinksSection({ socialLinks, onChange }: ProfileLi
             const social = ALLOWED_SOCIAL_LINKS.find((s) => s.id === id)
             if (!social) return null
             return (
-              <div key={id} className="flex items-center gap-3 bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
+              <div key={id} className="flex items-center gap-2 md:gap-3 bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
                 <img src={social.iconPath} alt={social.name} className="w-5 h-5" />
                 <input
                   type="url"
-                  className="flex-1 px-2 py-1.5 border border-gray-300 rounded-md text-sm"
+                  className="flex-1 px-2 py-1.5 border border-gray-300 rounded-md text-xs md:text-sm"
                   placeholder={social.placeholder}
                   value={socialLinks[id]?.url || ""}
                   onChange={(e) => onChange(id, { url: e.target.value, visible: socialLinks[id]?.visible ?? true })}
                 />
                 <button
                   type="button"
-                  className="bg-gray-400 hover:bg-gray-500 text-white p-1.5 rounded-full transition-colors"
+                  className="bg-gray-400 hover:bg-gray-500 text-white w-[20px] h-[20px] md:w-[24px] md:h-[24px] aspect-square rounded-full transition-colors flex-shrink-0 flex items-center justify-center"
                   onClick={() => handleSelect(id)}
                   title={t("links.remove")}
                 >
-                  <XMarkIcon className="w-3 h-3" />
+                  <XMarkIcon className="w-2.5 h-2.5 md:w-3 md:h-3" />
                 </button>
               </div>
             )

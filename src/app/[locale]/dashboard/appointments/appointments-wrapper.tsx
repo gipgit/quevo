@@ -368,11 +368,11 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto h-screen flex flex-col">
+      <div className="max-w-7xl mx-auto flex flex-col h-full">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-1 lg:mb-6 flex-shrink-0">
           <div>
-            <h1 className={`text-2xl font-bold ${
+            <h1 className={`text-xl lg:text-2xl font-bold ${
               theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
             }`}>{t('title')}</h1>
           </div>
@@ -451,43 +451,43 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
         </div>
 
         {/* Main Content - Outlook-like Layout */}
-        <div className="flex-1 flex gap-6 min-h-0">
+        <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-6 overflow-hidden">
           {/* Left Panel - Calendar/List View */}
-          <div className={`w-80 border-r ${
+          <div className={`w-full lg:w-80 border-b lg:border-b-0 lg:border-r ${
             theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
           } flex flex-col`}>
             {/* Progress Bar */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex justify-between items-center mb-2">
-                <span className={`text-sm font-medium ${
+            <div className="p-2 lg:p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-2 gap-1 lg:gap-0">
+                <span className={`text-xs lg:text-sm font-medium ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                 }`}>
                   Progress: {confirmedAppointments + completedAppointments} of {totalAppointments} confirmed
                 </span>
-                <span className={`text-sm ${
+                <span className={`text-xs lg:text-sm ${
                   theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                 }`}>
                   {totalAppointments - (confirmedAppointments + completedAppointments)} pending
                 </span>
               </div>
-              <div className={`w-full h-2 rounded-full ${
+              <div className={`w-full h-1.5 lg:h-2 rounded-full ${
                 theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
               }`}>
                 <div 
-                  className="h-2 bg-green-500 rounded-full transition-all duration-300"
+                  className="h-1.5 lg:h-2 bg-green-500 rounded-full transition-all duration-300"
                   style={{ width: `${progressPercentage}%` }}
                 />
               </div>
             </div>
 
             {/* View Mode Tabs */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="p-2 lg:p-4 border-b border-gray-200 dark:border-gray-700">
               <div className={`flex space-x-1 p-1 rounded-lg ${
                 theme === 'dark' ? 'bg-zinc-700' : 'bg-zinc-100'
               }`}>
                 <button
                   onClick={() => setViewMode('calendar')}
-                  className={`py-1.5 px-3 text-xs font-medium rounded-md transition-colors flex items-center gap-1.5 ${
+                  className={`py-1 lg:py-1.5 px-2 lg:px-3 text-xs font-medium rounded-md transition-colors flex items-center gap-1 lg:gap-1.5 ${
                     viewMode === 'calendar'
                       ? theme === 'dark' 
                         ? 'bg-zinc-600 text-gray-100 shadow-sm' 
@@ -497,12 +497,13 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                         : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  <CalendarIcon className="w-3.5 h-3.5" />
-                  Calendar
+                  <CalendarIcon className="w-3 lg:w-3.5 h-3 lg:h-3.5" />
+                  <span className="hidden sm:inline">Calendar</span>
+                  <span className="sm:hidden">Cal</span>
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`py-1.5 px-3 text-xs font-medium rounded-md transition-colors flex items-center gap-1.5 ${
+                  className={`py-1 lg:py-1.5 px-2 lg:px-3 text-xs font-medium rounded-md transition-colors flex items-center gap-1 lg:gap-1.5 ${
                     viewMode === 'list'
                       ? theme === 'dark' 
                         ? 'bg-zinc-600 text-gray-100 shadow-sm' 
@@ -512,14 +513,14 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                         : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  <ListBulletIcon className="w-3.5 h-3.5" />
+                  <ListBulletIcon className="w-3 lg:w-3.5 h-3 lg:h-3.5" />
                   List
                 </button>
               </div>
             </div>
             
             {/* Calendar/List Content */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto lg:overflow-y-auto overflow-x-auto lg:overflow-x-visible">
               {viewMode === 'calendar' ? (
                 <div className="p-2">
                   <Calendar
@@ -527,7 +528,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                     events={calendarEvents}
                     startAccessor="start"
                     endAccessor="end"
-                    style={{ height: 400 }}
+                    style={{ height: 300 }}
                     onSelectEvent={handleEventSelect}
                     onSelectSlot={handleSlotSelect}
                     selectable={true}
@@ -542,7 +543,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                   />
                 </div>
               ) : (
-                <div className="space-y-1 p-2">
+                <div className="flex lg:flex-col space-x-2 lg:space-x-0 lg:space-y-1 p-2 min-w-max lg:min-w-0">
                   {appointments.map((appointment, index) => {
                     const isSelected = selectedAppointment?.id === appointment.id
                     
@@ -553,7 +554,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                           setSelectedAppointment(appointment)
                           setSelectedIndex(index)
                         }}
-                        className={`p-3 rounded-lg cursor-pointer transition-all ${
+                        className={`p-3 rounded-lg cursor-pointer transition-all flex-shrink-0 w-64 lg:w-auto ${
                           isSelected
                             ? theme === 'dark'
                               ? 'bg-blue-600 text-white'
@@ -573,7 +574,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                         
                         <div className="flex gap-4">
                           {/* Left Column - Date and Time */}
-                          <div className="flex-shrink-0 w-20">
+                          <div className="flex-shrink-0 w-16 lg:w-20">
                             <div className="text-center">
                               <div className="text-xs opacity-75 mb-1">
                                 {new Date(appointment.start).toLocaleDateString('it-IT', { 
@@ -606,98 +607,110 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
           </div>
 
           {/* Right Panel - Appointment Details */}
-          <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex-1 flex flex-col min-h-0 lg:min-h-0 h-96 lg:h-auto">
             {selectedAppointment ? (
               <>
                 {/* Appointment Header */}
-                <div className={`p-6 border-b ${
+                <div className={`p-2 lg:p-6 border-b ${
                   theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
                 }`}>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-4">
-                      <h2 className={`text-xl font-bold ${
-                        theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                      }`}>
-                        {selectedAppointment.title}
-                      </h2>
-                      <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(selectedAppointment.status)}`}>
-                        {getStatusText(selectedAppointment.status)}
-                      </span>
+                  <div className="flex flex-col lg:flex-row items-start justify-between gap-2 lg:gap-4">
+                    <div className="flex-1 min-w-0 w-full lg:w-auto">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h2 className={`text-lg lg:text-xl font-bold ${
+                            theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                          }`}>
+                            {selectedAppointment.title}
+                          </h2>
+                          <span className={`px-2 lg:px-3 py-0.5 lg:py-1 rounded-full text-xs lg:text-sm ${getStatusColor(selectedAppointment.status)}`}>
+                            {getStatusText(selectedAppointment.status)}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                          <span>{selectedAppointment.customerName}</span>
+                          <span>•</span>
+                          <span>{formatTime(selectedAppointment.start)} - {formatTime(selectedAppointment.end)}</span>
+                          <span>•</span>
+                          <span>{formatDate(selectedAppointment.start)}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto lg:max-w-sm">
+                      <button
+                        onClick={() => handleStatusChange(selectedAppointment.id, 'confirmed')}
+                        className={`px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm ${
+                          selectedAppointment.status === 'confirmed'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-green-600 text-white hover:bg-green-700'
+                        }`}
+                        title="Confirm appointment"
+                      >
+                        <CheckCircleIcon className="w-3.5 h-3.5" />
+                        {selectedAppointment.status === 'confirmed' ? 'Confirmed' : 'Confirm'}
+                      </button>
+                      
+                      <button
+                        onClick={() => handleStatusChange(selectedAppointment.id, 'cancelled')}
+                        className={`px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm ${
+                          selectedAppointment.status === 'cancelled'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-red-600 text-white hover:bg-red-700'
+                        }`}
+                        title="Cancel appointment"
+                      >
+                        <XCircleIcon className="w-3.5 h-3.5" />
+                        {selectedAppointment.status === 'cancelled' ? 'Cancelled' : 'Cancel'}
+                      </button>
+                      
+                      <button
+                        onClick={() => handleDeleteAppointment(selectedAppointment.id)}
+                        className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm"
+                        title="Delete appointment"
+                      >
+                        <TrashIcon className="w-3.5 h-3.5" />
+                        Delete
+                      </button>
                     </div>
                   </div>
                   
                   {/* Appointment Details - Each on its own row */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <ClockIcon className="w-5 h-5" />
-                      <span className="text-base font-medium">{formatTime(selectedAppointment.start)} - {formatTime(selectedAppointment.end)}</span>
+                  <div className="space-y-2 lg:space-y-3 mt-3">
+                    <div className="flex items-center gap-2 lg:gap-3">
+                      <ClockIcon className="w-4 lg:w-5 h-4 lg:h-5" />
+                      <span className="text-sm lg:text-base font-medium">{formatTime(selectedAppointment.start)} - {formatTime(selectedAppointment.end)}</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CalendarIcon className="w-5 h-5" />
-                      <span className="text-base font-medium">{formatDate(selectedAppointment.start)}</span>
+                    <div className="flex items-center gap-2 lg:gap-3">
+                      <CalendarIcon className="w-4 lg:w-5 h-4 lg:h-5" />
+                      <span className="text-sm lg:text-base font-medium">{formatDate(selectedAppointment.start)}</span>
                     </div>
                     {selectedAppointment.appointment_location && (
-                      <div className="flex items-center gap-3">
-                        <MapPinIcon className="w-5 h-5" />
-                        <span className="text-base font-medium">{selectedAppointment.appointment_location}</span>
+                      <div className="flex items-center gap-2 lg:gap-3">
+                        <MapPinIcon className="w-4 lg:w-5 h-4 lg:h-5" />
+                        <span className="text-sm lg:text-base font-medium">{selectedAppointment.appointment_location}</span>
                       </div>
                     )}
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className={`p-6 border-b ${
-                  theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
-                }`}>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => handleStatusChange(selectedAppointment.id, 'confirmed')}
-                      className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors flex items-center gap-2"
-                      title="Confirm appointment"
-                    >
-                      <CheckCircleIcon className="w-4 h-4" />
-                      Confirm
-                    </button>
-                    
-                    <button
-                      onClick={() => handleStatusChange(selectedAppointment.id, 'cancelled')}
-                      className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors flex items-center gap-2"
-                      title="Cancel appointment"
-                    >
-                      <XCircleIcon className="w-4 h-4" />
-                      Cancel
-                    </button>
-                    
-                    <button
-                      onClick={() => handleDeleteAppointment(selectedAppointment.id)}
-                      className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors flex items-center gap-2"
-                      title="Delete appointment"
-                    >
-                      <TrashIcon className="w-4 h-4" />
-                      Delete
-                    </button>
-                  </div>
-                </div>
-
                 {/* Customer Details */}
-                <div className={`p-6 border-b ${
-                  theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
-                }`}>
-                  <h3 className={`text-lg font-semibold mb-3 ${
-                    theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                <div className="p-2 lg:p-6">
+                  <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
+                    theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
                   }`}>Customer Details</h3>
-                  <div className="flex items-center gap-6 text-sm">
+                  <div className="flex flex-wrap items-center gap-3 lg:gap-6 text-xs lg:text-sm">
                     <div className="flex items-center gap-2">
-                      <UserIcon className="w-4 h-4" />
+                      <UserIcon className="w-3.5 lg:w-4 h-3.5 lg:h-4" />
                       <span>{selectedAppointment.customerName}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <EnvelopeIcon className="w-4 h-4" />
+                      <EnvelopeIcon className="w-3.5 lg:w-4 h-3.5 lg:h-4" />
                       <span>{selectedAppointment.customerEmail}</span>
                     </div>
                     {selectedAppointment.customerPhone && (
                       <div className="flex items-center gap-2">
-                        <PhoneIcon className="w-4 h-4" />
+                        <PhoneIcon className="w-3.5 lg:w-4 h-3.5 lg:h-4" />
                         <span>{selectedAppointment.customerPhone}</span>
                       </div>
                     )}
@@ -705,18 +718,18 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                 </div>
 
                 {/* Appointment Content */}
-                <div className="flex-1 p-6">
-                  <div className="space-y-6">
+                <div className="flex-1 p-2 lg:p-6 space-y-4 lg:space-y-6">
+                  <div className="space-y-4 lg:space-y-6">
                     {/* Service Board Information */}
                     {selectedAppointment.service_board_title && (
                       <div>
-                        <h3 className={`text-lg font-semibold mb-2 ${
-                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                        <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
+                          theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
                         }`}>Service Board</h3>
-                        <div className={`p-4 rounded-lg border ${
+                        <div className={`p-3 lg:p-4 rounded-lg border ${
                           theme === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
                         }`}>
-                          <div className="flex items-center gap-6 text-sm">
+                          <div className="flex flex-wrap items-center gap-3 lg:gap-6 text-xs lg:text-sm">
                             <div className="flex items-center gap-2">
                               <span className="font-medium">Board:</span>
                               <span>{selectedAppointment.service_board_title}</span>
@@ -735,13 +748,17 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                     {/* Notes */}
                     {selectedAppointment.notes && (
                       <div>
-                        <h3 className={`text-lg font-semibold mb-2 ${
-                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                        <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
+                          theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
                         }`}>Notes</h3>
-                        <div className={`p-4 rounded-lg ${
+                        <div className={`p-3 lg:p-4 rounded-lg ${
                           theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'
                         }`}>
-                          {selectedAppointment.notes}
+                          <div className={`text-xs lg:text-sm ${
+                            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                          }`}>
+                            {selectedAppointment.notes}
+                          </div>
                         </div>
                       </div>
                     )}
@@ -749,13 +766,13 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                     {/* Platform Information */}
                     {selectedAppointment.platform_name && (
                       <div>
-                        <h3 className={`text-lg font-semibold mb-2 ${
-                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                        <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
+                          theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
                         }`}>Meeting Platform</h3>
-                        <div className={`p-4 rounded-lg border ${
+                        <div className={`p-3 lg:p-4 rounded-lg border ${
                           theme === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
                         }`}>
-                          <div className="flex items-center gap-6 text-sm">
+                          <div className="flex flex-wrap items-center gap-3 lg:gap-6 text-xs lg:text-sm">
                             <div className="flex items-center gap-2">
                               <span className="font-medium">Platform:</span>
                               <span>{selectedAppointment.platform_name}</span>

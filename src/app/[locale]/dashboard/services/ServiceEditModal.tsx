@@ -501,35 +501,140 @@ export default function ServiceEditModal({
   const imagePath = `/uploads/business/${businessPublicUuid}/services/${service.service_id}.webp`
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2">
-      <div className={`max-w-7xl w-full max-h-[90vh] min-h-[600px] rounded-lg flex flex-col ${
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-1 lg:p-2">
+      <div className={`max-w-7xl w-full max-h-[90vh] min-h-[600px] rounded-xl flex flex-col ${
         theme === 'dark' ? 'bg-zinc-800' : 'bg-white'
       }`}>
         {/* Header */}
-        <div className="flex justify-between items-start p-4 lg:p-6 border-b border-gray-200 dark:border-gray-700">
-          {/* Left side - Title and Service Name */}
-                            <div className="flex flex-col">
-            <h2 className={`text-xs lg:text-sm font-medium text-gray-500 dark:text-gray-400 mb-0.5 lg:mb-1`}>
-              {t("editService")}
-            </h2>
-            <h1 className={`text-xl lg:text-2xl font-bold ${
-              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-            }`}>
-              {service.service_name}
-            </h1>
-          </div>
-          
-          {/* Right side - Toggle switches and close button */}
-          <div className="flex items-center gap-4">
-            {/* Toggle switches */}
-            <div className="flex items-center gap-4">
-              <label className="flex items-center gap-2">
-                <span className={`text-sm ${
+        <div className="p-4 lg:p-6 border-b border-gray-200 dark:border-gray-700">
+          {/* Mobile: Service title and close button in same row, toggles below */}
+          <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-0">
+            
+            {/* Row 1: Service title and close button (mobile) / Service title and right group (desktop) */}
+            <div className="flex justify-between items-start md:flex-1 md:items-center">
+              
+              {/* Service Title */}
+              <div className="flex flex-col">
+                <h2 className={`text-xs lg:text-sm font-medium text-gray-500 dark:text-gray-400 mb-0.5 lg:mb-1`}>
+                  {t("editService")}
+                </h2>
+                <h1 className={`text-lg md:text-xl lg:text-2xl font-bold leading-tight md:leading-normal ${
+                  theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                }`}>
+                  {service.service_name}
+                </h1>
+              </div>
+              
+              {/* Close Button - Mobile only */}
+              <button
+                onClick={onClose}
+                className={`p-2 rounded-lg transition-colors md:hidden ${
+                  theme === 'dark' 
+                    ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700' 
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              
+              {/* Desktop: Right Group - Toggle Switches and Close Button */}
+              <div className="hidden md:flex items-center gap-4">
+                <label className="flex items-center gap-2">
+                  <span className={`text-sm ${
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    {t("active")}
+                  </span>
+                  <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    formData.is_active 
+                      ? 'bg-blue-600' 
+                      : 'bg-gray-300 dark:bg-gray-600'
+                  }`}>
+                    <input
+                      type="checkbox"
+                      checked={formData.is_active}
+                      onChange={(e) => handleInputChange('is_active', e.target.checked)}
+                      className="sr-only"
+                    />
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      formData.is_active ? 'translate-x-6' : 'translate-x-1'
+                    }`} />
+                  </div>
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <span className={`text-sm ${
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    {t("activeBooking")}
+                  </span>
+                  <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    formData.active_booking 
+                      ? 'bg-blue-600' 
+                      : 'bg-gray-300 dark:bg-gray-600'
+                  }`}>
+                    <input
+                      type="checkbox"
+                      checked={formData.active_booking}
+                      onChange={(e) => handleInputChange('active_booking', e.target.checked)}
+                      className="sr-only"
+                    />
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      formData.active_booking ? 'translate-x-6' : 'translate-x-1'
+                    }`} />
+                  </div>
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <span className={`text-sm ${
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    {t("activeQuotation")}
+                  </span>
+                  <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    formData.active_quotation 
+                      ? 'bg-blue-600' 
+                      : 'bg-gray-300 dark:bg-gray-600'
+                  }`}>
+                    <input
+                      type="checkbox"
+                      checked={formData.active_quotation}
+                      onChange={(e) => handleInputChange('active_quotation', e.target.checked)}
+                      className="sr-only"
+                    />
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      formData.active_quotation ? 'translate-x-6' : 'translate-x-1'
+                    }`} />
+                  </div>
+                </label>
+                
+                <button
+                  onClick={onClose}
+                  className={`p-2 rounded-lg transition-colors ${
+                    theme === 'dark' 
+                      ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700' 
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                  }`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+            </div>
+            
+            {/* Row 2: Toggle Switches - Mobile only, aligned to left */}
+            <div className="flex items-center justify-start gap-4 md:hidden">
+              <label className="flex flex-col items-center gap-1">
+                <span className={`text-[10px] ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                 }`}>
                   {t("active")}
                 </span>
-                <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                <div className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
                   formData.is_active 
                     ? 'bg-blue-600' 
                     : 'bg-gray-300 dark:bg-gray-600'
@@ -540,19 +645,19 @@ export default function ServiceEditModal({
                     onChange={(e) => handleInputChange('is_active', e.target.checked)}
                     className="sr-only"
                   />
-                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    formData.is_active ? 'translate-x-6' : 'translate-x-1'
+                  <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                    formData.is_active ? 'translate-x-5' : 'translate-x-0.5'
                   }`} />
                 </div>
               </label>
 
-              <label className="flex items-center gap-2">
-                <span className={`text-sm ${
+              <label className="flex flex-col items-center gap-1">
+                <span className={`text-[10px] ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                 }`}>
                   {t("activeBooking")}
                 </span>
-                <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                <div className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
                   formData.active_booking 
                     ? 'bg-blue-600' 
                     : 'bg-gray-300 dark:bg-gray-600'
@@ -563,19 +668,19 @@ export default function ServiceEditModal({
                     onChange={(e) => handleInputChange('active_booking', e.target.checked)}
                     className="sr-only"
                   />
-                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    formData.active_booking ? 'translate-x-6' : 'translate-x-1'
+                  <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                    formData.active_booking ? 'translate-x-5' : 'translate-x-0.5'
                   }`} />
                 </div>
               </label>
 
-              <label className="flex items-center gap-2">
-                <span className={`text-sm ${
+              <label className="flex flex-col items-center gap-1">
+                <span className={`text-[10px] ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                 }`}>
                   {t("activeQuotation")}
                 </span>
-                <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                <div className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
                   formData.active_quotation 
                     ? 'bg-blue-600' 
                     : 'bg-gray-300 dark:bg-gray-600'
@@ -586,25 +691,13 @@ export default function ServiceEditModal({
                     onChange={(e) => handleInputChange('active_quotation', e.target.checked)}
                     className="sr-only"
                   />
-                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    formData.active_quotation ? 'translate-x-6' : 'translate-x-1'
+                  <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                    formData.active_quotation ? 'translate-x-5' : 'translate-x-0.5'
                   }`} />
                 </div>
               </label>
             </div>
             
-            <button
-              onClick={onClose}
-              className={`p-2 rounded-lg transition-colors ${
-                theme === 'dark' 
-                  ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700' 
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-              }`}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
           </div>
         </div>
 
@@ -613,7 +706,7 @@ export default function ServiceEditModal({
           <div className="flex space-x-1 px-4 lg:px-6 overflow-x-auto scroll-smooth">
             <button
               onClick={() => setActiveTab('basic')}
-              className={`px-3 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors ${
+              className={`px-4 md:px-3 lg:px-4 py-3 md:py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
                 activeTab === 'basic'
                   ? theme === 'dark'
                     ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
@@ -627,7 +720,7 @@ export default function ServiceEditModal({
             </button>
             <button
               onClick={() => setActiveTab('extras')}
-              className={`px-3 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors ${
+              className={`px-4 md:px-3 lg:px-4 py-3 md:py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
                 activeTab === 'extras'
                   ? theme === 'dark'
                     ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
@@ -641,7 +734,7 @@ export default function ServiceEditModal({
             </button>
             <button
               onClick={() => setActiveTab('items')}
-              className={`px-3 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors ${
+              className={`px-4 md:px-3 lg:px-4 py-3 md:py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
                 activeTab === 'items'
                   ? theme === 'dark'
                     ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
@@ -655,7 +748,7 @@ export default function ServiceEditModal({
             </button>
             <button
               onClick={() => setActiveTab('questions')}
-              className={`px-3 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors ${
+              className={`px-4 md:px-3 lg:px-4 py-3 md:py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
                 activeTab === 'questions'
                   ? theme === 'dark'
                     ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
@@ -669,7 +762,7 @@ export default function ServiceEditModal({
             </button>
             <button
               onClick={() => setActiveTab('requirements')}
-              className={`px-3 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors ${
+              className={`px-4 md:px-3 lg:px-4 py-3 md:py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
                 activeTab === 'requirements'
                   ? theme === 'dark'
                     ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
@@ -683,7 +776,7 @@ export default function ServiceEditModal({
             </button>
             <button
               onClick={() => setActiveTab('events')}
-              className={`px-3 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors ${
+              className={`px-4 md:px-3 lg:px-4 py-3 md:py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
                 activeTab === 'events'
                   ? theme === 'dark'
                     ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
@@ -697,7 +790,7 @@ export default function ServiceEditModal({
             </button>
             <button
               onClick={() => setActiveTab('consent')}
-              className={`px-3 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors ${
+              className={`px-4 md:px-3 lg:px-4 py-3 md:py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
                 activeTab === 'consent'
                   ? theme === 'dark'
                     ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'

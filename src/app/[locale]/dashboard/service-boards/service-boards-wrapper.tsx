@@ -219,11 +219,11 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto h-screen flex flex-col">
+      <div className="max-w-7xl mx-auto flex flex-col h-full">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-1 lg:mb-6 flex-shrink-0">
           <div>
-            <h1 className={`text-2xl font-bold ${
+            <h1 className={`text-xl lg:text-2xl font-bold ${
               theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
             }`}>{t("title")}</h1>
           </div>
@@ -302,38 +302,38 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
         </div>
 
         {/* Main Content - Outlook-like Layout */}
-        <div className="flex-1 flex gap-6 min-h-0">
+        <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-6 overflow-hidden">
           {/* Left Panel - Board List */}
-          <div className={`w-80 border-r ${
+          <div className={`w-full lg:w-80 border-b lg:border-b-0 lg:border-r ${
             theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
           } flex flex-col`}>
             {/* Progress Bar */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex justify-between items-center mb-2">
-                <span className={`text-sm font-medium ${
+            <div className="p-2 lg:p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-2 gap-1 lg:gap-0">
+                <span className={`text-xs lg:text-sm font-medium ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                 }`}>
                   Progress: {completedBoards + activeBoards} of {totalBoards} active
                 </span>
-                <span className={`text-sm ${
+                <span className={`text-xs lg:text-sm ${
                   theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                 }`}>
                   {totalBoards - (completedBoards + activeBoards)} pending
                 </span>
               </div>
-              <div className={`w-full h-2 rounded-full ${
+              <div className={`w-full h-1.5 lg:h-2 rounded-full ${
                 theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
               }`}>
                 <div 
-                  className="h-2 bg-green-500 rounded-full transition-all duration-300"
+                  className="h-1.5 lg:h-2 bg-green-500 rounded-full transition-all duration-300"
                   style={{ width: `${progressPercentage}%` }}
                 />
               </div>
             </div>
             
             {/* Board List */}
-            <div className="flex-1 overflow-y-auto">
-              <div className="space-y-1 p-2">
+            <div className="flex-1 overflow-y-auto lg:overflow-y-auto overflow-x-auto lg:overflow-x-visible">
+              <div className="flex lg:flex-col space-x-2 lg:space-x-0 lg:space-y-1 p-2 min-w-max lg:min-w-0">
                 {serviceBoards.map((board, index) => {
                   const { day, month } = formatDate(board.created_at)
                   const isSelected = selectedBoard?.board_id === board.board_id
@@ -345,7 +345,7 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
                         setSelectedBoard(board)
                         setSelectedIndex(index)
                       }}
-                      className={`p-4 rounded-lg cursor-pointer transition-all ${
+                      className={`p-3 lg:p-4 rounded-lg cursor-pointer transition-all flex-shrink-0 w-64 lg:w-auto ${
                         isSelected
                           ? theme === 'dark'
                             ? 'bg-blue-600 text-white'
@@ -389,70 +389,73 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
           </div>
 
           {/* Right Panel - Board Details */}
-          <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex-1 flex flex-col min-h-0 lg:min-h-0 h-96 lg:h-auto">
             {selectedBoard ? (
               <>
                 {/* Board Header */}
-                <div className={`p-6 border-b ${
+                <div className={`p-2 lg:p-6 border-b ${
                   theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
                 }`}>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-4">
-                      <h2 className={`text-xl font-bold ${
-                        theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                      }`}>
-                        {selectedBoard.board_ref}
-                      </h2>
-                      <span>{selectedBoard.board_title}</span>
-                      <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(selectedBoard.status)}`}>
-                        {getStatusText(selectedBoard.status)}
-                      </span>
+                  <div className="flex flex-col lg:flex-row items-start justify-between gap-2 lg:gap-4">
+                    <div className="flex-1 min-w-0 w-full lg:w-auto">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h2 className={`text-lg lg:text-xl font-bold ${
+                            theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                          }`}>
+                            {selectedBoard.board_ref}
+                          </h2>
+                          <span className={`px-2 lg:px-3 py-0.5 lg:py-1 rounded-full text-xs lg:text-sm ${getStatusColor(selectedBoard.status)}`}>
+                            {getStatusText(selectedBoard.status)}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                          <span>{selectedBoard.board_title}</span>
+                          <span>•</span>
+                          <span>{selectedBoard.usercustomer?.name_first} {selectedBoard.usercustomer?.name_last}</span>
+                          <span>•</span>
+                          <span>{selectedBoard.serviceboardaction?.length || 0} actions</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto lg:max-w-sm">
+                      <button
+                        onClick={() => handleOpenBoard(selectedBoard.board_ref)}
+                        className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm"
+                        title="Open board"
+                      >
+                        <ArrowTopRightOnSquareIcon className="w-3.5 h-3.5" />
+                        Open Board
+                      </button>
+                      
+                      <button
+                        onClick={() => handleViewDetails(selectedBoard.board_id)}
+                        className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm"
+                        title="View details"
+                      >
+                        <EyeIcon className="w-3.5 h-3.5" />
+                        View Details
+                      </button>
+                      
+                      <button
+                        onClick={() => copyBoardLink(selectedBoard.board_ref)}
+                        className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm"
+                        title="Copy board link"
+                      >
+                        <ClipboardDocumentIcon className="w-3.5 h-3.5" />
+                        Copy Link
+                      </button>
                     </div>
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className={`p-6 border-b ${
-                  theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
-                }`}>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => handleOpenBoard(selectedBoard.board_ref)}
-                      className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center gap-2"
-                      title="Open board"
-                    >
-                      <ArrowTopRightOnSquareIcon className="w-4 h-4" />
-                      Open Board
-                    </button>
-                    
-                    <button
-                      onClick={() => handleViewDetails(selectedBoard.board_id)}
-                      className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors flex items-center gap-2"
-                      title="View details"
-                    >
-                      <EyeIcon className="w-4 h-4" />
-                      View Details
-                    </button>
-                    
-                    <button
-                      onClick={() => copyBoardLink(selectedBoard.board_ref)}
-                      className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors flex items-center gap-2"
-                      title="Copy board link"
-                    >
-                      <ClipboardDocumentIcon className="w-4 h-4" />
-                      Copy Link
-                    </button>
-                  </div>
-                </div>
-
                 {/* Customer Details */}
-                <div className={`p-6 border-b ${
-                  theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
-                }`}>
-                  <h3 className={`text-lg font-semibold mb-3 ${
-                    theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                <div className="p-2 lg:p-6">
+                  <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
+                    theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
                   }`}>Customer Details</h3>
-                  <div className="flex items-center gap-6 text-sm">
+                  <div className="flex flex-wrap items-center gap-3 lg:gap-6 text-xs lg:text-sm">
                     <div className="flex items-center gap-2">
                       <span>{selectedBoard.usercustomer?.name_first} {selectedBoard.usercustomer?.name_last}</span>
                     </div>
@@ -468,12 +471,12 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
                 </div>
 
                 {/* Board Content */}
-                <div className="flex-1 p-6">
-                  <div className="space-y-6">
+                <div className="flex-1 p-2 lg:p-6 space-y-4 lg:space-y-6">
+                  <div className="space-y-4 lg:space-y-6">
                     {/* Board Actions */}
                     <div>
-                      <h3 className={`text-lg font-semibold mb-2 ${
-                        theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                      <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
+                        theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
                       }`}>Board Actions</h3>
                       {selectedBoard.serviceboardaction && selectedBoard.serviceboardaction.length > 0 ? (
                         <div className="space-y-2">
@@ -481,22 +484,40 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
                             <div key={action.action_id} className={`p-3 rounded-lg border ${
                               theme === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
                             }`}>
-                              <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <span className="font-medium">{action.action_title}</span>
-                                    <span className="opacity-75 text-xs">({action.action_type})</span>
-                                  </div>
-                                  <div className="text-xs opacity-75">
-                                    Created: {new Date(action.created_at).toLocaleDateString()}
-                                    {action.due_date && (
-                                      <span className="ml-4">Due: {new Date(action.due_date).toLocaleDateString()}</span>
-                                    )}
+                              <div className="grid grid-cols-[120px_1fr_auto] lg:grid-cols-[120px_1fr_auto] gap-4 items-center">
+                                {/* Column 1: Date and Time */}
+                                <div className="text-xs text-gray-500">
+                                  {action.created_at ? (
+                                    <>
+                                      <div>{new Date(action.created_at).toLocaleDateString()}</div>
+                                      {action.due_date && (
+                                        <div className="text-xs opacity-75">
+                                          Due: {new Date(action.due_date).toLocaleDateString()}
+                                        </div>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <span className="text-gray-400">No date</span>
+                                  )}
+                                  {/* Mobile: Action details in same column */}
+                                  <div className="lg:hidden mt-2">
+                                    <div className="font-medium text-xs">{action.action_title}</div>
+                                    <div className="text-xs opacity-75">{action.action_type}</div>
                                   </div>
                                 </div>
-                                <span className={`px-2 py-1 rounded-full text-xs ${getActionStatusColor(action.action_status)}`}>
-                                  {getActionStatusText(action.action_status)}
-                                </span>
+                                
+                                {/* Column 2: Action Title and Type (Desktop only) */}
+                                <div className="hidden lg:block col-span-1">
+                                  <div className="font-medium text-sm">{action.action_title}</div>
+                                  <div className="text-xs opacity-75">{action.action_type}</div>
+                                </div>
+                                
+                                {/* Column 3: Status Pill */}
+                                <div className="flex justify-end">
+                                  <span className={`px-2 py-1 rounded-full text-xs ${getActionStatusColor(action.action_status)}`}>
+                                    {getActionStatusText(action.action_status)}
+                                  </span>
+                                </div>
                               </div>
                             </div>
                           ))}
@@ -505,7 +526,7 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
                         <div className={`p-3 rounded-lg border ${
                           theme === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
                         }`}>
-                          <div className={`text-sm ${
+                          <div className={`text-xs lg:text-sm ${
                             theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                           }`}>
                             No actions for this board.
@@ -532,3 +553,4 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
     </DashboardLayout>
   )
 }
+
