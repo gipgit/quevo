@@ -61,15 +61,15 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
         {/* Content Area */}
         <div className="pt-3 px-4">
           {/* Business Info */}
-          <div className="text-center mb-3">
+          <div className="text-center mb-1 lg:mb-2">
             <h2 className="text-sm font-medium mb-0.5" style={{ color: theme?.textColor || '#1F2937' }}>
               {business.boardTitle || 'Service Board'}
             </h2>
-            <div className="flex items-center justify-center gap-2 mb-1">
+            <div className="flex items-center justify-center gap-1 mb-1">
               <div className="text-xs font-normal" style={{ color: theme?.textColor || '#1F2937' }}>
                 {business.name}
               </div>
-              <span className="text-xs font-mono" style={{ color: theme?.textColor || '#1F2937' }}>
+              <span className="text-xs font-normal" style={{ color: theme?.textColor || '#1F2937' }}>
                 {business.boardRef}
               </span>
             </div>
@@ -91,47 +91,60 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
           {/* Timeline Preview */}
           <div className="relative">
             {/* Timeline Line */}
-            <div className="absolute left-1 top-0 bottom-0 w-0.5 bg-gray-300 z-0"></div>
+            <div className="absolute -left-0.5 top-0 bottom-0 w-0.5 bg-gray-300 z-0"></div>
             
-          <div className="space-y-3 pl-3">
+          <div className="space-y-3 pl-1">
               {/* Timeline Item 1 - Payment Request */}
             <div className="relative">
-                <div className="absolute -left-3 w-3 h-3 rounded-full bg-yellow-500 border-2 border-yellow-600 mt-2 flex-shrink-0 z-10"></div>
-                <div className="w-[95%] bg-white border border-gray-200 rounded-lg p-2 text-center">
+                <div className="absolute -left-3 w-2.5 h-2.5 rounded-full bg-yellow-500 mt-2 flex-shrink-0 z-10"></div>
+                <div className="w-[100%] bg-white border border-gray-200 rounded-xl p-3 text-center">
                   <div className="text-xs font-bold text-gray-900 mb-1">Payment Request</div>
                   
                   {/* Reason of payment - moved out of gray card */}
-                  <div className="flex items-center justify-center gap-1 mb-2 text-center">
+                  <div className="flex items-center justify-center gap-1 mb-0.5 text-center">
                     <span className="text-[10px] font-normal text-gray-500">Reason of payment</span>
-                    <button className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors">
+                  </div>
+                  <div className="flex items-center justify-center gap-1 text-center">
+                    <span className="text-xs text-gray-800">Service consultation fee</span>
+                    <button className="transition-colors">
                       <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                       </svg>
                     </button>
                   </div>
-                  <div className="text-[10px] text-gray-800 mb-2">Service consultation fee</div>
+                  <div className="mb-2"></div>
                   
                   {/* Bank transfer details - white background */}
                   <div className="bg-white border border-gray-200 rounded-lg p-2 mb-2">
                     <div className="flex items-center justify-center gap-1 mb-1 text-center">
-                      <span className="text-[10px] font-normal text-gray-500">IBAN</span>
-                      <button className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors">
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-green-600 rounded flex items-center justify-center">
+                          <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                          </svg>
+                        </div>
+                        <span className="text-[10px] font-medium text-gray-800">IBAN</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-center gap-1 text-center">
+                      <span className="text-[10px] text-gray-800">IT60X0542811101000000123456</span>
+                      <button className="transition-colors">
                         <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
                       </button>
                     </div>
-                    <div className="text-[10px] text-gray-800">IT60X0542811101000000123456</div>
                   </div>
                   
                   {/* PayPal payment method */}
                   <div className="bg-white border border-gray-200 rounded-lg p-2 mb-2">
-                    <div className="flex items-center justify-center gap-2">
+                    <div className="flex items-center justify-center gap-2 mb-1">
                       <div className="w-4 h-4 bg-blue-600 rounded flex items-center justify-center">
                         <span className="text-white text-[8px] font-bold">P</span>
                       </div>
                       <span className="text-[10px] font-medium text-gray-800">PayPal</span>
                     </div>
+                    <div className="text-[10px] text-gray-600">business@example.com</div>
                   </div>
                   
                   <div className="flex items-center justify-center gap-2 mb-1">
@@ -144,8 +157,8 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
 
               {/* Timeline Item 2 - Document Download */}
               <div className="relative">
-                <div className="absolute -left-3 w-3 h-3 rounded-full bg-red-500 border-2 border-red-600 mt-2 flex-shrink-0 z-10"></div>
-                <div className="w-[95%] bg-white border border-gray-200 rounded-lg p-2 text-center">
+                <div className="absolute -left-3 w-2.5 h-2.5 rounded-full bg-red-500 mt-2 flex-shrink-0 z-10"></div>
+                <div className="w-[100%] bg-white border border-gray-200 rounded-xl p-3 text-center">
                   <div className="text-[10px] font-bold text-gray-900 mb-1">Document Download</div>
                   <div className="flex items-center justify-center gap-2 mb-1">
                     <span className="inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-gray-100 text-gray-800">PDF</span>
@@ -162,37 +175,6 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
                 </div>
               </div>
 
-              {/* Timeline Item 3 - Milestone Update */}
-              <div className="relative">
-                <div className="absolute -left-3 w-3 h-3 rounded-full bg-blue-500 border-2 border-blue-600 mt-2 flex-shrink-0 z-10"></div>
-                <div className="w-[95%] bg-white border border-gray-200 rounded-lg p-2 text-center">
-                  <div className="text-xs font-bold text-gray-900 mb-1">Milestone Update</div>
-                  <div className="flex items-center justify-center gap-2 mb-1">
-                    <h3 className="text-xs font-semibold text-gray-900">Initial Consultation</h3>
-                    <div className="h-5 w-5 rounded-full bg-blue-100 flex items-center justify-center">
-                      <svg className="h-3 w-3 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="text-xs text-gray-600 mb-1">Project milestone in progress</div>
-                  <div className="text-[10px] text-gray-500">2 days ago</div>
-              </div>
-            </div>
-
-              {/* Timeline Item 4 - Checklist */}
-            <div className="relative">
-                <div className="absolute -left-3 w-3 h-3 rounded-full bg-green-500 border-2 border-green-600 mt-2 flex-shrink-0 z-10"></div>
-                <div className="w-[95%] bg-white border border-gray-200 rounded-lg p-2 text-center">
-                  <div className="text-xs font-bold text-gray-900 mb-1">Checklist</div>
-                  <div className="flex items-center justify-center gap-2 mb-1">
-                    <h3 className="text-xs font-semibold text-gray-900">Requirements</h3>
-                    <span className="text-xs font-medium text-gray-700">75%</span>
-                  </div>
-                  <div className="text-xs text-gray-600 mb-1">Project requirements verification</div>
-                  <div className="text-[10px] text-gray-500">3 days ago</div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -216,7 +198,7 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
       >
         <div className="flex items-center justify-between">
           {/* Left - Business Info */}
-          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
               {business.profileImage ? (
                 <Image
@@ -235,10 +217,10 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
               )}
             </div>
             <div>
-              <h2 className="text-sm font-medium mb-1" style={{ color: theme?.textColor || '#1F2937' }}>
+              <h2 className="text-base font-medium mb-1" style={{ color: theme?.textColor || '#1F2937' }}>
                 {business.boardTitle || 'Service Board'}
               </h2>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 <div className="text-xs font-normal" style={{ color: theme?.textColor || '#1F2937' }}>
                   {business.name}
                 </div>
@@ -257,7 +239,7 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
               </svg>
             </div>
-            <div className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-700">
+            <div className="px-3 py-1.5 rounded-lg text-xs font-medium bg-transparent border" style={{ borderColor: theme?.buttonBgColor || '#3B82F6', color: theme?.buttonBgColor || '#3B82F6' }}>
               Request Support
             </div>
             <div className="px-3 py-1.5 rounded-lg text-xs font-medium" style={{ backgroundColor: theme?.buttonBgColor || '#3B82F6', color: theme?.buttonTextColor || '#FFFFFF' }}>
@@ -271,65 +253,77 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
 
               {/* Three Column Layout */}
         <div className="px-2 pb-4">
-          <div className="grid grid-cols-8 gap-0.5">
+          <div className="grid grid-cols-8 gap-0">
             {/* Timeline Section - Even Narrower */}
             <div className="col-span-4 p-3">
               <div className="relative">
                 {/* Timeline Line */}
-                <div className="absolute left-1 top-0 bottom-0 w-0.5 bg-gray-300 z-0"></div>
+                <div className="absolute left-0.5 top-0 bottom-0 w-0.5 bg-gray-300 z-0"></div>
                 
               <div className="space-y-2 pl-3">
                 <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
                   <div className="relative">
-                      <div className="absolute -left-8 w-3 h-3 rounded-full bg-yellow-500 border-2 border-yellow-600 mt-1 flex-shrink-0 z-10"></div>
+                      <div className="absolute -left-8 w-3 h-3 rounded-full bg-yellow-500 mt-1 flex-shrink-0 z-10"></div>
                       <div className="w-[95%]">
                         <div className="text-sm font-bold text-gray-900 mb-1">Payment Request</div>
                         
                         {/* Reason of payment - moved out of gray card */}
-                        <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center justify-between mb-0.5">
                           <span className="text-[10px] font-normal text-gray-500">Reason of payment</span>
-                          <button className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors">
+                        </div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs text-gray-800">Service consultation fee</span>
+                          <button className="transition-colors">
                             <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                             </svg>
                           </button>
                         </div>
-                        <div className="text-[10px] text-gray-800 mb-2">Service consultation fee</div>
                         
                         {/* Bank transfer details - white background */}
                         <div className="bg-white border border-gray-200 rounded-lg p-2 mb-2">
                           <div className="flex items-center justify-between mb-1">
-                            <span className="text-[10px] font-normal text-gray-500">IBAN</span>
-                            <button className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors">
+                            <div className="flex items-center gap-2">
+                              <div className="w-4 h-4 bg-green-600 rounded flex items-center justify-center">
+                                <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                </svg>
+                              </div>
+                              <span className="text-[10px] font-medium text-gray-800">IBAN</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] text-gray-800">IT60X0542811101000000123456</span>
+                            <button className="transition-colors">
                               <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                               </svg>
                             </button>
                           </div>
-                          <div className="text-[10px] text-gray-800">IT60X0542811101000000123456</div>
                         </div>
                         
                         {/* PayPal payment method */}
                         <div className="bg-white border border-gray-200 rounded-lg p-2 mb-2">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 mb-1">
                             <div className="w-4 h-4 bg-blue-600 rounded flex items-center justify-center">
                               <span className="text-white text-[8px] font-bold">P</span>
                             </div>
                             <span className="text-[10px] font-medium text-gray-800">PayPal</span>
                           </div>
+                          <div className="text-[10px] text-gray-600">business@example.com</div>
                         </div>
                         
                         <div className="flex items-center gap-2 mb-1">
                           <div className="text-sm font-bold text-gray-900">€ 150.00</div>
                           <span className="px-1 py-0.5 rounded-full text-[10px] font-medium bg-yellow-100 text-yellow-800">pending</span>
                         </div>
-                        <div className="text-xs text-gray-500">2 hours ago</div>
+                        <div className="text-[10px] text-gray-500">2 hours ago</div>
                     </div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
                   <div className="relative">
-                      <div className="absolute -left-8 w-3 h-3 rounded-full bg-red-500 border-2 border-red-600 mt-1 flex-shrink-0 z-10"></div>
+                      <div className="absolute -left-8 w-3 h-3 rounded-full bg-red-500 mt-1 flex-shrink-0 z-10"></div>
                       <div className="w-[95%]">
                         <div className="text-sm font-bold text-gray-900 mb-1">Document Download</div>
                         <div className="flex items-center gap-2 mb-1">
@@ -342,13 +336,13 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
                             Download
                           </button>
                         </div>
-                        <div className="text-xs text-gray-500">1 day ago</div>
+                        <div className="text-[10px] text-gray-500">1 day ago</div>
                       </div>
                     </div>
                   </div>
                   <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
                     <div className="relative">
-                      <div className="absolute -left-8 w-3 h-3 rounded-full bg-blue-500 border-2 border-blue-600 mt-1 flex-shrink-0 z-10"></div>
+                      <div className="absolute -left-8 w-3 h-3 rounded-full bg-blue-500 mt-1 flex-shrink-0 z-10"></div>
                       <div className="w-[95%]">
                         <div className="text-sm font-bold text-gray-900 mb-1">Milestone Update</div>
                         <div className="flex items-center justify-between mb-1">
@@ -359,20 +353,20 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
                             </svg>
                           </div>
                         </div>
-                        <div className="text-xs text-gray-500">2 days ago</div>
+                        <div className="text-[10px] text-gray-500">2 days ago</div>
                       </div>
                     </div>
                   </div>
                   <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
                     <div className="relative">
-                      <div className="absolute -left-8 w-3 h-3 rounded-full bg-green-500 border-2 border-green-600 mt-1 flex-shrink-0 z-10"></div>
+                      <div className="absolute -left-8 w-3 h-3 rounded-full bg-green-500 mt-1 flex-shrink-0 z-10"></div>
                       <div className="w-[95%]">
                         <div className="text-sm font-bold text-gray-900 mb-1">Checklist</div>
                         <div className="flex items-center justify-between mb-1">
                           <h3 className="text-sm font-semibold text-gray-900">Requirements</h3>
                           <span className="text-xs font-medium text-gray-700">75%</span>
                         </div>
-                        <div className="text-xs text-gray-500">3 days ago</div>
+                        <div className="text-[10px] text-gray-500">3 days ago</div>
                       </div>
                     </div>
                   </div>
@@ -389,19 +383,19 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
                     <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    <span className="text-xs font-medium text-gray-900">Tomorrow</span>
+                    <span className="text-[10px] font-medium text-gray-900">Dec 15, 2024</span>
                     <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className="text-xs font-medium text-gray-900">2:00 PM</span>
+                    <span className="text-[10px] font-medium text-gray-900">2:00 PM</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-blue-600">Zoom Meeting</span>
-                    <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 rounded-full">
-                      <svg className="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <span className="text-[10px] text-blue-600">Zoom Meeting</span>
+                    <div className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-50 rounded-full">
+                      <svg className="w-2.5 h-2.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                       </svg>
-                      <span className="text-xs text-blue-600">Open</span>
+                      <span className="text-[10px] text-blue-600">Open</span>
                     </div>
                   </div>
                 </div>
@@ -411,23 +405,23 @@ const ServiceBoardScreenshot = ({ business, variant = 'mobile', className = '' }
                     <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    <span className="text-xs font-medium text-gray-900">Next week</span>
+                    <span className="text-[10px] font-medium text-gray-900">Dec 22, 2024</span>
                     <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className="text-xs font-medium text-gray-900">10:00 AM</span>
+                    <span className="text-[10px] font-medium text-gray-900">10:00 AM</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-600">123 Main St</span>
+                    <span className="text-[10px] text-gray-600">123 Main St</span>
                     <div className="flex items-center gap-1">
-                      <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
-                        <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center">
+                        <svg className="w-2.5 h-2.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                       </div>
-                      <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
-                        <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center">
+                        <svg className="w-2.5 h-2.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                       </div>
