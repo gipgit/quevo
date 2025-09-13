@@ -39,7 +39,7 @@ export default function SectionSteps({ locale }) {
       @media (min-width: 1024px) {
         .timeline-dot-absolute {
           left: 50% !important;
-          top: 50% !important;
+          top: 0% !important;
           transform: translateX(-50%) !important;
         }
       }
@@ -436,10 +436,10 @@ export default function SectionSteps({ locale }) {
         {/* Vertical Timeline Layout */}
         <div className="relative max-w-6xl mx-auto" data-timeline-container>
           {/* Timeline line - left for mobile, centered for lg+ */}
-          <div className="absolute left-4 lg:left-1/2 lg:transform lg:-translate-x-1/2 top-0 bottom-0 w-1 bg-gray-300"></div>
+          <div className="absolute left-2 lg:left-1/2 lg:transform lg:-translate-x-1/2 top-0 bottom-0 w-1 bg-gray-300"></div>
           <div 
             ref={timelineRef}
-            className="absolute left-4 lg:left-1/2 lg:transform lg:-translate-x-1/2 top-0 w-1 bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300"
+            className="absolute left-2 lg:left-1/2 lg:transform lg:-translate-x-1/2 top-0 w-1 bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300"
             style={{ 
               height: `${Math.max(10, timelineProgress * 100)}%`,
               maxHeight: '100%',
@@ -470,13 +470,13 @@ export default function SectionSteps({ locale }) {
                 >
                   {/* Timeline dot - positioned absolutely relative to timeline container */}
                   <div 
-                    className={`timeline-dot-absolute absolute w-8 h-8 lg:w-12 lg:h-12 rounded-full shadow-lg z-10 transition-all duration-700 ease-out flex items-center justify-center text-white text-sm lg:text-lg ${
+                    className={`timeline-dot-absolute absolute w-[25px] h-[25px] lg:w-8 lg:h-8 rounded-full shadow-lg z-10 transition-all duration-700 ease-out flex items-center justify-center text-white text-xs lg:text-base ${
                       timelineReached 
                         ? 'bg-blue-500 scale-75 lg:scale-100 shadow-xl' 
                         : 'bg-gray-300 scale-75'
                     }`}
                     style={{
-                      left: '0px',
+                      left: '-2.5px',
                       top: '0%',
                       transform: 'translateY(-0%)',
                       transitionDelay: timelineReached ? `${index * 100}ms` : '0ms'
@@ -486,8 +486,8 @@ export default function SectionSteps({ locale }) {
                   </div>
                          
                   {/* Step content */}
-                  <div className={`w-[85%] lg:w-5/12 max-w-[250px] lg:max-w-[380px] transition-all duration-800 ease-out ${
-                    isEven ? 'ml-10 lg:ml-0 lg:pr-2 text-left lg:text-right' : 'ml-10 lg:ml-auto lg:pl-2 text-left'
+                  <div className={`w-[90%] lg:w-5/12 max-w-[300px] lg:max-w-[400px] transition-all duration-800 ease-out ${
+                    isEven ? 'ml-[10%] lg:ml-0 lg:pr-2 text-left lg:text-right' : 'ml-[10%] lg:ml-auto lg:pl-2 text-left'
                   } ${
                     isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'
                   }`}

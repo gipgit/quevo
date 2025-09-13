@@ -346,7 +346,7 @@ body{
     box-sizing: border-box;
     font-size: 100%;
     font-size: 13px;
-    letter-spacing: .25px;
+    letter-spacing: .15px;
     font-family: "FontMain", sans-serif;
     -webkit-tap-highlight-color: transparent;
     overflow-x: hidden;
@@ -476,25 +476,25 @@ body.bg-transition {
 
 @font-face {
     font-family: "FontMain";
-    src: url("../../../public/fonts/custom/Raveo\ Display\ Light.otf") format("opentype");
+    src: url("../../../public/fonts/custom/Geist-Light.otf") format("opentype");
 }
 
 @font-face {
     font-family: "FontSemiBold";
-    src: url("../../../public/fonts/custom/Raveo\ Display\ Medium.otf") format("truetype");
+    src: url("../../../public/fonts/custom/Geist-Medium.otf") format("truetype");
 }
 @font-face {
     font-family: "FontBold";
-    src: url("../../../public/fonts/custom/Raveo\ Display\ Medium.otf") format("truetype");
+    src: url("../../../public/fonts/custom/Geist-Medium.otf") format("truetype");
 }
 @font-face {
     font-family: "FontHeading";
-    src: url("../../../public/fonts/custom/Raveo\ Display\ Medium.otf") format("truetype");
+    src: url("../../../public/fonts/custom/Geist-Medium.otf") format("truetype");
 }
 
 @font-face {
     font-family: "FontButton";
-    src: url("../../../public/fonts/custom/Raveo\ Display\ Regular.otf") format("truetype");
+    src: url("../../../public/fonts/custom/Geist-Regular.otf") format("truetype");
 }
 
 @font-face {
@@ -506,7 +506,7 @@ body.bg-transition {
 h1,h2,h3,h4,h5,h6{
     font-family: "FontHeading", sans-serif;
     line-height: 1;
-    letter-spacing: .1px;
+    letter-spacing: 0px;
     margin: 0;
     padding: 0;
 }
@@ -1141,5 +1141,14 @@ background: radial-gradient(circle at top center,rgba(255, 255, 153, 0.3) 0,tran
 
 .rich-text-display span[style*="font-family: Arial"] {
     font-family: inherit !important;
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
 }
 

@@ -328,12 +328,10 @@
     "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
     "signInLink": "Hier anmelden",
     "benefits": {
-      "title": "Warum Flowia wählen?",
       "freePlan": "1 Plan immer kostenlos",
       "noPaymentDetails": "Kostenlos ohne Zahlungsdetails starten",
       "cancelAnytime": "Jederzeit ändern oder kündigen",
       "instantSetup": "Sofortige Einrichtung und Aktivierung",
-      "professionalTools": "Professionelle Geschäftstools",
       "customerSupport": "24/7 Kundensupport"
     }
   },

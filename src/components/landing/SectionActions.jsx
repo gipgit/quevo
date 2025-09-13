@@ -641,10 +641,10 @@ export default function SectionActions({ locale }) {
 
         {/* Primary Title Section */}
         <div className="text-center mb-8 lg:mb-16">
-          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-4">
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 leading-tight mb-4">
             {t('Actions.title')}
           </h1>
-          <p className="text-md lg:text-xl text-gray-600 leading-tight lg:leading-relaxed max-w-3xl mx-auto mb-8">
+          <p className="text-md lg:text-lg text-gray-600 leading-tight lg:leading-relaxed max-w-3xl mx-auto mb-8">
             {t('Actions.subtitle')}
           </p>
         </div>

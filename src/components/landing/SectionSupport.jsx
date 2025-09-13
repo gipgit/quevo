@@ -70,41 +70,37 @@ export default function SectionSupport({ locale }) {
 
       <div className="container mx-auto px-6 lg:px-12 max-w-7xl relative z-10">
         {/* Header */}
-        <div className="text-center mb-10 lg:mb-16">
+        <div className="text-center mb-6 lg:mb-12">
           <h2 className="text-2xl lg:text-4xl font-bold text-gray-900 mb-6">
             {t('Support.title.prefix')} <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{t('Support.title.highlighted')}</span>
           </h2>
-          <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto leading-snug">
-            {t('Support.subtitle')}
-          </p>
         </div>
 
         {/* Support Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-1 md:gap-4 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-1 md:gap-2 mb-20">
           {supportFeatures.map((feature, index) => (
             <div
               key={index}
-              className="group relative p-3 md:p-4 transition-all duration-300 hover:-translate-y-1 text-center"
+              className="group relative p-3 md:p-4 text-center"
             >
               {/* Icon and title in same row for mobile */}
-              <div className="flex items-center justify-center lg:flex-col mb-2 lg:mb-3">
-                <div className="text-2xl md:text-3xl lg:mb-3 mr-3 lg:mr-0">{feature.icon}</div>
+              <div className="flex items-center justify-center lg:flex-col mb-1 lg:mb-2">
+                <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-blue-50 flex items-center justify-center text-lg md:text-xl lg:text-2xl lg:mb-3 mr-3 lg:mr-0">
+                  {feature.icon}
+                </div>
                 <h3 className="text-base md:text-lg font-semibold text-gray-900">
                   {feature.title}
                 </h3>
               </div>
               
-              <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium mb-2 ${
-                feature.badge === 'Pro+' 
-                  ? 'bg-blue-100 text-blue-700' 
-                  : feature.badge === 'Enterprise'
-                  ? 'bg-purple-100 text-purple-700'
-                  : 'bg-gray-100 text-gray-700'
-              }`}>
-                {feature.badge}
-              </div>
+              {/* Plan Badge - Only show for Pro+ */}
+              {feature.badge === 'Pro+' && (
+                <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium mb-2 bg-blue-100 text-blue-700">
+                  {feature.badge}
+                </div>
+              )}
               
-              <p className="text-xs md:text-sm leading-relaxed text-gray-600">
+              <p className="text-xs md:text-sm leading-snug text-gray-600">
                 {feature.description}
               </p>
             </div>
@@ -114,10 +110,10 @@ export default function SectionSupport({ locale }) {
         {/* Testimonials Section */}
         <div className="bg-white rounded-3xl p-8 lg:p-12 shadow-xl border border-gray-100">
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-gray-900 mb-4">
+            <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4">
               {t('Support.testimonials.title')}
             </h3>
-            <p className="text-gray-600 text-lg">
+            <p className="text-gray-600 text-base lg:text-lg">
               {t('Support.testimonials.subtitle')}
             </p>
           </div>

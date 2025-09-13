@@ -230,13 +230,88 @@ export default function ManagerSignInPage() {
   }, [error.show])
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
-      <div className="text-center mb-8">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 relative overflow-hidden">
+      {/* Light Neutral Gradient Layer 1 */}
+      <div 
+        className="absolute z-1"
+        style={{
+          background: 'linear-gradient(143.241deg, rgb(248, 250, 252) 0%, rgb(241, 245, 249) 31.087%, rgb(226, 232, 240) 70.4599%, rgb(248, 250, 252) 100%)',
+          filter: 'blur(80px)',
+          borderRadius: '100%',
+          opacity: 0.8,
+          height: '600px',
+          left: '-300px',
+          top: '-200px',
+          width: '800px'
+        }}
+      ></div>
+      
+      {/* Light Neutral Gradient Layer 2 */}
+      <div 
+        className="absolute z-1"
+        style={{
+          background: 'linear-gradient(140.017deg, rgb(241, 245, 249) 0%, rgb(226, 232, 240) 60.8266%, rgb(248, 250, 252) 100%)',
+          filter: 'blur(80px)',
+          borderRadius: '100%',
+          opacity: 0.6,
+          height: '600px',
+          right: '-200px',
+          bottom: '-150px',
+          width: '800px'
+        }}
+      ></div>
+      
+      {/* Bottom Color Layer 1 */}
+      <div 
+        className="absolute z-1"
+        style={{
+          background: '#8A5FBF',
+          filter: 'blur(80px)',
+          opacity: 0.9,
+          height: '180px',
+          bottom: '-90px',
+          left: '0',
+          width: '33.33%',
+          borderRadius: '100%'
+        }}
+      ></div>
+      
+      {/* Bottom Color Layer 2 */}
+      <div 
+        className="absolute z-1"
+        style={{
+          background: '#FFB366',
+          filter: 'blur(80px)',
+          opacity: 0.9,
+          height: '180px',
+          bottom: '-90px',
+          left: '33.33%',
+          width: '33.33%',
+          borderRadius: '100%'
+        }}
+      ></div>
+      
+      {/* Bottom Color Layer 3 */}
+      <div 
+        className="absolute z-1"
+        style={{
+          background: '#7ED321',
+          filter: 'blur(80px)',
+          opacity: 0.9,
+          height: '180px',
+          bottom: '-90px',
+          left: '66.66%',
+          width: '33.33%',
+          borderRadius: '100%'
+        }}
+      ></div>
+      
+      <div className="text-center mb-8 relative z-10">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">Flowia</h1>
         <p className="text-gray-600">{t("subtitle")}</p>
       </div>
       
-                 <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 w-full max-w-[380px]">
+                 <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 w-full max-w-[380px] relative z-10">
          
          <form onSubmit={handleSubmit} className="space-y-6">
           <div>
@@ -295,18 +370,26 @@ export default function ManagerSignInPage() {
           
           <button
             type="submit"
-            className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-200 flex items-center justify-center ${
+            className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-200 flex items-center justify-center relative overflow-hidden ${
               loading
-                ? "bg-gray-400 text-white cursor-not-allowed"
+                ? "bg-black text-white cursor-not-allowed"
                 : "bg-black text-white hover:bg-gray-800 active:transform active:scale-95"
             }`}
             disabled={loading}
           >
+            {loading && (
+              <div className="absolute inset-0 overflow-hidden">
+                <div 
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 w-1/3"
+                  style={{
+                    animation: 'shimmer 2s ease-in-out infinite',
+                    left: '-100%'
+                  }}
+                ></div>
+              </div>
+            )}
             {loading ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                {t("loading")}
-              </>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
             ) : (
               tCommon("loginButton")
             )}
@@ -335,7 +418,7 @@ export default function ManagerSignInPage() {
                 </div>
       
              {/* Links and locale switcher below the card */}
-       <div className="mt-6 text-center">
+       <div className="mt-6 text-center relative z-10">
          <p className="text-sm text-gray-600 mb-4">
            {t("noAccountText")}{" "}
            <a 

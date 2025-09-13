@@ -465,13 +465,87 @@ export default function BusinessSignupPage() {
         </div>
 
         {/* Right side - Dark background with branding and benefits */}
-        <div className="flex-1 bg-gray-900 flex items-center justify-center text-white p-8">
-          <div className="text-left py-8 max-w-md">
+        <div className="flex-1 bg-gray-900 flex items-center justify-center text-white p-8 relative overflow-hidden">
+          {/* Gradient Layer 1 */}
+          <div 
+            className="absolute z-1"
+            style={{
+              background: 'linear-gradient(143.241deg, rgb(128, 169, 252) 0%, rgb(211, 123, 255) 31.087%, rgb(252, 171, 131) 70.4599%, rgb(255, 73, 212) 100%)',
+              filter: 'blur(80px)',
+              borderRadius: '100%',
+              opacity: 0.24,
+              height: '400px',
+              left: '-200px',
+              top: '-100px',
+              width: '500px'
+            }}
+          ></div>
+          
+          {/* Gradient Layer 2 */}
+          <div 
+            className="absolute z-1"
+            style={{
+              background: 'linear-gradient(140.017deg, rgb(239, 232, 246) 0%, rgb(213, 136, 251) 60.8266%, rgb(255, 73, 212) 100%)',
+              filter: 'blur(80px)',
+              borderRadius: '100%',
+              opacity: 0.18,
+              height: '400px',
+              right: '-150px',
+              bottom: '-100px',
+              width: '500px'
+            }}
+          ></div>
+          
+          {/* Bottom Color Layer 1 */}
+          <div 
+            className="absolute z-1"
+            style={{
+              background: '#8A5FBF',
+              filter: 'blur(80px)',
+              opacity: 0.9,
+              height: '180px',
+              bottom: '-90px',
+              left: '0',
+              width: '33.33%',
+              borderRadius: '100%'
+            }}
+          ></div>
+          
+          {/* Bottom Color Layer 2 */}
+          <div 
+            className="absolute z-1"
+            style={{
+              background: '#FFB366',
+              filter: 'blur(80px)',
+              opacity: 0.9,
+              height: '180px',
+              bottom: '-90px',
+              left: '33.33%',
+              width: '33.33%',
+              borderRadius: '100%'
+            }}
+          ></div>
+          
+          {/* Bottom Color Layer 3 */}
+          <div 
+            className="absolute z-1"
+            style={{
+              background: '#7ED321',
+              filter: 'blur(80px)',
+              opacity: 0.9,
+              height: '180px',
+              bottom: '-90px',
+              left: '66.66%',
+              width: '33.33%',
+              borderRadius: '100%'
+            }}
+          ></div>
+          
+          <div className="text-left py-8 max-w-md relative z-10">
             <h1 className="text-xl mb-4">{t("rightSideTitle")}</h1>
            
             {/* Benefits List */}
             <div className="text-left">
-              <h3 className="text-base mb-6">{t("benefits.title")}</h3>
               <div className="space-y-2 lg:space-y-3">
                 <div className="flex items-start space-x-3">
                   <CheckIcon className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
@@ -488,10 +562,6 @@ export default function BusinessSignupPage() {
                 <div className="flex items-start space-x-3">
                   <CheckIcon className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
                   <span className="text-gray-200">{t("benefits.instantSetup")}</span>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <CheckIcon className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-200">{t("benefits.professionalTools")}</span>
                 </div>
                 <div className="flex items-start space-x-3">
                   <CheckIcon className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />

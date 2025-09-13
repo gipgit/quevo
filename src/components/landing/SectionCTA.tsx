@@ -8,7 +8,7 @@ export default function SectionCTA() {
     
     return (
         <section className="py-16 px-4 lg:px-8">
-            <div className="max-w-6xl mx-auto">
+            <div className="max-w-7xl mx-auto">
                 <div 
                     className="relative rounded-3xl p-8 lg:p-16 overflow-hidden"
                     style={{ backgroundColor: 'rgb(27, 12, 37)' }}
@@ -43,11 +43,56 @@ export default function SectionCTA() {
                         }}
                     ></div>
                     
+                    {/* Bottom Color Layer 1 */}
+                    <div 
+                        className="absolute z-1"
+                        style={{
+                            background: '#8A5FBF',
+                            filter: 'blur(80px)',
+                            opacity: 0.9,
+                            height: '180px',
+                            bottom: '-90px',
+                            left: '0',
+                            width: '33.33%',
+                            borderRadius: '100%'
+                        }}
+                    ></div>
+                    
+                    {/* Bottom Color Layer 2 */}
+                    <div 
+                        className="absolute z-1"
+                        style={{
+                            background: '#FFB366',
+                            filter: 'blur(80px)',
+                            opacity: 0.9,
+                            height: '180px',
+                            bottom: '-90px',
+                            left: '33.33%',
+                            width: '33.33%',
+                            borderRadius: '100%'
+                        }}
+                    ></div>
+                    
+                    {/* Bottom Color Layer 3 */}
+                    <div 
+                        className="absolute z-1"
+                        style={{
+                            background: '#7ED321',
+                            filter: 'blur(80px)',
+                            opacity: 0.9,
+                            height: '180px',
+                            bottom: '-90px',
+                            left: '66.66%',
+                            width: '33.33%',
+                            borderRadius: '100%'
+                        }}
+                    ></div>
+                    
                     <div className="relative z-10 text-center">
                         <h2 className="text-2xl md:text-3xl lg:text-5xl font-normal leading-tight mb-4 drop-shadow-lg">
                             <span className="text-white">{t('CTA.title.part1')}</span> <span className="text-white">{t('CTA.title.part2')}</span>
                         </h2>
-                        <p className="text-base lg:text-xl mb-8 text-gray-300 leading-tight lg:leading-relaxed max-w-3xl mx-auto drop-shadow-md">
+                        <p className="text-sm lg:text-xl mb-6 lg:mb-8 text-gray-300 leading-tight lg:leading-relaxed max-w-3xl mx-auto drop-shadow-md">
                             {t('CTA.subtitle')}
                         </p>
                         <div className="flex flex-col gap-4 justify-center items-center">

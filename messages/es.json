@@ -574,12 +574,10 @@
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",
     "signInLink": "Inicia sesión aquí",
     "benefits": {
-      "title": "¿Por qué elegir Flowia?",
       "freePlan": "1 plan siempre gratuito",
       "noPaymentDetails": "Comienza gratis sin datos de pago",
       "cancelAnytime": "Cambia o cancela en cualquier momento",
       "instantSetup": "Configuración e activación instantáneas",
-      "professionalTools": "Herramientas profesionales para negocios",
       "customerSupport": "Soporte al cliente 24/7"
     }
   },
@@ -1458,7 +1456,6 @@
         "prefix": "Soporte de",
         "highlighted": "Clase Mundial"
       },
-      "subtitle": "Experimenta soporte que va más allá de las expectativas. Desde asistencia premium 24/7 hasta experiencia multilingüe, estamos aquí para asegurar tu éxito en cada paso.",
       "features": {
         "knowledgeBase": {
           "title": "Base de Conocimiento Integral",

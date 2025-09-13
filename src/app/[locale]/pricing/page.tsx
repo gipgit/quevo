@@ -85,10 +85,10 @@ export default function PricingPage() {
         {!showPlanSelector ? (
           <>
             
-            <div className="text-center mb-12">
-              <p className="text-3xl text-gray-600 mb-6">
+            <div className="text-center mb-6 lg:mb-12">
+              <h4 className="font-bold text-2xl lg:text-5xl mb-3 lg:mb-6">
                 {t('subtitle')}
-              </p>
+              </h4>
               
               {/* 3 Horizontal List Items */}
               <div className="flex flex-wrap justify-center gap-1 lg:gap-6">
@@ -119,10 +119,8 @@ export default function PricingPage() {
                 <div
                   key={plan.id}
         className={`rounded-3xl border p-8 flex flex-col justify-between transition-all duration-300 hover:shadow-xl bg-white ${
-          plan.name.toLowerCase().includes('pro plus') 
-            ? "border-gray-300 shadow-2xl scale-105 ring-2 ring-gray-200" 
-            : plan.name.toLowerCase().includes('pro unlimited')
-            ? "border-gray-300 shadow-xl scale-102"
+          plan.name.toLowerCase().includes('pro unlimited')
+            ? "border-gray-300 shadow-xl"
             : "border-gray-200 shadow-lg"
         }`}
                 >
@@ -177,7 +175,7 @@ export default function PricingPage() {
             
             {/* Marketing Modules */}
             <div className="mt-20">
-              <div className="text-center mb-12">
+              <div className="text-center mb-12 max-w-[1200px] mx-auto">
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">
                   Marketing Modules
                 </h2>
@@ -186,13 +184,13 @@ export default function PricingPage() {
                 </p>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1200px] mx-auto">
                 {modules.filter(module => 
                   ['email-marketing', 'ai-email-creator', 'ai-social-creator'].includes(module.id)
                 ).map((module) => (
                   <div
                     key={module.id}
-                    className="bg-white rounded-2xl border border-gray-200 p-6 shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col"
+                    className="bg-white rounded-2xl border border-gray-200 p-6 lg:p-8 shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col"
                   >
                     <div className="flex items-center gap-3 mb-4">
                       <span className="text-2xl">{module.icon}</span>
@@ -206,7 +204,22 @@ export default function PricingPage() {
                       <span className="text-gray-500">/ {module.frequency}</span>
                     </div>
                     
-                    <p className="text-gray-600 mb-4 flex-grow">{module.description}</p>
+                    <p className="text-gray-600 mb-4">{module.description}</p>
+                    
+                    {module.aiCredits && (
+                      <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-xl p-3 mb-4 shadow-sm">
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-center w-6 h-6 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full">
+                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                          <span className="text-sm font-semibold text-amber-800 bg-gradient-to-r from-amber-100 to-yellow-100 px-2 py-1 rounded-md">
+                            {module.aiCredits}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                     
                     <button 
                       className="w-full py-3 px-4 bg-black hover:bg-gray-800 text-white rounded-lg font-semibold transition-all duration-300 mb-4"
@@ -216,7 +229,7 @@ export default function PricingPage() {
                     </button>
                     
                     <div className="flex-grow">
-                      <ul className="space-y-2 mb-4">
+                      <ul className="space-y-2">
                         {module.features.map((feature, index) => (
                           <li key={index} className="flex items-start gap-3 text-sm text-gray-700">
                             <svg className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
@@ -226,17 +239,6 @@ export default function PricingPage() {
                           </li>
                         ))}
                       </ul>
-                      
-                      {module.aiCredits && (
-                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                          <div className="flex items-center gap-2">
-                            <span className="text-yellow-600">🪙</span>
-                            <span className="text-sm font-medium text-yellow-800">
-                              {module.aiCredits}
-                            </span>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))}
@@ -245,7 +247,7 @@ export default function PricingPage() {
 
             {/* Request / Support Management Modules */}
             <div className="mt-20">
-              <div className="text-center mb-12">
+              <div className="text-center mb-12 max-w-[1200px] mx-auto">
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">
                   Request / Support Management
                 </h2>
@@ -254,13 +256,13 @@ export default function PricingPage() {
                 </p>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1200px] mx-auto">
                 {modules.filter(module => 
                   ['ai-chat-assistant', 'ai-support-assistant', 'response-assistant'].includes(module.id)
                 ).map((module) => (
                   <div
                     key={module.id}
-                    className="bg-white rounded-2xl border border-gray-200 p-6 shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col"
+                    className="bg-white rounded-2xl border border-gray-200 p-6 lg:p-8 shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col"
                   >
                     <div className="flex items-center gap-3 mb-4">
                       <span className="text-2xl">{module.icon}</span>
@@ -274,7 +276,22 @@ export default function PricingPage() {
                       <span className="text-gray-500">/ {module.frequency}</span>
                     </div>
                     
-                    <p className="text-gray-600 mb-4 flex-grow">{module.description}</p>
+                    <p className="text-gray-600 mb-4">{module.description}</p>
+                    
+                    {module.aiCredits && (
+                      <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-xl p-3 mb-4 shadow-sm">
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-center w-6 h-6 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full">
+                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                          <span className="text-sm font-semibold text-amber-800 bg-gradient-to-r from-amber-100 to-yellow-100 px-2 py-1 rounded-md">
+                            {module.aiCredits}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                     
                     <button 
                       className="w-full py-3 px-4 bg-black hover:bg-gray-800 text-white rounded-lg font-semibold transition-all duration-300 mb-4"
@@ -284,7 +301,7 @@ export default function PricingPage() {
                     </button>
                     
                     <div className="flex-grow">
-                      <ul className="space-y-2 mb-4">
+                      <ul className="space-y-2">
                         {module.features.map((feature, index) => (
                           <li key={index} className="flex items-start gap-3 text-sm text-gray-700">
                             <svg className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
@@ -294,17 +311,6 @@ export default function PricingPage() {
                           </li>
                         ))}
                       </ul>
-                      
-                      {module.aiCredits && (
-                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                          <div className="flex items-center gap-2">
-                            <span className="text-yellow-600">🪙</span>
-                            <span className="text-sm font-medium text-yellow-800">
-                              {module.aiCredits}
-                            </span>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))}
