@@ -986,11 +986,17 @@ export default function SocialMediaContentGenerator({
                     onClick={() => handleServiceToggle(service.service_id.toString())}
                     className={`p-2 rounded-lg border-2 transition-all duration-200 relative text-center ${
                       isSelected
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100'
-                        : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
+                        ? theme === 'dark' 
+                          ? 'border-blue-500 bg-blue-900/20 text-blue-100'
+                          : 'border-blue-500 bg-blue-50 text-blue-900'
+                        : theme === 'dark'
+                          ? 'border-gray-600 bg-gray-700 hover:bg-gray-600'
+                          : 'border-gray-200 bg-gray-50 hover:bg-gray-100'
                     }`}
                   >
-                    <div className="font-medium text-sm">{service.service_name}</div>
+                    <div className={`font-medium text-sm ${
+                      theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                    }`}>{service.service_name}</div>
                     {isSelected && (
                       <CheckIcon className="w-3 h-3 absolute top-1 right-1 text-blue-600 dark:text-blue-400" />
                     )}
@@ -1016,15 +1022,21 @@ export default function SocialMediaContentGenerator({
                     onClick={() => handlePlatformToggle(platform.id)}
                     className={`p-2 rounded-lg border-2 transition-all duration-200 relative ${
                       isSelected
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100'
-                        : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
+                        ? theme === 'dark' 
+                          ? 'border-blue-500 bg-blue-900/20 text-blue-100'
+                          : 'border-blue-500 bg-blue-50 text-blue-900'
+                        : theme === 'dark'
+                          ? 'border-gray-600 bg-gray-700 hover:bg-gray-600'
+                          : 'border-gray-200 bg-gray-50 hover:bg-gray-100'
                     }`}
                   >
                     <div className="flex items-center space-x-2">
                       <div className={`p-1.5 rounded-full ${isSelected ? 'bg-blue-600' : platform.color}`}>
                         <Icon platform={platform.id} className="w-4 h-4 text-white" />
                       </div>
-                      <span className="font-medium text-sm">{platform.name}</span>
+                      <span className={`font-medium text-sm ${
+                        theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                      }`}>{platform.name}</span>
                     </div>
                     {isSelected && (
                       <CheckIcon className="w-3 h-3 absolute top-1 right-1 text-blue-600 dark:text-blue-400" />
@@ -1051,14 +1063,20 @@ export default function SocialMediaContentGenerator({
                 onClick={() => handleQualityToggle(quality.id)}
                     className={`group p-2 rounded-lg border-2 transition-all duration-200 relative ${
                   isSelected
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100'
-                    : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
+                        ? theme === 'dark' 
+                          ? 'border-blue-500 bg-blue-900/20 text-blue-100'
+                          : 'border-blue-500 bg-blue-50 text-blue-900'
+                    : theme === 'dark'
+                      ? 'border-gray-600 bg-gray-700 hover:bg-gray-600'
+                      : 'border-gray-200 bg-gray-50 hover:bg-gray-100'
                 }`}
                     title={quality.description}
                   >
                     <div className="flex items-center space-x-2">
                       <Icon className={`w-4 h-4 ${isSelected ? 'text-blue-600 dark:text-blue-400' : quality.textColor}`} />
-                      <div className="font-medium text-xs">{quality.name}</div>
+                      <div className={`font-medium text-xs ${
+                        theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                      }`}>{quality.name}</div>
                     </div>
                 {isSelected && (
                       <CheckIcon className="w-3 h-3 absolute top-1 right-1 text-blue-600 dark:text-blue-400" />
@@ -1106,12 +1124,18 @@ export default function SocialMediaContentGenerator({
                        }}
                        className={`p-2 rounded-lg border-2 transition-all duration-200 text-left relative ${
                          isSelected
-                           ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100'
-                           : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
+                           ? theme === 'dark' 
+                             ? 'border-blue-500 bg-blue-900/20 text-blue-100'
+                             : 'border-blue-500 bg-blue-50 text-blue-900'
+                           : theme === 'dark'
+                             ? 'border-gray-600 bg-gray-800 hover:bg-gray-700'
+                             : 'border-gray-200 bg-white hover:bg-gray-50'
                        }`}
                        title={post.description}
                      >
-                       <div className="font-medium text-xs">{post.title}</div>
+                       <div className={`font-medium text-xs ${
+                         theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                       }`}>{post.title}</div>
               {isSelected && (
                          <CheckIcon className="w-3 h-3 absolute top-1 right-1 text-blue-600 dark:text-blue-400" />
               )}
@@ -1145,14 +1169,20 @@ export default function SocialMediaContentGenerator({
                     onClick={() => setSelectedFrequency(frequency.id)}
                     className={`p-2 rounded-lg border-2 transition-all duration-200 relative text-center ${
                   isSelected
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100'
-                    : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
+                        ? theme === 'dark' 
+                          ? 'border-blue-500 bg-blue-900/20 text-blue-100'
+                          : 'border-blue-500 bg-blue-50 text-blue-900'
+                    : theme === 'dark'
+                      ? 'border-gray-600 bg-gray-700 hover:bg-gray-600'
+                      : 'border-gray-200 bg-gray-50 hover:bg-gray-100'
                 }`}
                     title={frequency.description}
                   >
                     <div className="flex flex-col items-center space-y-1">
                       <div className={`w-4 h-4 rounded-full ${isSelected ? 'bg-blue-600' : frequency.color}`}></div>
-                      <div className="font-medium text-xs">{frequency.name}</div>
+                      <div className={`font-medium text-xs ${
+                        theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                      }`}>{frequency.name}</div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">{frequency.description}</div>
                 </div>
                 {isSelected && (

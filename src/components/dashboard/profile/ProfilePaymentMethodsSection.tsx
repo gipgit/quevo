@@ -6,6 +6,7 @@ import {
 } from "@/lib/payment-methods-config"
 import { useTranslations } from "next-intl"
 import { XMarkIcon } from "@heroicons/react/24/outline"
+import { useTheme } from "@/contexts/ThemeContext"
 
 interface PaymentMethod {
   type: string
@@ -20,6 +21,7 @@ interface ProfilePaymentMethodsSectionProps {
 
 export default function ProfilePaymentMethodsSection({ paymentMethods, onChange }: ProfilePaymentMethodsSectionProps) {
   const t = useTranslations("profile")
+  const { theme } = useTheme()
   // Use only IDs for selection
   const [selected, setSelected] = useState<string[]>(paymentMethods?.map((m) => m.type) || [])
 
@@ -76,7 +78,11 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                 const method = paymentMethods.find((m) => m.type === id)
                 if (!config || !config.fields || config.fields.length === 0 || !method) return null
                 return (
-                  <div key={id} className="flex items-center gap-3 bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
+                  <div key={id} className={`flex items-center gap-3 border rounded-lg p-3 shadow-sm ${
+                    theme === 'dark' 
+                      ? 'bg-zinc-700 border-gray-600' 
+                      : 'bg-white border-gray-200'
+                  }`}>
                     <img src={config.iconPath} alt={config.name} className="w-5 h-5" />
                     <div className={`flex-1 ${id === 'bank_transfer' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3' : 'grid grid-cols-1 md:grid-cols-2 gap-3'}`}>
                       {config.fields.map((field) => (
@@ -85,7 +91,11 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                             <input
                               id={`${id}-${field.name}`}
                               type={field.type}
-                              className={`w-full px-2 py-1.5 border border-gray-300 rounded-md ${id === 'bank_transfer' && (field.name === 'bank_name' || field.name === 'account_holder') ? 'text-xs' : 'text-sm'} ${method.details?.[field.name] ? 'pt-6 pb-1' : 'py-1.5'}`}
+                              className={`w-full px-2 py-1.5 border rounded-md ${id === 'bank_transfer' && (field.name === 'bank_name' || field.name === 'account_holder') ? 'text-xs' : 'text-sm'} ${method.details?.[field.name] ? 'pt-6 pb-1' : 'py-1.5'} ${
+                                theme === 'dark' 
+                                  ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+                                  : 'bg-white border-gray-300 text-gray-900'
+                              }`}
                               placeholder=""
                               value={method.details?.[field.name] || ""}
                               required={field.required}
@@ -128,8 +138,12 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                   type="button"
                   className={`flex flex-col items-center justify-center p-2 rounded-lg transition-all focus:outline-none h-16 ${
                     isActive
-                      ? "ring-2 ring-gray-400 bg-gray-100 shadow-md"
-                      : "border border-gray-300 hover:border-gray-400 bg-white"
+                      ? theme === 'dark' 
+                        ? "ring-2 ring-gray-400 bg-zinc-600 shadow-md"
+                        : "ring-2 ring-gray-400 bg-gray-100 shadow-md"
+                      : theme === 'dark'
+                        ? "border border-gray-600 hover:border-gray-500 bg-zinc-700"
+                        : "border border-gray-300 hover:border-gray-400 bg-white"
                   }`}
                   onClick={() => handleToggle(method.id)}
                 >
@@ -146,7 +160,9 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                       }
                     }}
                   />
-                  <span className="text-xs text-gray-600 font-medium">{method.name}</span>
+                  <span className={`text-xs font-medium ${
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                  }`}>{method.name}</span>
                 </button>
               )
             })}
@@ -165,8 +181,12 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                   type="button"
                   className={`flex flex-col items-center justify-center p-2 rounded-lg transition-all focus:outline-none h-16 ${
                     isActive
-                      ? "ring-2 ring-gray-400 bg-gray-100 shadow-md"
-                      : "border border-gray-300 hover:border-gray-400 bg-white"
+                      ? theme === 'dark' 
+                        ? "ring-2 ring-gray-400 bg-zinc-600 shadow-md"
+                        : "ring-2 ring-gray-400 bg-gray-100 shadow-md"
+                      : theme === 'dark'
+                        ? "border border-gray-600 hover:border-gray-500 bg-zinc-700"
+                        : "border border-gray-300 hover:border-gray-400 bg-white"
                   }`}
                   onClick={() => handleToggle(method.id)}
                 >
@@ -183,7 +203,9 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                       }
                     }}
                   />
-                  <span className="text-xs text-gray-600 font-medium">{method.name}</span>
+                  <span className={`text-xs font-medium ${
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                  }`}>{method.name}</span>
                 </button>
               )
             })}

@@ -123,8 +123,8 @@ export default async function ServicesPage() {
       is_required: event.is_required || true,
       serviceeventavailability: (event.serviceeventavailability || []).map(avail => ({
         ...avail,
-        time_start: avail.time_start ? avail.time_start.toTimeString().substring(0, 8) : '08:00:00',
-        time_end: avail.time_end ? avail.time_end.toTimeString().substring(0, 8) : '18:00:00',
+        time_start: avail.time_start ? avail.time_start.toISOString().substring(11, 19) : '08:00:00',
+        time_end: avail.time_end ? avail.time_end.toISOString().substring(11, 19) : '18:00:00',
         is_recurring: avail.is_recurring || true,
         date_effective_from: avail.date_effective_from ? avail.date_effective_from.toISOString().split('T')[0] : null,
         date_effective_to: avail.date_effective_to ? avail.date_effective_to.toISOString().split('T')[0] : null

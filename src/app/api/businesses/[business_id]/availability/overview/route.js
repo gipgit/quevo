@@ -27,10 +27,13 @@ const getTimeDate = (day, timeDateObject) => {
         return startOfDay(day);
     }
 
-    const h = timeDateObject.getHours();
-    const m = timeDateObject.getMinutes();
+    // Extract time from the ISO string to avoid timezone conversion
+    const timeString = timeDateObject.toISOString().substring(11, 19); // Get "HH:mm:ss"
+    const [hours, minutes] = timeString.split(':').map(Number);
+    
+    console.log(`[DEBUG] getTimeDate - Raw time object: ${timeDateObject.toISOString()}, Extracted hours: ${hours}, Extracted minutes: ${minutes}`);
 
-    return setMinutes(setHours(startOfDay(day), h), m);
+    return setMinutes(setHours(startOfDay(day), hours), minutes);
 };
 
 export async function GET(request, { params }) {
@@ -101,6 +104,7 @@ export async function GET(request, { params }) {
         console.log(`[Overview API] Total days in interval:`, daysInMonth.length);
 
         console.log('[Overview API] Fetching bookingavailability...');
+        console.log(`[DEBUG] Event ID filter: ${eventIdParam ? `event_id = ${eventIdParam}` : 'no event filter'}`);
         
         // Build the availability query based on whether eventId is provided
         let availabilityWhere = {
@@ -134,12 +138,15 @@ export async function GET(request, { params }) {
             ];
         }
 
+        console.log(`[DEBUG] Querying ServiceEventAvailability with where clause:`, JSON.stringify(availabilityWhere, null, 2));
+        
         const availableAvailabilities = await prisma.serviceeventavailability.findMany({
             where: availabilityWhere,
             select: {
                 day_of_week: true,
                 time_start: true,
                 time_end: true,
+                slot_interval_minutes: true,
                 is_recurring: true,
                 date_effective_from: true,
                 date_effective_to: true,
@@ -148,6 +155,21 @@ export async function GET(request, { params }) {
         });
         console.log(`[Overview API] Fetched ${availableAvailabilities.length} availability blocks.`);
         console.log(`[Overview API] Event ID filter: ${eventIdParam ? `Only event_id=${eventIdParam} or NULL` : 'All events'}`);
+        
+        // Enhanced debugging for time values
+        console.log(`[DEBUG] Available Availabilities with parsed times:`);
+        console.log(`[DEBUG] Raw availability data:`, availableAvailabilities.map(a => ({
+            availability_id: a.availability_id,
+            event_id: a.event_id,
+            day_of_week: a.day_of_week,
+            time_start: a.time_start,
+            time_end: a.time_end,
+            slot_interval_minutes: a.slot_interval_minutes
+        })));
+        availableAvailabilities.forEach((avail, index) => {
+            console.log(`  [${index}] Day ${avail.day_of_week}: ${avail.time_start.toISOString().substring(11,19)} - ${avail.time_end.toISOString().substring(11,19)} (Event ID: ${avail.event_id}, Interval: ${avail.slot_interval_minutes}min)`);
+        });
+        
         console.log(`[Overview API] Available Availabilities Details:`, JSON.stringify(availableAvailabilities, (key, value) => {
             if (value instanceof Date) {
                 return value.toISOString();

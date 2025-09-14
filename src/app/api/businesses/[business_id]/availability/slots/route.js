@@ -23,20 +23,44 @@ export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url);
     const dateParam = searchParams.get('date');
     const durationParam = searchParams.get('duration');
+    const eventIdParam = searchParams.get('eventId');
 
-    console.log(`--- API Call Start for Business ID: ${businessId}, Date: ${dateParam}, Duration: ${durationParam} ---`);
+    console.log(`--- API Call Start for Business ID: ${businessId}, Date: ${dateParam}, Duration: ${durationParam}, EventId: ${eventIdParam} ---`);
 
     if (!businessId || !dateParam || isNaN(parseInt(durationParam))) {
         console.error("Missing or invalid parameters:", { businessId, dateParam, durationParam });
         return NextResponse.json({ error: 'Missing or invalid business ID, date, or duration.' }, { status: 400 });
     }
 
-    const totalOccupancyDuration = parseInt(durationParam);
     const bookingDate = toZonedTime(parseISO(dateParam), BUSINESS_TIMEZONE);
     const bookingDayStart = startOfDay(bookingDate);
 
     console.log("Parsed bookingDate (zoned):", bookingDate.toISOString());
     console.log("BookingDayStart (zoned):", bookingDayStart.toISOString());
+
+    // Get event details if eventId is provided, otherwise use duration from request
+    let eventDuration = durationParam ? parseInt(durationParam) : 60;
+    let eventBuffer = 0;
+    
+    if (eventIdParam) {
+        try {
+            const event = await prisma.serviceevent.findUnique({
+                where: { event_id: parseInt(eventIdParam) },
+                select: { duration_minutes: true, buffer_minutes: true }
+            });
+            
+            if (event) {
+                eventDuration = event.duration_minutes || eventDuration;
+                eventBuffer = event.buffer_minutes || 0;
+                console.log(`[DEBUG] Event details - duration: ${eventDuration}, buffer: ${eventBuffer}`);
+            }
+        } catch (error) {
+            console.error('[DEBUG] Error fetching event details:', error);
+        }
+    }
+    
+    const totalOccupancyDuration = eventDuration + eventBuffer;
+    console.log(`[DEBUG] Total required duration (duration + buffer): ${totalOccupancyDuration} minutes`);
 
     if (isNaN(bookingDate.getTime())) {
         console.error("Invalid date format parsed:", dateParam);
@@ -62,26 +86,58 @@ export async function GET(request, { params }) {
         const dayOfWeek = bookingDate.getDay();
         console.log("Day of week for bookingDate:", dayOfWeek);
 
+        console.log(`[DEBUG] Querying ServiceEventAvailability for day ${dayOfWeek} (${format(bookingDate, 'EEEE')})`);
+        
+        // Build the where clause based on whether eventId is provided
+        let availabilityWhere = {
+            business_id: businessId, // Use UUID string directly
+            OR: [
+                {
+                    is_recurring: true,
+                    day_of_week: dayOfWeek,
+                },
+                {
+                    is_recurring: false,
+                    date_effective_from: { lte: bookingDate },
+                    date_effective_to: { gte: bookingDate }
+                }
+            ]
+        };
+
+        // If eventId is provided, filter to only include event-specific availability
+        if (eventIdParam) {
+            availabilityWhere.AND = [
+                { event_id: parseInt(eventIdParam) } // Only event-specific availability
+            ];
+            console.log(`[DEBUG] Filtering for specific event ID: ${eventIdParam}`);
+        } else {
+            console.log(`[DEBUG] No event ID provided, fetching all business availability`);
+        }
+        
         const availabilitiesForDay = await prisma.serviceeventavailability.findMany({
-            where: {
-                business_id: businessId, // Use UUID string directly
-                OR: [
-                    {
-                        is_recurring: true,
-                        day_of_week: dayOfWeek,
-                    },
-                    {
-                        is_recurring: false,
-                        date_effective_from: { lte: bookingDate },
-                        date_effective_to: { gte: bookingDate }
-                    }
-                ]
+            where: availabilityWhere,
+            select: {
+                availability_id: true,
+                event_id: true,
+                business_id: true,
+                day_of_week: true,
+                time_start: true,
+                time_end: true,
+                slot_interval_minutes: true,
+                is_recurring: true,
+                date_effective_from: true,
+                date_effective_to: true
             },
             orderBy: {
                 time_start: 'asc'
             }
         });
 
+        console.log(`[DEBUG] Fetched ${availabilitiesForDay.length} availability blocks for ${format(bookingDate, 'EEEE')}:`);
+        availabilitiesForDay.forEach((avail, index) => {
+            console.log(`  [${index}] Day ${avail.day_of_week}: ${avail.time_start.toISOString().substring(11,19)} - ${avail.time_end.toISOString().substring(11,19)} (Event ID: ${avail.event_id}, Interval: ${avail.slot_interval_minutes}min)`);
+        });
+        
         console.log("Fetched availabilitiesForDay:", JSON.stringify(availabilitiesForDay));
 
         if (availabilitiesForDay.length === 0) {
@@ -123,7 +179,9 @@ export async function GET(request, { params }) {
 
         const availableSlots = [];
         const addedSlots = new Set();
-        const slotCheckIntervalMinutes = 15; // Granularity of slot checking
+        // Get slot interval from the first availability block (all should have the same interval for the same event)
+        const slotCheckIntervalMinutes = availabilitiesForDay.length > 0 ? (availabilitiesForDay[0].slot_interval_minutes || 15) : 15;
+        console.log(`[DEBUG] Using slot interval: ${slotCheckIntervalMinutes} minutes`);
 
         // Helper function to convert time to date
         const getTimeDate = (timeDateObjectFromPrisma) => {
@@ -131,9 +189,10 @@ export async function GET(request, { params }) {
                 console.warn("getTimeDate received invalid input:", timeDateObjectFromPrisma);
                 return null;
             }
-            const hours = timeDateObjectFromPrisma.getUTCHours();
-            const minutes = timeDateObjectFromPrisma.getUTCMinutes();
-            console.log(`  getTimeDate: Raw Prisma Time Object: ${timeDateObjectFromPrisma.toISOString()}, UTC Hours: ${hours}, UTC Minutes: ${minutes}`);
+            // Extract time from the ISO string to avoid timezone conversion
+            const timeString = timeDateObjectFromPrisma.toISOString().substring(11, 19); // Get "HH:mm:ss"
+            const [hours, minutes] = timeString.split(':').map(Number);
+            console.log(`  getTimeDate: Raw Prisma Time Object: ${timeDateObjectFromPrisma.toISOString()}, Extracted Hours: ${hours}, Extracted Minutes: ${minutes}`);
             const resultTime = setMinutes(setHours(bookingDayStart, hours), minutes);
             console.log(`  getTimeDate: Resulting zoned time: ${resultTime.toISOString()}`);
             return resultTime;
@@ -176,7 +235,7 @@ export async function GET(request, { params }) {
                 const potentialSlotEndTime = addMinutes(currentSlotCandidateTime, totalOccupancyDuration);
                 const slotFormatString = formatInTimeZone(currentSlotCandidateTime, BUSINESS_TIMEZONE, 'HH:mm');
 
-                console.log(`  Evaluating potential slot: ${slotFormatString} (ends ${formatInTimeZone(potentialSlotEndTime, BUSINESS_TIMEZONE, 'HH:mm')})`);
+                console.log(`  Evaluating potential slot: ${slotFormatString} (ends ${formatInTimeZone(potentialSlotEndTime, BUSINESS_TIMEZONE, 'HH:mm')}) [Raw time: ${currentSlotCandidateTime.toISOString()}]`);
 
                 if (addedSlots.has(slotFormatString)) {
                     console.log(`  Skipping ${slotFormatString} - already added (or duplicate check).`);

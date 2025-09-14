@@ -72,6 +72,7 @@ import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { LoadingSparkles } from '@/components/ui/loading-sparkles'
+import { useTheme } from "@/contexts/ThemeContext"
 
 interface Customer {
   id: string
@@ -159,6 +160,7 @@ export default function MarketingEmailAssistantWrapper({
   locale
 }: MarketingEmailAssistantWrapperProps) {
   const router = useRouter()
+  const { theme } = useTheme()
   const [isGenerating, setIsGenerating] = useState(false)
   const [isSending, setIsSending] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -556,8 +558,12 @@ export default function MarketingEmailAssistantWrapper({
                             key={quality}
                             className={`border-2 rounded-full cursor-pointer transition-colors px-3 py-1 text-center whitespace-nowrap ${
                               aiGenerationSettings.businessQualities.includes(quality)
-                                ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-200'
-                                : 'border-gray-400 hover:border-gray-500 hover:bg-gray-50'
+                                ? theme === 'dark' 
+                                  ? 'border-blue-500 bg-blue-900/20 ring-2 ring-blue-200'
+                                  : 'border-blue-500 bg-blue-50 ring-2 ring-blue-200'
+                                : theme === 'dark'
+                                  ? 'border-gray-600 hover:border-gray-500 hover:bg-gray-700'
+                                  : 'border-gray-400 hover:border-gray-500 hover:bg-gray-50'
                             }`}
                             onClick={() => {
                               if (aiGenerationSettings.businessQualities.includes(quality)) {
@@ -573,7 +579,9 @@ export default function MarketingEmailAssistantWrapper({
                               }
                             }}
                           >
-                            <span className="text-xs font-medium">{quality}</span>
+                            <span className={`text-xs font-medium ${
+                              theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                            }`}>{quality}</span>
                           </div>
                         ))}
                       </div>
@@ -610,10 +618,16 @@ export default function MarketingEmailAssistantWrapper({
                             />
                             <div className={`border-2 rounded-full px-3 py-1 text-center transition-colors whitespace-nowrap ${
                               aiGenerationSettings.tone === tone.value 
-                                ? 'border-blue-500 bg-blue-50' 
-                                : 'border-gray-400 hover:border-gray-500 hover:bg-gray-50'
+                                ? theme === 'dark' 
+                                  ? 'border-blue-500 bg-blue-900/20' 
+                                  : 'border-blue-500 bg-blue-50'
+                                : theme === 'dark'
+                                  ? 'border-gray-600 hover:border-gray-500 hover:bg-gray-700'
+                                  : 'border-gray-400 hover:border-gray-500 hover:bg-gray-50'
                             }`}>
-                              <div className="font-medium text-xs">{tone.label}</div>
+                              <div className={`font-medium text-xs ${
+                                theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                              }`}>{tone.label}</div>
                             </div>
                           </label>
                         ))}
@@ -653,10 +667,16 @@ export default function MarketingEmailAssistantWrapper({
                               />
                               <div className={`border-2 rounded-full px-3 py-1 text-center transition-colors whitespace-nowrap ${
                                 aiGenerationSettings.callToAction === cta.value 
-                                  ? 'border-blue-500 bg-blue-50' 
-                                  : 'border-gray-400 hover:border-gray-500 hover:bg-gray-50'
+                                  ? theme === 'dark' 
+                                    ? 'border-blue-500 bg-blue-900/20' 
+                                    : 'border-blue-500 bg-blue-50'
+                                  : theme === 'dark'
+                                    ? 'border-gray-600 hover:border-gray-500 hover:bg-gray-700'
+                                    : 'border-gray-400 hover:border-gray-500 hover:bg-gray-50'
                               }`}>
-                                <div className="font-medium text-xs">{cta.label}</div>
+                                <div className={`font-medium text-xs ${
+                                  theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                                }`}>{cta.label}</div>
                               </div>
                             </label>
                           ))}
@@ -848,13 +868,21 @@ export default function MarketingEmailAssistantWrapper({
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   <div 
                     className={`border-2 rounded-lg cursor-pointer transition-colors min-h-[60px] flex items-center justify-center ${
-                      recipientType === 'past_customers' ? 'ring-2 ring-blue-500 bg-blue-50 border-blue-200' : 'border-gray-200 hover:border-gray-300'
+                      recipientType === 'past_customers' 
+                        ? theme === 'dark' 
+                          ? 'ring-2 ring-blue-500 bg-blue-900/20 border-blue-200' 
+                          : 'ring-2 ring-blue-500 bg-blue-50 border-blue-200'
+                        : theme === 'dark'
+                          ? 'border-gray-600 hover:border-gray-500'
+                          : 'border-gray-200 hover:border-gray-300'
                     }`}
                     onClick={() => handleRecipientTypeChange('past_customers')}
                   >
                     <div className="text-center p-2">
                       <UsersIcon className="w-4 h-4 mx-auto mb-1 text-blue-600" />
-                      <p className="font-semibold text-xs">Past Customers</p>
+                      <p className={`font-semibold text-xs ${
+                        theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                      }`}>Past Customers</p>
                     </div>
                   </div>
                   
@@ -866,7 +894,9 @@ export default function MarketingEmailAssistantWrapper({
                   >
                     <div className="text-center p-2">
                       <UsersIcon className="w-4 h-4 mx-auto mb-1 text-orange-600" />
-                      <p className="font-semibold text-xs">Uncommitted</p>
+                      <p className={`font-semibold text-xs ${
+                        theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                      }`}>Uncommitted</p>
                     </div>
                   </div>
                   
@@ -878,7 +908,9 @@ export default function MarketingEmailAssistantWrapper({
                   >
                     <div className="text-center p-2">
                       <UsersIcon className="w-4 h-4 mx-auto mb-1 text-green-600" />
-                      <p className="font-semibold text-xs">All Customers</p>
+                      <p className={`font-semibold text-xs ${
+                        theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                      }`}>All Customers</p>
                     </div>
                   </div>
                   
@@ -890,7 +922,9 @@ export default function MarketingEmailAssistantWrapper({
                   >
                     <div className="text-center p-2">
                       <UsersIcon className="w-4 h-4 mx-auto mb-1 text-purple-600" />
-                      <p className="font-semibold text-xs">Custom Selection</p>
+                      <p className={`font-semibold text-xs ${
+                        theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                      }`}>Custom Selection</p>
                     </div>
                   </div>
                 </div>

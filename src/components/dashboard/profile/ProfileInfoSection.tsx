@@ -1,6 +1,7 @@
 import { useState, useRef } from "react"
 import { useTranslations } from "next-intl"
 import { CheckIcon, XMarkIcon, ArrowPathIcon, GlobeAltIcon } from "@heroicons/react/24/outline"
+import { useTheme } from "@/contexts/ThemeContext"
 
 interface ProfileInfoSectionProps {
   profileData: Record<string, any>
@@ -14,6 +15,7 @@ interface UrlValidation {
 
 export default function ProfileInfoSection({ profileData, onChange }: ProfileInfoSectionProps) {
   const t = useTranslations("profile")
+  const { theme } = useTheme()
   // --- Business URL name validation logic ---
   const [urlValidation, setUrlValidation] = useState<UrlValidation>({ status: "idle", message: "" })
   const timeoutRef = useRef<NodeJS.Timeout>()
@@ -216,7 +218,11 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
           type="text"
           value={profileData.business_name || ""}
           onChange={(e) => onChange("business_name", e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+          className={`w-full px-3 py-2 border rounded-lg ${
+            theme === 'dark' 
+              ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+              : 'bg-white border-gray-300 text-gray-900'
+          }`}
         />
       </div>
 
@@ -228,7 +234,11 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
             type="text"
             value={profileData.business_country || ""}
             onChange={(e) => onChange("business_country", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+            className={`w-full px-3 py-2 border rounded-lg ${
+              theme === 'dark' 
+                ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+                : 'bg-white border-gray-300 text-gray-900'
+            }`}
           />
         </div>
         <div className="w-full md:w-1/5">
@@ -237,7 +247,11 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
             type="text"
             value={profileData.business_region || ""}
             onChange={(e) => onChange("business_region", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+            className={`w-full px-3 py-2 border rounded-lg ${
+              theme === 'dark' 
+                ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+                : 'bg-white border-gray-300 text-gray-900'
+            }`}
           />
         </div>
         <div className="w-full md:w-1/5">
@@ -246,7 +260,11 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
             type="text"
             value={profileData.business_city || ""}
             onChange={(e) => onChange("business_city", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+            className={`w-full px-3 py-2 border rounded-lg ${
+            theme === 'dark' 
+              ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+              : 'bg-white border-gray-300 text-gray-900'
+          }`}
           />
         </div>
         <div className="w-full md:w-2/5">
@@ -255,7 +273,11 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
             type="text"
             value={profileData.business_address || ""}
             onChange={(e) => onChange("business_address", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+            className={`w-full px-3 py-2 border rounded-lg ${
+            theme === 'dark' 
+              ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+              : 'bg-white border-gray-300 text-gray-900'
+          }`}
           />
         </div>
       </div>
@@ -266,7 +288,11 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
         <textarea
           value={profileData.business_descr || ""}
           onChange={(e) => onChange("business_descr", e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+          className={`w-full px-3 py-2 border rounded-lg ${
+            theme === 'dark' 
+              ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+              : 'bg-white border-gray-300 text-gray-900'
+          }`}
         />
       </div>
       {/* Emails */}
@@ -283,14 +309,22 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
               type="email"
               value={email.value}
               onChange={(e) => handleEmailChange(idx, "value", e.target.value)}
-              className="w-3/5 md:flex-none md:w-2/3 px-3 py-2 border border-gray-300 rounded-lg"
+              className={`w-3/5 md:flex-none md:w-2/3 px-3 py-2 border rounded-lg ${
+            theme === 'dark' 
+              ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+              : 'bg-white border-gray-300 text-gray-900'
+          }`}
               placeholder={t("emailPlaceholder")}
             />
             <input
               type="text"
               value={email.title}
               onChange={(e) => handleEmailChange(idx, "title", e.target.value)}
-              className="w-32 md:w-40 px-3 py-2 border border-gray-300 rounded-lg"
+              className={`w-32 md:w-40 px-3 py-2 border rounded-lg ${
+            theme === 'dark' 
+              ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+              : 'bg-white border-gray-300 text-gray-900'
+          }`}
               placeholder={t("emailTitlePlaceholder")}
             />
             {emails.length > 1 && (
@@ -320,14 +354,22 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
               type="text"
               value={phone.value}
               onChange={(e) => handlePhoneChange(idx, "value", e.target.value)}
-              className="w-3/5 md:flex-none md:w-2/3 px-3 py-2 border border-gray-300 rounded-lg"
+              className={`w-3/5 md:flex-none md:w-2/3 px-3 py-2 border rounded-lg ${
+            theme === 'dark' 
+              ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+              : 'bg-white border-gray-300 text-gray-900'
+          }`}
               placeholder={t("phonePlaceholder")}
             />
             <input
               type="text"
               value={phone.title}
               onChange={(e) => handlePhoneChange(idx, "title", e.target.value)}
-              className="w-32 md:w-40 px-3 py-2 border border-gray-300 rounded-lg"
+              className={`w-32 md:w-40 px-3 py-2 border rounded-lg ${
+            theme === 'dark' 
+              ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+              : 'bg-white border-gray-300 text-gray-900'
+          }`}
               placeholder={t("phoneTitlePlaceholder")}
             />
             {phones.length > 1 && (

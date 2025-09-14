@@ -47,6 +47,7 @@ interface ServiceEventAvailability {
   day_of_week: number
   time_start: string
   time_end: string
+  slot_interval_minutes?: number
   is_recurring: boolean
   date_effective_from: string | null
   date_effective_to: string | null
@@ -59,6 +60,7 @@ interface ServiceEvent {
   event_type: string
   duration_minutes: number | null
   buffer_minutes: number | null
+  slot_interval_minutes?: number | null
   is_required: boolean
   display_order: number
   is_active: boolean
@@ -185,6 +187,7 @@ export default function ServiceEditModal({
     event_type: 'appointment',
     duration_minutes: 60,
     buffer_minutes: 0,
+    slot_interval_minutes: 15,
     is_required: true,
     display_order: 0,
     is_active: true
@@ -463,6 +466,94 @@ export default function ServiceEditModal({
     setExtras(prev => prev.filter(e => e.service_extra_id !== extraId))
   }
 
+  // Helper function to get add button for current tab
+  const getAddButtonForTab = () => {
+    switch (activeTab) {
+      case 'extras':
+        return (
+          <button
+            onClick={addExtra}
+            disabled={!newExtra.extra_name.trim() || !newExtra.price_base}
+            className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+              !newExtra.extra_name.trim() || !newExtra.price_base
+                ? theme === 'dark' 
+                  ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                : 'bg-green-600 hover:bg-green-700 text-white'
+            }`}
+          >
+            Add Extra
+          </button>
+        )
+      case 'items':
+        return (
+          <button
+            onClick={addItem}
+            disabled={!newItem.item_name.trim() || !newItem.price_base}
+            className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+              !newItem.item_name.trim() || !newItem.price_base
+                ? theme === 'dark' 
+                  ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                : 'bg-green-600 hover:bg-green-700 text-white'
+            }`}
+          >
+            Add Item
+          </button>
+        )
+      case 'questions':
+        return (
+          <button
+            onClick={addQuestion}
+            disabled={!newQuestion.question_text.trim()}
+            className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+              !newQuestion.question_text.trim()
+                ? theme === 'dark' 
+                  ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                : 'bg-green-600 hover:bg-green-700 text-white'
+            }`}
+          >
+            Add Question
+          </button>
+        )
+      case 'requirements':
+        return (
+          <button
+            onClick={addRequirement}
+            disabled={!newRequirement.title.trim() || !newRequirement.requirements_text.trim()}
+            className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+              !newRequirement.title.trim() || !newRequirement.requirements_text.trim()
+                ? theme === 'dark' 
+                  ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                : 'bg-green-600 hover:bg-green-700 text-white'
+            }`}
+          >
+            Add Requirement
+          </button>
+        )
+      case 'events':
+        return (
+          <button
+            onClick={addEvent}
+            disabled={!newEvent.event_name.trim()}
+            className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+              !newEvent.event_name.trim()
+                ? theme === 'dark' 
+                  ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                : 'bg-green-600 hover:bg-green-700 text-white'
+            }`}
+          >
+            Add Event
+          </button>
+        )
+      default:
+        return null
+    }
+  }
+
   // Event management
   const addEvent = () => {
     if (!newEvent.event_name) return
@@ -474,6 +565,7 @@ export default function ServiceEditModal({
       event_type: newEvent.event_type,
       duration_minutes: newEvent.duration_minutes,
       buffer_minutes: newEvent.buffer_minutes,
+      slot_interval_minutes: newEvent.slot_interval_minutes,
       is_required: newEvent.is_required,
       display_order: newEvent.display_order,
       is_active: newEvent.is_active
@@ -486,6 +578,7 @@ export default function ServiceEditModal({
       event_type: 'appointment',
       duration_minutes: 60,
       buffer_minutes: 0,
+      slot_interval_minutes: 15,
       is_required: true,
       display_order: 0,
       is_active: true
@@ -558,9 +651,9 @@ export default function ServiceEditModal({
                       onChange={(e) => handleInputChange('is_active', e.target.checked)}
                       className="sr-only"
                     />
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      formData.is_active ? 'translate-x-6' : 'translate-x-1'
-                    }`} />
+                    <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${
+                      theme === 'dark' ? 'bg-gray-200' : 'bg-white'
+                    } ${formData.is_active ? 'translate-x-6' : 'translate-x-1'}`} />
                   </div>
                 </label>
 
@@ -581,9 +674,9 @@ export default function ServiceEditModal({
                       onChange={(e) => handleInputChange('active_booking', e.target.checked)}
                       className="sr-only"
                     />
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      formData.active_booking ? 'translate-x-6' : 'translate-x-1'
-                    }`} />
+                    <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${
+                      theme === 'dark' ? 'bg-gray-200' : 'bg-white'
+                    } ${formData.active_booking ? 'translate-x-6' : 'translate-x-1'}`} />
                   </div>
                 </label>
 
@@ -604,9 +697,9 @@ export default function ServiceEditModal({
                       onChange={(e) => handleInputChange('active_quotation', e.target.checked)}
                       className="sr-only"
                     />
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      formData.active_quotation ? 'translate-x-6' : 'translate-x-1'
-                    }`} />
+                    <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${
+                      theme === 'dark' ? 'bg-gray-200' : 'bg-white'
+                    } ${formData.active_quotation ? 'translate-x-6' : 'translate-x-1'}`} />
                   </div>
                 </label>
                 
@@ -645,9 +738,9 @@ export default function ServiceEditModal({
                     onChange={(e) => handleInputChange('is_active', e.target.checked)}
                     className="sr-only"
                   />
-                  <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                    formData.is_active ? 'translate-x-5' : 'translate-x-0.5'
-                  }`} />
+                  <span className={`inline-block h-3 w-3 transform rounded-full transition-transform ${
+                    theme === 'dark' ? 'bg-gray-200' : 'bg-white'
+                  } ${formData.is_active ? 'translate-x-5' : 'translate-x-0.5'}`} />
                 </div>
               </label>
 
@@ -668,9 +761,9 @@ export default function ServiceEditModal({
                     onChange={(e) => handleInputChange('active_booking', e.target.checked)}
                     className="sr-only"
                   />
-                  <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                    formData.active_booking ? 'translate-x-5' : 'translate-x-0.5'
-                  }`} />
+                  <span className={`inline-block h-3 w-3 transform rounded-full transition-transform ${
+                    theme === 'dark' ? 'bg-gray-200' : 'bg-white'
+                  } ${formData.active_booking ? 'translate-x-5' : 'translate-x-0.5'}`} />
                 </div>
               </label>
 
@@ -691,9 +784,9 @@ export default function ServiceEditModal({
                     onChange={(e) => handleInputChange('active_quotation', e.target.checked)}
                     className="sr-only"
                   />
-                  <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                    formData.active_quotation ? 'translate-x-5' : 'translate-x-0.5'
-                  }`} />
+                  <span className={`inline-block h-3 w-3 transform rounded-full transition-transform ${
+                    theme === 'dark' ? 'bg-gray-200' : 'bg-white'
+                  } ${formData.active_quotation ? 'translate-x-5' : 'translate-x-0.5'}`} />
                 </div>
               </label>
             </div>
@@ -805,7 +898,9 @@ export default function ServiceEditModal({
           </div>
         </div>
 
-        <div className="p-4 lg:p-6 overflow-y-auto flex-1">
+        <div className={`p-4 lg:p-6 overflow-y-auto flex-1 ${
+          theme === 'dark' ? 'bg-zinc-800' : 'bg-white'
+        }`}>
           {/* Basic Information Section - Column Layout */}
           {activeTab === 'basic' && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 mb-8">
@@ -824,8 +919,8 @@ export default function ServiceEditModal({
                     onChange={(e) => handleInputChange('service_name', e.target.value)}
                     className={`w-full px-3 py-2 border rounded-lg ${
                       theme === 'dark' 
-                        ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                        : 'bg-white border-gray-300 text-gray-900'
+                        ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                        : 'bg-white border-gray-200 text-gray-900'
                     }`}
                   />
                 </div>
@@ -857,8 +952,8 @@ export default function ServiceEditModal({
                        onChange={(e) => handleInputChange('price_base', e.target.value)}
                       className={`w-full px-3 py-2 border rounded-lg ${
                         theme === 'dark' 
-                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                          : 'bg-white border-gray-300 text-gray-900'
+                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                          : 'bg-white border-gray-200 text-gray-900'
                       }`}
                     />
                   </div>
@@ -874,8 +969,8 @@ export default function ServiceEditModal({
                        onChange={(e) => handleInputChange('price_type', e.target.value)}
                       className={`w-full px-3 py-2 border rounded-lg ${
                         theme === 'dark' 
-                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                          : 'bg-white border-gray-300 text-gray-900'
+                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                          : 'bg-white border-gray-200 text-gray-900'
                       }`}
                      >
                        <option value="fixed">{t("fixed")}</option>
@@ -896,8 +991,8 @@ export default function ServiceEditModal({
                        placeholder="e.g., per hour, per session"
                     className={`w-full px-3 py-2 border rounded-lg ${
                       theme === 'dark' 
-                        ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                        : 'bg-white border-gray-300 text-gray-900'
+                        ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                        : 'bg-white border-gray-200 text-gray-900'
                     }`}
                   />
                    </div>
@@ -942,24 +1037,15 @@ export default function ServiceEditModal({
           {/* Service Extras - Full Width */}
           {activeTab === 'extras' && (
             <div className="mb-8">
-             <div className="flex justify-between items-center mb-4">
-               <h3 className={`text-lg font-semibold ${
-                        theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                      }`}>
-                 Service Extras ({extras.length})
-               </h3>
-               <button
-                 onClick={addExtra}
-                 className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
-               >
-                 Add Extra
-               </button>
-                    </div>
 
              {/* Extras list */}
              <div className="space-y-3">
                {extras.map((extra, index) => (
-                 <div key={extra.service_extra_id} className="mb-3 border border-gray-200 dark:border-gray-700 rounded-lg p-3 lg:py-2 bg-gray-100 dark:bg-zinc-700 shadow-sm">
+                 <div key={extra.service_extra_id} className={`mb-3 border rounded-xl p-3 lg:py-2 shadow-sm ${
+                   theme === 'dark' 
+                     ? 'border-gray-600 bg-zinc-700' 
+                     : 'border-gray-300 bg-gray-100'
+                 }`}>
                    <div className="space-y-2 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
                      {/* Header row with number icon and delete button - mobile only */}
                      <div className="flex justify-between items-center lg:hidden mb-2">
@@ -1011,12 +1097,12 @@ export default function ServiceEditModal({
                          }}
                          className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                            theme === 'dark' 
-                             ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-300 bg-gray-50 text-gray-900'
+                             ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                             : 'border-gray-200 bg-gray-50 text-gray-900'
                          }`}
                          placeholder="Extra Name"
                        />
-                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                          theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                        }`}>
                          Extra Name
@@ -1035,12 +1121,12 @@ export default function ServiceEditModal({
                          }}
                          className={`w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                            theme === 'dark' 
-                             ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-300 bg-white text-gray-900'
+                             ? 'border-gray-700 bg-zinc-700 text-gray-100' 
+                             : 'border-gray-200 bg-gray-50 text-gray-900'
                          }`}
                          placeholder="Description"
                        />
-                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                          theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
                        }`}>
                          Description
@@ -1048,7 +1134,7 @@ export default function ServiceEditModal({
                      </div>
 
                      {/* Price - fixed width */}
-                     <div className="w-full lg:w-24 flex-shrink-0 relative">
+                     <div className="w-full lg:w-32 flex-shrink-0 relative">
                        <input
                          type="number"
                          step="0.01"
@@ -1060,12 +1146,12 @@ export default function ServiceEditModal({
                          }}
                          className={`w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                            theme === 'dark' 
-                             ? 'border-gray-600 bg-zinc-700 text-gray-100' 
-                             : 'border-gray-300 bg-gray-50 text-gray-900'
+                             ? 'border-gray-700 bg-zinc-700 text-gray-100' 
+                             : 'border-gray-200 bg-gray-50 text-gray-900'
                          }`}
                          placeholder="0.00"
                        />
-                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                          theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                        }`}>
                          Price
@@ -1083,14 +1169,14 @@ export default function ServiceEditModal({
                          }}
                          className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                            theme === 'dark' 
-                             ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-300 bg-gray-50 text-gray-900'
+                             ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                             : 'border-gray-200 bg-gray-50 text-gray-900'
                          }`}
                        >
                        <option value="fixed">{t("fixed")}</option>
                        <option value="per_unit">{t("perUnit")}</option>
                      </select>
-                     <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                     <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                        theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                      }`}>
                        Type
@@ -1131,12 +1217,12 @@ export default function ServiceEditModal({
                       onChange={(e) => setNewExtra(prev => ({ ...prev, extra_name: e.target.value }))}
                       className={`w-full px-3 py-2 pr-20 border rounded-lg ${
                         theme === 'dark' 
-                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                          : 'bg-white border-gray-300 text-gray-900'
+                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                          : 'bg-white border-gray-200 text-gray-900'
                       }`}
                       placeholder="Extra Name"
                     />
-                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                       theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                     }`}>
                       Extra Name
@@ -1149,12 +1235,12 @@ export default function ServiceEditModal({
                       onChange={(e) => setNewExtra(prev => ({ ...prev, extra_description: e.target.value }))}
                       className={`w-full px-3 py-2 pr-24 border rounded-lg ${
                         theme === 'dark' 
-                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                          : 'bg-white border-gray-300 text-gray-900'
+                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                          : 'bg-gray-50 border-gray-200 text-gray-900'
                       }`}
                       placeholder="Description"
                     />
-                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                       theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
                     }`}>
                       Description
@@ -1168,29 +1254,16 @@ export default function ServiceEditModal({
                       onChange={(e) => setNewExtra(prev => ({ ...prev, price_base: e.target.value }))}
                       className={`w-full px-3 py-2 pr-16 border rounded-lg ${
                         theme === 'dark' 
-                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                          : 'bg-white border-gray-300 text-gray-900'
+                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                          : 'bg-white border-gray-200 text-gray-900'
                       }`}
                       placeholder="0.00"
                     />
-                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                       theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
                     }`}>
                       Price
                     </span>
-                  </div>
-                  <div className="flex items-end">
-                    <button
-                      onClick={addExtra}
-                      disabled={!newExtra.extra_name.trim() || !newExtra.price_base}
-                      className={`px-4 py-2 rounded-lg text-sm transition-colors ${
-                        !newExtra.extra_name.trim() || !newExtra.price_base
-                          ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                          : 'bg-blue-600 hover:bg-blue-700 text-white'
-                      }`}
-                    >
-                      Add Extra
-                    </button>
                   </div>
                 </div>
               </div>
@@ -1200,24 +1273,15 @@ export default function ServiceEditModal({
           {/* Service Items - Full Width */}
           {activeTab === 'items' && (
             <div className="mb-8">
-             <div className="flex justify-between items-center mb-4">
-               <h3 className={`text-lg font-semibold ${
-                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-              }`}>
-                {t("serviceItems")} ({items.length})
-              </h3>
-               <button
-                 onClick={addItem}
-                 className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
-               >
-                 Add Item
-               </button>
-             </div>
 
                           {/* Items list */}
              <div className="space-y-3">
                {items.map((item, index) => (
-                   <div key={item.service_item_id} className="mb-3 border border-gray-200 dark:border-gray-700 rounded-lg p-3 lg:py-2 bg-gray-100 dark:bg-zinc-700 shadow-sm">
+                   <div key={item.service_item_id} className={`mb-3 border rounded-xl p-3 lg:py-2 shadow-sm ${
+                     theme === 'dark' 
+                       ? 'border-gray-600 bg-zinc-700' 
+                       : 'border-gray-300 bg-gray-100'
+                   }`}>
                      <div className="space-y-2 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
                                            {/* Header row with number icon and delete button - mobile only */}
                       <div className="flex justify-between items-center lg:hidden mb-2">
@@ -1269,12 +1333,12 @@ export default function ServiceEditModal({
                    }}
                    className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                      theme === 'dark' 
-                       ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                       : 'border-gray-300 bg-gray-50 text-gray-900'
+                       ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                       : 'border-gray-200 bg-gray-50 text-gray-900'
                    }`}
                    placeholder={t("itemName")}
                  />
-                 <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                 <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                    theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                  }`}>
                    {t("itemName")}
@@ -1293,12 +1357,12 @@ export default function ServiceEditModal({
                    }}
                    className={`w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                      theme === 'dark' 
-                       ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                       : 'border-gray-300 bg-gray-50 text-gray-900'
+                       ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                       : 'border-gray-200 bg-gray-50 text-gray-900'
                    }`}
                    placeholder={t("itemDescription")}
                  />
-                          <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                          <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                             theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                           }`}>
                             {t("itemDescription")}
@@ -1306,7 +1370,7 @@ export default function ServiceEditModal({
                       </div>
 
                      {/* Price - fixed width */}
-                     <div className="w-full lg:w-24 flex-shrink-0 relative">
+                     <div className="w-full lg:w-32 flex-shrink-0 relative">
                                                                                                                            <input
                     type="number"
                     step="0.01"
@@ -1318,12 +1382,12 @@ export default function ServiceEditModal({
                     }}
                     className={`w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                       theme === 'dark' 
-                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                        : 'border-gray-300 bg-gray-50 text-gray-900'
+                        ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                        : 'border-gray-200 bg-gray-50 text-gray-900'
                     }`}
                     placeholder="0.00"
                   />
-                 <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                 <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                    theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                  }`}>
                    {t("price")}
@@ -1341,14 +1405,14 @@ export default function ServiceEditModal({
                          }}
                          className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                 theme === 'dark' 
-                         ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                         : 'border-gray-300 bg-gray-50 text-gray-900'
+                         ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                         : 'border-gray-200 bg-gray-50 text-gray-900'
                }`}
             >
                        <option value="fixed">{t("fixed")}</option>
                        <option value="per_unit">{t("perUnit")}</option>
                      </select>
-                     <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                     <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                        theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                      }`}>
                        {t("priceType")}
@@ -1389,12 +1453,12 @@ export default function ServiceEditModal({
                       onChange={(e) => setNewItem(prev => ({ ...prev, item_name: e.target.value }))}
                       className={`w-full px-3 py-2 pr-20 border rounded-lg ${
                         theme === 'dark' 
-                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                          : 'bg-white border-gray-300 text-gray-900'
+                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                          : 'bg-white border-gray-200 text-gray-900'
                       }`}
                       placeholder={t("itemName")}
                     />
-                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                       theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                     }`}>
                       {t("itemName")}
@@ -1407,12 +1471,12 @@ export default function ServiceEditModal({
                       onChange={(e) => setNewItem(prev => ({ ...prev, item_description: e.target.value }))}
                       className={`w-full px-3 py-2 pr-24 border rounded-lg ${
                         theme === 'dark' 
-                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                          : 'bg-white border-gray-300 text-gray-900'
+                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                          : 'bg-white border-gray-200 text-gray-900'
                       }`}
                       placeholder={t("itemDescription")}
                     />
-                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                       theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
                     }`}>
                       {t("itemDescription")}
@@ -1426,12 +1490,12 @@ export default function ServiceEditModal({
                       onChange={(e) => setNewItem(prev => ({ ...prev, price_base: e.target.value }))}
                       className={`w-full px-3 py-2 pr-16 border rounded-lg ${
                         theme === 'dark' 
-                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                          : 'bg-white border-gray-300 text-gray-900'
+                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                          : 'bg-white border-gray-200 text-gray-900'
                       }`}
                       placeholder="0.00"
                     />
-                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                       theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
                     }`}>
                       {t("price")}
@@ -1458,24 +1522,15 @@ export default function ServiceEditModal({
                            {/* Service Questions - Full Width */}
           {activeTab === 'questions' && (
             <div className="mb-8">
-             <div className="flex justify-between items-center mb-4">
-               <h3 className={`text-lg font-semibold ${
-                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-              }`}>
-                {t("questions")} ({questions.length})
-              </h3>
-               <button
-                 onClick={addQuestion}
-                 className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
-               >
-                 Add Question
-               </button>
-             </div>
 
              {/* Questions list */}
              <div className="space-y-3">
                {questions.map((question, index) => (
-                 <div key={question.question_id} className="mb-3 border border-gray-200 dark:border-gray-700 rounded-lg p-3 lg:py-2 bg-gray-100 dark:bg-zinc-700 shadow-sm">
+                 <div key={question.question_id} className={`mb-3 border rounded-xl p-3 lg:py-2 shadow-sm ${
+                   theme === 'dark' 
+                     ? 'border-gray-600 bg-zinc-700' 
+                     : 'border-gray-300 bg-gray-100'
+                 }`}>
                    <div className="space-y-2 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
                      {/* Header row with number icon and delete button - mobile only */}
                      <div className="flex justify-between items-center lg:hidden mb-2">
@@ -1527,12 +1582,12 @@ export default function ServiceEditModal({
                  }}
                                    className={`w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                     theme === 'dark' 
-                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                      : 'border-gray-300 bg-gray-50 text-gray-900'
+                      ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                      : 'border-gray-200 bg-gray-50 text-gray-900'
                   }`}
                  placeholder={t("questionText")}
                />
-              <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+              <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                 theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
               }`}>
                 {t("questionText")}
@@ -1587,8 +1642,8 @@ export default function ServiceEditModal({
                        }}
                        className={`w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                 theme === 'dark' 
-                         ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                         : 'border-gray-300 bg-gray-50 text-gray-900'
+                         ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                         : 'border-gray-200 bg-gray-50 text-gray-900'
                          }`}
                        >
                        <option value="open">{t("open")}</option>
@@ -1596,7 +1651,7 @@ export default function ServiceEditModal({
                        <option value="checkbox_multi">{t("checkboxMulti")}</option>
                        <option value="media_upload">{t("mediaUpload")}</option>
               </select>
-              <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+              <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                 theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
               }`}>
                 {t("type")}
@@ -1671,8 +1726,8 @@ export default function ServiceEditModal({
                                }}
                                className={`w-28 px-2 py-1 border rounded text-xs ${
                                  theme === 'dark' 
-                                   ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                   : 'border-gray-300 bg-gray-50 text-gray-900'
+                                   ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                                   : 'border-gray-200 bg-gray-50 text-gray-900'
                                }`}
                                placeholder={`Option ${optionIndex + 1}`}
                              />
@@ -1743,12 +1798,12 @@ export default function ServiceEditModal({
                       onChange={(e) => setNewQuestion(prev => ({ ...prev, question_text: e.target.value }))}
                       className={`w-full px-3 py-2 pr-24 border rounded-lg ${
                         theme === 'dark' 
-                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                          : 'bg-white border-gray-300 text-gray-900'
+                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                          : 'bg-white border-gray-200 text-gray-900'
                       }`}
                       placeholder={t("questionText")}
                     />
-                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                       theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                     }`}>
                       {t("questionText")}
@@ -1760,8 +1815,8 @@ export default function ServiceEditModal({
                       onChange={(e) => setNewQuestion(prev => ({ ...prev, question_type: e.target.value }))}
                       className={`w-full px-3 py-2 pr-20 border rounded-lg ${
                         theme === 'dark' 
-                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                          : 'bg-white border-gray-300 text-gray-900'
+                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                          : 'bg-white border-gray-200 text-gray-900'
                       }`}
                     >
                       <option value="open">{t("open")}</option>
@@ -1769,7 +1824,7 @@ export default function ServiceEditModal({
                       <option value="checkbox_multi">{t("checkboxMulti")}</option>
                       <option value="media_upload">{t("mediaUpload")}</option>
                     </select>
-                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                       theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
                     }`}>
                       {t("type")}
@@ -1796,24 +1851,15 @@ export default function ServiceEditModal({
                            {/* Service Requirements - Full Width */}
           {activeTab === 'requirements' && (
             <div className="mb-8">
-             <div className="flex justify-between items-center mb-4">
-               <h3 className={`text-lg font-semibold ${
-                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-              }`}>
-                {t("requirements")} ({requirements.length})
-              </h3>
-               <button
-                 onClick={addRequirement}
-                 className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
-               >
-                 Add Requirement
-               </button>
-             </div>
 
              {/* Requirements list */}
              <div className="space-y-3">
                {requirements.map((requirement, index) => (
-                                  <div key={requirement.requirement_block_id} className="mb-3 border border-gray-200 dark:border-gray-700 rounded-lg p-3 lg:py-2 bg-gray-100 dark:bg-zinc-700 shadow-sm">
+                                  <div key={requirement.requirement_block_id} className={`mb-3 border rounded-xl p-3 lg:py-2 shadow-sm ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-700' 
+                                      : 'border-gray-300 bg-gray-100'
+                                  }`}>
                                                  <div className="space-y-2 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
                                          {/* Header row with number icon and delete button - mobile only */}
                      <div className="flex justify-between items-center lg:hidden mb-2">
@@ -1865,12 +1911,12 @@ export default function ServiceEditModal({
                         }}
                         className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
               theme === 'dark' 
-                            ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                            : 'border-gray-300 bg-gray-50 text-gray-900'
+                            ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                            : 'border-gray-200 bg-gray-50 text-gray-900'
               }`}
               placeholder={t("requirementTitle")}
             />
-            <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+            <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
               theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
             }`}>
               {t("requirementTitle")}
@@ -1889,12 +1935,12 @@ export default function ServiceEditModal({
                           }}
                           className={`w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
               theme === 'dark' 
-                            ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                            : 'border-gray-300 bg-gray-50 text-gray-900'
+                            ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                            : 'border-gray-200 bg-gray-50 text-gray-900'
                         }`}
                         placeholder={t("requirementsText")}
                         />
-                        <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                        <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                           theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                         }`}>
                           {t("requirementsText")}
@@ -1956,12 +2002,12 @@ export default function ServiceEditModal({
                       onChange={(e) => setNewRequirement(prev => ({ ...prev, title: e.target.value }))}
                       className={`w-full px-3 py-2 pr-16 border rounded-lg ${
                         theme === 'dark' 
-                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                          : 'bg-white border-gray-300 text-gray-900'
+                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                          : 'bg-white border-gray-200 text-gray-900'
                       }`}
                       placeholder={t("requirementTitle")}
                     />
-                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                       theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                     }`}>
                       {t("requirementTitle")}
@@ -1974,12 +2020,12 @@ export default function ServiceEditModal({
                       onChange={(e) => setNewRequirement(prev => ({ ...prev, requirements_text: e.target.value }))}
                       className={`w-full px-2 py-2 pr-24 border rounded-lg ${
                         theme === 'dark' 
-                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                          : 'bg-white border-gray-300 text-gray-900'
+                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                          : 'bg-white border-gray-200 text-gray-900'
                       }`}
                       placeholder={t("requirementsText")}
                     />
-                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                       theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
                     }`}>
                       {t("requirementsText")}
@@ -2006,24 +2052,15 @@ export default function ServiceEditModal({
            {/* Service Events - Full Width */}
           {activeTab === 'events' && (
             <div className="mb-8">
-             <div className="flex justify-between items-center mb-4">
-               <h3 className={`text-lg font-semibold ${
-                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                        }`}>
-                 Service Events ({events.length})
-               </h3>
-               <button
-                 onClick={addEvent}
-                 className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
-               >
-                 Add Event
-               </button>
-                          </div>
 
              {/* Events list */}
              <div className="space-y-3">
                {events.map((event, index) => (
-                                  <div key={event.event_id} className="mb-3 border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-100 dark:bg-zinc-700 shadow-sm">
+                                  <div key={event.event_id} className={`mb-3 border rounded-xl p-3 shadow-sm ${
+                                    theme === 'dark' 
+                                      ? 'border-gray-600 bg-zinc-700' 
+                                      : 'border-gray-300 bg-gray-100'
+                                  }`}>
                                                  <div className="space-y-2 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
                                          {/* Circular number icon - minimal width */}
                      <div className="flex items-center justify-center w-8 flex-shrink-0">
@@ -2048,12 +2085,12 @@ export default function ServiceEditModal({
                          }}
                          className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                            theme === 'dark' 
-                             ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-300 bg-gray-50 text-gray-900'
+                             ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                             : 'border-gray-200 bg-gray-50 text-gray-900'
                          }`}
                          placeholder="Event Name"
                        />
-                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                          theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                        }`}>
                          Event Name
@@ -2072,12 +2109,12 @@ export default function ServiceEditModal({
                          }}
                          className={`w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                            theme === 'dark' 
-                             ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-300 bg-gray-50 text-gray-900'
+                             ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                             : 'border-gray-200 bg-gray-50 text-gray-900'
                          }`}
                          placeholder="Description"
                        />
-                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                          theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                        }`}>
                          Description
@@ -2085,7 +2122,7 @@ export default function ServiceEditModal({
                      </div>
 
                                           {/* Duration - fixed width */}
-                      <div className="w-full lg:w-24 flex-shrink-0 relative">
+                      <div className="w-full lg:w-32 flex-shrink-0 relative">
                        <input
                          type="number"
                          value={event.duration_minutes || 60}
@@ -2096,12 +2133,12 @@ export default function ServiceEditModal({
                          }}
                          className={`w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                            theme === 'dark' 
-                             ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-300 bg-gray-50 text-gray-900'
+                             ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                             : 'border-gray-200 bg-gray-50 text-gray-900'
                          }`}
                          placeholder="60"
                        />
-                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                          theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                        }`}>
                          Duration
@@ -2109,10 +2146,7 @@ export default function ServiceEditModal({
                      </div>
 
                                           {/* Buffer - fixed width */}
-                      <div className="w-full lg:w-24 flex-shrink-0">
-                                                                                                   <label className={`block text-xs font-normal mb-0.5 ${
-                            theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                          }`}>Buffer (min)</label>
+                      <div className="w-full lg:w-32 flex-shrink-0 relative">
                        <input
                          type="number"
                          value={event.buffer_minutes || 0}
@@ -2121,12 +2155,44 @@ export default function ServiceEditModal({
                            updatedEvents[index] = { ...updatedEvents[index], buffer_minutes: parseInt(e.target.value) || 0 }
                            setEvents(updatedEvents)
                          }}
-                         className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
+                         className={`w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
                            theme === 'dark' 
-                             ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-300 bg-white text-gray-900'
+                             ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                             : 'border-gray-200 bg-gray-50 text-gray-900'
                          }`}
+                         placeholder="0"
                        />
+                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
+                         theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                       }`}>
+                         Buffer
+                       </span>
+                     </div>
+
+                                          {/* Slot Interval - fixed width */}
+                      <div className="w-full lg:w-32 flex-shrink-0 relative">
+                       <input
+                         type="number"
+                         value={event.slot_interval_minutes || 15}
+                         onChange={(e) => {
+                           const updatedEvents = [...events]
+                           updatedEvents[index] = { ...updatedEvents[index], slot_interval_minutes: parseInt(e.target.value) || 15 }
+                           setEvents(updatedEvents)
+                         }}
+                         className={`w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
+                           theme === 'dark' 
+                             ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                             : 'border-gray-200 bg-gray-50 text-gray-900'
+                         }`}
+                         placeholder="15"
+                         min="5"
+                         step="5"
+                       />
+                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
+                         theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                       }`}>
+                         Interval
+                       </span>
                      </div>
 
 
@@ -2164,7 +2230,7 @@ export default function ServiceEditModal({
                         
                         return (
                           <div key={day} className="text-center">
-                            <div className={`text-xs font-medium mb-1 ${
+                            <div className={`text-[10px] font-medium mb-1 ${
                               theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                             }`}>
                               {day.slice(0, 3)}
@@ -2255,8 +2321,8 @@ export default function ServiceEditModal({
                                 }}
                                 className={`w-full px-2 py-1 text-xs border rounded ${
                                   theme === 'dark' 
-                                    ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                    : 'border-gray-300 bg-white text-gray-900'
+                                    ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                                    : 'border-gray-200 bg-white text-gray-900'
                                 } ${!isDayEnabled ? 'cursor-not-allowed opacity-50' : ''}`}
                                 placeholder="Start"
                               />
@@ -2296,8 +2362,8 @@ export default function ServiceEditModal({
                                 }}
                                 className={`w-full px-2 py-1 text-xs border rounded ${
                                   theme === 'dark' 
-                                    ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                    : 'border-gray-300 bg-white text-gray-900'
+                                    ? 'border-gray-700 bg-zinc-800 text-gray-100' 
+                                    : 'border-gray-200 bg-white text-gray-900'
                                 } ${!isDayEnabled ? 'cursor-not-allowed opacity-50' : ''}`}
                                 placeholder="End"
                               />
@@ -2318,7 +2384,7 @@ export default function ServiceEditModal({
                 }`}>
                   Add New Event
                 </h4>
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
                   <div className="relative">
                     <input
                       type="text"
@@ -2326,12 +2392,12 @@ export default function ServiceEditModal({
                       onChange={(e) => setNewEvent(prev => ({ ...prev, event_name: e.target.value }))}
                       className={`w-full px-3 py-2 pr-20 border rounded-lg ${
                         theme === 'dark' 
-                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                          : 'bg-white border-gray-300 text-gray-900'
+                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                          : 'bg-white border-gray-200 text-gray-900'
                       }`}
                       placeholder="Event Name"
                     />
-                                         <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                                         <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                        theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                      }`}>
                        Event Name
@@ -2344,12 +2410,12 @@ export default function ServiceEditModal({
                         onChange={(e) => setNewEvent(prev => ({ ...prev, event_description: e.target.value }))}
                         className={`w-full px-3 py-2 pr-24 border rounded-lg ${
                           theme === 'dark'
-                            ? 'bg-zinc-700 border-gray-600 text-gray-100'
-                            : 'bg-white border-gray-300 text-gray-900'
+                            ? 'bg-zinc-700 border-gray-700 text-gray-100'
+                            : 'bg-white border-gray-200 text-gray-900'
                         }`}
                         placeholder="Description"
                       />
-                     <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                     <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                        theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                      }`}>
                        Description
@@ -2362,15 +2428,35 @@ export default function ServiceEditModal({
                       onChange={(e) => setNewEvent(prev => ({ ...prev, duration_minutes: parseInt(e.target.value) || 60 }))}
                       className={`w-full px-3 py-2 pr-20 border rounded-lg ${
                         theme === 'dark' 
-                          ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                          : 'bg-white border-gray-300 text-gray-900'
+                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                          : 'bg-white border-gray-200 text-gray-900'
                       }`}
                       placeholder="60"
                     />
-                                         <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium transition-opacity duration-200 ${
+                                         <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
                        theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
                      }`}>
                        Duration
+                     </span>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={newEvent.slot_interval_minutes}
+                      onChange={(e) => setNewEvent(prev => ({ ...prev, slot_interval_minutes: parseInt(e.target.value) || 15 }))}
+                      className={`w-full px-3 py-2 pr-20 border rounded-lg ${
+                        theme === 'dark' 
+                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                          : 'bg-white border-gray-200 text-gray-900'
+                      }`}
+                      placeholder="15"
+                      min="5"
+                      step="5"
+                    />
+                                         <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
+                       theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                     }`}>
+                       Interval
                      </span>
                   </div>
                   <div className="flex items-end">
@@ -2394,69 +2480,91 @@ export default function ServiceEditModal({
            {/* Consent Options - Full Width */}
           {activeTab === 'consent' && (
             <div className="mb-8">
-            <h3 className={`text-lg font-semibold mb-4 ${
-              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-            }`}>
-              Consent Options
-            </h3>
-            <div className="space-y-4">
-              <div className="flex gap-4">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={formData.require_phone}
-                    onChange={(e) => handleInputChange('require_phone', e.target.checked)}
-                    className="mr-2"
-                  />
-                  <span className={`text-sm ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+            <div className="space-y-3">
+              {/* Require Phone Number Toggle */}
+              <div className={`border rounded-xl p-4 shadow-sm ${
+                theme === 'dark' 
+                  ? 'border-gray-600 bg-zinc-700' 
+                  : 'border-gray-300 bg-gray-100'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <span className={`text-xs md:text-sm font-medium ${
+                    theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
                   }`}>
                     Require Phone Number
                   </span>
-                </label>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.require_phone}
+                      onChange={(e) => handleInputChange('require_phone', e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className={`w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 ${
+                      theme === 'dark' ? 'after:bg-gray-200' : 'after:bg-white'
+                    }`}></div>
+                  </label>
+                </div>
+              </div>
 
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={formData.require_consent_newsletter}
-                    onChange={(e) => handleInputChange('require_consent_newsletter', e.target.checked)}
-                    className="mr-2"
-                  />
-                  <span className={`text-sm ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+              {/* Require Newsletter Consent Toggle */}
+              <div className={`border rounded-xl p-4 shadow-sm ${
+                theme === 'dark' 
+                  ? 'border-gray-600 bg-zinc-700' 
+                  : 'border-gray-300 bg-gray-100'
+              }`}>
+                <div className="flex items-center justify-between mb-3">
+                  <span className={`text-xs md:text-sm font-medium ${
+                    theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
                   }`}>
                     Require Newsletter Consent
                   </span>
-                </label>
-              </div>
-
-              {formData.require_consent_newsletter && (
-                <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
-                    Newsletter Consent Text
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.require_consent_newsletter}
+                      onChange={(e) => handleInputChange('require_consent_newsletter', e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className={`w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 ${
+                      theme === 'dark' ? 'after:bg-gray-200' : 'after:bg-white'
+                    }`}></div>
                   </label>
-                  <textarea
-                    value={formData.require_consent_newsletter_text}
-                    onChange={(e) => handleInputChange('require_consent_newsletter_text', e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-lg ${
-                      theme === 'dark' 
-                        ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                        : 'bg-white border-gray-300 text-gray-900'
-                    }`}
-                    rows={3}
-                    placeholder="Enter custom newsletter consent text..."
-                  />
                 </div>
-              )}
+
+                {formData.require_consent_newsletter && (
+                  <div>
+                    <label className={`block text-xs md:text-sm font-medium mb-2 ${
+                      theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
+                      Newsletter Consent Text
+                    </label>
+                    <textarea
+                      value={formData.require_consent_newsletter_text}
+                      onChange={(e) => handleInputChange('require_consent_newsletter_text', e.target.value)}
+                      className={`w-full px-3 py-2 border rounded-lg ${
+                        theme === 'dark' 
+                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
+                          : 'bg-white border-gray-200 text-gray-900'
+                      }`}
+                      rows={3}
+                      placeholder="Enter custom newsletter consent text..."
+                    />
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+            </div>
           )}
         </div>
 
         {/* Footer - Fixed at bottom */}
-        <div className="flex justify-end items-center p-4 lg:p-6 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
+        <div className="flex justify-between items-center p-4 lg:p-6 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
+          {/* Left side - Add button for current tab */}
+          <div>
+            {getAddButtonForTab()}
+          </div>
+          
           {/* Right side - Cancel and Save buttons */}
           <div className="flex gap-3">
             <button

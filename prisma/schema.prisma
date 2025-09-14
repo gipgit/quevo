@@ -894,20 +894,21 @@ model serviceevent {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model serviceeventavailability {
-  availability_id     Int           @id @default(autoincrement())
-  event_id            Int?
-  business_id         String        @db.Uuid
-  staff_id            Int?
-  day_of_week         Int           @db.SmallInt
-  time_start          DateTime      @db.Time(6)
-  time_end            DateTime      @db.Time(6)
-  is_recurring        Boolean?      @default(true)
-  date_effective_from DateTime?     @db.Date
-  date_effective_to   DateTime?     @db.Date
-  date_created        DateTime?     @default(now()) @db.Timestamp(6)
-  date_updated        DateTime?     @default(now()) @db.Timestamp(6)
-  business            business      @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
-  serviceevent        serviceevent? @relation(fields: [event_id], references: [event_id], onDelete: Cascade)
+  availability_id       Int           @id @default(autoincrement())
+  event_id              Int?
+  business_id           String        @db.Uuid
+  staff_id              Int?
+  day_of_week           Int           @db.SmallInt
+  time_start            DateTime      @db.Time(6)
+  time_end              DateTime      @db.Time(6)
+  slot_interval_minutes Int?          @default(15)
+  is_recurring          Boolean?      @default(true)
+  date_effective_from   DateTime?     @db.Date
+  date_effective_to     DateTime?     @db.Date
+  date_created          DateTime?     @default(now()) @db.Timestamp(6)
+  date_updated          DateTime?     @default(now()) @db.Timestamp(6)
+  business              business      @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  serviceevent          serviceevent? @relation(fields: [event_id], references: [event_id], onDelete: Cascade)
 
   @@index([business_id, day_of_week], map: "idx_serviceeventavailability_business_day")
   @@index([business_id, event_id, day_of_week], map: "idx_serviceeventavailability_business_event_day")

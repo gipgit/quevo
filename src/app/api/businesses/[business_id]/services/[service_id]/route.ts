@@ -7,13 +7,12 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { business_id: string; service_id: string } }
 ) {
+  const { business_id, service_id } = params
   try {
     const session = await auth()
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
-
-    const { business_id, service_id } = params
     const data = await request.json()
 
     // Verify business ownership
@@ -202,8 +201,26 @@ export async function PUT(
             },
           })
 
-          // Create availability records for each day
-          if (event.availability) {
+          // Create availability records
+          if (event.serviceeventavailability && event.serviceeventavailability.length > 0) {
+            for (const avail of event.serviceeventavailability) {
+              await tx.serviceeventavailability.create({
+                data: {
+                  event_id: createdEvent.event_id,
+                  business_id: business_id,
+                  day_of_week: avail.day_of_week,
+                  time_start: new Date(`2000-01-01T${avail.time_start}Z`), // Use UTC to avoid timezone conversion
+                  time_end: new Date(`2000-01-01T${avail.time_end}Z`), // Use UTC to avoid timezone conversion
+                  slot_interval_minutes: event.slot_interval_minutes || 15, // Use event's slot interval or default to 15
+                  is_recurring: avail.is_recurring,
+                  date_effective_from: avail.date_effective_from ? new Date(avail.date_effective_from) : null,
+                  date_effective_to: avail.date_effective_to ? new Date(avail.date_effective_to) : null,
+                },
+              })
+            }
+          }
+          // Legacy support for old availability format
+          else if (event.availability) {
             const dayMapping = {
               monday: 1,
               tuesday: 2,
@@ -222,8 +239,9 @@ export async function PUT(
                     event_id: createdEvent.event_id,
                     business_id: business_id,
                     day_of_week: dayMapping[day as keyof typeof dayMapping],
-                    time_start: new Date(`2000-01-01T${typedConfig.start}:00`),
-                    time_end: new Date(`2000-01-01T${typedConfig.end}:00`),
+                    time_start: new Date(`2000-01-01T${typedConfig.start}:00Z`), // Use UTC
+                    time_end: new Date(`2000-01-01T${typedConfig.end}:00Z`), // Use UTC
+                    slot_interval_minutes: event.slot_interval_minutes || 15, // Use event's slot interval or default to 15
                     is_recurring: true,
                   },
                 })
@@ -237,8 +255,14 @@ export async function PUT(
     return NextResponse.json({ message: "Service updated successfully" })
   } catch (error) {
     console.error("Error updating service:", error)
+    console.error("Error details:", {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      business_id: business_id,
+      service_id: service_id
+    })
     return NextResponse.json(
-      { error: "Failed to update service" },
+      { error: "Failed to update service", details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

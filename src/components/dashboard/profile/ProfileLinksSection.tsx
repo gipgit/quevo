@@ -2,6 +2,7 @@ import { useState } from "react"
 import { ALLOWED_SOCIAL_LINKS } from "@/lib/social-links-config"
 import { useTranslations } from "next-intl"
 import { XMarkIcon } from "@heroicons/react/24/outline"
+import { useTheme } from "@/contexts/ThemeContext"
 
 interface SocialLink {
   url: string
@@ -15,6 +16,7 @@ interface ProfileLinksSectionProps {
 
 export default function ProfileLinksSection({ socialLinks, onChange }: ProfileLinksSectionProps) {
   const t = useTranslations("profile")
+  const { theme } = useTheme()
   // Track which socials are selected for input
   const [selected, setSelected] = useState<string[]>(
     Object.keys(socialLinks).filter((key) => !!socialLinks[key]?.url)
@@ -52,11 +54,19 @@ export default function ProfileLinksSection({ socialLinks, onChange }: ProfileLi
             const social = ALLOWED_SOCIAL_LINKS.find((s) => s.id === id)
             if (!social) return null
             return (
-              <div key={id} className="flex items-center gap-2 md:gap-3 bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
+              <div key={id} className={`flex items-center gap-2 md:gap-3 border rounded-lg p-3 shadow-sm ${
+                theme === 'dark' 
+                  ? 'bg-zinc-700 border-gray-600' 
+                  : 'bg-white border-gray-200'
+              }`}>
                 <img src={social.iconPath} alt={social.name} className="w-5 h-5" />
                 <input
                   type="url"
-                  className="flex-1 px-2 py-1.5 border border-gray-300 rounded-md text-xs md:text-sm"
+                  className={`flex-1 px-2 py-1.5 border rounded-md text-xs md:text-sm ${
+                    theme === 'dark' 
+                      ? 'bg-zinc-700 border-gray-600 text-gray-100' 
+                      : 'bg-white border-gray-300 text-gray-900'
+                  }`}
                   placeholder={social.placeholder}
                   value={socialLinks[id]?.url || ""}
                   onChange={(e) => onChange(id, { url: e.target.value, visible: socialLinks[id]?.visible ?? true })}
@@ -84,13 +94,19 @@ export default function ProfileLinksSection({ socialLinks, onChange }: ProfileLi
                 type="button"
                 className={`flex flex-col items-center justify-center p-2 rounded-lg transition-all focus:outline-none h-16 ${
                   isActive
-                    ? "ring-2 ring-gray-400 bg-gray-100 shadow-md"
-                    : "border border-gray-300 hover:border-gray-400 bg-white"
+                    ? theme === 'dark' 
+                      ? "ring-2 ring-gray-400 bg-zinc-600 shadow-md"
+                      : "ring-2 ring-gray-400 bg-gray-100 shadow-md"
+                    : theme === 'dark'
+                      ? "border border-gray-600 hover:border-gray-500 bg-zinc-700"
+                      : "border border-gray-300 hover:border-gray-400 bg-white"
                 }`}
                 onClick={() => handleSelect(social.id)}
               >
                 <img src={social.iconPath} alt={social.name} className="w-5 h-5 mb-1" />
-                <span className="text-xs text-gray-600 font-medium">{social.name}</span>
+                <span className={`text-xs font-medium ${
+                  theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                }`}>{social.name}</span>
               </button>
             )
           })}
