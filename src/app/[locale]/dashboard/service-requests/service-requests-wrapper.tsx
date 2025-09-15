@@ -434,11 +434,16 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
           <div className="w-full lg:w-1/5 border-b lg:border-b-0 lg:border-r border-[var(--dashboard-border-primary)] flex flex-col">
             {/* Progress Bar */}
             <div className="p-4 border-b border-[var(--dashboard-border-primary)]">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium text-[var(--dashboard-text-secondary)]">
-                  Progress: {handledRequests} of {totalRequests} handled
-                </span>
-                <span className="text-sm text-[var(--dashboard-text-tertiary)]">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <div className="text-xs font-medium text-[var(--dashboard-text-secondary)]">
+                    Progress
+                  </div>
+                  <div className="text-lg font-bold text-[var(--dashboard-text-primary)]">
+                    {handledRequests} of {totalRequests} handled
+                  </div>
+                </div>
+                <span className="text-xs text-[var(--dashboard-text-tertiary)]">
                   {unhandledRequests} remaining
                 </span>
               </div>
@@ -477,30 +482,29 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       <div className="flex items-center justify-between text-xs mb-1">
                         <div className="flex items-center gap-1">
                           <span className="opacity-75">{day} {month} {time}</span>
-                          <span className="text-xs opacity-75">•</span>
-                          <span className="font-medium text-xs" style={{ fontSize: '0.7rem' }}>{request.request_reference}</span>
+                          <span className="font-medium text-xs" style={{ fontSize: '0.6rem' }}>{request.request_reference}</span>
                         </div>
-                        <span className={`px-1 py-0.5 rounded-full ${getStatusColor(request.status)}`} style={{ fontSize: '0.7rem' }}>
-                          {getStatusText(request.status)}
-                        </span>
+                        <div className="flex items-center gap-1">
+                          <span className={`px-1 py-0.5 rounded-full ${getStatusColor(request.status)} whitespace-nowrap`} style={{ fontSize: '0.6rem' }}>
+                            {getStatusText(request.status)}
+                          </span>
+                          {getPriorityIcon(request.priority || 'medium')}
+                          {request.urgency_flag && (
+                            <FlagIcon className="w-3.5 h-3.5 text-red-500" />
+                          )}
+                        </div>
                       </div>
                       
                       <div className="flex items-start justify-between mb-1">
                         <div className="flex items-center gap-2">
                           {isRequestHandled(request) ? (
-                            <CheckCircleSolidIcon className="w-3.5 h-3.5 text-green-500" />
+                            <CheckCircleSolidIcon className="w-3 h-3 text-green-500" />
                           ) : (
-                            <div className="w-3.5 h-3.5 rounded-full bg-blue-500" />
+                            <div className="w-3 h-3 rounded-full bg-blue-500" />
                           )}
                           <span className="text-xs opacity-75">{request.customer_name}</span>
                           <span className="text-xs opacity-75">•</span>
                           <span className="text-xs opacity-75">{request.service?.service_name}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          {getPriorityIcon(request.priority || 'medium')}
-                          {request.urgency_flag && (
-                            <FlagIcon className="w-3.5 h-3.5 text-red-500" />
-                          )}
                         </div>
                       </div>
                     </div>
@@ -515,7 +519,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
             {selectedRequest ? (
               <>
                 {/* Request Header with Action Buttons */}
-                <div className="border-b border-[var(--dashboard-border-primary)]">
+                <div className="border-b border-[var(--dashboard-border-primary)] pb-4">
                   <div className="flex flex-col lg:flex-row items-start justify-between gap-2 lg:gap-4">
                     <div className="flex-1 min-w-0 w-full lg:w-auto">
                       <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-2 lg:gap-4">
@@ -534,7 +538,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center gap-3 text-xs lg:text-sm text-[var(--dashboard-text-tertiary)]">
+                          <div className="flex items-center gap-3 text-xs lg:text-base text-[var(--dashboard-text-tertiary)]">
                             <span className="font-medium lg:font-semibold">{selectedRequest.customer_name}</span>
                             <span>•</span>
                             <span className="font-medium lg:font-semibold">{selectedRequest.service?.service_name || 'N/A'}</span>
@@ -546,7 +550,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                         {/* Right Column: Time Passed Indicator */}
                         <div className="flex flex-col items-end">
                           <span className="text-xs text-[var(--dashboard-text-secondary)]">Time passed</span>
-                          <span className="text-sm font-bold text-[var(--dashboard-text-primary)]">
+                          <span className="text-sm lg:text-base font-bold text-[var(--dashboard-text-primary)]">
                             {(() => {
                               try {
                                 const dateField = selectedRequest.created_at || selectedRequest.date_created || selectedRequest.request_date

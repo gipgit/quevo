@@ -69,6 +69,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [copied, setCopied] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('sidebarCollapsed') === 'true'
+    }
+    return false
+  })
   const { currentBusiness, businesses, switchBusiness, loading, userPlan, userManager, businessSwitchKey } = useBusiness()
   const { isModalOpen, setIsModalOpen, currentLocale, availableLocales, switchLocale } = useLocaleSwitcher()
   const { theme, toggleTheme } = useTheme()
@@ -228,6 +234,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     return firstInitial + lastInitial
   }
 
+  // Helper function to toggle sidebar and persist state
+  const toggleSidebar = () => {
+    const newState = !isSidebarCollapsed
+    setIsSidebarCollapsed(newState)
+    localStorage.setItem('sidebarCollapsed', newState.toString())
+  }
+
   // Helper function to check if a navigation item is active
   const isActiveLink = (href: string) => {
     console.log('Checking active link:', { href, pathname, currentLocale })
@@ -246,58 +259,88 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   return (
     <>
       <NavigationInterceptor />
-      <div className="min-h-screen lg:px-6 lg:py-4 bg-[var(--dashboard-bg-secondary)]">
+      <div className="min-h-screen lg:grid lg:grid-cols-[auto_1fr] lg:gap-6 lg:px-6 lg:py-4 bg-[var(--dashboard-bg-secondary)]">
         {/* Desktop Sidebar */}
-        <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-80 lg:flex-col rounded-xl">
-          <div className="flex grow flex-col gap-y-3 overflow-y-auto px-4 py-6">
-
-            {/* Business Info Card */}
-            <div className="rounded-lg p-2 cursor-pointer transition-colors mb-2 hover:bg-[var(--dashboard-bg-tertiary)]" onClick={() => setShowBusinessModal(true)}>
-              <div className="flex items-center space-x-3">
-                <div className="h-10 w-10 rounded-full bg-zinc-600 flex items-center justify-center overflow-hidden">
-                  {(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? (
-                    <img
-                      src={getProfileImageUrl(currentBusiness)}
-                      alt={businessName}
-                      className="h-full w-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement
-                        target.style.display = "none"
-                        target.nextElementSibling?.classList.remove("hidden")
-                      }}
-                    />
-                  ) : null}
-                  <span className={`text-white text-sm font-medium ${(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? "hidden" : ""}`}>
-                    {getBusinessInitial()}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h2 className="font-semibold text-sm lg:text-base truncate text-[var(--dashboard-text-primary)]">{businessName}</h2>
+        <aside className={`hidden lg:flex lg:flex-col rounded-xl transition-all duration-300 relative lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)] lg:max-h-[calc(100vh-2rem)] lg:will-change-transform ${
+          isSidebarCollapsed ? 'lg:w-16' : 'lg:w-64'
+        }`} style={{ transform: 'translateZ(0)' }}>
+          {isSidebarCollapsed && (
+            <button
+              onClick={toggleSidebar}
+              className="absolute top-2 right-2 z-10 p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+              title="Expand sidebar"
+            >
+              <Bars3Icon className="h-4 w-4" />
+            </button>
+          )}
+          <div className={`flex flex-col h-full ${isSidebarCollapsed ? 'px-2 pt-9 pb-3' : 'px-4 py-3'}`}>
+            {/* Business Info Card with Toggle Button */}
+            <div className="flex items-center justify-between mb-2">
+              <div className="rounded-lg p-1.5 cursor-pointer transition-colors hover:bg-[var(--dashboard-bg-tertiary)] flex-1" onClick={() => setShowBusinessModal(true)}>
+                <div className={`flex items-center ${isSidebarCollapsed ? 'justify-center' : 'space-x-3'}`}>
+                  <div className="h-10 w-10 rounded-full bg-zinc-600 flex items-center justify-center overflow-hidden">
+                    {(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? (
+                      <img
+                        src={getProfileImageUrl(currentBusiness)}
+                        alt={businessName}
+                        className="h-full w-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement
+                          target.style.display = "none"
+                          target.nextElementSibling?.classList.remove("hidden")
+                        }}
+                      />
+                    ) : null}
+                    <span className={`text-white text-sm font-medium ${(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? "hidden" : ""}`}>
+                      {getBusinessInitial()}
+                    </span>
+                  </div>
+                  {!isSidebarCollapsed && (
+                    <div className="flex-1 min-w-0">
+                      <h2 className="font-semibold text-sm lg:text-base truncate text-[var(--dashboard-text-primary)]">{businessName}</h2>
+                    </div>
+                  )}
                 </div>
               </div>
+              {!isSidebarCollapsed && (
+                <button
+                  onClick={toggleSidebar}
+                  className="p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)] ml-2"
+                  title="Collapse sidebar"
+                >
+                  <Bars3Icon className="h-4 w-4" />
+                </button>
+              )}
             </div>
 
             {/* Navigation Items */}
-            <nav className="flex-1">
-              <ul className="space-y-0">
+            <nav className="flex-1 overflow-y-auto min-h-0">
+              <ul className="space-y-1">
                 {navigationItems.map((item) => {
                   const IconComponent = item.icon
                   return (
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        className={`flex items-center gap-x-3 rounded-md p-2 text-sm md:text-base leading-6 transition-all duration-200 ${
+                        className={`flex items-center rounded-md p-1.5 text-sm md:text-base leading-6 transition-all duration-200 ${
+                          isSidebarCollapsed ? 'justify-center' : 'gap-x-3'
+                        } ${
                           isActiveLink(item.href)
                             ? "bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)] shadow-md border border-[var(--dashboard-border-primary)]"
                             : "text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)] hover:text-[var(--dashboard-text-primary)]"
                         }`}
+                        title={isSidebarCollapsed ? item.label : undefined}
                       >
-                        <IconComponent className="h-5 w-5" />
-                        <span className="flex-1">{item.label}</span>
-                        {item.comingSoon && (
-                          <span className="text-xs px-1.5 py-0.5 rounded-full bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
-                            Coming Soon
-                          </span>
+                        <IconComponent className="h-5 w-5 flex-shrink-0" />
+                        {!isSidebarCollapsed && (
+                          <>
+                            <span className="flex-1">{item.label}</span>
+                            {item.comingSoon && (
+                              <span className="text-xs px-1.5 py-0.5 rounded-full bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
+                                Coming Soon
+                              </span>
+                            )}
+                          </>
                         )}
                       </Link>
                     </li>
@@ -307,38 +350,73 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             </nav>
 
             {/* Theme Toggle, Locale Switcher and Support Buttons */}
-            <div className="mt-auto">
-              <div className="flex items-center gap-4">
-                <LocaleSwitcherButton 
-                  onClick={() => setIsModalOpen(true)}
-                  className=""
-                />
-                <SupportButton 
-                  onClick={handleSupportRequest}
-                  className=""
-                />
-                <div className="flex items-center gap-2">
-                  <SunIcon className="h-4 w-4 text-[var(--dashboard-text-secondary)]" />
+            <div className="mt-auto flex-shrink-0 pt-2 pb-2">
+              {!isSidebarCollapsed ? (
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-4">
+                    <LocaleSwitcherButton 
+                      onClick={() => setIsModalOpen(true)}
+                      className=""
+                    />
+                    <SupportButton 
+                      onClick={handleSupportRequest}
+                      className=""
+                    />
+                  </div>
+                  <div className="flex items-center justify-center gap-2">
+                    <SunIcon className="h-4 w-4 text-[var(--dashboard-text-secondary)]" />
+                    <button
+                      onClick={toggleTheme}
+                      className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--dashboard-ring-primary)] focus:ring-offset-2 bg-[var(--dashboard-border-secondary)]"
+                      title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
+                          theme === 'dark' ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                      <span className="sr-only">
+                        {theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                      </span>
+                    </button>
+                    <MoonIcon className="h-4 w-4 text-[var(--dashboard-text-secondary)]" />
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-3">
                   <button
                     onClick={toggleTheme}
-                    className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--dashboard-ring-primary)] focus:ring-offset-2 bg-[var(--dashboard-border-secondary)]"
+                    className="relative inline-flex h-6 w-12 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--dashboard-ring-primary)] focus:ring-offset-2 bg-[var(--dashboard-border-secondary)] mx-auto"
                     title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
                   >
                     <span
                       className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
-                        theme === 'dark' ? 'translate-x-6' : 'translate-x-1'
+                        theme === 'dark' ? 'translate-x-7' : 'translate-x-1'
                       }`}
                     />
                     <span className="sr-only">
                       {theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
                     </span>
                   </button>
-                  <MoonIcon className="h-4 w-4 text-[var(--dashboard-text-secondary)]" />
+                  <div className="flex flex-col gap-3 w-full">
+                    <div className="w-full flex justify-center">
+                      <LocaleSwitcherButton 
+                        onClick={() => setIsModalOpen(true)}
+                        className=""
+                      />
+                    </div>
+                    <div className="w-full flex justify-center">
+                      <SupportButton 
+                        onClick={handleSupportRequest}
+                        className=""
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
-        </div>
+        </aside>
 
         {/* Mobile Sidebar Overlay */}
         {isMobileMenuOpen && (
@@ -541,7 +619,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         </div>
 
         {/* Main Content */}
-        <div className="lg:pl-80">
+        <main className="min-w-0">
           <div className="px-6 py-4 lg:py-2 rounded-2xl lg:sticky top-0 z-10 mb-2 bg-[var(--dashboard-bg-primary)]">
             {/* Top Navbar Dashboard*/}
             <div className="flex flex-row justify-between gap-4">
@@ -667,7 +745,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               {children}
             </CacheBusterWrapper>
           </div>
-        </div>
+        </main>
 
         {/* Business Selection Modal */}
         <BusinessSelectionModal 

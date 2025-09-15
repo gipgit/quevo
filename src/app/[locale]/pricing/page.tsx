@@ -1,10 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useTranslations } from 'next-intl'
 import { getPlanColors, capitalizePlanName } from "@/lib/plan-colors"
 import { getAllPlans, PlanFeature } from "@/lib/plan-features"
-import { getAllModules, AdditionalModule } from "@/lib/additional-modules"
 import { useCheckout } from "@/hooks/useCheckout"
 import PlanSelector from "@/components/pricing/PlanSelector"
 import PricingHeader from "@/components/pricing/PricingHeader"
@@ -28,12 +27,11 @@ export default function PricingPage() {
   // Debug logging
   console.log('PricingPage render - showPlanSelector:', showPlanSelector)
   
-  // Get plans and modules from static configuration
+  // Get plans from static configuration
   const plans = getAllPlans()
-  const modules = getAllModules()
 
-  const handlePlanSelect = async (plan: PlanFeature, selectedModules: AdditionalModule[]) => {
-    await createCheckoutSession(plan, selectedModules)
+  const handlePlanSelect = async (plan: PlanFeature) => {
+    await createCheckoutSession(plan)
   }
 
   const handleGetStarted = (plan: Plan) => {
@@ -114,14 +112,14 @@ export default function PricingPage() {
             </div>
             
             {/* Quick Plan Overview */}
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6 mb-12">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-4 mb-12">
               {plans.map((plan) => (
                 <div
                   key={plan.id}
-        className={`rounded-3xl border p-8 flex flex-col justify-between transition-all duration-300 hover:shadow-xl bg-white ${
+        className={`rounded-3xl border p-8 flex flex-col justify-between transition-all duration-300 hover:shadow-lg bg-white ${
           plan.name.toLowerCase().includes('pro unlimited')
-            ? "border-gray-300 shadow-xl"
-            : "border-gray-200 shadow-lg"
+            ? "border-gray-300 shadow-md"
+            : "border-gray-200 shadow-sm"
         }`}
                 >
                   <div>
@@ -159,163 +157,69 @@ export default function PricingPage() {
                     </button>
                     
                     <ul className="space-y-1 md:space-y-2">
-                      {plan.features.map((feature, index) => (
-                        <li key={index} className="flex items-center gap-2 md:gap-3">
-                          <svg className="w-3.5 h-3.5 md:w-5 md:h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          <span className="text-sm md:text-sm text-gray-700 leading-tight">{feature}</span>
-                        </li>
-                      ))}
+                      {plan.features.map((feature, index) => {
+                        // Check if this is the first AI feature
+                        const isFirstAI = feature.type === 'ai' && !plan.features.slice(0, index).some(f => f.type === 'ai');
+                        
+                        return (
+                          <React.Fragment key={index}>
+                            {/* Add AI Credits as regular list item before first AI feature */}
+                            {isFirstAI && (
+                              <>
+                                {/* Visual separator between core and AI features */}
+                                <li className="border-t border-gray-100 my-2"></li>
+                                <li className="flex items-center gap-2 md:gap-3">
+                                  <svg className="w-3.5 h-3.5 md:w-5 md:h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                                  </svg>
+                                  <span className="text-sm md:text-sm text-gray-700 leading-tight">
+                                    {typeof plan.ai_credits_included === 'number' 
+                                      ? `${plan.ai_credits_included} AI Credits / month`
+                                      : 'Unlimited AI Credits'
+                                    }
+                                  </span>
+                                </li>
+                              </>
+                            )}
+                            <li className="flex items-start gap-2 md:gap-3">
+                              {feature.type === 'ai' ? (
+                                <svg className="w-3.5 h-3.5 md:w-5 md:h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                              ) : feature.text === 'Remove Quevo Logo' && plan.name === 'FREE' ? (
+                                <svg className="w-3.5 h-3.5 md:w-5 md:h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                              ) : (
+                                <svg className="w-3.5 h-3.5 md:w-5 md:h-5 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                              <div className="flex-1">
+                                <span className="text-sm md:text-sm text-gray-700 leading-tight font-semibold">{feature.text}</span>
+                                {feature.description && (
+                                  <div className="text-xs text-gray-500 mt-0.5 leading-relaxed">{feature.description}</div>
+                                )}
+                              </div>
+                            </li>
+                          </React.Fragment>
+                        );
+                      })}
+                      {/* Visual separator before support */}
+                      <li className="border-t border-gray-100 my-2"></li>
+                      <li className="flex items-center gap-2 md:gap-3">
+                        <svg className="w-3.5 h-3.5 md:w-5 md:h-5 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-sm md:text-sm text-gray-700 leading-tight">Support: {plan.support}</span>
+                      </li>
                     </ul>
                   </div>
                 </div>
               ))}
             </div>
             
-            {/* Marketing Modules */}
-            <div className="mt-20">
-              <div className="text-center mb-12 max-w-[1200px] mx-auto">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                  Marketing Modules
-                </h2>
-                <p className="text-lg text-gray-600">
-                  Boost your marketing efforts with AI-powered tools
-                </p>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1200px] mx-auto">
-                {modules.filter(module => 
-                  ['email-marketing', 'ai-email-creator', 'ai-social-creator'].includes(module.id)
-                ).map((module) => (
-                  <div
-                    key={module.id}
-                    className="bg-white rounded-2xl border border-gray-200 p-6 lg:p-8 shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col"
-                  >
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="text-2xl">{module.icon}</span>
-                      <h3 className="text-xl font-semibold text-gray-900">
-                        {module.name}
-                      </h3>
-                    </div>
-                    
-                    <div className="flex items-center gap-1 mb-4">
-                      <span className="text-2xl font-bold text-gray-900">{module.price}</span>
-                      <span className="text-gray-500">/ {module.frequency}</span>
-                    </div>
-                    
-                    <p className="text-gray-600 mb-4">{module.description}</p>
-                    
-                    {module.aiCredits && (
-                      <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-xl p-3 mb-4 shadow-sm">
-                        <div className="flex items-center gap-2">
-                          <div className="flex items-center justify-center w-6 h-6 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full">
-                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-                            </svg>
-                          </div>
-                          <span className="text-sm font-semibold text-amber-800 bg-gradient-to-r from-amber-100 to-yellow-100 px-2 py-1 rounded-md">
-                            {module.aiCredits}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                    
-                    <button 
-                      className="w-full py-3 px-4 bg-black hover:bg-gray-800 text-white rounded-lg font-semibold transition-all duration-300 mb-4"
-                      onClick={() => setShowPlanSelector(true)}
-                    >
-                      Add Module
-                    </button>
-                    
-                    <div className="flex-grow">
-                      <ul className="space-y-2">
-                        {module.features.map((feature, index) => (
-                          <li key={index} className="flex items-start gap-3 text-sm text-gray-700">
-                            <svg className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                            </svg>
-                            <span className="leading-relaxed">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
 
-            {/* Request / Support Management Modules */}
-            <div className="mt-20">
-              <div className="text-center mb-12 max-w-[1200px] mx-auto">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                  Request / Support Management
-                </h2>
-                <p className="text-lg text-gray-600">
-                  Streamline customer support and request handling
-                </p>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1200px] mx-auto">
-                {modules.filter(module => 
-                  ['ai-chat-assistant', 'ai-support-assistant', 'response-assistant'].includes(module.id)
-                ).map((module) => (
-                  <div
-                    key={module.id}
-                    className="bg-white rounded-2xl border border-gray-200 p-6 lg:p-8 shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col"
-                  >
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="text-2xl">{module.icon}</span>
-                      <h3 className="text-xl font-semibold text-gray-900">
-                        {module.name}
-                      </h3>
-                    </div>
-                    
-                    <div className="flex items-center gap-1 mb-4">
-                      <span className="text-2xl font-bold text-gray-900">{module.price}</span>
-                      <span className="text-gray-500">/ {module.frequency}</span>
-                    </div>
-                    
-                    <p className="text-gray-600 mb-4">{module.description}</p>
-                    
-                    {module.aiCredits && (
-                      <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-xl p-3 mb-4 shadow-sm">
-                        <div className="flex items-center gap-2">
-                          <div className="flex items-center justify-center w-6 h-6 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full">
-                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-                            </svg>
-                          </div>
-                          <span className="text-sm font-semibold text-amber-800 bg-gradient-to-r from-amber-100 to-yellow-100 px-2 py-1 rounded-md">
-                            {module.aiCredits}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                    
-                    <button 
-                      className="w-full py-3 px-4 bg-black hover:bg-gray-800 text-white rounded-lg font-semibold transition-all duration-300 mb-4"
-                      onClick={() => setShowPlanSelector(true)}
-                    >
-                      Add Module
-                    </button>
-                    
-                    <div className="flex-grow">
-                      <ul className="space-y-2">
-                        {module.features.map((feature, index) => (
-                          <li key={index} className="flex items-start gap-3 text-sm text-gray-700">
-                            <svg className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                            </svg>
-                            <span className="leading-relaxed">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
             
             {/* Plans Comparison Table */}
             <div className="mt-20">
@@ -371,11 +275,18 @@ export default function PricingPage() {
                         <td className="px-6 py-4 text-center text-sm text-gray-600">Unlimited</td>
                       </tr>
                       <tr>
+                        <td className="px-6 py-4 text-sm text-gray-700 font-medium">AI Credits</td>
+                        <td className="px-6 py-4 text-center text-sm text-gray-600">50 / month</td>
+                        <td className="px-6 py-4 text-center text-sm text-gray-600">500 / month</td>
+                        <td className="px-6 py-4 text-center text-sm text-gray-600">1,500 / month</td>
+                        <td className="px-6 py-4 text-center text-sm text-gray-600">Unlimited</td>
+                      </tr>
+                      <tr>
                         <td className="px-6 py-4 text-sm text-gray-700 font-medium">Support</td>
                         <td className="px-6 py-4 text-center text-sm text-gray-600">Email only</td>
-                        <td className="px-6 py-4 text-center text-sm text-gray-600">Email + Chat</td>
-                        <td className="px-6 py-4 text-center text-sm text-gray-600">Email + Chat + Phone</td>
-                        <td className="px-6 py-4 text-center text-sm text-gray-600">24/7 + Manager</td>
+                        <td className="px-6 py-4 text-center text-sm text-gray-600">Email + In-Dashboard</td>
+                        <td className="px-6 py-4 text-center text-sm text-gray-600">Email + In-Dashboard</td>
+                        <td className="px-6 py-4 text-center text-sm text-gray-600">24/7 Priority</td>
                       </tr>
                       <tr>
                         <td className="px-6 py-4 text-sm text-gray-700 font-medium">Remove Logo</td>
@@ -495,7 +406,6 @@ export default function PricingPage() {
             
             <PlanSelector
               plans={plans}
-              modules={modules}
               onPlanSelect={handlePlanSelect}
               onBack={() => setShowPlanSelector(false)}
               locale={window.location.pathname.split('/')[1] || 'it'}

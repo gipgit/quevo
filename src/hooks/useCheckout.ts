@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { PlanFeature } from '@/lib/plan-features';
-import { AdditionalModule } from '@/lib/additional-modules';
 
 interface CheckoutState {
   loading: boolean;
@@ -15,7 +14,6 @@ export function useCheckout() {
 
   const createCheckoutSession = async (
     plan: PlanFeature,
-    modules: AdditionalModule[],
     successUrl?: string,
     cancelUrl?: string
   ) => {
@@ -25,7 +23,7 @@ export function useCheckout() {
       // Placeholder logic - replace with actual Stripe integration
       console.log('Checkout request:', {
         plan: plan.name,
-        modules: modules.map(m => m.name),
+        ai_credits: plan.ai_credits_included,
         successUrl: successUrl || `${window.location.origin}/dashboard?success=true`,
         cancelUrl: cancelUrl || `${window.location.origin}/pricing?canceled=true`,
       });
@@ -34,7 +32,7 @@ export function useCheckout() {
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Placeholder response - replace with actual Stripe checkout session creation
-      const placeholderUrl = successUrl || `${window.location.origin}/dashboard?success=true&placeholder=true&plan=${plan.id}&modules=${modules.map(m => m.id).join(',')}`;
+      const placeholderUrl = successUrl || `${window.location.origin}/dashboard?success=true&placeholder=true&plan=${plan.id}`;
       
       // For now, just redirect to success page with placeholder data
       window.location.href = placeholderUrl;

@@ -1,53 +1,26 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import { PlanFeature } from "@/lib/plan-features"
-import { AdditionalModule } from "@/lib/additional-modules"
 import { getPlanColors, capitalizePlanName } from "@/lib/plan-colors"
 
 interface PlanSelectorProps {
   plans: PlanFeature[]
-  modules: AdditionalModule[]
-  onPlanSelect: (plan: PlanFeature, selectedModules: AdditionalModule[]) => void
+  onPlanSelect: (plan: PlanFeature) => void
   onBack: () => void
   locale: string
 }
 
-export default function PlanSelector({ plans, modules, onPlanSelect, onBack, locale }: PlanSelectorProps) {
+export default function PlanSelector({ plans, onPlanSelect, onBack, locale }: PlanSelectorProps) {
   const [selectedPlan, setSelectedPlan] = useState<PlanFeature | null>(null)
-  const [selectedModules, setSelectedModules] = useState<AdditionalModule[]>([])
-
 
   const handlePlanSelect = (plan: PlanFeature) => {
     setSelectedPlan(plan)
   }
 
-  const handleModuleToggle = (module: AdditionalModule) => {
-    setSelectedModules(prev => {
-      const isSelected = prev.some(m => m.id === module.id)
-      if (isSelected) {
-        return prev.filter(m => m.id !== module.id)
-      } else {
-        return [...prev, module]
-      }
-    })
-  }
-
-  const calculateTotalPrice = () => {
-    if (!selectedPlan) return 0
-    
-    const planPrice = parseFloat(selectedPlan.display_price.replace('$', ''))
-    const modulesPrice = selectedModules.reduce((total, module) => {
-      const price = module.price.replace('$', '').replace('<', '')
-      return total + parseFloat(price)
-    }, 0)
-    
-    return planPrice + modulesPrice
-  }
-
   const handleProceedToCheckout = () => {
     if (selectedPlan) {
-      onPlanSelect(selectedPlan, selectedModules)
+      onPlanSelect(selectedPlan)
     }
   }
 
@@ -121,64 +94,6 @@ export default function PlanSelector({ plans, modules, onPlanSelect, onBack, loc
             </div>
           </div>
 
-          {/* Module Selection */}
-          {selectedPlan && (
-            <div className="mb-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">
-                Add Additional Modules (Optional)
-              </h3>
-              <div className="space-y-3">
-                {modules.map((module) => {
-                  const isSelected = selectedModules.some(m => m.id === module.id)
-                  return (
-                    <div
-                      key={module.id}
-                      className={`rounded-lg border p-4 cursor-pointer transition-all duration-300 ${
-                        isSelected
-                          ? "selected border-gray-400 bg-white shadow-sm"
-                          : "border-gray-200 hover:border-gray-300 hover:shadow-sm bg-white"
-                      }`}
-                      onClick={() => handleModuleToggle(module)}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          {/* Selection Indicator - Consistent with plan cards */}
-                          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                            isSelected ? 'border-gray-600 bg-gray-600' : 'border-gray-300'
-                          }`}
->
-                            {isSelected && (
-                              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
-                            )}
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-lg">{module.icon}</span>
-                              <h4 className="font-semibold text-gray-900">{module.name}</h4>
-                              {/* Credits label in same line */}
-                              {module.aiCredits && (
-                                <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
-                                  <span>🪙</span>
-                                  {module.aiCredits}
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-sm text-gray-600">{module.description}</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-semibold text-gray-900">{module.price}</div>
-                          <div className="text-sm text-gray-500">/ {module.frequency}</div>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Right Column - Order Summary */}
@@ -195,17 +110,27 @@ export default function PlanSelector({ plans, modules, onPlanSelect, onBack, loc
                       <span className="font-semibold text-gray-900">{selectedPlan.display_price}/month</span>
                     </div>
                     
-                    {selectedModules.map((module) => (
-                      <div key={module.id} className="flex justify-between items-center text-sm">
-                        <span className="text-gray-600">+ {module.name}</span>
-                        <span className="font-medium text-gray-900">{module.price}/month</span>
+                    {/* AI Credits Display */}
+                    <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-xl p-3">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center justify-center w-6 h-6 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full">
+                          <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <span className="text-sm font-semibold text-amber-800 bg-gradient-to-r from-amber-100 to-yellow-100 px-2 py-1 rounded-md">
+                          {typeof selectedPlan.ai_credits_included === 'number' 
+                            ? `${selectedPlan.ai_credits_included} AI Credits / month`
+                            : 'Unlimited AI Credits'
+                          }
+                        </span>
                       </div>
-                    ))}
+                    </div>
                     
                     <div className="border-t border-gray-200 pt-3">
                       <div className="flex justify-between items-center">
                         <span className="text-lg font-bold text-gray-900">Total</span>
-                        <span className="text-xl font-bold text-blue-600">${calculateTotalPrice()}/month</span>
+                        <span className="text-xl font-bold text-blue-600">{selectedPlan.display_price}/month</span>
                       </div>
                     </div>
                   </div>
@@ -214,14 +139,48 @@ export default function PlanSelector({ plans, modules, onPlanSelect, onBack, loc
                   <div className="mb-6 bg-green-50 p-3 rounded border border-green-200">
                     <h4 className="text-sm font-semibold text-gray-900 mb-3">Plan Features</h4>
                     <ul className="space-y-2">
-                      {selectedPlan.features.map((feature, index) => (
-                        <li key={index} className="flex items-center gap-2 text-sm text-gray-700">
-                          <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          <span>{feature}</span>
-                        </li>
-                      ))}
+                      {selectedPlan.features.map((feature, index) => {
+                        // Check if this is the first AI feature
+                        const isFirstAI = feature.type === 'ai' && !selectedPlan.features.slice(0, index).some(f => f.type === 'ai');
+                        
+                        return (
+                          <React.Fragment key={index}>
+                            {/* Add visual separator before first AI feature */}
+                            {isFirstAI && (
+                              <li className="border-t border-gray-100 my-2"></li>
+                            )}
+                            <li className="flex items-start gap-2 text-sm text-gray-700">
+                              {feature.type === 'ai' ? (
+                                <svg className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                              ) : feature.text === 'Remove Quevo Logo' && selectedPlan.name === 'FREE' ? (
+                                <svg className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                              ) : (
+                                <svg className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                              <div className="flex-1">
+                                <span className="font-semibold">{feature.text}</span>
+                                {feature.description && (
+                                  <div className="text-xs text-gray-500 mt-0.5 leading-relaxed">{feature.description}</div>
+                                )}
+                              </div>
+                            </li>
+                          </React.Fragment>
+                        );
+                      })}
+                      {/* Visual separator before support */}
+                      <li className="border-t border-gray-100 my-2"></li>
+                      <li className="flex items-center gap-2 text-sm text-gray-700">
+                        <svg className="w-4 h-4 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                        </svg>
+                        <span>Support: {selectedPlan.support}</span>
+                      </li>
                     </ul>
                   </div>
                   

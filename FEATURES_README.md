@@ -43,11 +43,17 @@
 - **Rescheduling**: Customer-initiated rescheduling requests
 - **Email Notifications**: Automated appointment confirmations
 
-### 6. AI-Powered Marketing Features
-- **Social Media Content Generation**: AI-generated posts for multiple platforms
-- **Email Marketing Assistant**: AI-powered email campaign creation
-- **Content Customization**: Tailored content based on business services
-- **Multi-platform Support**: Facebook, Instagram, LinkedIn, Twitter, TikTok
+### 6. AI-Powered Features (Included in All Plans)
+- **AI Credits System**: Shared credits across all AI features for maximum flexibility
+- **AI Response Assistant**: Automatically generates professional responses to customer inquiries
+- **AI Email Content Creator**: Automated email content generation with brand tone matching
+- **AI Social Media Content Creator**: Complete social media content planning with posting timelines
+- **AI Support Requests Assistant**: Intelligent support request analysis and action recommendations
+- **AI Chat Assistant**: Advanced customer support assistant with brand understanding
+- **Email Marketing Campaigns**: AI-powered email campaign creation and management
+- **Advanced AI Features** (Pro Plus+): Analytics, workflow automation, custom model training
+- **Enterprise AI Features** (Unlimited): Business intelligence, white-label solutions, dedicated support
+- **Future-Proof**: Access to new AI features as they're released
 
 ### 7. Client Management
 - **Customer Database**: Comprehensive client information management
@@ -67,7 +73,8 @@
 - **AI Ticket Classification**: Automatic support ticket categorization
 - **Smart Response Suggestions**: AI-powered response recommendations
 - **Text Correction**: AI grammar and spelling correction
-- **Multi-channel Support**: Email, chat, phone support options
+- **In-Dashboard Messaging**: Send support tickets directly from your dashboard without leaving the website
+- **Multi-channel Support**: Email and in-dashboard messaging options
 - **Knowledge Base**: Comprehensive self-service resources
 
 ### 10. Analytics & Reporting
@@ -103,29 +110,63 @@
 
 ## Pricing & Plans
 
-### Free Plan
-- Basic service management
-- Limited service requests
-- Standard support
-- Basic customization
+### Free Plan ($0/month)
+- Business Profile Management
+- Service Listings (Limited)
+- Service Requests: 30 / month
+- Appointments: 30 / month
+- Board Duration: 1 week
+- **AI Features**: Response Assistant (Basic), Content Generation (Limited)
+- **50 AI Credits / month** (access to all AI features)
+- Basic support (Email only)
 
-### Premium Plans
-- Advanced features
-- Priority support
-- Increased limits
-- Advanced analytics
-- Custom integrations
+### Pro Plan ($20/month)
+- All Free features
+- Service Requests: 300 / month
+- Appointments: 300 / month
+- Board Duration: up to 6 months
+- Remove Quevo Logo
+- Google Reviews & FAQs Integration
+- **AI Features**: Email Content Creator, Social Media Content Creator, Support Requests Assistant, Email Marketing Campaigns
+- **500 AI Credits / month** (access to all AI features)
+- Standard support (Email + In-Dashboard Messages)
+
+### Pro Plus Plan ($45/month)
+- All Pro features
+- Service Requests: 1000 / month
+- Appointments: 1000 / month
+- Board Duration: up to 2 years
+- Remove Quevo Logo
+- Video Covers
+- Document Upload & Download
+- Automatic appointment reminders (Email + SMS)
+- **AI Features**: Chat Assistant (Advanced), Advanced Content Customization, AI-Powered Analytics & Insights, Priority AI Feature Access
+- **1,500 AI Credits / month** (access to all AI features)
+- Priority support (Email + In-Dashboard Messages)
+
+### Pro Unlimited Plan ($165/month)
+- Appointments: Unlimited
+- Service Requests: Unlimited
+- Board Duration: Unlimited
+- Operations per Board: Unlimited
+- Remove Quevo Logo
+- Video Covers
+- Document Upload & Download
+- **AI Features**: All AI Features (Unlimited), Chat Assistant (Enterprise), Advanced Workflow Automation, Custom AI Model Training, AI-Powered Business Intelligence, White-label AI Solutions, Dedicated AI Support & Training
+- **Unlimited AI Credits** (access to all AI features)
+- 24/7 Priority support (Email + In-Dashboard Messages)
 
 ## Key Differentiators
 
-1. **AI-Powered Automation**: Intelligent content generation and process automation
-2. **Service Boards**: Unique unified customer experience platform
-3. **Multi-language Native Support**: Built-in internationalization
-4. **Mobile-First Design**: Optimized for mobile business operations
-5. **Comprehensive Service Management**: End-to-end service lifecycle management
-6. **Professional Branding**: Customizable business presence
-7. **Real-time Communication**: Live updates and notifications
-8. **Scalable Architecture**: Grows with business needs
+1. **AI Credits System**: Shared credits across all AI features - try any AI feature without changing plans
+2. **Future-Proof AI**: Access to new AI features as they're released, included in your plan
+3. **Service Boards**: Unique unified customer experience platform
+4. **Multi-language Native Support**: Built-in internationalization
+5. **Mobile-First Design**: Optimized for mobile business operations
+6. **Comprehensive Service Management**: End-to-end service lifecycle management
+7. **Professional Branding**: Customizable business presence
+8. **Real-time Communication**: Live updates and notifications
+9. **Scalable Architecture**: Grows with business needs
 
 ## Target Industries
 
@@ -138,7 +179,7 @@
 - **Technology**: IT services, software consulting
 - **Creative Services**: Design, marketing agencies
 
-This platform represents a comprehensive business management solution that combines traditional service management with modern AI-powered features and mobile-first design principles.
+This platform represents a comprehensive business management solution that combines traditional service management with modern AI-powered features and mobile-first design principles. The innovative AI Credits system ensures that all users can access and try any AI feature without the complexity of separate modules or plan changes, making AI an essential and accessible component of every business plan.
 
 
 
