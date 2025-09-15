@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
-import { useTheme } from '@/contexts/ThemeContext'
+import { useTheme } from '@/contexts/ThemeProvider'
 import { useBusiness } from '@/lib/business-context'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'

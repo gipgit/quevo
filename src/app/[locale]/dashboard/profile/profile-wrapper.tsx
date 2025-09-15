@@ -4,7 +4,6 @@ import { useState, useCallback, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
-import { useTheme } from "@/contexts/ThemeContext"
 import { useBusiness } from "@/lib/business-context"
 import { ALLOWED_SOCIAL_LINKS } from "@/lib/social-links-config"
 import ProfileInfoSection from "@/components/dashboard/profile/ProfileInfoSection"
@@ -102,7 +101,6 @@ export default function ProfileWrapper({
   const tCommon = useTranslations("Common")
   const { showToast } = useToaster()
   const router = useRouter();
-  const { theme } = useTheme()
   
   // Set the correct domain after component mounts
   useEffect(() => {
@@ -564,9 +562,7 @@ export default function ProfileWrapper({
         {/* Header */}
         <div className="flex flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h1 className={`text-xl lg:text-2xl font-bold ${
-              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-            }`}>{t("title")}</h1>
+            <h1 className="text-xl lg:text-2xl font-bold text-[var(--dashboard-text-primary)]">{t("title")}</h1>
           </div>
           <div>
             <a 
@@ -581,9 +577,7 @@ export default function ProfileWrapper({
         </div>
         
         {/* Tab Navigation */}
-        <div className={`rounded-lg p-2 mb-8 ${
-          theme === 'dark' ? 'bg-zinc-700' : 'bg-zinc-200'
-        }`}>
+        <div className="rounded-lg p-2 mb-8 bg-[var(--dashboard-bg-secondary)]">
           <nav className="flex justify-between overflow-x-auto">
             {tabs.map((tab) => {
               const isActive = section === tab.id;
@@ -593,12 +587,8 @@ export default function ProfileWrapper({
                   onClick={() => handleTabClick(tab.id)}
                   className={`flex items-center space-x-2 py-3 px-4 rounded-md font-medium text-sm whitespace-nowrap transition-colors flex-1 ${
                     isActive
-                      ? theme === 'dark' 
-                        ? "bg-zinc-600 text-gray-100 shadow-sm" 
-                        : "bg-zinc-200 text-gray-900 shadow-sm"
-                      : theme === 'dark'
-                        ? "text-gray-300"
-                        : "text-gray-600"
+                      ? "bg-[var(--dashboard-bg-card)] text-[var(--dashboard-text-primary)] shadow-sm" 
+                      : "text-[var(--dashboard-text-secondary)]"
                   }`}
                 >
                   {renderTabIcon(tab.icon, isActive)}
@@ -712,11 +702,7 @@ export default function ProfileWrapper({
           {/* Right Column - Preview */}
           <div className="w-full lg:w-96 flex-shrink-0">
             <div className="lg:sticky lg:top-6 lg:h-full">
-              <div className={`h-full p-4 border rounded-xl flex flex-col ${
-                theme === 'dark' 
-                  ? 'bg-gradient-to-br from-gray-600 to-gray-700 border-gray-600' 
-                  : 'bg-gradient-to-br from-gray-300 to-gray-400 border-gray-200'
-              }`}>
+              <div className="h-full p-4 border rounded-xl flex flex-col bg-gradient-to-br from-[var(--dashboard-bg-tertiary)] to-[var(--dashboard-bg-secondary)] border-[var(--dashboard-border-primary)]">
                 <div className="flex-1 flex items-center justify-center">
                   <ProfilePreview
                     profileData={currentProfileData}

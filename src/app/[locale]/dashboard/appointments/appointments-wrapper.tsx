@@ -11,7 +11,7 @@ import Link from 'next/link'
 import DashboardLayout from '@/components/dashboard/dashboard-layout'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import { useToaster } from '@/components/ui/ToasterProvider'
-import { useTheme } from '@/contexts/ThemeContext'
+import { useTheme } from '@/contexts/ThemeProvider'
 import { useBusiness } from '@/lib/business-context'
 import EmptyState from '@/components/EmptyState'
 import { 

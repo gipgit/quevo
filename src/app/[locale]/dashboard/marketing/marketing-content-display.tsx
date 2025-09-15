@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { useTheme } from "@/contexts/ThemeContext"
+import { useTheme } from "@/contexts/ThemeProvider"
 import { useToaster } from "@/components/ui/ToasterProvider"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import { generateMarketingContentAction } from "./actions"

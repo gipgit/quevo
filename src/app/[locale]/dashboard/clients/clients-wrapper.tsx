@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react"
 import { useTranslations } from "next-intl"
-import { useTheme } from "@/contexts/ThemeContext"
+import { useTheme } from "@/contexts/ThemeProvider"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { 
   UsersIcon, 

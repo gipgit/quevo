@@ -72,7 +72,7 @@ import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { LoadingSparkles } from '@/components/ui/loading-sparkles'
-import { useTheme } from "@/contexts/ThemeContext"
+import { useTheme } from "@/contexts/ThemeProvider"
 
 interface Customer {
   id: string

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
-import { useTheme } from "@/contexts/ThemeContext"
+import { useTheme } from "@/contexts/ThemeProvider"
 import { useToaster } from "@/components/ui/ToasterProvider"
 import Image from "next/image"
 import RichTextEditor from "@/components/ui/RichTextEditor"
@@ -595,11 +595,9 @@ export default function ServiceEditModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-1 lg:p-2">
-      <div className={`max-w-7xl w-full max-h-[90vh] min-h-[600px] rounded-xl flex flex-col ${
-        theme === 'dark' ? 'bg-zinc-800' : 'bg-white'
-      }`}>
+      <div className="max-w-7xl w-full max-h-[90vh] min-h-[600px] rounded-xl flex flex-col bg-[var(--dashboard-bg-card)]">
         {/* Header */}
-        <div className="p-4 lg:p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="p-4 lg:p-6 border-b border-[var(--dashboard-border-primary)]">
           {/* Mobile: Service title and close button in same row, toggles below */}
           <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-0">
             
@@ -608,12 +606,10 @@ export default function ServiceEditModal({
               
               {/* Service Title */}
               <div className="flex flex-col">
-                <h2 className={`text-xs lg:text-sm font-medium text-gray-500 dark:text-gray-400 mb-0.5 lg:mb-1`}>
+                <h2 className="text-xs lg:text-sm font-medium text-[var(--dashboard-text-secondary)] mb-0.5 lg:mb-1">
                   {t("editService")}
                 </h2>
-                <h1 className={`text-lg md:text-xl lg:text-2xl font-bold leading-tight md:leading-normal ${
-                  theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                }`}>
+                <h1 className="text-lg md:text-xl lg:text-2xl font-bold leading-tight md:leading-normal text-[var(--dashboard-text-primary)]">
                   {service.service_name}
                 </h1>
               </div>
@@ -621,11 +617,7 @@ export default function ServiceEditModal({
               {/* Close Button - Mobile only */}
               <button
                 onClick={onClose}
-                className={`p-2 rounded-lg transition-colors md:hidden ${
-                  theme === 'dark' 
-                    ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700' 
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                }`}
+                className="p-2 rounded-lg transition-colors md:hidden text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -635,9 +627,7 @@ export default function ServiceEditModal({
               {/* Desktop: Right Group - Toggle Switches and Close Button */}
               <div className="hidden md:flex items-center gap-4">
                 <label className="flex items-center gap-2">
-                  <span className={`text-sm ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
+                  <span className="text-sm text-[var(--dashboard-text-secondary)]">
                     {t("active")}
                   </span>
                   <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
@@ -651,16 +641,12 @@ export default function ServiceEditModal({
                       onChange={(e) => handleInputChange('is_active', e.target.checked)}
                       className="sr-only"
                     />
-                    <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${
-                      theme === 'dark' ? 'bg-gray-200' : 'bg-white'
-                    } ${formData.is_active ? 'translate-x-6' : 'translate-x-1'}`} />
+                    <span className={`inline-block h-4 w-4 transform rounded-full transition-transform bg-white dark:bg-gray-200 ${formData.is_active ? 'translate-x-6' : 'translate-x-1'}`} />
                   </div>
                 </label>
 
                 <label className="flex items-center gap-2">
-                  <span className={`text-sm ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
+                  <span className="text-sm text-[var(--dashboard-text-secondary)]">
                     {t("activeBooking")}
                   </span>
                   <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
@@ -674,16 +660,12 @@ export default function ServiceEditModal({
                       onChange={(e) => handleInputChange('active_booking', e.target.checked)}
                       className="sr-only"
                     />
-                    <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${
-                      theme === 'dark' ? 'bg-gray-200' : 'bg-white'
-                    } ${formData.active_booking ? 'translate-x-6' : 'translate-x-1'}`} />
+                    <span className={`inline-block h-4 w-4 transform rounded-full transition-transform bg-white dark:bg-gray-200 ${formData.active_booking ? 'translate-x-6' : 'translate-x-1'}`} />
                   </div>
                 </label>
 
                 <label className="flex items-center gap-2">
-                  <span className={`text-sm ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
+                  <span className="text-sm text-[var(--dashboard-text-secondary)]">
                     {t("activeQuotation")}
                   </span>
                   <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
@@ -697,19 +679,13 @@ export default function ServiceEditModal({
                       onChange={(e) => handleInputChange('active_quotation', e.target.checked)}
                       className="sr-only"
                     />
-                    <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${
-                      theme === 'dark' ? 'bg-gray-200' : 'bg-white'
-                    } ${formData.active_quotation ? 'translate-x-6' : 'translate-x-1'}`} />
+                    <span className={`inline-block h-4 w-4 transform rounded-full transition-transform bg-white dark:bg-gray-200 ${formData.active_quotation ? 'translate-x-6' : 'translate-x-1'}`} />
                   </div>
                 </label>
                 
                 <button
                   onClick={onClose}
-                  className={`p-2 rounded-lg transition-colors ${
-                    theme === 'dark' 
-                      ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700' 
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                  }`}
+                  className="p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -722,9 +698,7 @@ export default function ServiceEditModal({
             {/* Row 2: Toggle Switches - Mobile only, aligned to left */}
             <div className="flex items-center justify-start gap-4 md:hidden">
               <label className="flex flex-col items-center gap-1">
-                <span className={`text-[10px] ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
+                <span className="text-[10px] text-[var(--dashboard-text-secondary)]">
                   {t("active")}
                 </span>
                 <div className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
@@ -738,16 +712,12 @@ export default function ServiceEditModal({
                     onChange={(e) => handleInputChange('is_active', e.target.checked)}
                     className="sr-only"
                   />
-                  <span className={`inline-block h-3 w-3 transform rounded-full transition-transform ${
-                    theme === 'dark' ? 'bg-gray-200' : 'bg-white'
-                  } ${formData.is_active ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                  <span className={`inline-block h-3 w-3 transform rounded-full transition-transform bg-white dark:bg-gray-200 ${formData.is_active ? 'translate-x-5' : 'translate-x-0.5'}`} />
                 </div>
               </label>
 
               <label className="flex flex-col items-center gap-1">
-                <span className={`text-[10px] ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
+                <span className="text-[10px] text-[var(--dashboard-text-secondary)]">
                   {t("activeBooking")}
                 </span>
                 <div className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
@@ -761,16 +731,12 @@ export default function ServiceEditModal({
                     onChange={(e) => handleInputChange('active_booking', e.target.checked)}
                     className="sr-only"
                   />
-                  <span className={`inline-block h-3 w-3 transform rounded-full transition-transform ${
-                    theme === 'dark' ? 'bg-gray-200' : 'bg-white'
-                  } ${formData.active_booking ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                  <span className={`inline-block h-3 w-3 transform rounded-full transition-transform bg-white dark:bg-gray-200 ${formData.active_booking ? 'translate-x-5' : 'translate-x-0.5'}`} />
                 </div>
               </label>
 
               <label className="flex flex-col items-center gap-1">
-                <span className={`text-[10px] ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
+                <span className="text-[10px] text-[var(--dashboard-text-secondary)]">
                   {t("activeQuotation")}
                 </span>
                 <div className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
@@ -784,9 +750,7 @@ export default function ServiceEditModal({
                     onChange={(e) => handleInputChange('active_quotation', e.target.checked)}
                     className="sr-only"
                   />
-                  <span className={`inline-block h-3 w-3 transform rounded-full transition-transform ${
-                    theme === 'dark' ? 'bg-gray-200' : 'bg-white'
-                  } ${formData.active_quotation ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                  <span className={`inline-block h-3 w-3 transform rounded-full transition-transform bg-white dark:bg-gray-200 ${formData.active_quotation ? 'translate-x-5' : 'translate-x-0.5'}`} />
                 </div>
               </label>
             </div>
@@ -795,18 +759,14 @@ export default function ServiceEditModal({
         </div>
 
         {/* Tab Navigation */}
-        <div className="border-b border-gray-200 dark:border-gray-700">
+        <div className="border-b border-[var(--dashboard-border-primary)]">
           <div className="flex space-x-1 px-4 lg:px-6 overflow-x-auto scroll-smooth">
             <button
               onClick={() => setActiveTab('basic')}
               className={`px-4 md:px-3 lg:px-4 py-3 md:py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
                 activeTab === 'basic'
-                  ? theme === 'dark'
-                    ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
-                    : 'bg-white text-gray-900 border-b-2 border-blue-500'
-                  : theme === 'dark'
-                    ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                  ? 'bg-[var(--dashboard-bg-card)] text-[var(--dashboard-text-primary)] border-b-2 border-blue-500'
+                  : 'text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]'
               }`}
             >
               {t("tabs.basicInfo")}
@@ -815,12 +775,8 @@ export default function ServiceEditModal({
               onClick={() => setActiveTab('extras')}
               className={`px-4 md:px-3 lg:px-4 py-3 md:py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
                 activeTab === 'extras'
-                  ? theme === 'dark'
-                    ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
-                    : 'bg-white text-gray-900 border-b-2 border-blue-500'
-                  : theme === 'dark'
-                    ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                  ? 'bg-[var(--dashboard-bg-card)] text-[var(--dashboard-text-primary)] border-b-2 border-blue-500'
+                  : 'text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]'
               }`}
             >
               {t("tabs.extras")} ({extras.length})
@@ -829,12 +785,8 @@ export default function ServiceEditModal({
               onClick={() => setActiveTab('items')}
               className={`px-4 md:px-3 lg:px-4 py-3 md:py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
                 activeTab === 'items'
-                  ? theme === 'dark'
-                    ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
-                    : 'bg-white text-gray-900 border-b-2 border-blue-500'
-                  : theme === 'dark'
-                    ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-100'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                  ? 'bg-[var(--dashboard-bg-card)] text-[var(--dashboard-text-primary)] border-b-2 border-blue-500'
+                  : 'text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]'
               }`}
             >
               {t("tabs.items")} ({items.length})
@@ -843,12 +795,8 @@ export default function ServiceEditModal({
               onClick={() => setActiveTab('questions')}
               className={`px-4 md:px-3 lg:px-4 py-3 md:py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
                 activeTab === 'questions'
-                  ? theme === 'dark'
-                    ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
-                    : 'bg-white text-gray-900 border-b-2 border-blue-500'
-                  : theme === 'dark'
-                    ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                  ? 'bg-[var(--dashboard-bg-card)] text-[var(--dashboard-text-primary)] border-b-2 border-blue-500'
+                  : 'text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]'
               }`}
             >
               {t("tabs.questions")} ({questions.length})
@@ -857,12 +805,8 @@ export default function ServiceEditModal({
               onClick={() => setActiveTab('requirements')}
               className={`px-4 md:px-3 lg:px-4 py-3 md:py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
                 activeTab === 'requirements'
-                  ? theme === 'dark'
-                    ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
-                    : 'bg-white text-gray-900 border-b-2 border-blue-500'
-                  : theme === 'dark'
-                    ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                  ? 'bg-[var(--dashboard-bg-card)] text-[var(--dashboard-text-primary)] border-b-2 border-blue-500'
+                  : 'text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]'
               }`}
             >
               {t("tabs.requirements")} ({requirements.length})
@@ -871,12 +815,8 @@ export default function ServiceEditModal({
               onClick={() => setActiveTab('events')}
               className={`px-4 md:px-3 lg:px-4 py-3 md:py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
                 activeTab === 'events'
-                  ? theme === 'dark'
-                    ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
-                    : 'bg-white text-gray-900 border-b-2 border-blue-500'
-                  : theme === 'dark'
-                    ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                  ? 'bg-[var(--dashboard-bg-card)] text-[var(--dashboard-text-primary)] border-b-2 border-blue-500'
+                  : 'text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]'
               }`}
             >
               {t("tabs.events")} ({events.length})
@@ -885,12 +825,8 @@ export default function ServiceEditModal({
               onClick={() => setActiveTab('consent')}
               className={`px-4 md:px-3 lg:px-4 py-3 md:py-2 lg:py-3 text-xs lg:text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
                 activeTab === 'consent'
-                  ? theme === 'dark'
-                    ? 'bg-zinc-700 text-gray-100 border-b-2 border-blue-500'
-                    : 'bg-white text-gray-900 border-b-2 border-blue-500'
-                  : theme === 'dark'
-                    ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                  ? 'bg-[var(--dashboard-bg-card)] text-[var(--dashboard-text-primary)] border-b-2 border-blue-500'
+                  : 'text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]'
               }`}
             >
               {t("tabs.consent")}
@@ -898,9 +834,7 @@ export default function ServiceEditModal({
           </div>
         </div>
 
-        <div className={`p-4 lg:p-6 overflow-y-auto flex-1 ${
-          theme === 'dark' ? 'bg-zinc-800' : 'bg-white'
-        }`}>
+        <div className="p-4 lg:p-6 overflow-y-auto flex-1 bg-[var(--dashboard-bg-tab-content)]">
           {/* Basic Information Section - Column Layout */}
           {activeTab === 'basic' && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 mb-8">
@@ -908,27 +842,19 @@ export default function ServiceEditModal({
             <div className="lg:col-span-2">
               <div className="space-y-4">
                 <div>
-                  <label className={`block text-xs font-normal mb-1 ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                  }`}>
+                  <label className="block text-xs font-normal mb-1 text-[var(--dashboard-text-secondary)]">
                     {t("serviceName")}
                   </label>
                   <input
                     type="text"
                     value={formData.service_name}
                     onChange={(e) => handleInputChange('service_name', e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-lg ${
-                      theme === 'dark' 
-                        ? 'bg-zinc-700 border-gray-700 text-gray-100' 
-                        : 'bg-white border-gray-200 text-gray-900'
-                    }`}
+                    className="w-full px-3 py-2 border rounded-lg bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                   />
                 </div>
 
                 <div>
-                  <label className={`block text-xs font-normal mb-1 ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                  }`}>
+                  <label className="block text-xs font-normal mb-1 text-[var(--dashboard-text-secondary)]">
                     {t("description")}
                   </label>
                   <RichTextEditor
@@ -940,9 +866,7 @@ export default function ServiceEditModal({
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                   <div>
-                    <label className={`block text-xs font-normal mb-1 ${
-                      theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                    }`}>
+                    <label className="block text-xs font-normal mb-1 text-[var(--dashboard-text-secondary)]">
                        {t("price")} (€)
                     </label>
                     <input
@@ -950,28 +874,18 @@ export default function ServiceEditModal({
                        step="0.01"
                        value={formData.price_base}
                        onChange={(e) => handleInputChange('price_base', e.target.value)}
-                      className={`w-full px-3 py-2 border rounded-lg ${
-                        theme === 'dark' 
-                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
-                          : 'bg-white border-gray-200 text-gray-900'
-                      }`}
+                      className="w-full px-3 py-2 border rounded-lg bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                     />
                   </div>
 
                   <div>
-                    <label className={`block text-xs font-normal mb-1 ${
-                      theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                    }`}>
+                    <label className="block text-xs font-normal mb-1 text-[var(--dashboard-text-secondary)]">
                        {t("priceType")}
                     </label>
                      <select
                        value={formData.price_type}
                        onChange={(e) => handleInputChange('price_type', e.target.value)}
-                      className={`w-full px-3 py-2 border rounded-lg ${
-                        theme === 'dark' 
-                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
-                          : 'bg-white border-gray-200 text-gray-900'
-                      }`}
+                      className="w-full px-3 py-2 border rounded-lg bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                      >
                        <option value="fixed">{t("fixed")}</option>
                        <option value="per_unit">{t("perUnit")}</option>
@@ -979,9 +893,7 @@ export default function ServiceEditModal({
                 </div>
 
                 <div>
-                  <label className={`block text-xs font-normal mb-1 ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                  }`}>
+                  <label className="block text-xs font-normal mb-1 text-[var(--dashboard-text-secondary)]">
                        {t("priceUnit")}
                   </label>
                   <input
@@ -989,11 +901,7 @@ export default function ServiceEditModal({
                        value={formData.price_unit}
                        onChange={(e) => handleInputChange('price_unit', e.target.value)}
                        placeholder="e.g., per hour, per session"
-                    className={`w-full px-3 py-2 border rounded-lg ${
-                      theme === 'dark' 
-                        ? 'bg-zinc-700 border-gray-700 text-gray-100' 
-                        : 'bg-white border-gray-200 text-gray-900'
-                    }`}
+                    className="w-full px-3 py-2 border rounded-lg bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                   />
                    </div>
                 </div>
@@ -1041,21 +949,13 @@ export default function ServiceEditModal({
              {/* Extras list */}
              <div className="space-y-3">
                {extras.map((extra, index) => (
-                 <div key={extra.service_extra_id} className={`mb-3 border rounded-xl p-3 lg:py-2 shadow-sm ${
-                   theme === 'dark' 
-                     ? 'border-gray-600 bg-zinc-700' 
-                     : 'border-gray-300 bg-gray-100'
-                 }`}>
+                 <div key={extra.service_extra_id} className="mb-3 border rounded-xl p-3 lg:py-2 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
                    <div className="space-y-2 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
                      {/* Header row with number icon and delete button - mobile only */}
                      <div className="flex justify-between items-center lg:hidden mb-2">
                        {/* Circular number icon - minimal width */}
                        <div className="flex items-center justify-center w-8 flex-shrink-0">
-                         <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-normal ${
-                           theme === 'dark' 
-                             ? 'bg-gray-700 text-gray-400' 
-                             : 'bg-gray-600 text-gray-300'
-                         }`}>
+                         <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-normal bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
                            {index + 1}
                         </div>
                        </div>
@@ -1095,16 +995,10 @@ export default function ServiceEditModal({
                            updatedExtras[index] = { ...updatedExtras[index], extra_name: e.target.value }
                            setExtras(updatedExtras)
                          }}
-                         className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                           theme === 'dark' 
-                             ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-200 bg-gray-50 text-gray-900'
-                         }`}
+                         className="w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                          placeholder="Extra Name"
                        />
-                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
-                         theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                       }`}>
+                       <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 text-[var(--dashboard-text-secondary)]">
                          Extra Name
                        </span>
                   </div>
@@ -1119,16 +1013,10 @@ export default function ServiceEditModal({
                            updatedExtras[index] = { ...updatedExtras[index], extra_description: e.target.value }
                            setExtras(updatedExtras)
                          }}
-                         className={`w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                           theme === 'dark' 
-                             ? 'border-gray-700 bg-zinc-700 text-gray-100' 
-                             : 'border-gray-200 bg-gray-50 text-gray-900'
-                         }`}
+                         className="w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                          placeholder="Description"
                        />
-                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
-                         theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                       }`}>
+                       <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 text-[var(--dashboard-text-secondary)]">
                          Description
                        </span>
                      </div>
@@ -1144,16 +1032,10 @@ export default function ServiceEditModal({
                            updatedExtras[index] = { ...updatedExtras[index], price_base: parseFloat(e.target.value) || 0 }
                            setExtras(updatedExtras)
                          }}
-                         className={`w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                           theme === 'dark' 
-                             ? 'border-gray-700 bg-zinc-700 text-gray-100' 
-                             : 'border-gray-200 bg-gray-50 text-gray-900'
-                         }`}
+                         className="w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                          placeholder="0.00"
                        />
-                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
-                         theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                       }`}>
+                       <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 text-[var(--dashboard-text-secondary)]">
                          Price
                        </span>
                      </div>
@@ -1167,18 +1049,12 @@ export default function ServiceEditModal({
                            updatedExtras[index] = { ...updatedExtras[index], price_type: e.target.value }
                            setExtras(updatedExtras)
                          }}
-                         className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                           theme === 'dark' 
-                             ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-200 bg-gray-50 text-gray-900'
-                         }`}
+                         className="w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                        >
                        <option value="fixed">{t("fixed")}</option>
                        <option value="per_unit">{t("perUnit")}</option>
                      </select>
-                     <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
-                       theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                     }`}>
+                     <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 text-[var(--dashboard-text-secondary)]">
                        Type
                      </span>
                    </div>
@@ -1277,21 +1153,13 @@ export default function ServiceEditModal({
                           {/* Items list */}
              <div className="space-y-3">
                {items.map((item, index) => (
-                   <div key={item.service_item_id} className={`mb-3 border rounded-xl p-3 lg:py-2 shadow-sm ${
-                     theme === 'dark' 
-                       ? 'border-gray-600 bg-zinc-700' 
-                       : 'border-gray-300 bg-gray-100'
-                   }`}>
+                   <div key={item.service_item_id} className="mb-3 border rounded-xl p-3 lg:py-2 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
                      <div className="space-y-2 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
                                            {/* Header row with number icon and delete button - mobile only */}
                       <div className="flex justify-between items-center lg:hidden mb-2">
                         {/* Circular number icon - minimal width */}
                         <div className="flex items-center justify-center w-8 flex-shrink-0">
-                          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-normal ${
-                            theme === 'dark' 
-                              ? 'bg-gray-700 text-gray-400' 
-                              : 'bg-gray-600 text-gray-300'
-                          }`}>
+                          <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-normal bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
                             {index + 1}
                           </div>
                         </div>
@@ -1312,11 +1180,7 @@ export default function ServiceEditModal({
                       
                       {/* Circular number icon - desktop only */}
                       <div className="hidden lg:flex items-center justify-center w-8 flex-shrink-0">
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-normal ${
-                          theme === 'dark' 
-                            ? 'bg-gray-700 text-gray-400' 
-                            : 'bg-gray-600 text-gray-300'
-                        }`}>
+                        <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-normal bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
                           {index + 1}
                         </div>
                       </div>
@@ -1331,16 +1195,10 @@ export default function ServiceEditModal({
                      updatedItems[index] = { ...updatedItems[index], item_name: e.target.value }
                      setItems(updatedItems)
                    }}
-                   className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                     theme === 'dark' 
-                       ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                       : 'border-gray-200 bg-gray-50 text-gray-900'
-                   }`}
+                   className="w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                    placeholder={t("itemName")}
                  />
-                 <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
-                   theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                 }`}>
+                 <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 text-[var(--dashboard-text-secondary)]">
                    {t("itemName")}
                  </span>
                       </div>
@@ -1355,16 +1213,10 @@ export default function ServiceEditModal({
                      updatedItems[index] = { ...updatedItems[index], item_description: e.target.value }
                      setItems(updatedItems)
                    }}
-                   className={`w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                     theme === 'dark' 
-                       ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                       : 'border-gray-200 bg-gray-50 text-gray-900'
-                   }`}
+                   className="w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                    placeholder={t("itemDescription")}
                  />
-                          <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
-                            theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                          }`}>
+                          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 text-[var(--dashboard-text-secondary)]">
                             {t("itemDescription")}
                           </span>
                       </div>
@@ -1380,16 +1232,10 @@ export default function ServiceEditModal({
                       updatedItems[index] = { ...updatedItems[index], price_base: parseFloat(e.target.value) || 0 }
                       setItems(updatedItems)
                     }}
-                    className={`w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                      theme === 'dark' 
-                        ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                        : 'border-gray-200 bg-gray-50 text-gray-900'
-                    }`}
+                    className="w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                     placeholder="0.00"
                   />
-                 <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
-                   theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                 }`}>
+                 <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 text-[var(--dashboard-text-secondary)]">
                    {t("price")}
                  </span>
                      </div>
@@ -1403,18 +1249,12 @@ export default function ServiceEditModal({
                            updatedItems[index] = { ...updatedItems[index], price_type: e.target.value }
                            setItems(updatedItems)
                          }}
-                         className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                theme === 'dark' 
-                         ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                         : 'border-gray-200 bg-gray-50 text-gray-900'
-               }`}
+                         className="w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
             >
                        <option value="fixed">{t("fixed")}</option>
                        <option value="per_unit">{t("perUnit")}</option>
                      </select>
-                     <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
-                       theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                     }`}>
+                     <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 text-[var(--dashboard-text-secondary)]">
                        {t("priceType")}
                      </span>
             </div>
@@ -1526,21 +1366,13 @@ export default function ServiceEditModal({
              {/* Questions list */}
              <div className="space-y-3">
                {questions.map((question, index) => (
-                 <div key={question.question_id} className={`mb-3 border rounded-xl p-3 lg:py-2 shadow-sm ${
-                   theme === 'dark' 
-                     ? 'border-gray-600 bg-zinc-700' 
-                     : 'border-gray-300 bg-gray-100'
-                 }`}>
+                 <div key={question.question_id} className="mb-3 border rounded-xl p-3 lg:py-2 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
                    <div className="space-y-2 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
                      {/* Header row with number icon and delete button - mobile only */}
                      <div className="flex justify-between items-center lg:hidden mb-2">
                        {/* Circular number icon - minimal width */}
                        <div className="flex items-center justify-center w-8 flex-shrink-0">
-                         <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-normal ${
-                           theme === 'dark' 
-                             ? 'bg-gray-700 text-gray-400' 
-                             : 'bg-gray-600 text-gray-300'
-                         }`}>
+                         <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-normal bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
                            {index + 1}
                          </div>
                        </div>
@@ -1580,16 +1412,10 @@ export default function ServiceEditModal({
                    updatedQuestions[index] = { ...updatedQuestions[index], question_text: e.target.value }
                    setQuestions(updatedQuestions)
                  }}
-                                   className={`w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                    theme === 'dark' 
-                      ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                      : 'border-gray-200 bg-gray-50 text-gray-900'
-                  }`}
+                                   className="w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                  placeholder={t("questionText")}
                />
-              <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
-                theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-              }`}>
+              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 text-[var(--dashboard-text-secondary)]">
                 {t("questionText")}
               </span>
                      </div>
@@ -1640,20 +1466,14 @@ export default function ServiceEditModal({
                          
                          setQuestions(updatedQuestions)
                        }}
-                       className={`w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                theme === 'dark' 
-                         ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                         : 'border-gray-200 bg-gray-50 text-gray-900'
-                         }`}
+                       className="w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                        >
                        <option value="open">{t("open")}</option>
                        <option value="checkbox_single">{t("checkboxSingle")}</option>
                        <option value="checkbox_multi">{t("checkboxMulti")}</option>
                        <option value="media_upload">{t("mediaUpload")}</option>
               </select>
-              <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
-                theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-              }`}>
+              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 text-[var(--dashboard-text-secondary)]">
                 {t("type")}
               </span>
             </div>
@@ -1671,9 +1491,7 @@ export default function ServiceEditModal({
                        }}
                 className="mr-2"
               />
-                       <span className={`text-xs ${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-              }`}>
+                       <span className="text-xs text-[var(--dashboard-text-secondary)]">
                 {t("required")}
               </span>
             </label>
@@ -1698,9 +1516,7 @@ export default function ServiceEditModal({
                    {/* Question Options - shown only for checkbox types */}
                    {(question.question_type === 'checkbox_single' || question.question_type === 'checkbox_multi') && (
                      <div className="mt-2 ml-12">
-                       <label className={`block text-xs font-normal mb-1 ${
-                         theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                       }`}>
+                       <label className="block text-xs font-normal mb-1 text-[var(--dashboard-text-secondary)]">
                          Options
                        </label>
                        <div className="flex flex-wrap items-center gap-2">
@@ -1724,11 +1540,7 @@ export default function ServiceEditModal({
                                  }
                                  setQuestions(updatedQuestions)
                                }}
-                               className={`w-28 px-2 py-1 border rounded text-xs ${
-                                 theme === 'dark' 
-                                   ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                                   : 'border-gray-200 bg-gray-50 text-gray-900'
-                               }`}
+                               className="w-28 px-2 py-1 border rounded text-xs bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                                placeholder={`Option ${optionIndex + 1}`}
                              />
                              <button
@@ -1743,11 +1555,7 @@ export default function ServiceEditModal({
                                  }
                                  setQuestions(updatedQuestions)
                                }}
-                               className={`w-4 h-4 rounded-full flex items-center justify-center transition-colors ${
-                                 theme === 'dark' 
-                                   ? 'bg-gray-500 text-gray-400 hover:bg-red-600 hover:text-white' 
-                                   : 'bg-gray-200 text-gray-500 hover:bg-red-500 hover:text-white'
-                               }`}
+                               className="w-4 h-4 rounded-full flex items-center justify-center transition-colors bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-red-600 hover:text-white"
                                disabled={(question.question_options || []).length <= 2}
                              >
                                <span className="text-xs font-light">×</span>
@@ -1772,7 +1580,7 @@ export default function ServiceEditModal({
                              }
                              setQuestions(updatedQuestions)
                            }}
-                           className="px-2 py-1 border border-gray-300 dark:border-gray-600 bg-transparent text-gray-600 dark:text-gray-400 rounded text-xs hover:bg-gray-100 dark:hover:bg-zinc-700 hover:text-gray-800 dark:hover:text-gray-300 transition-colors"
+                           className="px-2 py-1 border border-[var(--dashboard-border-primary)] bg-transparent text-[var(--dashboard-text-secondary)] rounded text-xs hover:bg-[var(--dashboard-bg-tertiary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
                          >
                            Add Option
                          </button>
@@ -1855,21 +1663,13 @@ export default function ServiceEditModal({
              {/* Requirements list */}
              <div className="space-y-3">
                {requirements.map((requirement, index) => (
-                                  <div key={requirement.requirement_block_id} className={`mb-3 border rounded-xl p-3 lg:py-2 shadow-sm ${
-                                    theme === 'dark' 
-                                      ? 'border-gray-600 bg-zinc-700' 
-                                      : 'border-gray-300 bg-gray-100'
-                                  }`}>
+                                  <div key={requirement.requirement_block_id} className="mb-3 border rounded-xl p-3 lg:py-2 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
                                                  <div className="space-y-2 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
                                          {/* Header row with number icon and delete button - mobile only */}
                      <div className="flex justify-between items-center lg:hidden mb-2">
                        {/* Circular number icon - minimal width */}
                        <div className="flex items-center justify-center w-8 flex-shrink-0">
-                         <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-normal ${
-                           theme === 'dark' 
-                             ? 'bg-gray-700 text-gray-400' 
-                             : 'bg-gray-600 text-gray-300'
-                         }`}>
+                         <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-normal bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
                            {index + 1}
                          </div>
                        </div>
@@ -1909,16 +1709,10 @@ export default function ServiceEditModal({
                           updatedRequirements[index] = { ...updatedRequirements[index], title: e.target.value }
                           setRequirements(updatedRequirements)
                         }}
-                        className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-              theme === 'dark' 
-                            ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                            : 'border-gray-200 bg-gray-50 text-gray-900'
-              }`}
+                        className="w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
               placeholder={t("requirementTitle")}
             />
-            <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
-              theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-            }`}>
+            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 text-[var(--dashboard-text-secondary)]">
               {t("requirementTitle")}
             </span>
                     </div>
@@ -1933,16 +1727,10 @@ export default function ServiceEditModal({
                             updatedRequirements[index] = { ...updatedRequirements[index], requirements_text: e.target.value }
                             setRequirements(updatedRequirements)
                           }}
-                          className={`w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-              theme === 'dark' 
-                            ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                            : 'border-gray-200 bg-gray-50 text-gray-900'
-                        }`}
+                          className="w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                         placeholder={t("requirementsText")}
                         />
-                        <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
-                          theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                        }`}>
+                        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 text-[var(--dashboard-text-secondary)]">
                           {t("requirementsText")}
                         </span>
                       </div>
@@ -1960,9 +1748,7 @@ export default function ServiceEditModal({
                             }}
                             className="mr-2"
                           />
-                                                                                                           <span className={`text-xs ${
-                              theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                            }`}>
+                                                                                                           <span className="text-xs text-[var(--dashboard-text-secondary)]">
                               {t("required")}
                             </span>
                         </label>
@@ -2056,19 +1842,11 @@ export default function ServiceEditModal({
              {/* Events list */}
              <div className="space-y-3">
                {events.map((event, index) => (
-                                  <div key={event.event_id} className={`mb-3 border rounded-xl p-3 shadow-sm ${
-                                    theme === 'dark' 
-                                      ? 'border-gray-600 bg-zinc-700' 
-                                      : 'border-gray-300 bg-gray-100'
-                                  }`}>
+                                  <div key={event.event_id} className="mb-3 border rounded-xl p-3 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
                                                  <div className="space-y-2 lg:space-y-0 lg:flex lg:gap-3 lg:items-center">
                                          {/* Circular number icon - minimal width */}
                      <div className="flex items-center justify-center w-8 flex-shrink-0">
-                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-normal ${
-                         theme === 'dark' 
-                           ? 'bg-gray-700 text-gray-400' 
-                           : 'bg-gray-600 text-gray-300'
-                       }`}>
+                       <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-normal bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
                          {index + 1}
                    </div>
                  </div>
@@ -2083,16 +1861,10 @@ export default function ServiceEditModal({
                            updatedEvents[index] = { ...updatedEvents[index], event_name: e.target.value }
                            setEvents(updatedEvents)
                          }}
-                         className={`w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                           theme === 'dark' 
-                             ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-200 bg-gray-50 text-gray-900'
-                         }`}
+                         className="w-full px-3 py-2 pr-20 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                          placeholder="Event Name"
                        />
-                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
-                         theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                       }`}>
+                       <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 text-[var(--dashboard-text-secondary)]">
                          Event Name
                        </span>
                      </div>
@@ -2107,16 +1879,10 @@ export default function ServiceEditModal({
                            updatedEvents[index] = { ...updatedEvents[index], event_description: e.target.value }
                            setEvents(updatedEvents)
                          }}
-                         className={`w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                           theme === 'dark' 
-                             ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-200 bg-gray-50 text-gray-900'
-                         }`}
+                         className="w-full px-3 py-2 pr-24 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                          placeholder="Description"
                        />
-                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
-                         theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                       }`}>
+                       <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 text-[var(--dashboard-text-secondary)]">
                          Description
                        </span>
                      </div>
@@ -2131,16 +1897,10 @@ export default function ServiceEditModal({
                            updatedEvents[index] = { ...updatedEvents[index], duration_minutes: parseInt(e.target.value) || 60 }
                            setEvents(updatedEvents)
                          }}
-                         className={`w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                           theme === 'dark' 
-                             ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-200 bg-gray-50 text-gray-900'
-                         }`}
+                         className="w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                          placeholder="60"
                        />
-                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
-                         theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                       }`}>
+                       <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 text-[var(--dashboard-text-secondary)]">
                          Duration
                        </span>
                      </div>
@@ -2155,16 +1915,10 @@ export default function ServiceEditModal({
                            updatedEvents[index] = { ...updatedEvents[index], buffer_minutes: parseInt(e.target.value) || 0 }
                            setEvents(updatedEvents)
                          }}
-                         className={`w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                           theme === 'dark' 
-                             ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-200 bg-gray-50 text-gray-900'
-                         }`}
+                         className="w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                          placeholder="0"
                        />
-                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
-                         theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                       }`}>
+                       <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 text-[var(--dashboard-text-secondary)]">
                          Buffer
                        </span>
                      </div>
@@ -2179,18 +1933,12 @@ export default function ServiceEditModal({
                            updatedEvents[index] = { ...updatedEvents[index], slot_interval_minutes: parseInt(e.target.value) || 15 }
                            setEvents(updatedEvents)
                          }}
-                         className={`w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm ${
-                           theme === 'dark' 
-                             ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-200 bg-gray-50 text-gray-900'
-                         }`}
+                         className="w-full px-3 py-2 pr-16 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                          placeholder="15"
                          min="5"
                          step="5"
                        />
-                       <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 ${
-                         theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                       }`}>
+                       <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium transition-opacity duration-200 text-[var(--dashboard-text-secondary)]">
                          Interval
                        </span>
                      </div>
@@ -2230,9 +1978,7 @@ export default function ServiceEditModal({
                         
                         return (
                           <div key={day} className="text-center">
-                            <div className={`text-[10px] font-medium mb-1 ${
-                              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                            }`}>
+                            <div className="text-[10px] font-medium mb-1 text-[var(--dashboard-text-secondary)]">
                               {day.slice(0, 3)}
                             </div>
                             
@@ -2319,11 +2065,7 @@ export default function ServiceEditModal({
                                   dayAvailability.time_start = e.target.value + ':00';
                                   setEvents(updatedEvents);
                                 }}
-                                className={`w-full px-2 py-1 text-xs border rounded ${
-                                  theme === 'dark' 
-                                    ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                                    : 'border-gray-200 bg-white text-gray-900'
-                                } ${!isDayEnabled ? 'cursor-not-allowed opacity-50' : ''}`}
+                                className={`w-full px-2 py-1 text-xs border rounded bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)] ${!isDayEnabled ? 'cursor-not-allowed opacity-50' : ''}`}
                                 placeholder="Start"
                               />
                               <input
@@ -2360,11 +2102,7 @@ export default function ServiceEditModal({
                                   dayAvailability.time_end = e.target.value + ':00';
                                   setEvents(updatedEvents);
                                 }}
-                                className={`w-full px-2 py-1 text-xs border rounded ${
-                                  theme === 'dark' 
-                                    ? 'border-gray-700 bg-zinc-800 text-gray-100' 
-                                    : 'border-gray-200 bg-white text-gray-900'
-                                } ${!isDayEnabled ? 'cursor-not-allowed opacity-50' : ''}`}
+                                className={`w-full px-2 py-1 text-xs border rounded bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)] ${!isDayEnabled ? 'cursor-not-allowed opacity-50' : ''}`}
                                 placeholder="End"
                               />
                             </div>
@@ -2482,79 +2220,61 @@ export default function ServiceEditModal({
             <div className="mb-8">
             <div className="space-y-3">
               {/* Require Phone Number Toggle */}
-              <div className={`border rounded-xl p-4 shadow-sm ${
-                theme === 'dark' 
-                  ? 'border-gray-600 bg-zinc-700' 
-                  : 'border-gray-300 bg-gray-100'
-              }`}>
+              <div className="border rounded-xl p-4 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
                 <div className="flex items-center justify-between">
-                  <span className={`text-xs md:text-sm font-medium ${
-                    theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
-                  }`}>
+                  <span className="text-xs md:text-sm font-medium text-[var(--dashboard-text-primary)]">
                     Require Phone Number
                   </span>
                   <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.require_phone}
-                      onChange={(e) => handleInputChange('require_phone', e.target.checked)}
+                  <input
+                    type="checkbox"
+                    checked={formData.require_phone}
+                    onChange={(e) => handleInputChange('require_phone', e.target.checked)}
                       className="sr-only peer"
                     />
                     <div className={`w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 ${
                       theme === 'dark' ? 'after:bg-gray-200' : 'after:bg-white'
                     }`}></div>
-                  </label>
+                </label>
                 </div>
               </div>
 
               {/* Require Newsletter Consent Toggle */}
-              <div className={`border rounded-xl p-4 shadow-sm ${
-                theme === 'dark' 
-                  ? 'border-gray-600 bg-zinc-700' 
-                  : 'border-gray-300 bg-gray-100'
-              }`}>
+              <div className="border rounded-xl p-4 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
                 <div className="flex items-center justify-between mb-3">
-                  <span className={`text-xs md:text-sm font-medium ${
-                    theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
-                  }`}>
+                  <span className="text-xs md:text-sm font-medium text-[var(--dashboard-text-primary)]">
                     Require Newsletter Consent
                   </span>
                   <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.require_consent_newsletter}
-                      onChange={(e) => handleInputChange('require_consent_newsletter', e.target.checked)}
+                  <input
+                    type="checkbox"
+                    checked={formData.require_consent_newsletter}
+                    onChange={(e) => handleInputChange('require_consent_newsletter', e.target.checked)}
                       className="sr-only peer"
                     />
                     <div className={`w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 ${
                       theme === 'dark' ? 'after:bg-gray-200' : 'after:bg-white'
                     }`}></div>
-                  </label>
-                </div>
+                </label>
+              </div>
 
-                {formData.require_consent_newsletter && (
-                  <div>
-                    <label className={`block text-xs md:text-sm font-medium mb-2 ${
-                      theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                    }`}>
-                      Newsletter Consent Text
-                    </label>
-                    <textarea
-                      value={formData.require_consent_newsletter_text}
-                      onChange={(e) => handleInputChange('require_consent_newsletter_text', e.target.value)}
-                      className={`w-full px-3 py-2 border rounded-lg ${
-                        theme === 'dark' 
-                          ? 'bg-zinc-700 border-gray-700 text-gray-100' 
-                          : 'bg-white border-gray-200 text-gray-900'
-                      }`}
-                      rows={3}
-                      placeholder="Enter custom newsletter consent text..."
-                    />
-                  </div>
-                )}
+              {formData.require_consent_newsletter && (
+                <div>
+                    <label className="block text-xs md:text-sm font-medium mb-2 text-[var(--dashboard-text-secondary)]">
+                    Newsletter Consent Text
+                  </label>
+                  <textarea
+                    value={formData.require_consent_newsletter_text}
+                    onChange={(e) => handleInputChange('require_consent_newsletter_text', e.target.value)}
+                    className="w-full px-3 py-2 border rounded-lg bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                    rows={3}
+                    placeholder="Enter custom newsletter consent text..."
+                  />
+                </div>
+              )}
               </div>
             </div>
-            </div>
+          </div>
           )}
         </div>
 
@@ -2570,11 +2290,7 @@ export default function ServiceEditModal({
             <button
               onClick={onClose}
               disabled={isLoading}
-              className={`px-4 py-2 lg:px-6 lg:py-3 rounded-lg transition-colors text-sm lg:text-base ${
-                theme === 'dark' 
-                  ? 'bg-zinc-700 text-gray-300 hover:bg-zinc-600' 
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
+              className="px-4 py-2 lg:px-6 lg:py-3 rounded-lg transition-colors text-sm lg:text-base bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]"
             >
               {tCommon("cancel")}
             </button>

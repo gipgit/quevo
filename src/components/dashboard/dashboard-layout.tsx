@@ -14,7 +14,7 @@ import LocaleSwitcherButton from "@/components/ui/LocaleSwitcherButton"
 import LocaleSelectModal from "@/components/ui/LocaleSelectModal"
 import DashboardSupportModal from "@/components/modals/DashboardSupportModal"
 import { useLocaleSwitcher } from "@/hooks/useLocaleSwitcher"
-import { useTheme } from "@/contexts/ThemeContext"
+import { useTheme } from "@/contexts/ThemeProvider"
 import { GlobeAltIcon } from "@heroicons/react/24/outline"
 import CacheBusterWrapper from "./CacheBusterWrapper"
 import { useBusinessSwitchTracker } from "@/hooks/useBusinessSwitchTracker"
@@ -88,11 +88,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     setDOMAIN(isLocalhost ? "http://localhost:3000" : "https://quevo.vercel.app")
   }, [])
 
-
-
-  // Removed client-side redirect logic - server-side provider handles this case
-  // This prevents conflicts with server-side redirects and infinite loops
-
   if (loading) {
     return (
       <AnimatedLoadingBackground>
@@ -131,12 +126,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">{t("noBusiness")}</h2>
-                      <Link
-              href="/onboarding"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-            >
-              {t("createBusiness") || "Create Business"}
-            </Link>
+          <Link
+            href="/onboarding"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            {t("createBusiness") || "Create Business"}
+          </Link>
         </div>
       </div>
     )
@@ -158,8 +153,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     { href: "/dashboard/marketing", label: t("nav.marketing") || "Marketing", icon: ShareIcon, comingSoon: true },
     { href: "/dashboard/marketing-email-assistant", label: t("nav.marketingEmailAssistant") || "Email Assistant", icon: EnvelopeIcon, comingSoon: true },
   ]
-
-
 
   const handleLogout = async () => {
     try {
@@ -195,8 +188,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const handleSupportRequest = () => {
     setShowSupportModal(true)
   }
-
-  // Domain constant for public link - will be set after component mounts to avoid hydration mismatch
 
   // Public link format: DOMAIN/business_urlname
   const publicUrl = `${DOMAIN}/${currentBusiness?.business_urlname || ""}`
@@ -255,376 +246,303 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   return (
     <>
       <NavigationInterceptor />
-      <div className={`min-h-screen lg:px-6 lg:py-4 ${
-        theme === 'dark' 
-          ? 'bg-gradient-to-t from-zinc-950 to-zinc-900' 
-          : 'bg-gradient-to-t from-zinc-300 to-zinc-100'
-      }`}>
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-80 lg:flex-col rounded-xl">
-        <div className="flex grow flex-col gap-y-3 overflow-y-auto px-4 py-6">
+      <div className="min-h-screen lg:px-6 lg:py-4 bg-[var(--dashboard-bg-secondary)]">
+        {/* Desktop Sidebar */}
+        <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-80 lg:flex-col rounded-xl">
+          <div className="flex grow flex-col gap-y-3 overflow-y-auto px-4 py-6">
 
-          {/* Business Info Card */}
-          <div className={`rounded-lg p-2 cursor-pointer transition-colors mb-2 ${
-            theme === 'dark' 
-              ? 'hover:bg-zinc-700' 
-              : 'hover:bg-zinc-100'
-          }`} onClick={() => setShowBusinessModal(true)}>
-            <div className="flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-full bg-zinc-600 flex items-center justify-center overflow-hidden">
-                {(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? (
-                  <img
-                    src={getProfileImageUrl(currentBusiness)}
-                    alt={businessName}
-                    className="h-full w-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      target.style.display = "none"
-                      target.nextElementSibling?.classList.remove("hidden")
-                    }}
-                  />
-                ) : null}
-                <span className={`text-white text-sm font-medium ${(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? "hidden" : ""}`}>
-                  {getBusinessInitial()}
-                </span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <h2 className={`font-semibold text-sm lg:text-base truncate ${
-                  theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                }`}>{businessName}</h2>
+            {/* Business Info Card */}
+            <div className="rounded-lg p-2 cursor-pointer transition-colors mb-2 hover:bg-[var(--dashboard-bg-tertiary)]" onClick={() => setShowBusinessModal(true)}>
+              <div className="flex items-center space-x-3">
+                <div className="h-10 w-10 rounded-full bg-zinc-600 flex items-center justify-center overflow-hidden">
+                  {(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? (
+                    <img
+                      src={getProfileImageUrl(currentBusiness)}
+                      alt={businessName}
+                      className="h-full w-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.style.display = "none"
+                        target.nextElementSibling?.classList.remove("hidden")
+                      }}
+                    />
+                  ) : null}
+                  <span className={`text-white text-sm font-medium ${(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? "hidden" : ""}`}>
+                    {getBusinessInitial()}
+                  </span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h2 className="font-semibold text-sm lg:text-base truncate text-[var(--dashboard-text-primary)]">{businessName}</h2>
+                </div>
               </div>
             </div>
-          </div>
-          {/* Navigation Items */}
-          <nav className="flex-1">
-            <ul className="space-y-0">
+
+            {/* Navigation Items */}
+            <nav className="flex-1">
+              <ul className="space-y-0">
                 {navigationItems.map((item) => {
                   const IconComponent = item.icon
                   return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={`flex items-center gap-x-3 rounded-md p-2 text-sm md:text-base leading-6 transition-all duration-200 ${
-                      isActiveLink(item.href)
-                        ? theme === 'dark' 
-                          ? "bg-zinc-700 text-gray-100 shadow-md border border-zinc-600" 
-                          : "bg-zinc-200 text-gray-900 shadow-md border border-zinc-300"
-                        : theme === 'dark'
-                          ? "text-gray-400 hover:bg-zinc-700 hover:text-gray-200"
-                          : "text-gray-500 hover:bg-zinc-100 hover:text-gray-700"
-                    }`}
-                  >
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className={`flex items-center gap-x-3 rounded-md p-2 text-sm md:text-base leading-6 transition-all duration-200 ${
+                          isActiveLink(item.href)
+                            ? "bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)] shadow-md border border-[var(--dashboard-border-primary)]"
+                            : "text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)] hover:text-[var(--dashboard-text-primary)]"
+                        }`}
+                      >
                         <IconComponent className="h-5 w-5" />
-                    <span className="flex-1">{item.label}</span>
-                    {item.comingSoon && (
-                      <span className="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
-                        Coming Soon
-                      </span>
-                    )}
-                  </Link>
-                </li>
+                        <span className="flex-1">{item.label}</span>
+                        {item.comingSoon && (
+                          <span className="text-xs px-1.5 py-0.5 rounded-full bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
+                            Coming Soon
+                          </span>
+                        )}
+                      </Link>
+                    </li>
                   )
                 })}
-            </ul>
-          </nav>
-          
+              </ul>
+            </nav>
 
-
-          {/* Theme Toggle, Locale Switcher and Support Buttons */}
-          <div className="mt-auto">
-            <div className="flex items-center gap-4">
-              <LocaleSwitcherButton 
-                onClick={() => setIsModalOpen(true)}
-                className=""
-              />
-              <SupportButton 
-                onClick={handleSupportRequest}
-                className=""
-              />
-              <div className="flex items-center gap-2">
-                <SunIcon className="h-4 w-4 text-gray-500" />
-                <button
-                  onClick={toggleTheme}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                    theme === 'dark' 
-                      ? 'bg-blue-600' 
-                      : 'bg-zinc-400'
-                  }`}
-                  title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
-                      theme === 'dark' ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                  <span className="sr-only">
-                    {theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-                  </span>
-                </button>
-                <MoonIcon className="h-4 w-4 text-gray-500" />
+            {/* Theme Toggle, Locale Switcher and Support Buttons */}
+            <div className="mt-auto">
+              <div className="flex items-center gap-4">
+                <LocaleSwitcherButton 
+                  onClick={() => setIsModalOpen(true)}
+                  className=""
+                />
+                <SupportButton 
+                  onClick={handleSupportRequest}
+                  className=""
+                />
+                <div className="flex items-center gap-2">
+                  <SunIcon className="h-4 w-4 text-[var(--dashboard-text-secondary)]" />
+                  <button
+                    onClick={toggleTheme}
+                    className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--dashboard-ring-primary)] focus:ring-offset-2 bg-[var(--dashboard-border-secondary)]"
+                    title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
+                        theme === 'dark' ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                    <span className="sr-only">
+                      {theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                    </span>
+                  </button>
+                  <MoonIcon className="h-4 w-4 text-[var(--dashboard-text-secondary)]" />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Mobile Sidebar Overlay */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-70" onClick={() => setIsMobileMenuOpen(false)} />
-      )}
+        {/* Mobile Sidebar Overlay */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-70" onClick={() => setIsMobileMenuOpen(false)} />
+        )}
 
-      {/* Mobile Sidebar */}
-      <div 
-        className="lg:hidden fixed inset-x-0 z-50 h-screen transition-all duration-300 ease-in-out"
-        style={{ 
-          bottom: isMobileMenuOpen ? '0' : '-100vh'
-        }}
-      >
-        <div className={`flex h-full flex-col px-6 py-6 ${
-          theme === 'dark' ? 'bg-zinc-800' : 'bg-zinc-200'
-        }`}>
-          {/* Close Button */}
-          <div className="flex justify-end mb-4 relative">
-            <button
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`absolute top-0 right-0 p-2 rounded-lg transition-colors ${
-                theme === 'dark' 
-                  ? 'text-gray-400 hover:text-gray-200 hover:bg-zinc-700' 
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-zinc-100'
-              }`}
-            >
-              <XMarkIcon className="h-6 w-6" />
-            </button>
-          </div>
+        {/* Mobile Sidebar */}
+        <div 
+          className="lg:hidden fixed inset-x-0 z-50 h-screen transition-all duration-300 ease-in-out"
+          style={{ 
+            bottom: isMobileMenuOpen ? '0' : '-100vh'
+          }}
+        >
+          <div className="flex h-full flex-col px-6 py-6 bg-[var(--dashboard-bg-secondary)]">
+            {/* Close Button */}
+            <div className="flex justify-end mb-4 relative">
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="absolute top-0 right-0 p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+            </div>
 
-
-
-          {/* Business Info Card */}
-          <div className={`p-4 cursor-pointer transition-colors mb-4 ${
-            theme === 'dark' 
-              ? 'hover:bg-zinc-700/50' 
-              : 'hover:bg-zinc-100/50'
-          }`} onClick={() => {
-            setShowBusinessModal(true)
-            setIsMobileMenuOpen(false)
-          }}>
-            <div className="flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-full bg-zinc-600 flex items-center justify-center overflow-hidden">
-                {(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? (
-                  <img
-                    src={getProfileImageUrl(currentBusiness)}
-                    alt={businessName}
-                    className="h-full w-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      target.style.display = "none"
-                      target.nextElementSibling?.classList.remove("hidden")
-                    }}
-                  />
-                ) : null}
-                <span className={`text-white text-sm font-medium ${(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? "hidden" : ""}`}>
-                  {getBusinessInitial()}
-                </span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <h2 className={`font-semibold text-sm truncate ${
-                  theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                }`}>{businessName}</h2>
+            {/* Business Info Card */}
+            <div className="p-4 cursor-pointer transition-colors mb-4 hover:bg-[var(--dashboard-bg-tertiary)]" onClick={() => {
+              setShowBusinessModal(true)
+              setIsMobileMenuOpen(false)
+            }}>
+              <div className="flex items-center space-x-3">
+                <div className="h-10 w-10 rounded-full bg-zinc-600 flex items-center justify-center overflow-hidden">
+                  {(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? (
+                    <img
+                      src={getProfileImageUrl(currentBusiness)}
+                      alt={businessName}
+                      className="h-full w-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.style.display = "none"
+                        target.nextElementSibling?.classList.remove("hidden")
+                      }}
+                    />
+                  ) : null}
+                  <span className={`text-white text-sm font-medium ${(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? "hidden" : ""}`}>
+                    {getBusinessInitial()}
+                  </span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h2 className="font-semibold text-sm truncate text-[var(--dashboard-text-primary)]">{businessName}</h2>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Navigation Items */}
-          <nav className="flex-1">
-            <ul className="space-y-0">
+            {/* Navigation Items */}
+            <nav className="flex-1">
+              <ul className="space-y-0">
                 {navigationItems.map((item) => {
                   const IconComponent = item.icon
                   return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={`flex items-center gap-x-3 rounded-md p-2 text-sm md:text-base leading-6 transition-all duration-200 ${
-                      isActiveLink(item.href)
-                        ? theme === 'dark' 
-                          ? "bg-zinc-700 text-gray-100 shadow-md border border-zinc-600" 
-                          : "bg-zinc-200 text-gray-900 shadow-md border border-zinc-300"
-                        : theme === 'dark'
-                          ? "text-gray-400 hover:bg-zinc-700 hover:text-gray-200"
-                          : "text-gray-500 hover:bg-zinc-100 hover:text-gray-700"
-                    }`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className={`flex items-center gap-x-3 rounded-md p-2 text-sm md:text-base leading-6 transition-all duration-200 ${
+                          isActiveLink(item.href)
+                            ? "bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)] shadow-md border border-[var(--dashboard-border-primary)]"
+                            : "text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)] hover:text-[var(--dashboard-text-primary)]"
+                        }`}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
                         <IconComponent className="h-5 w-5" />
-                    <span className="flex-1">{item.label}</span>
-                    {item.comingSoon && (
-                      <span className="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
-                        Coming Soon
-                      </span>
-                    )}
-                  </Link>
-                </li>
+                        <span className="flex-1">{item.label}</span>
+                        {item.comingSoon && (
+                          <span className="text-xs px-1.5 py-0.5 rounded-full bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
+                            Coming Soon
+                          </span>
+                        )}
+                      </Link>
+                    </li>
                   )
                 })}
-            </ul>
-          </nav>
-          
+              </ul>
+            </nav>
 
-
-          {/* Theme Toggle, Locale Switcher and Support Buttons */}
-          <div className="mt-auto">
-            <div className="flex gap-2">
-              <LocaleSwitcherButton 
-                onClick={() => {
-                  setIsModalOpen(true)
-                  setIsMobileMenuOpen(false)
-                }}
-                className="flex-1"
-              />
-              <SupportButton 
-                onClick={() => {
-                  handleSupportRequest()
-                  setIsMobileMenuOpen(false)
-                }}
-                className="flex-1"
-              />
-              <div className="flex items-center gap-2">
-                <SunIcon className="h-4 w-4 text-gray-500" />
-                <button
+            {/* Theme Toggle, Locale Switcher and Support Buttons */}
+            <div className="mt-auto">
+              <div className="flex gap-2">
+                <LocaleSwitcherButton 
                   onClick={() => {
-                    toggleTheme()
+                    setIsModalOpen(true)
                     setIsMobileMenuOpen(false)
                   }}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                    theme === 'dark' 
-                      ? 'bg-blue-600' 
-                      : 'bg-zinc-400'
-                  }`}
-                  title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
-                      theme === 'dark' ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                  <span className="sr-only">
-                    {theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-                  </span>
-                </button>
-                <MoonIcon className="h-4 w-4 text-gray-500" />
+                  className="flex-1"
+                />
+                <SupportButton 
+                  onClick={() => {
+                    handleSupportRequest()
+                    setIsMobileMenuOpen(false)
+                  }}
+                  className="flex-1"
+                />
+                <div className="flex items-center gap-2">
+                  <SunIcon className="h-4 w-4 text-[var(--dashboard-text-secondary)]" />
+                  <button
+                    onClick={() => {
+                      toggleTheme()
+                      setIsMobileMenuOpen(false)
+                    }}
+                    className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--dashboard-ring-primary)] focus:ring-offset-2 bg-[var(--dashboard-border-secondary)]"
+                    title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
+                        theme === 'dark' ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                    <span className="sr-only">
+                      {theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                    </span>
+                  </button>
+                  <MoonIcon className="h-4 w-4 text-[var(--dashboard-text-secondary)]" />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Bottom Navigation Bar (Mobile) */}
-      <div className={`lg:hidden fixed bottom-0 left-0 right-0 z-30 rounded-t-3xl shadow-lg border-t ${
-        theme === 'dark'
-          ? 'bg-gradient-to-t from-zinc-800 to-zinc-700 border-gray-600'
-          : 'bg-gradient-to-t from-zinc-100 to-zinc-200 border-gray-300'
-      }`}>
-        <div className="flex items-center justify-around px-4 py-2">
-          {/* Essential Navigation Items */}
-          <Link
-            href="/dashboard"
-            className={`flex flex-col items-center p-1.5 rounded-lg transition-all duration-200 ${
-              isActiveLink("/dashboard")
-                ? theme === 'dark'
-                  ? "text-gray-100 bg-zinc-700 shadow-md border border-zinc-600"
-                  : "text-gray-900 bg-zinc-200 shadow-md border border-zinc-300"
-                : theme === 'dark'
-                  ? "text-gray-400 hover:text-gray-200 hover:bg-zinc-700"
-                  : "text-gray-400 hover:text-gray-600 hover:bg-zinc-100"
-            }`}
-          >
-            <HomeIcon className="h-5 w-5" />
-            <span className="text-[10px] mt-0.5 font-normal">Home</span>
-          </Link>
+        {/* Bottom Navigation Bar (Mobile) */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 rounded-t-3xl shadow-lg border-t bg-[var(--dashboard-bg-secondary)] border-[var(--dashboard-border-primary)]">
+          <div className="flex items-center justify-around px-4 py-2">
+            {/* Essential Navigation Items */}
+            <Link
+              href="/dashboard"
+              className={`flex flex-col items-center p-1.5 rounded-lg transition-all duration-200 ${
+                isActiveLink("/dashboard")
+                  ? "text-[var(--dashboard-text-primary)] bg-[var(--dashboard-bg-tertiary)] shadow-md border border-[var(--dashboard-border-primary)]"
+                  : "text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+              }`}
+            >
+              <HomeIcon className="h-5 w-5" />
+              <span className="text-[10px] mt-0.5 font-normal">Home</span>
+            </Link>
 
-          <Link
-            href="/dashboard/appointments"
-            className={`flex flex-col items-center p-1.5 rounded-lg transition-all duration-200 ${
-              isActiveLink("/dashboard/appointments")
-                ? theme === 'dark'
-                  ? "text-gray-100 bg-zinc-700 shadow-md border border-zinc-600"
-                  : "text-gray-900 bg-zinc-200 shadow-md border border-zinc-300"
-                : theme === 'dark'
-                  ? "text-gray-400 hover:text-gray-200 hover:bg-zinc-700"
-                  : "text-gray-400 hover:text-gray-600 hover:bg-zinc-100"
-            }`}
-          >
-            <CalendarIcon className="h-5 w-5" />
-            <span className="text-[10px] mt-0.5 font-normal">Appointments</span>
-          </Link>
+            <Link
+              href="/dashboard/appointments"
+              className={`flex flex-col items-center p-1.5 rounded-lg transition-all duration-200 ${
+                isActiveLink("/dashboard/appointments")
+                  ? "text-[var(--dashboard-text-primary)] bg-[var(--dashboard-bg-tertiary)] shadow-md border border-[var(--dashboard-border-primary)]"
+                  : "text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+              }`}
+            >
+              <CalendarIcon className="h-5 w-5" />
+              <span className="text-[10px] mt-0.5 font-normal">Appointments</span>
+            </Link>
 
-          <Link
-            href="/dashboard/services"
-            className={`flex flex-col items-center p-1.5 rounded-lg transition-all duration-200 ${
-              isActiveLink("/dashboard/services")
-                ? theme === 'dark'
-                  ? "text-gray-100 bg-zinc-700 shadow-md border border-zinc-600"
-                  : "text-gray-900 bg-zinc-200 shadow-md border border-zinc-300"
-                : theme === 'dark'
-                  ? "text-gray-400 hover:text-gray-200 hover:bg-zinc-700"
-                  : "text-gray-400 hover:text-gray-600 hover:bg-zinc-100"
-            }`}
-          >
-            <WrenchScrewdriverIcon className="h-5 w-5" />
-            <span className="text-[10px] mt-0.5 font-normal">Services</span>
-          </Link>
+            <Link
+              href="/dashboard/services"
+              className={`flex flex-col items-center p-1.5 rounded-lg transition-all duration-200 ${
+                isActiveLink("/dashboard/services")
+                  ? "text-[var(--dashboard-text-primary)] bg-[var(--dashboard-bg-tertiary)] shadow-md border border-[var(--dashboard-border-primary)]"
+                  : "text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+              }`}
+            >
+              <WrenchScrewdriverIcon className="h-5 w-5" />
+              <span className="text-[10px] mt-0.5 font-normal">Services</span>
+            </Link>
 
-          <Link
-            href="/dashboard/service-boards"
-            className={`flex flex-col items-center p-1.5 rounded-lg transition-all duration-200 ${
-              isActiveLink("/dashboard/service-boards")
-                ? theme === 'dark'
-                  ? "text-gray-100 bg-zinc-700 shadow-md border border-zinc-600"
-                  : "text-gray-900 bg-zinc-200 shadow-md border border-zinc-300"
-                : theme === 'dark'
-                  ? "text-gray-400 hover:text-gray-200 hover:bg-zinc-700"
-                  : "text-gray-400 hover:text-gray-600 hover:bg-zinc-100"
-            }`}
-          >
-            <ClipboardDocumentIcon className="h-5 w-5" />
-            <span className="text-[10px] mt-0.5 font-normal">Boards</span>
-          </Link>
+            <Link
+              href="/dashboard/service-boards"
+              className={`flex flex-col items-center p-1.5 rounded-lg transition-all duration-200 ${
+                isActiveLink("/dashboard/service-boards")
+                  ? "text-[var(--dashboard-text-primary)] bg-[var(--dashboard-bg-tertiary)] shadow-md border border-[var(--dashboard-border-primary)]"
+                  : "text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+              }`}
+            >
+              <ClipboardDocumentIcon className="h-5 w-5" />
+              <span className="text-[10px] mt-0.5 font-normal">Boards</span>
+            </Link>
 
-          <Link
-            href="/dashboard/profile"
-            className={`flex flex-col items-center p-1.5 rounded-lg transition-all duration-200 ${
-              isActiveLink("/dashboard/profile")
-                ? theme === 'dark'
-                  ? "text-gray-100 bg-zinc-700 shadow-md border border-zinc-600"
-                  : "text-gray-900 bg-zinc-200 shadow-md border border-zinc-300"
-                : theme === 'dark'
-                  ? "text-gray-400 hover:text-gray-200 hover:bg-zinc-700"
-                  : "text-gray-400 hover:text-gray-600 hover:bg-zinc-100"
-            }`}
-          >
-            <UserIcon className="h-5 w-5" />
-            <span className="text-[10px] mt-0.5 font-normal">Profile</span>
-          </Link>
+            <Link
+              href="/dashboard/profile"
+              className={`flex flex-col items-center p-1.5 rounded-lg transition-all duration-200 ${
+                isActiveLink("/dashboard/profile")
+                  ? "text-[var(--dashboard-text-primary)] bg-[var(--dashboard-bg-tertiary)] shadow-md border border-[var(--dashboard-border-primary)]"
+                  : "text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+              }`}
+            >
+              <UserIcon className="h-5 w-5" />
+              <span className="text-[10px] mt-0.5 font-normal">Profile</span>
+            </Link>
 
-          {/* Sidebar Toggle Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(true)}
-            className={`flex flex-col items-center p-1.5 rounded-lg transition-colors ${
-              theme === 'dark'
-                ? "text-gray-400 hover:text-gray-200 hover:bg-zinc-700"
-                : "text-gray-500 hover:text-gray-700 hover:bg-zinc-50"
-            }`}
-          >
-            <Bars3Icon className="h-5 w-5" />
-            <span className="text-[10px] mt-0.5 font-normal">Menu</span>
-          </button>
+            {/* Sidebar Toggle Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="flex flex-col items-center p-1.5 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+            >
+              <Bars3Icon className="h-5 w-5" />
+              <span className="text-[10px] mt-0.5 font-normal">Menu</span>
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="lg:pl-80">
-        <div className={`px-6 py-4 lg:py-2 rounded-2xl lg:sticky top-0 z-10 mb-2 ${
-          theme === 'dark' ? 'lg:bg-zinc-800' : 'lg:bg-zinc-50'
-        }`}>
+        {/* Main Content */}
+        <div className="lg:pl-80">
+          <div className="px-6 py-4 lg:py-2 rounded-2xl lg:sticky top-0 z-10 mb-2 bg-[var(--dashboard-bg-primary)]">
             {/* Top Navbar Dashboard*/}
             <div className="flex flex-row justify-between gap-4">
               {/* Left Column - Public Link (Desktop only) */}
@@ -633,23 +551,18 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   <div className="flex items-center gap-2">
                     {/* Collapsed pill for xs to md, full pill for lg+ */}
                     <div className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm border transition-all duration-300 relative overflow-hidden ${
-                      theme === 'dark' 
-                        ? 'bg-zinc-700 text-gray-300 border-gray-600' 
-                        : 'bg-zinc-100 text-gray-700 border-gray-200'
-                    } ${isAnimating ? 'animate-pill-shine' : ''} ${
+                      isAnimating ? 'animate-pill-shine' : ''} ${
                       // Collapsed on xs to md, full on lg+
-                      'max-w-[40px] md:max-w-[40px] lg:max-w-[250px]'
+                      'max-w-[40px] md:max-w-[40px] lg:max-w-[250px] bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)]'
                     }`}>
                       <GlobeAltIcon className="w-4 h-4 text-blue-600 flex-shrink-0" />
                       <span className="text-xs truncate hidden lg:block">{publicUrl}</span>
                     </div>
                     <button
                       onClick={handleCopy}
-                      className={`px-2 py-2 rounded-lg border transition-all duration-300 flex items-center justify-center ${
-                        theme === 'dark' 
-                          ? 'bg-zinc-700 text-gray-300 border-gray-600 hover:bg-zinc-600 hover:text-gray-200' 
-                          : 'bg-white text-gray-600 border-gray-200 hover:bg-zinc-50 hover:text-gray-800'
-                      } ${copied ? 'text-green-600 border-green-200 bg-green-50' : ''}`}
+                      className={`px-2 py-2 rounded-lg border transition-all duration-300 flex items-center justify-center bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)] ${
+                        copied ? 'text-green-600 border-green-200 bg-green-50' : ''
+                      }`}
                       title={copied ? t("publicLink.copied") : t("publicLink.copy")}
                     >
                       {copied ? (
@@ -664,11 +577,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     </button>
                     <button
                       onClick={handleOpen}
-                      className={`px-2 py-2 rounded-lg border transition-colors flex items-center gap-1 ${
-                        theme === 'dark' 
-                          ? 'bg-zinc-700 text-gray-300 border-gray-600 hover:bg-zinc-600 hover:text-gray-200' 
-                          : 'bg-white text-gray-600 border-gray-200 hover:bg-zinc-50 hover:text-gray-800'
-                      }`}
+                      className="px-2 py-2 rounded-lg border transition-colors flex items-center gap-1 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]"
                       title={t("publicLink.open")}
                     >
                       <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -678,11 +587,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     </button>
                     <button
                       onClick={() => setShowShareModal(true)}
-                      className={`px-2 py-2 rounded-lg border transition-colors flex items-center justify-center ${
-                        theme === 'dark' 
-                          ? 'bg-zinc-700 text-gray-300 border-gray-600 hover:bg-zinc-600 hover:text-gray-200' 
-                          : 'bg-white text-gray-600 border-gray-200 hover:bg-zinc-50 hover:text-gray-800'
-                      }`}
+                      className="px-2 py-2 rounded-lg border transition-colors flex items-center justify-center bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]"
                       title="Share Link"
                     >
                       <ShareIcon className="w-3 h-3" />
@@ -700,11 +605,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     <div className="flex items-center gap-2">
                       <Link 
                         href="/dashboard/plan" 
-                        className={`px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-2 border ${
-                          theme === 'dark'
-                            ? 'bg-transparent text-gray-300 border-gray-600 hover:bg-zinc-800 hover:text-gray-200'
-                            : 'bg-transparent text-gray-600 border-gray-300 hover:bg-zinc-100 hover:text-gray-800'
-                        }`}
+                        className="px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-2 border bg-transparent text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]"
                       >
                         Manage your plan
                         {(() => {
@@ -723,11 +624,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                       </Link>
                       <button
                         onClick={handleSupportRequest}
-                        className={`px-5 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors border ${
-                          theme === 'dark'
-                            ? 'bg-transparent text-gray-300 border-gray-600 hover:bg-zinc-800 hover:text-gray-200'
-                            : 'bg-transparent text-gray-600 border-gray-300 hover:bg-zinc-100 hover:text-gray-800'
-                        }`}
+                        className="px-5 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors border bg-transparent text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]"
                       >
                         Support
                       </button>
@@ -738,11 +635,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 {/* Bell Notification Button */}
                 <Link 
                   href="/dashboard/notifications" 
-                  className={`p-2 rounded-lg transition-colors ${
-                    theme === 'dark' 
-                      ? 'text-gray-400 hover:text-gray-200 hover:bg-zinc-700' 
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-zinc-100'
-                  }`}
+                  className="p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
                   title="Notifications"
                 >
                   <BellIcon className="h-5 w-5" />
@@ -751,16 +644,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 {/* User Info */}
                 <div className="flex flex-row items-center gap-x-2">
                   <div className="text-right hidden lg:block">
-                    <p className={`font-medium text-sm lg:text-base truncate ${
-                      theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                    }`}>{getManagerFullName()}</p>
+                    <p className="font-medium text-sm lg:text-base truncate text-[var(--dashboard-text-primary)]">{getManagerFullName()}</p>
                     <button
                       onClick={handleLogout}
-                      className={`ml-auto flex items-center gap-x-1 rounded-md border px-2 py-1 text-xs transition-all ${
-                        theme === 'dark' 
-                          ? 'border-gray-600 bg-zinc-700 text-gray-300 hover:bg-zinc-600' 
-                          : 'border-gray-300 bg-white text-gray-700 hover:bg-zinc-50'
-                      }`}
+                      className="ml-auto flex items-center gap-x-1 rounded-md border px-2 py-1 text-xs transition-all border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-secondary)]"
                     >
                       <ArrowRightOnRectangleIcon className="h-3 w-3" />
                       {t("nav.logout") || "Logout"}
@@ -774,114 +661,92 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 </div>
               </div>
             </div>
+          </div>
+          <div className="border-t-[1px] lg:border-[1px] px-4 py-8 sm:px-6 md:px-10 lg:px-12 pb-20 lg:pb-6 rounded-2xl min-h-screen bg-[var(--dashboard-bg-primary)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]">
+            <CacheBusterWrapper>
+              {children}
+            </CacheBusterWrapper>
+          </div>
         </div>
-        <div className={`border-t-[1px] lg:border-[1px] px-4 py-8 sm:px-6 md:px-10 lg:px-12 pb-20 lg:pb-6 rounded-2xl min-h-screen ${
-          theme === 'dark' 
-            ? 'bg-[#1d1d21] border-gray-600 text-white' 
-            : 'bg-zinc-50 border-gray-200 text-gray-900'
-        }`}>
-          <CacheBusterWrapper>
-            {children}
-          </CacheBusterWrapper>
-        </div>
-      </div>
 
-      {/* Business Selection Modal */}
-      <BusinessSelectionModal 
-        isOpen={showBusinessModal} 
-        onClose={() => setShowBusinessModal(false)}
-      />
+        {/* Business Selection Modal */}
+        <BusinessSelectionModal 
+          isOpen={showBusinessModal} 
+          onClose={() => setShowBusinessModal(false)}
+        />
 
+        {/* Locale Selection Modal */}
+        <LocaleSelectModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          currentLocale={currentLocale}
+          availableLocales={availableLocales}
+          onLocaleSelect={switchLocale}
+        />
 
+        {/* Dashboard Support Modal */}
+        <DashboardSupportModal
+          isOpen={showSupportModal}
+          onClose={() => setShowSupportModal(false)}
+          businessId={currentBusiness?.business_id || ''}
+        />
 
-      {/* Locale Selection Modal */}
-      <LocaleSelectModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        currentLocale={currentLocale}
-        availableLocales={availableLocales}
-        onLocaleSelect={switchLocale}
-      />
-
-      {/* Dashboard Support Modal */}
-      <DashboardSupportModal
-        isOpen={showSupportModal}
-        onClose={() => setShowSupportModal(false)}
-        businessId={currentBusiness?.business_id || ''}
-      />
-
-      {/* Share Link Modal */}
-      {showShareModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className={`max-w-md w-full rounded-lg shadow-xl ${
-            theme === 'dark' ? 'bg-zinc-800 text-white' : 'bg-white text-gray-900'
-          }`}>
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold">Share Your Business Link</h3>
-              <button
-                onClick={() => setShowShareModal(false)}
-                className={`p-1 rounded-lg transition-colors ${
-                  theme === 'dark' 
-                    ? 'text-gray-400 hover:text-gray-200 hover:bg-zinc-700' 
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-zinc-100'
-                }`}
-              >
-                <XMarkIcon className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="p-6">
-              <div className={`px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-3 shadow-sm border mb-4 ${
-                theme === 'dark' 
-                  ? 'bg-zinc-700 text-gray-300 border-gray-600' 
-                  : 'bg-zinc-100 text-gray-700 border-gray-200'
-              }`}>
-                <GlobeAltIcon className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                <span className="text-sm break-all">{publicUrl}</span>
+        {/* Share Link Modal */}
+        {showShareModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="max-w-md w-full rounded-lg shadow-xl bg-[var(--dashboard-bg-card)] text-[var(--dashboard-text-primary)]">
+              <div className="flex items-center justify-between p-6 border-b border-[var(--dashboard-border-primary)]">
+                <h3 className="text-lg font-semibold">Share Your Business Link</h3>
+                <button
+                  onClick={() => setShowShareModal(false)}
+                  className="p-1 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+                >
+                  <XMarkIcon className="h-5 w-5" />
+                </button>
               </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={handleCopy}
-                  className={`flex-1 px-4 py-2 rounded-lg border transition-all duration-300 flex items-center justify-center gap-2 ${
-                    theme === 'dark' 
-                      ? 'bg-zinc-700 text-gray-300 border-gray-600 hover:bg-zinc-600 hover:text-gray-200' 
-                      : 'bg-white text-gray-600 border-gray-200 hover:bg-zinc-50 hover:text-gray-800'
-                  } ${copied ? 'text-green-600 border-green-200 bg-green-50' : ''}`}
-                >
-                  {copied ? (
-                    <>
-                      <svg className="w-4 h-4 animate-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span>Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
-                      <span>Copy Link</span>
-                    </>
-                  )}
-                </button>
-                <button
-                  onClick={handleOpen}
-                  className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 ${
-                    theme === 'dark' 
-                      ? 'bg-zinc-700 text-gray-300 border-gray-600 hover:bg-zinc-600 hover:text-gray-200' 
-                      : 'bg-white text-gray-600 border-gray-200 hover:bg-zinc-50 hover:text-gray-800'
-                  }`}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                  <span>Open</span>
-                </button>
+              <div className="p-6">
+                <div className="px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-3 shadow-sm border mb-4 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)]">
+                  <GlobeAltIcon className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                  <span className="text-sm break-all">{publicUrl}</span>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopy}
+                    className={`flex-1 px-4 py-2 rounded-lg border transition-all duration-300 flex items-center justify-center gap-2 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)] ${
+                      copied ? 'text-green-600 border-green-200 bg-green-50' : ''
+                    }`}
+                  >
+                    {copied ? (
+                      <>
+                        <svg className="w-4 h-4 animate-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <span>Copy Link</span>
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={handleOpen}
+                    className="px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    <span>Open</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
     </>
   )
 }

@@ -6,7 +6,7 @@ import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation'; // For handling unsupported locales
 import { routing } from '@/i18n/routing'; // Import your routing config for locales
 import { ToasterProvider } from '@/components/ui/ToasterProvider';
-import { ThemeProvider } from '@/contexts/ThemeContext';
+import { ThemeProvider } from '@/contexts/ThemeProvider';
 
 export const metadata = {
   title: 'Flowia App',

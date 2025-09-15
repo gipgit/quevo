@@ -28,31 +28,27 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
-    // OPTIMIZED: Lazy theme detection to avoid blocking initial render
+    // Get theme from localStorage or system preference
     const detectTheme = () => {
       try {
-        // Check for saved theme preference
-        const savedTheme = localStorage.getItem('theme') as Theme
+        const savedTheme = localStorage.getItem('dashboard-theme') as Theme
         if (savedTheme) {
           setTheme(savedTheme)
         } else {
-          // Check system preference (non-blocking)
           const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
           setTheme(mediaQuery.matches ? 'dark' : 'light')
         }
       } catch (error) {
-        // Fallback to light theme if localStorage fails
         setTheme('light')
       } finally {
         setIsLoaded(true)
       }
     }
 
-    // Use requestIdleCallback for non-critical theme detection
+    // Use requestIdleCallback for non-blocking theme detection
     if ('requestIdleCallback' in window) {
       requestIdleCallback(detectTheme)
     } else {
-      // Fallback for older browsers
       setTimeout(detectTheme, 0)
     }
   }, [])
@@ -60,7 +56,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   useEffect(() => {
     if (!isLoaded) return
 
-    // OPTIMIZED: Batch DOM updates
+    // Apply theme class to html element
     const root = document.documentElement
     if (theme === 'dark') {
       root.classList.add('dark')
@@ -68,9 +64,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       root.classList.remove('dark')
     }
     
-    // Save theme preference (non-blocking)
+    // Save theme preference
     try {
-      localStorage.setItem('theme', theme)
+      localStorage.setItem('dashboard-theme', theme)
     } catch (error) {
       // Ignore localStorage errors
     }
@@ -85,4 +81,4 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       {children}
     </ThemeContext.Provider>
   )
-} 
+}

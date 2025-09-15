@@ -1,5 +1,6 @@
 import { SessionProvider } from "next-auth/react"
 import ServerBusinessProvider from "@/lib/server-business-provider"
+import { ThemeProvider } from "@/contexts/ThemeProvider"
 
 export default function DashboardLayout({
   children,
@@ -9,7 +10,9 @@ export default function DashboardLayout({
   return (
     <SessionProvider>
       <ServerBusinessProvider>
-        {children}
+               <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </ServerBusinessProvider>
     </SessionProvider>
   )

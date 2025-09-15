@@ -16,19 +16,19 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   onButtonClick
 }) => {
   return (
-    <div className="w-full min-h-[90vh] bg-gray-100 border-[2px] border-gray-300 rounded-lg flex flex-col items-center justify-center p-8">
-      <div className="text-gray-400 mb-4">
+    <div className="w-full min-h-[90vh] bg-[var(--dashboard-bg-tertiary)] border-[2px] border-[var(--dashboard-border-primary)] rounded-lg flex flex-col items-center justify-center p-8">
+      <div className="text-[var(--dashboard-text-tertiary)] mb-4">
         {icon}
       </div>
-      <h3 className="text-lg font-medium text-gray-900 mb-2">
+      <h3 className="text-lg font-medium text-[var(--dashboard-text-primary)] mb-2">
         {title}
       </h3>
-      <p className="text-gray-600 text-center mb-6 max-w-md">
+      <p className="text-[var(--dashboard-text-secondary)] text-center mb-6 max-w-md">
         {description}
       </p>
       <button
         onClick={onButtonClick}
-        className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors"
+        className="bg-[var(--dashboard-bg-secondary)] hover:bg-[var(--dashboard-bg-primary)] text-[var(--dashboard-text-primary)] px-4 py-2 rounded-lg transition-colors border border-[var(--dashboard-border-primary)]"
       >
         {buttonText}
       </button>

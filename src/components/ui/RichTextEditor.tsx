@@ -235,14 +235,8 @@ export default function RichTextEditor({
   // Don't render until client is ready
   if (!isClient) {
     return (
-      <div className={`border rounded-lg ${className} ${
-        theme === 'dark' 
-          ? 'border-gray-600 bg-zinc-800' 
-          : 'border-gray-300 bg-white'
-      }`}>
-        <div className={`p-3 ${
-          theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-        }`}>
+      <div className={`border rounded-lg ${className} border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-input)]`}>
+        <div className="p-3 text-[var(--dashboard-text-secondary)]">
           Loading editor...
         </div>
       </div>
@@ -250,21 +244,13 @@ export default function RichTextEditor({
   }
 
   return (
-    <div className={`border rounded-lg ${className} ${
-      theme === 'dark' 
-        ? 'border-gray-600 bg-zinc-800' 
-        : 'border-gray-300 bg-white'
-    }`}>
+    <div className={`border rounded-lg ${className} border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-input)]`}>
       {/* Toolbar */}
-      <div className={`flex items-center gap-1 p-2 border-b ${
-        theme === 'dark' ? 'border-gray-600' : 'border-gray-200'
-      }`}>
+      <div className="flex items-center gap-1 p-2 border-b border-[var(--dashboard-border-primary)]">
         <button
           type="button"
           onClick={() => execCommand('bold')}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            theme === 'dark' ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'
-          } ${isActive('bold') ? 'bg-blue-100 text-blue-600' : ''}`}
+          className={`p-2 rounded hover:bg-[var(--dashboard-bg-tertiary)] ${isActive('bold') ? 'bg-blue-100 text-blue-600' : ''}`}
           title="Bold"
         >
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -275,9 +261,7 @@ export default function RichTextEditor({
         <button
           type="button"
           onClick={() => execCommand('underline')}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            theme === 'dark' ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'
-          } ${isActive('underline') ? 'bg-blue-100 text-blue-600' : ''}`}
+          className={`p-2 rounded hover:bg-[var(--dashboard-bg-tertiary)] ${isActive('underline') ? 'bg-blue-100 text-blue-600' : ''}`}
           title="Underline"
         >
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -285,16 +269,12 @@ export default function RichTextEditor({
           </svg>
         </button>
 
-        <div className={`w-px h-6 ${
-          theme === 'dark' ? 'bg-gray-600' : 'bg-gray-300'
-        }`}></div>
+        <div className="w-px h-6 bg-[var(--dashboard-border-primary)]"></div>
 
         <button
           type="button"
           onClick={() => insertList('ul')}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            theme === 'dark' ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'
-          }`}
+          className="p-2 rounded hover:bg-[var(--dashboard-bg-tertiary)]"
           title="Bullet List"
         >
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -305,9 +285,7 @@ export default function RichTextEditor({
         <button
           type="button"
           onClick={() => insertList('ol')}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            theme === 'dark' ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'
-          }`}
+          className="p-2 rounded hover:bg-[var(--dashboard-bg-tertiary)]"
           title="Numbered List"
         >
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -315,18 +293,14 @@ export default function RichTextEditor({
           </svg>
         </button>
 
-        <div className={`w-px h-6 ${
-          theme === 'dark' ? 'bg-gray-600' : 'bg-gray-300'
-        }`}></div>
+        <div className="w-px h-6 bg-[var(--dashboard-border-primary)]"></div>
 
         {/* Emoji Picker */}
         <div className="relative">
           <button
             type="button"
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className={`p-2 rounded hover:bg-gray-100 ${
-              theme === 'dark' ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'
-            }`}
+            className="p-2 rounded hover:bg-[var(--dashboard-bg-tertiary)]"
             title="Insert Emoji"
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -338,20 +312,14 @@ export default function RichTextEditor({
           {showEmojiPicker && (
             <div 
               ref={emojiPickerRef}
-              className={`absolute top-full left-0 mt-1 border rounded-lg shadow-lg p-3 z-10 ${
-                theme === 'dark' 
-                  ? 'bg-zinc-700 border-gray-600' 
-                  : 'bg-white border-gray-200'
-              }`}>
+              className="absolute top-full left-0 mt-1 border rounded-lg shadow-lg p-3 z-10 bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)]">
               <div className="grid grid-cols-4 gap-2 w-48">
                 {EMOJIS.map((emoji, index) => (
                   <button
                     key={index}
                     type="button"
                     onClick={() => insertEmoji(emoji)}
-                    className={`p-2 hover:bg-gray-100 rounded text-xl transition-colors ${
-                      theme === 'dark' ? 'hover:bg-zinc-600' : 'hover:bg-gray-100'
-                    }`}
+                    className="p-2 hover:bg-[var(--dashboard-bg-tertiary)] rounded text-xl transition-colors"
                   >
                     {emoji}
                   </button>
@@ -370,11 +338,7 @@ export default function RichTextEditor({
         onKeyDown={handleKeyDown}
         onFocus={() => setIsFocused(true)}
         onBlur={handleBlur}
-        className={`min-h-[120px] p-3 outline-none ${
-          theme === 'dark' 
-            ? 'text-gray-100' 
-            : 'text-gray-900'
-        } ${!value && !isFocused ? 'text-gray-500' : ''}`}
+        className={`min-h-[120px] p-3 outline-none text-[var(--dashboard-text-primary)] ${!value && !isFocused ? 'text-[var(--dashboard-text-secondary)]' : ''}`}
         data-placeholder={placeholder}
         style={{
           minHeight: '120px',

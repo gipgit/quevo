@@ -81,18 +81,18 @@ export default function BusinessSelectionModal({ isOpen, onClose }: BusinessSele
   const getInitial = (name: string) => name?.charAt(0)?.toUpperCase() || "?"
 
   return (
-         <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900 bg-opacity-40">
-       <div className="bg-gray-900 w-full max-h-screen lg:rounded-xl lg:p-16 lg:shadow-lg relative">
+         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+       <div className="bg-[var(--dashboard-bg-card)] w-full max-h-screen lg:rounded-xl lg:p-16 lg:shadow-lg relative">
          <button 
-           className="absolute top-4 right-4 lg:top-2 lg:right-2 text-gray-400 hover:text-gray-600 z-10" 
+           className="absolute top-4 right-4 lg:top-2 lg:right-2 text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] z-10" 
            onClick={onClose}
          >
            <XMarkIcon className="h-6 w-6" />
          </button>
          <div className="p-4 lg:p-0 h-full flex flex-col max-h-screen overflow-hidden">
-           <h2 className="text-xl lg:text-3xl font-bold mb-4 text-center mt-8 lg:mt-0 flex-shrink-0 text-white">{t("currentBusiness.selectBusiness")}</h2>
+           <h2 className="text-xl lg:text-3xl font-bold mb-4 text-center mt-8 lg:mt-0 flex-shrink-0 text-[var(--dashboard-text-primary)]">{t("currentBusiness.selectBusiness")}</h2>
            {selectingBusiness && (
-             <div className="text-blue-400 text-sm font-medium animate-pulse text-center mb-4">
+             <div className="text-blue-500 text-sm font-medium animate-pulse text-center mb-4">
                Switching to business...
              </div>
            )}
@@ -106,8 +106,8 @@ export default function BusinessSelectionModal({ isOpen, onClose }: BusinessSele
                    : "cursor-pointer"
                } ${
                  currentBusiness?.business_id === b.business_id 
-                   ? "bg-blue-500 ring-2 ring-blue-500" 
-                   : "bg-white hover:bg-gray-100 hover:shadow-lg"
+                   ? "bg-[var(--dashboard-active-bg)] ring-2 ring-[var(--dashboard-active-border)]" 
+                   : "bg-[var(--dashboard-bg-card)] hover:bg-[var(--dashboard-bg-tertiary)] hover:shadow-lg border border-[var(--dashboard-border-primary)]"
                }`}
                onClick={() => !selectingBusiness && handleBusinessSelect(b.business_id)}
              >
@@ -122,12 +122,12 @@ export default function BusinessSelectionModal({ isOpen, onClose }: BusinessSele
                    <img
                      src={getProfileImageUrl(b)}
                      alt={b.business_name}
-                     className="w-8 h-8 lg:w-16 lg:h-16 rounded-full object-cover bg-gray-200"
+                     className="w-8 h-8 lg:w-16 lg:h-16 rounded-full object-cover bg-[var(--dashboard-bg-tertiary)]"
                      onError={() => setAvatarError(errs => ({ ...errs, [b.business_id]: true }))}
                    />
                  ) : (
                    <div
-                     className="w-8 h-8 lg:w-16 lg:h-16 rounded-full bg-blue-200 text-blue-700 flex items-center justify-center font-bold text-sm lg:text-lg"
+                     className="w-8 h-8 lg:w-16 lg:h-16 rounded-full bg-[var(--dashboard-active-bg)] text-[var(--dashboard-active-text)] flex items-center justify-center font-bold text-sm lg:text-lg"
                    >
                      {getInitial(b.business_name)}
                    </div>
@@ -135,8 +135,8 @@ export default function BusinessSelectionModal({ isOpen, onClose }: BusinessSele
                </div>
                                <div className={`text-center w-full truncate text-sm lg:text-base pl-8 lg:pl-0 font-medium leading-tight ${
                                  currentBusiness?.business_id === b.business_id 
-                                   ? "text-white" 
-                                   : "text-gray-900"
+                                   ? "text-[var(--dashboard-active-text)]" 
+                                   : "text-[var(--dashboard-text-primary)]"
                                }`}>{b.business_name}</div>
             </div>
           ))}

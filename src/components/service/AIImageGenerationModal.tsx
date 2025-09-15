@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { useTheme } from "@/contexts/ThemeContext"
+import { useTheme } from "@/contexts/ThemeProvider"
 import { XMarkIcon, SparklesIcon } from "@heroicons/react/24/outline"
 
 interface AIImageGenerationModalProps {

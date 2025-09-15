@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { useTheme } from "@/contexts/ThemeContext"
+import { useTheme } from "@/contexts/ThemeProvider"
 import AILoading from "@/components/ui/ai-loading"
 import { 
   DocumentDuplicateIcon,
@@ -1094,9 +1094,9 @@ export default function SocialMediaContentGenerator({
          </h2>
          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
            {postTypesData.post_types_by_purpose.map((category, categoryIndex) => (
-             <div key={categoryIndex} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+             <div key={categoryIndex} className="rounded-lg p-3">
                <p 
-                 className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 cursor-help border-b border-gray-200 dark:border-gray-600 pb-1"
+                 className="text-xs font-medium mb-2 cursor-help border-b border-gray-200 dark:border-gray-600 pb-1"
                  title={category.description}
                >
                  {category.category}
@@ -1219,7 +1219,7 @@ export default function SocialMediaContentGenerator({
         </button>
         
         {/* Token Usage Estimation */}
-        <div className="text-center text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg px-4 py-2">
+        <div className="text-center text-xsrounded-lg px-4 py-2">
           <div className="flex items-center justify-center space-x-4">
             <span>Estimated tokens: ~{Math.round((business.business_name.length + (business.business_descr?.length || 0) + selectedServices.length * 200 + selectedPlatforms.length * 100 + selectedQualities.length * 50 + selectedPostTypes.length * 30) / 3.5)}</span>
             <span>•</span>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useTranslations } from "next-intl"
-import { useTheme } from "@/contexts/ThemeContext"
+import { useTheme } from "@/contexts/ThemeProvider"
 import { useBusiness } from "@/lib/business-context"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import EmptyState from "@/components/EmptyState"

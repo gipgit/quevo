@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
-import { useTheme } from "@/contexts/ThemeContext"
 import { useBusiness } from "@/lib/business-context"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import BusinessSelectionModal from "@/components/modals/BusinessSelectionModal"
@@ -76,7 +75,6 @@ interface DashboardWrapperProps {
 export default function DashboardWrapper({ usage, planLimits, autoSelectBusinessId }: DashboardWrapperProps) {
   const { businesses, currentBusiness, userManager, userPlan } = useBusiness()
   const t = useTranslations("dashboard")
-  const { theme } = useTheme()
   const [copied, setCopied] = useState(false)
   const [showBusinessModal, setShowBusinessModal] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -279,9 +277,7 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
           <div className="flex items-center justify-between mb-4">
                          <div className="md:flex md:flex-row md:items-center gap-2 md:gap-4">
                <div>
-                 <div className={`font-semibold text-3xl md:text-4xl ${
-                   theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                 }`}>{currentBusiness?.business_name}</div>
+                 <div className="font-semibold text-3xl md:text-4xl text-[var(--dashboard-text-primary)]">{currentBusiness?.business_name}</div>
                </div>
              </div>
             
@@ -290,21 +286,13 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
                <div className="flex flex-col md:flex-row gap-2">
                  <button
                    onClick={() => setShowBusinessModal(true)}
-                   className={`px-2 py-1 w-auto border rounded-lg text-xs font-medium transition-colors ${
-                     theme === 'dark'
-                       ? 'bg-zinc-700 border-gray-600 text-gray-300 hover:bg-zinc-600'
-                       : 'bg-white border-gray-300 text-gray-700 hover:bg-zinc-50'
-                   }`}
+                   className="px-2 py-1 w-auto border rounded-lg text-xs font-medium transition-colors bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
                  >
                    {t("currentBusiness.change")}
                  </button>
                                    <Link
                     href="/onboarding"
-                    className={`px-2 py-1 w-auto border rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
-                      theme === 'dark'
-                        ? 'bg-zinc-700 border-gray-600 text-gray-300 hover:bg-zinc-600'
-                        : 'bg-white border-gray-300 text-gray-700 hover:bg-zinc-50'
-                    }`}
+                    className="px-2 py-1 w-auto border rounded-lg text-xs font-medium whitespace-nowrap transition-colors bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
                   >
                     Add Business
                   </Link>
@@ -322,24 +310,20 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
                   const suffix = getLimitSuffix(card.feature)
                   return (
                                                               <div key={card.feature} className="min-w-[120px] lg:min-w-0 flex-shrink-0 lg:flex-shrink">
-                       <div className={`text-xs md:text-sm mb-2 ${
-                         theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                       }`}>{card.label}</div>
+                       <div className="text-xs md:text-sm mb-2 text-[var(--dashboard-text-secondary)]">{card.label}</div>
                        <div className="font-medium text-md md:text-lg lg:text-xl mb-1">
                          <span className="text-md md:text-lg lg:text-xl">{formatUsageDisplay(current, { value: max }).split(' ')[0]}</span>
                          {formatUsageDisplay(current, { value: max }).includes(' ') && (
-                           <span className="text-xs md:text-sm lg:text-sm text-gray-500 ml-1">
+                           <span className="text-xs md:text-sm lg:text-sm text-[var(--dashboard-text-secondary)] ml-1">
                              {formatUsageDisplay(current, { value: max }).split(' ').slice(1).join(' ')} {suffix}
                            </span>
                          )}
                          {!formatUsageDisplay(current, { value: max }).includes(' ') && suffix && (
-                           <span className="text-xs md:text-sm lg:text-sm text-gray-500 ml-1">{suffix}</span>
+                           <span className="text-xs md:text-sm lg:text-sm text-[var(--dashboard-text-secondary)] ml-1">{suffix}</span>
                          )}
                        </div>
                       {max !== -1 && max !== null && (
-                        <div className={`w-full rounded-full h-2 ${
-                          theme === 'dark' ? 'bg-zinc-600' : 'bg-zinc-200'
-                        }`}>
+                        <div className="w-full rounded-full h-2 bg-[var(--dashboard-bg-tertiary)]">
                           <div
                             className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                             style={{
@@ -358,11 +342,7 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
        
         {/* Public Link Section */}
         <div className="mb-8">
-                      <div className={`px-4 py-2 md:px-6 md:py-4 rounded-full text-base font-medium flex items-center justify-between gap-4 shadow-sm border transition-all duration-300 relative overflow-hidden ${
-                        theme === 'dark'
-                          ? 'bg-zinc-700 text-gray-300 border-gray-600'
-                          : 'bg-zinc-100 text-gray-700 border-gray-200'
-                      } ${isAnimating ? 'animate-pill-shine' : ''}`}>
+                      <div className={`px-4 py-2 md:px-6 md:py-4 rounded-full text-base font-medium flex items-center justify-between gap-4 shadow-sm border transition-all duration-300 relative overflow-hidden bg-[var(--dashboard-bg-secondary)] text-[var(--dashboard-text-primary)] border-[var(--dashboard-border-primary)] ${isAnimating ? 'animate-pill-shine' : ''}`}>
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <GlobeAltIcon className="w-6 h-6 md:w-7 md:h-7 text-blue-600 flex-shrink-0" />
               <span className="text-sm md:text-lg truncate">{publicUrl}</span>
@@ -370,9 +350,7 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
             <div className="flex items-center gap-2">
               <button
                 onClick={handleCopy}
-                className={`transition-all duration-300 flex items-center gap-2 ${
-                  theme === 'dark' ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'
-                } ${copied ? 'text-green-600' : ''}`}
+                className={`transition-all duration-300 flex items-center gap-2 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] ${copied ? 'text-green-600' : ''}`}
                 title={copied ? t("publicLink.copied") : t("publicLink.copy")}
               >
                 {copied ? (
@@ -388,9 +366,7 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
               </button>
               <button
                 onClick={handleOpen}
-                className={`transition-colors flex items-center gap-2 ${
-                  theme === 'dark' ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'
-                }`}
+                className="transition-colors flex items-center gap-2 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)]"
                 title={t("publicLink.open")}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -410,23 +386,15 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
               <a
                 key={index}
                 href={card.href}
-                className={`rounded-xl p-4 md:p-6 border transition-all duration-200 group ${
-                  theme === 'dark'
-                    ? 'bg-zinc-800 border-gray-600 hover:bg-zinc-700'
-                    : 'bg-white border-gray-200 hover:bg-zinc-50'
-                }`}
+                className="rounded-xl p-4 md:p-6 border transition-all duration-200 group bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)]"
               >
                 <div className="flex flex-col space-y-4">
                   <div className="transition-transform duration-200">
                     <IconComponent className="h-12 w-12 text-gray-600 group-hover:text-blue-600 stroke-[1]" />
                   </div>
                   <div>
-                    <h3 className={`text-md font-semibold mb-2 ${
-                      theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                    }`}>{card.title}</h3>
-                    <p className={`text-xs md:text-sm leading-none ${
-                      theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                    }`}>{card.description}</p>
+                    <h3 className="text-md font-semibold mb-2 text-[var(--dashboard-text-primary)]">{card.title}</h3>
+                    <p className="text-xs md:text-sm leading-none text-[var(--dashboard-text-secondary)]">{card.description}</p>
                   </div>
                 </div>
               </a>

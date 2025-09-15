@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useTranslations } from "next-intl"
-import { useTheme } from "@/contexts/ThemeContext"
+import { useTheme } from "@/contexts/ThemeProvider"
 import { useBusiness } from "@/lib/business-context"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import EmptyState from "@/components/EmptyState"
@@ -401,9 +401,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className={`text-2xl font-bold ${
-              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-            }`}>{t("title")}</h1>
+            <h1 className="text-2xl font-bold text-[var(--dashboard-text-primary)]">{t("title")}</h1>
           </div>
         </div>
 
@@ -425,20 +423,14 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
         {/* Header */}
         <div className="flex justify-between items-center mb-1 lg:mb-6 flex-shrink-0">
           <div>
-            <h1 className={`text-xl lg:text-2xl font-bold ${
-              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-            }`}>{t("title")}</h1>
+            <h1 className="text-xl lg:text-2xl font-bold text-[var(--dashboard-text-primary)]">{t("title")}</h1>
           </div>
           
           <div className="flex items-center gap-4">
             {/* Keyboard Shortcuts Button with Tooltip */}
             <div className="relative group">
               <button
-                className={`p-2 rounded-lg transition-colors ${
-                  theme === 'dark' 
-                    ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                }`}
+                className="p-2 rounded-lg transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
                 title="Keyboard shortcuts"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -447,11 +439,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
               </button>
               
               {/* Tooltip */}
-              <div className={`absolute right-0 top-full mt-2 p-3 rounded-lg shadow-lg border z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto ${
-                theme === 'dark' 
-                  ? 'bg-gray-800 border-gray-700 text-gray-300' 
-                  : 'bg-white border-gray-200 text-gray-700'
-              }`}>
+              <div className="absolute right-0 top-full mt-2 p-3 rounded-lg shadow-lg border z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-secondary)]">
                 <div className="text-xs whitespace-nowrap">
                   <div className="font-medium mb-2">Keyboard Shortcuts:</div>
                   <div>↑↓ Navigate requests</div>
@@ -461,11 +449,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                   <div>Ctrl+C Copy contacts</div>
                 </div>
                 {/* Arrow pointing up */}
-                <div className={`absolute -top-1 right-4 w-2 h-2 rotate-45 ${
-                  theme === 'dark' 
-                    ? 'bg-gray-800 border-l border-t border-gray-700' 
-                    : 'bg-white border-l border-t border-gray-200'
-                }`}></div>
+                <div className="absolute -top-1 right-4 w-2 h-2 rotate-45 bg-[var(--dashboard-bg-card)] border-l border-t border-[var(--dashboard-border-primary)]"></div>
               </div>
             </div>
             
@@ -477,16 +461,12 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                 className={`p-2 rounded-lg transition-colors ${
                   selectedIndex === 0
                     ? 'opacity-50 cursor-not-allowed'
-                    : theme === 'dark'
-                      ? 'hover:bg-gray-700'
-                      : 'hover:bg-gray-100'
+                    : 'hover:bg-[var(--dashboard-bg-tertiary)]'
                 }`}
               >
                 <ArrowLeftIcon className="w-5 h-5" />
               </button>
-              <span className={`text-sm ${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-              }`}>
+              <span className="text-sm text-[var(--dashboard-text-tertiary)]">
                 {selectedIndex + 1} of {serviceRequests.length}
               </span>
               <button
@@ -495,9 +475,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                 className={`p-2 rounded-lg transition-colors ${
                   selectedIndex === serviceRequests.length - 1
                     ? 'opacity-50 cursor-not-allowed'
-                    : theme === 'dark'
-                      ? 'hover:bg-gray-700'
-                      : 'hover:bg-gray-100'
+                    : 'hover:bg-[var(--dashboard-bg-tertiary)]'
                 }`}
               >
                 <ArrowRightIcon className="w-5 h-5" />
@@ -511,26 +489,18 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
         {/* Main Content - Outlook-like Layout */}
         <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-6 overflow-hidden">
           {/* Left Panel - Request List */}
-          <div className={`w-full lg:w-72 border-b lg:border-b-0 lg:border-r ${
-            theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
-          } flex flex-col`}>
+          <div className="w-full lg:w-72 border-b lg:border-b-0 lg:border-r border-[var(--dashboard-border-primary)] flex flex-col">
             {/* Progress Bar */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="p-4 border-b border-[var(--dashboard-border-primary)]">
               <div className="flex justify-between items-center mb-2">
-                <span className={`text-sm font-medium ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
+                <span className="text-sm font-medium text-[var(--dashboard-text-secondary)]">
                   Progress: {handledRequests} of {totalRequests} handled
                 </span>
-                <span className={`text-sm ${
-                  theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                }`}>
+                <span className="text-sm text-[var(--dashboard-text-tertiary)]">
                   {unhandledRequests} remaining
                 </span>
               </div>
-              <div className={`w-full h-2 rounded-full ${
-                theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
-              }`}>
+              <div className="w-full h-2 rounded-full bg-[var(--dashboard-bg-tertiary)]">
                 <div 
                   className="h-2 bg-green-500 rounded-full transition-all duration-300"
                   style={{ width: `${progressPercentage}%` }}
@@ -558,12 +528,8 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       }}
                       className={`p-3 rounded-lg cursor-pointer transition-all flex-shrink-0 w-64 lg:w-auto ${
                         isSelected
-                          ? theme === 'dark'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-blue-50 border-blue-200 border'
-                          : theme === 'dark'
-                            ? 'hover:bg-gray-700 text-gray-300'
-                            : 'hover:bg-gray-50 text-gray-900'
+                          ? 'bg-[var(--dashboard-active-bg)] text-[var(--dashboard-active-text)] border-[var(--dashboard-active-border)] border'
+                          : 'hover:bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)]'
                       }`}
                     >
                       <div className="flex items-center justify-between text-xs mb-1">
@@ -608,16 +574,12 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
             {selectedRequest ? (
               <>
                 {/* Request Header with Action Buttons */}
-                <div className={`border-b ${
-                  theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
-                }`}>
+                <div className="border-b border-[var(--dashboard-border-primary)]">
                   <div className="flex flex-col lg:flex-row items-start justify-between gap-2 lg:gap-4">
                     <div className="flex-1 min-w-0 w-full lg:w-auto">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h2 className={`text-2xl font-bold ${
-                            theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                          }`}>
+                          <h2 className="text-2xl font-bold text-[var(--dashboard-text-primary)]">
                             {selectedRequest.request_reference}
                           </h2>
                           <span className={`px-2 py-0.5 rounded-full text-xs ${getStatusColor(selectedRequest.status)}`}>
@@ -629,7 +591,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-3 text-xs text-gray-500">
+                        <div className="flex items-center gap-3 text-xs text-[var(--dashboard-text-tertiary)]">
                           <span>{selectedRequest.customer_name}</span>
                           <span>•</span>
                           <span>{selectedRequest.service?.service_name || 'N/A'}</span>
@@ -693,9 +655,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                 {/* Action Buttons */}
                 {selectedRequest.serviceboard?.[0] && (
                     <div>
-                    <h3 className={`text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide ${
-                      theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
-                    }`}>Quick Actions</h3>
+                    <h3 className="text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Quick Actions</h3>
                     <div className="flex flex-wrap gap-2">
                       <button
                         onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}`, '_blank')}
@@ -754,24 +714,20 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                 {/* Service Board Actions */}
                 {selectedRequest.serviceboard?.[0] && selectedRequest.serviceboard[0].serviceboardaction && selectedRequest.serviceboard[0].serviceboardaction.length > 0 && (
                     <div>
-                    <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
-                      theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
-                    }`}>Service Board Actions</h3>
+                    <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Service Board Actions</h3>
                     <div className="space-y-2">
                       {selectedRequest.serviceboard[0].serviceboardaction.map((action: any) => (
-                        <div key={action.action_id} className={`p-3 rounded-lg border ${
-                          theme === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
-                        }`}>
+                        <div key={action.action_id} className="p-3 rounded-lg border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
                           <div className="grid grid-cols-[120px_1fr_auto] lg:grid-cols-[120px_1fr_auto] gap-4 items-center">
                             {/* Column 1: Date and Time */}
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-[var(--dashboard-text-tertiary)]">
                               {action.created_at ? (
                                 <>
                                   <div>{new Date(action.created_at).toLocaleDateString()}</div>
                                   <div>{new Date(action.created_at).toLocaleTimeString()}</div>
                                 </>
                               ) : (
-                                <span className="text-gray-400">No date</span>
+                                <span className="text-[var(--dashboard-text-muted)]">No date</span>
                               )}
                               {/* Mobile: Action details in same column */}
                               <div className="lg:hidden mt-2">
@@ -805,19 +761,13 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
                 {/* Customer Details */}
                     <div>
-                  <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
-                    theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
-                  }`}>Customer Details</h3>
+                  <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Customer Details</h3>
                   <div className="flex items-center gap-6 text-sm">
                     <div className="flex items-center gap-2">
                       <span>{selectedRequest.customer_name}</span>
                       <button
                         onClick={() => navigator.clipboard.writeText(selectedRequest.customer_name)}
-                        className={`p-1 rounded transition-colors ${
-                          theme === 'dark' 
-                            ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
-                            : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                        }`}
+                        className="p-1 rounded transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
                         title="Copy name"
                       >
                         <ClipboardDocumentIcon className="w-3 h-3" />
@@ -827,11 +777,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       <span>{selectedRequest.customer_email}</span>
                       <button
                         onClick={() => navigator.clipboard.writeText(selectedRequest.customer_email)}
-                        className={`p-1 rounded transition-colors ${
-                          theme === 'dark' 
-                            ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
-                            : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                        }`}
+                        className="p-1 rounded transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
                         title="Copy email"
                       >
                         <ClipboardDocumentIcon className="w-3 h-3" />
@@ -839,11 +785,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       {selectedRequest.customer_email && (
                         <a
                           href={`mailto:${selectedRequest.customer_email}`}
-                          className={`p-1 rounded transition-colors ${
-                            theme === 'dark' 
-                              ? 'text-blue-400 hover:text-blue-300 hover:bg-gray-700' 
-                              : 'text-blue-600 hover:text-blue-700 hover:bg-blue-50'
-                          }`}
+                          className="p-1 rounded transition-colors text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                           title="Send email"
                         >
                           <EnvelopeIcon className="w-3 h-3" />
@@ -855,11 +797,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                         <span>{selectedRequest.customer_phone}</span>
                         <button
                           onClick={() => navigator.clipboard.writeText(selectedRequest.customer_phone)}
-                          className={`p-1 rounded transition-colors ${
-                            theme === 'dark' 
-                              ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
-                              : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                          }`}
+                          className="p-1 rounded transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
                           title="Copy phone"
                         >
                           <ClipboardDocumentIcon className="w-3 h-3" />
@@ -868,11 +806,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           href={`https://wa.me/${selectedRequest.customer_phone.replace(/\D/g, '')}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`p-1 rounded transition-colors ${
-                            theme === 'dark' 
-                              ? 'text-green-400 hover:text-green-300 hover:bg-gray-700' 
-                              : 'text-green-600 hover:text-green-700 hover:bg-green-50'
-                          }`}
+                          className="p-1 rounded transition-colors text-green-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20"
                           title="WhatsApp"
                         >
                           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
@@ -887,15 +821,9 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                 {/* Customer Notes */}
                 {selectedRequest.customer_notes && (
                     <div>
-                    <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
-                      theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
-                    }`}>Customer Notes</h3>
-                    <div className={`p-3 rounded-lg border ${
-                      theme === 'dark' ? 'border-gray-600 bg-gray-800' : 'border-gray-200 bg-white'
-                    }`}>
-                      <div className={`text-sm ${
-                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                      }`}>
+                    <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Customer Notes</h3>
+                    <div className="p-3 rounded-lg border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
+                      <div className="text-sm text-[var(--dashboard-text-secondary)]">
                         {selectedRequest.customer_notes}
                       </div>
                     </div>
@@ -908,13 +836,9 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                     {/* Event and Datetime Information */}
                     {(selectedRequest.serviceevent || selectedRequest.request_datetimes) && (
                       <div>
-                        <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
-                          theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
-                        }`}>Event & Scheduling</h3>
+                        <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Event & Scheduling</h3>
                         
-                        <div className={`p-3 rounded-lg border ${
-                          theme === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
-                        }`}>
+                        <div className="p-3 rounded-lg border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
                           <div className="space-y-3">
                             <div className="flex items-center justify-between">
                               <div>
@@ -933,7 +857,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                                             }
                                             
                                             return (
-                                              <div key={index} className="text-xs text-gray-500">
+                                              <div key={index} className="text-xs text-[var(--dashboard-text-tertiary)]">
                                                 {dateToUse.toLocaleString('it-IT', {
                                                   weekday: 'short',
                                                   day: 'numeric',
@@ -949,7 +873,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                                         })}
                                       </div>
                                     ) : (
-                                      <div className="text-xs text-gray-500">
+                                      <div className="text-xs text-[var(--dashboard-text-tertiary)]">
                                         {(() => {
                                           try {
                                             const dateToUse = new Date(selectedRequest.request_datetimes);
@@ -982,15 +906,11 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
                     {/* Selected Service Items */}
                     <div>
-                      <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
-                        theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
-                      }`}>Selected Items</h3>
+                      <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Selected Items</h3>
                       {selectedRequest.selected_service_items_snapshot && Array.isArray(selectedRequest.selected_service_items_snapshot) && selectedRequest.selected_service_items_snapshot.length > 0 ? (
                         <div className="space-y-2">
                           {selectedRequest.selected_service_items_snapshot.map((item: any, index: number) => (
-                            <div key={index} className={`p-3 rounded-lg border ${
-                              theme === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
-                            }`}>
+                            <div key={index} className="p-3 rounded-lg border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
                               <div className="flex items-center justify-between text-sm">
                                 <div className="flex items-center gap-4">
                                   <span className="font-medium">{item.name || item.item_name}</span>
@@ -1011,9 +931,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           ))}
                         </div>
                       ) : (
-                        <div className={`text-xs ${
-                          theme === 'dark' ? 'text-gray-500' : 'text-gray-500'
-                        }`}>
+                        <div className="text-xs text-[var(--dashboard-text-tertiary)]">
                           No items selected for this request.
                         </div>
                       )}
@@ -1021,16 +939,12 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
                     {/* Question Responses */}
                     <div>
-                      <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
-                        theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
-                      }`}>Question Responses</h3>
+                      <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Question Responses</h3>
                       {selectedRequest.question_responses_snapshot && Array.isArray(selectedRequest.question_responses_snapshot) && selectedRequest.question_responses_snapshot.length > 0 ? (
                         <div className="space-y-2">
                           {selectedRequest.question_responses_snapshot.map((question: any, index: number) => (
-                            <div key={index} className="text-sm pb-2 border-b border-gray-200 last:border-b-0">
-                              <div className={`text-xs font-medium flex items-center gap-1 ${
-                                theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                              }`}>
+                            <div key={index} className="text-sm pb-2 border-b border-[var(--dashboard-border-primary)] last:border-b-0">
+                              <div className="text-xs font-medium flex items-center gap-1 text-[var(--dashboard-text-tertiary)]">
                                 <svg className="w-1.5 h-1.5" fill="currentColor" viewBox="0 0 20 20">
                                   <circle cx="10" cy="10" r="3" />
                                 </svg>
@@ -1057,9 +971,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           ))}
                         </div>
                       ) : (
-                        <div className={`text-xs ${
-                          theme === 'dark' ? 'text-gray-500' : 'text-gray-500'
-                        }`}>
+                        <div className="text-xs text-[var(--dashboard-text-tertiary)]">
                           No question responses for this request.
                         </div>
                       )}
@@ -1067,9 +979,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
                     {/* Requirement Responses */}
                     <div>
-                      <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
-                        theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
-                      }`}>Requirements</h3>
+                      <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Requirements</h3>
                       {selectedRequest.requirement_responses_snapshot && Array.isArray(selectedRequest.requirement_responses_snapshot) && selectedRequest.requirement_responses_snapshot.length > 0 ? (
                         <div className="space-y-1">
                           {selectedRequest.requirement_responses_snapshot.map((requirement: any, index: number) => (
@@ -1082,9 +992,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                                 {requirement.customer_confirmed ? 'Confirmed' : 'Pending'}
                               </div>
                               <div className="flex-1">
-                                <span className={`text-xs ${
-                                  theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                                }`}>
+                                <span className="text-xs text-[var(--dashboard-text-tertiary)]">
                                   {requirement.title && (
                                     <span className="font-medium">{requirement.title}: </span>
                                   )}
@@ -1095,9 +1003,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           ))}
                         </div>
                       ) : (
-                        <div className={`text-xs ${
-                          theme === 'dark' ? 'text-gray-500' : 'text-gray-500'
-                        }`}>
+                        <div className="text-xs text-[var(--dashboard-text-tertiary)]">
                           No requirements for this request.
                         </div>
                       )}
@@ -1110,14 +1016,10 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                     {/* Messages */}
                     {selectedRequest.servicerequestmessage?.length > 0 && (
                       <div>
-                        <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
-                          theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
-                        }`}>Messages</h3>
+                        <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Messages</h3>
                         <div className="space-y-2">
                           {selectedRequest.servicerequestmessage.map((message: any) => (
-                            <div key={message.message_id} className={`p-3 rounded-lg ${
-                              theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'
-                            }`}>
+                            <div key={message.message_id} className="p-3 rounded-lg bg-[var(--dashboard-bg-tertiary)]">
                               <div className="flex items-center justify-between mb-1">
                                 <span className="text-sm font-medium">{message.sender_type}</span>
                                 <span className="text-xs opacity-75">
@@ -1134,9 +1036,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
               </>
             ) : (
               <div className="flex-1 flex items-center justify-center">
-                <div className={`text-center ${
-                  theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                }`}>
+                <div className="text-center text-[var(--dashboard-text-tertiary)]">
                   <EyeIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
                   <p>Select a request to view details</p>
                 </div>

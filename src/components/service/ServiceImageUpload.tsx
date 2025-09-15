@@ -131,9 +131,7 @@ export default function ServiceImageUpload({ onImageChange, currentImage, theme 
         className={`relative flex items-center justify-center h-full border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
           isDragOver
             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-            : theme === 'dark'
-            ? 'border-gray-600 bg-zinc-800'
-            : 'border-gray-300 bg-gray-50'
+            : 'border-[var(--dashboard-border-secondary)] bg-[var(--dashboard-bg-tertiary)]'
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -158,18 +156,12 @@ export default function ServiceImageUpload({ onImageChange, currentImage, theme 
           </div>
         ) : (
                       <div className="space-y-4">
-              <PhotoIcon className={`mx-auto h-12 w-12 ${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-300'
-              }`} />
+              <PhotoIcon className="mx-auto h-12 w-12 text-[var(--dashboard-text-tertiary)]" />
               <div>
-                <p className={`text-sm ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                }`}>
+                <p className="text-sm text-[var(--dashboard-text-secondary)]">
                   {t("dragDropImage")}
                 </p>
-                <p className={`text-xs mt-1 ${
-                  theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                }`}>
+                <p className="text-xs mt-1 text-[var(--dashboard-text-tertiary)]">
                   {t("orClickToSelect")}
                 </p>
               </div>
@@ -177,11 +169,7 @@ export default function ServiceImageUpload({ onImageChange, currentImage, theme 
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                    theme === 'dark'
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                      : 'bg-blue-500 hover:bg-blue-600 text-white'
-                  }`}
+                  className="px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   {t("selectImage")}
                 </button>
@@ -189,11 +177,7 @@ export default function ServiceImageUpload({ onImageChange, currentImage, theme 
                   <button
                     type="button"
                     onClick={() => setAiModalOpen(true)}
-                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 ${
-                      theme === 'dark'
-                        ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                        : 'bg-purple-500 hover:bg-purple-600 text-white'
-                    }`}
+                    className="px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white"
                   >
                     <SparklesIcon className="h-4 w-4" />
                     {t("generateAIImage")}
@@ -215,20 +199,14 @@ export default function ServiceImageUpload({ onImageChange, currentImage, theme 
       {/* Image Cropper Modal */}
       {cropperOpen && cropImageSrc && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className={`relative max-w-2xl w-full mx-4 p-6 rounded-lg ${
-            theme === 'dark' ? 'bg-zinc-800' : 'bg-white'
-          }`}>
+          <div className="relative max-w-2xl w-full mx-4 p-6 rounded-lg bg-[var(--dashboard-bg-card)]">
             <div className="flex justify-between items-center mb-4">
-              <h3 className={`text-lg font-medium ${
-                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-              }`}>
+              <h3 className="text-lg font-medium text-[var(--dashboard-text-primary)]">
                 {t("cropImage")}
               </h3>
               <button
                 onClick={handleCropCancel}
-                className={`p-2 rounded-lg ${
-                  theme === 'dark' ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'
-                }`}
+                className="p-2 rounded-lg hover:bg-[var(--dashboard-bg-tertiary)]"
               >
                 <XMarkIcon className="h-5 w-5" />
               </button>
@@ -251,11 +229,7 @@ export default function ServiceImageUpload({ onImageChange, currentImage, theme 
               <button
                 type="button"
                 onClick={handleCropCancel}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                  theme === 'dark'
-                    ? 'bg-zinc-600 hover:bg-zinc-700 text-gray-100'
-                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                }`}
+                className="px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-secondary)] text-[var(--dashboard-text-secondary)]"
               >
                 {t("cancel")}
               </button>

@@ -5,7 +5,7 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { useBusiness } from "@/lib/business-context"
-import { useTheme } from "@/contexts/ThemeContext"
+import { useTheme } from "@/contexts/ThemeProvider"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { useRouter } from "next/navigation"
 import { useToaster } from "@/components/ui/ToasterProvider"
@@ -532,16 +532,12 @@ export default function CreateServicePage() {
       <DashboardLayout>
         <div className="mx-auto">
           <div className="mb-8">
-            <h1 className={`text-2xl lg:text-3xl font-bold ${
-              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-            }`}>{t("createService")}</h1>
+            <h1 className="text-2xl lg:text-3xl font-bold text-[var(--dashboard-text-primary)]">{t("createService")}</h1>
           </div>
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className={`${
-                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-              }`}>{tCommon("loading")}</p>
+              <p className="text-[var(--dashboard-text-secondary)]">{tCommon("loading")}</p>
             </div>
           </div>
         </div>
@@ -555,14 +551,10 @@ export default function CreateServicePage() {
       <DashboardLayout>
         <div className="mx-auto">
           <div className="mb-8">
-            <h1 className={`text-2xl lg:text-3xl font-bold ${
-              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-            }`}>{t("createService")}</h1>
+            <h1 className="text-2xl lg:text-3xl font-bold text-[var(--dashboard-text-primary)]">{t("createService")}</h1>
           </div>
           
-          <div className={`${
-            theme === 'dark' ? 'bg-red-900 border-red-700' : 'bg-red-50 border-red-200'
-          } border rounded-lg p-8 text-center min`}>
+          <div className="bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 rounded-lg p-8 text-center min">
             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
               <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
@@ -597,9 +589,7 @@ export default function CreateServicePage() {
       <div className="mx-auto">
         <div className="mb-4 lg:mb-6">
           <div className="flex items-center justify-between">
-            <h1 className={`text-2xl lg:text-3xl font-bold ${
-              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-            }`}>{t("createService")}</h1>
+            <h1 className="text-2xl lg:text-3xl font-bold text-[var(--dashboard-text-primary)]">{t("createService")}</h1>
             {planLimitServices && (
               <div className="ml-4 min-w-[220px]">
                 <UsageLimitBar
@@ -617,14 +607,12 @@ export default function CreateServicePage() {
         </div>
         <form onSubmit={handleSubmit} className="">
           {/* Basic Information */}
-          <div className="pb-4 lg:pb-6 border-b border-gray-200 dark:border-gray-700">
+          <div className="pb-4 lg:pb-6 border-b border-[var(--dashboard-border-primary)]">
           
             <div className="grid grid-cols-1 lg:grid-cols-3 items-stretch gap-6 space-y-4">
               {/* Left Column - Image */}
               <div className="lg:col-span-1 h-full">
-                <label className={`block text-sm font-medium mb-2 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>{t("serviceImage")}</label>
+                <label className="block text-sm font-medium mb-2 text-[var(--dashboard-text-secondary)]">{t("serviceImage")}</label>
                 <ServiceImageUpload
                   onImageChange={setServiceImage}
                   currentImage={serviceImage}
@@ -637,34 +625,22 @@ export default function CreateServicePage() {
               {/* Right Column - Service Details */}
               <div className="lg:col-span-2 space-y-2">
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>{t("serviceName")} *</label>
+                  <label className="block text-sm font-medium mb-2 text-[var(--dashboard-text-secondary)]">{t("serviceName")} *</label>
                   <input
                     type="text"
                     value={serviceName}
                     onChange={(e) => setServiceName(e.target.value)}
-                    className={`w-full text-lg px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                      theme === 'dark' 
-                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                        : 'border-gray-300 bg-white text-gray-900'
-                    }`}
+                    className="w-full text-lg px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                     required
                   />
                 </div>
 
                                  <div>
-                   <label className={`block text-sm font-medium mb-2 ${
-                     theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                   }`}>{t("category")}</label>
+                   <label className="block text-sm font-medium mb-2 text-[var(--dashboard-text-secondary)]">{t("category")}</label>
                    <select
                      value={categoryId || ""}
                      onChange={(e) => setCategoryId(e.target.value ? (e.target.value === "new" ? "new" : Number.parseInt(e.target.value)) : null)}
-                     className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                       theme === 'dark' 
-                         ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                         : 'border-gray-300 bg-white text-gray-900'
-                     }`}
+                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                    >
                      <option value="">{t("selectCategory")}</option>
                      {categories.map((category) => (
@@ -679,27 +655,19 @@ export default function CreateServicePage() {
                  {/* Conditional New Category Title Field */}
                  {categoryId === "new" && (
                    <div>
-                     <label className={`block text-sm font-medium mb-2 ${
-                       theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                     }`}>New Category Title</label>
+                     <label className="block text-sm font-medium mb-2 text-[var(--dashboard-text-secondary)]">New Category Title</label>
                      <input
                        type="text"
                        value={newCategoryTitle}
                        onChange={(e) => setNewCategoryTitle(e.target.value)}
                        placeholder="Enter new category name..."
-                       className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                         theme === 'dark' 
-                           ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                           : 'border-gray-300 bg-white text-gray-900'
-                       }`}
+                       className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                      />
                    </div>
                  )}
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>{t("description")}</label>
+                  <label className="block text-sm font-medium mb-2 text-[var(--dashboard-text-secondary)]">{t("description")}</label>
                   <RichTextEditor
                     value={description}
                     onChange={setDescription}
@@ -710,34 +678,22 @@ export default function CreateServicePage() {
 
                 <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>{t("basePrice")} (€)</label>
+                  <label className="block text-sm font-medium mb-2 text-[var(--dashboard-text-secondary)]">{t("basePrice")} (€)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={priceBase || ""}
                     onChange={(e) => setPriceBase(e.target.value ? Number.parseFloat(e.target.value) : null)}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                      theme === 'dark' 
-                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                        : 'border-gray-300 bg-white text-gray-900'
-                    }`}
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                   />
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>{t("priceType")}</label>
+                  <label className="block text-sm font-medium mb-2 text-[var(--dashboard-text-secondary)]">{t("priceType")}</label>
                   <select
                     value={priceType}
                     onChange={(e) => setPriceType(e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                      theme === 'dark' 
-                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                        : 'border-gray-300 bg-white text-gray-900'
-                    }`}
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                   >
                     <option value="fixed">{t("fixed")}</option>
                     <option value="per_unit">{t("perUnit")}</option>
@@ -746,18 +702,12 @@ export default function CreateServicePage() {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>{t("priceUnit")}</label>
+                  <label className="block text-sm font-medium mb-2 text-[var(--dashboard-text-secondary)]">{t("priceUnit")}</label>
                   <input
                     type="text"
                     value={priceUnit}
                     onChange={(e) => setPriceUnit(e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                      theme === 'dark' 
-                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                        : 'border-gray-300 bg-white text-gray-900'
-                    }`}
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                     disabled={priceType === "fixed"}
                   />
                 </div>
@@ -772,98 +722,67 @@ export default function CreateServicePage() {
                                     {/* Service Extras Section */}
                    <div className="mb-8">
                        <div className="flex justify-between items-center mb-6">
-                         <h2 className={`text-xl font-bold ${
-                           theme === 'dark' ? 'text-gray-100' : 
-                           'text-gray-900'
-                       }`}>Service Extras</h2>
+                         <h2 className="text-xl font-bold text-[var(--dashboard-text-primary)]">Service Extras</h2>
                         <button
                           type="button"
                         onClick={addExtra}
-                          className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
+                          className="px-3 py-1 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] rounded-lg text-sm hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
                         >
                         Add Extra
                         </button>
                       </div>
 
                                        {extras.map((extra, index) => (
-                         <div key={index} className="mb-4">
+                         <div key={index} className="mb-3 border rounded-xl p-3 lg:py-2 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
                                                                                                                                                <div className="space-y-4 lg:space-y-0 lg:flex lg:gap-4 lg:items-center">
                           {/* Circular number icon - minimal width */}
                           <div className="flex items-center justify-center w-8 flex-shrink-0">
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
-                              theme === 'dark' 
-                                ? 'bg-gray-700 text-gray-200' 
-                                : 'bg-gray-600 text-white'
-                            }`}>
+                            <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
                               {index + 1}
                             </div>
                           </div>
 
                           {/* Name - flexible width */}
                           <div className="flex-1">
-                                <label className={`block text-xs font-medium mb-1 ${
-                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                            }`}>Extra Name</label>
+                                <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">Extra Name</label>
                                 <input
                                   type="text"
                               value={extra.extra_name}
                               onChange={(e) => updateExtra(index, "extra_name", e.target.value)}
-                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                    theme === 'dark' 
-                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                      : 'border-gray-300 bg-white text-gray-900'
-                                  }`}
+                                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                                 />
                               </div>
 
                           {/* Description - flexible width */}
                           <div className="flex-1">
-                                <label className={`block text-xs font-medium mb-1 ${
-                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                            }`}>Extra Description</label>
+                                <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">Extra Description</label>
                             <input
                               type="text"
                               value={extra.extra_description}
                               onChange={(e) => updateExtra(index, "extra_description", e.target.value)}
-                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                    theme === 'dark' 
-                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                      : 'border-gray-300 bg-white text-gray-900'
-                                  }`}
+                                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                                 />
                             </div>
 
                           {/* Price - fixed width */}
                                 <div className="w-24 flex-shrink-0">
-                                  <label className={`block text-xs font-medium mb-1 ${
-                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                  }`}>{t("price")}</label>
+                                  <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("price")}</label>
                                   <input
                                     type="number"
                                     step="0.01"
                               value={extra.price_base}
                               onChange={(e) => updateExtra(index, "price_base", Number.parseFloat(e.target.value) || 0)}
-                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                      theme === 'dark' 
-                                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                        : 'border-gray-300 bg-white text-gray-900'
-                                    }`}
+                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                                   />
                                 </div>
 
                           {/* Price Type - fixed width */}
                                 <div className="w-28 flex-shrink-0">
-                                  <label className={`block text-xs font-medium mb-1 ${
-                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                  }`}>{t("priceType")}</label>
+                                  <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("priceType")}</label>
                                   <select
                               value={extra.price_type}
                               onChange={(e) => updateExtra(index, "price_type", e.target.value)}
-                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                      theme === 'dark' 
-                                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                        : 'border-gray-300 bg-white text-gray-900'
-                                    }`}
+                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                                   >
                                     <option value="fixed">{t("fixed")}</option>
                                     <option value="percentage">{t("percentage")}</option>
@@ -875,11 +794,7 @@ export default function CreateServicePage() {
                             <button
                               type="button"
                               onClick={() => removeExtra(index)}
-                              className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
-                                    theme === 'dark' 
-                                  ? 'bg-gray-600 text-gray-300 hover:bg-red-600 hover:text-white' 
-                                  : 'bg-gray-400 text-gray-600 hover:bg-red-500 hover:text-white'
-                                  }`}
+                              className="w-6 h-6 rounded-full flex items-center justify-center transition-colors bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-red-600 hover:text-white"
                             >
                               ×
                             </button>
@@ -890,18 +805,16 @@ export default function CreateServicePage() {
                     </div>
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {/* Quotation Section with Conditional Content */}
-                                            <div className={`border-t-2 border-gray-300 dark:border-gray-600 pt-10 mb-10`}>
+                                            <div className="border-t-2 border-[var(--dashboard-border-primary)] pt-10 mb-10">
                       <div className="flex justify-between items-center mb-6">
-                        <h2 className={`text-xl font-bold ${
-                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                          }`}>Quotation</h2>
+                        <h2 className="text-xl font-bold text-[var(--dashboard-text-primary)]">Quotation</h2>
                        <button
                          type="button"
                            onClick={() => setAvailableQuotation(!availableQuotation)}
                            className={`px-3 py-1 rounded-lg text-sm transition-colors ${
                              availableQuotation
                                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                               : 'bg-zinc-500 text-white hover:bg-zinc-700'
+                               : 'bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]'
                            }`}
                          >
                            Configura Preventivo Online
@@ -912,97 +825,67 @@ export default function CreateServicePage() {
                                          {availableQuotation && items.length > 0 && (
                        <div className="mt-6">
                         <div className="flex justify-between items-center mb-4">
-                          <h2 className={`text-lg font-semibold ${
-                            theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                           }`}>Items for Quotation</h2>
+                          <h2 className="text-lg font-semibold text-[var(--dashboard-text-primary)]">Items for Quotation</h2>
                           <button
                             type="button"
                             onClick={addItem}
-                         className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
+                         className="px-3 py-1 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] rounded-lg text-sm hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
                        >
                              Add Item
                        </button>
                      </div>
 
                                                  {items.map((item, index) => (
-                        <div key={index} className="mb-4">
+                        <div key={index} className="mb-3 border rounded-xl p-3 lg:py-2 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
                                                                                                                                                                                                                                <div className="space-y-3 lg:space-y-0 lg:flex lg:gap-4 lg:items-center">
                               {/* Circular number icon - minimal width */}
                               <div className="flex items-center justify-center w-8 flex-shrink-0">
-                                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
-                                  theme === 'dark' 
-                                    ? 'bg-gray-700 text-gray-200' 
-                                    : 'bg-gray-600 text-white'
-                                }`}>
+                                <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
                                   {index + 1}
                                 </div>
                          </div>
 
                               {/* Name - flexible width */}
                               <div className="flex-1">
-                                <label className={`block text-xs font-medium mb-1 ${
-                               theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                }`}>{t("itemName")}</label>
+                                <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("itemName")}</label>
                              <input
                                type="text"
                                   value={item.item_name}
                                   onChange={(e) => updateItem(index, "item_name", e.target.value)}
-                               className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                 theme === 'dark' 
-                                   ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                   : 'border-gray-300 bg-white text-gray-900'
-                               }`}
+                               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                              />
                            </div>
 
                               {/* Description - flexible width */}
                               <div className="flex-1">
-                                <label className={`block text-xs font-medium mb-1 ${
-                               theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                }`}>{t("itemDescription")}</label>
+                                <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("itemDescription")}</label>
                                 <input
                                   type="text"
                                   value={item.item_description}
                                   onChange={(e) => updateItem(index, "item_description", e.target.value)}
-                               className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                 theme === 'dark' 
-                                   ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                   : 'border-gray-300 bg-white text-gray-900'
-                               }`}
+                               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                              />
                            </div>
 
                               {/* Price - fixed width */}
                              <div className="w-24 flex-shrink-0">
-                                <label className={`block text-xs font-medium mb-1 ${
-                                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                               }`}>{t("price")}</label>
+                                <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("price")}</label>
                                <input
                                  type="number"
                                  step="0.01"
                                   value={item.price_base}
                                   onChange={(e) => updateItem(index, "price_base", Number.parseFloat(e.target.value) || 0)}
-                                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                   theme === 'dark' 
-                                     ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                     : 'border-gray-300 bg-white text-gray-900'
-                                 }`}
+                               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                                />
                              </div>
 
                               {/* Price Type - fixed width */}
                              <div className="w-28 flex-shrink-0">
-                                <label className={`block text-xs font-medium mb-1 ${
-                                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                               }`}>{t("priceType")}</label>
+                                <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("priceType")}</label>
                                <select
                                   value={item.price_type}
                                   onChange={(e) => updateItem(index, "price_type", e.target.value)}
-                                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                   theme === 'dark' 
-                                     ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                     : 'border-gray-300 bg-white text-gray-900'
-                                 }`}
+                                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                                >
                                  <option value="fixed">{t("fixed")}</option>
                                  <option value="percentage">{t("percentage")}</option>
@@ -1014,11 +897,7 @@ export default function CreateServicePage() {
                                 <button
                                   type="button"
                                   onClick={() => removeItem(index)}
-                                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
-                                   theme === 'dark' 
-                                      ? 'bg-gray-600 text-gray-300 hover:bg-red-600 hover:text-white' 
-                                      : 'bg-gray-400 text-gray-600 hover:bg-red-500 hover:text-white'
-                                 }`}
+                                  className="w-6 h-6 rounded-full flex items-center justify-center transition-colors bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-red-600 hover:text-white"
                                 >
                                   ×
                                 </button>
@@ -1033,18 +912,16 @@ export default function CreateServicePage() {
                                  </div>
 
                                                                        {/* Booking Section with Conditional Content */}
-                                          <div className={`border-t-2 border-gray-300 dark:border-gray-600 pt-10 mb-10`}>
+                                          <div className="border-t-2 border-[var(--dashboard-border-primary)] pt-10 mb-10">
                        <div className="flex justify-between items-center mb-6">
-                         <h2 className={`text-xl font-bold ${
-                           theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                         }`}>Booking</h2>
+                         <h2 className="text-xl font-bold text-[var(--dashboard-text-primary)]">Booking</h2>
                         <button
                           type="button"
                           onClick={() => setAvailableBooking(!availableBooking)}
                           className={`px-3 py-1 rounded-lg text-sm transition-colors ${
                             availableBooking
                               ? 'bg-blue-600 text-white hover:bg-blue-700'
-                              : 'bg-zinc-500 text-white hover:bg-zinc-700'
+                              : 'bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]'
                           }`}
                         >
                           Configura Prenotazione
@@ -1055,97 +932,67 @@ export default function CreateServicePage() {
                    {availableBooking && events.length > 0 && (
                      <div className="mt-6">
                       <div className="flex justify-between items-center mb-4">
-                        <h2 className={`text-lg font-semibold ${
-                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                        }`}>{t("events")}</h2>
+                        <h2 className="text-lg font-semibold text-[var(--dashboard-text-primary)]">{t("events")}</h2>
                         <button
                           type="button"
                           onClick={addEvent}
-                          className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
+                          className="px-3 py-1 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] rounded-lg text-sm hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
                         >
                           {t("addEvent")}
                         </button>
                       </div>
 
                                              {events.map((event, index) => (
-                         <div key={index} className="mb-4">
+                         <div key={index} className="mb-3 border rounded-xl p-3 lg:py-2 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
                                                                                                            <div className="space-y-3 lg:space-y-0 lg:flex lg:gap-4 lg:items-center">
                               {/* Circular number icon - minimal width */}
                               <div className="flex items-center justify-center w-8 flex-shrink-0">
-                                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
-                                  theme === 'dark' 
-                                    ? 'bg-gray-700 text-gray-200' 
-                                    : 'bg-gray-600 text-white'
-                                }`}>
+                                <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
                                   {index + 1}
                                 </div>
                           </div>
 
                               {/* Name - flexible width */}
                               <div className="flex-1">
-                                <label className={`block text-xs font-medium mb-1 ${
-                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                }`}>{t("eventName")}</label>
+                                <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("eventName")}</label>
                                 <input
                                   type="text"
                                   value={event.event_name}
                                   onChange={(e) => updateEvent(index, "event_name", e.target.value)}
-                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                    theme === 'dark' 
-                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                      : 'border-gray-300 bg-white text-gray-900'
-                                  }`}
+                                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                                 />
                               </div>
 
                               {/* Description - flexible width */}
                               <div className="flex-1">
-                                <label className={`block text-xs font-medium mb-1 ${
-                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                }`}>{t("eventDescription")}</label>
+                                <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("eventDescription")}</label>
                                 <input
                                   type="text"
                                   value={event.event_description}
                                   onChange={(e) => updateEvent(index, "event_description", e.target.value)}
-                                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                    theme === 'dark' 
-                                      ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                      : 'border-gray-300 bg-white text-gray-900'
-                                  }`}
+                                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                                 />
                               </div>
 
                               {/* Duration - fixed width */}
                                 <div className="w-24 flex-shrink-0">
-                                <label className={`block text-xs font-medium mb-1 ${
-                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                  }`}>{t("duration")} ({t("minutes")})</label>
+                                <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("duration")} ({t("minutes")})</label>
                                   <input
                                     type="number"
                                     value={event.duration_minutes}
                                     onChange={(e) => updateEvent(index, "duration_minutes", Number.parseInt(e.target.value) || 60)}
-                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                      theme === 'dark' 
-                                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                        : 'border-gray-300 bg-white text-gray-900'
-                                    }`}
+                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                                   />
                                 </div>
 
                               {/* Buffer Time - fixed width */}
                                 <div className="w-24 flex-shrink-0">
-                                <label className={`block text-xs font-medium mb-1 ${
-                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                  }`}>{t("bufferTime")} ({t("minutes")})</label>
+                                <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("bufferTime")} ({t("minutes")})</label>
                                   <input
                                     type="number"
                                     value={event.buffer_minutes}
                                     onChange={(e) => updateEvent(index, "buffer_minutes", Number.parseInt(e.target.value) || 0)}
-                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                      theme === 'dark' 
-                                        ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                        : 'border-gray-300 bg-white text-gray-900'
-                                    }`}
+                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                                   />
                               </div>
 
@@ -1154,11 +1001,7 @@ export default function CreateServicePage() {
                                 <button
                                   type="button"
                                   onClick={() => removeEvent(index)}
-                                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
-                                    theme === 'dark' 
-                                      ? 'bg-gray-600 text-gray-300 hover:bg-red-600 hover:text-white' 
-                                      : 'bg-gray-400 text-gray-600 hover:bg-red-500 hover:text-white'
-                                  }`}
+                                  className="w-6 h-6 rounded-full flex items-center justify-center transition-colors bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-red-600 hover:text-white"
                                 >
                                   ×
                                 </button>
@@ -1167,9 +1010,7 @@ export default function CreateServicePage() {
 
                                                      {/* Availability Section */}
                            <div className="mt-6">
-                             <h4 className={`text-sm font-semibold mb-3 ${
-                               theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
-                             }`}>Availability</h4>
+                             <h4 className="text-sm font-semibold mb-3 text-[var(--dashboard-text-primary)]">Availability</h4>
                                                            <div className="space-y-2">
                                {[
                                  { key: 'monday', label: 'Monday' },
@@ -1180,15 +1021,9 @@ export default function CreateServicePage() {
                                  { key: 'saturday', label: 'Saturday' },
                                  { key: 'sunday', label: 'Sunday' }
                                ].map((day) => (
-                                                                   <div key={day.key} className={`p-2 rounded border ${
-                                    theme === 'dark' 
-                                      ? 'border-gray-600 bg-zinc-800' 
-                                      : 'border-gray-200 bg-gray-50'
-                                  }`}>
+                                                                   <div key={day.key} className="p-2 rounded border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-tertiary)]">
                                     <div className="flex items-center gap-3">
-                                      <span className={`text-sm font-medium w-20 ${
-                                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                                      }`}>{day.label}</span>
+                                      <span className="text-sm font-medium w-20 text-[var(--dashboard-text-secondary)]">{day.label}</span>
                                       
                                       {/* Toggle Switch */}
                                       <button
@@ -1209,40 +1044,24 @@ export default function CreateServicePage() {
                                       
                                       {/* Time Fields */}
                                       <div className="flex items-center gap-2 ml-auto">
-                                        <div className={`flex items-center gap-1 px-2 py-1 rounded border ${
-                                          theme === 'dark' 
-                                            ? 'border-gray-500 bg-zinc-700' 
-                                            : 'border-gray-300 bg-white'
-                                        }`}>
+                                        <div className="flex items-center gap-1 px-2 py-1 rounded border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-input)]">
                                           <label className={`text-xs text-gray-500`}>Start</label>
                                           <input
                                             type="time"
                                             value={event.availability[day.key as keyof typeof event.availability].start}
                                             onChange={(e) => updateEventAvailability(index, day.key, 'start', e.target.value)}
                                             disabled={!event.availability[day.key as keyof typeof event.availability].enabled}
-                                            className={`w-16 px-1 py-0.5 text-xs border-0 bg-transparent focus:ring-0 focus:outline-none ${
-                                              theme === 'dark' 
-                                                ? 'text-gray-100' 
-                                                : 'text-gray-900'
-                                            } ${!event.availability[day.key as keyof typeof event.availability].enabled ? 'opacity-50' : ''}`}
+                                            className={`w-16 px-1 py-0.5 text-xs border-0 bg-transparent focus:ring-0 focus:outline-none text-[var(--dashboard-text-primary)] ${!event.availability[day.key as keyof typeof event.availability].enabled ? 'opacity-50' : ''}`}
                                           />
                                         </div>
-                                        <div className={`flex items-center gap-1 px-2 py-1 rounded border ${
-                                          theme === 'dark' 
-                                            ? 'border-gray-500 bg-zinc-700' 
-                                            : 'border-gray-300 bg-white'
-                                        }`}>
+                                        <div className="flex items-center gap-1 px-2 py-1 rounded border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-input)]">
                                           <label className={`text-xs text-gray-500`}>End</label>
                                           <input
                                             type="time"
                                             value={event.availability[day.key as keyof typeof event.availability].end}
                                             onChange={(e) => updateEventAvailability(index, day.key, 'end', e.target.value)}
                                             disabled={!event.availability[day.key as keyof typeof event.availability].enabled}
-                                            className={`w-16 px-1 py-0.5 text-xs border-0 bg-transparent focus:ring-0 focus:outline-none ${
-                                              theme === 'dark' 
-                                                ? 'text-gray-100' 
-                                                : 'text-gray-900'
-                                            } ${!event.availability[day.key as keyof typeof event.availability].enabled ? 'opacity-50' : ''}`}
+                                            className={`w-16 px-1 py-0.5 text-xs border-0 bg-transparent focus:ring-0 focus:outline-none text-[var(--dashboard-text-primary)] ${!event.availability[day.key as keyof typeof event.availability].enabled ? 'opacity-50' : ''}`}
                                           />
                                         </div>
                                       </div>
@@ -1265,65 +1084,47 @@ export default function CreateServicePage() {
 
 
                                                                                        {/* Requirements Section */}
-               <div className={`border-t-2 border-gray-300 dark:border-gray-600 pt-10 mb-10`}>
+               <div className="border-t-2 border-[var(--dashboard-border-primary)] pt-10 mb-10">
              <div className="flex justify-between items-center mb-6">
-               <h2 className={`text-xl font-bold ${
-                 theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-               }`}>{t("requirements")}</h2>
+               <h2 className="text-xl font-bold text-[var(--dashboard-text-primary)]">{t("requirements")}</h2>
               <button
                 type="button"
                 onClick={addRequirement}
-                className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
+                className="px-3 py-1 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] rounded-lg text-sm hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
               >
                 {t("addRequirement")}
               </button>
             </div>
 
                          {requirements.map((requirement, index) => (
-               <div key={index} className="mb-4">
+               <div key={index} className="mb-3 border rounded-xl p-3 lg:py-2 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
                 <div className="space-y-4 lg:space-y-0 lg:flex lg:gap-4 lg:items-center">
                   {/* Circular number icon - minimal width */}
                   <div className="flex items-center justify-center w-8 flex-shrink-0">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
-                      theme === 'dark' 
-                        ? 'bg-gray-700 text-gray-200' 
-                        : 'bg-gray-600 text-white'
-                    }`}>
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
                       {index + 1}
                     </div>
                 </div>
 
                   {/* Title - fixed width */}
                   <div className="w-48 flex-shrink-0">
-                    <label className={`block text-xs font-medium mb-1 ${
-                      theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                    }`}>{t("requirementTitle")}</label>
+                    <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("requirementTitle")}</label>
                     <input
                       type="text"
                       value={requirement.title}
                       onChange={(e) => updateRequirement(index, "title", e.target.value)}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                        theme === 'dark' 
-                          ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                          : 'border-gray-300 bg-white text-gray-900'
-                      }`}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                     />
                   </div>
 
                   {/* Description - flexible width */}
                   <div className="flex-1">
-                    <label className={`block text-xs font-medium mb-1 ${
-                      theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                    }`}>{t("requirementText")}</label>
+                    <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("requirementText")}</label>
                     <input
                       type="text"
                       value={requirement.requirements_text}
                       onChange={(e) => updateRequirement(index, "requirements_text", e.target.value)}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                        theme === 'dark' 
-                          ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                          : 'border-gray-300 bg-white text-gray-900'
-                      }`}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                     />
                   </div>
 
@@ -1336,9 +1137,7 @@ export default function CreateServicePage() {
                         onChange={(e) => updateRequirement(index, "is_required", e.target.checked)}
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
-                      <span className={`ml-2 text-xs ${
-                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                      }`}>{t("required")}</span>
+                      <span className="ml-2 text-xs text-[var(--dashboard-text-secondary)]">{t("required")}</span>
                     </label>
                   </div>
 
@@ -1347,11 +1146,7 @@ export default function CreateServicePage() {
                     <button
                       type="button"
                       onClick={() => removeRequirement(index)}
-                      className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
-                        theme === 'dark' 
-                          ? 'bg-gray-600 text-gray-300 hover:bg-red-600 hover:text-white' 
-                          : 'bg-gray-400 text-gray-600 hover:bg-red-500 hover:text-white'
-                      }`}
+                      className="w-6 h-6 rounded-full flex items-center justify-center transition-colors bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-red-600 hover:text-white"
                     >
                       ×
                     </button>
@@ -1362,47 +1157,35 @@ export default function CreateServicePage() {
           </div>
 
                                                                                        {/* Questions Section */}
-               <div className={`border-t-2 border-gray-300 dark:border-gray-600 pt-10 mb-10`}>
+               <div className="border-t-2 border-[var(--dashboard-border-primary)] pt-10 mb-10">
              <div className="flex justify-between items-center mb-6">
-               <h2 className={`text-xl font-bold ${
-                 theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-               }`}>{t("questions")}</h2>
+               <h2 className="text-xl font-bold text-[var(--dashboard-text-primary)]">{t("questions")}</h2>
               <button
                 type="button"
                 onClick={addQuestion}
-                className="px-3 py-1 bg-zinc-500 text-white rounded-lg text-sm hover:bg-zinc-700 transition-colors"
+                className="px-3 py-1 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] rounded-lg text-sm hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
               >
                 {t("addQuestion")}
               </button>
             </div>
 
                              {questions.map((question, index) => (
-                 <div key={index} className="mb-4">
+                 <div key={index} className="mb-3 border rounded-xl p-3 lg:py-2 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
                   <div className="space-y-4 lg:space-y-0 lg:flex lg:gap-4 lg:items-center">
                     {/* Circular number icon - minimal width */}
                     <div className="flex items-center justify-center w-8 flex-shrink-0">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
-                        theme === 'dark' 
-                          ? 'bg-gray-700 text-gray-200' 
-                          : 'bg-gray-600 text-white'
-                      }`}>
+                      <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
                         {index + 1}
                       </div>
                   </div>
 
                                          {/* Question Type - dropdown */}
                      <div className="w-48 flex-shrink-0">
-                     <label className={`block text-xs font-medium mb-1 ${
-                       theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                     }`}>{t("questionType")}</label>
+                     <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("questionType")}</label>
                      <select
                        value={question.question_type}
                        onChange={(e) => updateQuestion(index, "question_type", e.target.value)}
-                       className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                         theme === 'dark' 
-                           ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                           : 'border-gray-300 bg-white text-gray-900'
-                       }`}
+                       className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                      >
                        <option value="open">📝 {t("openText")}</option>
                        <option value="checkbox_single">☑️ {t("singleCheckbox")}</option>
@@ -1412,27 +1195,19 @@ export default function CreateServicePage() {
 
                                          {/* Question Text - flexible width */}
                      <div className="flex-1">
-                       <label className={`block text-xs font-medium mb-1 ${
-                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                       }`}>{t("questionText")}</label>
+                       <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("questionText")}</label>
                        <input
                          type="text"
                          value={question.question_text}
                          onChange={(e) => updateQuestion(index, "question_text", e.target.value)}
-                         className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                           theme === 'dark' 
-                             ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                             : 'border-gray-300 bg-white text-gray-900'
-                         }`}
+                         className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                        />
                      </div>
 
                      {/* Max Length - fixed width (only for open questions) */}
                      {question.question_type === "open" && (
                        <div className="w-32 flex-shrink-0">
-                         <label className={`block text-xs font-medium mb-1 ${
-                           theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                         }`}>{t("maxLength")}</label>
+                         <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("maxLength")}</label>
                          <input
                            type="number"
                            value={question.max_length || ""}
@@ -1444,11 +1219,7 @@ export default function CreateServicePage() {
                              )
                            }
                            placeholder="500"
-                           className={`w-full px-3 py-2 border rounded-lg text-sm ${
-                             theme === 'dark' 
-                               ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                               : 'border-gray-300 bg-white text-gray-900'
-                           }`}
+                           className="w-full px-3 py-2 border rounded-lg text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                          />
                        </div>
                      )}
@@ -1462,9 +1233,7 @@ export default function CreateServicePage() {
                            onChange={(e) => updateQuestion(index, "is_required", e.target.checked)}
                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                          />
-                         <span className={`ml-2 text-xs ${
-                           theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                         }`}>{t("required")}</span>
+                         <span className="ml-2 text-xs text-[var(--dashboard-text-secondary)]">{t("required")}</span>
                        </label>
                      </div>
 
@@ -1473,11 +1242,7 @@ export default function CreateServicePage() {
                       <button
                         type="button"
                         onClick={() => removeQuestion(index)}
-                        className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
-                          theme === 'dark' 
-                            ? 'bg-gray-600 text-gray-300 hover:bg-red-600 hover:text-white' 
-                            : 'bg-gray-400 text-gray-600 hover:bg-red-500 hover:text-white'
-                        }`}
+                        className="w-6 h-6 rounded-full flex items-center justify-center transition-colors bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-red-600 hover:text-white"
                       >
                         ×
                       </button>
@@ -1488,17 +1253,11 @@ export default function CreateServicePage() {
                    {(question.question_type === "checkbox_single" || question.question_type === "checkbox_multi") && (
                      <div className="mt-4">
                        <div className="flex justify-between items-center mb-2">
-                         <label className={`block text-sm font-medium ${
-                           theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                         }`}>{t("options")}</label>
+                         <label className="block text-sm font-medium text-[var(--dashboard-text-secondary)]">{t("options")}</label>
                          <button
                            type="button"
                            onClick={() => addQuestionOption(index)}
-                           className={`text-sm px-2 py-1 rounded ${
-                             theme === 'dark' 
-                               ? 'text-blue-400 hover:text-blue-300 hover:bg-zinc-700' 
-                               : 'text-blue-600 hover:text-blue-700 hover:bg-blue-50'
-                           }`}
+                           className="text-sm px-2 py-1 rounded text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-zinc-700"
                          >
                            {t("addOption")}
                          </button>
@@ -1510,29 +1269,19 @@ export default function CreateServicePage() {
                              value={option}
                              onChange={(e) => updateQuestionOption(index, optionIndex, e.target.value)}
                              placeholder={`${t("option")} ${optionIndex + 1}`}
-                             className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                               theme === 'dark' 
-                                 ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                                 : 'border-gray-300 bg-white text-gray-900'
-                             }`}
+                             className="flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                            />
                            <button
                              type="button"
                              onClick={() => removeQuestionOption(index, optionIndex)}
-                             className={`px-3 py-2 rounded-lg ${
-                               theme === 'dark' 
-                                 ? 'text-red-400 hover:text-red-300 hover:bg-zinc-700' 
-                                 : 'text-red-600 hover:text-red-700 hover:bg-red-50'
-                             }`}
+                             className="px-3 py-2 rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-zinc-700"
                            >
                              ×
                            </button>
                          </div>
                        ))}
                        {(!question.options || question.options.length === 0) && (
-                         <p className={`text-sm italic ${
-                           theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                         }`}>
+                         <p className="text-sm italic text-[var(--dashboard-text-secondary)]">
                            {t("addOptionsToContinue")}
                          </p>
                        )}
@@ -1545,9 +1294,7 @@ export default function CreateServicePage() {
                                  {/* Additional Options Section */}
             <div className="mt-8 pb-4 lg:pb-6">
               <div className="md:col-span-2">
-                <label className={`block text-sm font-medium mb-3 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>Additional Options</label>
+                <label className="block text-sm font-medium mb-3 text-[var(--dashboard-text-secondary)]">Additional Options</label>
                 
                 <div className="space-y-4">
                   {/* Newsletter Consent Card */}
@@ -1556,25 +1303,19 @@ export default function CreateServicePage() {
                     description={t("requireConsentNewsletterDescription")}
                     selected={requireConsentNewsletter}
                     onSelect={setRequireConsentNewsletter}
-                    theme={theme === 'dark' ? 'dark' : 'light'}
+                    theme="light"
                   />
                   
                   {/* Conditional Newsletter Consent Text Field */}
                   {requireConsentNewsletter && (
                     <div className="ml-6">
-                      <label className={`block text-sm font-medium mb-2 ${
-                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                      }`}>Newsletter Consent Text</label>
+                      <label className="block text-sm font-medium mb-2 text-[var(--dashboard-text-secondary)]">Newsletter Consent Text</label>
                       <textarea
                         value={requireConsentNewsletterText}
                         onChange={(e) => setRequireConsentNewsletterText(e.target.value)}
                         placeholder="Enter the text that customers will see for newsletter consent..."
                         rows={3}
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                          theme === 'dark' 
-                            ? 'border-gray-600 bg-zinc-800 text-gray-100' 
-                            : 'border-gray-300 bg-white text-gray-900'
-                        }`}
+                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
                       />
                     </div>
                   )}
@@ -1585,7 +1326,7 @@ export default function CreateServicePage() {
                     description="Require customers to provide their phone number when booking or requesting a quotation"
                     selected={requirePhone}
                     onSelect={setRequirePhone}
-                    theme={theme === 'dark' ? 'dark' : 'light'}
+                    theme="light"
                   />
                  </div>
                </div>
@@ -1596,11 +1337,7 @@ export default function CreateServicePage() {
               <button
                 type="button"
                 onClick={() => router.back()}
-                className={`px-6 py-2 border rounded-lg transition-colors ${
-                  theme === 'dark' 
-                    ? 'border-gray-600 text-gray-300 hover:bg-zinc-700' 
-                    : 'border-gray-300 text-gray-700 hover:bg-zinc-50'
-                }`}
+                className="px-6 py-2 border rounded-lg transition-colors border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
               >
                 {t("cancel")}
               </button>

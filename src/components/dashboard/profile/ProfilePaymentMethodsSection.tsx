@@ -6,7 +6,7 @@ import {
 } from "@/lib/payment-methods-config"
 import { useTranslations } from "next-intl"
 import { XMarkIcon } from "@heroicons/react/24/outline"
-import { useTheme } from "@/contexts/ThemeContext"
+import { useTheme } from "@/contexts/ThemeProvider"
 
 interface PaymentMethod {
   type: string
@@ -78,11 +78,7 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                 const method = paymentMethods.find((m) => m.type === id)
                 if (!config || !config.fields || config.fields.length === 0 || !method) return null
                 return (
-                  <div key={id} className={`flex items-center gap-3 border rounded-lg p-3 shadow-sm ${
-                    theme === 'dark' 
-                      ? 'bg-zinc-700 border-gray-600' 
-                      : 'bg-white border-gray-200'
-                  }`}>
+         <div key={id} className="flex items-center gap-3 border rounded-lg p-3 shadow-sm bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)]">
                     <img src={config.iconPath} alt={config.name} className="w-5 h-5" />
                     <div className={`flex-1 ${id === 'bank_transfer' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3' : 'grid grid-cols-1 md:grid-cols-2 gap-3'}`}>
                       {config.fields.map((field) => (
@@ -91,11 +87,7 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                             <input
                               id={`${id}-${field.name}`}
                               type={field.type}
-                              className={`w-full px-2 py-1.5 border rounded-md ${id === 'bank_transfer' && (field.name === 'bank_name' || field.name === 'account_holder') ? 'text-xs' : 'text-sm'} ${method.details?.[field.name] ? 'pt-6 pb-1' : 'py-1.5'} ${
-                                theme === 'dark' 
-                                  ? 'bg-zinc-700 border-gray-600 text-gray-100' 
-                                  : 'bg-white border-gray-300 text-gray-900'
-                              }`}
+           className={`w-full px-2 py-1.5 border rounded-md ${id === 'bank_transfer' && (field.name === 'bank_name' || field.name === 'account_holder') ? 'text-xs' : 'text-sm'} ${method.details?.[field.name] ? 'pt-6 pb-1' : 'py-1.5'} bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]`}
                               placeholder=""
                               value={method.details?.[field.name] || ""}
                               required={field.required}
@@ -136,15 +128,11 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                 <button
                   key={method.id}
                   type="button"
-                  className={`flex flex-col items-center justify-center p-2 rounded-lg transition-all focus:outline-none h-16 ${
-                    isActive
-                      ? theme === 'dark' 
-                        ? "ring-2 ring-gray-400 bg-zinc-600 shadow-md"
-                        : "ring-2 ring-gray-400 bg-gray-100 shadow-md"
-                      : theme === 'dark'
-                        ? "border border-gray-600 hover:border-gray-500 bg-zinc-700"
-                        : "border border-gray-300 hover:border-gray-400 bg-white"
-                  }`}
+           className={`flex flex-col items-center justify-center p-2 rounded-lg transition-all focus:outline-none h-16 ${
+             isActive
+               ? "ring-2 ring-[var(--dashboard-ring-primary)] bg-[var(--dashboard-bg-tertiary)] shadow-md"
+               : "border border-[var(--dashboard-border-primary)] hover:border-[var(--dashboard-border-secondary)] bg-[var(--dashboard-bg-card)]"
+           }`}
                   onClick={() => handleToggle(method.id)}
                 >
                   <img 
@@ -179,15 +167,11 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                 <button
                   key={method.id}
                   type="button"
-                  className={`flex flex-col items-center justify-center p-2 rounded-lg transition-all focus:outline-none h-16 ${
-                    isActive
-                      ? theme === 'dark' 
-                        ? "ring-2 ring-gray-400 bg-zinc-600 shadow-md"
-                        : "ring-2 ring-gray-400 bg-gray-100 shadow-md"
-                      : theme === 'dark'
-                        ? "border border-gray-600 hover:border-gray-500 bg-zinc-700"
-                        : "border border-gray-300 hover:border-gray-400 bg-white"
-                  }`}
+           className={`flex flex-col items-center justify-center p-2 rounded-lg transition-all focus:outline-none h-16 ${
+             isActive
+               ? "ring-2 ring-[var(--dashboard-ring-primary)] bg-[var(--dashboard-bg-tertiary)] shadow-md"
+               : "border border-[var(--dashboard-border-primary)] hover:border-[var(--dashboard-border-secondary)] bg-[var(--dashboard-bg-card)]"
+           }`}
                   onClick={() => handleToggle(method.id)}
                 >
                   <img 

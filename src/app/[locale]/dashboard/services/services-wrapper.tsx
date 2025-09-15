@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { useBusiness } from "@/lib/business-context"
-import { useTheme } from "@/contexts/ThemeContext"
 import { canCreateMore, formatUsageDisplay } from "@/lib/usage-utils"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { useForceRefreshOnBusinessChange } from "@/hooks/useForceRefreshOnBusinessChange"
@@ -113,7 +112,6 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
   const [services, setServices] = useState<Service[]>(initialServices)
   const [loading, setLoading] = useState(false)
   const { showToast } = useToaster()
-  const { theme } = useTheme()
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [serviceToDelete, setServiceToDelete] = useState<Service | null>(null)
   const [deleting, setDeleting] = useState(false)
@@ -225,9 +223,7 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className={`text-2xl font-bold ${
-              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-            }`}>{t("title")}</h1>
+            <h1 className="text-2xl font-bold text-[var(--dashboard-text-primary)]">{t("title")}</h1>
           </div>
           <Link
             href="/dashboard/services/create"
@@ -261,14 +257,10 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
               <div key={categoryName}>
                 {/* Category Header */}
                 <div className="mb-4">
-                  <h2 className={`text-xs font-medium ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                  }`}>
+                  <h2 className="text-xs font-medium text-[var(--dashboard-text-secondary)]">
                     {categoryName}
                   </h2>
-                  <div className={`w-16 h-1 mt-2 rounded ${
-                    theme === 'dark' ? 'bg-blue-500' : 'bg-blue-600'
-                  }`}></div>
+                  <div className="w-16 h-1 mt-2 rounded bg-blue-600"></div>
                 </div>
 
                 {/* Services in this category */}
@@ -276,11 +268,7 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                   {groupedServices[categoryName].map((service) => (
                     <div
                       key={service.service_id}
-                      className={`rounded-xl shadow-sm border p-6 ${
-                        theme === 'dark' 
-                          ? 'bg-zinc-800 border-gray-600' 
-                          : 'bg-white border-gray-200'
-                      }`}
+                      className="rounded-xl shadow-sm border p-6 bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)]"
                     >
                       <div className="flex flex-col lg:flex-row gap-6">
                         {/* Column 1: Service image - slightly more width, less height */}
@@ -298,9 +286,7 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
 
                         {/* Column 2: Service title, description, price, duration - given more width */}
                         <div className="lg:w-2/5">
-                          <h3 className={`text-xl font-semibold mb-3 ${
-                            theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                          }`}>{service.service_name}</h3>
+                          <h3 className="text-xl font-semibold mb-3 text-[var(--dashboard-text-primary)]">{service.service_name}</h3>
 
                           {service.description && (
                             <div className="mb-1 md:mb-3">
@@ -311,9 +297,7 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                           {/* Price display */}
                           <div className="flex items-center gap-3">
                             {service.price_base !== null && (
-                              <div className={`text-lg font-semibold ${
-                                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                              }`}>€{service.price_base}</div>
+                              <div className="text-lg font-semibold text-[var(--dashboard-text-primary)]">€{service.price_base}</div>
                             )}
                           </div>
                         </div>
@@ -321,33 +305,25 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                         {/* Column 3: Extras, items, requirements, questions counters */}
                         <div className="lg:w-1/4">
                           <div className="space-y-1 md:space-y-2">
-                            <div className={`flex items-center gap-2 text-xs md:text-sm leading-tight md:leading-normal ${
-                              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                            }`}>
+                            <div className="flex items-center gap-2 text-xs md:text-sm leading-tight md:leading-normal text-[var(--dashboard-text-secondary)]">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                               </svg>
                               {t("serviceExtras")}: {service.serviceextra?.length || 0}
                             </div>
-                            <div className={`flex items-center gap-2 text-xs md:text-sm leading-tight md:leading-normal ${
-                              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                            }`}>
+                            <div className="flex items-center gap-2 text-xs md:text-sm leading-tight md:leading-normal text-[var(--dashboard-text-secondary)]">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                               </svg>
                               {t("serviceItems")}: {service.serviceitem.length}
                             </div>
-                            <div className={`flex items-center gap-2 text-xs md:text-sm leading-tight md:leading-normal ${
-                              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                            }`}>
+                            <div className="flex items-center gap-2 text-xs md:text-sm leading-tight md:leading-normal text-[var(--dashboard-text-secondary)]">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
                               {t("requirements")}: {service.servicerequirementblock.length}
                             </div>
-                            <div className={`flex items-center gap-2 text-xs md:text-sm leading-tight md:leading-normal ${
-                              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                            }`}>
+                            <div className="flex items-center gap-2 text-xs md:text-sm leading-tight md:leading-normal text-[var(--dashboard-text-secondary)]">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
@@ -362,8 +338,8 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                           <div>
                             <span className={`px-3 py-1 text-sm lg:px-4 lg:py-2 lg:text-base rounded-lg ${
                               service.is_active 
-                                ? (theme === 'dark' ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-800')
-                                : (theme === 'dark' ? 'bg-red-900 text-red-300' : 'bg-red-100 text-red-800')
+                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+                                : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
                             }`}>
                               {service.is_active ? t("active") : t("inactive")}
                             </span>
@@ -372,11 +348,7 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleEditService(service)}
-                              className={`p-2 rounded-lg transition-colors ${
-                                theme === 'dark' 
-                                  ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700' 
-                                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                              }`}
+                              className="p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
                             >
                               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -384,11 +356,7 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                             </button>
                             <button
                               onClick={() => handleDeleteService(service)}
-                              className={`p-2 rounded-lg transition-colors ${
-                                theme === 'dark' 
-                                  ? 'text-red-400 hover:text-red-300 hover:bg-zinc-700' 
-                                  : 'text-red-600 hover:text-red-700 hover:bg-red-50'
-                              }`}
+                              className="p-2 rounded-lg transition-colors text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-zinc-700"
                             >
                               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -426,24 +394,14 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
         {/* Delete Confirmation Modal */}
         {deleteModalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className={`p-6 rounded-lg max-w-md w-full mx-4 ${
-              theme === 'dark' ? 'bg-zinc-800' : 'bg-white'
-            }`}>
-              <h3 className={`text-lg font-semibold mb-4 ${
-                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-              }`}>{t("confirmDelete")}</h3>
-              <p className={`mb-6 ${
-                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-              }`}>{t("confirmDeleteMessage")}</p>
+            <div className="p-6 rounded-lg max-w-md w-full mx-4 bg-[var(--dashboard-bg-card)]">
+              <h3 className="text-lg font-semibold mb-4 text-[var(--dashboard-text-primary)]">{t("confirmDelete")}</h3>
+              <p className="mb-6 text-[var(--dashboard-text-secondary)]">{t("confirmDeleteMessage")}</p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteModalOpen(false)}
                   disabled={deleting}
-                  className={`flex-1 px-4 py-2 rounded-lg transition-colors ${
-                    theme === 'dark' 
-                      ? 'bg-zinc-700 text-gray-300 hover:bg-zinc-600' 
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
+                  className="flex-1 px-4 py-2 rounded-lg transition-colors bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-secondary)]"
                 >
                   {tCommon("cancel")}
                 </button>

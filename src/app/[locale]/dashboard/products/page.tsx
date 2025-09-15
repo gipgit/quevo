@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { useBusiness } from "@/lib/business-context"
-import { useTheme } from "@/contexts/ThemeContext"
+import { useTheme } from "@/contexts/ThemeProvider"
 import { canCreateMore, formatUsageDisplay } from "@/lib/usage-utils"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { UsageLimitBar } from "@/components/dashboard/UsageLimitBar"

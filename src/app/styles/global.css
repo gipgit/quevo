@@ -6,6 +6,67 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Dashboard Theme Variables */
+:root {
+  /* Light theme colors */
+  --dashboard-bg-primary: #ffffff;
+  --dashboard-bg-secondary: #f8fafc;
+  --dashboard-bg-tertiary: #f1f5f9;
+  --dashboard-bg-card: #ffffff;
+  --dashboard-bg-input: #ffffff;
+  --dashboard-bg-tab-content: #f8fafc;
+  
+  --dashboard-text-primary: #1e293b;
+  --dashboard-text-secondary: #64748b;
+  --dashboard-text-tertiary: #94a3b8;
+  --dashboard-text-muted: #cbd5e1;
+  
+  --dashboard-border-primary: #e2e8f0;
+  --dashboard-border-secondary: #cbd5e1;
+  --dashboard-border-tertiary: #f1f5f9;
+  
+  --dashboard-ring-primary: #3b82f6;
+  --dashboard-ring-secondary: #6366f1;
+  
+  --dashboard-active-bg: #dbeafe;
+  --dashboard-active-border: #3b82f6;
+  --dashboard-active-text: #1d4ed8;
+  --dashboard-active-text-secondary: #2563eb;
+  
+  --dashboard-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --dashboard-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.dark {
+  /* Dark theme colors - warmer neutral grays */
+  --dashboard-bg-primary: #1a1a1a;
+  --dashboard-bg-secondary: #2a2a2a;
+  --dashboard-bg-tertiary: #3a3a3a;
+  --dashboard-bg-card: #2a2a2a;
+  --dashboard-bg-input: #3a3a3a;
+  --dashboard-bg-tab-content: #2a2a2a;
+  
+  --dashboard-text-primary: #f5f5f5;
+  --dashboard-text-secondary: #d4d4d4;
+  --dashboard-text-tertiary: #a3a3a3;
+  --dashboard-text-muted: #737373;
+  
+  --dashboard-border-primary: #525252;
+  --dashboard-border-secondary: #404040;
+  --dashboard-border-tertiary: #3a3a3a;
+  
+  --dashboard-ring-primary: #60a5fa;
+  --dashboard-ring-secondary: #818cf8;
+  
+  --dashboard-active-bg: #404040;
+  --dashboard-active-border: #60a5fa;
+  --dashboard-active-text: #e5e5e5;
+  --dashboard-active-text-secondary: #d4d4d4;
+  
+  --dashboard-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --dashboard-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+}
+
 /* Custom styles for React Big Calendar to integrate with your theme */
 /*
 .rbc-calendar {
