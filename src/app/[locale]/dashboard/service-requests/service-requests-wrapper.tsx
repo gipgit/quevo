@@ -423,64 +423,6 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
         {/* Header */}
         <div className="flex justify-between items-center mb-1 lg:mb-6 flex-shrink-0">
           <div>
-            <h1 className="text-xl lg:text-2xl font-bold text-[var(--dashboard-text-primary)]">{t("title")}</h1>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            {/* Keyboard Shortcuts Button with Tooltip */}
-            <div className="relative group">
-              <button
-                className="p-2 rounded-lg transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
-                title="Keyboard shortcuts"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </button>
-              
-              {/* Tooltip */}
-              <div className="absolute right-0 top-full mt-2 p-3 rounded-lg shadow-lg border z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-secondary)]">
-                <div className="text-xs whitespace-nowrap">
-                  <div className="font-medium mb-2">Keyboard Shortcuts:</div>
-                  <div>↑↓ Navigate requests</div>
-                  <div>Enter/Ctrl+H Mark handled</div>
-                  <div>Ctrl+Q Generate quotation</div>
-                  <div>Ctrl+F Toggle urgency</div>
-                  <div>Ctrl+C Copy contacts</div>
-                </div>
-                {/* Arrow pointing up */}
-                <div className="absolute -top-1 right-4 w-2 h-2 rotate-45 bg-[var(--dashboard-bg-card)] border-l border-t border-[var(--dashboard-border-primary)]"></div>
-              </div>
-            </div>
-            
-            {/* Navigation Arrows */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => navigateRequest(-1)}
-                disabled={selectedIndex === 0}
-                className={`p-2 rounded-lg transition-colors ${
-                  selectedIndex === 0
-                    ? 'opacity-50 cursor-not-allowed'
-                    : 'hover:bg-[var(--dashboard-bg-tertiary)]'
-                }`}
-              >
-                <ArrowLeftIcon className="w-5 h-5" />
-              </button>
-              <span className="text-sm text-[var(--dashboard-text-tertiary)]">
-                {selectedIndex + 1} of {serviceRequests.length}
-              </span>
-              <button
-                onClick={() => navigateRequest(1)}
-                disabled={selectedIndex === serviceRequests.length - 1}
-                className={`p-2 rounded-lg transition-colors ${
-                  selectedIndex === serviceRequests.length - 1
-                    ? 'opacity-50 cursor-not-allowed'
-                    : 'hover:bg-[var(--dashboard-bg-tertiary)]'
-                }`}
-              >
-                <ArrowRightIcon className="w-5 h-5" />
-              </button>
-            </div>
           </div>
         </div>
 
@@ -489,7 +431,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
         {/* Main Content - Outlook-like Layout */}
         <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-6 overflow-hidden">
           {/* Left Panel - Request List */}
-          <div className="w-full lg:w-72 border-b lg:border-b-0 lg:border-r border-[var(--dashboard-border-primary)] flex flex-col">
+          <div className="w-full lg:w-1/5 border-b lg:border-b-0 lg:border-r border-[var(--dashboard-border-primary)] flex flex-col">
             {/* Progress Bar */}
             <div className="p-4 border-b border-[var(--dashboard-border-primary)]">
               <div className="flex justify-between items-center mb-2">
@@ -535,8 +477,10 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       <div className="flex items-center justify-between text-xs mb-1">
                         <div className="flex items-center gap-1">
                           <span className="opacity-75">{day} {month} {time}</span>
+                          <span className="text-xs opacity-75">•</span>
+                          <span className="font-medium text-xs" style={{ fontSize: '0.7rem' }}>{request.request_reference}</span>
                         </div>
-                        <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(request.status)}`}>
+                        <span className={`px-1 py-0.5 rounded-full ${getStatusColor(request.status)}`} style={{ fontSize: '0.7rem' }}>
                           {getStatusText(request.status)}
                         </span>
                       </div>
@@ -548,8 +492,9 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           ) : (
                             <div className="w-3.5 h-3.5 rounded-full bg-blue-500" />
                           )}
-                          <span className="font-medium text-xs">{request.request_reference}</span>
-                          <span className="text-xs opacity-75">• {request.customer_name}</span>
+                          <span className="text-xs opacity-75">{request.customer_name}</span>
+                          <span className="text-xs opacity-75">•</span>
+                          <span className="text-xs opacity-75">{request.service?.service_name}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           {getPriorityIcon(request.priority || 'medium')}
@@ -558,10 +503,6 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           )}
                         </div>
                       </div>
-                      
-                      <div className="text-xs">
-                        <div className="text-xs opacity-75">{request.service?.service_name}</div>
-                      </div>
                     </div>
                 )
               })}
@@ -569,158 +510,125 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
             </div>
           </div>
 
-          {/* Right Panel - Request Details */}
-          <div className="flex-1 flex flex-col min-h-0 lg:min-h-0 h-96 lg:h-auto p-2 lg:p-6 space-y-4 lg:space-y-5">
+          {/* Middle Panel - Request Details */}
+          <div className="flex-1 lg:w-3/5 flex flex-col min-h-0 lg:min-h-0 h-96 lg:h-auto p-2 lg:p-6 space-y-4 lg:space-y-5">
             {selectedRequest ? (
               <>
                 {/* Request Header with Action Buttons */}
                 <div className="border-b border-[var(--dashboard-border-primary)]">
                   <div className="flex flex-col lg:flex-row items-start justify-between gap-2 lg:gap-4">
                     <div className="flex-1 min-w-0 w-full lg:w-auto">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h2 className="text-2xl font-bold text-[var(--dashboard-text-primary)]">
-                            {selectedRequest.request_reference}
-                          </h2>
-                          <span className={`px-2 py-0.5 rounded-full text-xs ${getStatusColor(selectedRequest.status)}`}>
-                            {getStatusText(selectedRequest.status)}
-                          </span>
-                          {selectedRequest.urgency_flag && (
-                            <span className="px-2 py-0.5 rounded-full text-xs bg-red-100 text-red-800">
-                              Urgent
+                      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-2 lg:gap-4">
+                        {/* Left Column: Request Info */}
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h2 className="text-2xl font-bold text-[var(--dashboard-text-primary)]">
+                              {selectedRequest.request_reference}
+                            </h2>
+                            <span className={`px-2 py-0.5 rounded-full text-xs ${getStatusColor(selectedRequest.status)}`}>
+                              {getStatusText(selectedRequest.status)}
                             </span>
-                          )}
+                            {selectedRequest.urgency_flag && (
+                              <span className="px-2 py-0.5 rounded-full text-xs bg-red-100 text-red-800">
+                                Urgent
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-3 text-xs lg:text-sm text-[var(--dashboard-text-tertiary)]">
+                            <span className="font-medium lg:font-semibold">{selectedRequest.customer_name}</span>
+                            <span>•</span>
+                            <span className="font-medium lg:font-semibold">{selectedRequest.service?.service_name || 'N/A'}</span>
+                            <span>•</span>
+                            <span className="font-medium lg:font-semibold">€{selectedRequest.price_subtotal || 0}</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-3 text-xs text-[var(--dashboard-text-tertiary)]">
-                          <span>{selectedRequest.customer_name}</span>
-                          <span>•</span>
-                          <span>{selectedRequest.service?.service_name || 'N/A'}</span>
-                          <span>•</span>
-                          <span>€{selectedRequest.price_subtotal || 0}</span>
+                        
+                        {/* Right Column: Time Passed Indicator */}
+                        <div className="flex flex-col items-end">
+                          <span className="text-xs text-[var(--dashboard-text-secondary)]">Time passed</span>
+                          <span className="text-sm font-bold text-[var(--dashboard-text-primary)]">
+                            {(() => {
+                              try {
+                                const dateField = selectedRequest.created_at || selectedRequest.date_created || selectedRequest.request_date
+                                if (!dateField) return 'N/A'
+                                
+                                const requestDate = new Date(dateField)
+                                if (isNaN(requestDate.getTime())) return 'N/A'
+                                
+                                const now = new Date()
+                                const diffMs = now.getTime() - requestDate.getTime()
+                                
+                                if (diffMs < 0) return 'N/A'
+                                
+                                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+                                const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+                                const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
+                                
+                                if (diffDays > 0) {
+                                  return `${diffDays}d ${diffHours}h`
+                                } else if (diffHours > 0) {
+                                  return `${diffHours}h ${diffMinutes}m`
+                                } else {
+                                  return `${diffMinutes}m`
+                                }
+                              } catch (error) {
+                                return 'N/A'
+                              }
+                            })()}
+                          </span>
                         </div>
                       </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto lg:max-w-sm">
-                      <button
-                        onClick={() => markAsHandled(selectedRequest.request_id)}
-                        className={`px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm ${
-                          isRequestHandled(selectedRequest)
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-green-600 text-white hover:bg-green-700'
-                        }`}
-                        title="Mark as handled (Ctrl+H)"
-                      >
-                        {isRequestHandled(selectedRequest) ? (
-                          <CheckCircleSolidIcon className="w-3.5 h-3.5" />
-                        ) : (
-                          <CheckCircleIcon className="w-3.5 h-3.5" />
-                        )}
-                        {isRequestHandled(selectedRequest) ? 'Handled' : 'Mark Handled'}
-                      </button>
-                      
-                      <button
-                        onClick={() => toggleUrgencyFlag(selectedRequest.request_id)}
-                        className={`px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm ${
-                          selectedRequest.urgency_flag
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-black text-white hover:bg-gray-800'
-                        }`}
-                        title="Toggle urgency flag (Ctrl+F)"
-                      >
-                        <FlagIcon className="w-3.5 h-3.5" />
-                        {selectedRequest.urgency_flag ? 'Urgent' : 'Flag Urgent'}
-                      </button>
-                      
-                      <button
-                        onClick={() => toggleClosedStatus(selectedRequest.request_id)}
-                        className={`px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm ${
-                          selectedRequest.is_closed
-                            ? 'bg-gray-100 text-gray-800'
-                            : 'bg-orange-600 text-white hover:bg-orange-700'
-                        }`}
-                        title="Toggle closed status"
-                      >
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        {selectedRequest.is_closed ? 'Closed' : 'Mark Closed'}
-                      </button>
-                      
-
                     </div>
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                {selectedRequest.serviceboard?.[0] && (
-                    <div>
-                    <h3 className="text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Quick Actions</h3>
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}`, '_blank')}
-                        className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-gray-600 text-white hover:bg-gray-700 transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm"
-                        title="Open service board"
-                      >
-                        <ArrowTopRightOnSquareIcon className="w-3.5 h-3.5" />
-                        Open Board
-                      </button>
-                      
-                      <button
-                        onClick={() => generateQuotation(selectedRequest.request_id)}
-                        className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm"
-                        title="Generate quotation (Ctrl+Q)"
-                      >
-                        <DocumentArrowUpIcon className="w-3.5 h-3.5" />
-                        Generate Quotation
-                      </button>
-                      
-                      <button
-                        onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=appointment_scheduling`, '_blank')}
-                        className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm"
-                        title="Create appointment on service board"
-                      >
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Create Appointment
-                      </button>
-                      
-                      <button
-                        onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=information_request`, '_blank')}
-                        className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm"
-                        title="Add information request"
-                      >
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Info Request
-                      </button>
-                      
-                      <button
-                        onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=checklist`, '_blank')}
-                        className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-orange-600 text-white hover:bg-orange-700 transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm"
-                        title="Add checklist"
-                      >
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                        </svg>
-                        Checklist
-                      </button>
-                    </div>
-                  </div>
-                )}
 
                 {/* Service Board Actions */}
                 {selectedRequest.serviceboard?.[0] && selectedRequest.serviceboard[0].serviceboardaction && selectedRequest.serviceboard[0].serviceboardaction.length > 0 && (
                     <div>
                     <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Service Board Actions</h3>
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                       {selectedRequest.serviceboard[0].serviceboardaction.map((action: any) => (
-                        <div key={action.action_id} className="p-3 rounded-lg border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
-                          <div className="grid grid-cols-[120px_1fr_auto] lg:grid-cols-[120px_1fr_auto] gap-4 items-center">
+                        <div key={action.action_id} className="p-2 rounded-lg border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
+                          {/* Mobile Layout */}
+                          <div className="lg:hidden space-y-2">
+                            {/* Row 1: Date/Time, Action Type, Status */}
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="text-xs text-[var(--dashboard-text-tertiary)]" style={{ fontSize: '0.7rem' }}>
+                                {action.created_at ? (
+                                  <>
+                                    <div>{new Date(action.created_at).toLocaleDateString()}</div>
+                                    <div>{new Date(action.created_at).toLocaleTimeString()}</div>
+                                  </>
+                                ) : (
+                                  <span className="text-[var(--dashboard-text-muted)]">No date</span>
+                                )}
+                              </div>
+                              
+                              <div className="flex items-center gap-2">
+                                <span className="px-1.5 py-0.5 rounded-full text-xs bg-gray-50 text-gray-500 truncate opacity-60" style={{ fontSize: '0.7rem', maxWidth: '80px' }}>
+                                  {action.action_type}
+                                </span>
+                                <span className={`px-1.5 py-0.5 rounded-full text-xs ${
+                                  action.action_status === 'completed' 
+                                    ? 'bg-green-100 text-green-800'
+                                    : 'bg-yellow-100 text-yellow-800'
+                                }`} style={{ fontSize: '0.7rem' }}>
+                                  {action.action_status}
+                                </span>
+                              </div>
+                            </div>
+                            
+                            {/* Row 2: Action Title */}
+                            <div className="font-medium text-xs text-[var(--dashboard-text-primary)]">
+                              {action.action_title}
+                            </div>
+                          </div>
+
+                          {/* Desktop Layout */}
+                          <div className="hidden lg:grid lg:grid-cols-[70px_120px_1fr_80px] gap-2 items-center">
                             {/* Column 1: Date and Time */}
-                            <div className="text-xs text-[var(--dashboard-text-tertiary)]">
+                            <div className="text-xs text-[var(--dashboard-text-tertiary)]" style={{ fontSize: '0.7rem' }}>
                               {action.created_at ? (
                                 <>
                                   <div>{new Date(action.created_at).toLocaleDateString()}</div>
@@ -729,26 +637,27 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                               ) : (
                                 <span className="text-[var(--dashboard-text-muted)]">No date</span>
                               )}
-                              {/* Mobile: Action details in same column */}
-                              <div className="lg:hidden mt-2">
-                                <div className="font-medium text-xs">{action.action_title}</div>
-                                <div className="text-xs opacity-75">{action.action_type}</div>
-                              </div>
                             </div>
                             
-                            {/* Column 2: Action Title and Type (Desktop only) */}
-                            <div className="hidden lg:block col-span-1">
-                              <div className="font-medium text-sm">{action.action_title}</div>
-                              <div className="text-xs opacity-75">{action.action_type}</div>
+                            {/* Column 2: Action Type */}
+                            <div className="flex justify-start">
+                              <span className="px-1.5 py-0.5 rounded-full text-xs bg-gray-50 text-gray-500 truncate opacity-60" style={{ fontSize: '0.7rem', maxWidth: '110px' }}>
+                                {action.action_type}
+                              </span>
                             </div>
                             
-                            {/* Column 3: Status Pill */}
-                            <div className="flex justify-end">
-                              <span className={`px-2 py-1 rounded-full text-xs ${
+                            {/* Column 3: Action Title */}
+                            <div className="font-medium text-xs text-[var(--dashboard-text-primary)] truncate">
+                              {action.action_title}
+                            </div>
+                            
+                            {/* Column 4: Status Pill */}
+                            <div className="flex justify-center">
+                              <span className={`px-1.5 py-0.5 rounded-full text-xs ${
                                 action.action_status === 'completed' 
                                   ? 'bg-green-100 text-green-800'
                                   : 'bg-yellow-100 text-yellow-800'
-                              }`}>
+                              }`} style={{ fontSize: '0.7rem' }}>
                                 {action.action_status}
                               </span>
                             </div>
@@ -1042,6 +951,255 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Right Panel - Actions */}
+          <div className="w-full lg:w-1/4 border-t lg:border-t-0 lg:border-l border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-secondary)] flex flex-col">
+            <div className="p-4 lg:p-6">
+              {selectedRequest ? (
+                <>
+                  {/* Navigation Controls */}
+                  <div className="mb-6">
+                    <h4 className="text-xs font-medium mb-3 text-[var(--dashboard-text-tertiary)] uppercase tracking-wide">Navigation</h4>
+                    
+                    {/* Navigation Arrows */}
+                    <div className="flex items-center justify-between gap-2">
+                      <button
+                        onClick={() => navigateRequest(-1)}
+                        disabled={selectedIndex === 0}
+                        className={`p-2 rounded-lg transition-colors ${
+                          selectedIndex === 0
+                            ? 'opacity-50 cursor-not-allowed'
+                            : 'hover:bg-[var(--dashboard-bg-tertiary)]'
+                        }`}
+                      >
+                        <ArrowLeftIcon className="w-4 h-4" />
+                      </button>
+                      <span className="text-xs text-[var(--dashboard-text-tertiary)]">
+                        {selectedIndex + 1} of {serviceRequests.length}
+                      </span>
+                      <button
+                        onClick={() => navigateRequest(1)}
+                        disabled={selectedIndex === serviceRequests.length - 1}
+                        className={`p-2 rounded-lg transition-colors ${
+                          selectedIndex === serviceRequests.length - 1
+                            ? 'opacity-50 cursor-not-allowed'
+                            : 'hover:bg-[var(--dashboard-bg-tertiary)]'
+                        }`}
+                      >
+                        <ArrowRightIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+
+                  {/* Handle/Flag Buttons */}
+                  <div className="mb-6">
+                    <h4 className="text-xs font-medium mb-3 text-[var(--dashboard-text-tertiary)] uppercase tracking-wide">Status Actions</h4>
+                    
+                    {/* Row 1: Handled and Closed */}
+                    <div className="grid grid-cols-2 gap-2 mb-2">
+                      <button
+                        onClick={() => markAsHandled(selectedRequest.request_id)}
+                        className={`px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm ${
+                          isRequestHandled(selectedRequest)
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-green-600 text-white hover:bg-green-700'
+                        }`}
+                        title="Mark as handled (Ctrl+H)"
+                      >
+                        {isRequestHandled(selectedRequest) ? (
+                          <CheckCircleSolidIcon className="w-4 h-4" />
+                        ) : (
+                          <CheckCircleIcon className="w-4 h-4" />
+                        )}
+                        {isRequestHandled(selectedRequest) ? 'Handled' : 'Mark Handled'}
+                      </button>
+                      
+                      <button
+                        onClick={() => toggleClosedStatus(selectedRequest.request_id)}
+                        className={`px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm ${
+                          selectedRequest.is_closed
+                            ? 'bg-gray-100 text-gray-800'
+                            : 'bg-orange-600 text-white hover:bg-orange-700'
+                        }`}
+                        title="Toggle closed status"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        {selectedRequest.is_closed ? 'Closed' : 'Mark Closed'}
+                      </button>
+                    </div>
+                    
+                    {/* Row 2: Urgency Flag (full width) */}
+                    <button
+                      onClick={() => toggleUrgencyFlag(selectedRequest.request_id)}
+                      className={`w-full px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm ${
+                        selectedRequest.urgency_flag
+                          ? 'bg-red-100 text-red-800'
+                          : 'bg-black text-white hover:bg-gray-800'
+                      }`}
+                      title="Toggle urgency flag (Ctrl+F)"
+                    >
+                      <FlagIcon className="w-4 h-4" />
+                      {selectedRequest.urgency_flag ? 'Urgent' : 'Flag Urgent'}
+                    </button>
+                  </div>
+
+                  {/* Contact Actions */}
+                  <div className="mb-6">
+                    <h4 className="text-xs font-medium mb-2 text-[var(--dashboard-text-tertiary)] uppercase tracking-wide">Contact Customer</h4>
+                    
+                    {selectedRequest.customer_phone || selectedRequest.customer_email ? (
+                      <div className="grid grid-cols-2 gap-2">
+                        {selectedRequest.customer_phone && (
+                          <a
+                            href={`tel:${selectedRequest.customer_phone}`}
+                            className="px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors flex items-center justify-center gap-2 text-sm"
+                            title={`Call ${selectedRequest.customer_phone}`}
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            </svg>
+                            Call
+                          </a>
+                        )}
+                        
+                        {selectedRequest.customer_email && (
+                          <a
+                            href={`mailto:${selectedRequest.customer_email}`}
+                            className="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm"
+                            title={`Email ${selectedRequest.customer_email}`}
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            Email
+                          </a>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-xs text-[var(--dashboard-text-secondary)] text-center py-2">
+                        No contact info available
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Generate Actions */}
+                  <div className="mb-6">
+                    <h4 className="text-xs font-medium mb-3 text-[var(--dashboard-text-tertiary)] uppercase tracking-wide">Generate</h4>
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => {
+                          console.log('Generate Response clicked - placeholder functionality')
+                          // TODO: Implement AI response generation based on request details and customer notes
+                        }}
+                        className="w-full px-3 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-sm"
+                        title="Generate AI response based on request details and customer notes"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                        Generate Response
+                      </button>
+                      
+                      <button
+                        onClick={() => generateQuotation(selectedRequest.request_id)}
+                        className="w-full px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm"
+                        title="Generate quotation (Ctrl+Q)"
+                      >
+                        <DocumentArrowUpIcon className="w-4 h-4" />
+                        Generate Quotation
+                      </button>
+                    </div>
+                    <div className="text-xs text-[var(--dashboard-text-secondary)] text-center mt-1">
+                      AI-powered generation tools
+                    </div>
+                  </div>
+
+                  <h3 className="text-sm font-medium mb-4 text-[var(--dashboard-text-secondary)]">Actions</h3>
+                  
+                  {/* Action Buttons */}
+                  {selectedRequest.serviceboard?.[0] && (
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}`, '_blank')}
+                        className="w-full px-3 py-2 rounded-lg bg-gray-600 text-white hover:bg-gray-700 transition-colors flex items-center justify-center gap-2 text-sm"
+                        title="Open service board"
+                      >
+                        <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                        Open Board
+                      </button>
+                      
+                      <button
+                        onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=appointment_scheduling`, '_blank')}
+                        className="w-full px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors flex items-center justify-center gap-2 text-sm"
+                        title="Create appointment on service board"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Create Appointment
+                      </button>
+                      
+                      <button
+                        onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=information_request`, '_blank')}
+                        className="w-full px-3 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-sm"
+                        title="Add information request"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Info Request
+                      </button>
+                      
+                      <button
+                        onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=checklist`, '_blank')}
+                        className="w-full px-3 py-2 rounded-lg bg-orange-600 text-white hover:bg-orange-700 transition-colors flex items-center justify-center gap-2 text-sm"
+                        title="Add checklist"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
+                        Checklist
+                      </button>
+                    </div>
+                  )}
+                  {/* Keyboard Shortcuts Button - At Bottom */}
+                  <div className="mt-6 pt-4 border-t border-[var(--dashboard-border-primary)]">
+                    <div className="relative group">
+                      <button
+                        className="w-full p-2 rounded-lg transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+                        title="Keyboard shortcuts"
+                      >
+                        <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                      </button>
+                      
+                      {/* Tooltip */}
+                      <div className="absolute right-0 top-full mt-2 p-3 rounded-lg shadow-lg border z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-secondary)]">
+                        <div className="text-xs whitespace-nowrap">
+                          <div className="font-medium mb-2">Keyboard Shortcuts:</div>
+                          <div>↑↓ Navigate requests</div>
+                          <div>Enter/Ctrl+H Mark handled</div>
+                          <div>Ctrl+Q Generate quotation</div>
+                          <div>Ctrl+F Toggle urgency</div>
+                          <div>Ctrl+C Copy contacts</div>
+                        </div>
+                        {/* Arrow pointing up */}
+                        <div className="absolute -top-1 right-4 w-2 h-2 rotate-45 bg-[var(--dashboard-bg-card)] border-l border-t border-[var(--dashboard-border-primary)]"></div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center text-[var(--dashboard-text-tertiary)]">
+                  <p className="text-sm">Select a request to see available actions</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
