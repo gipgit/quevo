@@ -21,11 +21,7 @@ export async function GET(
         manager_id: session.user.id
       },
       include: {
-        usermanager: {
-          include: {
-            plan: true
-          }
-        }
+        plan: true // Get plan directly from business
       }
     });
 
@@ -70,7 +66,7 @@ export async function GET(
     // Get plan limits for service boards
     const planLimits = await prisma.planlimit.findMany({
       where: {
-        plan_id: business.usermanager.plan_id,
+        plan_id: business.plan_id,
         feature: 'boards',
         limit_type: 'count',
         scope: 'global',

@@ -120,37 +120,37 @@ export default async function MarketingEmailAssistantPage({
     products: usageCounters.find(c => c.feature === 'products')?.usage_count || 0
   }
 
-  // Fetch plan limits
-  const planLimits = await prisma.planlimit.findMany({
+  // Get business plan ID
+  const businessWithPlan = await prisma.business.findUnique({
     where: {
-      plan_id: 1 // Default plan
-    }
-  })
-
-  // Get user's plan ID
-  const userManager = await prisma.usermanager.findFirst({
-    where: {
-      user_id: session.user.id
+      business_id: currentBusiness.business_id
     },
     select: {
       plan_id: true
     }
   })
 
-  const userPlanId = userManager?.plan_id || 1
+  const businessPlanId = businessWithPlan?.plan_id || 1
+
+  // Fetch plan limits
+  const planLimits = await prisma.planlimit.findMany({
+    where: {
+      plan_id: businessPlanId
+    }
+  })
 
   // Get email rate limit status
   const { EmailRateLimiter } = await import("@/lib/email-rate-limit")
   const rateLimitStatus = await EmailRateLimiter.getRateLimitStatus(
     currentBusiness.business_id,
-    userPlanId
+    businessPlanId
   )
 
   // Get AI content generation rate limit status
   const { AIContentGenerationRateLimiter } = await import("@/lib/ai-content-generation-rate-limit")
   const aiContentGenerationRateLimitStatus = await AIContentGenerationRateLimiter.getRateLimitStatus(
     currentBusiness.business_id,
-    userPlanId
+    businessPlanId
   )
 
   // Process customers data

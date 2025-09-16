@@ -33,7 +33,6 @@ interface UserManager {
   name_first: string
   name_last: string
   email: string
-  plan: Plan
 }
 
 interface ServerBusinessProviderProps {
@@ -194,16 +193,7 @@ export default async function ServerBusinessProvider({ children }: ServerBusines
       user_id: true,
       name_first: true,
       name_last: true,
-      email: true,
-      plan_id: true,
-      plan: {
-        select: {
-          plan_id: true,
-          plan_name: true,
-          display_price: true,
-          display_frequency: true
-        }
-      }
+      email: true
     }
   })
 
@@ -215,8 +205,7 @@ export default async function ServerBusinessProvider({ children }: ServerBusines
     id: userManager?.user_id || '',
     name_first: userManager?.name_first || '',
     name_last: userManager?.name_last || '',
-    email: userManager?.email || '',
-    plan: userManager?.plan || { plan_id: 1, plan_name: 'Free', display_price: null, display_frequency: null }
+    email: userManager?.email || ''
   }
 
   const transformedBusinesses: Business[] = businesses.map(b => ({
@@ -258,9 +247,9 @@ export default async function ServerBusinessProvider({ children }: ServerBusines
     <BusinessProvider 
       initialData={{
         userManager: transformedUserManager,
-        userPlan: transformedUserManager.plan,
         businesses: transformedBusinesses,
         currentBusiness: transformedCurrentBusiness
+        // userPlan removed - plan data now comes from business
         // usage and planLimits removed - fetched at page level
       }}
     >

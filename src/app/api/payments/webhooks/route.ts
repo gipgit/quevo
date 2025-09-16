@@ -48,14 +48,15 @@ export async function POST(req: NextRequest) {
       const customerId = checkoutSession.customer as string;
       const subscriptionId = checkoutSession.subscription as string;
       const userIdFromMetadata = checkoutSession.metadata?.userId;
+      const businessIdFromMetadata = checkoutSession.metadata?.businessId;
       const planIdFromMetadata = checkoutSession.metadata?.planId;
 
       console.log('Processing checkout.session.completed event...');
-      console.log({ customerId, subscriptionId, userIdFromMetadata, planIdFromMetadata });
+      console.log({ customerId, subscriptionId, userIdFromMetadata, businessIdFromMetadata, planIdFromMetadata });
 
-      if (!userIdFromMetadata || !customerId || !subscriptionId || !planIdFromMetadata) {
+      if (!userIdFromMetadata || !businessIdFromMetadata || !customerId || !subscriptionId || !planIdFromMetadata) {
         console.error('Missing critical data in checkout.session.completed webhook:', {
-          userIdFromMetadata, customerId, subscriptionId, planIdFromMetadata
+          userIdFromMetadata, businessIdFromMetadata, customerId, subscriptionId, planIdFromMetadata
         });
         return NextResponse.json({ error: 'Missing data' }, { status: 400 });
       }
@@ -86,12 +87,13 @@ export async function POST(req: NextRequest) {
           console.error(`Mismatch or missing Plan for priceId: ${currentPriceId} or planId: ${internalPlanId}`);
           return NextResponse.json({ error: 'Plan data mismatch' }, { status: 400 });
         }
-        await prisma.usermanager.update({
-          where: { user_id: userIdFromMetadata },
+        await prisma.business.update({
+          where: { business_id: businessIdFromMetadata },
           data: {
             stripe_customer_id: customerId,
             stripe_subscription_id: subscription.id,
             stripe_price_id: currentPriceId,
+            stripe_current_period_start: currentPeriodStartDate,
             stripe_current_period_end: currentPeriodEndDate,
             stripe_next_invoice_date: nextInvoiceDateObj,
             stripe_cancel_at_period_end: cancelAtPeriodEnd,
@@ -104,9 +106,19 @@ export async function POST(req: NextRequest) {
             plan_id: plan.plan_id,
           },
         });
-        console.log(`UserManager ${userIdFromMetadata} subscribed/updated successfully! Status: ${subscription.status}, Plan ID: ${plan.plan_id} (${plan.plan_name}). stripe_current_period_end set to: ${currentPeriodEndDate?.toISOString()}`);
+
+        // Initialize AI credits for new subscription
+        const { AICreditsManager } = await import('@/lib/ai-credits-manager');
+        await AICreditsManager.initializeCreditsForBusiness(
+          businessIdFromMetadata,
+          plan.plan_id,
+          currentPeriodStartDate,
+          currentPeriodEndDate
+        );
+
+        console.log(`Business ${businessIdFromMetadata} subscribed/updated successfully! Status: ${subscription.status}, Plan ID: ${plan.plan_id} (${plan.plan_name}). stripe_current_period_end set to: ${currentPeriodEndDate?.toISOString()}`);
       } catch (prismaError) {
-        console.error(`Error updating UserManager ${userIdFromMetadata} after checkout.session.completed:`, prismaError);
+        console.error(`Error updating Business ${businessIdFromMetadata} after checkout.session.completed:`, prismaError);
         // Log the full error for more details
         if (prismaError instanceof Error) {
           console.error(prismaError.stack);
@@ -128,11 +140,11 @@ export async function POST(req: NextRequest) {
       console.log(`Converted currentPeriodEndDate for DB: ${updatedCurrentPeriodEndDate ? updatedCurrentPeriodEndDate.toISOString() : 'NULL'}`);
 
       try {
-        const userManagerToUpdate = await prisma.usermanager.findUnique({
+        const businessToUpdate = await prisma.business.findUnique({
           where: { stripe_customer_id: updatedCustomerId },
         });
 
-        if (userManagerToUpdate) {
+        if (businessToUpdate) {
           const currentPriceId = updatedSubscription.items.data[0]?.price?.id;
           const plan = await prisma.plan.findUnique({
             where: { stripe_price_id: currentPriceId },
@@ -150,8 +162,8 @@ export async function POST(req: NextRequest) {
           const updatedPaymentMethodId = updatedPaymentMethod?.id ?? null;
           const updatedPaymentMethodBrand = updatedPaymentMethod?.card?.brand ?? null;
           const updatedPaymentMethodLast4 = updatedPaymentMethod?.card?.last4 ?? null;
-          await prisma.usermanager.update({
-            where: { user_id: userManagerToUpdate.user_id },
+          await prisma.business.update({
+            where: { business_id: businessToUpdate.business_id },
             data: {
               stripe_subscription_id: updatedSubscription.id,
               stripe_price_id: currentPriceId,
@@ -168,12 +180,30 @@ export async function POST(req: NextRequest) {
               plan_id: newPlanId,
             },
           });
+
+          // Update AI credits for plan change
+          const { AICreditsManager } = await import('@/lib/ai-credits-manager');
+          const planCreditsMap: Record<number, number> = {
+            1: 50,    // FREE
+            2: 500,   // PRO
+            3: 1500,  // PRO PLUS
+            4: 999999, // PRO UNLIMITED
+          };
+          const planCredits = planCreditsMap[newPlanId] || 0;
+          
+          await AICreditsManager.allocateCreditsForPeriod(
+            business.business_id,
+            planCredits,
+            updatedCurrentPeriodStartDate,
+            updatedCurrentPeriodEndDate
+          );
+
           console.log(`Subscription for customer ${updatedCustomerId} updated to ${updatedSubscription.status}, Plan ID: ${newPlanId} (${plan?.plan_name || 'FREE'}). stripe_current_period_end set to: ${updatedCurrentPeriodEndDate?.toISOString()}`);
         } else {
-            console.warn(`UserManager with Stripe Customer ID ${updatedCustomerId} not found in DB for subscription update.`);
+            console.warn(`Business with Stripe Customer ID ${updatedCustomerId} not found in DB for subscription update.`);
         }
       } catch (prismaError) {
-        console.error(`Error updating UserManager for customer.subscription.updated:`, prismaError);
+        console.error(`Error updating Business for customer.subscription.updated:`, prismaError);
         if (prismaError instanceof Error) {
           console.error(prismaError.stack);
         }
@@ -185,17 +215,17 @@ export async function POST(req: NextRequest) {
       const deletedSubscription = event.data.object as Stripe.Subscription;
       const deletedCustomerId = deletedSubscription.customer as string;
       try {
-        const userManagerToDelete = await prisma.usermanager.findUnique({
+        const businessToDelete = await prisma.business.findUnique({
           where: { stripe_customer_id: deletedCustomerId },
         });
-        if (userManagerToDelete) {
+        if (businessToDelete) {
           const freePlan = await prisma.plan.findUnique({
             where: { plan_name: 'FREE' },
             select: { plan_id: true }
           });
           const freePlanId = freePlan ? freePlan.plan_id : 1;
-          await prisma.usermanager.update({
-            where: { user_id: userManagerToDelete.user_id },
+          await prisma.business.update({
+            where: { business_id: businessToDelete.business_id },
             data: {
               stripe_subscription_id: null,
               stripe_price_id: null,
@@ -212,12 +242,12 @@ export async function POST(req: NextRequest) {
               plan_id: freePlanId,
             },
           });
-          console.log(`Subscription for customer ${deletedCustomerId} deleted. UserManager plan set to FREE (ID: ${freePlanId}).`);
+          console.log(`Subscription for customer ${deletedCustomerId} deleted. Business plan set to FREE (ID: ${freePlanId}).`);
         } else {
-            console.warn(`UserManager with Stripe Customer ID ${deletedCustomerId} not found in DB for subscription deletion.`);
+            console.warn(`Business with Stripe Customer ID ${deletedCustomerId} not found in DB for subscription deletion.`);
         }
       } catch (prismaError) {
-        console.error(`Error updating UserManager for customer.subscription.deleted:`, prismaError);
+        console.error(`Error updating Business for customer.subscription.deleted:`, prismaError);
         if (prismaError instanceof Error) {
           console.error(prismaError.stack);
         }

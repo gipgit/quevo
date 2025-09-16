@@ -15,18 +15,19 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Missing user or business context" }, { status: 400 });
   }
 
-  // Robust planId lookup
-  let planId: number | undefined = (session as any)?.user?.plan_id;
-  if (!planId) {
-    // Try to fetch from business's manager
-    const business = await prisma.business.findUnique({ where: { business_id: businessId } });
-    if (business) {
-      const userManager = await prisma.usermanager.findUnique({ where: { user_id: business.manager_id } });
-      planId = userManager?.plan_id;
-    }
+  // Get planId from business directly
+  const business = await prisma.business.findUnique({ 
+    where: { business_id: businessId },
+    select: { plan_id: true }
+  });
+  
+  if (!business) {
+    return NextResponse.json({ error: "Business not found" }, { status: 404 });
   }
+  
+  const planId = business.plan_id;
   if (!planId) {
-    return NextResponse.json({ error: "Missing plan context" }, { status: 400 });
+    return NextResponse.json({ error: "Business has no plan assigned" }, { status: 400 });
   }
 
   try {

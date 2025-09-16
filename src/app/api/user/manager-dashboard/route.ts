@@ -11,18 +11,20 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Get UserManager with plan
+    // Get UserManager
     const userManager = await prisma.usermanager.findUnique({
       where: { user_id: session.user.id },
-      include: { plan: true },
     })
     if (!userManager) {
       return NextResponse.json({ error: "UserManager not found" }, { status: 404 })
     }
 
-    // Get all businesses for this manager
+    // Get all businesses for this manager with their plans
     const businesses = await prisma.business.findMany({
       where: { manager_id: session.user.id },
+      include: {
+        plan: true, // Include the plan for each business
+      },
       select: {
         business_id: true,
         business_name: true,
@@ -37,8 +39,15 @@ export async function GET() {
         business_img_cover: true,
         business_public_uuid: true,
         date_created: true,
+        plan: true, // Include plan data
+        ai_credits_used: true,
+        ai_credits_reset_date: true,
       },
     })
+
+    // For backward compatibility, use the first business's plan as the "user plan"
+    // In the future, this could be removed as each business will have its own plan
+    const userPlan = businesses.length > 0 ? businesses[0].plan : null
 
     return NextResponse.json({
       userManager: {
@@ -46,7 +55,7 @@ export async function GET() {
         name_first: userManager.name_first,
         name_last: userManager.name_last,
         email: userManager.email,
-        plan: userManager.plan,
+        plan: userPlan, // For backward compatibility
       },
       businesses,
     })

@@ -18,6 +18,9 @@ interface Business {
   business_img_cover: string | null
   business_public_uuid: string
   date_created: string
+  plan?: Plan // Plan information for this business
+  ai_credits_used?: number
+  ai_credits_reset_date?: string | null
 }
 
 interface Plan {
@@ -31,7 +34,6 @@ interface UserManager {
   name_first: string
   name_last: string
   email: string
-  plan: Plan
 }
 
 // Replace the old UsageData interface with a flexible type
@@ -49,7 +51,6 @@ interface PlanLimits {
 
 interface BusinessContextType {
   userManager: UserManager | null
-  userPlan: Plan | null
   businesses: Business[]
   currentBusiness: Business | null
   usage: UsageData | null
@@ -67,7 +68,6 @@ interface BusinessContextType {
 
 interface InitialData {
   userManager: UserManager
-  userPlan: Plan
   businesses: Business[]
   currentBusiness: Business | null
   usage?: UsageData
@@ -85,7 +85,6 @@ export function BusinessProvider({
 }) {
   const router = useRouter()
   const [userManager, setUserManager] = useState<UserManager | null>(initialData?.userManager || null)
-  const [userPlan, setUserPlan] = useState<Plan | null>(initialData?.userPlan || null)
   const [businesses, setBusinesses] = useState<Business[]>(initialData?.businesses || [])
   const [currentBusiness, setCurrentBusiness] = useState<Business | null>(initialData?.currentBusiness || null)
   const [usage, setUsage] = useState<UsageData | null>(initialData?.usage || null)
@@ -143,8 +142,12 @@ export function BusinessProvider({
       
       setUserManager(data.userManager)
       console.log("BusinessContext: setUserManager", data.userManager)
-      setUserPlan(data.userManager?.plan || null)
-      console.log("BusinessContext: setUserPlan", data.userManager?.plan)
+      // Plan data is now included in each business, no need for separate userPlan
+      console.log("BusinessContext: Businesses with plans:", data.businesses?.map((b: any) => ({ 
+        name: b.business_name, 
+        hasPlan: !!b.plan, 
+        planName: b.plan?.plan_name 
+      })))
       setBusinesses(data.businesses || [])
 
       // If user has no businesses, we'll let the useEffect handle the redirect
@@ -178,6 +181,7 @@ export function BusinessProvider({
       }
       setCurrentBusiness(business)
       console.log("BusinessContext: setCurrentBusiness", business)
+      console.log("BusinessContext: Current business plan:", business?.plan)
       if (business) {
         sessionStorage.setItem("currentBusinessId", business.business_id)
         setCurrentBusinessIdCookie(business.business_id) // Set cookie for server-side access
@@ -206,9 +210,9 @@ export function BusinessProvider({
 
   const fetchPlanLimits = useCallback(async () => {
     try {
-      console.log("BusinessContext: fetchPlanLimits called, userPlan:", userPlan)
-      if (!userPlan?.plan_id) return
-      const response = await fetch(`/api/plan-limits/${userPlan.plan_id}`)
+      console.log("BusinessContext: fetchPlanLimits called, currentBusiness:", currentBusiness)
+      if (!currentBusiness?.plan?.plan_id) return
+      const response = await fetch(`/api/plan-limits/${currentBusiness.plan.plan_id}`)
       if (!response.ok) throw new Error("Failed to fetch plan limits")
       const data = await response.json()
       setPlanLimits(data.limits)
@@ -216,7 +220,7 @@ export function BusinessProvider({
     } catch (err) {
       console.error("Error fetching plan limits:", err)
     }
-  }, [userPlan?.plan_id])
+  }, [currentBusiness?.plan?.plan_id])
 
   const fetchUsage = useCallback(async () => {
     try {
@@ -276,12 +280,12 @@ export function BusinessProvider({
   // This prevents conflicts with server-side redirects and infinite loops
 
   useEffect(() => {
-    console.log("BusinessContext: useEffect - userPlan changed:", userPlan?.plan_id)
-    // Fetch plan limits when user plan changes
-    if (userPlan?.plan_id) {
+    console.log("BusinessContext: useEffect - currentBusiness plan changed:", currentBusiness?.plan?.plan_id)
+    // Fetch plan limits when current business plan changes
+    if (currentBusiness?.plan?.plan_id) {
       fetchPlanLimits()
     }
-  }, [userPlan?.plan_id, fetchPlanLimits])
+  }, [currentBusiness?.plan?.plan_id, fetchPlanLimits])
 
   useEffect(() => {
     console.log("BusinessContext: useEffect - fetchUsage trigger", {
@@ -378,7 +382,6 @@ export function BusinessProvider({
     <BusinessContext.Provider
       value={{
         userManager,
-        userPlan,
         businesses,
         currentBusiness,
         usage,

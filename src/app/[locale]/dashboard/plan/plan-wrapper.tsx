@@ -18,13 +18,6 @@ interface UserManager {
   name_first: string | null
   name_last: string | null
   email: string | null
-  plan_id: number
-  plan: {
-    plan_id: number
-    plan_name: string
-    display_price: string | null
-    display_frequency: string | null
-  }
 }
 
 interface Plan {

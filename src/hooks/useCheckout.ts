@@ -14,28 +14,50 @@ export function useCheckout() {
 
   const createCheckoutSession = async (
     plan: PlanFeature,
+    userId: string,
+    userEmail: string,
+    businessId: string,
     successUrl?: string,
     cancelUrl?: string
   ) => {
     setState({ loading: true, error: null });
 
     try {
-      // Placeholder logic - replace with actual Stripe integration
       console.log('Checkout request:', {
         plan: plan.name,
         ai_credits: plan.ai_credits_included,
+        userId,
+        userEmail,
+        businessId,
         successUrl: successUrl || `${window.location.origin}/dashboard?success=true`,
         cancelUrl: cancelUrl || `${window.location.origin}/pricing?canceled=true`,
       });
 
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await fetch('/api/payments/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          priceId: plan.stripe_price_id,
+          userId,
+          userEmail,
+          businessId,
+        }),
+      });
 
-      // Placeholder response - replace with actual Stripe checkout session creation
-      const placeholderUrl = successUrl || `${window.location.origin}/dashboard?success=true&placeholder=true&plan=${plan.id}`;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create checkout session');
+      }
+
+      const { sessionId, url } = await response.json();
       
-      // For now, just redirect to success page with placeholder data
-      window.location.href = placeholderUrl;
+      if (url) {
+        window.location.href = url;
+      } else {
+        throw new Error('No checkout URL received');
+      }
       
       setState({ loading: false, error: null });
     } catch (error: any) {

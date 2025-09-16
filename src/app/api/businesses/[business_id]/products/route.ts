@@ -83,11 +83,7 @@ export async function POST(request: Request, { params }: { params: { business_id
         manager_id: session.user.id,
       },
       include: {
-        usermanager: {
-          include: {
-            plan: true,
-          },
-        },
+        plan: true, // Get plan directly from business
       },
     })
 
@@ -95,8 +91,8 @@ export async function POST(request: Request, { params }: { params: { business_id
       return NextResponse.json({ error: "Business not found" }, { status: 404 })
     }
 
-    // Check plan limits (new system)
-    const planId = business.usermanager.plan_id
+    // Check plan limits (business-based system)
+    const planId = business.plan_id
     const planLimits = await getPlanLimits(planId)
     const planLimitProducts = planLimits.find(l => l.feature === 'products' && l.limit_type === 'count' && l.scope === 'global')
     if (!planLimitProducts) {

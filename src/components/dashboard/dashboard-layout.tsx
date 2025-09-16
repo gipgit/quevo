@@ -20,6 +20,7 @@ import CacheBusterWrapper from "./CacheBusterWrapper"
 import { useBusinessSwitchTracker } from "@/hooks/useBusinessSwitchTracker"
 import NavigationInterceptor from "./NavigationInterceptor"
 import { useForceRefreshOnBusinessChange } from "@/hooks/useForceRefreshOnBusinessChange"
+import { useAICredits } from "@/hooks/useAICredits"
 
 import { 
   HomeIcon, 
@@ -75,9 +76,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     }
     return false
   })
-  const { currentBusiness, businesses, switchBusiness, loading, userPlan, userManager, businessSwitchKey } = useBusiness()
+  const { currentBusiness, businesses, switchBusiness, loading, userManager, businessSwitchKey } = useBusiness()
   const { isModalOpen, setIsModalOpen, currentLocale, availableLocales, switchLocale } = useLocaleSwitcher()
   const { theme, toggleTheme } = useTheme()
+  const { creditsStatus, loading: creditsLoading } = useAICredits(currentBusiness?.business_id || null)
+  
+  // Debug logging
+  console.log("DashboardLayout: currentBusiness:", currentBusiness)
+  console.log("DashboardLayout: currentBusiness.plan:", currentBusiness?.plan)
   
   // Initialize business switch tracker
   useBusinessSwitchTracker()
@@ -607,6 +613,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               <span className="text-[10px] mt-0.5 font-normal">Profile</span>
             </Link>
 
+            {/* AI Credits Indicator (Mobile) */}
+            {currentBusiness && (
+              <div className="flex flex-col items-center p-1.5 rounded-lg bg-[var(--dashboard-bg-tertiary)] border border-[var(--dashboard-border-primary)]">
+                <div className="flex items-center gap-1">
+                  <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  <span className="text-xs font-medium text-[var(--dashboard-text-primary)]">
+                    {creditsLoading ? "..." : creditsStatus?.creditsAvailable ?? 0}
+                  </span>
+                </div>
+                <span className="text-[8px] mt-0.5 font-normal text-[var(--dashboard-text-secondary)]">AI Credits</span>
+              </div>
+            )}
+
             {/* Sidebar Toggle Button */}
             <button
               onClick={() => setIsMobileMenuOpen(true)}
@@ -677,7 +698,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               {/* Right Column - Aligned to the right */}
               <div className="flex justify-end items-center gap-x-6">
                 {/* User Plan Card */}
-                {userPlan && (
+                {currentBusiness && (
                   <div className="hidden lg:flex items-center gap-4">
                     {/* Plan Management Buttons */}
                     <div className="flex items-center gap-2">
@@ -686,8 +707,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                         className="px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-2 border bg-transparent text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]"
                       >
                         Manage your plan
-                        {(() => {
-                          const planColors = getPlanColors(userPlan.plan_name);
+                        {currentBusiness.plan ? (() => {
+                          const planColors = getPlanColors(currentBusiness.plan.plan_name);
                           return (
                             <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${planColors.gradient} ${planColors.textColor}`}>
                               {planColors.showStar && (
@@ -695,10 +716,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                 </svg>
                               )}
-                              {capitalizePlanName(userPlan.plan_name)}
+                              {capitalizePlanName(currentBusiness.plan.plan_name)}
                             </span>
                           );
-                        })()}
+                        })() : (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
+                            No Plan
+                          </span>
+                        )}
                       </Link>
                       <button
                         onClick={handleSupportRequest}
@@ -706,6 +731,27 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                       >
                         Support
                       </button>
+                    </div>
+                  </div>
+                )}
+                
+                {/* AI Credits Balance Indicator */}
+                {currentBusiness && (
+                  <div className="hidden lg:flex items-center gap-2 px-3 py-2 rounded-lg border bg-[var(--dashboard-bg-tertiary)] border-[var(--dashboard-border-primary)]">
+                    <div className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                      <div className="flex flex-col">
+                        <span className="text-xs text-[var(--dashboard-text-secondary)]">AI Credits</span>
+                        <span className="text-sm font-medium text-[var(--dashboard-text-primary)]">
+                          {creditsLoading ? (
+                            <div className="w-8 h-4 bg-gray-200 rounded animate-pulse"></div>
+                          ) : (
+                            creditsStatus?.creditsAvailable ?? 0
+                          )}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 )}

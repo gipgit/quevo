@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import prisma from '@/lib/prisma'
-import { AIContentGenerationRateLimiter } from '@/lib/ai-content-generation-rate-limit'
+import { AICreditsManager } from '@/lib/ai-credits-manager'
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,17 +35,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Support request not found' }, { status: 404 })
     }
 
-    // Check rate limit
-    const planId = 1 // Default plan - you might want to get this from user
-    const rateLimitCheck = await AIContentGenerationRateLimiter.checkAndConsumeToken(
+    // Check and consume AI generation credit
+    const creditsResult = await AICreditsManager.consumeCredits(
       supportRequest.business_id,
-      planId
+      'SUPPORT_TEXT_ENHANCEMENT',
+      'Support text enhancement'
     )
 
-    if (!rateLimitCheck.allowed) {
+    if (!creditsResult.success) {
       return NextResponse.json({ 
-        error: rateLimitCheck.errorMessage || 'Rate limit exceeded' 
-      }, { status: 429 })
+        error: creditsResult.errorMessage || 'Insufficient AI credits' 
+      }, { status: 402 }) // 402 Payment Required
     }
 
     // Prepare context for AI

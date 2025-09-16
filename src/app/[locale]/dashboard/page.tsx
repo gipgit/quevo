@@ -75,10 +75,10 @@ export default async function DashboardPage() {
     products: usageCounters.find(c => c.feature === 'products')?.usage_count || 0
   }
 
-  // Fetch user plan to get plan limits
-  const userManager = await prisma.usermanager.findFirst({
+  // Fetch business plan to get plan limits
+  const businessWithPlan = await prisma.business.findUnique({
     where: {
-      user_id: session.user.id
+      business_id: currentBusinessId
     },
     select: {
       plan_id: true
@@ -88,7 +88,7 @@ export default async function DashboardPage() {
   // Fetch plan limits (dashboard-specific data)
   const planLimits = await prisma.planlimit.findMany({
     where: {
-      plan_id: userManager?.plan_id || 1 // Default to plan 1 if no user plan
+      plan_id: businessWithPlan?.plan_id || 1 // Default to plan 1 if no business plan
     }
   })
 

@@ -2,7 +2,7 @@
 
 import { generateText } from 'ai'
 import { openai } from '@ai-sdk/openai'
-import { AIContentGenerationRateLimiter } from '@/lib/ai-content-generation-rate-limit'
+import { AICreditsManager, AI_FEATURE_COSTS } from '@/lib/ai-credits-manager'
 import prisma from '@/lib/prisma'
 
 interface AIGenerationSettings {
@@ -26,12 +26,17 @@ export async function generateMarketingEmailContent(
   business: BusinessInfo
 ) {
   try {
-    // Check rate limit - using checkAndConsumeToken instead of checkRateLimit
-    const rateLimitCheck = await AIContentGenerationRateLimiter.checkAndConsumeToken(business.business_id, 1) // Assuming planId 1 for now
-    if (!rateLimitCheck.allowed) {
+    // Check and consume AI generation credit
+    const creditsResult = await AICreditsManager.consumeCredits(
+      business.business_id,
+      'MARKETING_EMAIL_CONTENT',
+      'Marketing email content generation'
+    )
+    
+    if (!creditsResult.success) {
       return {
         success: false,
-        error: rateLimitCheck.errorMessage || 'Rate limit exceeded'
+        error: creditsResult.errorMessage || 'Insufficient AI credits'
       }
     }
 

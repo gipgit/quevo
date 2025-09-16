@@ -13,31 +13,27 @@ export async function POST(req: NextRequest, { params }: { params: { business_id
     const business_id = params.business_id
     const data = await req.json()
 
-    // Verify business ownership
+    // Verify business ownership and get plan
     const business = await prisma.business.findFirst({
       where: {
         business_id: business_id,
         manager_id: session.user.id,
       },
       include: {
-        usermanager: { include: { plan: true } },
+        plan: true, // Get plan directly from business
       },
     })
     console.debug("Fetched business object:", business)
     if (!business) {
       return NextResponse.json({ error: "Business not found" }, { status: 404 })
     }
-    if (!business.usermanager) {
-      console.error("Business found but usermanager relation is missing:", business)
-      return NextResponse.json({ error: "Business manager or plan not found" }, { status: 404 })
-    }
-    if (!business.usermanager.plan_id) {
-      console.error("Plan ID is missing for business:", business_id, business.usermanager)
-      return NextResponse.json({ error: "Plan ID not found for business manager" }, { status: 404 })
+    if (!business.plan_id) {
+      console.error("Plan ID is missing for business:", business_id, business)
+      return NextResponse.json({ error: "Plan ID not found for business" }, { status: 404 })
     }
 
-    // Check plan limits (new system)
-    const planId = business.usermanager.plan_id
+    // Check plan limits (business-based system)
+    const planId = business.plan_id
     const planLimits = await getPlanLimits(planId)
     const planLimitServices = planLimits.find(l => l.feature === 'services' && l.limit_type === 'count' && l.scope === 'global')
     if (!planLimitServices) {

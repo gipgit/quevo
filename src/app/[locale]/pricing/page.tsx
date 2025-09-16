@@ -31,7 +31,13 @@ export default function PricingPage() {
   const plans = getAllPlans()
 
   const handlePlanSelect = async (plan: PlanFeature) => {
-    await createCheckoutSession(plan)
+    // For now, we'll need to get user and business info from the session
+    // This should be updated to get the actual user and business data
+    const userId = "placeholder-user-id" // TODO: Get from session
+    const userEmail = "placeholder@email.com" // TODO: Get from session
+    const businessId = "placeholder-business-id" // TODO: Get from current business
+    
+    await createCheckoutSession(plan, userId, userEmail, businessId)
   }
 
   const handleGetStarted = (plan: Plan) => {
@@ -192,8 +198,8 @@ export default function PricingPage() {
                                 </svg>
                               ) : (
                                 <svg className="w-3.5 h-3.5 md:w-5 md:h-5 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                </svg>
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
                               )}
                               <div className="flex-1">
                                 <span className="text-sm md:text-sm text-gray-700 leading-tight font-semibold">{feature.text}</span>
@@ -212,7 +218,7 @@ export default function PricingPage() {
                           <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                         </svg>
                         <span className="text-sm md:text-sm text-gray-700 leading-tight">Support: {plan.support}</span>
-                      </li>
+                        </li>
                     </ul>
                   </div>
                 </div>

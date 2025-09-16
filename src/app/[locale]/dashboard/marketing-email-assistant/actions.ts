@@ -58,12 +58,9 @@ export async function createEmailCampaign(data: CreateCampaignData): Promise<{
           user_id: session.user.id
         }
       },
-      include: {
-        usermanager: {
-          select: {
-            plan_id: true
-          }
-        }
+      select: {
+        business_id: true,
+        plan_id: true
       }
     })
 
@@ -120,12 +117,9 @@ export async function sendEmailCampaign(data: SendCampaignData): Promise<Campaig
           user_id: session.user.id
         }
       },
-      include: {
-        usermanager: {
-          select: {
-            plan_id: true
-          }
-        }
+      select: {
+        business_id: true,
+        plan_id: true
       }
     })
 
@@ -137,7 +131,7 @@ export async function sendEmailCampaign(data: SendCampaignData): Promise<Campaig
     }
 
     // Check rate limit
-    const planId = business.usermanager?.plan_id || 1
+    const planId = business.plan_id || 1
     const rateLimitCheck = await EmailRateLimiter.checkAndConsumeToken(
       business.business_id,
       planId
@@ -243,12 +237,9 @@ export async function getEmailRateLimitStatus(): Promise<{
           user_id: session.user.id
         }
       },
-      include: {
-        usermanager: {
-          select: {
-            plan_id: true
-          }
-        }
+      select: {
+        business_id: true,
+        plan_id: true
       }
     })
 
@@ -256,7 +247,7 @@ export async function getEmailRateLimitStatus(): Promise<{
       throw new Error("Business not found")
     }
 
-    const planId = business.usermanager?.plan_id || 1
+    const planId = business.plan_id || 1
     const rateLimitStatus = await EmailRateLimiter.getRateLimitStatus(
       business.business_id,
       planId
@@ -296,12 +287,9 @@ export async function getAIContentGenerationRateLimitStatus(): Promise<{
           user_id: session.user.id
         }
       },
-      include: {
-        usermanager: {
-          select: {
-            plan_id: true
-          }
-        }
+      select: {
+        business_id: true,
+        plan_id: true
       }
     })
 
@@ -309,7 +297,7 @@ export async function getAIContentGenerationRateLimitStatus(): Promise<{
       throw new Error("Business not found")
     }
 
-    const planId = business.usermanager?.plan_id || 1
+    const planId = business.plan_id || 1
     const rateLimitStatus = await AIContentGenerationRateLimiter.getRateLimitStatus(
       business.business_id,
       planId

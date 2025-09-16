@@ -6,6 +6,9 @@ import { useTheme } from "@/contexts/ThemeProvider"
 import { useBusiness } from "@/lib/business-context"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import EmptyState from "@/components/EmptyState"
+import { generateServiceResponse } from './generate-service-response'
+import { useAICredits } from '@/hooks/useAICredits'
+import { LoadingAIGeneration } from '@/components/ui/loading-ai-generation'
 import { 
   EnvelopeIcon, 
   DocumentArrowUpIcon, 
@@ -22,7 +25,8 @@ import {
   ArrowRightIcon,
   ArrowTopRightOnSquareIcon,
   EyeIcon,
-  EyeSlashIcon
+  EyeSlashIcon,
+  SparklesIcon
 } from '@heroicons/react/24/outline'
 import { 
   CheckCircleIcon as CheckCircleSolidIcon,
@@ -38,8 +42,20 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
   const { theme } = useTheme()
   const { currentBusiness, businessSwitchKey } = useBusiness()
   const [serviceRequests, setServiceRequests] = useState(initialServiceRequests)
-  const [selectedRequest, setSelectedRequest] = useState<any>(null)
+  const [selectedRequest, setSelectedRequest] = useState<any>(initialServiceRequests.length > 0 ? initialServiceRequests[0] : null)
   const [selectedIndex, setSelectedIndex] = useState(0)
+  
+  // AI Generation state
+  const [showAIGenerationModal, setShowAIGenerationModal] = useState(false)
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [generationError, setGenerationError] = useState<string | null>(null)
+  const [generatedResponse, setGeneratedResponse] = useState<string | null>(null)
+  const [selectedQuestionsForClarification, setSelectedQuestionsForClarification] = useState<number[]>([])
+  const [manualQuestions, setManualQuestions] = useState<string>('')
+  const [customerNotesClarification, setCustomerNotesClarification] = useState<string>('')
+  
+  // AI Credits hook
+  const { creditsStatus, featureCosts, loading: creditsLoading, refetch: refetchCredits } = useAICredits(currentBusiness?.business_id || null)
 
   // Debug: Log initial service requests
   useEffect(() => {
@@ -81,13 +97,16 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
     }
   }, [currentBusiness?.business_id, businessSwitchKey])
 
-  // Set initial selected request
+  // Update selected request when service requests change
   useEffect(() => {
     if (serviceRequests.length > 0 && !selectedRequest) {
       setSelectedRequest(serviceRequests[0])
       setSelectedIndex(0)
+    } else if (serviceRequests.length === 0) {
+      setSelectedRequest(null)
+      setSelectedIndex(0)
     }
-  }, [serviceRequests, selectedRequest])
+  }, [serviceRequests])
 
   // Keyboard navigation
   useEffect(() => {
@@ -387,6 +406,83 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
     } catch (error) {
       console.error('Error copying contacts:', error)
     }
+  }
+
+  // AI Generation functions
+  const handleGenerateResponse = () => {
+    if (!selectedRequest) return
+    setGenerationError(null)
+    setGeneratedResponse(null)
+    setShowAIGenerationModal(true)
+  }
+
+  const handleConfirmAIGeneration = async () => {
+    if (!selectedRequest) return
+    
+    setIsGenerating(true)
+    setGenerationError(null)
+    
+    try {
+      const result = await generateServiceResponse({
+        requestId: selectedRequest.request_id,
+        customerNotes: selectedRequest.customer_notes,
+        requestDetails: {
+          customerName: selectedRequest.customer_name,
+          serviceName: selectedRequest.service?.service_name || 'Service',
+          requestReference: selectedRequest.request_reference,
+          questionResponses: selectedRequest.question_responses_snapshot,
+          requirements: selectedRequest.requirement_responses_snapshot,
+          eventInfo: selectedRequest.serviceevent,
+          schedulingDates: selectedRequest.request_datetimes
+        },
+        clarificationRequests: {
+          selectedQuestionIndices: selectedQuestionsForClarification,
+          manualQuestions: manualQuestions.trim(),
+          customerNotesClarification: customerNotesClarification.trim()
+        }
+      })
+      
+      if (result.success && result.data) {
+        setGeneratedResponse(result.data.response)
+        // Refresh credits after successful generation
+        refetchCredits()
+        // Keep modal open to show the generated response
+      } else {
+        setGenerationError(result.errorMessage || 'Failed to generate response')
+      }
+    } catch (error) {
+      setGenerationError('Error generating response')
+      console.error('Error generating response:', error)
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
+  const copyGeneratedResponse = async () => {
+    if (generatedResponse) {
+      try {
+        await navigator.clipboard.writeText(generatedResponse)
+        // You could add a toast notification here
+      } catch (error) {
+        console.error('Error copying response:', error)
+      }
+    }
+  }
+
+  const toggleQuestionForClarification = (questionIndex: number) => {
+    setSelectedQuestionsForClarification(prev => 
+      prev.includes(questionIndex) 
+        ? prev.filter(index => index !== questionIndex)
+        : [...prev, questionIndex]
+    )
+  }
+
+  const resetGenerationState = () => {
+    setSelectedQuestionsForClarification([])
+    setManualQuestions('')
+    setCustomerNotesClarification('')
+    setGeneratedResponse(null)
+    setGenerationError(null)
   }
 
   // Calculate progress
@@ -1095,16 +1191,11 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                     <h4 className="text-xs font-medium mb-3 text-[var(--dashboard-text-tertiary)] uppercase tracking-wide">Generate</h4>
                     <div className="space-y-2">
                       <button
-                        onClick={() => {
-                          console.log('Generate Response clicked - placeholder functionality')
-                          // TODO: Implement AI response generation based on request details and customer notes
-                        }}
+                        onClick={handleGenerateResponse}
                         className="w-full px-3 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-sm"
                         title="Generate AI response based on request details and customer notes"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                        </svg>
+                        <SparklesIcon className="w-4 h-4" />
                         Generate Response
                       </button>
                       
@@ -1206,6 +1297,390 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
             </div>
           </div>
         </div>
+
+        {/* AI Generation Confirmation Modal */}
+        {showAIGenerationModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+              <div className="p-6">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center space-x-2">
+                    <SparklesIcon className="w-4 h-4 text-purple-600" />
+                    <h2 className="text-lg font-medium text-gray-900">Confirm AI Response Generation</h2>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setShowAIGenerationModal(false)
+                      resetGenerationState()
+                    }}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    title="Close modal"
+                  >
+                    <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                
+                <div className="space-y-6">
+                  {/* 3-Column Layout */}
+                  <div className="grid grid-cols-12 gap-6">
+                    {/* Request Summary - Column 1 */}
+                    <div className="col-span-4">
+                      <h3 className="text-xs font-medium text-gray-600 mb-2">Request Summary</h3>
+                      <div className="space-y-2 text-sm">
+                        <div>
+                          <div className="text-[10px] text-gray-500 mb-0.5">Customer</div>
+                          <div className="font-medium text-gray-900">{selectedRequest?.customer_name}</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-gray-500 mb-0.5">Service</div>
+                          <div className="font-medium text-gray-900">{selectedRequest?.service?.service_name || 'N/A'}</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-gray-500 mb-0.5">Reference</div>
+                          <div className="font-medium text-gray-900">{selectedRequest?.request_reference}</div>
+                        </div>
+                        {selectedRequest?.customer_notes && (
+                          <div>
+                            <div className="text-[10px] text-gray-500 mb-0.5">Customer Notes</div>
+                            <div className="font-medium text-gray-900">{selectedRequest.customer_notes}</div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Customer Notes Clarification */}
+                      {selectedRequest?.customer_notes && (
+                        <div className="mt-3">
+                          <h4 className="text-xs font-medium text-gray-600 mb-2">What's unclear about the customer notes?</h4>
+                          <textarea
+                            value={customerNotesClarification}
+                            onChange={(e) => setCustomerNotesClarification(e.target.value)}
+                            placeholder="Write informally what's not clear or what additional information you need from the customer notes..."
+                            className="w-full p-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                            rows={2}
+                          />
+                          {customerNotesClarification.trim() && (
+                            <div className="mt-1 text-xs text-blue-600">
+                              This will help the AI ask for specific clarifications
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Interactive Question Cards */}
+                      {selectedRequest?.question_responses_snapshot && selectedRequest.question_responses_snapshot.length > 0 && (
+                        <div className="mt-4">
+                          <h4 className="text-xs font-medium text-gray-600 mb-3">Question Responses</h4>
+                          <div className="space-y-2">
+                            {selectedRequest.question_responses_snapshot.map((question: any, index: number) => {
+                              const isSelected = selectedQuestionsForClarification.includes(index)
+                              let responseText = 'No response'
+                              
+                              // Handle text responses
+                              if (question.response_text) {
+                                responseText = question.response_text
+                              }
+                              // Handle checkbox/multiple choice responses
+                              else if (question.selected_options && question.selected_options.length > 0) {
+                                responseText = question.selected_options.map((option: any) => option.option_text || option.text || option).join(', ')
+                              }
+
+                              return (
+                                <div
+                                  key={index}
+                                  className={`p-3 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
+                                    isSelected 
+                                      ? 'border-orange-300 bg-orange-50' 
+                                      : 'border-gray-200 bg-white hover:border-gray-300'
+                                  }`}
+                                  onClick={() => toggleQuestionForClarification(index)}
+                                >
+                                  <div className="flex items-start justify-between">
+                                    <div className="flex-1">
+                                      <div className="text-xs font-medium text-gray-700 mb-1">
+                                        {question.question_text}
+                                      </div>
+                                      <div className="text-sm text-gray-600">
+                                        {responseText}
+                                      </div>
+                                    </div>
+                                    <div className={`ml-2 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                      isSelected 
+                                        ? 'border-orange-500 bg-orange-500' 
+                                        : 'border-gray-300'
+                                    }`}>
+                                      {isSelected && (
+                                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                        </svg>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              )
+                            })}
+                          </div>
+                          {selectedQuestionsForClarification.length > 0 && (
+                            <div className="mt-2 text-xs text-orange-600">
+                              {selectedQuestionsForClarification.length} question(s) selected for clarification
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Manual Questions Textarea */}
+                      <div className="mt-4">
+                        <h4 className="text-xs font-medium text-gray-600 mb-2">Additional Questions</h4>
+                        <textarea
+                          value={manualQuestions}
+                          onChange={(e) => setManualQuestions(e.target.value)}
+                          placeholder="Add any additional questions you'd like the AI to ask the customer..."
+                          className="w-full p-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                          rows={3}
+                        />
+                        {manualQuestions.trim() && (
+                          <div className="mt-1 text-xs text-blue-600">
+                            Custom questions will be integrated into the AI response
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Credit Cost - Column 2 */}
+                    <div className="col-span-3">
+                      <div className="bg-gray-50 rounded-xl p-4">
+                        <h4 className="font-semibold text-gray-900 text-center mb-4">AI Generation Cost</h4>
+                        <div className="space-y-3">
+                          {/* Remaining Credits */}
+                          <div className="text-left">
+                            <div className="text-xs text-gray-500 mb-1">Remaining Credits</div>
+                            <div className="flex items-center gap-2">
+                              <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
+                                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd"/>
+                                </svg>
+                              </div>
+                              <div className="text-lg font-bold text-gray-900">
+                                {creditsLoading ? "..." : creditsStatus?.creditsAvailable ?? 0}
+                              </div>
+                            </div>
+                          </div>
+                          {/* Cost for Generation */}
+                          <div className="text-left">
+                            <div className="text-xs text-gray-500 mb-1">Generation Cost</div>
+                            <div className="flex items-center gap-2">
+                              <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd"/>
+                                </svg>
+                              </div>
+                              <div className="text-lg font-bold text-gray-900">1</div>
+                            </div>
+                          </div>
+                          {/* Expected After Generation */}
+                          <div className="text-left">
+                            <div className="text-xs text-gray-500 mb-1">After Generation</div>
+                            <div className="flex items-center gap-2">
+                              <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd"/>
+                                </svg>
+                              </div>
+                              <div className="text-lg font-bold text-gray-900">
+                                {creditsLoading ? "..." : Math.max(0, (creditsStatus?.creditsAvailable ?? 0) - 1)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Response Generation - Column 3 */}
+                    <div className="col-span-5 bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900 rounded-2xl p-4 relative overflow-hidden">
+                      {/* Animated background elements */}
+                      <div className="absolute inset-0 opacity-10">
+                        <div className="absolute top-0 left-0 w-32 h-32 bg-blue-500 rounded-full blur-3xl animate-pulse"></div>
+                        <div className="absolute bottom-0 right-0 w-24 h-24 bg-purple-500 rounded-full blur-2xl animate-pulse delay-1000"></div>
+                        <div className="absolute top-1/2 left-1/2 w-16 h-16 bg-indigo-500 rounded-full blur-xl animate-pulse delay-500"></div>
+                      </div>
+                      
+                      {isGenerating ? (
+                        <div className="relative z-10 h-64 flex items-center justify-center">
+                          <LoadingAIGeneration size="md" text="Generating response..." />
+                        </div>
+                      ) : generatedResponse ? (
+                        <div className="relative z-10 h-64 flex flex-col">
+                          <div className="flex items-center justify-between mb-3">
+                            <h4 className="font-semibold text-white flex items-center gap-2">
+                              <CheckCircleIcon className="w-4 h-4" />
+                              Generated Response
+                            </h4>
+                            <button
+                              onClick={copyGeneratedResponse}
+                              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 text-xs font-medium shadow-sm hover:shadow-md"
+                            >
+                              Copy
+                            </button>
+                          </div>
+                          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 flex-1 overflow-y-auto border border-white/20">
+                            <div className="text-sm text-white leading-relaxed">
+                              {generatedResponse}
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="relative z-10 h-64 flex items-center justify-center">
+                          <div className="text-center text-gray-300">
+                            <SparklesIcon className="w-8 h-8 mx-auto mb-2 opacity-60" />
+                            <p className="text-sm">Response will appear here</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Debug: Raw Prompt Text */}
+                  <div className="bg-gray-100 rounded-lg p-3 border border-gray-200">
+                    <div className="text-[10px] text-gray-500 mb-1 font-mono">Debug: Raw Prompt Text</div>
+                    <div className="text-[9px] text-gray-600 font-mono leading-tight max-h-32 overflow-y-auto bg-white p-2 rounded border">
+                      {selectedRequest && (() => {
+                        const prompt = `Generate a professional response for the following service request:
+
+**Customer:** ${selectedRequest.customer_name}
+**Service:** ${selectedRequest.service?.service_name || 'Service'}
+**Request Reference:** ${selectedRequest.request_reference}
+
+**Business:** ${selectedRequest.business?.business_name || 'Business'}
+${selectedRequest.business?.business_descr ? `**Business Description:** ${selectedRequest.business.business_descr}` : ''}
+
+**Request Details:**
+
+${selectedRequest.question_responses_snapshot && selectedRequest.question_responses_snapshot.length > 0 ? `**Customer Responses:**
+${selectedRequest.question_responses_snapshot.map((response: any, index: number) => {
+  let responseText = 'No response'
+  
+  // Handle text responses
+  if (response.response_text) {
+    responseText = response.response_text
+  }
+  // Handle checkbox/multiple choice responses
+  else if (response.selected_options && response.selected_options.length > 0) {
+    responseText = response.selected_options.map((option: any) => option.option_text || option.text || option).join(', ')
+  }
+  
+  return `${index + 1}. ${response.question_text}: ${responseText}`
+}).join('\n')}` : ''}
+
+${selectedRequest.requirement_responses_snapshot && selectedRequest.requirement_responses_snapshot.length > 0 ? `**Requirements:**
+${selectedRequest.requirement_responses_snapshot.map((req: any, index: number) => `${index + 1}. ${req.requirements_text} (Status: ${req.customer_confirmed ? 'Confirmed' : 'Pending'})`).join('\n')}` : ''}
+
+${selectedRequest.serviceevent ? `**Event Information:**
+Event Name: ${selectedRequest.serviceevent.event_name || 'N/A'}
+${selectedRequest.serviceevent.event_description ? `Event Description: ${selectedRequest.serviceevent.event_description}` : ''}` : ''}
+
+${selectedRequest.request_datetimes && selectedRequest.request_datetimes.length > 0 ? `**Scheduling Dates Selected:**
+${selectedRequest.request_datetimes.map((date: string, index: number) => `${index + 1}. ${date}`).join('\n')}` : ''}
+
+${selectedRequest.customer_notes ? `**Customer Notes:**
+${selectedRequest.customer_notes}` : ''}
+
+${(selectedQuestionsForClarification.length > 0 || manualQuestions.trim() || customerNotesClarification.trim()) ? `**CLARIFICATION REQUESTS:**
+${customerNotesClarification.trim() ? `**Customer Notes Clarification Needed:**
+${customerNotesClarification.trim()}
+
+Please address these specific concerns about the customer notes and ask for clarification where needed in Italian.` : ''}${selectedQuestionsForClarification.length > 0 ? `${customerNotesClarification.trim() ? '\n\n' : ''}The following question responses need clarification or additional information:
+${selectedQuestionsForClarification.map((index: number) => {
+  const question = selectedRequest.question_responses_snapshot[index]
+  if (question) {
+    let responseText = 'No response'
+    if (question.response_text) {
+      responseText = question.response_text
+    } else if (question.selected_options && question.selected_options.length > 0) {
+      responseText = question.selected_options.map((option: any) => option.option_text || option.text || option).join(', ')
+    }
+    return `- "${question.question_text}": ${responseText}`
+  }
+  return ''
+}).filter(Boolean).join('\n')}
+
+Please ask for more specific details or clarification for these responses in Italian.` : ''}${manualQuestions.trim() ? `${selectedQuestionsForClarification.length > 0 ? '\n\n' : ''}**Additional Questions to Ask:**
+${manualQuestions.trim()}
+
+Please integrate these questions naturally into your response in Italian.` : ''}` : ''}
+
+Please generate a professional, helpful response in Italian that:
+1. Acknowledges the customer's request
+2. Shows understanding of their needs
+3. Provides next steps or solutions
+4. Maintains a professional and empathetic tone
+5. Is concise but comprehensive
+
+**IMPORTANT:** If any of the following information is missing, unclear, or incomplete, please request clarification from the customer:
+- Customer notes that are unclear or incomplete
+- Question responses that don't provide sufficient detail
+- Requirements that are not confirmed or are vague
+- Any other information needed to properly fulfill the service request
+
+The response should be ready to send directly to the customer in Italian. If any information is missing or unclear, politely request clarification for that specific information in Italian.`
+                        return prompt
+                      })()}
+                    </div>
+                  </div>
+
+                  {/* Warning if low credits */}
+                  {creditsStatus && creditsStatus.creditsAvailable <= 2 && (
+                    <div className="bg-yellow-50 rounded-xl p-4 text-center">
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center">
+                          <span className="text-yellow-800 text-xs font-bold">!</span>
+                        </div>
+                        <p className="text-sm text-yellow-800">
+                          Low AI generation credits remaining. Consider upgrading your plan.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Error Display */}
+                  {generationError && (
+                    <div className="bg-red-50 rounded-xl p-4 text-center">
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className="w-4 h-4 bg-red-400 rounded-full flex items-center justify-center">
+                          <span className="text-red-800 text-xs font-bold">!</span>
+                        </div>
+                        <p className="text-sm text-red-800">
+                          {generationError}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                </div>
+
+                {/* Footer */}
+                <div className="flex flex-col space-y-2 pt-6">
+                  {!generatedResponse && !isGenerating && (
+                    <button
+                      onClick={handleConfirmAIGeneration}
+                      disabled={(creditsStatus?.creditsAvailable ?? 0) <= 0}
+                      className="w-full bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 hover:from-purple-700 hover:via-blue-700 hover:to-indigo-700 text-white border-0 h-12 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    >
+                      <div className="flex items-center justify-center space-x-2">
+                        <SparklesIcon className="w-5 h-5" />
+                        <span>Generate Response</span>
+                      </div>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   )

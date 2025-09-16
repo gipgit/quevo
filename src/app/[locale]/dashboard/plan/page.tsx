@@ -35,7 +35,7 @@ export default async function PlanPage() {
     ? businesses.find(b => b.business_id === currentBusinessId) || businesses[0]
     : businesses[0]
 
-  // Fetch user manager details with plan info
+  // Fetch user manager details
   const userManager = await prisma.usermanager.findFirst({
     where: {
       user_id: session.user.id
@@ -44,8 +44,16 @@ export default async function PlanPage() {
       user_id: true,
       name_first: true,
       name_last: true,
-      email: true,
-      plan_id: true,
+      email: true
+    }
+  })
+
+  // Fetch business plan info
+  const businessWithPlan = await prisma.business.findUnique({
+    where: {
+      business_id: currentBusiness.business_id
+    },
+    include: {
       plan: {
         select: {
           plan_id: true,
@@ -77,7 +85,7 @@ export default async function PlanPage() {
   // Fetch plan limits
   const planLimits = await prisma.planlimit.findMany({
     where: {
-      plan_id: userManager?.plan_id || 1 // Default to plan 1 if no user plan
+      plan_id: businessWithPlan?.plan_id || 1 // Default to plan 1 if no business plan
     }
   })
 
@@ -101,7 +109,7 @@ export default async function PlanPage() {
     <PlanWrapper 
       currentBusiness={currentBusiness}
       userManager={userManager}
-      userPlan={userManager?.plan || null}
+      userPlan={businessWithPlan?.plan || null}
       usage={usage}
       planLimits={planLimits}
       allPlans={allPlans}

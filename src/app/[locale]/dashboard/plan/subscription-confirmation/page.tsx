@@ -21,8 +21,8 @@ export default function SubscriptionConfirmationPage() {
         const data = await res.json();
         if (data.subscription?.status) {
           setStatus(data.subscription.status);
-        } else if (data.userManager?.stripe_status) {
-          setStatus(data.userManager.stripe_status);
+        } else if (data.business?.stripe_status) {
+          setStatus(data.business.stripe_status);
         } else {
           setStatus("unknown");
         }

@@ -16,7 +16,7 @@ export interface AIContentGenerationRateLimitResult {
 
 export class AIContentGenerationRateLimiter {
   private static readonly REFILL_INTERVAL_HOURS = 168 // 7 days (1 week)
-  private static readonly UNLIMITED_GENERATION = true // Set to false to enable rate limiting
+  private static readonly UNLIMITED_GENERATION = false // Set to false to enable rate limiting
 
   static async initializeRateLimit(businessId: string, planId: number): Promise<AIContentGenerationRateLimitConfig> {
     // Get plan limits for AI content generation

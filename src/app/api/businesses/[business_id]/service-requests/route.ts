@@ -147,10 +147,13 @@ export async function POST(
     // Sanitize and capitalize customer name
     const sanitizedCustomerName = sanitizeAndCapitalizeName(customerName);
 
-    // Verify business exists and get UserManager info
+    // Verify business exists and get plan info
     const business = await prisma.business.findUnique({
       where: { business_id: business_id },
-      include: { usermanager: true }
+      include: { 
+        plan: true, // Get plan directly from business
+        usermanager: true // Keep for email sending
+      }
     });
 
     if (!business) {
@@ -180,12 +183,12 @@ export async function POST(
     // Note: Time validation can be added here if needed for the simplified datetime format
 
     // ENFORCE PER-MONTH SERVICE REQUEST LIMIT
-    // plan_id is on usermanager, not business
-    const planId = business?.usermanager?.plan_id;
+    // plan_id is now on business directly
+    const planId = business?.plan_id;
     if (!planId) {
       return NextResponse.json({ 
-        error: 'Plan ID not found for business manager.',
-        details: 'The business manager does not have an associated plan. Please contact support.',
+        error: 'Plan ID not found for business.',
+        details: 'The business does not have an associated plan. Please contact support.',
         errorType: 'PLAN_NOT_FOUND'
       }, { status: 500 });
     }
@@ -728,11 +731,7 @@ export async function GET(
         manager_id: session.user.id
       },
       include: {
-        usermanager: {
-          include: {
-            plan: true
-          }
-        }
+        plan: true // Get plan directly from business
       }
     });
 
@@ -854,7 +853,7 @@ export async function GET(
     // Get plan limits for service requests
     const planLimits = await prisma.planlimit.findMany({
       where: {
-        plan_id: business.usermanager.plan_id,
+        plan_id: business.plan_id,
         feature: 'service_requests',
         limit_type: 'count',
         scope: 'per_month',

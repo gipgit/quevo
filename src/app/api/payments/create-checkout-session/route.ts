@@ -6,10 +6,10 @@ import getStripe from '@/lib/stripe'; // Your Stripe utility
 import prisma from '@/lib/prisma'; // Your Prisma client
 
 export async function POST(req: Request) {
-  const { priceId, userId, userEmail } = await req.json();
+  const { priceId, userId, userEmail, businessId } = await req.json();
 
-  if (!priceId || !userId || !userEmail) {
-    return NextResponse.json({ error: 'Missing required fields: priceId, userId, or userEmail' }, { status: 400 });
+  if (!priceId || !userId || !userEmail || !businessId) {
+    return NextResponse.json({ error: 'Missing required fields: priceId, userId, userEmail, or businessId' }, { status: 400 });
   }
 
   try {
@@ -26,13 +26,17 @@ export async function POST(req: Request) {
     // 2. Find or create Stripe Customer
     let customer: Stripe.Customer | undefined;
 
-    const existingUserManager = await prisma.usermanager.findUnique({
-      where: { user_id: userId },
+    const existingBusiness = await prisma.business.findUnique({
+      where: { business_id: businessId },
     });
 
-    if (existingUserManager?.stripe_customer_id) {
+    if (!existingBusiness) {
+      return NextResponse.json({ error: 'Business not found' }, { status: 404 });
+    }
+
+    if (existingBusiness.stripe_customer_id) {
       const stripe = getStripe();
-      const customerResponse = await stripe.customers.retrieve(existingUserManager.stripe_customer_id);
+      const customerResponse = await stripe.customers.retrieve(existingBusiness.stripe_customer_id);
       if ((customerResponse as Stripe.DeletedCustomer).deleted) {
         throw new Error('Stripe customer has been deleted.');
       }
@@ -48,16 +52,17 @@ export async function POST(req: Request) {
         email: userEmail,
         metadata: {
           userId: userId, // Link to your internal user_id from UserManager
+          businessId: businessId, // Link to your internal business_id
         },
       });
-      // Store the new customer ID in your UserManager table
-      await prisma.usermanager.update({
-        where: { user_id: userId },
+      // Store the new customer ID in your Business table
+      await prisma.business.update({
+        where: { business_id: businessId },
         data: {
           stripe_customer_id: customer.id,
         },
       });
-      console.log(`New Stripe customer created for UserManager ${userId}.`);
+      console.log(`New Stripe customer created for Business ${businessId}.`);
     }
 
     if (!customer) {
@@ -79,6 +84,7 @@ export async function POST(req: Request) {
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/plan/subscription-cancelled`,
       metadata: {
         userId: userId, // Pass your internal user_id to the webhook
+        businessId: businessId, // Pass the business_id to the webhook
         planId: plan.plan_id.toString(), // Pass the internal plan ID to the webhook for easier lookup
       },
       subscription_data: {

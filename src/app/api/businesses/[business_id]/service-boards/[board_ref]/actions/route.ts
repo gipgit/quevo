@@ -189,24 +189,19 @@ export async function POST(
     if (!serviceBoard) {
       return NextResponse.json({ error: 'Service board not found' }, { status: 404 });
     }
-    // Fetch business to get manager_id
+    // Fetch business to get plan_id directly
     const business = await prisma.business.findUnique({
       where: { business_id },
-      select: { manager_id: true },
+      select: { plan_id: true },
     });
     if (!business) {
       return NextResponse.json({ error: 'Business not found' }, { status: 404 });
     }
-    // Fetch UserManager to get plan_id
-    const userManager = await prisma.usermanager.findUnique({
-      where: { user_id: business.manager_id },
-      select: { plan_id: true },
-    });
-    if (!userManager) {
-      return NextResponse.json({ error: 'Manager not found' }, { status: 404 });
+    if (!business.plan_id) {
+      return NextResponse.json({ error: 'Business has no plan assigned' }, { status: 404 });
     }
     // Get plan limits for actions per board
-    const planLimits = await getPlanLimits(userManager.plan_id);
+    const planLimits = await getPlanLimits(business.plan_id);
     const planLimitActions = planLimits.find(l => l.feature === 'actions' && l.limit_type === 'count' && l.scope === 'per_board');
     if (!planLimitActions) {
       return NextResponse.json({ error: 'Action per board plan limit not found' }, { status: 403 });

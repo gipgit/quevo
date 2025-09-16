@@ -7,6 +7,314 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model usercustomer {
+  user_id                 String                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name_first              String?                     @db.VarChar(50)
+  name_last               String?                     @db.VarChar(50)
+  email                   String                      @unique @db.VarChar(255)
+  phone                   String?                     @unique @db.VarChar(20)
+  date_created            DateTime?                   @default(now()) @db.Timestamp(6)
+  active                  user_customer_active_status @default(inactive)
+  birth_date              DateTime?                   @db.Date
+  birth_country           String?                     @db.VarChar(50)
+  gender                  user_gender_type?
+  residence_country       String?                     @db.VarChar(50)
+  residence_region        String?                     @db.VarChar(50)
+  residence_city          String?                     @db.VarChar(50)
+  password                String?                     @db.VarChar(255)
+  token_activation        String?                     @unique @db.VarChar(255)
+  user_public_uuid        String?                     @unique @db.VarChar(36)
+  updated_at              DateTime                    @default(now()) @db.Timestamptz(6)
+  appointment             appointment[]
+  customercard            customercard[]
+  serviceboard            serviceboard[]
+  serviceboardaction      serviceboardaction[]
+  servicerequest          servicerequest[]
+  servicesupportrequest   servicesupportrequest[]
+  surveyanswer            surveyanswer[]
+  userchallengecompletion userchallengecompletion[]
+  usercustomerredemption  usercustomerredemption[]
+}
+
+model usermanager {
+  user_id                                                      String                           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name_first                                                   String                           @db.VarChar(50)
+  name_last                                                    String                           @db.VarChar(50)
+  email                                                        String                           @unique @db.VarChar(255)
+  date_created                                                 DateTime?                        @default(now()) @db.Timestamp(6)
+  active                                                       user_customer_active_status      @default(inactive)
+  verification_status                                          user_manager_verification_status @default(waiting)
+  birth_date                                                   DateTime?                        @db.Date
+  birth_country                                                String?                          @db.VarChar(50)
+  gender                                                       user_gender_type?
+  residence_country                                            String?                          @db.VarChar(50)
+  residence_region                                             String?                          @db.VarChar(50)
+  residence_city                                               String?                          @db.VarChar(50)
+  residence_address                                            String?                          @db.VarChar(80)
+  tel                                                          String?                          @db.VarChar(20)
+  password                                                     String                           @db.VarChar(255)
+  token_activation                                             String?                          @unique @db.VarChar(255)
+  updated_at                                                   DateTime                         @default(now()) @db.Timestamptz(6)
+  appsupportrequest_appsupportrequest_assigned_toTousermanager appsupportrequest[]              @relation("appsupportrequest_assigned_toTousermanager")
+  appsupportrequest_appsupportrequest_manager_idTousermanager  appsupportrequest[]              @relation("appsupportrequest_manager_idTousermanager")
+  appsupportresponse                                           appsupportresponse[]
+  business                                                     business[]
+  servicesupportrequest                                        servicesupportrequest[]
+  usercustomerredemption                                       usercustomerredemption[]
+  userguestredemption                                          userguestredemption[]
+}
+
+model plan {
+  plan_id                         Int         @id
+  plan_name                       String      @unique @db.VarChar(50)
+  display_price                   String      @db.VarChar(50)
+  display_frequency               String?     @db.VarChar(20)
+  plan_description                String?
+  stripe_price_id                 String      @unique @db.VarChar(255)
+  stripe_product_id               String      @unique @db.VarChar(255)
+  plan_features                   String[]    @default([])
+  ai_credits_rollover_max_percent Decimal?    @default(1.0) @db.Decimal(5, 2)
+  is_unlimited_ai                 Boolean?    @default(false)
+  created_at                      DateTime?   @default(now()) @db.Timestamptz(6)
+  updated_at                      DateTime?   @default(now()) @db.Timestamptz(6)
+  business                        business[]
+  planlimit                       planlimit[]
+}
+
+model planlimit {
+  id         Int      @id @default(autoincrement())
+  plan_id    Int?
+  feature    String   @db.VarChar(64)
+  limit_type String   @db.VarChar(32)
+  scope      String   @db.VarChar(32)
+  value      Int?
+  enabled    Boolean?
+  notes      String?
+  plan       plan?    @relation(fields: [plan_id], references: [plan_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([plan_id, feature])
+}
+
+model usagecounter {
+  id          Int       @id @default(autoincrement())
+  business_id String    @db.Uuid
+  feature     String    @db.VarChar(64)
+  usage_count Int       @default(0)
+  updated_at  DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@unique([business_id, feature])
+  @@index([business_id, feature], map: "idx_usagecounter_business_feature")
+}
+
+model usagecountermonthly {
+  id          Int       @id @default(autoincrement())
+  business_id String    @db.Uuid
+  feature     String    @db.VarChar(64)
+  year        Int
+  month       Int
+  usage_count Int       @default(0)
+  updated_at  DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@unique([business_id, feature, year, month])
+  @@index([business_id, feature, year, month], map: "idx_usagecountermonthly_business_feature_month")
+}
+
+model quotation {
+  id               Int       @id @default(autoincrement())
+  business_id      String    @db.Uuid
+  request_id       String    @db.Uuid
+  quotation_number String    @unique @db.VarChar(50)
+  quotation_data   Json
+  status           String?   @default("draft") @db.VarChar(50)
+  sent_at          DateTime? @db.Timestamptz(6)
+  expires_at       DateTime? @db.Timestamptz(6)
+  created_at       DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@index([status], map: "idx_quotation_status")
+  @@index([business_id], map: "idx_quotation_business")
+  @@index([request_id], map: "idx_quotation_request")
+}
+
+model aiassistantmessagehistory {
+  message_id        BigInt   @id @default(autoincrement())
+  business_id       String   @db.Uuid
+  session_id        String?  @db.VarChar(255)
+  user_message      String
+  ai_response       String?
+  message_type      String?  @default("conversation") @db.VarChar(50)
+  request_type      String?  @default("openai") @db.VarChar(50)
+  input_tokens      Int?
+  output_tokens     Int?
+  cost_usd          Decimal? @db.Decimal(10, 6)
+  response_time_ms  Int?
+  success           Boolean? @default(true)
+  error_message     String?
+  user_ip           String?  @db.VarChar(45)
+  user_agent        String?
+  validation_passed Boolean? @default(true)
+  validation_errors String?
+  rate_limited      Boolean? @default(false)
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+  business          business @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+
+  @@index([business_id], map: "idx_ai_message_history_business_id")
+  @@index([created_at], map: "idx_ai_message_history_created_at")
+  @@index([message_type], map: "idx_ai_message_history_message_type")
+  @@index([request_type], map: "idx_ai_message_history_request_type")
+  @@index([session_id], map: "idx_ai_message_history_session_id")
+  @@index([success], map: "idx_ai_message_history_success")
+  @@index([validation_passed], map: "idx_ai_message_history_validation_passed")
+}
+
+model aicontentgenerationratelimit {
+  id                    Int      @id @default(autoincrement())
+  business_id           String   @unique @db.Uuid
+  generations_available Int      @default(0)
+  fill_rate             Int      @default(1)
+  last_refill           DateTime @default(now()) @db.Timestamptz(6)
+  created_at            DateTime @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime @default(now()) @db.Timestamptz(6)
+  business              business @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([business_id], map: "idx_aicontentgenerationratelimit_business")
+}
+
+model aicreditbalance {
+  business_id          String    @id @db.Uuid
+  credits_available    Int       @default(0)
+  credits_period_start DateTime? @db.Timestamptz(6)
+  credits_period_end   DateTime? @db.Timestamptz(6)
+  last_credit_update   DateTime  @default(now()) @db.Timestamptz(6)
+  business             business  @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([business_id], map: "idx_ai_credit_balance_business_id")
+}
+
+model aicredittransaction {
+  transaction_id   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  business_id      String   @db.Uuid
+  transaction_type String   @db.VarChar(50)
+  amount           Int
+  description      String?
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  business         business @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([business_id], map: "idx_ai_credit_transaction_business_id")
+  @@index([created_at], map: "idx_ai_credit_transaction_created_at")
+  @@index([transaction_type], map: "idx_ai_credit_transaction_type")
+}
+
+model aigenerationemail {
+  id                            Int      @id @default(autoincrement())
+  business_id                   String   @db.Uuid
+  generation_date               DateTime @default(now()) @db.Timestamptz(6)
+  past_customers_subject        String?
+  past_customers_body           String?
+  uncommitted_customers_subject String?
+  uncommitted_customers_body    String?
+  services_text                 String?
+  past_customers_text           String?
+  uncommitted_customers_text    String?
+  created_at                    DateTime @default(now()) @db.Timestamptz(6)
+  business                      business @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([business_id], map: "idx_aigenerationemail_business")
+  @@index([generation_date], map: "idx_aigenerationemail_date")
+}
+
+model appointment {
+  id                    String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  business_id           String              @db.Uuid
+  service_board_id      String              @db.Uuid
+  customer_id           String              @db.Uuid
+  appointment_datetime  DateTime            @db.Timestamptz(6)
+  appointment_type      String              @db.VarChar(50)
+  appointment_location  String              @db.VarChar(255)
+  appointment_title     String?             @db.VarChar(255)
+  platform_name         String?             @db.VarChar(50)
+  platform_link         String?             @db.VarChar(255)
+  status                String              @default("scheduled") @db.VarChar(50)
+  notes                 String?
+  duration_minutes      Int?                @default(60)
+  originating_action_id String?             @db.Uuid
+  created_at            DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime            @default(now()) @db.Timestamptz(6)
+  business              business            @relation(fields: [business_id], references: [business_id], onUpdate: NoAction, map: "fk_appointment_business")
+  serviceboardaction    serviceboardaction? @relation(fields: [originating_action_id], references: [action_id], onUpdate: NoAction, map: "fk_appointment_originating_action")
+  serviceboard          serviceboard        @relation(fields: [service_board_id], references: [board_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_appointment_service_board")
+  usercustomer          usercustomer        @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_appointment_user_customer")
+}
+
+model appstatusupdates {
+  update_id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title               String   @db.VarChar(255)
+  status              String   @db.VarChar(50)
+  category            String   @db.VarChar(50)
+  description         String?
+  created_at          DateTime @default(now()) @db.Timestamptz(6)
+  last_updated        DateTime @default(now()) @db.Timestamptz(6)
+  tags                String[] @default([])
+  affected_components Json?
+  release_version     String?  @db.VarChar(50)
+  is_public           Boolean  @default(true)
+  priority            Int?     @db.SmallInt
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model appsupportrequest {
+  support_request_id                                     String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  business_id                                            String                @db.Uuid
+  manager_id                                             String                @db.Uuid
+  message                                                String
+  priority                                               app_support_priority? @default(medium)
+  category                                               app_support_category  @default(general)
+  status                                                 app_support_status    @default(open)
+  assigned_to                                            String?               @db.Uuid
+  resolution_notes                                       String?
+  created_at                                             DateTime?             @default(now()) @db.Timestamptz(6)
+  updated_at                                             DateTime?             @default(now()) @db.Timestamptz(6)
+  usermanager_appsupportrequest_assigned_toTousermanager usermanager?          @relation("appsupportrequest_assigned_toTousermanager", fields: [assigned_to], references: [user_id], onUpdate: NoAction, map: "fk_asr_assigned_to")
+  business                                               business              @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_asr_business")
+  usermanager_appsupportrequest_manager_idTousermanager  usermanager           @relation("appsupportrequest_manager_idTousermanager", fields: [manager_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_asr_manager")
+  appsupportresponse                                     appsupportresponse[]
+
+  @@index([business_id], map: "idx_appsupportrequest_business_id")
+  @@index([business_id, status], map: "idx_appsupportrequest_business_status")
+  @@index([category], map: "idx_appsupportrequest_category")
+  @@index([created_at], map: "idx_appsupportrequest_created_at")
+  @@index([manager_id], map: "idx_appsupportrequest_manager_id")
+  @@index([priority], map: "idx_appsupportrequest_priority")
+  @@index([status], map: "idx_appsupportrequest_status")
+}
+
+model appsupportresponse {
+  response_id        String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  support_request_id String            @db.Uuid
+  user_id            String            @db.Uuid
+  message            String
+  created_at         DateTime?         @default(now()) @db.Timestamptz(6)
+  appsupportrequest  appsupportrequest @relation(fields: [support_request_id], references: [support_request_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_asr_request")
+  usermanager        usermanager       @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_asr_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model attachments {
+  id                    BigInt                 @id @default(autoincrement())
+  file_path             String                 @db.VarChar(255)
+  file_name             String?                @db.VarChar(255)
+  support_request_id    String?                @db.Uuid
+  user_id               String?                @db.Uuid
+  created_at            DateTime               @default(now()) @db.Timestamptz(6)
+  feedback_id           BigInt?
+  feedback              feedback?              @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  servicesupportrequest servicesupportrequest? @relation(fields: [support_request_id], references: [support_request_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_attachments_support_request_id")
+
+  @@index([feedback_id], map: "idx_attachments_feedback_id")
+  @@index([support_request_id], map: "idx_attachments_support_request_id")
+  @@index([user_id], map: "idx_attachments_user_id")
+}
+
 model business {
   business_id                    String                           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   manager_id                     String                           @db.Uuid
@@ -33,12 +341,29 @@ model business {
   business_public_uuid           String?                          @unique @db.VarChar(36)
   business_img_profile           String?                          @db.VarChar(255)
   business_img_cover             String?                          @db.VarChar(255)
+  plan_id                        Int                              @default(1)
+  stripe_customer_id             String?                          @unique @db.VarChar(255)
+  stripe_subscription_id         String?                          @unique @db.VarChar(255)
+  stripe_price_id                String?                          @db.VarChar(255)
+  stripe_current_period_start    DateTime?                        @db.Timestamp(6)
+  stripe_current_period_end      DateTime?                        @db.Timestamp(6)
+  stripe_payment_method_id       String?                          @db.VarChar(255)
+  stripe_payment_method_brand    String?                          @db.VarChar(50)
+  stripe_payment_method_last4    String?                          @db.VarChar(10)
+  stripe_next_invoice_date       DateTime?                        @db.Timestamp(6)
+  stripe_cancel_at_period_end    Boolean?
+  stripe_canceled_at             DateTime?                        @db.Timestamp(6)
+  stripe_status                  String?                          @db.VarChar(50)
+  subscription_status            String?                          @db.VarChar(50)
   aiassistantmessagehistory      aiassistantmessagehistory[]
   aicontentgenerationratelimit   aicontentgenerationratelimit?
+  aicreditbalance                aicreditbalance?
+  aicredittransaction            aicredittransaction[]
   aigenerationemail              aigenerationemail[]
   appointment                    appointment[]
   appsupportrequest              appsupportrequest[]
   usermanager                    usermanager                      @relation(fields: [manager_id], references: [user_id], onDelete: Cascade)
+  plan                           plan                             @relation(fields: [plan_id], references: [plan_id])
   businessad                     businessad[]
   businesscategory               businesscategory[]
   businesslink                   businesslink[]
@@ -212,800 +537,6 @@ model customercard {
   usercustomer       usercustomer         @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 }
 
-model paymentmethod {
-  payment_method_id     Int                     @id @default(autoincrement())
-  method_name           String                  @unique @db.VarChar(50)
-  businesspaymentmethod businesspaymentmethod[]
-}
-
-model promo {
-  promo_id               String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  business_id            String                   @db.Uuid
-  promo_title            String                   @db.VarChar(50)
-  promo_text_full        String                   @db.VarChar(100)
-  promo_conditions       String?                  @db.VarChar(255)
-  date_start             DateTime?                @db.Date
-  date_end               DateTime?                @db.Date
-  date_created           DateTime?                @default(now()) @db.Timestamp(6)
-  date_update            DateTime?                @default(now()) @db.Timestamp(6)
-  promo_nickname         String                   @db.VarChar(30)
-  locked                 Boolean                  @default(false)
-  cardscanauthorized     cardscanauthorized[]
-  business               business                 @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
-  promochallenge         promochallenge[]
-  usercustomerredemption usercustomerredemption[]
-  userguest              userguest[]
-  userguestredemption    userguestredemption[]
-}
-
-model promochallenge {
-  challenge_id                 Int                            @id @default(autoincrement())
-  promo_id                     String                         @db.Uuid
-  challenge_type               promo_challenge_type
-  title                        String                         @db.VarChar(255)
-  description                  String?
-  challenge_order              Int
-  challenge_data               Json?
-  is_active                    Boolean?                       @default(true)
-  date_created                 DateTime?                      @default(now()) @db.Timestamp(6)
-  date_updated                 DateTime?                      @default(now()) @db.Timestamp(6)
-  promo                        promo                          @relation(fields: [promo_id], references: [promo_id], onDelete: Cascade, onUpdate: NoAction)
-  surveydefinition             surveydefinition?
-  userchallengecompletion      userchallengecompletion[]
-  userguestchallengecompletion userguestchallengecompletion[]
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model surveyanswer {
-  answer_id            Int                         @id @default(autoincrement())
-  survey_definition_id Int
-  question_id          Int
-  question_type        survey_answer_question_type
-  user_id              String?                     @db.Uuid
-  guest_id             String?                     @db.VarChar(128)
-  answer_text          String?
-  answered_at          DateTime?                   @default(now()) @db.Timestamp(6)
-  userguest            userguest?                  @relation(fields: [guest_id], references: [guest_id], onDelete: Cascade, onUpdate: NoAction)
-  surveydefinition     surveydefinition            @relation(fields: [survey_definition_id], references: [survey_definition_id], onDelete: Cascade, onUpdate: NoAction)
-  usercustomer         usercustomer?               @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([survey_definition_id, question_id, question_type], map: "idx_answer_survey_question")
-  @@index([user_id, guest_id], map: "idx_answer_user_guest")
-}
-
-model surveydefinition {
-  survey_definition_id     Int                        @id @default(autoincrement())
-  promo_challenge_id       Int                        @unique
-  is_active                Boolean?                   @default(true)
-  date_created             DateTime?                  @default(now()) @db.Timestamp(6)
-  surveyanswer             surveyanswer[]
-  promochallenge           promochallenge             @relation(fields: [promo_challenge_id], references: [challenge_id], onDelete: Cascade, onUpdate: NoAction)
-  surveydefinitionquestion surveydefinitionquestion[]
-}
-
-model surveydefinitionquestion {
-  survey_definition_question_id Int                         @id @default(autoincrement())
-  survey_definition_id          Int
-  question_id                   Int
-  question_source               survey_question_source_type
-  question_order                Int
-  surveydefinition              surveydefinition            @relation(fields: [survey_definition_id], references: [survey_definition_id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@unique([survey_definition_id, question_id, question_source])
-}
-
-model surveyquestionbusiness {
-  question_id     Int                         @id @default(autoincrement())
-  business_id     String                      @db.Uuid
-  question_text   String
-  question_format survey_question_format_type
-  options_data    Json?
-  is_active       Boolean?                    @default(true)
-  date_created    DateTime?                   @default(now()) @db.Timestamp(6)
-  date_updated    DateTime?                   @default(now()) @db.Timestamp(6)
-}
-
-model surveyquestionprebuilt {
-  question_prebuilt_id           Int                              @id @default(autoincrement())
-  question_text                  String
-  question_format                survey_question_format_type
-  options_data                   Json?
-  is_active                      Boolean?                         @default(true)
-  date_created                   DateTime?                        @default(now()) @db.Timestamp(6)
-  date_updated                   DateTime?                        @default(now()) @db.Timestamp(6)
-  surveyquestionprebuiltfavorite surveyquestionprebuiltfavorite[]
-}
-
-model surveyquestionprebuiltfavorite {
-  business_id            String                 @db.Uuid
-  question_prebuilt_id   Int
-  date_favorited         DateTime?              @default(now()) @db.Timestamp(6)
-  business               business               @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
-  surveyquestionprebuilt surveyquestionprebuilt @relation(fields: [question_prebuilt_id], references: [question_prebuilt_id], onDelete: Cascade)
-
-  @@id([business_id, question_prebuilt_id])
-}
-
-model userchallengecompletion {
-  user_challenge_completion_id Int            @id @default(autoincrement())
-  user_id                      String         @db.Uuid
-  challenge_id                 Int
-  completion_date              DateTime?      @default(now()) @db.Timestamp(6)
-  promochallenge               promochallenge @relation(fields: [challenge_id], references: [challenge_id], onDelete: Cascade, onUpdate: NoAction)
-  usercustomer                 usercustomer   @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@unique([user_id, challenge_id])
-}
-
-model usercustomer {
-  user_id                 String                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name_first              String?                     @db.VarChar(50)
-  name_last               String?                     @db.VarChar(50)
-  email                   String                      @unique @db.VarChar(255)
-  phone                   String?                     @unique @db.VarChar(20)
-  date_created            DateTime?                   @default(now()) @db.Timestamp(6)
-  active                  user_customer_active_status @default(inactive)
-  birth_date              DateTime?                   @db.Date
-  birth_country           String?                     @db.VarChar(50)
-  gender                  user_gender_type?
-  residence_country       String?                     @db.VarChar(50)
-  residence_region        String?                     @db.VarChar(50)
-  residence_city          String?                     @db.VarChar(50)
-  password                String?                     @db.VarChar(255)
-  token_activation        String?                     @unique @db.VarChar(255)
-  user_public_uuid        String?                     @unique @db.VarChar(36)
-  updated_at              DateTime                    @default(now()) @db.Timestamptz(6)
-  appointment             appointment[]
-  customercard            customercard[]
-  serviceboard            serviceboard[]
-  serviceboardaction      serviceboardaction[]
-  servicerequest          servicerequest[]
-  servicesupportrequest   servicesupportrequest[]
-  surveyanswer            surveyanswer[]
-  userchallengecompletion userchallengecompletion[]
-  usercustomerredemption  usercustomerredemption[]
-}
-
-model usercustomerredemption {
-  redemption_id          Int          @id @default(autoincrement())
-  redemption_token       String       @unique @db.VarChar(36)
-  user_id                String       @db.Uuid
-  promo_id               String       @db.Uuid
-  qr_content_data        String?
-  date_issued            DateTime?    @default(now()) @db.Timestamp(6)
-  date_expires           DateTime?    @db.Timestamp(6)
-  is_redeemed            Boolean?     @default(false)
-  date_redeemed          DateTime?    @db.Timestamp(6)
-  redeemed_by_manager_id String?      @db.Uuid
-  promo                  promo        @relation(fields: [promo_id], references: [promo_id], onDelete: NoAction, onUpdate: NoAction)
-  usermanager            usermanager? @relation(fields: [redeemed_by_manager_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
-  usercustomer           usercustomer @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model userguest {
-  guest_id                     String                         @id @db.VarChar(128)
-  session_id                   String?                        @unique @db.VarChar(255)
-  date_created                 DateTime?                      @default(now()) @db.Timestamp(6)
-  last_active                  DateTime?                      @default(now()) @db.Timestamp(6)
-  email                        String?                        @db.VarChar(255)
-  promo_unlocked_promo_id      String?                        @db.Uuid
-  surveyanswer                 surveyanswer[]
-  promo                        promo?                         @relation(fields: [promo_unlocked_promo_id], references: [promo_id], onDelete: NoAction, onUpdate: NoAction)
-  userguestchallengecompletion userguestchallengecompletion[]
-  userguestredemption          userguestredemption[]
-}
-
-model userguestchallengecompletion {
-  guest_challenge_completion_id Int            @id @default(autoincrement())
-  guest_id                      String         @db.VarChar(128)
-  challenge_id                  Int
-  completion_date               DateTime?      @default(now()) @db.Timestamp(6)
-  data_submitted                String?
-  promochallenge                promochallenge @relation(fields: [challenge_id], references: [challenge_id], onDelete: NoAction, onUpdate: NoAction)
-  userguest                     userguest      @relation(fields: [guest_id], references: [guest_id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@unique([guest_id, challenge_id])
-}
-
-model userguestredemption {
-  redemption_id          Int          @id @default(autoincrement())
-  redemption_token       String       @unique @db.VarChar(36)
-  email                  String?      @db.VarChar(255)
-  guest_id               String       @db.VarChar(128)
-  promo_id               String       @db.Uuid
-  qr_content_data        String?
-  date_issued            DateTime?    @default(now()) @db.Timestamp(6)
-  date_expires           DateTime?    @db.Timestamp(6)
-  is_redeemed            Boolean?     @default(false)
-  date_redeemed          DateTime?    @db.Timestamp(6)
-  redeemed_by_manager_id String?      @db.Uuid
-  userguest              userguest    @relation(fields: [guest_id], references: [guest_id], onDelete: NoAction, onUpdate: NoAction)
-  promo                  promo        @relation(fields: [promo_id], references: [promo_id], onDelete: NoAction, onUpdate: NoAction)
-  usermanager            usermanager? @relation(fields: [redeemed_by_manager_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model usermanager {
-  user_id                                                      String                           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name_first                                                   String                           @db.VarChar(50)
-  name_last                                                    String                           @db.VarChar(50)
-  email                                                        String                           @unique @db.VarChar(255)
-  date_created                                                 DateTime?                        @default(now()) @db.Timestamp(6)
-  active                                                       user_customer_active_status      @default(inactive)
-  verification_status                                          user_manager_verification_status @default(waiting)
-  plan_id                                                      Int                              @default(1)
-  stripe_customer_id                                           String?                          @unique @db.VarChar(255)
-  stripe_subscription_id                                       String?                          @unique @db.VarChar(255)
-  stripe_price_id                                              String?                          @db.VarChar(255)
-  stripe_current_period_start                                  DateTime?                        @db.Timestamp(6)
-  stripe_current_period_end                                    DateTime?                        @db.Timestamp(6)
-  stripe_payment_method_id                                     String?                          @db.VarChar(255)
-  stripe_payment_method_brand                                  String?                          @db.VarChar(50)
-  stripe_payment_method_last4                                  String?                          @db.VarChar(10)
-  stripe_next_invoice_date                                     DateTime?                        @db.Timestamp(6)
-  stripe_cancel_at_period_end                                  Boolean?
-  stripe_canceled_at                                           DateTime?                        @db.Timestamp(6)
-  stripe_status                                                String?                          @db.VarChar(50)
-  subscription_status                                          String?                          @db.VarChar(50)
-  birth_date                                                   DateTime?                        @db.Date
-  birth_country                                                String?                          @db.VarChar(50)
-  gender                                                       user_gender_type?
-  residence_country                                            String?                          @db.VarChar(50)
-  residence_region                                             String?                          @db.VarChar(50)
-  residence_city                                               String?                          @db.VarChar(50)
-  residence_address                                            String?                          @db.VarChar(80)
-  tel                                                          String?                          @db.VarChar(20)
-  password                                                     String                           @db.VarChar(255)
-  token_activation                                             String?                          @unique @db.VarChar(255)
-  updated_at                                                   DateTime                         @default(now()) @db.Timestamptz(6)
-  appsupportrequest_appsupportrequest_assigned_toTousermanager appsupportrequest[]              @relation("appsupportrequest_assigned_toTousermanager")
-  appsupportrequest_appsupportrequest_manager_idTousermanager  appsupportrequest[]              @relation("appsupportrequest_manager_idTousermanager")
-  business                                                     business[]
-  servicesupportrequest                                        servicesupportrequest[]
-  usercustomerredemption                                       usercustomerredemption[]
-  userguestredemption                                          userguestredemption[]
-  plan                                                         plan                             @relation(fields: [plan_id], references: [plan_id], onUpdate: NoAction)
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model servicequestion {
-  question_id           Int                     @id @default(autoincrement())
-  service_id            String                  @db.Uuid
-  question_text         String                  @db.VarChar(500)
-  question_type         String                  @db.VarChar(50)
-  question_options      Json?
-  max_length            Int?
-  is_required           Boolean?                @default(false)
-  display_order         Int?                    @default(0)
-  is_active             Boolean?                @default(true)
-  date_created          DateTime?               @default(now()) @db.Timestamp(6)
-  date_updated          DateTime?               @default(now()) @db.Timestamp(6)
-  bookingservice        service                 @relation(fields: [service_id], references: [service_id], onDelete: Cascade)
-  servicequestionoption servicequestionoption[]
-}
-
-model servicequestionoption {
-  option_id       Int             @id @default(autoincrement())
-  question_id     Int
-  option_text     String          @db.VarChar(255)
-  display_order   Int?            @default(0)
-  is_active       Boolean?        @default(true)
-  date_created    DateTime?       @default(now()) @db.Timestamp(6)
-  date_updated    DateTime?       @default(now()) @db.Timestamp(6)
-  servicequestion servicequestion @relation(fields: [question_id], references: [question_id], onDelete: Cascade)
-}
-
-model servicerequirementblock {
-  requirement_block_id Int       @id @default(autoincrement())
-  service_id           String    @db.Uuid
-  title                String?   @db.VarChar(255)
-  requirements_text    String
-  is_active            Boolean?  @default(true)
-  is_required          Boolean?  @default(false)
-  date_created         DateTime? @default(now()) @db.Timestamp(6)
-  date_updated         DateTime? @default(now()) @db.Timestamp(6)
-  bookingservice       service   @relation(fields: [service_id], references: [service_id], onDelete: Cascade)
-}
-
-model plan {
-  plan_id           Int           @id
-  plan_name         String        @unique @db.VarChar(50)
-  display_price     String        @db.VarChar(50)
-  display_frequency String?       @db.VarChar(20)
-  plan_description  String?
-  stripe_price_id   String        @unique @db.VarChar(255)
-  stripe_product_id String        @unique @db.VarChar(255)
-  plan_features     String[]      @default([])
-  created_at        DateTime?     @default(now()) @db.Timestamptz(6)
-  updated_at        DateTime?     @default(now()) @db.Timestamptz(6)
-  planlimit         planlimit[]
-  usermanager       usermanager[]
-}
-
-model product {
-  item_id          String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  business_id      String             @db.Uuid
-  category_id      Int?
-  item_name        String             @db.VarChar(100)
-  display_order    Int?               @default(0)
-  item_notes       String?            @db.VarChar(100)
-  item_description String?            @db.VarChar(200)
-  price            Decimal            @db.Decimal(10, 2)
-  price_type       String?            @default("fixed") @db.VarChar(50)
-  price_unit       String?            @db.VarChar(255)
-  is_available     Boolean?           @default(true)
-  image_available  Boolean?           @default(false)
-  image_url        String?            @db.VarChar(155)
-  date_created     DateTime?          @default(now()) @db.Timestamp(6)
-  date_update      DateTime?          @default(now()) @db.Timestamp(6)
-  business         business           @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
-  productcategory  productcategory?   @relation(fields: [category_id], references: [category_id])
-  productvariation productvariation[]
-}
-
-model productcategory {
-  category_id   Int       @id @default(autoincrement())
-  business_id   String    @db.Uuid
-  category_name String    @db.VarChar(50)
-  display_order Int?      @default(0)
-  date_created  DateTime? @default(now()) @db.Timestamp(6)
-  date_update   DateTime? @default(now()) @db.Timestamp(6)
-  product       product[]
-  business      business  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
-
-  @@unique([business_id, category_name])
-}
-
-model productvariation {
-  variation_id           Int       @id @default(autoincrement())
-  item_id                String    @db.Uuid
-  variation_name         String    @db.VarChar(100)
-  additional_description String?
-  price_override         Decimal?  @db.Decimal(10, 2)
-  price_modifier         Decimal?  @db.Decimal(10, 2)
-  is_available           Boolean?  @default(true)
-  display_order          Int?      @default(0)
-  date_created           DateTime? @default(now()) @db.Timestamp(6)
-  date_update            DateTime? @default(now()) @db.Timestamp(6)
-  product                product   @relation(fields: [item_id], references: [item_id], onDelete: Cascade)
-
-  @@unique([item_id, variation_name])
-}
-
-model service {
-  service_id                      String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  business_id                     String                    @db.Uuid
-  category_id                     Int?
-  service_name                    String                    @db.VarChar(255)
-  description                     String?
-  duration_minutes                Int?
-  price_base                      Decimal?                  @db.Decimal(10, 2)
-  price_type                      String?                   @default("fixed") @db.VarChar(50)
-  price_unit                      String?                   @db.VarChar(50)
-  has_extras                      Boolean?                  @default(false)
-  has_items                       Boolean?                  @default(false)
-  active_booking                  Boolean?                  @default(false)
-  active_quotation                Boolean?                  @default(false)
-  require_phone                   Boolean?                  @default(true)
-  require_consent_pdp             Boolean?                  @default(true)
-  require_consent_newsletter      Boolean?                  @default(false)
-  require_consent_newsletter_text String?
-  is_active                       Boolean?                  @default(true)
-  display_order                   Int?                      @default(0)
-  has_image                       Boolean?                  @default(false)
-  demo                            Boolean?                  @default(false)
-  date_created                    DateTime?                 @default(now()) @db.Timestamp(6)
-  date_updated                    DateTime?                 @default(now()) @db.Timestamp(6)
-  business                        business                  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
-  servicecategory                 servicecategory?          @relation(fields: [category_id], references: [category_id])
-  serviceboard                    serviceboard[]
-  serviceevent                    serviceevent[]
-  serviceextra                    serviceextra[]
-  serviceitem                     serviceitem[]
-  servicequestion                 servicequestion[]
-  servicerequest                  servicerequest[]
-  servicerequirementblock         servicerequirementblock[]
-}
-
-model serviceitem {
-  service_item_id                   Int                                 @id @default(autoincrement())
-  service_id                        String                              @db.Uuid
-  item_name                         String                              @db.VarChar(255)
-  item_description                  String?
-  price_base                        Decimal                             @default(0.00) @db.Decimal(10, 2)
-  price_type                        String                              @default("fixed") @db.VarChar(50)
-  price_unit                        String?                             @db.VarChar(50)
-  is_active                         Boolean?                            @default(true)
-  display_order                     Int?                                @default(0)
-  date_created                      DateTime?                           @default(now()) @db.Timestamp(6)
-  date_updated                      DateTime?                           @default(now()) @db.Timestamp(6)
-  service                           service                             @relation(fields: [service_id], references: [service_id], onDelete: Cascade)
-  servicerequestselectedserviceitem servicerequestselectedserviceitem[]
-}
-
-model serviceextra {
-  service_extra_id  Int       @id @default(autoincrement())
-  service_id        String    @db.Uuid
-  extra_name        String    @db.VarChar(255)
-  extra_description String?
-  price_base        Decimal   @default(0.00) @db.Decimal(10, 2)
-  price_type        String    @default("fixed") @db.VarChar(50)
-  price_unit        String?   @db.VarChar(50)
-  is_active         Boolean?  @default(true)
-  display_order     Int?      @default(0)
-  date_created      DateTime? @default(now()) @db.Timestamp(6)
-  date_updated      DateTime? @default(now()) @db.Timestamp(6)
-  service           service   @relation(fields: [service_id], references: [service_id], onDelete: Cascade)
-}
-
-model servicerequest {
-  request_id                        String                              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  request_reference                 String                              @unique @db.VarChar(50)
-  business_id                       String                              @db.Uuid
-  service_id                        String                              @db.Uuid
-  customer_email                    String?                             @db.VarChar(255)
-  customer_user_id                  String?                             @db.Uuid
-  customer_name                     String?                             @db.VarChar(50)
-  customer_phone                    String?                             @db.VarChar(50)
-  event_id                          Int?
-  request_datetimes                 Json?
-  status                            request_status_type                 @default(pending)
-  customer_notes                    String?
-  internal_notes                    String?                             @db.VarChar(200)
-  price_subtotal                    Decimal?                            @db.Decimal(10, 2)
-  selected_service_extras_snapshot  Json?
-  selected_service_items_snapshot   Json?
-  question_responses_snapshot       Json?
-  requirement_responses_snapshot    Json?
-  consent_newsletter                Boolean?                            @default(false)
-  consent_pdp                       Boolean?                            @default(false)
-  staff_id                          Int?
-  date_created                      DateTime?                           @default(now()) @db.Timestamp(6)
-  date_updated                      DateTime?                           @default(now()) @db.Timestamp(6)
-  is_handled                        Boolean?                            @default(false)
-  handled_at                        DateTime?                           @db.Timestamp(6)
-  handled_by                        String?                             @db.VarChar(100)
-  priority                          String?                             @default("medium") @db.VarChar(20)
-  urgency_flag                      Boolean?                            @default(false)
-  is_closed                         Boolean?                            @default(false)
-  assigned_to                       String?                             @db.VarChar(100)
-  estimated_completion              DateTime?                           @db.Timestamp(6)
-  actual_completion                 DateTime?                           @db.Timestamp(6)
-  customer_satisfaction             Int?
-  follow_up_required                Boolean?                            @default(false)
-  follow_up_date                    DateTime?                           @db.Timestamp(6)
-  tags                              Json?
-  serviceboard                      serviceboard[]
-  business                          business                            @relation(fields: [business_id], references: [business_id])
-  usercustomer                      usercustomer?                       @relation(fields: [customer_user_id], references: [user_id], onDelete: Restrict)
-  serviceevent                      serviceevent?                       @relation(fields: [event_id], references: [event_id])
-  service                           service                             @relation(fields: [service_id], references: [service_id])
-  servicerequestmessage             servicerequestmessage[]
-  servicerequestselectedserviceitem servicerequestselectedserviceitem[]
-  servicerequeststatushistory       servicerequeststatushistory[]
-}
-
-model servicerequestmessage {
-  message_id     Int            @id @default(autoincrement())
-  request_id     String         @db.Uuid
-  message_text   String
-  sent_at        DateTime?      @default(now()) @db.Timestamp(6)
-  sender_type    String?        @default("manager") @db.VarChar(20)
-  servicerequest servicerequest @relation(fields: [request_id], references: [request_id], onDelete: Cascade)
-}
-
-model servicerequestselectedserviceitem {
-  request_selected_item_id Int            @id @default(autoincrement())
-  request_id               String         @db.Uuid
-  service_item_id          Int
-  item_name                String         @db.VarChar(255)
-  price_at_request         Decimal        @db.Decimal(10, 2)
-  quantity                 Int            @default(1)
-  date_created             DateTime?      @default(now()) @db.Timestamp(6)
-  date_updated             DateTime?      @default(now()) @db.Timestamp(6)
-  servicerequest           servicerequest @relation(fields: [request_id], references: [request_id], onDelete: Cascade)
-  serviceitem              serviceitem    @relation(fields: [service_item_id], references: [service_item_id])
-
-  @@unique([request_id, service_item_id], map: "servicerequestselectedserviceite_request_id_service_item_id_key")
-}
-
-model servicerequeststatushistory {
-  status_history_id Int                 @id @default(autoincrement())
-  request_id        String              @db.Uuid
-  old_status        request_status_type
-  new_status        request_status_type
-  changed_at        DateTime?           @default(now()) @db.Timestamp(6)
-  changed_by        String?             @db.VarChar(50)
-  servicerequest    servicerequest      @relation(fields: [request_id], references: [request_id], onDelete: Cascade)
-}
-
-model servicecategory {
-  category_id   Int       @id @default(autoincrement())
-  business_id   String    @db.Uuid
-  category_name String    @db.VarChar(255)
-  description   String?
-  display_order Int?      @default(0)
-  service       service[]
-  business      business  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
-
-  @@unique([business_id, category_name], map: "uq_servicecategory_name_business")
-}
-
-model appointment {
-  id                    String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  business_id           String              @db.Uuid
-  service_board_id      String              @db.Uuid
-  customer_id           String              @db.Uuid
-  appointment_datetime  DateTime            @db.Timestamptz(6)
-  appointment_type      String              @db.VarChar(50)
-  appointment_location  String              @db.VarChar(255)
-  appointment_title     String?             @db.VarChar(255)
-  platform_name         String?             @db.VarChar(50)
-  platform_link         String?             @db.VarChar(255)
-  status                String              @default("scheduled") @db.VarChar(50)
-  notes                 String?
-  duration_minutes      Int?                @default(60)
-  originating_action_id String?             @db.Uuid
-  created_at            DateTime            @default(now()) @db.Timestamptz(6)
-  updated_at            DateTime            @default(now()) @db.Timestamptz(6)
-  business              business            @relation(fields: [business_id], references: [business_id], onUpdate: NoAction, map: "fk_appointment_business")
-  serviceboardaction    serviceboardaction? @relation(fields: [originating_action_id], references: [action_id], onUpdate: NoAction, map: "fk_appointment_originating_action")
-  serviceboard          serviceboard        @relation(fields: [service_board_id], references: [board_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_appointment_service_board")
-  usercustomer          usercustomer        @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_appointment_user_customer")
-}
-
-model planlimit {
-  id         Int      @id @default(autoincrement())
-  plan_id    Int?
-  feature    String   @db.VarChar(64)
-  limit_type String   @db.VarChar(32)
-  scope      String   @db.VarChar(32)
-  value      Int?
-  enabled    Boolean?
-  notes      String?
-  plan       plan?    @relation(fields: [plan_id], references: [plan_id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@unique([plan_id, feature])
-}
-
-model serviceboard {
-  board_id              String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  business_id           String               @db.Uuid
-  customer_id           String               @db.Uuid
-  request_id            String?              @db.Uuid
-  service_id            String?              @db.Uuid
-  board_title           String               @db.VarChar(255)
-  board_description     String?
-  board_ref             String               @unique @db.VarChar(255)
-  is_password_protected Boolean              @default(false)
-  board_password        String?              @db.VarChar(30)
-  status                String               @default("pending") @db.VarChar(50)
-  action_count          Int                  @default(0)
-  created_at            DateTime             @default(now()) @db.Timestamptz(6)
-  updated_at            DateTime             @default(now()) @db.Timestamptz(6)
-  appointment           appointment[]
-  business              business             @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sb_business")
-  service               service?             @relation(fields: [service_id], references: [service_id], onUpdate: NoAction, map: "fk_sb_service")
-  servicerequest        servicerequest?      @relation(fields: [request_id], references: [request_id], onUpdate: NoAction, map: "fk_sb_service_request")
-  usercustomer          usercustomer         @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_sb_user_customer")
-  serviceboardaction    serviceboardaction[]
-}
-
-model serviceboardaction {
-  action_id                   String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  board_id                    String                  @db.Uuid
-  customer_id                 String                  @db.Uuid
-  action_type                 String                  @db.VarChar(50)
-  action_title                String                  @db.VarChar(255)
-  action_description          String?
-  action_details              Json?
-  action_status               String                  @default("pending") @db.VarChar(50)
-  action_priority             String?                 @default("medium") @db.VarChar(20)
-  created_at                  DateTime                @default(now()) @db.Timestamptz(6)
-  updated_at                  DateTime                @default(now()) @db.Timestamptz(6)
-  due_date                    DateTime?               @db.Timestamptz(6)
-  is_customer_action_required Boolean                 @default(false)
-  is_archived                 Boolean                 @default(false)
-  appointment                 appointment[]
-  serviceboard                serviceboard            @relation(fields: [board_id], references: [board_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sba_service_board")
-  usercustomer                usercustomer            @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_sba_user_customer")
-  servicesupportrequest       servicesupportrequest[]
-}
-
-model usagecounter {
-  id          Int       @id @default(autoincrement())
-  business_id String    @db.Uuid
-  feature     String    @db.VarChar(64)
-  usage_count Int       @default(0)
-  updated_at  DateTime? @default(now()) @db.Timestamptz(6)
-
-  @@unique([business_id, feature])
-  @@index([business_id, feature], map: "idx_usagecounter_business_feature")
-}
-
-model usagecountermonthly {
-  id          Int       @id @default(autoincrement())
-  business_id String    @db.Uuid
-  feature     String    @db.VarChar(64)
-  year        Int
-  month       Int
-  usage_count Int       @default(0)
-  updated_at  DateTime? @default(now()) @db.Timestamptz(6)
-
-  @@unique([business_id, feature, year, month])
-  @@index([business_id, feature, year, month], map: "idx_usagecountermonthly_business_feature_month")
-}
-
-model quotation {
-  id               Int       @id @default(autoincrement())
-  business_id      String    @db.Uuid
-  request_id       String    @db.Uuid
-  quotation_number String    @unique @db.VarChar(50)
-  quotation_data   Json
-  status           String?   @default("draft") @db.VarChar(50)
-  sent_at          DateTime? @db.Timestamptz(6)
-  expires_at       DateTime? @db.Timestamptz(6)
-  created_at       DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at       DateTime? @default(now()) @db.Timestamptz(6)
-
-  @@index([status], map: "idx_quotation_status")
-  @@index([business_id], map: "idx_quotation_business")
-  @@index([request_id], map: "idx_quotation_request")
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model attachments {
-  id                 BigInt                 @id @default(autoincrement())
-  file_path          String                 @db.VarChar(255)
-  file_name          String?                @db.VarChar(255)
-  support_request_id String?                @db.Uuid
-  user_id            String?                @db.Uuid
-  created_at         DateTime               @default(now()) @db.Timestamptz(6)
-  feedback_id        BigInt?
-  feedback           feedback?              @relation(fields: [feedback_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  support_requests   servicesupportrequest? @relation(fields: [support_request_id], references: [support_request_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_attachments_support_request_id")
-
-  @@index([support_request_id], map: "idx_attachments_support_request_id")
-  @@index([user_id], map: "idx_attachments_user_id")
-  @@index([feedback_id], map: "idx_attachments_feedback_id")
-}
-
-model serviceevent {
-  event_id                 Int                        @id @default(autoincrement())
-  service_id               String                     @db.Uuid
-  event_name               String                     @db.VarChar(255)
-  event_description        String?
-  event_type               String                     @default("appointment") @db.VarChar(50)
-  duration_minutes         Int?                       @default(60)
-  buffer_minutes           Int?                       @default(0)
-  is_required              Boolean?                   @default(true)
-  display_order            Int?                       @default(0)
-  is_active                Boolean?                   @default(true)
-  date_created             DateTime?                  @default(now()) @db.Timestamp(6)
-  date_updated             DateTime?                  @default(now()) @db.Timestamp(6)
-  service                  service                    @relation(fields: [service_id], references: [service_id], onDelete: Cascade)
-  serviceeventavailability serviceeventavailability[]
-  servicerequest           servicerequest[]
-
-  @@index([is_active], map: "idx_serviceevent_active")
-  @@index([service_id], map: "idx_serviceevent_service")
-  @@index([service_id, is_active], map: "idx_serviceevent_service_active")
-  @@index([event_type], map: "idx_serviceevent_type")
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model serviceeventavailability {
-  availability_id       Int           @id @default(autoincrement())
-  event_id              Int?
-  business_id           String        @db.Uuid
-  staff_id              Int?
-  day_of_week           Int           @db.SmallInt
-  time_start            DateTime      @db.Time(6)
-  time_end              DateTime      @db.Time(6)
-  slot_interval_minutes Int?          @default(15)
-  is_recurring          Boolean?      @default(true)
-  date_effective_from   DateTime?     @db.Date
-  date_effective_to     DateTime?     @db.Date
-  date_created          DateTime?     @default(now()) @db.Timestamp(6)
-  date_updated          DateTime?     @default(now()) @db.Timestamp(6)
-  business              business      @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
-  serviceevent          serviceevent? @relation(fields: [event_id], references: [event_id], onDelete: Cascade)
-
-  @@index([business_id, day_of_week], map: "idx_serviceeventavailability_business_day")
-  @@index([business_id, event_id, day_of_week], map: "idx_serviceeventavailability_business_event_day")
-  @@index([date_effective_from, date_effective_to], map: "idx_serviceeventavailability_effective_dates")
-  @@index([event_id, business_id], map: "idx_serviceeventavailability_event_business")
-  @@index([is_recurring], map: "idx_serviceeventavailability_recurring")
-  @@index([time_start, time_end], map: "idx_serviceeventavailability_time_range")
-}
-
-model aiassistantmessagehistory {
-  message_id        BigInt   @id @default(autoincrement())
-  business_id       String   @db.Uuid
-  session_id        String?  @db.VarChar(255)
-  user_message      String
-  ai_response       String?
-  message_type      String?  @default("conversation") @db.VarChar(50)
-  request_type      String?  @default("openai") @db.VarChar(50)
-  input_tokens      Int?
-  output_tokens     Int?
-  cost_usd          Decimal? @db.Decimal(10, 6)
-  response_time_ms  Int?
-  success           Boolean? @default(true)
-  error_message     String?
-  user_ip           String?  @db.VarChar(45)
-  user_agent        String?
-  validation_passed Boolean? @default(true)
-  validation_errors String?
-  rate_limited      Boolean? @default(false)
-  created_at        DateTime @default(now()) @db.Timestamptz(6)
-  business          business @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
-
-  @@index([business_id], map: "idx_ai_message_history_business_id")
-  @@index([created_at], map: "idx_ai_message_history_created_at")
-  @@index([message_type], map: "idx_ai_message_history_message_type")
-  @@index([request_type], map: "idx_ai_message_history_request_type")
-  @@index([session_id], map: "idx_ai_message_history_session_id")
-  @@index([success], map: "idx_ai_message_history_success")
-  @@index([validation_passed], map: "idx_ai_message_history_validation_passed")
-}
-
-model aicontentgenerationratelimit {
-  id                    Int      @id @default(autoincrement())
-  business_id           String   @unique @db.Uuid
-  generations_available Int      @default(0)
-  fill_rate             Int      @default(1)
-  last_refill           DateTime @default(now()) @db.Timestamptz(6)
-  created_at            DateTime @default(now()) @db.Timestamptz(6)
-  updated_at            DateTime @default(now()) @db.Timestamptz(6)
-  business              business @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([business_id], map: "idx_aicontentgenerationratelimit_business")
-}
-
-model aigenerationemail {
-  id                            Int      @id @default(autoincrement())
-  business_id                   String   @db.Uuid
-  generation_date               DateTime @default(now()) @db.Timestamptz(6)
-  past_customers_subject        String?
-  past_customers_body           String?
-  uncommitted_customers_subject String?
-  uncommitted_customers_body    String?
-  services_text                 String?
-  past_customers_text           String?
-  uncommitted_customers_text    String?
-  created_at                    DateTime @default(now()) @db.Timestamptz(6)
-  business                      business @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([business_id], map: "idx_aigenerationemail_business")
-  @@index([generation_date], map: "idx_aigenerationemail_date")
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model appsupportrequest {
-  support_request_id                                     String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  business_id                                            String                @db.Uuid
-  manager_id                                             String                @db.Uuid
-  message                                                String
-  priority                                               app_support_priority? @default(medium)
-  category                                               app_support_category  @default(general)
-  status                                                 app_support_status    @default(open)
-  assigned_to                                            String?               @db.Uuid
-  resolution_notes                                       String?
-  created_at                                             DateTime?             @default(now()) @db.Timestamptz(6)
-  updated_at                                             DateTime?             @default(now()) @db.Timestamptz(6)
-  usermanager_appsupportrequest_assigned_toTousermanager usermanager?          @relation("appsupportrequest_assigned_toTousermanager", fields: [assigned_to], references: [user_id], onUpdate: NoAction, map: "fk_asr_assigned_to")
-  business                                               business              @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_asr_business")
-  usermanager_appsupportrequest_manager_idTousermanager  usermanager           @relation("appsupportrequest_manager_idTousermanager", fields: [manager_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_asr_manager")
-
-  @@index([business_id], map: "idx_appsupportrequest_business_id")
-  @@index([business_id, status], map: "idx_appsupportrequest_business_status")
-  @@index([category], map: "idx_appsupportrequest_category")
-  @@index([created_at], map: "idx_appsupportrequest_created_at")
-  @@index([manager_id], map: "idx_appsupportrequest_manager_id")
-  @@index([priority], map: "idx_appsupportrequest_priority")
-  @@index([status], map: "idx_appsupportrequest_status")
-}
-
 model emailcampaign {
   id                     Int                      @id @default(autoincrement())
   business_id            String                   @db.Uuid
@@ -1151,6 +682,392 @@ model marketingemailcampaign {
   @@index([campaign_type], map: "idx_marketing_email_campaign_type")
 }
 
+model paymentmethod {
+  payment_method_id     Int                     @id @default(autoincrement())
+  method_name           String                  @unique @db.VarChar(50)
+  businesspaymentmethod businesspaymentmethod[]
+}
+
+model product {
+  item_id          String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  business_id      String             @db.Uuid
+  category_id      Int?
+  item_name        String             @db.VarChar(100)
+  display_order    Int?               @default(0)
+  item_notes       String?            @db.VarChar(100)
+  item_description String?            @db.VarChar(200)
+  price            Decimal            @db.Decimal(10, 2)
+  price_type       String?            @default("fixed") @db.VarChar(50)
+  price_unit       String?            @db.VarChar(255)
+  is_available     Boolean?           @default(true)
+  image_available  Boolean?           @default(false)
+  image_url        String?            @db.VarChar(155)
+  date_created     DateTime?          @default(now()) @db.Timestamp(6)
+  date_update      DateTime?          @default(now()) @db.Timestamp(6)
+  business         business           @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  productcategory  productcategory?   @relation(fields: [category_id], references: [category_id])
+  productvariation productvariation[]
+}
+
+model productcategory {
+  category_id   Int       @id @default(autoincrement())
+  business_id   String    @db.Uuid
+  category_name String    @db.VarChar(50)
+  display_order Int?      @default(0)
+  date_created  DateTime? @default(now()) @db.Timestamp(6)
+  date_update   DateTime? @default(now()) @db.Timestamp(6)
+  product       product[]
+  business      business  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+
+  @@unique([business_id, category_name])
+}
+
+model productvariation {
+  variation_id           Int       @id @default(autoincrement())
+  item_id                String    @db.Uuid
+  variation_name         String    @db.VarChar(100)
+  additional_description String?
+  price_override         Decimal?  @db.Decimal(10, 2)
+  price_modifier         Decimal?  @db.Decimal(10, 2)
+  is_available           Boolean?  @default(true)
+  display_order          Int?      @default(0)
+  date_created           DateTime? @default(now()) @db.Timestamp(6)
+  date_update            DateTime? @default(now()) @db.Timestamp(6)
+  product                product   @relation(fields: [item_id], references: [item_id], onDelete: Cascade)
+
+  @@unique([item_id, variation_name])
+}
+
+model promo {
+  promo_id               String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  business_id            String                   @db.Uuid
+  promo_title            String                   @db.VarChar(50)
+  promo_text_full        String                   @db.VarChar(100)
+  promo_conditions       String?                  @db.VarChar(255)
+  date_start             DateTime?                @db.Date
+  date_end               DateTime?                @db.Date
+  date_created           DateTime?                @default(now()) @db.Timestamp(6)
+  date_update            DateTime?                @default(now()) @db.Timestamp(6)
+  promo_nickname         String                   @db.VarChar(30)
+  locked                 Boolean                  @default(false)
+  cardscanauthorized     cardscanauthorized[]
+  business               business                 @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  promochallenge         promochallenge[]
+  usercustomerredemption usercustomerredemption[]
+  userguest              userguest[]
+  userguestredemption    userguestredemption[]
+}
+
+model promochallenge {
+  challenge_id                 Int                            @id @default(autoincrement())
+  promo_id                     String                         @db.Uuid
+  challenge_type               promo_challenge_type
+  title                        String                         @db.VarChar(255)
+  description                  String?
+  challenge_order              Int
+  challenge_data               Json?
+  is_active                    Boolean?                       @default(true)
+  date_created                 DateTime?                      @default(now()) @db.Timestamp(6)
+  date_updated                 DateTime?                      @default(now()) @db.Timestamp(6)
+  promo                        promo                          @relation(fields: [promo_id], references: [promo_id], onDelete: Cascade, onUpdate: NoAction)
+  surveydefinition             surveydefinition?
+  userchallengecompletion      userchallengecompletion[]
+  userguestchallengecompletion userguestchallengecompletion[]
+}
+
+model service {
+  service_id                      String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  business_id                     String                    @db.Uuid
+  category_id                     Int?
+  service_name                    String                    @db.VarChar(255)
+  description                     String?
+  duration_minutes                Int?
+  price_base                      Decimal?                  @db.Decimal(10, 2)
+  price_type                      String?                   @default("fixed") @db.VarChar(50)
+  price_unit                      String?                   @db.VarChar(50)
+  has_extras                      Boolean?                  @default(false)
+  has_items                       Boolean?                  @default(false)
+  active_booking                  Boolean?                  @default(false)
+  active_quotation                Boolean?                  @default(false)
+  require_phone                   Boolean?                  @default(true)
+  require_consent_pdp             Boolean?                  @default(true)
+  require_consent_newsletter      Boolean?                  @default(false)
+  require_consent_newsletter_text String?
+  is_active                       Boolean?                  @default(true)
+  display_order                   Int?                      @default(0)
+  has_image                       Boolean?                  @default(false)
+  demo                            Boolean?                  @default(false)
+  date_created                    DateTime?                 @default(now()) @db.Timestamp(6)
+  date_updated                    DateTime?                 @default(now()) @db.Timestamp(6)
+  business                        business                  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  servicecategory                 servicecategory?          @relation(fields: [category_id], references: [category_id])
+  serviceboard                    serviceboard[]
+  serviceevent                    serviceevent[]
+  serviceextra                    serviceextra[]
+  serviceitem                     serviceitem[]
+  servicequestion                 servicequestion[]
+  servicerequest                  servicerequest[]
+  servicerequirementblock         servicerequirementblock[]
+}
+
+model serviceboard {
+  board_id              String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  business_id           String               @db.Uuid
+  customer_id           String               @db.Uuid
+  request_id            String?              @db.Uuid
+  service_id            String?              @db.Uuid
+  board_title           String               @db.VarChar(255)
+  board_description     String?
+  board_ref             String               @unique @db.VarChar(255)
+  is_password_protected Boolean              @default(false)
+  board_password        String?              @db.VarChar(30)
+  status                String               @default("pending") @db.VarChar(50)
+  action_count          Int                  @default(0)
+  created_at            DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime             @default(now()) @db.Timestamptz(6)
+  appointment           appointment[]
+  business              business             @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sb_business")
+  service               service?             @relation(fields: [service_id], references: [service_id], onUpdate: NoAction, map: "fk_sb_service")
+  servicerequest        servicerequest?      @relation(fields: [request_id], references: [request_id], onUpdate: NoAction, map: "fk_sb_service_request")
+  usercustomer          usercustomer         @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_sb_user_customer")
+  serviceboardaction    serviceboardaction[]
+}
+
+model serviceboardaction {
+  action_id                   String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  board_id                    String                  @db.Uuid
+  customer_id                 String                  @db.Uuid
+  action_type                 String                  @db.VarChar(50)
+  action_title                String                  @db.VarChar(255)
+  action_description          String?
+  action_details              Json?
+  action_status               String                  @default("pending") @db.VarChar(50)
+  action_priority             String?                 @default("medium") @db.VarChar(20)
+  created_at                  DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at                  DateTime                @default(now()) @db.Timestamptz(6)
+  due_date                    DateTime?               @db.Timestamptz(6)
+  is_customer_action_required Boolean                 @default(false)
+  is_archived                 Boolean                 @default(false)
+  appointment                 appointment[]
+  serviceboard                serviceboard            @relation(fields: [board_id], references: [board_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sba_service_board")
+  usercustomer                usercustomer            @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_sba_user_customer")
+  servicesupportrequest       servicesupportrequest[]
+}
+
+model servicecategory {
+  category_id   Int       @id @default(autoincrement())
+  business_id   String    @db.Uuid
+  category_name String    @db.VarChar(255)
+  description   String?
+  display_order Int?      @default(0)
+  service       service[]
+  business      business  @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+
+  @@unique([business_id, category_name], map: "uq_servicecategory_name_business")
+}
+
+model serviceevent {
+  event_id                 Int                        @id @default(autoincrement())
+  service_id               String                     @db.Uuid
+  event_name               String                     @db.VarChar(255)
+  event_description        String?
+  event_type               String                     @default("appointment") @db.VarChar(50)
+  duration_minutes         Int?                       @default(60)
+  buffer_minutes           Int?                       @default(0)
+  is_required              Boolean?                   @default(true)
+  display_order            Int?                       @default(0)
+  is_active                Boolean?                   @default(true)
+  date_created             DateTime?                  @default(now()) @db.Timestamp(6)
+  date_updated             DateTime?                  @default(now()) @db.Timestamp(6)
+  service                  service                    @relation(fields: [service_id], references: [service_id], onDelete: Cascade)
+  serviceeventavailability serviceeventavailability[]
+  servicerequest           servicerequest[]
+
+  @@index([is_active], map: "idx_serviceevent_active")
+  @@index([service_id], map: "idx_serviceevent_service")
+  @@index([service_id, is_active], map: "idx_serviceevent_service_active")
+  @@index([event_type], map: "idx_serviceevent_type")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model serviceeventavailability {
+  availability_id       Int           @id @default(autoincrement())
+  event_id              Int?
+  business_id           String        @db.Uuid
+  staff_id              Int?
+  day_of_week           Int           @db.SmallInt
+  time_start            DateTime      @db.Time(6)
+  time_end              DateTime      @db.Time(6)
+  slot_interval_minutes Int?          @default(15)
+  is_recurring          Boolean?      @default(true)
+  date_effective_from   DateTime?     @db.Date
+  date_effective_to     DateTime?     @db.Date
+  date_created          DateTime?     @default(now()) @db.Timestamp(6)
+  date_updated          DateTime?     @default(now()) @db.Timestamp(6)
+  business              business      @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  serviceevent          serviceevent? @relation(fields: [event_id], references: [event_id], onDelete: Cascade)
+
+  @@index([business_id, day_of_week], map: "idx_serviceeventavailability_business_day")
+  @@index([business_id, event_id, day_of_week], map: "idx_serviceeventavailability_business_event_day")
+  @@index([date_effective_from, date_effective_to], map: "idx_serviceeventavailability_effective_dates")
+  @@index([event_id, business_id], map: "idx_serviceeventavailability_event_business")
+  @@index([is_recurring], map: "idx_serviceeventavailability_recurring")
+  @@index([time_start, time_end], map: "idx_serviceeventavailability_time_range")
+}
+
+model serviceextra {
+  service_extra_id  Int       @id @default(autoincrement())
+  service_id        String    @db.Uuid
+  extra_name        String    @db.VarChar(255)
+  extra_description String?
+  price_base        Decimal   @default(0.00) @db.Decimal(10, 2)
+  price_type        String    @default("fixed") @db.VarChar(50)
+  price_unit        String?   @db.VarChar(50)
+  is_active         Boolean?  @default(true)
+  display_order     Int?      @default(0)
+  date_created      DateTime? @default(now()) @db.Timestamp(6)
+  date_updated      DateTime? @default(now()) @db.Timestamp(6)
+  service           service   @relation(fields: [service_id], references: [service_id], onDelete: Cascade)
+}
+
+model serviceitem {
+  service_item_id                   Int                                 @id @default(autoincrement())
+  service_id                        String                              @db.Uuid
+  item_name                         String                              @db.VarChar(255)
+  item_description                  String?
+  price_base                        Decimal                             @default(0.00) @db.Decimal(10, 2)
+  price_type                        String                              @default("fixed") @db.VarChar(50)
+  price_unit                        String?                             @db.VarChar(50)
+  is_active                         Boolean?                            @default(true)
+  display_order                     Int?                                @default(0)
+  date_created                      DateTime?                           @default(now()) @db.Timestamp(6)
+  date_updated                      DateTime?                           @default(now()) @db.Timestamp(6)
+  service                           service                             @relation(fields: [service_id], references: [service_id], onDelete: Cascade)
+  servicerequestselectedserviceitem servicerequestselectedserviceitem[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model servicequestion {
+  question_id           Int                     @id @default(autoincrement())
+  service_id            String                  @db.Uuid
+  question_text         String                  @db.VarChar(500)
+  question_type         String                  @db.VarChar(50)
+  question_options      Json?
+  max_length            Int?
+  is_required           Boolean?                @default(false)
+  display_order         Int?                    @default(0)
+  is_active             Boolean?                @default(true)
+  date_created          DateTime?               @default(now()) @db.Timestamp(6)
+  date_updated          DateTime?               @default(now()) @db.Timestamp(6)
+  service               service                 @relation(fields: [service_id], references: [service_id], onDelete: Cascade)
+  servicequestionoption servicequestionoption[]
+}
+
+model servicequestionoption {
+  option_id       Int             @id @default(autoincrement())
+  question_id     Int
+  option_text     String          @db.VarChar(255)
+  display_order   Int?            @default(0)
+  is_active       Boolean?        @default(true)
+  date_created    DateTime?       @default(now()) @db.Timestamp(6)
+  date_updated    DateTime?       @default(now()) @db.Timestamp(6)
+  servicequestion servicequestion @relation(fields: [question_id], references: [question_id], onDelete: Cascade)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model servicerequest {
+  request_id                        String                              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  request_reference                 String                              @unique @db.VarChar(50)
+  business_id                       String                              @db.Uuid
+  service_id                        String                              @db.Uuid
+  customer_email                    String?                             @db.VarChar(255)
+  customer_user_id                  String?                             @db.Uuid
+  customer_name                     String?                             @db.VarChar(50)
+  customer_phone                    String?                             @db.VarChar(50)
+  event_id                          Int?
+  request_datetimes                 Json?
+  status                            request_status_type                 @default(pending)
+  customer_notes                    String?
+  internal_notes                    String?                             @db.VarChar(200)
+  price_subtotal                    Decimal?                            @db.Decimal(10, 2)
+  selected_service_extras_snapshot  Json?
+  selected_service_items_snapshot   Json?
+  question_responses_snapshot       Json?
+  requirement_responses_snapshot    Json?
+  consent_newsletter                Boolean?                            @default(false)
+  consent_pdp                       Boolean?                            @default(false)
+  staff_id                          Int?
+  date_created                      DateTime?                           @default(now()) @db.Timestamp(6)
+  date_updated                      DateTime?                           @default(now()) @db.Timestamp(6)
+  is_handled                        Boolean?                            @default(false)
+  handled_at                        DateTime?                           @db.Timestamp(6)
+  handled_by                        String?                             @db.VarChar(100)
+  priority                          String?                             @default("medium") @db.VarChar(20)
+  urgency_flag                      Boolean?                            @default(false)
+  is_closed                         Boolean?                            @default(false)
+  assigned_to                       String?                             @db.VarChar(100)
+  estimated_completion              DateTime?                           @db.Timestamp(6)
+  actual_completion                 DateTime?                           @db.Timestamp(6)
+  customer_satisfaction             Int?
+  follow_up_required                Boolean?                            @default(false)
+  follow_up_date                    DateTime?                           @db.Timestamp(6)
+  tags                              Json?
+  serviceboard                      serviceboard[]
+  business                          business                            @relation(fields: [business_id], references: [business_id])
+  usercustomer                      usercustomer?                       @relation(fields: [customer_user_id], references: [user_id], onDelete: Restrict)
+  serviceevent                      serviceevent?                       @relation(fields: [event_id], references: [event_id])
+  service                           service                             @relation(fields: [service_id], references: [service_id])
+  servicerequestmessage             servicerequestmessage[]
+  servicerequestselectedserviceitem servicerequestselectedserviceitem[]
+  servicerequeststatushistory       servicerequeststatushistory[]
+}
+
+model servicerequestmessage {
+  message_id     Int            @id @default(autoincrement())
+  request_id     String         @db.Uuid
+  message_text   String
+  sent_at        DateTime?      @default(now()) @db.Timestamp(6)
+  sender_type    String?        @default("manager") @db.VarChar(20)
+  servicerequest servicerequest @relation(fields: [request_id], references: [request_id], onDelete: Cascade)
+}
+
+model servicerequestselectedserviceitem {
+  request_selected_item_id Int            @id @default(autoincrement())
+  request_id               String         @db.Uuid
+  service_item_id          Int
+  item_name                String         @db.VarChar(255)
+  price_at_request         Decimal        @db.Decimal(10, 2)
+  quantity                 Int            @default(1)
+  date_created             DateTime?      @default(now()) @db.Timestamp(6)
+  date_updated             DateTime?      @default(now()) @db.Timestamp(6)
+  servicerequest           servicerequest @relation(fields: [request_id], references: [request_id], onDelete: Cascade)
+  serviceitem              serviceitem    @relation(fields: [service_item_id], references: [service_item_id])
+
+  @@unique([request_id, service_item_id], map: "servicerequestselectedserviceite_request_id_service_item_id_key")
+}
+
+model servicerequeststatushistory {
+  status_history_id Int                 @id @default(autoincrement())
+  request_id        String              @db.Uuid
+  old_status        request_status_type
+  new_status        request_status_type
+  changed_at        DateTime?           @default(now()) @db.Timestamp(6)
+  changed_by        String?             @db.VarChar(50)
+  servicerequest    servicerequest      @relation(fields: [request_id], references: [request_id], onDelete: Cascade)
+}
+
+model servicerequirementblock {
+  requirement_block_id Int       @id @default(autoincrement())
+  service_id           String    @db.Uuid
+  title                String?   @db.VarChar(255)
+  requirements_text    String
+  is_active            Boolean?  @default(true)
+  is_required          Boolean?  @default(false)
+  date_created         DateTime? @default(now()) @db.Timestamp(6)
+  date_updated         DateTime? @default(now()) @db.Timestamp(6)
+  service              service   @relation(fields: [service_id], references: [service_id], onDelete: Cascade)
+}
+
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model servicesupportrequest {
   support_request_id String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -1183,6 +1100,146 @@ model servicesupportrequest {
   @@index([priority], map: "idx_servicesupportrequest_priority")
   @@index([related_action_id], map: "idx_servicesupportrequest_related_action_id")
   @@index([status], map: "idx_servicesupportrequest_status")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model surveyanswer {
+  answer_id            Int                         @id @default(autoincrement())
+  survey_definition_id Int
+  question_id          Int
+  question_type        survey_answer_question_type
+  user_id              String?                     @db.Uuid
+  guest_id             String?                     @db.VarChar(128)
+  answer_text          String?
+  answered_at          DateTime?                   @default(now()) @db.Timestamp(6)
+  userguest            userguest?                  @relation(fields: [guest_id], references: [guest_id], onDelete: Cascade, onUpdate: NoAction)
+  surveydefinition     surveydefinition            @relation(fields: [survey_definition_id], references: [survey_definition_id], onDelete: Cascade, onUpdate: NoAction)
+  usercustomer         usercustomer?               @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([survey_definition_id, question_id, question_type], map: "idx_answer_survey_question")
+  @@index([user_id, guest_id], map: "idx_answer_user_guest")
+}
+
+model surveydefinition {
+  survey_definition_id     Int                        @id @default(autoincrement())
+  promo_challenge_id       Int                        @unique
+  is_active                Boolean?                   @default(true)
+  date_created             DateTime?                  @default(now()) @db.Timestamp(6)
+  surveyanswer             surveyanswer[]
+  promochallenge           promochallenge             @relation(fields: [promo_challenge_id], references: [challenge_id], onDelete: Cascade, onUpdate: NoAction)
+  surveydefinitionquestion surveydefinitionquestion[]
+}
+
+model surveydefinitionquestion {
+  survey_definition_question_id Int                         @id @default(autoincrement())
+  survey_definition_id          Int
+  question_id                   Int
+  question_source               survey_question_source_type
+  question_order                Int
+  surveydefinition              surveydefinition            @relation(fields: [survey_definition_id], references: [survey_definition_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([survey_definition_id, question_id, question_source])
+}
+
+model surveyquestionbusiness {
+  question_id     Int                         @id @default(autoincrement())
+  business_id     String                      @db.Uuid
+  question_text   String
+  question_format survey_question_format_type
+  options_data    Json?
+  is_active       Boolean?                    @default(true)
+  date_created    DateTime?                   @default(now()) @db.Timestamp(6)
+  date_updated    DateTime?                   @default(now()) @db.Timestamp(6)
+}
+
+model surveyquestionprebuilt {
+  question_prebuilt_id           Int                              @id @default(autoincrement())
+  question_text                  String
+  question_format                survey_question_format_type
+  options_data                   Json?
+  is_active                      Boolean?                         @default(true)
+  date_created                   DateTime?                        @default(now()) @db.Timestamp(6)
+  date_updated                   DateTime?                        @default(now()) @db.Timestamp(6)
+  surveyquestionprebuiltfavorite surveyquestionprebuiltfavorite[]
+}
+
+model surveyquestionprebuiltfavorite {
+  business_id            String                 @db.Uuid
+  question_prebuilt_id   Int
+  date_favorited         DateTime?              @default(now()) @db.Timestamp(6)
+  business               business               @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  surveyquestionprebuilt surveyquestionprebuilt @relation(fields: [question_prebuilt_id], references: [question_prebuilt_id], onDelete: Cascade)
+
+  @@id([business_id, question_prebuilt_id])
+}
+
+model userchallengecompletion {
+  user_challenge_completion_id Int            @id @default(autoincrement())
+  user_id                      String         @db.Uuid
+  challenge_id                 Int
+  completion_date              DateTime?      @default(now()) @db.Timestamp(6)
+  promochallenge               promochallenge @relation(fields: [challenge_id], references: [challenge_id], onDelete: Cascade, onUpdate: NoAction)
+  usercustomer                 usercustomer   @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, challenge_id])
+}
+
+model usercustomerredemption {
+  redemption_id          Int          @id @default(autoincrement())
+  redemption_token       String       @unique @db.VarChar(36)
+  user_id                String       @db.Uuid
+  promo_id               String       @db.Uuid
+  qr_content_data        String?
+  date_issued            DateTime?    @default(now()) @db.Timestamp(6)
+  date_expires           DateTime?    @db.Timestamp(6)
+  is_redeemed            Boolean?     @default(false)
+  date_redeemed          DateTime?    @db.Timestamp(6)
+  redeemed_by_manager_id String?      @db.Uuid
+  promo                  promo        @relation(fields: [promo_id], references: [promo_id], onDelete: NoAction, onUpdate: NoAction)
+  usermanager            usermanager? @relation(fields: [redeemed_by_manager_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  usercustomer           usercustomer @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model userguest {
+  guest_id                     String                         @id @db.VarChar(128)
+  session_id                   String?                        @unique @db.VarChar(255)
+  date_created                 DateTime?                      @default(now()) @db.Timestamp(6)
+  last_active                  DateTime?                      @default(now()) @db.Timestamp(6)
+  email                        String?                        @db.VarChar(255)
+  promo_unlocked_promo_id      String?                        @db.Uuid
+  surveyanswer                 surveyanswer[]
+  promo                        promo?                         @relation(fields: [promo_unlocked_promo_id], references: [promo_id], onDelete: NoAction, onUpdate: NoAction)
+  userguestchallengecompletion userguestchallengecompletion[]
+  userguestredemption          userguestredemption[]
+}
+
+model userguestchallengecompletion {
+  guest_challenge_completion_id Int            @id @default(autoincrement())
+  guest_id                      String         @db.VarChar(128)
+  challenge_id                  Int
+  completion_date               DateTime?      @default(now()) @db.Timestamp(6)
+  data_submitted                String?
+  promochallenge                promochallenge @relation(fields: [challenge_id], references: [challenge_id], onDelete: NoAction, onUpdate: NoAction)
+  userguest                     userguest      @relation(fields: [guest_id], references: [guest_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([guest_id, challenge_id])
+}
+
+model userguestredemption {
+  redemption_id          Int          @id @default(autoincrement())
+  redemption_token       String       @unique @db.VarChar(36)
+  email                  String?      @db.VarChar(255)
+  guest_id               String       @db.VarChar(128)
+  promo_id               String       @db.Uuid
+  qr_content_data        String?
+  date_issued            DateTime?    @default(now()) @db.Timestamp(6)
+  date_expires           DateTime?    @db.Timestamp(6)
+  is_redeemed            Boolean?     @default(false)
+  date_redeemed          DateTime?    @db.Timestamp(6)
+  redeemed_by_manager_id String?      @db.Uuid
+  userguest              userguest    @relation(fields: [guest_id], references: [guest_id], onDelete: NoAction, onUpdate: NoAction)
+  promo                  promo        @relation(fields: [promo_id], references: [promo_id], onDelete: NoAction, onUpdate: NoAction)
+  usermanager            usermanager? @relation(fields: [redeemed_by_manager_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 enum business_sponsorship_level {

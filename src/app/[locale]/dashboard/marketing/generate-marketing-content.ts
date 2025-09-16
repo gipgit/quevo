@@ -4,6 +4,7 @@ import { generateText } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { Decimal } from "@prisma/client/runtime/library"
 import { calculateTokenUsageAndCost } from './token-utils'
+import { AICreditsManager } from '@/lib/ai-credits-manager'
 
 interface ServiceQuestion {
   question_id: number
@@ -248,6 +249,16 @@ export async function generateSocialMediaContent(
   console.log("⏰ Frequency:", frequency)
   
   try {
+    // Check and consume AI generation credit
+    const creditsResult = await AICreditsManager.consumeCredits(
+      business.business_id,
+      'SOCIAL_MEDIA_CONTENT',
+      `Social media content generation for ${uniquePlatforms.join(', ')} platforms`
+    )
+    
+    if (!creditsResult.success) {
+      throw new Error(creditsResult.errorMessage || 'Insufficient AI credits')
+    }
     // Format the data into text strings
     const servicesText = formatServicesForPrompt(business, services)
     
