@@ -46,16 +46,39 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
   const [selectedIndex, setSelectedIndex] = useState(0)
   
   // AI Generation state
-  const [showAIGenerationModal, setShowAIGenerationModal] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
   const [generationError, setGenerationError] = useState<string | null>(null)
-  const [generatedResponse, setGeneratedResponse] = useState<string | null>(null)
+  const [generatedResponse, setGeneratedResponse] = useState<string | null>(null) // Current working response
+  const [isSavingResponse, setIsSavingResponse] = useState(false)
+  const [saveResponseError, setSaveResponseError] = useState<string | null>(null)
+  const [responseIsSaved, setResponseIsSaved] = useState(false)
   const [selectedQuestionsForClarification, setSelectedQuestionsForClarification] = useState<number[]>([])
   const [manualQuestions, setManualQuestions] = useState<string>('')
   const [customerNotesClarification, setCustomerNotesClarification] = useState<string>('')
   
+  // Modal state
+  const [showGenerationModal, setShowGenerationModal] = useState(false)
+  const [showAddActionDropdown, setShowAddActionDropdown] = useState(false)
+  
   // AI Credits hook
   const { creditsStatus, featureCosts, loading: creditsLoading, refetch: refetchCredits } = useAICredits(currentBusiness?.business_id || null)
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showAddActionDropdown) {
+        setShowAddActionDropdown(false)
+      }
+    }
+
+    if (showAddActionDropdown) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showAddActionDropdown])
 
   // Debug: Log initial service requests
   useEffect(() => {
@@ -64,7 +87,9 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
       request_reference: req.request_reference,
       is_handled: req.is_handled,
       urgency_flag: req.urgency_flag,
-      is_closed: req.is_closed
+      is_closed: req.is_closed,
+      generated_response: req.generated_response,
+      generated_response_saved_at: req.generated_response_saved_at
     })))
   }, [initialServiceRequests])
 
@@ -82,7 +107,9 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
             request_reference: req.request_reference,
             is_handled: req.is_handled,
             urgency_flag: req.urgency_flag,
-            is_closed: req.is_closed
+            is_closed: req.is_closed,
+            generated_response: req.generated_response,
+            generated_response_saved_at: req.generated_response_saved_at
           })))
           setServiceRequests(data.serviceRequests || [])
         }
@@ -107,6 +134,18 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
       setSelectedIndex(0)
     }
   }, [serviceRequests])
+
+  // Reset generation state when selected request changes
+  useEffect(() => {
+    // Don't auto-load saved response into working area - keep generate section clean
+    setGeneratedResponse(null)
+    setResponseIsSaved(false)
+    setGenerationError(null)
+    setSaveResponseError(null)
+    setSelectedQuestionsForClarification([])
+    setManualQuestions('')
+    setCustomerNotesClarification('')
+  }, [selectedRequest])
 
   // Keyboard navigation
   useEffect(() => {
@@ -411,15 +450,29 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
   // AI Generation functions
   const handleGenerateResponse = () => {
     if (!selectedRequest) return
+    setShowGenerationModal(true)
+  }
+
+  const handleConfirmGeneration = async () => {
+    if (!selectedRequest) return
+
+    // Reset previous state
     setGenerationError(null)
     setGeneratedResponse(null)
-    setShowAIGenerationModal(true)
+    
+    // Set generating state immediately for modal UI
+    setIsGenerating(true)
+
+    // Small delay to ensure UI updates
+    await new Promise(resolve => setTimeout(resolve, 100))
+
+    // Keep modal open and start generation
+    await handleConfirmAIGeneration()
   }
 
   const handleConfirmAIGeneration = async () => {
     if (!selectedRequest) return
     
-    setIsGenerating(true)
     setGenerationError(null)
     
     try {
@@ -444,9 +497,13 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
       
       if (result.success && result.data) {
         setGeneratedResponse(result.data.response)
+        // Reset save state for new response
+        setResponseIsSaved(false)
+        setSaveResponseError(null)
         // Refresh credits after successful generation
         refetchCredits()
-        // Keep modal open to show the generated response
+        // Close modal after successful generation
+        setShowGenerationModal(false)
       } else {
         setGenerationError(result.errorMessage || 'Failed to generate response')
       }
@@ -469,6 +526,60 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
     }
   }
 
+  const saveGeneratedResponse = async () => {
+    if (!generatedResponse || !selectedRequest) return
+
+    setIsSavingResponse(true)
+    setSaveResponseError(null)
+
+    try {
+      const response = await fetch(`/api/service-requests/${selectedRequest.request_id}/save-response`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ generated_response: generatedResponse })
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        console.log('Response saved successfully:', result)
+        
+        // Update the selected request with the saved response data
+        setSelectedRequest((prev: any) => prev?.request_id === selectedRequest.request_id 
+          ? { ...prev, generated_response: result.request.generated_response, generated_response_saved_at: result.request.generated_response_saved_at }
+          : prev
+        )
+        
+        // Update the service requests array
+        setServiceRequests((prev: any[]) => prev.map(req => 
+          req.request_id === selectedRequest.request_id 
+            ? { ...req, generated_response: result.request.generated_response, generated_response_saved_at: result.request.generated_response_saved_at }
+            : req
+        ))
+        
+        setResponseIsSaved(true)
+        
+        // Reset saved status after 3 seconds
+        setTimeout(() => setResponseIsSaved(false), 3000)
+      } else {
+        const errorData = await response.json()
+        setSaveResponseError(errorData.error || 'Failed to save response')
+        console.error('API error:', errorData)
+      }
+    } catch (error) {
+      setSaveResponseError('Error saving response')
+      console.error('Error saving response:', error)
+    } finally {
+      setIsSavingResponse(false)
+    }
+  }
+
+  const loadSavedResponseForEditing = () => {
+    if (selectedRequest?.generated_response) {
+      setGeneratedResponse(selectedRequest.generated_response)
+      setResponseIsSaved(true)
+    }
+  }
+
   const toggleQuestionForClarification = (questionIndex: number) => {
     setSelectedQuestionsForClarification(prev => 
       prev.includes(questionIndex) 
@@ -481,8 +592,13 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
     setSelectedQuestionsForClarification([])
     setManualQuestions('')
     setCustomerNotesClarification('')
-    setGeneratedResponse(null)
+    // Only reset generated response if it's not saved in database
+    if (!selectedRequest?.generated_response) {
+      setGeneratedResponse(null)
+      setResponseIsSaved(false)
+    }
     setGenerationError(null)
+    setSaveResponseError(null)
   }
 
   // Calculate progress
@@ -517,12 +633,300 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
     <DashboardLayout>
       <div className="max-w-7xl mx-auto flex flex-col h-full">
         {/* Header */}
-        <div className="flex justify-between items-center mb-1 lg:mb-6 flex-shrink-0">
-          <div>
+        {/* Top Actions Bar */}
+        {selectedRequest && (
+          <div className="p-4 lg:p-6">
+             <div className="bg-[var(--dashboard-actionbar-bg)] dashboard-actionbar rounded-[2rem] border-2 border-[var(--dashboard-border-primary)] p-3 lg:p-4">
+              <div className="flex flex-wrap lg:flex-row gap-2 lg:gap-6 xl:gap-8 justify-center items-center">
+                {/* Status Actions */}
+                <div className="flex flex-wrap lg:flex-row gap-2 justify-center">
+                  <button
+                    onClick={() => markAsHandled(selectedRequest.request_id)}
+                    className="px-2 py-1 rounded-full bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-input)] transition-colors flex items-center justify-center gap-2 text-xs w-fit border border-[var(--dashboard-border-secondary)] whitespace-nowrap"
+                    title="Mark as handled (Ctrl+H)"
+                  >
+                    <div 
+                      className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 -ml-2"
+                      style={{
+                        backgroundColor: isRequestHandled(selectedRequest) ? '#10b981' : '#059669',
+                        minWidth: '24px',
+                        minHeight: '24px'
+                      }}
+                    >
+                      {isRequestHandled(selectedRequest) ? (
+                        <CheckCircleSolidIcon className="w-3.5 h-3.5 text-white" />
+                      ) : (
+                        <CheckCircleIcon className="w-3.5 h-3.5 text-white" />
+                      )}
           </div>
+                     <span className="hidden lg:inline ml-1">{isRequestHandled(selectedRequest) ? 'Handled' : 'Mark Handled'}</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => toggleClosedStatus(selectedRequest.request_id)}
+                    className="px-2 py-1 rounded-full bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-input)] transition-colors flex items-center justify-center gap-2 text-xs w-fit border border-[var(--dashboard-border-secondary)] whitespace-nowrap"
+                    title="Toggle closed status"
+                  >
+                    <div 
+                      className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 -ml-2"
+                      style={{
+                        backgroundColor: selectedRequest.is_closed ? '#6b7280' : '#f97316',
+                        minWidth: '24px',
+                        minHeight: '24px'
+                      }}
+                    >
+                      <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
         </div>
+                     <span className="hidden lg:inline ml-1">{selectedRequest.is_closed ? 'Closed' : 'Mark Closed'}</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => toggleUrgencyFlag(selectedRequest.request_id)}
+                    className="px-2 py-1 rounded-full bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-input)] transition-colors flex items-center justify-center gap-2 text-xs w-fit border border-[var(--dashboard-border-secondary)] whitespace-nowrap"
+                    title="Toggle urgency flag (Ctrl+F)"
+                  >
+                    <div 
+                      className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 -ml-2"
+                      style={{
+                        backgroundColor: selectedRequest.urgency_flag ? '#ef4444' : '#374151',
+                        minWidth: '24px',
+                        minHeight: '24px'
+                      }}
+                    >
+                      <FlagIcon className="w-3.5 h-3.5 text-white" />
+                    </div>
+                     <span className="hidden lg:inline ml-1">{selectedRequest.urgency_flag ? 'Urgent' : 'Flag Urgent'}</span>
+                  </button>
+                </div>
 
+                {/* Contact Actions */}
+                {selectedRequest.customer_phone || selectedRequest.customer_email ? (
+                  <div className="flex flex-wrap lg:flex-row gap-2 justify-center">
+                    {selectedRequest.customer_phone && (
+                      <a
+                        href={`tel:${selectedRequest.customer_phone}`}
+                        className="px-2 py-1 rounded-full bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-input)] transition-colors flex items-center justify-center gap-2 text-xs w-fit border border-[var(--dashboard-border-secondary)] whitespace-nowrap"
+                        title={`Call ${selectedRequest.customer_phone}`}
+                      >
+                        <div 
+                          className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 -ml-2"
+                          style={{ 
+                            backgroundColor: '#10b981',
+                            minWidth: '24px',
+                            minHeight: '24px'
+                          }}
+                        >
+                          <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          </svg>
+                        </div>
+                         <span className="hidden lg:inline ml-1">Call</span>
+                      </a>
+                    )}
+                    
+                    {selectedRequest.customer_email && (
+                      <a
+                        href={`mailto:${selectedRequest.customer_email}`}
+                        className="px-2 py-1 rounded-full bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-input)] transition-colors flex items-center justify-center gap-2 text-xs w-fit border border-[var(--dashboard-border-secondary)] whitespace-nowrap"
+                        title={`Email ${selectedRequest.customer_email}`}
+                      >
+                        <div 
+                          className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 -ml-2"
+                          style={{ 
+                            backgroundColor: '#3b82f6',
+                            minWidth: '24px',
+                            minHeight: '24px'
+                          }}
+                        >
+                          <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                         <span className="hidden lg:inline ml-1">Email</span>
+                      </a>
+                    )}
+                  </div>
+                ) : null}
 
+                {/* Other Actions */}
+                <div className="flex flex-wrap lg:flex-row gap-2 justify-center">
+                  {selectedRequest.serviceboard?.[0] && (
+                    <>
+                      <button
+                        onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}`, '_blank')}
+                        className="px-2 py-1 rounded-full bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-input)] transition-colors flex items-center justify-center gap-2 text-xs w-fit border border-[var(--dashboard-border-secondary)] whitespace-nowrap"
+                        title="Open service board"
+                      >
+                        <div 
+                          className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 -ml-2"
+                          style={{ 
+                            backgroundColor: '#6b7280',
+                            minWidth: '24px',
+                            minHeight: '24px'
+                          }}
+                        >
+                          <ArrowTopRightOnSquareIcon className="w-3.5 h-3.5 text-white" />
+                        </div>
+                         <span className="hidden lg:inline ml-1">Open Board</span>
+                      </button>
+                      
+                      {/* Add Action Dropdown */}
+                      <div className="relative">
+                        <button
+                          onClick={() => setShowAddActionDropdown(!showAddActionDropdown)}
+                          className="px-2 py-1 rounded-full bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-input)] transition-colors flex items-center justify-center gap-2 text-xs w-fit border border-[var(--dashboard-border-secondary)] whitespace-nowrap"
+                          title="Add action to service board"
+                        >
+                          <div 
+                            className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 -ml-2"
+                            style={{ 
+                              backgroundColor: '#8b5cf6',
+                              minWidth: '24px',
+                              minHeight: '24px'
+                            }}
+                          >
+                            <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                          </div>
+                           <span className="hidden lg:inline ml-1">Add Action</span>
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                        
+                        {showAddActionDropdown && (
+                          <div className="absolute top-full left-0 mt-1 w-48 bg-[var(--dashboard-bg-card)] border border-[var(--dashboard-border-primary)] rounded-lg shadow-lg z-50">
+                            <div className="py-1">
+                              <button
+                                onClick={() => {
+                                  window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=appointment_scheduling`, '_blank')
+                                  setShowAddActionDropdown(false)
+                                }}
+                                className="w-full px-4 py-2 text-left text-xs hover:bg-[var(--dashboard-bg-tertiary)] flex items-center gap-3"
+                              >
+                                <div 
+                                  className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+                                  style={{ 
+                                    backgroundColor: '#10b981',
+                                    minWidth: '20px',
+                                    minHeight: '20px'
+                                  }}
+                                >
+                                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                </div>
+                                Schedule Appointment
+                              </button>
+                              
+                              <button
+                                onClick={() => {
+                                  window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=information_request`, '_blank')
+                                  setShowAddActionDropdown(false)
+                                }}
+                                className="w-full px-4 py-2 text-left text-xs hover:bg-[var(--dashboard-bg-tertiary)] flex items-center gap-3"
+                              >
+                                <div 
+                                  className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+                                  style={{ 
+                                    backgroundColor: '#a855f7',
+                                    minWidth: '20px',
+                                    minHeight: '20px'
+                                  }}
+                                >
+                                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                  </svg>
+                                </div>
+                                Info Request
+                              </button>
+                              
+                              <button
+                                onClick={() => {
+                                  window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=checklist`, '_blank')
+                                  setShowAddActionDropdown(false)
+                                }}
+                                className="w-full px-4 py-2 text-left text-xs hover:bg-[var(--dashboard-bg-tertiary)] flex items-center gap-3"
+                              >
+                                <div 
+                                  className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+                                  style={{ 
+                                    backgroundColor: '#f97316',
+                                    minWidth: '20px',
+                                    minHeight: '20px'
+                                  }}
+                                >
+                                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                  </svg>
+                                </div>
+                                Checklist
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Generate Quotation Button */}
+                      <button
+                        onClick={() => generateQuotation(selectedRequest.request_id)}
+                        className="px-2 py-1 rounded-full bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-input)] transition-colors flex items-center justify-center gap-2 text-xs w-fit border border-[var(--dashboard-border-secondary)] whitespace-nowrap"
+                        title="Generate quotation (Ctrl+Q)"
+                      >
+                        <div 
+                          className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 -ml-2"
+                          style={{ 
+                            backgroundColor: '#3b82f6',
+                            minWidth: '24px',
+                            minHeight: '24px'
+                          }}
+                        >
+                          <DocumentArrowUpIcon className="w-3.5 h-3.5 text-white" />
+                        </div>
+                         <span className="hidden lg:inline ml-1">Generate Quotation</span>
+                      </button>
+                      
+                      {/* Navigation Controls */}
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => navigateRequest(-1)}
+                          disabled={selectedIndex === 0}
+                          className={`p-2 rounded-lg transition-colors ${
+                            selectedIndex === 0
+                              ? 'opacity-50 cursor-not-allowed'
+                              : 'hover:bg-[var(--dashboard-bg-tertiary)]'
+                          }`}
+                          title="Previous request"
+                        >
+                          <ArrowLeftIcon className="w-4 h-4" />
+                        </button>
+                        <span className="text-xs text-[var(--dashboard-text-tertiary)] px-2">
+                          {selectedIndex + 1} of {serviceRequests.length}
+                        </span>
+                        <button
+                          onClick={() => navigateRequest(1)}
+                          disabled={selectedIndex === serviceRequests.length - 1}
+                          className={`p-2 rounded-lg transition-colors ${
+                            selectedIndex === serviceRequests.length - 1
+                              ? 'opacity-50 cursor-not-allowed'
+                              : 'hover:bg-[var(--dashboard-bg-tertiary)]'
+                          }`}
+                          title="Next request"
+                        >
+                          <ArrowRightIcon className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </>
+                  )}
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Main Content - Outlook-like Layout */}
         <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-6 overflow-hidden">
@@ -571,14 +975,13 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       }}
                       className={`p-3 rounded-lg cursor-pointer transition-all flex-shrink-0 w-64 lg:w-auto ${
                         isSelected
-                          ? 'bg-[var(--dashboard-active-bg)] text-[var(--dashboard-active-text)] border-[var(--dashboard-active-border)] border'
+                          ? 'bg-[var(--dashboard-active-bg)] text-[var(--dashboard-active-text)] border-l-4 border-[var(--dashboard-active-border)]'
                           : 'hover:bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)]'
                       }`}
                     >
                       <div className="flex items-center justify-between text-xs mb-1">
                         <div className="flex items-center gap-1">
                           <span className="opacity-75">{day} {month} {time}</span>
-                          <span className="font-medium text-xs" style={{ fontSize: '0.6rem' }}>{request.request_reference}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <span className={`px-1 py-0.5 rounded-full ${getStatusColor(request.status)} whitespace-nowrap`} style={{ fontSize: '0.6rem' }}>
@@ -591,17 +994,21 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                         </div>
                       </div>
                       
-                      <div className="flex items-start justify-between mb-1">
-                        <div className="flex items-center gap-2">
-                          {isRequestHandled(request) ? (
-                            <CheckCircleSolidIcon className="w-3 h-3 text-green-500" />
-                          ) : (
-                            <div className="w-3 h-3 rounded-full bg-blue-500" />
-                          )}
-                          <span className="text-xs opacity-75">{request.customer_name}</span>
-                          <span className="text-xs opacity-75">•</span>
-                          <span className="text-xs opacity-75">{request.service?.service_name}</span>
-                        </div>
+                      {/* Row 1: Customer Name + Request Reference */}
+                      <div className="flex items-center gap-2 mb-1">
+                        {isRequestHandled(request) ? (
+                          <CheckCircleSolidIcon className="w-3 h-3 text-green-500" />
+                        ) : (
+                          <div className="w-3 h-3 rounded-full bg-blue-500" />
+                        )}
+                        <span className="text-xs opacity-75">{request.customer_name}</span>
+                        <span className="font-medium text-xs" style={{ fontSize: '0.6rem' }}>{request.request_reference}</span>
+                      </div>
+                      
+                      {/* Row 2: Service Name */}
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3"></div> {/* Spacer to align with icon above */}
+                        <span className="text-xs opacity-75">{request.service?.service_name}</span>
                       </div>
                     </div>
                 )
@@ -611,7 +1018,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
           </div>
 
           {/* Middle Panel - Request Details */}
-          <div className="flex-1 lg:w-3/5 flex flex-col min-h-0 lg:min-h-0 h-96 lg:h-auto p-2 lg:p-6 space-y-4 lg:space-y-5">
+          <div className="flex-1 lg:w-2/5 flex flex-col min-h-0 lg:min-h-0 h-96 lg:h-auto p-2 lg:p-6 space-y-4 lg:space-y-5">
             {selectedRequest ? (
               <>
                 {/* Request Header with Action Buttons */}
@@ -643,10 +1050,12 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           </div>
                         </div>
                         
-                        {/* Right Column: Time Passed Indicator */}
+                        {/* Right Column: Time Passed */}
+                        <div className="flex flex-col items-end space-y-3">
+                          {/* Time Passed Indicator */}
                         <div className="flex flex-col items-end">
                           <span className="text-xs text-[var(--dashboard-text-secondary)]">Time passed</span>
-                          <span className="text-sm lg:text-base font-bold text-[var(--dashboard-text-primary)]">
+                          <span className="text-xs lg:text-base font-bold text-[var(--dashboard-text-primary)]">
                             {(() => {
                               try {
                                 const dateField = selectedRequest.created_at || selectedRequest.date_created || selectedRequest.request_date
@@ -676,6 +1085,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                               }
                             })()}
                           </span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -687,28 +1097,48 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                 {selectedRequest.serviceboard?.[0] && selectedRequest.serviceboard[0].serviceboardaction && selectedRequest.serviceboard[0].serviceboardaction.length > 0 && (
                     <div>
                     <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Service Board Actions</h3>
-                    <div className="space-y-1.5">
-                      {selectedRequest.serviceboard[0].serviceboardaction.map((action: any) => (
-                        <div key={action.action_id} className="p-2 rounded-lg border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
-                          {/* Mobile Layout */}
-                          <div className="lg:hidden space-y-2">
-                            {/* Row 1: Date/Time, Action Type, Status */}
-                            <div className="flex items-center justify-between gap-2">
-                              <div className="text-xs text-[var(--dashboard-text-tertiary)]" style={{ fontSize: '0.7rem' }}>
-                                {action.created_at ? (
-                                  <>
-                                    <div>{new Date(action.created_at).toLocaleDateString()}</div>
-                                    <div>{new Date(action.created_at).toLocaleTimeString()}</div>
-                                  </>
-                                ) : (
-                                  <span className="text-[var(--dashboard-text-muted)]">No date</span>
-                                )}
-                              </div>
-                              
-                              <div className="flex items-center gap-2">
-                                <span className="px-1.5 py-0.5 rounded-full text-xs bg-gray-50 text-gray-500 truncate opacity-60" style={{ fontSize: '0.7rem', maxWidth: '80px' }}>
+                    <div className="relative">
+                      {selectedRequest.serviceboard[0].serviceboardaction.map((action: any, index: number) => (
+                        <div key={action.action_id} className="relative flex items-start pb-4 last:pb-0">
+                          {/* Timeline line */}
+                          {index < selectedRequest.serviceboard[0].serviceboardaction.length - 1 && (
+                            <div className="absolute left-3 top-8 w-0.5 h-full bg-[var(--dashboard-border-primary)]"></div>
+                          )}
+                          
+                          {/* Timeline dot */}
+                          <div className={`relative z-10 w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                                  action.action_status === 'completed' 
+                              ? 'bg-green-500 border-green-500' 
+                              : 'bg-yellow-500 border-yellow-500'
+                          }`}>
+                            <div className="w-2 h-2 rounded-full bg-white"></div>
+                            </div>
+                            
+                          {/* Content */}
+                          <div className="ml-4 flex-1 min-w-0">
+                            {/* Mobile Layout (xs-md): Two rows */}
+                            <div className="block lg:hidden">
+                              {/* Row 1: Date/Time + Action Type */}
+                              <div className="flex items-center gap-2 mb-1">
+                                <div className="text-xs text-[var(--dashboard-text-tertiary)]" style={{ fontSize: '0.7rem' }}>
+                                  {action.created_at ? (
+                                    <span>
+                                      {new Date(action.created_at).toLocaleDateString()} {new Date(action.created_at).toLocaleTimeString()}
+                                    </span>
+                                  ) : (
+                                    <span className="text-[var(--dashboard-text-muted)]">No date</span>
+                                  )}
+                                </div>
+                                <span className="px-1.5 py-0.5 rounded-full text-xs bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-tertiary)]" style={{ fontSize: '0.7rem' }}>
                                   {action.action_type}
                                 </span>
+                              </div>
+                              
+                              {/* Row 2: Action Title + Status */}
+                              <div className="flex items-center gap-2">
+                                <div className="font-medium text-xs text-[var(--dashboard-text-primary)] flex-1">
+                                  {action.action_title}
+                                </div>
                                 <span className={`px-1.5 py-0.5 rounded-full text-xs ${
                                   action.action_status === 'completed' 
                                     ? 'bg-green-100 text-green-800'
@@ -718,48 +1148,36 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                                 </span>
                               </div>
                             </div>
-                            
-                            {/* Row 2: Action Title */}
-                            <div className="font-medium text-xs text-[var(--dashboard-text-primary)]">
-                              {action.action_title}
-                            </div>
-                          </div>
 
-                          {/* Desktop Layout */}
-                          <div className="hidden lg:grid lg:grid-cols-[70px_120px_1fr_80px] gap-2 items-center">
-                            {/* Column 1: Date and Time */}
-                            <div className="text-xs text-[var(--dashboard-text-tertiary)]" style={{ fontSize: '0.7rem' }}>
-                              {action.created_at ? (
-                                <>
-                                  <div>{new Date(action.created_at).toLocaleDateString()}</div>
-                                  <div>{new Date(action.created_at).toLocaleTimeString()}</div>
-                                </>
-                              ) : (
-                                <span className="text-[var(--dashboard-text-muted)]">No date</span>
-                              )}
-                            </div>
-                            
-                            {/* Column 2: Action Type */}
-                            <div className="flex justify-start">
-                              <span className="px-1.5 py-0.5 rounded-full text-xs bg-gray-50 text-gray-500 truncate opacity-60" style={{ fontSize: '0.7rem', maxWidth: '110px' }}>
-                                {action.action_type}
-                              </span>
-                            </div>
-                            
-                            {/* Column 3: Action Title */}
-                            <div className="font-medium text-xs text-[var(--dashboard-text-primary)] truncate">
-                              {action.action_title}
-                            </div>
-                            
-                            {/* Column 4: Status Pill */}
-                            <div className="flex justify-center">
-                              <span className={`px-1.5 py-0.5 rounded-full text-xs ${
-                                action.action_status === 'completed' 
-                                  ? 'bg-green-100 text-green-800'
-                                  : 'bg-yellow-100 text-yellow-800'
-                              }`} style={{ fontSize: '0.7rem' }}>
-                                {action.action_status}
-                              </span>
+                            {/* Desktop Layout (lg+): Single row */}
+                            <div className="hidden lg:block">
+                              {/* Date/Time */}
+                              <div className="text-xs text-[var(--dashboard-text-tertiary)] mb-1" style={{ fontSize: '0.7rem' }}>
+                                {action.created_at ? (
+                                  <span>
+                                    {new Date(action.created_at).toLocaleDateString()} {new Date(action.created_at).toLocaleTimeString()}
+                                  </span>
+                                ) : (
+                                  <span className="text-[var(--dashboard-text-muted)]">No date</span>
+                                )}
+                              </div>
+                              
+                              {/* Action Type, Title, and Status in one row */}
+                              <div className="flex items-center gap-2">
+                                <span className="px-1.5 py-0.5 rounded-full text-xs bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-tertiary)]" style={{ fontSize: '0.7rem' }}>
+                                  {action.action_type}
+                                </span>
+                                <div className="font-medium text-xs text-[var(--dashboard-text-primary)] flex-1">
+                                  {action.action_title}
+                                </div>
+                                <span className={`px-1.5 py-0.5 rounded-full text-xs ${
+                                  action.action_status === 'completed' 
+                                    ? 'bg-green-100 text-green-800'
+                                    : 'bg-yellow-100 text-yellow-800'
+                                }`} style={{ fontSize: '0.7rem' }}>
+                                  {action.action_status}
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -771,7 +1189,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                 {/* Customer Details */}
                     <div>
                   <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Customer Details</h3>
-                  <div className="flex items-center gap-6 text-sm">
+                  <div className="flex items-center gap-6 text-xs">
                     <div className="flex items-center gap-2">
                       <span>{selectedRequest.customer_name}</span>
                       <button
@@ -832,7 +1250,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                     <div>
                     <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Customer Notes</h3>
                     <div className="p-3 rounded-lg border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
-                      <div className="text-sm text-[var(--dashboard-text-secondary)]">
+                      <div className="text-xs text-[var(--dashboard-text-secondary)]">
                         {selectedRequest.customer_notes}
                       </div>
                     </div>
@@ -851,7 +1269,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           <div className="space-y-3">
                             <div className="flex items-center justify-between">
                               <div>
-                                <div className="font-medium text-sm">
+                                <div className="font-medium text-xs">
                                   {selectedRequest.serviceevent?.event_name || 'Event'}
                                 </div>
                                 {selectedRequest.request_datetimes && (
@@ -920,7 +1338,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                         <div className="space-y-2">
                           {selectedRequest.selected_service_items_snapshot.map((item: any, index: number) => (
                             <div key={index} className="p-3 rounded-lg border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
-                              <div className="flex items-center justify-between text-sm">
+                              <div className="flex items-center justify-between text-xs">
                                 <div className="flex items-center gap-4">
                                   <span className="font-medium">{item.name || item.item_name}</span>
                                   {item.description && (
@@ -952,7 +1370,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       {selectedRequest.question_responses_snapshot && Array.isArray(selectedRequest.question_responses_snapshot) && selectedRequest.question_responses_snapshot.length > 0 ? (
                         <div className="space-y-2">
                           {selectedRequest.question_responses_snapshot.map((question: any, index: number) => (
-                            <div key={index} className="text-sm pb-2 border-b border-[var(--dashboard-border-primary)] last:border-b-0">
+                            <div key={index} className="text-xs pb-2 border-b border-[var(--dashboard-border-primary)] last:border-b-0">
                               <div className="text-xs font-medium flex items-center gap-1 text-[var(--dashboard-text-tertiary)]">
                                 <svg className="w-1.5 h-1.5" fill="currentColor" viewBox="0 0 20 20">
                                   <circle cx="10" cy="10" r="3" />
@@ -966,7 +1384,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                                 <div className="mt-1 pl-3">
                                   <div className="flex flex-wrap gap-2">
                                     {question.selected_options.map((option: any, optIndex: number) => (
-                                      <div key={optIndex} className="flex items-center gap-1 text-sm">
+                                      <div key={optIndex} className="flex items-center gap-1 text-xs">
                                         <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
@@ -992,7 +1410,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       {selectedRequest.requirement_responses_snapshot && Array.isArray(selectedRequest.requirement_responses_snapshot) && selectedRequest.requirement_responses_snapshot.length > 0 ? (
                         <div className="space-y-1">
                           {selectedRequest.requirement_responses_snapshot.map((requirement: any, index: number) => (
-                            <div key={index} className="flex items-center gap-2 text-sm">
+                            <div key={index} className="flex items-center gap-2 text-xs">
                               <div className={`px-2 py-1 rounded-full text-xs ${
                                 requirement.customer_confirmed 
                                   ? 'bg-green-100 text-green-800' 
@@ -1018,6 +1436,47 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       )}
                     </div>
 
+                    {/* Saved Generated Response */}
+                    {selectedRequest.generated_response && (
+                      <div>
+                        <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">
+                          AI Generated Response
+                        </h3>
+                        <div className="p-3 rounded-lg border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs text-[var(--dashboard-text-tertiary)]">
+                              Saved: {selectedRequest.generated_response_saved_at 
+                                ? new Date(selectedRequest.generated_response_saved_at).toLocaleDateString() + ' ' + 
+                                  new Date(selectedRequest.generated_response_saved_at).toLocaleTimeString()
+                                : 'Unknown'}
+                            </span>
+                            <div className="flex gap-1">
+                              <button
+                                onClick={loadSavedResponseForEditing}
+                                className="p-1 rounded transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+                                title="Load saved response for editing"
+                              >
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </button>
+                              <button
+                                onClick={() => navigator.clipboard.writeText(selectedRequest.generated_response)}
+                                className="p-1 rounded transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+                                title="Copy saved response"
+                              >
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                          <div className="text-xs text-[var(--dashboard-text-secondary)] leading-relaxed">
+                            {selectedRequest.generated_response}
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
 
 
@@ -1030,12 +1489,12 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           {selectedRequest.servicerequestmessage.map((message: any) => (
                             <div key={message.message_id} className="p-3 rounded-lg bg-[var(--dashboard-bg-tertiary)]">
                               <div className="flex items-center justify-between mb-1">
-                                <span className="text-sm font-medium">{message.sender_type}</span>
+                                <span className="text-xs font-medium">{message.sender_type}</span>
                                 <span className="text-xs opacity-75">
                                   {new Date(message.sent_at).toLocaleDateString()}
                                 </span>
                               </div>
-                              <div className="text-sm">{message.message_text}</div>
+                              <div className="text-xs">{message.message_text}</div>
                             </div>
                           ))}
                         </div>
@@ -1054,365 +1513,168 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
           </div>
 
           {/* Right Panel - Actions */}
-          <div className="w-full lg:w-1/4 border-t lg:border-t-0 lg:border-l border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-secondary)] flex flex-col">
-            <div className="p-4 lg:p-6">
+          <div className="w-full lg:w-1/3 border-t lg:border-t-0 lg:border-l border-[var(--dashboard-border-primary)] flex flex-col">
               {selectedRequest ? (
                 <>
-                  {/* Navigation Controls */}
-                  <div className="mb-6">
-                    <h4 className="text-xs font-medium mb-3 text-[var(--dashboard-text-tertiary)] uppercase tracking-wide">Navigation</h4>
+                {/* Generate Section - Independent Container */}
+                <div className="p-4 lg:p-6 border-b border-[var(--dashboard-border-primary)]">
+                  <div className="ai-panel-gradient rounded-2xl shadow-lg relative overflow-hidden p-5 lg:p-7">
+                    {/* Bottom Color Layer 1 */}
+                    <div 
+                      className="absolute z-1"
+                      style={{
+                        background: 'var(--ai-panel-accent-1)',
+                        filter: 'blur(40px)',
+                        opacity: 0.3,
+                        height: '90px',
+                        bottom: '-45px',
+                        left: '0',
+                        width: '33.33%',
+                        borderRadius: '100%'
+                      }}
+                    ></div>
                     
-                    {/* Navigation Arrows */}
-                    <div className="flex items-center justify-between gap-2">
-                      <button
-                        onClick={() => navigateRequest(-1)}
-                        disabled={selectedIndex === 0}
-                        className={`p-2 rounded-lg transition-colors ${
-                          selectedIndex === 0
-                            ? 'opacity-50 cursor-not-allowed'
-                            : 'hover:bg-[var(--dashboard-bg-tertiary)]'
-                        }`}
-                      >
-                        <ArrowLeftIcon className="w-4 h-4" />
-                      </button>
-                      <span className="text-xs text-[var(--dashboard-text-tertiary)]">
-                        {selectedIndex + 1} of {serviceRequests.length}
-                      </span>
-                      <button
-                        onClick={() => navigateRequest(1)}
-                        disabled={selectedIndex === serviceRequests.length - 1}
-                        className={`p-2 rounded-lg transition-colors ${
-                          selectedIndex === serviceRequests.length - 1
-                            ? 'opacity-50 cursor-not-allowed'
-                            : 'hover:bg-[var(--dashboard-bg-tertiary)]'
-                        }`}
-                      >
-                        <ArrowRightIcon className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-
-
-                  {/* Handle/Flag Buttons */}
-                  <div className="mb-6">
-                    <h4 className="text-xs font-medium mb-3 text-[var(--dashboard-text-tertiary)] uppercase tracking-wide">Status Actions</h4>
+                    {/* Bottom Color Layer 2 */}
+                    <div 
+                      className="absolute z-1"
+                      style={{
+                        background: 'var(--ai-panel-accent-2)',
+                        filter: 'blur(40px)',
+                        opacity: 0.3,
+                        height: '90px',
+                        bottom: '-45px',
+                        left: '33.33%',
+                        width: '33.33%',
+                        borderRadius: '100%'
+                      }}
+                    ></div>
                     
-                    {/* Row 1: Handled and Closed */}
-                    <div className="grid grid-cols-2 gap-2 mb-2">
-                      <button
-                        onClick={() => markAsHandled(selectedRequest.request_id)}
-                        className={`px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm ${
-                          isRequestHandled(selectedRequest)
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-green-600 text-white hover:bg-green-700'
-                        }`}
-                        title="Mark as handled (Ctrl+H)"
-                      >
-                        {isRequestHandled(selectedRequest) ? (
-                          <CheckCircleSolidIcon className="w-4 h-4" />
-                        ) : (
-                          <CheckCircleIcon className="w-4 h-4" />
-                        )}
-                        {isRequestHandled(selectedRequest) ? 'Handled' : 'Mark Handled'}
-                      </button>
-                      
-                      <button
-                        onClick={() => toggleClosedStatus(selectedRequest.request_id)}
-                        className={`px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm ${
-                          selectedRequest.is_closed
-                            ? 'bg-gray-100 text-gray-800'
-                            : 'bg-orange-600 text-white hover:bg-orange-700'
-                        }`}
-                        title="Toggle closed status"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        {selectedRequest.is_closed ? 'Closed' : 'Mark Closed'}
-                      </button>
-                    </div>
-                    
-                    {/* Row 2: Urgency Flag (full width) */}
-                    <button
-                      onClick={() => toggleUrgencyFlag(selectedRequest.request_id)}
-                      className={`w-full px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm ${
-                        selectedRequest.urgency_flag
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-black text-white hover:bg-gray-800'
-                      }`}
-                      title="Toggle urgency flag (Ctrl+F)"
-                    >
-                      <FlagIcon className="w-4 h-4" />
-                      {selectedRequest.urgency_flag ? 'Urgent' : 'Flag Urgent'}
-                    </button>
-                  </div>
-
-                  {/* Contact Actions */}
-                  <div className="mb-6">
-                    <h4 className="text-xs font-medium mb-2 text-[var(--dashboard-text-tertiary)] uppercase tracking-wide">Contact Customer</h4>
-                    
-                    {selectedRequest.customer_phone || selectedRequest.customer_email ? (
-                      <div className="grid grid-cols-2 gap-2">
-                        {selectedRequest.customer_phone && (
-                          <a
-                            href={`tel:${selectedRequest.customer_phone}`}
-                            className="px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors flex items-center justify-center gap-2 text-sm"
-                            title={`Call ${selectedRequest.customer_phone}`}
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                            </svg>
-                            Call
-                          </a>
-                        )}
-                        
-                        {selectedRequest.customer_email && (
-                          <a
-                            href={`mailto:${selectedRequest.customer_email}`}
-                            className="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm"
-                            title={`Email ${selectedRequest.customer_email}`}
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                            Email
-                          </a>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="text-xs text-[var(--dashboard-text-secondary)] text-center py-2">
-                        No contact info available
-                      </div>
-                    )}
-                  </div>
-
+                    {/* Bottom Color Layer 3 */}
+                    <div 
+                      className="absolute z-1"
+                      style={{
+                        background: 'var(--ai-panel-accent-3)',
+                        filter: 'blur(40px)',
+                        opacity: 0.3,
+                        height: '90px',
+                        bottom: '-45px',
+                        left: '66.66%',
+                        width: '33.33%',
+                        borderRadius: '100%'
+                      }}
+                    ></div>
+                    <div className="relative z-10">
                   {/* Generate Actions */}
                   <div className="mb-6">
-                    <h4 className="text-xs font-medium mb-3 text-[var(--dashboard-text-tertiary)] uppercase tracking-wide">Generate</h4>
-                    <div className="space-y-2">
-                      <button
-                        onClick={handleGenerateResponse}
-                        className="w-full px-3 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-sm"
-                        title="Generate AI response based on request details and customer notes"
-                      >
-                        <SparklesIcon className="w-4 h-4" />
-                        Generate Response
-                      </button>
-                      
-                      <button
-                        onClick={() => generateQuotation(selectedRequest.request_id)}
-                        className="w-full px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm"
-                        title="Generate quotation (Ctrl+Q)"
-                      >
-                        <DocumentArrowUpIcon className="w-4 h-4" />
-                        Generate Quotation
-                      </button>
-                    </div>
-                    <div className="text-xs text-[var(--dashboard-text-secondary)] text-center mt-1">
-                      AI-powered generation tools
-                    </div>
-                  </div>
+                      <h4 className="text-xs font-medium mb-3 ai-panel-text-secondary uppercase tracking-wide flex items-center gap-2">
+                        Generate
+                      </h4>
 
-                  <h3 className="text-sm font-medium mb-4 text-[var(--dashboard-text-secondary)]">Actions</h3>
-                  
-                  {/* Action Buttons */}
-                  {selectedRequest.serviceboard?.[0] && (
-                    <div className="space-y-2">
-                      <button
-                        onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}`, '_blank')}
-                        className="w-full px-3 py-2 rounded-lg bg-gray-600 text-white hover:bg-gray-700 transition-colors flex items-center justify-center gap-2 text-sm"
-                        title="Open service board"
-                      >
-                        <ArrowTopRightOnSquareIcon className="w-4 h-4" />
-                        Open Board
-                      </button>
-                      
-                      <button
-                        onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=appointment_scheduling`, '_blank')}
-                        className="w-full px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors flex items-center justify-center gap-2 text-sm"
-                        title="Create appointment on service board"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Create Appointment
-                      </button>
-                      
-                      <button
-                        onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=information_request`, '_blank')}
-                        className="w-full px-3 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-sm"
-                        title="Add information request"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Info Request
-                      </button>
-                      
-                      <button
-                        onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=checklist`, '_blank')}
-                        className="w-full px-3 py-2 rounded-lg bg-orange-600 text-white hover:bg-orange-700 transition-colors flex items-center justify-center gap-2 text-sm"
-                        title="Add checklist"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                        </svg>
-                        Checklist
-                      </button>
-                    </div>
-                  )}
-                  {/* Keyboard Shortcuts Button - At Bottom */}
-                  <div className="mt-6 pt-4 border-t border-[var(--dashboard-border-primary)]">
-                    <div className="relative group">
-                      <button
-                        className="w-full p-2 rounded-lg transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
-                        title="Keyboard shortcuts"
-                      >
-                        <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                      </button>
-                      
-                      {/* Tooltip */}
-                      <div className="absolute right-0 top-full mt-2 p-3 rounded-lg shadow-lg border z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-secondary)]">
-                        <div className="text-xs whitespace-nowrap">
-                          <div className="font-medium mb-2">Keyboard Shortcuts:</div>
-                          <div>↑↓ Navigate requests</div>
-                          <div>Enter/Ctrl+H Mark handled</div>
-                          <div>Ctrl+Q Generate quotation</div>
-                          <div>Ctrl+F Toggle urgency</div>
-                          <div>Ctrl+C Copy contacts</div>
-                        </div>
-                        {/* Arrow pointing up */}
-                        <div className="absolute -top-1 right-4 w-2 h-2 rotate-45 bg-[var(--dashboard-bg-card)] border-l border-t border-[var(--dashboard-border-primary)]"></div>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <div className="text-center text-[var(--dashboard-text-tertiary)]">
-                  <p className="text-sm">Select a request to see available actions</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+                      {/* Inline AI Generation Content */}
+                      <div className="space-y-4">
 
-        {/* AI Generation Confirmation Modal */}
-        {showAIGenerationModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-              <div className="p-6">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center space-x-2">
-                    <SparklesIcon className="w-4 h-4 text-purple-600" />
-                    <h2 className="text-lg font-medium text-gray-900">Confirm AI Response Generation</h2>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setShowAIGenerationModal(false)
-                      resetGenerationState()
-                    }}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                    title="Close modal"
-                  >
-                    <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-                
-                <div className="space-y-6">
-                  {/* 3-Column Layout */}
-                  <div className="grid grid-cols-12 gap-6">
-                    {/* Request Summary - Column 1 */}
-                    <div className="col-span-4">
-                      <h3 className="text-xs font-medium text-gray-600 mb-2">Request Summary</h3>
-                      <div className="space-y-2 text-sm">
-                        <div>
-                          <div className="text-[10px] text-gray-500 mb-0.5">Customer</div>
-                          <div className="font-medium text-gray-900">{selectedRequest?.customer_name}</div>
-                        </div>
-                        <div>
-                          <div className="text-[10px] text-gray-500 mb-0.5">Service</div>
-                          <div className="font-medium text-gray-900">{selectedRequest?.service?.service_name || 'N/A'}</div>
-                        </div>
-                        <div>
-                          <div className="text-[10px] text-gray-500 mb-0.5">Reference</div>
-                          <div className="font-medium text-gray-900">{selectedRequest?.request_reference}</div>
-                        </div>
-                        {selectedRequest?.customer_notes && (
-                          <div>
-                            <div className="text-[10px] text-gray-500 mb-0.5">Customer Notes</div>
-                            <div className="font-medium text-gray-900">{selectedRequest.customer_notes}</div>
+                      {/* Show Generated Response or Input Forms */}
+                      {generatedResponse ? (
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h5 className="text-sm font-medium ai-panel-text-secondary">Generated Response</h5>
+                            <button
+                              onClick={() => {
+                                setGeneratedResponse(null)
+                                setResponseIsSaved(false)
+                                setSaveResponseError(null)
+                              }}
+                              className="px-2 py-1 text-xs ai-panel-text-secondary hover:ai-panel-text transition-colors"
+                              title="Clear and create new response"
+                            >
+                              New Response
+                            </button>
                           </div>
-                        )}
-                      </div>
-
-                      {/* Customer Notes Clarification */}
-                      {selectedRequest?.customer_notes && (
-                        <div className="mt-3">
-                          <h4 className="text-xs font-medium text-gray-600 mb-2">What's unclear about the customer notes?</h4>
-                          <textarea
-                            value={customerNotesClarification}
-                            onChange={(e) => setCustomerNotesClarification(e.target.value)}
-                            placeholder="Write informally what's not clear or what additional information you need from the customer notes..."
-                            className="w-full p-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                            rows={2}
-                          />
-                          {customerNotesClarification.trim() && (
-                            <div className="mt-1 text-xs text-blue-600">
-                              This will help the AI ask for specific clarifications
+                          <div className="ai-response rounded-lg p-3 border">
+                            <div className="text-xs ai-panel-text leading-relaxed">
+                              {generatedResponse}
+                            </div>
+                          </div>
+                          <div className="flex gap-2 justify-end">
+                            <button
+                              onClick={copyGeneratedResponse}
+                              className="ai-button-copy px-3 py-1 rounded text-xs transition-colors"
+                            >
+                              Copy
+                            </button>
+                            <button
+                              onClick={saveGeneratedResponse}
+                              disabled={isSavingResponse || responseIsSaved}
+                              className={`px-3 py-1 rounded text-xs transition-colors ${
+                                responseIsSaved 
+                                  ? 'bg-green-500 text-white' 
+                                  : 'ai-button-copy'
+                              } disabled:opacity-50 disabled:cursor-not-allowed`}
+                              title={responseIsSaved ? "Response saved!" : "Save response to database"}
+                            >
+                              {isSavingResponse ? "Saving..." : responseIsSaved ? "Saved!" : "Save"}
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          {/* Customer Notes Clarification */}
+                          {selectedRequest?.customer_notes && (
+                              <div>
+                              <label className="block text-sm font-medium ai-panel-text-secondary mb-2">
+                                What's unclear about the customer notes?
+                              </label>
+                              <textarea
+                                value={customerNotesClarification}
+                                onChange={(e) => setCustomerNotesClarification(e.target.value)}
+                                  placeholder="What's unclear about the customer notes?"
+                                  className="ai-input w-full p-2 text-xs border rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent resize-none"
+                                rows={2}
+                              />
                             </div>
                           )}
-                        </div>
-                      )}
 
-                      {/* Interactive Question Cards */}
-                      {selectedRequest?.question_responses_snapshot && selectedRequest.question_responses_snapshot.length > 0 && (
-                        <div className="mt-4">
-                          <h4 className="text-xs font-medium text-gray-600 mb-3">Question Responses</h4>
-                          <div className="space-y-2">
+                            {/* Question Selection */}
+                          {selectedRequest?.question_responses_snapshot && selectedRequest.question_responses_snapshot.length > 0 && (
+                              <div>
+                                <h5 className="text-sm font-medium ai-panel-text-secondary mb-2">Questions Needing Clarification</h5>
+                            <div className="space-y-2 max-h-32 overflow-y-auto">
                             {selectedRequest.question_responses_snapshot.map((question: any, index: number) => {
                               const isSelected = selectedQuestionsForClarification.includes(index)
                               let responseText = 'No response'
                               
-                              // Handle text responses
                               if (question.response_text) {
                                 responseText = question.response_text
-                              }
-                              // Handle checkbox/multiple choice responses
-                              else if (question.selected_options && question.selected_options.length > 0) {
+                                } else if (question.selected_options && question.selected_options.length > 0) {
                                 responseText = question.selected_options.map((option: any) => option.option_text || option.text || option).join(', ')
                               }
 
                               return (
                                 <div
                                   key={index}
-                                  className={`p-3 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
+                                    className={`p-2 rounded border cursor-pointer transition-colors ${
                                     isSelected 
-                                      ? 'border-orange-300 bg-orange-50' 
-                                      : 'border-gray-200 bg-white hover:border-gray-300'
+                                        ? 'border-purple-400 bg-purple-500/20' 
+                                        : 'border-white/30 hover:border-purple-400/50'
                                   }`}
                                   onClick={() => toggleQuestionForClarification(index)}
                                 >
                                   <div className="flex items-start justify-between">
                                     <div className="flex-1">
-                                      <div className="text-xs font-medium text-gray-700 mb-1">
+                                        <div className="text-xs font-medium ai-panel-text mb-1">
                                         {question.question_text}
                                       </div>
-                                      <div className="text-sm text-gray-600">
+                                        <div className="text-xs ai-panel-text-secondary">
                                         {responseText}
                                       </div>
                                     </div>
-                                    <div className={`ml-2 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                      <div className={`ml-2 w-4 h-4 rounded-full border-2 flex items-center justify-center ${
                                       isSelected 
-                                        ? 'border-orange-500 bg-orange-500' 
-                                        : 'border-gray-300'
+                                          ? 'border-purple-400 bg-purple-400' 
+                                          : 'border-white/50'
                                     }`}>
                                       {isSelected && (
-                                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                          <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
                                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
                                       )}
@@ -1422,266 +1684,229 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                               )
                             })}
                           </div>
-                          {selectedQuestionsForClarification.length > 0 && (
-                            <div className="mt-2 text-xs text-orange-600">
-                              {selectedQuestionsForClarification.length} question(s) selected for clarification
-                            </div>
-                          )}
                         </div>
                       )}
 
-                      {/* Manual Questions Textarea */}
-                      <div className="mt-4">
-                        <h4 className="text-xs font-medium text-gray-600 mb-2">Additional Questions</h4>
+                        {/* Manual Questions */}
+                        <div>
+                        <label className="block text-sm font-medium ai-panel-text-secondary mb-2">
+                          Add any additional questions...
+                        </label>
                         <textarea
                           value={manualQuestions}
                           onChange={(e) => setManualQuestions(e.target.value)}
-                          placeholder="Add any additional questions you'd like the AI to ask the customer..."
-                          className="w-full p-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                          rows={3}
-                        />
-                        {manualQuestions.trim() && (
-                          <div className="mt-1 text-xs text-blue-600">
-                            Custom questions will be integrated into the AI response
+                            placeholder="Add any additional questions..."
+                            className="ai-input w-full p-2 text-xs border rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent resize-none"
+                            rows={2}
+                          />
+                          </div>
+
+                        {/* Generate Button */}
+                        {!isGenerating && (
+                      <button
+                            onClick={handleGenerateResponse}
+                            disabled={(creditsStatus?.creditsAvailable ?? 0) <= 0}
+                            className="ai-button-generate w-full border-0 py-2 px-4 text-xs font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
+                          >
+                            {/* Gradient Layer */}
+                            <div 
+                              className="ai-button-glow absolute z-1"
+                              style={{
+                                filter: 'blur(15px)',
+                                opacity: 0.3,
+                                borderRadius: '0.5rem',
+                                height: '60%',
+                                width: '80%',
+                                bottom: '0',
+                                left: '50%',
+                                transform: 'translateX(-50%)'
+                              }}
+                            ></div>
+                            
+                            <div className="relative z-10 flex items-center justify-center gap-1">
+                              <SparklesIcon className="w-4 h-4" />
+                              <span className="text-sm">Generate Response</span>
+                            </div>
+                      </button>
+                        )}
+                        </>
+                      )}
+
+                        {/* Loading State */}
+                        {isGenerating && (
+                          <div className="flex items-center justify-center py-4">
+                            <LoadingAIGeneration size="sm" text="Generating response..." />
+                      </div>
+                        )}
+
+                        {/* Error Display */}
+                        {generationError && (
+                          <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-3 text-center">
+                            <div className="flex items-center justify-center space-x-2">
+                              <div className="w-4 h-4 bg-red-400 rounded-full flex items-center justify-center">
+                                <span className="text-red-800 text-xs font-bold">!</span>
+                              </div>
+                              <p className="text-xs text-red-800 dark:text-red-200">
+                                {generationError}
+                              </p>
+                            </div>
                           </div>
                         )}
-                      </div>
-                    </div>
 
-                    {/* Credit Cost - Column 2 */}
-                    <div className="col-span-3">
-                      <div className="bg-gray-50 rounded-xl p-4">
-                        <h4 className="font-semibold text-gray-900 text-center mb-4">AI Generation Cost</h4>
-                        <div className="space-y-3">
-                          {/* Remaining Credits */}
-                          <div className="text-left">
-                            <div className="text-xs text-gray-500 mb-1">Remaining Credits</div>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
-                                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                  <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
-                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd"/>
-                                </svg>
                               </div>
-                              <div className="text-lg font-bold text-gray-900">
-                                {creditsLoading ? "..." : creditsStatus?.creditsAvailable ?? 0}
                               </div>
-                            </div>
-                          </div>
-                          {/* Cost for Generation */}
-                          <div className="text-left">
-                            <div className="text-xs text-gray-500 mb-1">Generation Cost</div>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
-                                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                  <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
-                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd"/>
-                                </svg>
-                              </div>
-                              <div className="text-lg font-bold text-gray-900">1</div>
-                            </div>
-                          </div>
-                          {/* Expected After Generation */}
-                          <div className="text-left">
-                            <div className="text-xs text-gray-500 mb-1">After Generation</div>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                  <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
-                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd"/>
-                                </svg>
-                              </div>
-                              <div className="text-lg font-bold text-gray-900">
-                                {creditsLoading ? "..." : Math.max(0, (creditsStatus?.creditsAvailable ?? 0) - 1)}
-                              </div>
+
                             </div>
                           </div>
                         </div>
+
+                </>
+              ) : (
+              <div className="text-center text-[var(--dashboard-text-tertiary)] p-4 lg:p-6">
+                  <p className="text-xs">Select a request to see available actions</p>
+                        </div>
+                      )}
                       </div>
                     </div>
 
-                    {/* Response Generation - Column 3 */}
-                    <div className="col-span-5 bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900 rounded-2xl p-4 relative overflow-hidden">
-                      {/* Animated background elements */}
-                      <div className="absolute inset-0 opacity-10">
-                        <div className="absolute top-0 left-0 w-32 h-32 bg-blue-500 rounded-full blur-3xl animate-pulse"></div>
-                        <div className="absolute bottom-0 right-0 w-24 h-24 bg-purple-500 rounded-full blur-2xl animate-pulse delay-1000"></div>
-                        <div className="absolute top-1/2 left-1/2 w-16 h-16 bg-indigo-500 rounded-full blur-xl animate-pulse delay-500"></div>
                       </div>
                       
-                      {isGenerating ? (
-                        <div className="relative z-10 h-64 flex items-center justify-center">
-                          <LoadingAIGeneration size="md" text="Generating response..." />
-                        </div>
-                      ) : generatedResponse ? (
-                        <div className="relative z-10 h-64 flex flex-col">
-                          <div className="flex items-center justify-between mb-3">
-                            <h4 className="font-semibold text-white flex items-center gap-2">
-                              <CheckCircleIcon className="w-4 h-4" />
-                              Generated Response
-                            </h4>
-                            <button
-                              onClick={copyGeneratedResponse}
-                              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 text-xs font-medium shadow-sm hover:shadow-md"
-                            >
-                              Copy
-                            </button>
-                          </div>
-                          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 flex-1 overflow-y-auto border border-white/20">
-                            <div className="text-sm text-white leading-relaxed">
-                              {generatedResponse}
+      {/* Generation Confirmation Modal */}
+      {showGenerationModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="ai-panel-gradient rounded-2xl w-full max-w-md relative overflow-hidden">
+              {/* Accent Color Layers */}
+              <div 
+                className="absolute z-1"
+                style={{
+                  background: 'var(--ai-panel-accent-1)',
+                  filter: 'blur(40px)',
+                  opacity: 0.2,
+                  height: '80px',
+                  bottom: '-40px',
+                  left: '0',
+                  width: '50%',
+                  borderRadius: '100%'
+                }}
+              ></div>
+              <div 
+                className="absolute z-1"
+                style={{
+                  background: 'var(--ai-panel-accent-2)',
+                  filter: 'blur(40px)',
+                  opacity: 0.2,
+                  height: '80px',
+                  bottom: '-40px',
+                  right: '0',
+                  width: '50%',
+                  borderRadius: '100%'
+                }}
+              ></div>
+              
+              <div className="p-6 text-center relative z-10">
+              <h3 className="text-lg font-semibold ai-panel-text mb-6">
+                {isGenerating ? 'Generating Response...' : 'Confirm AI Generation'}
+              </h3>
+              
+              {/* Show loading state or confirmation content */}
+              {isGenerating ? (
+                <div className="relative z-30 mb-6">
+                  <div className="w-full h-48 relative rounded-lg overflow-hidden">
+                    <LoadingAIGeneration size="lg" text="Generating your AI response..." />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {/* Request Summary */}
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium ai-panel-text-secondary mb-2">Request Summary</h4>
+                    <div className="space-y-1 text-xs">
+                            <div>
+                        <span className="ai-panel-text-secondary">Customer:</span> 
+                        <span className="ai-panel-text ml-2">{selectedRequest?.customer_name}</span>
                             </div>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="relative z-10 h-64 flex items-center justify-center">
-                          <div className="text-center text-gray-300">
-                            <SparklesIcon className="w-8 h-8 mx-auto mb-2 opacity-60" />
-                            <p className="text-sm">Response will appear here</p>
+                            <div>
+                        <span className="ai-panel-text-secondary">Service:</span> 
+                        <span className="ai-panel-text ml-2">{selectedRequest?.service?.service_name || 'N/A'}</span>
+                              </div>
+                            <div>
+                        <span className="ai-panel-text-secondary">Reference:</span> 
+                        <span className="ai-panel-text ml-2">{selectedRequest?.request_reference}</span>
+                                </div>
+                              </div>
+                            </div>
+
+                  {/* Customer Notes Clarification */}
+                  {customerNotesClarification && (
+                    <div className="mb-4">
+                      <h4 className="text-xs font-medium ai-panel-text-secondary mb-2">Customer Notes Clarification</h4>
+                      <div className="p-3 bg-black/20 rounded-lg border border-white/20">
+                        <p className="text-sm ai-panel-text">{customerNotesClarification}</p>
                           </div>
                         </div>
                       )}
+
+                  {/* Additional Questions */}
+                  {manualQuestions && (
+                    <div className="mb-4">
+                      <h4 className="text-xs font-medium ai-panel-text-secondary mb-2">Additional Questions</h4>
+                      <div className="p-3 bg-black/20 rounded-lg border border-white/20">
+                        <p className="text-sm ai-panel-text">{manualQuestions}</p>
+                          </div>
+                        </div>
+                      )}
+
+                  {/* Generation Cost */}
+                  <div className="mb-4 p-4 bg-black/20 rounded-lg border border-white/20 text-center">
+                    <div className="mb-2">
+                      <div className="text-2xl font-bold ai-panel-text">1</div>
+                      <div className="text-sm ai-panel-text-secondary">Credit Required</div>
+                    </div>
+                    <div className="text-xs ai-panel-text-secondary">
+                      {creditsLoading ? "..." : creditsStatus?.creditsAvailable ?? 0} credits remaining
                     </div>
                   </div>
+                </>
+              )}
 
-                  {/* Debug: Raw Prompt Text */}
-                  <div className="bg-gray-100 rounded-lg p-3 border border-gray-200">
-                    <div className="text-[10px] text-gray-500 mb-1 font-mono">Debug: Raw Prompt Text</div>
-                    <div className="text-[9px] text-gray-600 font-mono leading-tight max-h-32 overflow-y-auto bg-white p-2 rounded border">
-                      {selectedRequest && (() => {
-                        const prompt = `Generate a professional response for the following service request:
-
-**Customer:** ${selectedRequest.customer_name}
-**Service:** ${selectedRequest.service?.service_name || 'Service'}
-**Request Reference:** ${selectedRequest.request_reference}
-
-**Business:** ${selectedRequest.business?.business_name || 'Business'}
-${selectedRequest.business?.business_descr ? `**Business Description:** ${selectedRequest.business.business_descr}` : ''}
-
-**Request Details:**
-
-${selectedRequest.question_responses_snapshot && selectedRequest.question_responses_snapshot.length > 0 ? `**Customer Responses:**
-${selectedRequest.question_responses_snapshot.map((response: any, index: number) => {
-  let responseText = 'No response'
-  
-  // Handle text responses
-  if (response.response_text) {
-    responseText = response.response_text
-  }
-  // Handle checkbox/multiple choice responses
-  else if (response.selected_options && response.selected_options.length > 0) {
-    responseText = response.selected_options.map((option: any) => option.option_text || option.text || option).join(', ')
-  }
-  
-  return `${index + 1}. ${response.question_text}: ${responseText}`
-}).join('\n')}` : ''}
-
-${selectedRequest.requirement_responses_snapshot && selectedRequest.requirement_responses_snapshot.length > 0 ? `**Requirements:**
-${selectedRequest.requirement_responses_snapshot.map((req: any, index: number) => `${index + 1}. ${req.requirements_text} (Status: ${req.customer_confirmed ? 'Confirmed' : 'Pending'})`).join('\n')}` : ''}
-
-${selectedRequest.serviceevent ? `**Event Information:**
-Event Name: ${selectedRequest.serviceevent.event_name || 'N/A'}
-${selectedRequest.serviceevent.event_description ? `Event Description: ${selectedRequest.serviceevent.event_description}` : ''}` : ''}
-
-${selectedRequest.request_datetimes && selectedRequest.request_datetimes.length > 0 ? `**Scheduling Dates Selected:**
-${selectedRequest.request_datetimes.map((date: string, index: number) => `${index + 1}. ${date}`).join('\n')}` : ''}
-
-${selectedRequest.customer_notes ? `**Customer Notes:**
-${selectedRequest.customer_notes}` : ''}
-
-${(selectedQuestionsForClarification.length > 0 || manualQuestions.trim() || customerNotesClarification.trim()) ? `**CLARIFICATION REQUESTS:**
-${customerNotesClarification.trim() ? `**Customer Notes Clarification Needed:**
-${customerNotesClarification.trim()}
-
-Please address these specific concerns about the customer notes and ask for clarification where needed in Italian.` : ''}${selectedQuestionsForClarification.length > 0 ? `${customerNotesClarification.trim() ? '\n\n' : ''}The following question responses need clarification or additional information:
-${selectedQuestionsForClarification.map((index: number) => {
-  const question = selectedRequest.question_responses_snapshot[index]
-  if (question) {
-    let responseText = 'No response'
-    if (question.response_text) {
-      responseText = question.response_text
-    } else if (question.selected_options && question.selected_options.length > 0) {
-      responseText = question.selected_options.map((option: any) => option.option_text || option.text || option).join(', ')
-    }
-    return `- "${question.question_text}": ${responseText}`
-  }
-  return ''
-}).filter(Boolean).join('\n')}
-
-Please ask for more specific details or clarification for these responses in Italian.` : ''}${manualQuestions.trim() ? `${selectedQuestionsForClarification.length > 0 ? '\n\n' : ''}**Additional Questions to Ask:**
-${manualQuestions.trim()}
-
-Please integrate these questions naturally into your response in Italian.` : ''}` : ''}
-
-Please generate a professional, helpful response in Italian that:
-1. Acknowledges the customer's request
-2. Shows understanding of their needs
-3. Provides next steps or solutions
-4. Maintains a professional and empathetic tone
-5. Is concise but comprehensive
-
-**IMPORTANT:** If any of the following information is missing, unclear, or incomplete, please request clarification from the customer:
-- Customer notes that are unclear or incomplete
-- Question responses that don't provide sufficient detail
-- Requirements that are not confirmed or are vague
-- Any other information needed to properly fulfill the service request
-
-The response should be ready to send directly to the customer in Italian. If any information is missing or unclear, politely request clarification for that specific information in Italian.`
-                        return prompt
-                      })()}
-                    </div>
+              {/* Action Buttons */}
+              {!isGenerating && (
+                <div className="flex gap-3">
+                      <button
+                    onClick={() => setShowGenerationModal(false)}
+                    className="flex-1 px-4 py-2 text-sm font-medium ai-panel-text-secondary bg-black/20 hover:bg-black/30 rounded-lg transition-colors border border-white/20"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleConfirmGeneration}
+                        disabled={(creditsStatus?.creditsAvailable ?? 0) <= 0}
+                    className="ai-button-generate flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
+                      >
+                        {/* Gradient Layer */}
+                        <div 
+                          className="ai-button-glow absolute z-1"
+                          style={{
+                            filter: 'blur(15px)',
+                            opacity: 0.3,
+                            borderRadius: '0.5rem',
+                            height: '60%',
+                            width: '80%',
+                            bottom: '0',
+                            left: '50%',
+                            transform: 'translateX(-50%)'
+                          }}
+                        ></div>
+                        <div className="relative z-10 flex items-center justify-center gap-1">
+                          <span>Generate Response</span>
+                        </div>
+                      </button>
                   </div>
-
-                  {/* Warning if low credits */}
-                  {creditsStatus && creditsStatus.creditsAvailable <= 2 && (
-                    <div className="bg-yellow-50 rounded-xl p-4 text-center">
-                      <div className="flex items-center justify-center space-x-2">
-                        <div className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center">
-                          <span className="text-yellow-800 text-xs font-bold">!</span>
-                        </div>
-                        <p className="text-sm text-yellow-800">
-                          Low AI generation credits remaining. Consider upgrading your plan.
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Error Display */}
-                  {generationError && (
-                    <div className="bg-red-50 rounded-xl p-4 text-center">
-                      <div className="flex items-center justify-center space-x-2">
-                        <div className="w-4 h-4 bg-red-400 rounded-full flex items-center justify-center">
-                          <span className="text-red-800 text-xs font-bold">!</span>
-                        </div>
-                        <p className="text-sm text-red-800">
-                          {generationError}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                </div>
-
-                {/* Footer */}
-                <div className="flex flex-col space-y-2 pt-6">
-                  {!generatedResponse && !isGenerating && (
-                    <button
-                      onClick={handleConfirmAIGeneration}
-                      disabled={(creditsStatus?.creditsAvailable ?? 0) <= 0}
-                      className="w-full bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 hover:from-purple-700 hover:via-blue-700 hover:to-indigo-700 text-white border-0 h-12 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                    >
-                      <div className="flex items-center justify-center space-x-2">
-                        <SparklesIcon className="w-5 h-5" />
-                        <span>Generate Response</span>
-                      </div>
-                    </button>
-                  )}
-                </div>
+              )}
               </div>
             </div>
           </div>
         )}
-      </div>
     </DashboardLayout>
   )
 }

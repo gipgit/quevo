@@ -75,7 +75,7 @@ export default function CreateServicePage() {
   const t = useTranslations("services")
   const tCommon = useTranslations("Common")
   const router = useRouter()
-  const { currentBusiness, userPlan, planLimits, usage, refreshUsageForFeature, loading: contextLoading } = useBusiness()
+  const { currentBusiness, planLimits, usage, refreshUsageForFeature, loading: contextLoading } = useBusiness()
   const { showToast } = useToaster()
   const { theme } = useTheme()
 

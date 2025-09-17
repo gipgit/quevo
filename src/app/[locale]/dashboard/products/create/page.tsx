@@ -23,7 +23,7 @@ interface ProductVariation {
 export default function CreateProductPage() {
   const t = useTranslations("products")
   const router = useRouter()
-  const { currentBusiness, userPlan } = useBusiness()
+  const { currentBusiness } = useBusiness()
 
   const [categories, setCategories] = useState<MenuCategory[]>([])
   const [loading, setLoading] = useState(false)
@@ -51,13 +51,13 @@ export default function CreateProductPage() {
   }, [currentBusiness])
 
   useEffect(() => {
-    if (userPlan?.plan_id) {
-      fetch(`/api/plan-limits/${userPlan.plan_id}`)
+    if (currentBusiness?.plan?.plan_id) {
+      fetch(`/api/plan-limits/${currentBusiness.plan.plan_id}`)
         .then((res) => res.json())
         .then((data) => setPlanLimits(data.limits))
         .catch(() => setPlanLimits(null))
     }
-  }, [userPlan])
+  }, [currentBusiness?.plan])
 
   const fetchMenuCategories = async () => {
     try {

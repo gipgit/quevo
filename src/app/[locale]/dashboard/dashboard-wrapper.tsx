@@ -73,7 +73,7 @@ interface DashboardWrapperProps {
 }
 
 export default function DashboardWrapper({ usage, planLimits, autoSelectBusinessId }: DashboardWrapperProps) {
-  const { businesses, currentBusiness, userManager, userPlan } = useBusiness()
+  const { businesses, currentBusiness, userManager } = useBusiness()
   const t = useTranslations("dashboard")
   const [copied, setCopied] = useState(false)
   const [showBusinessModal, setShowBusinessModal] = useState(false)

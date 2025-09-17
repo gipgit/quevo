@@ -47,7 +47,6 @@ export async function GET(
           select: {
             service_name: true,
             description: true,
-            duration_minutes: true,
             price_base: true
           }
         },

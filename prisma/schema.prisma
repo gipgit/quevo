@@ -1012,6 +1012,8 @@ model servicerequest {
   follow_up_required                Boolean?                            @default(false)
   follow_up_date                    DateTime?                           @db.Timestamp(6)
   tags                              Json?
+  generated_response                String?
+  generated_response_saved_at       DateTime?                           @db.Timestamp(6)
   serviceboard                      serviceboard[]
   business                          business                            @relation(fields: [business_id], references: [business_id])
   usercustomer                      usercustomer?                       @relation(fields: [customer_user_id], references: [user_id], onDelete: Restrict)

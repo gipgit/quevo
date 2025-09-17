@@ -764,6 +764,8 @@ export async function GET(
         priority: true,
         urgency_flag: true,
         is_closed: true,
+        generated_response: true,
+        generated_response_saved_at: true,
         service: {
           select: {
             service_name: true,

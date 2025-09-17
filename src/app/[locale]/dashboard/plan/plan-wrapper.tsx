@@ -11,6 +11,7 @@ interface Business {
   business_id: string
   business_name: string
   business_descr: string | null
+  plan?: Plan | null
 }
 
 interface UserManager {
@@ -49,7 +50,6 @@ interface PlanLimit {
 interface PlanWrapperProps {
   currentBusiness: Business
   userManager: UserManager | null
-  userPlan: Plan | null
   usage: Usage
   planLimits: PlanLimit[]
   allPlans: Plan[]
@@ -59,7 +59,6 @@ interface PlanWrapperProps {
 export default function PlanWrapper({ 
   currentBusiness, 
   userManager, 
-  userPlan, 
   usage, 
   planLimits, 
   allPlans, 
@@ -186,8 +185,8 @@ export default function PlanWrapper({
   const paymentMethod = stripeDetails?.default_payment_method
 
   // Prefer live Stripe data if available, fallback to DB
-  const planName = userPlan?.plan_name || db?.plan_name
-  const planId = userPlan?.plan_id || db?.plan_id
+  const planName = currentBusiness.plan?.plan_name || db?.plan_name
+  const planId = currentBusiness.plan?.plan_id || db?.plan_id
   const managerName = `${userManager?.name_first || db?.name_first || ''} ${userManager?.name_last || db?.name_last || ''}`
   const subscriptionStatus = subscription?.status || db?.stripe_status || t("noStatus")
   const currentPeriodEnd = subscription?.current_period_end || db?.stripe_current_period_end
@@ -352,7 +351,7 @@ export default function PlanWrapper({
                     <div
                       key={plan.plan_id}
                       className={`rounded-3xl border p-6 bg-white flex flex-col justify-between transition-all duration-300 ${
-                        userPlan?.plan_id === plan.plan_id 
+                        currentBusiness.plan?.plan_id === plan.plan_id 
                           ? "border-blue-500 shadow-lg" 
                           : plan.plan_name.toLowerCase().includes('pro') 
                             ? "border-gray-200 shadow-2xl"
@@ -386,14 +385,14 @@ export default function PlanWrapper({
                         
                         <button
                           className={`w-full px-4 py-2 rounded-lg font-medium transition-colors mb-4 ${
-                            userPlan?.plan_id === plan.plan_id 
+                            currentBusiness.plan?.plan_id === plan.plan_id 
                               ? "bg-transparent border border-gray-300 text-gray-600 hover:bg-gray-50" 
                               : "bg-gray-900 hover:bg-gray-800 text-white"
                           }`}
                           onClick={() => handleUpgrade(plan)}
-                          disabled={userPlan?.plan_id === plan.plan_id || upgrading === plan.stripe_price_id}
+                          disabled={currentBusiness.plan?.plan_id === plan.plan_id || upgrading === plan.stripe_price_id}
                         >
-                          {userPlan?.plan_id === plan.plan_id
+                          {currentBusiness.plan?.plan_id === plan.plan_id
                             ? t("currentPlan")
                             : upgrading === plan.stripe_price_id
                             ? t("upgrading")

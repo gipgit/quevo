@@ -107,9 +107,8 @@ export default async function PlanPage() {
 
   return (
     <PlanWrapper 
-      currentBusiness={currentBusiness}
+      currentBusiness={businessWithPlan || currentBusiness}
       userManager={userManager}
-      userPlan={businessWithPlan?.plan || null}
       usage={usage}
       planLimits={planLimits}
       allPlans={allPlans}
