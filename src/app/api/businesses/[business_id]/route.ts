@@ -37,17 +37,16 @@ export async function GET(request: Request, { params }: { params: Promise<{ busi
             name_first: true,
             name_last: true,
             email: true,
+          },
+        },
+        plan: {
+          select: {
             plan_id: true,
-            plan: {
-              select: {
-                plan_id: true,
-                plan_name: true,
-                display_price: true,
-                display_frequency: true,
-                plan_description: true,
-                plan_features: true,
-              },
-            },
+            plan_name: true,
+            display_price: true,
+            display_frequency: true,
+            plan_description: true,
+            plan_features: true,
           },
         },
         businessprofilesettings: true,
@@ -134,17 +133,16 @@ export async function PUT(request: Request, { params }: { params: Promise<{ busi
             name_first: true,
             name_last: true,
             email: true,
+          },
+        },
+        plan: {
+          select: {
             plan_id: true,
-            plan: {
-              select: {
-                plan_id: true,
-                plan_name: true,
-                display_price: true,
-                display_frequency: true,
-                plan_description: true,
-                plan_features: true,
-              },
-            },
+            plan_name: true,
+            display_price: true,
+            display_frequency: true,
+            plan_description: true,
+            plan_features: true,
           },
         },
         businessprofilesettings: true,

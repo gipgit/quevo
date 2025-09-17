@@ -185,7 +185,7 @@ export class AICreditsManager {
     if (!plan) return null;
 
     return {
-      ai_credits_rollover_max_percent: plan.ai_credits_rollover_max_percent || 1.0,
+      ai_credits_rollover_max_percent: Number(plan.ai_credits_rollover_max_percent) || 1.0,
       is_unlimited_ai: plan.is_unlimited_ai || false,
     };
   }

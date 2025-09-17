@@ -17,12 +17,9 @@ export async function GET(
   }
 
   try {
-    // Fetch the user manager data, and include their associated plan details
+    // Fetch the user manager data
     const user = await prisma.usermanager.findUnique({
       where: { user_id: userId },
-      include: {
-        plan: true, // Include the related Plan object
-      },
     });
 
     if (!user) {

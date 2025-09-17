@@ -22,9 +22,6 @@ export async function GET() {
     // Get all businesses for this manager with their plans
     const businesses = await prisma.business.findMany({
       where: { manager_id: session.user.id },
-      include: {
-        plan: true, // Include the plan for each business
-      },
       select: {
         business_id: true,
         business_name: true,
@@ -40,8 +37,6 @@ export async function GET() {
         business_public_uuid: true,
         date_created: true,
         plan: true, // Include plan data
-        ai_credits_used: true,
-        ai_credits_reset_date: true,
       },
     })
 

@@ -78,8 +78,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ 
       enhancedText,
       rateLimitInfo: {
-        generationsRemaining: rateLimitCheck.generationsAvailable,
-        nextRefillTime: rateLimitCheck.nextRefillTime
+        creditsRemaining: creditsResult.creditsRemaining,
+        creditsConsumed: creditsResult.creditsConsumed
       }
     })
 

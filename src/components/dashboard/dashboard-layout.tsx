@@ -70,16 +70,19 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [copied, setCopied] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('sidebarCollapsed') === 'true'
-    }
-    return false
-  })
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const { currentBusiness, businesses, switchBusiness, loading, userManager, businessSwitchKey } = useBusiness()
   const { isModalOpen, setIsModalOpen, currentLocale, availableLocales, switchLocale } = useLocaleSwitcher()
   const { theme, toggleTheme } = useTheme()
   const { creditsStatus, loading: creditsLoading } = useAICredits(currentBusiness?.business_id || null)
+
+  // Sync sidebar state with localStorage after hydration
+  useEffect(() => {
+    const savedState = localStorage.getItem('sidebarCollapsed') === 'true'
+    if (savedState !== isSidebarCollapsed) {
+      setIsSidebarCollapsed(savedState)
+    }
+  }, [])
   
   // Debug logging
   console.log("DashboardLayout: currentBusiness:", currentBusiness)
@@ -270,15 +273,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <aside className={`hidden lg:flex lg:flex-col rounded-xl transition-all duration-300 relative lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)] lg:max-h-[calc(100vh-2rem)] lg:will-change-transform ${
           isSidebarCollapsed ? 'lg:w-16' : 'lg:w-64'
         }`} style={{ transform: 'translateZ(0)' }}>
-          {isSidebarCollapsed && (
-            <button
-              onClick={toggleSidebar}
-              className="absolute top-2 right-2 z-10 p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
-              title="Expand sidebar"
-            >
-              <Bars3Icon className="h-4 w-4" />
-            </button>
-          )}
+          <div suppressHydrationWarning>
+            {isSidebarCollapsed && (
+              <button
+                onClick={toggleSidebar}
+                className="absolute top-2 right-2 z-10 p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+                title="Expand sidebar"
+              >
+                <Bars3Icon className="h-4 w-4" />
+              </button>
+            )}
+          </div>
           <div className={`flex flex-col h-full ${isSidebarCollapsed ? 'px-2 pt-9 pb-3' : 'px-4 py-3'}`}>
             {/* Business Info Card with Toggle Button */}
             <div className="flex items-center justify-between mb-2">
@@ -308,15 +313,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   )}
                 </div>
               </div>
-              {!isSidebarCollapsed && (
-                <button
-                  onClick={toggleSidebar}
-                  className="p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)] ml-2"
-                  title="Collapse sidebar"
-                >
-                  <Bars3Icon className="h-4 w-4" />
-                </button>
-              )}
+              <div suppressHydrationWarning>
+                {!isSidebarCollapsed && (
+                  <button
+                    onClick={toggleSidebar}
+                    className="p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)] ml-2"
+                    title="Collapse sidebar"
+                  >
+                    <Bars3Icon className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Navigation Items */}

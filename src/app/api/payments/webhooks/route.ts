@@ -112,8 +112,8 @@ export async function POST(req: NextRequest) {
         await AICreditsManager.initializeCreditsForBusiness(
           businessIdFromMetadata,
           plan.plan_id,
-          currentPeriodStartDate,
-          currentPeriodEndDate
+          currentPeriodStartDate || undefined,
+          currentPeriodEndDate || undefined
         );
 
         console.log(`Business ${businessIdFromMetadata} subscribed/updated successfully! Status: ${subscription.status}, Plan ID: ${plan.plan_id} (${plan.plan_name}). stripe_current_period_end set to: ${currentPeriodEndDate?.toISOString()}`);
@@ -192,10 +192,10 @@ export async function POST(req: NextRequest) {
           const planCredits = planCreditsMap[newPlanId] || 0;
           
           await AICreditsManager.allocateCreditsForPeriod(
-            business.business_id,
+            businessToUpdate.business_id,
             planCredits,
-            updatedCurrentPeriodStartDate,
-            updatedCurrentPeriodEndDate
+            updatedCurrentPeriodStartDate || new Date(),
+            updatedCurrentPeriodEndDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days from now
           );
 
           console.log(`Subscription for customer ${updatedCustomerId} updated to ${updatedSubscription.status}, Plan ID: ${newPlanId} (${plan?.plan_name || 'FREE'}). stripe_current_period_end set to: ${updatedCurrentPeriodEndDate?.toISOString()}`);
@@ -266,22 +266,22 @@ export async function POST(req: NextRequest) {
       const failedCustomerId = invoiceFailed.customer as string;
 
       try {
-        const userManagerAfterFailedPayment = await prisma.usermanager.findUnique({
+        const businessAfterFailedPayment = await prisma.business.findUnique({
             where: { stripe_customer_id: failedCustomerId },
+            include: { usermanager: true }
         });
 
-        if (userManagerAfterFailedPayment) {
-            // No changes needed here specific to the current_period_end, as it remains the same
-            // You might revert to free plan here, or keep as is.
-            await prisma.usermanager.update({
-                where: { user_id: userManagerAfterFailedPayment.user_id },
+        if (businessAfterFailedPayment) {
+            // Update business subscription status to past_due
+            await prisma.business.update({
+                where: { business_id: businessAfterFailedPayment.business_id },
                 data: {
                   subscription_status: 'past_due',
                 },
             });
-            console.log(`Invoice payment failed for customer ${failedCustomerId}. UserManager subscription status set to 'past_due'.`);
+            console.log(`Invoice payment failed for customer ${failedCustomerId}. Business subscription status set to 'past_due'.`);
         } else {
-            console.warn(`UserManager with Stripe Customer ID ${failedCustomerId} not found in DB for failed payment.`);
+            console.warn(`Business with Stripe Customer ID ${failedCustomerId} not found in DB for failed payment.`);
         }
       } catch (prismaError) {
         console.error(`Error updating UserManager for invoice.payment_failed:`, prismaError);
