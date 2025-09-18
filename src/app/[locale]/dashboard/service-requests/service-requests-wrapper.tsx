@@ -650,16 +650,43 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
         <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-6 overflow-hidden">
           {/* Left Panel - Request List */}
           <div className="w-full lg:w-1/5 border-b lg:border-b-0 lg:border-r border-[var(--dashboard-border-primary)] flex flex-col">
-            {/* Progress Bar */}
+            {/* Navigation & Progress */}
             <div className="p-4 border-b border-[var(--dashboard-border-primary)]">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <div className="text-xs font-medium text-[var(--dashboard-text-secondary)]">
-                    Progress
-                  </div>
-                  <div className="text-lg font-bold text-[var(--dashboard-text-primary)]">
-                    {handledRequests} of {totalRequests} handled
-                  </div>
+              {/* Navigation Controls */}
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <button
+                  onClick={() => navigateRequest(-1)}
+                  disabled={selectedIndex === 0}
+                  className={`p-1.5 rounded-lg transition-colors ${
+                    selectedIndex === 0
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:bg-[var(--dashboard-bg-tertiary)]'
+                  }`}
+                  title="Previous request"
+                >
+                  <ArrowLeftIcon className="w-3.5 h-3.5" />
+                </button>
+                <span className="text-xs text-[var(--dashboard-text-tertiary)] px-2">
+                  {selectedIndex + 1} of {serviceRequests.length}
+                </span>
+                <button
+                  onClick={() => navigateRequest(1)}
+                  disabled={selectedIndex === serviceRequests.length - 1}
+                  className={`p-1.5 rounded-lg transition-colors ${
+                    selectedIndex === serviceRequests.length - 1
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:bg-[var(--dashboard-bg-tertiary)]'
+                  }`}
+                  title="Next request"
+                >
+                  <ArrowRightIcon className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              
+              {/* Progress Bar */}
+              <div className="flex justify-between items-center mb-2">
+                <div className="text-sm md:text-lg text-[var(--dashboard-text-primary)]">
+                  {handledRequests} of {totalRequests} handled
                 </div>
                 <span className="text-xs text-[var(--dashboard-text-tertiary)]">
                   {unhandledRequests} remaining
@@ -747,10 +774,10 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                         {/* Left Column: Request Info */}
                         <div className="space-y-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h2 className="text-2xl font-bold text-[var(--dashboard-text-primary)]">
+                            <h2 className="text-xl md:text-2xl font-bold text-[var(--dashboard-text-primary)]">
                               {selectedRequest.request_reference}
                             </h2>
-                            <span className={`px-2 py-0.5 rounded-full text-xs ${getStatusColor(selectedRequest.status)}`}>
+                            <span className={`px-1.5 py-0.5 rounded-full text-xs md:text-xs ${getStatusColor(selectedRequest.status)}`} style={{ fontSize: 'clamp(0.65rem, 2vw, 0.75rem)' }}>
                               {getStatusText(selectedRequest.status)}
                             </span>
                             {selectedRequest.urgency_flag && (
@@ -768,41 +795,9 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           </div>
                         </div>
                         
-                        {/* Right Column: Navigation & Time */}
-                        <div className="flex flex-col items-start lg:items-end space-y-3">
-                          {/* Navigation Controls */}
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => navigateRequest(-1)}
-                              disabled={selectedIndex === 0}
-                              className={`p-1.5 rounded-lg transition-colors ${
-                                selectedIndex === 0
-                                  ? 'opacity-50 cursor-not-allowed'
-                                  : 'hover:bg-[var(--dashboard-bg-tertiary)]'
-                              }`}
-                              title="Previous request"
-                            >
-                              <ArrowLeftIcon className="w-3.5 h-3.5" />
-                            </button>
-                            <span className="text-xs text-[var(--dashboard-text-tertiary)] px-2">
-                              {selectedIndex + 1} of {serviceRequests.length}
-                            </span>
-                            <button
-                              onClick={() => navigateRequest(1)}
-                              disabled={selectedIndex === serviceRequests.length - 1}
-                              className={`p-1.5 rounded-lg transition-colors ${
-                                selectedIndex === serviceRequests.length - 1
-                                  ? 'opacity-50 cursor-not-allowed'
-                                  : 'hover:bg-[var(--dashboard-bg-tertiary)]'
-                              }`}
-                              title="Next request"
-                            >
-                              <ArrowRightIcon className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                          
-                          {/* Time Passed Indicator */}
+                        {/* Right Column: Time Passed */}
                         <div className="flex flex-col items-start lg:items-end">
+                        <div className="flex flex-row lg:flex-col items-center lg:items-end gap-2 lg:gap-0">
                           <span className="text-xs text-[var(--dashboard-text-secondary)]">Time passed</span>
                           <span className="text-xs lg:text-base font-bold text-[var(--dashboard-text-primary)]">
                             {(() => {

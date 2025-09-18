@@ -273,17 +273,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <aside className={`hidden lg:flex lg:flex-col rounded-xl transition-all duration-300 relative lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)] lg:max-h-[calc(100vh-2rem)] lg:will-change-transform ${
           isSidebarCollapsed ? 'lg:w-16' : 'lg:w-64'
         }`} style={{ transform: 'translateZ(0)' }}>
-          <div suppressHydrationWarning>
-            {isSidebarCollapsed && (
-              <button
-                onClick={toggleSidebar}
-                className="absolute top-2 right-2 z-10 p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
-                title="Expand sidebar"
-              >
-                <Bars3Icon className="h-4 w-4" />
-              </button>
-            )}
-          </div>
           <div className={`flex flex-col h-full ${isSidebarCollapsed ? 'px-2 pt-9 pb-3' : 'px-4 py-3'}`}>
             {/* Business Info Card with Toggle Button */}
             <div className="flex items-center justify-between mb-2">
@@ -312,17 +301,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     </div>
                   )}
                 </div>
-              </div>
-              <div suppressHydrationWarning>
-                {!isSidebarCollapsed && (
-                  <button
-                    onClick={toggleSidebar}
-                    className="p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)] ml-2"
-                    title="Collapse sidebar"
-                  >
-                    <Bars3Icon className="h-4 w-4" />
-                  </button>
-                )}
               </div>
             </div>
 
@@ -429,6 +407,23 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               )}
             </div>
           </div>
+          {/* Sidebar Toggle Button */}
+          <button
+            onClick={toggleSidebar}
+            className="absolute top-1/2 transform -translate-y-1/2 -right-2 z-20 w-6 h-12 bg-[var(--dashboard-bg-secondary)] dark:bg-[var(--dashboard-bg-tertiary)] border border-[var(--dashboard-border-primary)] dark:border-[var(--dashboard-border-secondary)] rounded-lg items-center justify-center transition-all duration-300 hover:bg-[var(--dashboard-bg-tertiary)] dark:hover:bg-[var(--dashboard-bg-secondary)] shadow-md flex text-[var(--dashboard-text-secondary)] dark:text-[var(--dashboard-text-primary)]"
+            title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            <svg 
+              className={`w-3 h-3 transition-transform duration-300 ${
+                isSidebarCollapsed ? 'rotate-0' : 'rotate-180'
+              }`} 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </aside>
 
         {/* Mobile Sidebar Overlay */}
@@ -561,15 +556,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           <div className="flex items-center justify-around px-4 py-2">
             {/* Essential Navigation Items */}
             <Link
-              href="/dashboard"
+              href="/dashboard/service-requests"
               className={`flex flex-col items-center p-1.5 rounded-lg transition-all duration-200 ${
-                isActiveLink("/dashboard")
+                isActiveLink("/dashboard/service-requests")
                   ? "text-[var(--dashboard-text-primary)] bg-[var(--dashboard-bg-tertiary)] shadow-md border border-[var(--dashboard-border-primary)]"
                   : "text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
               }`}
             >
-              <HomeIcon className="h-5 w-5" />
-              <span className="text-[10px] mt-0.5 font-normal">Home</span>
+              <ClipboardDocumentListIcon className="h-5 w-5" />
+              <span className="text-[10px] mt-0.5 font-normal">Requests</span>
             </Link>
 
             <Link
@@ -620,20 +615,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               <span className="text-[10px] mt-0.5 font-normal">Profile</span>
             </Link>
 
-            {/* AI Credits Indicator (Mobile) */}
-            {currentBusiness && (
-              <div className="flex flex-col items-center p-1.5 rounded-lg bg-[var(--dashboard-bg-tertiary)] border border-[var(--dashboard-border-primary)]">
-                <div className="flex items-center gap-1">
-                  <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                  <span className="text-xs font-medium text-[var(--dashboard-text-primary)]">
-                    {creditsLoading ? "..." : creditsStatus?.creditsAvailable ?? 0}
-                  </span>
-                </div>
-                <span className="text-[8px] mt-0.5 font-normal text-[var(--dashboard-text-secondary)]">AI Credits</span>
-              </div>
-            )}
 
             {/* Sidebar Toggle Button */}
             <button
