@@ -20,6 +20,7 @@ interface GenerateServiceResponseData {
   }
   clarificationRequests?: {
     selectedQuestionIndices: number[]
+    selectedRequirementIndices: number[]
     manualQuestions: string
     customerNotesClarification: string
   }
@@ -188,7 +189,8 @@ ${business.business_descr ? `**Business Description:** ${business.business_descr
 
   // Add scheduling dates if available
   if (requestDetails.schedulingDates && requestDetails.schedulingDates.length > 0) {
-    prompt += `\n\n**Scheduling Dates Selected:**`
+    prompt += `\n\n**Customer's Preferred Dates/Times (NOT CONFIRMED APPOINTMENTS):**`
+    prompt += `\nThese are the customer's preferred dates/times for the service, but they are NOT confirmed appointments yet.`
     requestDetails.schedulingDates.forEach((date, index) => {
       prompt += `\n${index + 1}. ${date}`
     })
@@ -201,9 +203,9 @@ ${business.business_descr ? `**Business Description:** ${business.business_descr
 
   // Add clarification requests if specified
   if (clarificationRequests) {
-    const { selectedQuestionIndices, manualQuestions, customerNotesClarification } = clarificationRequests
+    const { selectedQuestionIndices, selectedRequirementIndices, manualQuestions, customerNotesClarification } = clarificationRequests
     
-    if (selectedQuestionIndices.length > 0 || manualQuestions.trim() || customerNotesClarification.trim()) {
+    if (selectedQuestionIndices.length > 0 || selectedRequirementIndices.length > 0 || manualQuestions.trim() || customerNotesClarification.trim()) {
       prompt += `\n\n**CLARIFICATION REQUESTS:**`
       
       // Add customer notes clarification
@@ -230,6 +232,18 @@ ${business.business_descr ? `**Business Description:** ${business.business_descr
         prompt += `\n\nPlease ask for more specific details or clarification for these responses in Italian.`
       }
       
+      // Add selected requirements that need clarification
+      if (selectedRequirementIndices.length > 0) {
+        prompt += `\n\nThe following requirements were not confirmed by the customer and need clarification:`
+        selectedRequirementIndices.forEach((index) => {
+          const requirement = requestDetails.requirements?.[index]
+          if (requirement) {
+            prompt += `\n- "${requirement.title ? requirement.title + ': ' : ''}${requirement.requirements_text}"`
+          }
+        })
+        prompt += `\n\nPlease ask the customer why these requirements were not confirmed and if they need clarification or have concerns about them in Italian.`
+      }
+      
       // Add manual questions
       if (manualQuestions.trim()) {
         prompt += `\n\n**Additional Questions to Ask:**\n${manualQuestions.trim()}`
@@ -244,14 +258,22 @@ ${business.business_descr ? `**Business Description:** ${business.business_descr
 3. Provides next steps or solutions
 4. Maintains a professional and empathetic tone
 5. Is concise but comprehensive
+6. Signs off with the business name "${business.business_name}" (DO NOT use placeholders like "[your name]" or similar)
 
-**IMPORTANT:** If any of the following information is missing, unclear, or incomplete, please request clarification from the customer:
+**IMPORTANT GUIDELINES:**
+- If scheduling dates/times are mentioned, treat them as PREFERENCES expressed by the customer, NOT as confirmed appointments
+- Do not refer to dates as "appointments" or "bookings" unless they are actually confirmed
+- Use phrases like "preferred dates", "suggested times", or "availability requests" instead
+- If any information is missing, unclear, or incomplete, request clarification from the customer
+- Always end the response with the business name, never use placeholders
+
+**INFORMATION TO CLARIFY IF MISSING/UNCLEAR:**
 - Customer notes that are unclear or incomplete
 - Question responses that don't provide sufficient detail
 - Requirements that are not confirmed or are vague
 - Any other information needed to properly fulfill the service request
 
-The response should be ready to send directly to the customer in Italian. If any information is missing or unclear, politely request clarification for that specific information in Italian.`
+The response should be ready to send directly to the customer in Italian. Always sign with "${business.business_name}" and never use placeholder text.`
 
   return prompt
 }

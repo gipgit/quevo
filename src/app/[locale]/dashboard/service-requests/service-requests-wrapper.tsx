@@ -53,6 +53,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
   const [saveResponseError, setSaveResponseError] = useState<string | null>(null)
   const [responseIsSaved, setResponseIsSaved] = useState(false)
   const [selectedQuestionsForClarification, setSelectedQuestionsForClarification] = useState<number[]>([])
+  const [selectedRequirementsForClarification, setSelectedRequirementsForClarification] = useState<number[]>([])
   const [manualQuestions, setManualQuestions] = useState<string>('')
   const [customerNotesClarification, setCustomerNotesClarification] = useState<string>('')
   
@@ -143,6 +144,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
     setGenerationError(null)
     setSaveResponseError(null)
     setSelectedQuestionsForClarification([])
+    setSelectedRequirementsForClarification([])
     setManualQuestions('')
     setCustomerNotesClarification('')
   }, [selectedRequest])
@@ -490,6 +492,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
         },
         clarificationRequests: {
           selectedQuestionIndices: selectedQuestionsForClarification,
+          selectedRequirementIndices: selectedRequirementsForClarification,
           manualQuestions: manualQuestions.trim(),
           customerNotesClarification: customerNotesClarification.trim()
         }
@@ -588,8 +591,17 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
     )
   }
 
+  const toggleRequirementForClarification = (requirementIndex: number) => {
+    setSelectedRequirementsForClarification(prev => 
+      prev.includes(requirementIndex) 
+        ? prev.filter(index => index !== requirementIndex)
+        : [...prev, requirementIndex]
+    )
+  }
+
   const resetGenerationState = () => {
     setSelectedQuestionsForClarification([])
+    setSelectedRequirementsForClarification([])
     setManualQuestions('')
     setCustomerNotesClarification('')
     // Only reset generated response if it's not saved in database
@@ -633,300 +645,6 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
     <DashboardLayout>
       <div className="max-w-7xl mx-auto flex flex-col h-full">
         {/* Header */}
-        {/* Top Actions Bar */}
-        {selectedRequest && (
-          <div className="p-4 lg:p-6">
-             <div className="bg-[var(--dashboard-actionbar-bg)] dashboard-actionbar rounded-[2rem] border-2 border-[var(--dashboard-border-primary)] p-3 lg:p-4">
-              <div className="flex flex-wrap lg:flex-row gap-2 lg:gap-6 xl:gap-8 justify-center items-center">
-                {/* Status Actions */}
-                <div className="flex flex-wrap lg:flex-row gap-2 justify-center">
-                  <button
-                    onClick={() => markAsHandled(selectedRequest.request_id)}
-                    className="px-2 py-1 rounded-full bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-input)] transition-colors flex items-center justify-center gap-2 text-xs w-fit border border-[var(--dashboard-border-secondary)] whitespace-nowrap"
-                    title="Mark as handled (Ctrl+H)"
-                  >
-                    <div 
-                      className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 -ml-2"
-                      style={{
-                        backgroundColor: isRequestHandled(selectedRequest) ? '#10b981' : '#059669',
-                        minWidth: '24px',
-                        minHeight: '24px'
-                      }}
-                    >
-                      {isRequestHandled(selectedRequest) ? (
-                        <CheckCircleSolidIcon className="w-3.5 h-3.5 text-white" />
-                      ) : (
-                        <CheckCircleIcon className="w-3.5 h-3.5 text-white" />
-                      )}
-          </div>
-                     <span className="hidden lg:inline ml-1">{isRequestHandled(selectedRequest) ? 'Handled' : 'Mark Handled'}</span>
-                  </button>
-                  
-                  <button
-                    onClick={() => toggleClosedStatus(selectedRequest.request_id)}
-                    className="px-2 py-1 rounded-full bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-input)] transition-colors flex items-center justify-center gap-2 text-xs w-fit border border-[var(--dashboard-border-secondary)] whitespace-nowrap"
-                    title="Toggle closed status"
-                  >
-                    <div 
-                      className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 -ml-2"
-                      style={{
-                        backgroundColor: selectedRequest.is_closed ? '#6b7280' : '#f97316',
-                        minWidth: '24px',
-                        minHeight: '24px'
-                      }}
-                    >
-                      <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-        </div>
-                     <span className="hidden lg:inline ml-1">{selectedRequest.is_closed ? 'Closed' : 'Mark Closed'}</span>
-                  </button>
-                  
-                  <button
-                    onClick={() => toggleUrgencyFlag(selectedRequest.request_id)}
-                    className="px-2 py-1 rounded-full bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-input)] transition-colors flex items-center justify-center gap-2 text-xs w-fit border border-[var(--dashboard-border-secondary)] whitespace-nowrap"
-                    title="Toggle urgency flag (Ctrl+F)"
-                  >
-                    <div 
-                      className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 -ml-2"
-                      style={{
-                        backgroundColor: selectedRequest.urgency_flag ? '#ef4444' : '#374151',
-                        minWidth: '24px',
-                        minHeight: '24px'
-                      }}
-                    >
-                      <FlagIcon className="w-3.5 h-3.5 text-white" />
-                    </div>
-                     <span className="hidden lg:inline ml-1">{selectedRequest.urgency_flag ? 'Urgent' : 'Flag Urgent'}</span>
-                  </button>
-                </div>
-
-                {/* Contact Actions */}
-                {selectedRequest.customer_phone || selectedRequest.customer_email ? (
-                  <div className="flex flex-wrap lg:flex-row gap-2 justify-center">
-                    {selectedRequest.customer_phone && (
-                      <a
-                        href={`tel:${selectedRequest.customer_phone}`}
-                        className="px-2 py-1 rounded-full bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-input)] transition-colors flex items-center justify-center gap-2 text-xs w-fit border border-[var(--dashboard-border-secondary)] whitespace-nowrap"
-                        title={`Call ${selectedRequest.customer_phone}`}
-                      >
-                        <div 
-                          className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 -ml-2"
-                          style={{ 
-                            backgroundColor: '#10b981',
-                            minWidth: '24px',
-                            minHeight: '24px'
-                          }}
-                        >
-                          <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                          </svg>
-                        </div>
-                         <span className="hidden lg:inline ml-1">Call</span>
-                      </a>
-                    )}
-                    
-                    {selectedRequest.customer_email && (
-                      <a
-                        href={`mailto:${selectedRequest.customer_email}`}
-                        className="px-2 py-1 rounded-full bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-input)] transition-colors flex items-center justify-center gap-2 text-xs w-fit border border-[var(--dashboard-border-secondary)] whitespace-nowrap"
-                        title={`Email ${selectedRequest.customer_email}`}
-                      >
-                        <div 
-                          className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 -ml-2"
-                          style={{ 
-                            backgroundColor: '#3b82f6',
-                            minWidth: '24px',
-                            minHeight: '24px'
-                          }}
-                        >
-                          <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                          </svg>
-                        </div>
-                         <span className="hidden lg:inline ml-1">Email</span>
-                      </a>
-                    )}
-                  </div>
-                ) : null}
-
-                {/* Other Actions */}
-                <div className="flex flex-wrap lg:flex-row gap-2 justify-center">
-                  {selectedRequest.serviceboard?.[0] && (
-                    <>
-                      <button
-                        onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}`, '_blank')}
-                        className="px-2 py-1 rounded-full bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-input)] transition-colors flex items-center justify-center gap-2 text-xs w-fit border border-[var(--dashboard-border-secondary)] whitespace-nowrap"
-                        title="Open service board"
-                      >
-                        <div 
-                          className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 -ml-2"
-                          style={{ 
-                            backgroundColor: '#6b7280',
-                            minWidth: '24px',
-                            minHeight: '24px'
-                          }}
-                        >
-                          <ArrowTopRightOnSquareIcon className="w-3.5 h-3.5 text-white" />
-                        </div>
-                         <span className="hidden lg:inline ml-1">Open Board</span>
-                      </button>
-                      
-                      {/* Add Action Dropdown */}
-                      <div className="relative">
-                        <button
-                          onClick={() => setShowAddActionDropdown(!showAddActionDropdown)}
-                          className="px-2 py-1 rounded-full bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-input)] transition-colors flex items-center justify-center gap-2 text-xs w-fit border border-[var(--dashboard-border-secondary)] whitespace-nowrap"
-                          title="Add action to service board"
-                        >
-                          <div 
-                            className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 -ml-2"
-                            style={{ 
-                              backgroundColor: '#8b5cf6',
-                              minWidth: '24px',
-                              minHeight: '24px'
-                            }}
-                          >
-                            <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                          </div>
-                           <span className="hidden lg:inline ml-1">Add Action</span>
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
-                        
-                        {showAddActionDropdown && (
-                          <div className="absolute top-full left-0 mt-1 w-48 bg-[var(--dashboard-bg-card)] border border-[var(--dashboard-border-primary)] rounded-lg shadow-lg z-50">
-                            <div className="py-1">
-                              <button
-                                onClick={() => {
-                                  window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=appointment_scheduling`, '_blank')
-                                  setShowAddActionDropdown(false)
-                                }}
-                                className="w-full px-4 py-2 text-left text-xs hover:bg-[var(--dashboard-bg-tertiary)] flex items-center gap-3"
-                              >
-                                <div 
-                                  className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-                                  style={{ 
-                                    backgroundColor: '#10b981',
-                                    minWidth: '20px',
-                                    minHeight: '20px'
-                                  }}
-                                >
-                                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                  </svg>
-                                </div>
-                                Schedule Appointment
-                              </button>
-                              
-                              <button
-                                onClick={() => {
-                                  window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=information_request`, '_blank')
-                                  setShowAddActionDropdown(false)
-                                }}
-                                className="w-full px-4 py-2 text-left text-xs hover:bg-[var(--dashboard-bg-tertiary)] flex items-center gap-3"
-                              >
-                                <div 
-                                  className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-                                  style={{ 
-                                    backgroundColor: '#a855f7',
-                                    minWidth: '20px',
-                                    minHeight: '20px'
-                                  }}
-                                >
-                                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                  </svg>
-                                </div>
-                                Info Request
-                              </button>
-                              
-                              <button
-                                onClick={() => {
-                                  window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=checklist`, '_blank')
-                                  setShowAddActionDropdown(false)
-                                }}
-                                className="w-full px-4 py-2 text-left text-xs hover:bg-[var(--dashboard-bg-tertiary)] flex items-center gap-3"
-                              >
-                                <div 
-                                  className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-                                  style={{ 
-                                    backgroundColor: '#f97316',
-                                    minWidth: '20px',
-                                    minHeight: '20px'
-                                  }}
-                                >
-                                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                                  </svg>
-                                </div>
-                                Checklist
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      
-                      {/* Generate Quotation Button */}
-                      <button
-                        onClick={() => generateQuotation(selectedRequest.request_id)}
-                        className="px-2 py-1 rounded-full bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-input)] transition-colors flex items-center justify-center gap-2 text-xs w-fit border border-[var(--dashboard-border-secondary)] whitespace-nowrap"
-                        title="Generate quotation (Ctrl+Q)"
-                      >
-                        <div 
-                          className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 -ml-2"
-                          style={{ 
-                            backgroundColor: '#3b82f6',
-                            minWidth: '24px',
-                            minHeight: '24px'
-                          }}
-                        >
-                          <DocumentArrowUpIcon className="w-3.5 h-3.5 text-white" />
-                        </div>
-                         <span className="hidden lg:inline ml-1">Generate Quotation</span>
-                      </button>
-                      
-                      {/* Navigation Controls */}
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => navigateRequest(-1)}
-                          disabled={selectedIndex === 0}
-                          className={`p-2 rounded-lg transition-colors ${
-                            selectedIndex === 0
-                              ? 'opacity-50 cursor-not-allowed'
-                              : 'hover:bg-[var(--dashboard-bg-tertiary)]'
-                          }`}
-                          title="Previous request"
-                        >
-                          <ArrowLeftIcon className="w-4 h-4" />
-                        </button>
-                        <span className="text-xs text-[var(--dashboard-text-tertiary)] px-2">
-                          {selectedIndex + 1} of {serviceRequests.length}
-                        </span>
-                        <button
-                          onClick={() => navigateRequest(1)}
-                          disabled={selectedIndex === serviceRequests.length - 1}
-                          className={`p-2 rounded-lg transition-colors ${
-                            selectedIndex === serviceRequests.length - 1
-                              ? 'opacity-50 cursor-not-allowed'
-                              : 'hover:bg-[var(--dashboard-bg-tertiary)]'
-                          }`}
-                          title="Next request"
-                        >
-                          <ArrowRightIcon className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </>
-                  )}
-                  
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Main Content - Outlook-like Layout */}
         <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-6 overflow-hidden">
@@ -1041,19 +759,50 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center gap-3 text-xs lg:text-base text-[var(--dashboard-text-tertiary)]">
-                            <span className="font-medium lg:font-semibold">{selectedRequest.customer_name}</span>
+                          <div className="flex items-center gap-3 text-xs lg:text-base text-[var(--dashboard-text-secondary)]">
+                            <span className="font-medium lg:font-semibold text-[var(--dashboard-text-primary)]">{selectedRequest.customer_name}</span>
                             <span>•</span>
-                            <span className="font-medium lg:font-semibold">{selectedRequest.service?.service_name || 'N/A'}</span>
+                            <span className="font-medium lg:font-semibold text-[var(--dashboard-text-primary)]">{selectedRequest.service?.service_name || 'N/A'}</span>
                             <span>•</span>
-                            <span className="font-medium lg:font-semibold">€{selectedRequest.price_subtotal || 0}</span>
+                            <span className="font-medium lg:font-semibold text-[var(--dashboard-text-primary)]">€{selectedRequest.price_subtotal || 0}</span>
                           </div>
                         </div>
                         
-                        {/* Right Column: Time Passed */}
-                        <div className="flex flex-col items-end space-y-3">
+                        {/* Right Column: Navigation & Time */}
+                        <div className="flex flex-col items-start lg:items-end space-y-3">
+                          {/* Navigation Controls */}
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => navigateRequest(-1)}
+                              disabled={selectedIndex === 0}
+                              className={`p-1.5 rounded-lg transition-colors ${
+                                selectedIndex === 0
+                                  ? 'opacity-50 cursor-not-allowed'
+                                  : 'hover:bg-[var(--dashboard-bg-tertiary)]'
+                              }`}
+                              title="Previous request"
+                            >
+                              <ArrowLeftIcon className="w-3.5 h-3.5" />
+                            </button>
+                            <span className="text-xs text-[var(--dashboard-text-tertiary)] px-2">
+                              {selectedIndex + 1} of {serviceRequests.length}
+                            </span>
+                            <button
+                              onClick={() => navigateRequest(1)}
+                              disabled={selectedIndex === serviceRequests.length - 1}
+                              className={`p-1.5 rounded-lg transition-colors ${
+                                selectedIndex === serviceRequests.length - 1
+                                  ? 'opacity-50 cursor-not-allowed'
+                                  : 'hover:bg-[var(--dashboard-bg-tertiary)]'
+                              }`}
+                              title="Next request"
+                            >
+                              <ArrowRightIcon className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                          
                           {/* Time Passed Indicator */}
-                        <div className="flex flex-col items-end">
+                        <div className="flex flex-col items-start lg:items-end">
                           <span className="text-xs text-[var(--dashboard-text-secondary)]">Time passed</span>
                           <span className="text-xs lg:text-base font-bold text-[var(--dashboard-text-primary)]">
                             {(() => {
@@ -1095,7 +844,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
                 {/* Service Board Actions */}
                 {selectedRequest.serviceboard?.[0] && selectedRequest.serviceboard[0].serviceboardaction && selectedRequest.serviceboard[0].serviceboardaction.length > 0 && (
-                    <div>
+                    <div className="mt-6">
                     <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Service Board Actions</h3>
                     <div className="relative">
                       {selectedRequest.serviceboard[0].serviceboardaction.map((action: any, index: number) => (
@@ -1187,7 +936,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                 )}
 
                 {/* Customer Details */}
-                    <div>
+                    <div className="mt-6">
                   <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Customer Details</h3>
                   <div className="flex items-center gap-6 text-xs">
                     <div className="flex items-center gap-2">
@@ -1247,7 +996,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
                 {/* Customer Notes */}
                 {selectedRequest.customer_notes && (
-                    <div>
+                    <div className="mt-6">
                     <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Customer Notes</h3>
                     <div className="p-3 rounded-lg border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
                       <div className="text-xs text-[var(--dashboard-text-secondary)]">
@@ -1257,74 +1006,73 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                   </div>
                 )}
 
-                {/* Request Content - Flexible without overflow scroll */}
-                <div className="flex-1 overflow-y-auto">
-
                     {/* Event and Datetime Information */}
                     {(selectedRequest.serviceevent || selectedRequest.request_datetimes) && (
-                      <div>
+                      <div className="mt-6">
                         <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Event & Scheduling</h3>
                         
                         <div className="p-3 rounded-lg border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
-                          <div className="space-y-3">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <div className="font-medium text-xs">
-                                  {selectedRequest.serviceevent?.event_name || 'Event'}
-                                </div>
-                                {selectedRequest.request_datetimes && (
-                                  <div className="mt-1">
-                                    {Array.isArray(selectedRequest.request_datetimes) ? (
-                                      <div className="space-y-1">
-                                        {selectedRequest.request_datetimes.map((datetime: string, index: number) => {
-                                          try {
-                                            const dateToUse = new Date(datetime);
-                                            if (isNaN(dateToUse.getTime())) {
-                                              return null; // Skip invalid dates
-                                            }
-                                            
-                                            return (
-                                              <div key={index} className="text-xs text-[var(--dashboard-text-tertiary)]">
-                                                {dateToUse.toLocaleString('it-IT', {
-                                                  weekday: 'short',
-                                                  day: 'numeric',
-                                                  month: 'short',
-                                                  hour: '2-digit',
-                                                  minute: '2-digit'
-                                                })}
-                                              </div>
-                                            );
-                                          } catch (error) {
-                                            return null; // Skip invalid dates
-                                          }
-                                        })}
-                                      </div>
-                                    ) : (
-                                      <div className="text-xs text-[var(--dashboard-text-tertiary)]">
-                                        {(() => {
-                                          try {
-                                            const dateToUse = new Date(selectedRequest.request_datetimes);
-                                            if (isNaN(dateToUse.getTime())) {
-                                              return null; // Skip invalid dates
-                                            }
-                                            
-                                            return dateToUse.toLocaleString('it-IT', {
-                                              weekday: 'short',
-                                              day: 'numeric',
-                                              month: 'short',
-                                              hour: '2-digit',
-                                              minute: '2-digit'
-                                            });
-                                          } catch (error) {
-                                            return null; // Skip invalid dates
-                                          }
-                                        })()}
-                                      </div>
-                                    )}
-                                  </div>
-                                )}
+                          <div className="flex items-start justify-between gap-4">
+                            {/* Left Column - Event Name */}
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium text-[var(--dashboard-text-primary)]">
+                                {selectedRequest.serviceevent?.event_name || 'Event'}
                               </div>
+                            </div>
 
+                            {/* Right Column - Date/Time */}
+                            <div className="flex-shrink-0 text-right">
+                              {selectedRequest.request_datetimes && (
+                                <div>
+                                  {Array.isArray(selectedRequest.request_datetimes) ? (
+                                    <div className="space-y-1">
+                                      {selectedRequest.request_datetimes.map((datetime: string, index: number) => {
+                                        try {
+                                          const dateToUse = new Date(datetime);
+                                          if (isNaN(dateToUse.getTime())) {
+                                            return null; // Skip invalid dates
+                                          }
+                                          
+                                          return (
+                                            <div key={index} className="text-xs text-[var(--dashboard-text-secondary)]">
+                                              {dateToUse.toLocaleString('it-IT', {
+                                                weekday: 'short',
+                                                day: 'numeric',
+                                                month: 'short',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                              })}
+                                            </div>
+                                          );
+                                        } catch (error) {
+                                          return null; // Skip invalid dates
+                                        }
+                                      })}
+                                    </div>
+                                  ) : (
+                                    <div className="text-xs text-[var(--dashboard-text-secondary)]">
+                                      {(() => {
+                                        try {
+                                          const dateToUse = new Date(selectedRequest.request_datetimes);
+                                          if (isNaN(dateToUse.getTime())) {
+                                            return null; // Skip invalid dates
+                                          }
+                                          
+                                          return dateToUse.toLocaleString('it-IT', {
+                                            weekday: 'short',
+                                            day: 'numeric',
+                                            month: 'short',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                          });
+                                        } catch (error) {
+                                          return null; // Skip invalid dates
+                                        }
+                                      })()}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -1332,25 +1080,32 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                     )}
 
                     {/* Selected Service Items */}
-                    <div>
+                    <div className="mt-6">
                       <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Selected Items</h3>
                       {selectedRequest.selected_service_items_snapshot && Array.isArray(selectedRequest.selected_service_items_snapshot) && selectedRequest.selected_service_items_snapshot.length > 0 ? (
-                        <div className="space-y-2">
+                        <div className="space-y-0">
                           {selectedRequest.selected_service_items_snapshot.map((item: any, index: number) => (
-                            <div key={index} className="p-3 rounded-lg border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
-                              <div className="flex items-center justify-between text-xs">
-                                <div className="flex items-center gap-4">
-                                  <span className="font-medium">{item.name || item.item_name}</span>
-                                  {item.description && (
-                                    <span className="opacity-60 text-xs">({item.description})</span>
-                                  )}
-                                </div>
-                                <div className="text-right">
-                                  <div className="flex items-center gap-2">
-                                    <span className="opacity-75 text-xs">{item.qty || item.quantity} x €{item.price_at_req || item.price_at_request}</span>
-                                    <span className="font-medium">
-                                      €{((item.qty || item.quantity) * (item.price_at_req || item.price_at_request)).toFixed(2)}
-                                    </span>
+                            <div key={index} className={`flex items-start gap-3 text-xs py-2 ${index > 0 ? 'border-t border-[var(--dashboard-border-primary)]' : ''}`}>
+                              <div className="flex-shrink-0 mt-0.5">
+                                <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-start justify-between gap-4">
+                                  <div className="flex-1 min-w-0">
+                                    <div className="font-medium text-[var(--dashboard-text-primary)]">{item.name || item.item_name}</div>
+                                    {item.description && (
+                                      <div className="text-[var(--dashboard-text-tertiary)] mt-0.5">{item.description}</div>
+                                    )}
+                                  </div>
+                                  <div className="flex-shrink-0 text-right">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-[var(--dashboard-text-secondary)]">{item.qty || item.quantity} x €{item.price_at_req || item.price_at_request}</span>
+                                      <span className="font-medium text-[var(--dashboard-text-primary)]">
+                                        €{((item.qty || item.quantity) * (item.price_at_req || item.price_at_request)).toFixed(2)}
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -1358,20 +1113,20 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           ))}
                         </div>
                       ) : (
-                        <div className="text-xs text-[var(--dashboard-text-tertiary)]">
+                        <div className="text-xs text-[var(--dashboard-text-muted)]">
                           No items selected for this request.
                         </div>
                       )}
                     </div>
 
                     {/* Question Responses */}
-                    <div>
+                    <div className="mt-6">
                       <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Question Responses</h3>
                       {selectedRequest.question_responses_snapshot && Array.isArray(selectedRequest.question_responses_snapshot) && selectedRequest.question_responses_snapshot.length > 0 ? (
                         <div className="space-y-2">
                           {selectedRequest.question_responses_snapshot.map((question: any, index: number) => (
                             <div key={index} className="text-xs pb-2 border-b border-[var(--dashboard-border-primary)] last:border-b-0">
-                              <div className="text-xs font-medium flex items-center gap-1 text-[var(--dashboard-text-tertiary)]">
+                              <div className="text-xs md:text-xs font-medium flex items-center gap-1 text-[var(--dashboard-text-tertiary)]" style={{ fontSize: 'clamp(0.65rem, 2vw, 0.75rem)' }}>
                                 <svg className="w-1.5 h-1.5" fill="currentColor" viewBox="0 0 20 20">
                                   <circle cx="10" cy="10" r="3" />
                                 </svg>
@@ -1398,31 +1153,33 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           ))}
                         </div>
                       ) : (
-                        <div className="text-xs text-[var(--dashboard-text-tertiary)]">
+                        <div className="text-xs text-[var(--dashboard-text-muted)]">
                           No question responses for this request.
                         </div>
                       )}
                     </div>
 
                     {/* Requirement Responses */}
-                    <div>
+                    <div className="mt-6">
                       <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Requirements</h3>
                       {selectedRequest.requirement_responses_snapshot && Array.isArray(selectedRequest.requirement_responses_snapshot) && selectedRequest.requirement_responses_snapshot.length > 0 ? (
-                        <div className="space-y-1">
+                        <div className="space-y-0">
                           {selectedRequest.requirement_responses_snapshot.map((requirement: any, index: number) => (
-                            <div key={index} className="flex items-center gap-2 text-xs">
-                              <div className={`px-2 py-1 rounded-full text-xs ${
-                                requirement.customer_confirmed 
-                                  ? 'bg-green-100 text-green-800' 
-                                  : 'bg-yellow-100 text-yellow-800'
-                              }`}>
-                                {requirement.customer_confirmed ? 'Confirmed' : 'Pending'}
+                            <div key={index} className={`text-xs py-2 ${index > 0 ? 'border-t border-[var(--dashboard-border-primary)]' : ''}`}>
+                              <div className="flex items-center gap-2 mb-1">
+                                <div className={`px-1.5 py-0.5 rounded-full text-xs ${
+                                  requirement.customer_confirmed 
+                                    ? 'bg-green-100 text-green-800' 
+                                    : 'bg-yellow-100 text-yellow-800'
+                                }`}>
+                                  {requirement.customer_confirmed ? 'Confirmed' : 'Pending'}
+                                </div>
+                                {requirement.title && (
+                                  <span className="font-medium text-xs text-[var(--dashboard-text-secondary)]">{requirement.title}</span>
+                                )}
                               </div>
-                              <div className="flex-1">
-                                <span className="text-xs text-[var(--dashboard-text-tertiary)]">
-                                  {requirement.title && (
-                                    <span className="font-medium">{requirement.title}: </span>
-                                  )}
+                              <div className="pl-0">
+                                <span className="text-[var(--dashboard-text-tertiary)]" style={{ fontSize: 'clamp(0.65rem, 2vw, 0.75rem)', lineHeight: '1.3' }}>
                                   {requirement.requirements_text}
                                 </span>
                               </div>
@@ -1430,7 +1187,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           ))}
                         </div>
                       ) : (
-                        <div className="text-xs text-[var(--dashboard-text-tertiary)]">
+                        <div className="text-xs text-[var(--dashboard-text-muted)]">
                           No requirements for this request.
                         </div>
                       )}
@@ -1438,7 +1195,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
                     {/* Saved Generated Response */}
                     {selectedRequest.generated_response && (
-                      <div>
+                      <div className="mt-6">
                         <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">
                           AI Generated Response
                         </h3>
@@ -1483,7 +1240,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
                     {/* Messages */}
                     {selectedRequest.servicerequestmessage?.length > 0 && (
-                      <div>
+                      <div className="mt-6">
                         <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Messages</h3>
                         <div className="space-y-2">
                           {selectedRequest.servicerequestmessage.map((message: any) => (
@@ -1500,7 +1257,6 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                         </div>
                       </div>
                     )}
-                </div>
               </>
             ) : (
               <div className="flex-1 flex items-center justify-center">
@@ -1517,8 +1273,8 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
               {selectedRequest ? (
                 <>
                 {/* Generate Section - Independent Container */}
-                <div className="p-4 lg:p-6 border-b border-[var(--dashboard-border-primary)]">
-                  <div className="ai-panel-gradient rounded-2xl shadow-lg relative overflow-hidden p-5 lg:p-7">
+                <div className="">
+                  <div className="ai-panel-gradient shadow-lg relative overflow-hidden p-5 lg:p-7">
                     {/* Bottom Color Layer 1 */}
                     <div 
                       className="absolute z-1"
@@ -1564,10 +1320,195 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       }}
                     ></div>
                     <div className="relative z-10">
+                  {/* Quick Actions */}
+                  <div className="mb-4">
+                    <div className="space-y-2">
+                      {/* Status Actions Group */}
+                      <div className="flex flex-wrap gap-1 justify-center">
+                        {/* Mark Handled */}
+                        <button
+                          onClick={() => markAsHandled(selectedRequest.request_id)}
+                          className="px-2 py-1 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center gap-1 text-xs w-fit border border-white/20 whitespace-nowrap"
+                          title="Mark as handled (Ctrl+H)"
+                        >
+                          <div 
+                            className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                            style={{
+                              backgroundColor: isRequestHandled(selectedRequest) ? '#10b981' : '#059669',
+                              minWidth: '16px',
+                              minHeight: '16px'
+                            }}
+                          >
+                            {isRequestHandled(selectedRequest) ? (
+                              <CheckCircleSolidIcon className="w-2.5 h-2.5 text-white" />
+                            ) : (
+                              <CheckCircleIcon className="w-2.5 h-2.5 text-white" />
+                            )}
+                          </div>
+                          <span className="hidden lg:inline text-xs ai-panel-text-secondary">{isRequestHandled(selectedRequest) ? 'Handled' : 'Mark Handled'}</span>
+                        </button>
+                        
+                        {/* Toggle Closed */}
+                        <button
+                          onClick={() => toggleClosedStatus(selectedRequest.request_id)}
+                          className="px-2 py-1 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center gap-1 text-xs w-fit border border-white/20 whitespace-nowrap"
+                          title="Toggle closed status"
+                        >
+                          <div 
+                            className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                            style={{
+                              backgroundColor: selectedRequest.is_closed ? '#6b7280' : '#f97316',
+                              minWidth: '16px',
+                              minHeight: '16px'
+                            }}
+                          >
+                            <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </div>
+                          <span className="hidden lg:inline text-xs ai-panel-text-secondary">{selectedRequest.is_closed ? 'Closed' : 'Mark Closed'}</span>
+                        </button>
+                        
+                        {/* Toggle Urgency */}
+                        <button
+                          onClick={() => toggleUrgencyFlag(selectedRequest.request_id)}
+                          className="px-2 py-1 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center gap-1 text-xs w-fit border border-white/20 whitespace-nowrap"
+                          title="Toggle urgency flag (Ctrl+F)"
+                        >
+                          <div 
+                            className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                            style={{
+                              backgroundColor: selectedRequest.urgency_flag ? '#ef4444' : '#374151',
+                              minWidth: '16px',
+                              minHeight: '16px'
+                            }}
+                          >
+                            <FlagIcon className="w-2.5 h-2.5 text-white" />
+                          </div>
+                          <span className="hidden lg:inline text-xs ai-panel-text-secondary">{selectedRequest.urgency_flag ? 'Urgent' : 'Flag Urgent'}</span>
+                        </button>
+                      </div>
+
+                      {/* Contact Actions Group */}
+                      {(selectedRequest.customer_phone || selectedRequest.customer_email) && (
+                        <div className="flex flex-wrap gap-1 justify-center">
+                          {selectedRequest.customer_phone && (
+                            <a
+                              href={`tel:${selectedRequest.customer_phone}`}
+                              className="px-2 py-1 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center gap-1 text-xs w-fit border border-white/20 whitespace-nowrap"
+                              title={`Call ${selectedRequest.customer_phone}`}
+                            >
+                              <div 
+                                className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                                style={{ 
+                                  backgroundColor: '#10b981',
+                                  minWidth: '16px',
+                                  minHeight: '16px'
+                                }}
+                              >
+                                <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                              </div>
+                              <span className="hidden lg:inline text-xs ai-panel-text-secondary">Call</span>
+                            </a>
+                          )}
+                          
+                          {selectedRequest.customer_email && (
+                            <a
+                              href={`mailto:${selectedRequest.customer_email}`}
+                              className="px-2 py-1 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center gap-1 text-xs w-fit border border-white/20 whitespace-nowrap"
+                              title={`Email ${selectedRequest.customer_email}`}
+                            >
+                              <div 
+                                className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                                style={{ 
+                                  backgroundColor: '#3b82f6',
+                                  minWidth: '16px',
+                                  minHeight: '16px'
+                                }}
+                              >
+                                <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                              </div>
+                              <span className="hidden lg:inline text-xs ai-panel-text-secondary">Email</span>
+                            </a>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Service Board Actions Group */}
+                      {selectedRequest.serviceboard?.[0] && (
+                        <div className="flex flex-wrap gap-1 justify-center">
+                          {/* Open Board */}
+                          <button
+                            onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}`, '_blank')}
+                            className="px-2 py-1 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center gap-1 text-xs w-fit border border-white/20 whitespace-nowrap"
+                            title="Open service board"
+                          >
+                            <div 
+                              className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                              style={{ 
+                                backgroundColor: '#6b7280',
+                                minWidth: '16px',
+                                minHeight: '16px'
+                              }}
+                            >
+                              <ArrowTopRightOnSquareIcon className="w-2.5 h-2.5 text-white" />
+                            </div>
+                            <span className="hidden lg:inline text-xs ai-panel-text-secondary">Open Board</span>
+                          </button>
+                          
+                          {/* Schedule Appointment */}
+                          <button
+                            onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=appointment_scheduling`, '_blank')}
+                            className="px-2 py-1 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center gap-1 text-xs w-fit border border-white/20 whitespace-nowrap"
+                            title="Schedule appointment"
+                          >
+                            <div 
+                              className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                              style={{ 
+                                backgroundColor: '#10b981',
+                                minWidth: '16px',
+                                minHeight: '16px'
+                              }}
+                            >
+                              <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                            </div>
+                            <span className="hidden lg:inline text-xs ai-panel-text-secondary">Schedule</span>
+                          </button>
+                          
+                          {/* Generate Quotation */}
+                          <button
+                            onClick={() => generateQuotation(selectedRequest.request_id)}
+                            className="px-2 py-1 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center gap-1 text-xs w-fit border border-white/20 whitespace-nowrap"
+                            title="Generate quotation (Ctrl+Q)"
+                          >
+                            <div 
+                              className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                              style={{ 
+                                backgroundColor: '#3b82f6',
+                                minWidth: '16px',
+                                minHeight: '16px'
+                              }}
+                            >
+                              <DocumentArrowUpIcon className="w-2.5 h-2.5 text-white" />
+                            </div>
+                            <span className="hidden lg:inline text-xs ai-panel-text-secondary">Generate Quotation</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
                   {/* Generate Actions */}
-                  <div className="mb-6">
+                  <div className="mb-6 pt-4 border-t border-white/10">
                       <h4 className="text-xs font-medium mb-3 ai-panel-text-secondary uppercase tracking-wide flex items-center gap-2">
-                        Generate
+                        <SparklesIcon className="w-4 h-4" />
+                        Generate Response
                       </h4>
 
                       {/* Inline AI Generation Content */}
@@ -1618,27 +1559,11 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                         </div>
                       ) : (
                         <>
-                          {/* Customer Notes Clarification */}
-                          {selectedRequest?.customer_notes && (
-                              <div>
-                              <label className="block text-sm font-medium ai-panel-text-secondary mb-2">
-                                What's unclear about the customer notes?
-                              </label>
-                              <textarea
-                                value={customerNotesClarification}
-                                onChange={(e) => setCustomerNotesClarification(e.target.value)}
-                                  placeholder="What's unclear about the customer notes?"
-                                  className="ai-input w-full p-2 text-xs border rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent resize-none"
-                                rows={2}
-                              />
-                            </div>
-                          )}
-
                             {/* Question Selection */}
                           {selectedRequest?.question_responses_snapshot && selectedRequest.question_responses_snapshot.length > 0 && (
                               <div>
                                 <h5 className="text-sm font-medium ai-panel-text-secondary mb-2">Questions Needing Clarification</h5>
-                            <div className="space-y-2 max-h-32 overflow-y-auto">
+                            <div className="space-y-2">
                             {selectedRequest.question_responses_snapshot.map((question: any, index: number) => {
                               const isSelected = selectedQuestionsForClarification.includes(index)
                               let responseText = 'No response'
@@ -1652,25 +1577,25 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                               return (
                                 <div
                                   key={index}
-                                    className={`p-2 rounded border cursor-pointer transition-colors ${
+                                    className={`p-2 rounded border cursor-pointer ${
                                     isSelected 
-                                        ? 'border-purple-400 bg-purple-500/20' 
-                                        : 'border-white/30 hover:border-purple-400/50'
+                                        ? 'ai-panel-card-selected' 
+                                        : 'ai-panel-card'
                                   }`}
                                   onClick={() => toggleQuestionForClarification(index)}
                                 >
                                   <div className="flex items-start justify-between">
                                     <div className="flex-1">
-                                        <div className="text-xs font-medium ai-panel-text mb-1">
+                                        <div className="text-xs ai-panel-text-secondary opacity-70 mb-1" style={{ fontSize: '0.7rem' }}>
                                         {question.question_text}
                                       </div>
-                                        <div className="text-xs ai-panel-text-secondary">
+                                        <div className="text-xs font-medium ai-panel-text">
                                         {responseText}
                                       </div>
                                     </div>
                                       <div className={`ml-2 w-4 h-4 rounded-full border-2 flex items-center justify-center ${
                                       isSelected 
-                                          ? 'border-purple-400 bg-purple-400' 
+                                          ? 'border-gray-400 bg-gray-400' 
                                           : 'border-white/50'
                                     }`}>
                                       {isSelected && (
@@ -1686,6 +1611,77 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           </div>
                         </div>
                       )}
+
+                            {/* Requirements Selection */}
+                          {selectedRequest?.requirement_responses_snapshot && selectedRequest.requirement_responses_snapshot.length > 0 && (() => {
+                            // Filter to only show pending/unconfirmed requirements
+                            const pendingRequirements = selectedRequest.requirement_responses_snapshot.filter((req: any) => !req.customer_confirmed)
+                            if (pendingRequirements.length === 0) return null
+                            
+                            return (
+                              <div>
+                                <h5 className="text-sm font-medium ai-panel-text-secondary mb-2">Requirements Needing Clarification</h5>
+                                <div className="space-y-2">
+                                  {selectedRequest.requirement_responses_snapshot.map((requirement: any, index: number) => {
+                                    // Only show pending/unconfirmed requirements
+                                    if (requirement.customer_confirmed) return null
+                                    
+                                    const isSelected = selectedRequirementsForClarification.includes(index)
+
+                                    return (
+                                      <div
+                                        key={index}
+                                        className={`p-2 rounded border cursor-pointer ${
+                                          isSelected 
+                                            ? 'ai-panel-card-selected' 
+                                            : 'ai-panel-card'
+                                        }`}
+                                        onClick={() => toggleRequirementForClarification(index)}
+                                      >
+                                        <div className="flex items-start justify-between">
+                                          <div className="flex-1">
+                                            <div className="text-xs ai-panel-text-secondary opacity-70 mb-1" style={{ fontSize: '0.7rem' }}>
+                                              {requirement.title ? `${requirement.title}: ` : ''}Requirement
+                                            </div>
+                                            <div className="text-xs font-medium ai-panel-text">
+                                              {requirement.requirements_text}
+                                            </div>
+                                          </div>
+                                          <div className={`ml-2 w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                                            isSelected 
+                                              ? 'border-gray-400 bg-gray-400' 
+                                              : 'border-white/50'
+                                          }`}>
+                                            {isSelected && (
+                                              <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                              </svg>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )
+                                  })}
+                                </div>
+                              </div>
+                            )
+                          })()}
+
+                          {/* Customer Notes Clarification */}
+                          {selectedRequest?.customer_notes && (
+                              <div>
+                              <label className="block text-sm font-medium ai-panel-text-secondary mb-2">
+                                What's unclear about the customer notes?
+                              </label>
+                              <textarea
+                                value={customerNotesClarification}
+                                onChange={(e) => setCustomerNotesClarification(e.target.value)}
+                                  placeholder="What's unclear about the customer notes?"
+                                  className="ai-input w-full p-2 text-xs border rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent resize-none"
+                                rows={2}
+                              />
+                            </div>
+                          )}
 
                         {/* Manual Questions */}
                         <div>
@@ -1706,7 +1702,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       <button
                             onClick={handleGenerateResponse}
                             disabled={(creditsStatus?.creditsAvailable ?? 0) <= 0}
-                            className="ai-button-generate w-full border-0 py-2 px-4 text-xs font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
+                            className="ai-button-generate-gradient w-full py-2 px-4 text-xs font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
                           >
                             {/* Gradient Layer */}
                             <div 
@@ -1817,53 +1813,112 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                 </div>
               ) : (
                 <>
-                  {/* Request Summary */}
-                  <div className="mb-4">
-                    <h4 className="text-sm font-medium ai-panel-text-secondary mb-2">Request Summary</h4>
-                    <div className="space-y-1 text-xs">
-                            <div>
-                        <span className="ai-panel-text-secondary">Customer:</span> 
-                        <span className="ai-panel-text ml-2">{selectedRequest?.customer_name}</span>
-                            </div>
-                            <div>
-                        <span className="ai-panel-text-secondary">Service:</span> 
-                        <span className="ai-panel-text ml-2">{selectedRequest?.service?.service_name || 'N/A'}</span>
+                  {/* Scrollable Content Container */}
+                  <div className="max-h-64 overflow-y-auto mb-4">
+                    {/* Request Summary */}
+                    <div className="mb-4 pb-4 border-b border-white/10">
+                      <h4 className="text-sm font-medium ai-panel-text-secondary mb-2">Request Summary</h4>
+                      <div className="space-y-1 text-xs">
+                              <div>
+                          <span className="ai-panel-text-secondary">Customer:</span> 
+                          <span className="ai-panel-text ml-2">{selectedRequest?.customer_name}</span>
                               </div>
-                            <div>
-                        <span className="ai-panel-text-secondary">Reference:</span> 
-                        <span className="ai-panel-text ml-2">{selectedRequest?.request_reference}</span>
+                              <div>
+                          <span className="ai-panel-text-secondary">Service:</span> 
+                          <span className="ai-panel-text ml-2">{selectedRequest?.service?.service_name || 'N/A'}</span>
+                                </div>
+                              <div>
+                          <span className="ai-panel-text-secondary">Reference:</span> 
+                          <span className="ai-panel-text ml-2">{selectedRequest?.request_reference}</span>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
 
-                  {/* Customer Notes Clarification */}
-                  {customerNotesClarification && (
-                    <div className="mb-4">
-                      <h4 className="text-xs font-medium ai-panel-text-secondary mb-2">Customer Notes Clarification</h4>
-                      <div className="p-3 bg-black/20 rounded-lg border border-white/20">
+                    {/* Customer Notes Clarification */}
+                    {customerNotesClarification && (
+                      <div className="mb-4 pb-4 border-b border-white/10">
+                        <h4 className="text-xs font-medium ai-panel-text-secondary mb-2">Customer Notes Clarification</h4>
                         <p className="text-sm ai-panel-text">{customerNotesClarification}</p>
-                          </div>
-                        </div>
-                      )}
+                      </div>
+                    )}
 
-                  {/* Additional Questions */}
-                  {manualQuestions && (
-                    <div className="mb-4">
-                      <h4 className="text-xs font-medium ai-panel-text-secondary mb-2">Additional Questions</h4>
-                      <div className="p-3 bg-black/20 rounded-lg border border-white/20">
-                        <p className="text-sm ai-panel-text">{manualQuestions}</p>
-                          </div>
+                    {/* Selected Questions for Clarification */}
+                    {selectedQuestionsForClarification.length > 0 && (
+                      <div className="mb-4 pb-4 border-b border-white/10">
+                        <h4 className="text-xs font-medium ai-panel-text-secondary mb-2">Selected Questions Needing Clarification</h4>
+                        <div className="space-y-2">
+                          {selectedQuestionsForClarification.map((questionIndex) => {
+                            const question = selectedRequest?.question_responses_snapshot[questionIndex]
+                            if (!question) return null
+                            
+                            let responseText = 'No response'
+                            if (question.response_text) {
+                              responseText = question.response_text
+                            } else if (question.selected_options && question.selected_options.length > 0) {
+                              responseText = question.selected_options.map((option: any) => option.option_text || option.text || option).join(', ')
+                            }
+                            
+                            return (
+                              <div key={questionIndex} className="mb-2">
+                                <div className="text-xs ai-panel-text-secondary opacity-70" style={{ fontSize: '0.7rem' }}>{question.question_text}</div>
+                                <div className="text-sm font-medium ai-panel-text">{responseText}</div>
+                              </div>
+                            )
+                          })}
                         </div>
-                      )}
+                      </div>
+                    )}
+
+                    {/* Selected Requirements for Clarification */}
+                    {selectedRequirementsForClarification.length > 0 && (
+                      <div className="mb-4 pb-4 border-b border-white/10">
+                        <h4 className="text-xs font-medium ai-panel-text-secondary mb-2">Selected Requirements Needing Clarification</h4>
+                        <div className="space-y-2">
+                          {selectedRequirementsForClarification.map((requirementIndex) => {
+                            const requirement = selectedRequest?.requirement_responses_snapshot[requirementIndex]
+                            if (!requirement) return null
+                            
+                            return (
+                              <div key={requirementIndex} className="mb-2">
+                                <div className="text-xs ai-panel-text-secondary opacity-70" style={{ fontSize: '0.7rem' }}>
+                                  {requirement.title ? `${requirement.title}: ` : ''}Requirement
+                                </div>
+                                <div className="text-sm font-medium ai-panel-text">{requirement.requirements_text}</div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Additional Questions */}
+                    {manualQuestions && (
+                      <div className="mb-4 pb-4 border-b border-white/10">
+                        <h4 className="text-xs font-medium ai-panel-text-secondary mb-2">Additional Questions</h4>
+                        <p className="text-sm ai-panel-text">{manualQuestions}</p>
+                      </div>
+                    )}
+                  </div>
 
                   {/* Generation Cost */}
-                  <div className="mb-4 p-4 bg-black/20 rounded-lg border border-white/20 text-center">
-                    <div className="mb-2">
-                      <div className="text-2xl font-bold ai-panel-text">1</div>
-                      <div className="text-sm ai-panel-text-secondary">Credit Required</div>
-                    </div>
-                    <div className="text-xs ai-panel-text-secondary">
-                      {creditsLoading ? "..." : creditsStatus?.creditsAvailable ?? 0} credits remaining
+                  <div className="mb-4 p-4 bg-black/20 rounded-lg">
+                    <div className="flex flex-col items-center space-y-3">
+                      {/* Remaining Credits - Top */}
+                      <div className="text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <span className="text-xs font-bold ai-panel-text">{creditsLoading ? "..." : creditsStatus?.creditsAvailable ?? 0}</span>
+                          <span className="text-xs ai-panel-text-secondary">credits remaining</span>
+                        </div>
+                      </div>
+                      
+                      {/* Cost Pill - Bottom */}
+                      <div className="flex flex-col items-center">
+                        <div className="text-xs font-bold ai-panel-text-secondary mb-2 text-center">Credits required for this generation</div>
+                        <div className="px-2 py-1 rounded-full bg-purple-500/20 border-2 border-purple-400/50 flex items-center justify-center gap-1.5">
+                          <div className="text-sm font-bold ai-panel-text">1</div>
+                          <div className="text-xs font-bold ai-panel-text-secondary uppercase">CREDIT</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </>
@@ -1871,17 +1926,11 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
               {/* Action Buttons */}
               {!isGenerating && (
-                <div className="flex gap-3">
-                      <button
-                    onClick={() => setShowGenerationModal(false)}
-                    className="flex-1 px-4 py-2 text-sm font-medium ai-panel-text-secondary bg-black/20 hover:bg-black/30 rounded-lg transition-colors border border-white/20"
-                  >
-                    Cancel
-                  </button>
+                <div className="flex flex-col gap-3">
                   <button
                     onClick={handleConfirmGeneration}
                         disabled={(creditsStatus?.creditsAvailable ?? 0) <= 0}
-                    className="ai-button-generate flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
+                    className="ai-button-generate-gradient w-full px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
                       >
                         {/* Gradient Layer */}
                         <div 
@@ -1901,6 +1950,13 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           <span>Generate Response</span>
                         </div>
                       </button>
+                  
+                  <button
+                    onClick={() => setShowGenerationModal(false)}
+                    className="text-sm ai-panel-text-secondary hover:ai-panel-text transition-colors underline text-center"
+                  >
+                    Cancel
+                  </button>
                   </div>
               )}
               </div>
