@@ -649,7 +649,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
         {/* Main Content - Outlook-like Layout */}
         <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-6 overflow-hidden">
           {/* Left Panel - Request List */}
-          <div className="w-full lg:w-1/5 border-b lg:border-b-0 lg:border-r border-[var(--dashboard-border-primary)] flex flex-col">
+          <div className="w-full lg:w-1/6 border-b lg:border-b-0 lg:border-r border-[var(--dashboard-border-primary)] flex flex-col">
             {/* Navigation & Progress */}
             <div className="p-4 border-b border-[var(--dashboard-border-primary)]">
               {/* Navigation Controls */}
@@ -685,7 +685,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
               
               {/* Progress Bar */}
               <div className="flex justify-between items-center mb-2">
-                <div className="text-sm md:text-lg text-[var(--dashboard-text-primary)]">
+                <div className="text-xs md:text-sm text-[var(--dashboard-text-primary)]">
                   {handledRequests} of {totalRequests} handled
                 </div>
                 <span className="text-xs text-[var(--dashboard-text-tertiary)]">
@@ -720,7 +720,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       }}
                       className={`p-3 rounded-lg cursor-pointer transition-all flex-shrink-0 w-64 lg:w-auto ${
                         isSelected
-                          ? 'bg-[var(--dashboard-active-bg)] text-[var(--dashboard-active-text)] border-l-4 border-[var(--dashboard-active-border)]'
+                          ? 'bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)] border-l-4 border-[var(--dashboard-active-border)]'
                           : 'hover:bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)]'
                       }`}
                     >
@@ -747,7 +747,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           <div className="w-3 h-3 rounded-full bg-blue-500" />
                         )}
                         <span className="text-xs opacity-75">{request.customer_name}</span>
-                        <span className="font-medium text-xs" style={{ fontSize: '0.6rem' }}>{request.request_reference}</span>
+                        <span className="font-medium text-xs" style={{ fontSize: '0.4rem' }}>{request.request_reference}</span>
                       </div>
                       
                       {/* Row 2: Service Name */}
@@ -766,72 +766,125 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
           <div className="flex-1 lg:w-2/5 flex flex-col min-h-0 lg:min-h-0 h-96 lg:h-auto p-2 lg:p-6 space-y-4 lg:space-y-5">
             {selectedRequest ? (
               <>
-                {/* Request Header with Action Buttons */}
+                {/* Request Header */}
                 <div className="border-b border-[var(--dashboard-border-primary)] pb-4">
-                  <div className="flex flex-col lg:flex-row items-start justify-between gap-2 lg:gap-4">
-                    <div className="flex-1 min-w-0 w-full lg:w-auto">
-                      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-2 lg:gap-4">
-                        {/* Left Column: Request Info */}
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <h2 className="text-xl md:text-2xl font-bold text-[var(--dashboard-text-primary)]">
-                              {selectedRequest.request_reference}
-                            </h2>
-                            <span className={`px-1.5 py-0.5 rounded-full text-xs md:text-xs ${getStatusColor(selectedRequest.status)}`} style={{ fontSize: 'clamp(0.65rem, 2vw, 0.75rem)' }}>
-                              {getStatusText(selectedRequest.status)}
-                            </span>
-                            {selectedRequest.urgency_flag && (
-                              <span className="px-2 py-0.5 rounded-full text-xs bg-red-100 text-red-800">
-                                Urgent
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-3 text-xs lg:text-base text-[var(--dashboard-text-secondary)]">
-                            <span className="font-medium lg:font-semibold text-[var(--dashboard-text-primary)]">{selectedRequest.customer_name}</span>
-                            <span>•</span>
-                            <span className="font-medium lg:font-semibold text-[var(--dashboard-text-primary)]">{selectedRequest.service?.service_name || 'N/A'}</span>
-                            <span>•</span>
-                            <span className="font-medium lg:font-semibold text-[var(--dashboard-text-primary)]">€{selectedRequest.price_subtotal || 0}</span>
-                          </div>
+                  <div className="space-y-3">
+                    {/* Service Title + Request Reference + Status + Time Passed Block */}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-bold text-[var(--dashboard-text-primary)] text-sm md:text-base">
+                        {selectedRequest.service?.service_name || 'N/A'}
+                      </span>
+                      <span className="text-[var(--dashboard-text-secondary)]">•</span>
+                      <h2 className="text-xs text-[var(--dashboard-text-primary)]">
+                        {selectedRequest.request_reference}
+                      </h2>
+                      <span className={`px-1.5 py-0.5 rounded-full text-xs md:text-xs ${getStatusColor(selectedRequest.status)}`} style={{ fontSize: 'clamp(0.65rem, 2vw, 0.75rem)' }}>
+                        {getStatusText(selectedRequest.status)}
+                      </span>
+                      {selectedRequest.urgency_flag && (
+                        <span className="px-2 py-0.5 rounded-full text-xs bg-red-100 text-red-800">
+                          Urgent
+                        </span>
+                      )}
+                      <span className="text-[var(--dashboard-text-secondary)]">•</span>
+                      <span className="text-xs text-[var(--dashboard-text-secondary)]" style={{ fontSize: '0.6rem' }}>Time passed</span>
+                      <span className="text-xs text-[var(--dashboard-text-primary)]">
+                        {(() => {
+                          try {
+                            const dateField = selectedRequest.created_at || selectedRequest.date_created || selectedRequest.request_date
+                            if (!dateField) return 'N/A'
+                            
+                            const requestDate = new Date(dateField)
+                            if (isNaN(requestDate.getTime())) return 'N/A'
+                            
+                            const now = new Date()
+                            const diffMs = now.getTime() - requestDate.getTime()
+                            
+                            if (diffMs < 0) return 'N/A'
+                            
+                            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+                            const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+                            const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
+                            
+                            if (diffDays > 0) {
+                              return `${diffDays}d ${diffHours}h`
+                            } else if (diffHours > 0) {
+                              return `${diffHours}h ${diffMinutes}m`
+                            } else {
+                              return `${diffMinutes}m`
+                            }
+                          } catch (error) {
+                            return 'N/A'
+                          }
+                        })()}
+                      </span>
+                    </div>
+                    
+                    {/* Customer Name + Contact Details - 2 Column Layout */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center">
+                      {/* Left Column - Customer Name */}
+                      <div className="flex flex-col">
+                        <span className="font-medium text-[var(--dashboard-text-primary)] text-lg lg:text-2xl">{selectedRequest.customer_name}</span>
+                        {selectedRequest.consent_newsletter !== null && (
+                          <span className="text-xs text-[var(--dashboard-text-secondary)] mt-1">
+                            Newsletter consent: {selectedRequest.consent_newsletter ? 'Yes' : 'No'}
+                          </span>
+                        )}
+                      </div>
+                      
+                      {/* Right Column - Contact Details */}
+                      <div className="space-y-0 text-right">
+                        {/* Email Row */}
+                        <div className="flex items-center justify-end gap-1 text-sm">
+                          <span>{selectedRequest.customer_email}</span>
+                          <button
+                            onClick={() => navigator.clipboard.writeText(selectedRequest.customer_email)}
+                            className="p-1.5 rounded transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+                            title="Copy email"
+                          >
+                            <ClipboardDocumentIcon className="w-4 h-4" />
+                          </button>
+                          {selectedRequest.customer_email && (
+                            <a
+                              href={`mailto:${selectedRequest.customer_email}`}
+                              className="p-1.5 rounded transition-colors text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                              title="Send email"
+                            >
+                              <EnvelopeIcon className="w-4 h-4" />
+                            </a>
+                          )}
                         </div>
                         
-                        {/* Right Column: Time Passed */}
-                        <div className="flex flex-col items-start lg:items-end">
-                        <div className="flex flex-row lg:flex-col items-center lg:items-end gap-2 lg:gap-0">
-                          <span className="text-xs text-[var(--dashboard-text-secondary)]">Time passed</span>
-                          <span className="text-xs lg:text-base font-bold text-[var(--dashboard-text-primary)]">
-                            {(() => {
-                              try {
-                                const dateField = selectedRequest.created_at || selectedRequest.date_created || selectedRequest.request_date
-                                if (!dateField) return 'N/A'
-                                
-                                const requestDate = new Date(dateField)
-                                if (isNaN(requestDate.getTime())) return 'N/A'
-                                
-                                const now = new Date()
-                                const diffMs = now.getTime() - requestDate.getTime()
-                                
-                                if (diffMs < 0) return 'N/A'
-                                
-                                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-                                const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-                                const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
-                                
-                                if (diffDays > 0) {
-                                  return `${diffDays}d ${diffHours}h`
-                                } else if (diffHours > 0) {
-                                  return `${diffHours}h ${diffMinutes}m`
-                                } else {
-                                  return `${diffMinutes}m`
-                                }
-                              } catch (error) {
-                                return 'N/A'
-                              }
-                            })()}
-                          </span>
+                        {/* Phone Row */}
+                        {selectedRequest.customer_phone && (
+                          <div className="flex items-center justify-end gap-1 text-sm">
+                            <span>{selectedRequest.customer_phone}</span>
+                            <button
+                              onClick={() => navigator.clipboard.writeText(selectedRequest.customer_phone)}
+                              className="p-1.5 rounded transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+                              title="Copy phone"
+                            >
+                              <ClipboardDocumentIcon className="w-4 h-4" />
+                            </button>
+                            <a
+                              href={`https://wa.me/${selectedRequest.customer_phone.replace(/\D/g, '')}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-1.5 rounded transition-colors text-green-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20"
+                              title="WhatsApp"
+                            >
+                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.533 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.451h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.463.703z"/>
+                              </svg>
+                            </a>
                           </div>
-                        </div>
+                        )}
                       </div>
+                    </div>
+                    
+                    {/* Price Row */}
+                    <div className="flex items-center gap-3 text-xs lg:text-sm">
+                      <span className="font-medium text-[var(--dashboard-text-primary)]">€{selectedRequest.price_subtotal || 0}</span>
                     </div>
                   </div>
                 </div>
@@ -846,50 +899,39 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                         <div key={action.action_id} className="relative flex items-start pb-4 last:pb-0">
                           {/* Timeline line */}
                           {index < selectedRequest.serviceboard[0].serviceboardaction.length - 1 && (
-                            <div className="absolute left-3 top-8 w-0.5 h-full bg-[var(--dashboard-border-primary)]"></div>
+                            <div className="absolute left-2.5 top-6 w-0.5 h-full bg-[var(--dashboard-border-primary)]"></div>
                           )}
                           
                           {/* Timeline dot */}
-                          <div className={`relative z-10 w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                                  action.action_status === 'completed' 
-                              ? 'bg-green-500 border-green-500' 
-                              : 'bg-yellow-500 border-yellow-500'
-                          }`}>
-                            <div className="w-2 h-2 rounded-full bg-white"></div>
-                            </div>
+                          <div className="relative z-10 w-5 h-5 rounded-full border-2 border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-primary)] flex items-center justify-center">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[var(--dashboard-text-secondary)]"></div>
+                          </div>
                             
                           {/* Content */}
                           <div className="ml-4 flex-1 min-w-0">
                             {/* Mobile Layout (xs-md): Two rows */}
                             <div className="block lg:hidden">
-                              {/* Row 1: Date/Time + Action Type */}
-                              <div className="flex items-center gap-2 mb-1">
-                                <div className="text-xs text-[var(--dashboard-text-tertiary)]" style={{ fontSize: '0.7rem' }}>
-                                  {action.created_at ? (
-                                    <span>
-                                      {new Date(action.created_at).toLocaleDateString()} {new Date(action.created_at).toLocaleTimeString()}
-                                    </span>
-                                  ) : (
-                                    <span className="text-[var(--dashboard-text-muted)]">No date</span>
-                                  )}
-                                </div>
-                                <span className="px-1.5 py-0.5 rounded-full text-xs bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-tertiary)]" style={{ fontSize: '0.7rem' }}>
-                                  {action.action_type}
-                                </span>
+                              {/* Row 1: Date/Time */}
+                              <div className="text-xs text-[var(--dashboard-text-tertiary)] mb-1" style={{ fontSize: '0.7rem' }}>
+                                {action.created_at ? (
+                                  <span>
+                                    {new Date(action.created_at).toLocaleDateString()} {new Date(action.created_at).toLocaleTimeString()}
+                                  </span>
+                                ) : (
+                                  <span className="text-[var(--dashboard-text-muted)]">No date</span>
+                                )}
                               </div>
                               
-                              {/* Row 2: Action Title + Status */}
+                              {/* Row 2: Status + Action Type + Title */}
                               <div className="flex items-center gap-2">
+                                {action.action_status === 'completed' ? (
+                                  <CheckCircleSolidIcon className="w-3 h-3 text-green-500 flex-shrink-0" />
+                                ) : (
+                                  <ClockIcon className="w-3 h-3 text-yellow-500 flex-shrink-0" />
+                                )}
                                 <div className="font-medium text-xs text-[var(--dashboard-text-primary)] flex-1">
-                                  {action.action_title}
+                                  <span className="text-[var(--dashboard-text-tertiary)]">{action.action_type}</span> • {action.action_title}
                                 </div>
-                                <span className={`px-1.5 py-0.5 rounded-full text-xs ${
-                                  action.action_status === 'completed' 
-                                    ? 'bg-green-100 text-green-800'
-                                    : 'bg-yellow-100 text-yellow-800'
-                                }`} style={{ fontSize: '0.7rem' }}>
-                                  {action.action_status}
-                                </span>
                               </div>
                             </div>
 
@@ -906,21 +948,16 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                                 )}
                               </div>
                               
-                              {/* Action Type, Title, and Status in one row */}
+                              {/* Status, Action Type, and Title in one row */}
                               <div className="flex items-center gap-2">
-                                <span className="px-1.5 py-0.5 rounded-full text-xs bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-tertiary)]" style={{ fontSize: '0.7rem' }}>
-                                  {action.action_type}
-                                </span>
+                                {action.action_status === 'completed' ? (
+                                  <CheckCircleSolidIcon className="w-3 h-3 text-green-500 flex-shrink-0" />
+                                ) : (
+                                  <ClockIcon className="w-3 h-3 text-yellow-500 flex-shrink-0" />
+                                )}
                                 <div className="font-medium text-xs text-[var(--dashboard-text-primary)] flex-1">
-                                  {action.action_title}
+                                  <span className="text-[var(--dashboard-text-tertiary)]">{action.action_type}</span> • {action.action_title}
                                 </div>
-                                <span className={`px-1.5 py-0.5 rounded-full text-xs ${
-                                  action.action_status === 'completed' 
-                                    ? 'bg-green-100 text-green-800'
-                                    : 'bg-yellow-100 text-yellow-800'
-                                }`} style={{ fontSize: '0.7rem' }}>
-                                  {action.action_status}
-                                </span>
                               </div>
                             </div>
                           </div>
@@ -929,65 +966,6 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                     </div>
                   </div>
                 )}
-
-                {/* Customer Details */}
-                    <div className="mt-6">
-                  <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Customer Details</h3>
-                  <div className="flex items-center gap-6 text-xs">
-                    <div className="flex items-center gap-2">
-                      <span>{selectedRequest.customer_name}</span>
-                      <button
-                        onClick={() => navigator.clipboard.writeText(selectedRequest.customer_name)}
-                        className="p-1 rounded transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
-                        title="Copy name"
-                      >
-                        <ClipboardDocumentIcon className="w-3 h-3" />
-                      </button>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span>{selectedRequest.customer_email}</span>
-                      <button
-                        onClick={() => navigator.clipboard.writeText(selectedRequest.customer_email)}
-                        className="p-1 rounded transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
-                        title="Copy email"
-                      >
-                        <ClipboardDocumentIcon className="w-3 h-3" />
-                      </button>
-                      {selectedRequest.customer_email && (
-                        <a
-                          href={`mailto:${selectedRequest.customer_email}`}
-                          className="p-1 rounded transition-colors text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                          title="Send email"
-                        >
-                          <EnvelopeIcon className="w-3 h-3" />
-                        </a>
-                      )}
-                    </div>
-                    {selectedRequest.customer_phone && (
-                      <div className="flex items-center gap-2">
-                        <span>{selectedRequest.customer_phone}</span>
-                        <button
-                          onClick={() => navigator.clipboard.writeText(selectedRequest.customer_phone)}
-                          className="p-1 rounded transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
-                          title="Copy phone"
-                        >
-                          <ClipboardDocumentIcon className="w-3 h-3" />
-                        </button>
-                        <a
-                          href={`https://wa.me/${selectedRequest.customer_phone.replace(/\D/g, '')}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-1 rounded transition-colors text-green-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20"
-                          title="WhatsApp"
-                        >
-                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
-                          </svg>
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                </div>
 
                 {/* Customer Notes */}
                 {selectedRequest.customer_notes && (
@@ -1264,12 +1242,12 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
           </div>
 
           {/* Right Panel - Actions */}
-          <div className="w-full lg:w-1/3 border-t lg:border-t-0 lg:border-l border-[var(--dashboard-border-primary)] flex flex-col">
+          <div className="w-full lg:w-2/5 border-t lg:border-t-0 lg:border-l border-[var(--dashboard-border-primary)] flex flex-col">
               {selectedRequest ? (
                 <>
                 {/* Generate Section - Independent Container */}
                 <div className="">
-                  <div className="ai-panel-gradient shadow-lg relative overflow-hidden p-5 lg:p-7">
+                  <div className="shadow-lg relative overflow-hidden p-5 lg:p-7">
                     {/* Bottom Color Layer 1 */}
                     <div 
                       className="absolute z-1"
@@ -1315,119 +1293,124 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       }}
                     ></div>
                     <div className="relative z-10">
+                  {/* Request Reference */}
+                  <div className="mb-4 text-left">
+                    <span className="text-2xl font-bold ai-panel-text">#{selectedRequest.request_reference}</span>
+                  </div>
+                  
                   {/* Quick Actions */}
                   <div className="mb-4">
                     <div className="space-y-2">
                       {/* Status Actions Group */}
-                      <div className="flex flex-wrap gap-1 justify-center">
+                      <div className="grid grid-cols-3 gap-2">
                         {/* Mark Handled */}
                         <button
                           onClick={() => markAsHandled(selectedRequest.request_id)}
-                          className="px-2 py-1 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center gap-1 text-xs w-fit border border-white/20 whitespace-nowrap"
+                          className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-2 border border-white/20"
                           title="Mark as handled (Ctrl+H)"
                         >
                           <div 
-                            className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                            className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
                             style={{
                               backgroundColor: isRequestHandled(selectedRequest) ? '#10b981' : '#059669',
-                              minWidth: '16px',
-                              minHeight: '16px'
+                              minWidth: '24px',
+                              minHeight: '24px'
                             }}
                           >
                             {isRequestHandled(selectedRequest) ? (
-                              <CheckCircleSolidIcon className="w-2.5 h-2.5 text-white" />
+                              <CheckCircleSolidIcon className="w-4 h-4 text-white" />
                             ) : (
-                              <CheckCircleIcon className="w-2.5 h-2.5 text-white" />
+                              <CheckCircleIcon className="w-4 h-4 text-white" />
                             )}
                           </div>
-                          <span className="hidden lg:inline text-xs ai-panel-text-secondary">{isRequestHandled(selectedRequest) ? 'Handled' : 'Mark Handled'}</span>
+                          <span className="text-xs ai-panel-text-secondary text-center leading-tight">{isRequestHandled(selectedRequest) ? 'Handled' : 'Mark Handled'}</span>
                         </button>
                         
                         {/* Toggle Closed */}
                         <button
                           onClick={() => toggleClosedStatus(selectedRequest.request_id)}
-                          className="px-2 py-1 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center gap-1 text-xs w-fit border border-white/20 whitespace-nowrap"
+                          className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-2 border border-white/20"
                           title="Toggle closed status"
                         >
                           <div 
-                            className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                            className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
                             style={{
                               backgroundColor: selectedRequest.is_closed ? '#6b7280' : '#f97316',
-                              minWidth: '16px',
-                              minHeight: '16px'
+                              minWidth: '24px',
+                              minHeight: '24px'
                             }}
                           >
-                            <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
                           </div>
-                          <span className="hidden lg:inline text-xs ai-panel-text-secondary">{selectedRequest.is_closed ? 'Closed' : 'Mark Closed'}</span>
+                          <span className="text-xs ai-panel-text-secondary text-center leading-tight">{selectedRequest.is_closed ? 'Closed' : 'Mark Closed'}</span>
                         </button>
                         
                         {/* Toggle Urgency */}
                         <button
                           onClick={() => toggleUrgencyFlag(selectedRequest.request_id)}
-                          className="px-2 py-1 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center gap-1 text-xs w-fit border border-white/20 whitespace-nowrap"
+                          className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-2 border border-white/20"
                           title="Toggle urgency flag (Ctrl+F)"
                         >
                           <div 
-                            className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                            className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
                             style={{
                               backgroundColor: selectedRequest.urgency_flag ? '#ef4444' : '#374151',
-                              minWidth: '16px',
-                              minHeight: '16px'
+                              minWidth: '24px',
+                              minHeight: '24px'
                             }}
                           >
-                            <FlagIcon className="w-2.5 h-2.5 text-white" />
+                            <FlagIcon className="w-4 h-4 text-white" />
                           </div>
-                          <span className="hidden lg:inline text-xs ai-panel-text-secondary">{selectedRequest.urgency_flag ? 'Urgent' : 'Flag Urgent'}</span>
+                          <span className="text-xs ai-panel-text-secondary text-center leading-tight">{selectedRequest.urgency_flag ? 'Urgent' : 'Flag Urgent'}</span>
                         </button>
                       </div>
 
                       {/* Contact Actions Group */}
                       {(selectedRequest.customer_phone || selectedRequest.customer_email) && (
-                        <div className="flex flex-wrap gap-1 justify-center">
+                        <div className="grid grid-cols-2 gap-2">
                           {selectedRequest.customer_phone && (
                             <a
                               href={`tel:${selectedRequest.customer_phone}`}
-                              className="px-2 py-1 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center gap-1 text-xs w-fit border border-white/20 whitespace-nowrap"
+                              className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-2 border border-white/20"
                               title={`Call ${selectedRequest.customer_phone}`}
                             >
                               <div 
-                                className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                                className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
                                 style={{ 
                                   backgroundColor: '#10b981',
-                                  minWidth: '16px',
-                                  minHeight: '16px'
+                                  minWidth: '24px',
+                                  minHeight: '24px'
                                 }}
                               >
-                                <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                 </svg>
                               </div>
-                              <span className="hidden lg:inline text-xs ai-panel-text-secondary">Call</span>
+                              <span className="text-xs ai-panel-text-secondary text-left leading-tight">Call</span>
                             </a>
                           )}
                           
                           {selectedRequest.customer_email && (
                             <a
                               href={`mailto:${selectedRequest.customer_email}`}
-                              className="px-2 py-1 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center gap-1 text-xs w-fit border border-white/20 whitespace-nowrap"
+                              className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-2 border border-white/20"
                               title={`Email ${selectedRequest.customer_email}`}
                             >
                               <div 
-                                className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                                className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
                                 style={{ 
                                   backgroundColor: '#3b82f6',
-                                  minWidth: '16px',
-                                  minHeight: '16px'
+                                  minWidth: '24px',
+                                  minHeight: '24px'
                                 }}
                               >
-                                <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
                               </div>
-                              <span className="hidden lg:inline text-xs ai-panel-text-secondary">Email</span>
+                              <span className="text-xs ai-panel-text-secondary text-left leading-tight">Email</span>
                             </a>
                           )}
                         </div>
@@ -1435,64 +1418,64 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
                       {/* Service Board Actions Group */}
                       {selectedRequest.serviceboard?.[0] && (
-                        <div className="flex flex-wrap gap-1 justify-center">
+                        <div className="grid grid-cols-3 gap-2">
                           {/* Open Board */}
                           <button
                             onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}`, '_blank')}
-                            className="px-2 py-1 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center gap-1 text-xs w-fit border border-white/20 whitespace-nowrap"
+                            className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-2 border border-white/20"
                             title="Open service board"
                           >
                             <div 
-                              className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                              className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
                               style={{ 
                                 backgroundColor: '#6b7280',
-                                minWidth: '16px',
-                                minHeight: '16px'
+                                minWidth: '24px',
+                                minHeight: '24px'
                               }}
                             >
-                              <ArrowTopRightOnSquareIcon className="w-2.5 h-2.5 text-white" />
+                              <ArrowTopRightOnSquareIcon className="w-4 h-4 text-white" />
                             </div>
-                            <span className="hidden lg:inline text-xs ai-panel-text-secondary">Open Board</span>
+                            <span className="text-xs ai-panel-text-secondary text-left leading-tight">Open Board</span>
                           </button>
                           
                           {/* Schedule Appointment */}
                           <button
                             onClick={() => window.open(`/${currentBusiness?.business_urlname}/s/${selectedRequest.serviceboard[0].board_ref}?openAddAction=true&actionType=appointment_scheduling`, '_blank')}
-                            className="px-2 py-1 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center gap-1 text-xs w-fit border border-white/20 whitespace-nowrap"
+                            className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-2 border border-white/20"
                             title="Schedule appointment"
                           >
                             <div 
-                              className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                              className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
                               style={{ 
                                 backgroundColor: '#10b981',
-                                minWidth: '16px',
-                                minHeight: '16px'
+                                minWidth: '24px',
+                                minHeight: '24px'
                               }}
                             >
-                              <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
                             </div>
-                            <span className="hidden lg:inline text-xs ai-panel-text-secondary">Schedule</span>
+                            <span className="text-xs ai-panel-text-secondary text-left leading-tight">Schedule</span>
                           </button>
                           
                           {/* Generate Quotation */}
                           <button
                             onClick={() => generateQuotation(selectedRequest.request_id)}
-                            className="px-2 py-1 rounded-full bg-black/10 hover:bg-black/20 transition-colors flex items-center justify-center gap-1 text-xs w-fit border border-white/20 whitespace-nowrap"
+                            className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-2 border border-white/20"
                             title="Generate quotation (Ctrl+Q)"
                           >
                             <div 
-                              className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                              className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
                               style={{ 
                                 backgroundColor: '#3b82f6',
-                                minWidth: '16px',
-                                minHeight: '16px'
+                                minWidth: '24px',
+                                minHeight: '24px'
                               }}
                             >
-                              <DocumentArrowUpIcon className="w-2.5 h-2.5 text-white" />
+                              <DocumentArrowUpIcon className="w-4 h-4 text-white" />
                             </div>
-                            <span className="hidden lg:inline text-xs ai-panel-text-secondary">Generate Quotation</span>
+                            <span className="text-xs ai-panel-text-secondary text-left leading-tight">Generate Quotation</span>
                           </button>
                         </div>
                       )}
@@ -1765,7 +1748,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
       {/* Generation Confirmation Modal */}
       {showGenerationModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="ai-panel-gradient rounded-2xl w-full max-w-md relative overflow-hidden">
+          <div className="rounded-2xl w-full max-w-md relative overflow-hidden">
               {/* Accent Color Layers */}
               <div 
                 className="absolute z-1"

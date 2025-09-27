@@ -49,6 +49,7 @@ export default async function ServiceRequestsPage() {
         is_closed: true,
         generated_response: true,
         generated_response_saved_at: true,
+        consent_newsletter: true,
       service: {
         select: {
           service_name: true,

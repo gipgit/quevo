@@ -149,10 +149,6 @@
 }
 
 /* AI Panel Component Styles */
-.ai-panel-gradient {
-  background: var(--ai-panel-bg-gradient);
-  color: var(--ai-panel-text);
-}
 
 .ai-panel-text {
   color: var(--ai-panel-text);
