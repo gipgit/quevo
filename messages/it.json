@@ -667,6 +667,9 @@
       "logout": "Esci",
       "manageAccount": "Gestisci Account",
       "marketing": "Marketing",
+      "plan": "Piano",
+      "quotationGenerator": "Generatore Preventivi",
+      "selectBusiness": "Seleziona Attività",
       "marketingEmailAssistant": "Assistente Email"
     },
     "support": {

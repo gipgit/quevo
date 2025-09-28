@@ -642,7 +642,10 @@
       "logout": "Se déconnecter",
       "manageAccount": "Gérer le compte",
       "marketing": "Marketing",
-      "marketingEmailAssistant": "Assistant Email"
+      "marketingEmailAssistant": "Assistant Email",
+      "plan": "Plan",
+      "quotationGenerator": "Générateur de Devis",
+      "selectBusiness": "Sélectionner l'Entreprise"
     }
   },
   "plan": {

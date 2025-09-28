@@ -1,16 +1,16 @@
+'use client'
+
 import React from 'react'
 
-interface LoadingAIGenerationProps {
+interface AIAssistantIconProps {
   size?: 'xs' | 'sm' | 'md' | 'lg'
-  text?: string
   className?: string
 }
 
-export function LoadingAIGeneration({ 
+export function AIAssistantIcon({ 
   size = 'md', 
-  text = 'Generating...', 
   className = '' 
-}: LoadingAIGenerationProps) {
+}: AIAssistantIconProps) {
   const sizeClasses = {
     xs: 'w-8 h-8',
     sm: 'w-12 h-12',
@@ -25,15 +25,15 @@ export function LoadingAIGeneration({
     lg: 'w-12 h-12'
   }
 
-  const textSizeClasses = {
-    xs: 'text-xs',
-    sm: 'text-xs',
-    md: 'text-sm',
-    lg: 'text-base'
+  const shadowSizeClasses = {
+    xs: 'w-8 h-8',
+    sm: 'w-12 h-12',
+    md: 'w-20 h-20',
+    lg: 'w-24 h-24'
   }
 
   return (
-    <div className={`relative w-full h-full flex flex-col items-center justify-center ${className}`}>
+    <div className={`relative ${className}`}>
       <style jsx>{`
         @keyframes floatLayer1 {
           0%, 100% {
@@ -83,34 +83,32 @@ export function LoadingAIGeneration({
         @keyframes shadowPulse {
           0%, 100% {
             transform: scale(1);
-            opacity: 0.4;
+            opacity: 0.3;
           }
           50% {
-            transform: scale(2.2);
-            opacity: 0.7;
+            transform: scale(1.4);
+            opacity: 0.5;
           }
         }
       `}</style>
       
-      {/* Icon Container with Shadow */}
-      <div className="relative">
-        {/* Animated Shadow */}
-        <div 
-          className={`absolute rounded-full ${sizeClasses[size]}`}
-          style={{
-            background: 'linear-gradient(45deg, rgb(255, 0, 150) 0%, rgb(0, 255, 255) 25%, rgb(255, 255, 0) 50%, rgb(255, 0, 255) 75%, rgb(0, 150, 255) 100%)',
-            filter: 'blur(25px)',
-            opacity: 0.4,
-            animation: 'shadowPulse 2.5s ease-in-out infinite',
-            zIndex: 0
-          }}
-        ></div>
-        
-        {/* Main Icon Container */}
-        <div 
-          className={`${sizeClasses[size]} rounded-full flex items-center justify-center border border-purple-400/40 relative overflow-hidden shadow-lg z-10`}
-          style={{ backgroundColor: 'rgb(27, 12, 37)' }}
-        >
+      {/* Animated Shadow */}
+      <div 
+        className={`absolute rounded-full ${shadowSizeClasses[size]}`}
+        style={{
+          background: 'linear-gradient(45deg, rgb(147, 51, 234) 0%, rgb(59, 130, 246) 50%, rgb(236, 72, 153) 100%)',
+          filter: 'blur(20px)',
+          opacity: 0.3,
+          animation: 'shadowPulse 3s ease-in-out infinite',
+          zIndex: 0
+        }}
+      ></div>
+      
+      {/* Main Icon Container */}
+      <div 
+        className={`${sizeClasses[size]} rounded-full flex items-center justify-center border border-purple-400/40 relative overflow-hidden shadow-lg z-10`}
+        style={{ backgroundColor: 'rgb(27, 12, 37)' }}
+      >
         {/* Gradient Layer 1 - Top Left */}
         <div 
           className="absolute z-1"
@@ -175,32 +173,7 @@ export function LoadingAIGeneration({
             d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" 
           />
         </svg>
-        </div>
       </div>
-
-      {/* Text below the icon */}
-      <div className="flex justify-center mt-4">
-        <span 
-          className={`${textSizeClasses[size]} font-medium text-white/80 text-center drop-shadow-sm`}
-          style={{
-            animation: 'textFade 3s ease-in-out infinite'
-          }}
-        >
-          {text}
-        </span>
-      </div>
-
-      {/* Custom CSS for animations */}
-      <style jsx>{`
-        @keyframes textFade {
-          0%, 100% {
-            opacity: 0.3;
-          }
-          50% {
-            opacity: 1;
-          }
-        }
-      `}</style>
     </div>
   )
 }

@@ -50,6 +50,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { AIAssistantIcon } from '@/components/ui/ai-assistant-icon'
 import { 
   CalendarIcon, 
   MailIcon, 
@@ -457,53 +458,22 @@ export default function MarketingEmailAssistantWrapper({
       <div className="space-y-6">
         {/* Header */}
         <div className="mb-6">
-          <div className="bg-gradient-to-br from-purple-900 via-blue-800 to-blue-400 rounded-xl p-6 shadow-lg relative overflow-hidden">
-            {/* AI Pattern Overlay */}
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,0,0.08)_1px,transparent_1px)] bg-[length:25px_25px]"></div>
-              <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_75%_25%,rgba(0,255,255,0.06)_2px,transparent_2px)] bg-[length:35px_35px]"></div>
-              <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_25%_75%,rgba(255,255,0,0.04)_1.5px,transparent_1.5px)] bg-[length:30px_30px]"></div>
-            </div>
-            <div className="relative z-10 flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl lg:text-3xl font-bold text-white mb-1 drop-shadow-lg">
-                  Marketing Email Assistant
-                </h1>
-                <p className="text-sm text-purple-100 drop-shadow-md">
-                  Create and send professional email campaigns with AI-powered content generation
-                </p>
-              </div>
-              <div className="flex items-center space-x-6">
-                <div className="text-right">
-                  <p className="text-sm text-purple-100 drop-shadow-md">Email Credits</p>
-                  <p className="text-lg font-semibold text-white drop-shadow-lg">
-                    {rateLimitStatus.tokensRemaining} / {rateLimitStatus.tokensCapacity}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-purple-100 drop-shadow-md">AI Generations</p>
-                  <p className="text-lg font-semibold text-white drop-shadow-lg">
-                    {aiContentGenerationRateLimitStatus.generationsAvailable}
-                  </p>
-                </div>
-                <div className="hidden lg:block">
-                  <div className="w-16 h-16 bg-purple-500/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-purple-400/40">
-                    <MailIcon className="w-8 h-8 text-purple-300" />
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="flex flex-col items-center text-center">
+            <AIAssistantIcon size="md" className="mb-4" />
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
+              Marketing Email Assistant
+            </h1>
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="space-y-6 max-w-3xl mx-auto">
           {/* Main Content - Campaign Builder */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="space-y-6">
             {/* Email Content Section - Moved before Recipients */}
             <div className="border-b-2 border-gray-300 pb-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-2">
+              <div className="flex flex-col items-center mb-4">
+                <div className="flex items-center space-x-2 mb-2">
                   <MailIcon className="w-5 h-5 text-gray-600" />
                   <h3 className="text-lg font-semibold text-gray-900">Email Content</h3>
                   <button
@@ -530,7 +500,7 @@ export default function MarketingEmailAssistantWrapper({
                   {/* Business Qualities */}
                   <div>
                     <div className="mb-3">
-                      <div className="flex items-center space-x-2 mb-3">
+                      <div className="flex items-center justify-center space-x-2 mb-3">
                         <Label className="text-xs xs:text-xs sm:text-xs md:text-sm font-medium opacity-70">Business Qualities</Label>
                         <button
                           className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -539,7 +509,7 @@ export default function MarketingEmailAssistantWrapper({
                           <Info className="w-4 h-4" />
                         </button>
                       </div>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2 justify-center">
                         {[
                           'Professional Service',
                           'Quality Work',
@@ -591,7 +561,7 @@ export default function MarketingEmailAssistantWrapper({
                   {/* Tone Selection */}
                   <div>
                     <div className="mb-3">
-                      <div className="flex items-center space-x-2 mb-3">
+                      <div className="flex items-center justify-center space-x-2 mb-3">
                         <Label className="text-xs xs:text-xs sm:text-xs md:text-sm font-medium opacity-70">Email Tone</Label>
                         <button
                           className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -600,7 +570,7 @@ export default function MarketingEmailAssistantWrapper({
                           <Info className="w-4 h-4" />
                         </button>
                       </div>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2 justify-center">
                         {[
                           { value: 'professional', label: 'Professional' },
                           { value: 'friendly', label: 'Friendly' },
@@ -635,99 +605,96 @@ export default function MarketingEmailAssistantWrapper({
                     </div>
                   </div>
 
-                  {/* Call to Action and Promotion Settings - Side by side on lg+ */}
-                  <div className="flex flex-col lg:flex-row lg:space-x-6 space-y-4 lg:space-y-0">
-                    {/* Call to Action - More width */}
-                    <div className="lg:flex-[2]">
-                      <div className="mb-3">
-                        <div className="flex items-center space-x-2 mb-3">
-                          <Label className="text-xs xs:text-xs sm:text-xs md:text-sm font-medium opacity-70">Call to Action</Label>
-                          <button
-                            className="text-gray-400 hover:text-gray-600 transition-colors"
-                            title="What action do you want recipients to take?"
-                          >
-                            <Info className="w-4 h-4" />
-                          </button>
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          {[
-                            { value: 'book_appointment', label: 'Book Appointment' },
-                            { value: 'learn_more', label: 'Learn More' },
-                            { value: 'contact_us', label: 'Contact Us' },
-                            { value: 'custom', label: 'Custom' }
-                          ].map((cta) => (
-                            <label key={cta.value} className="cursor-pointer">
-                              <input
-                                type="radio"
-                                name="cta"
-                                value={cta.value}
-                                checked={aiGenerationSettings.callToAction === cta.value}
-                                onChange={(e) => setAiGenerationSettings(prev => ({ ...prev, callToAction: e.target.value as any }))}
-                                className="sr-only"
-                              />
-                              <div className={`border-2 rounded-full px-3 py-1 text-center transition-colors whitespace-nowrap ${
-                                aiGenerationSettings.callToAction === cta.value 
-                                  ? theme === 'dark' 
-                                    ? 'border-blue-500 bg-blue-900/20' 
-                                    : 'border-blue-500 bg-blue-50'
-                                  : theme === 'dark'
-                                    ? 'border-gray-600 hover:border-gray-500 hover:bg-gray-700'
-                                    : 'border-gray-400 hover:border-gray-500 hover:bg-gray-50'
-                              }`}>
-                                <div className={`font-medium text-xs ${
-                                  theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
-                                }`}>{cta.label}</div>
-                              </div>
-                            </label>
-                          ))}
-                        </div>
+                  {/* Call to Action */}
+                  <div>
+                    <div className="mb-3">
+                      <div className="flex items-center justify-center space-x-2 mb-3">
+                        <Label className="text-xs xs:text-xs sm:text-xs md:text-sm font-medium opacity-70">Call to Action</Label>
+                        <button
+                          className="text-gray-400 hover:text-gray-600 transition-colors"
+                          title="What action do you want recipients to take?"
+                        >
+                          <Info className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        {[
+                          { value: 'book_appointment', label: 'Book Appointment' },
+                          { value: 'learn_more', label: 'Learn More' },
+                          { value: 'contact_us', label: 'Contact Us' },
+                          { value: 'custom', label: 'Custom' }
+                        ].map((cta) => (
+                          <label key={cta.value} className="cursor-pointer">
+                            <input
+                              type="radio"
+                              name="cta"
+                              value={cta.value}
+                              checked={aiGenerationSettings.callToAction === cta.value}
+                              onChange={(e) => setAiGenerationSettings(prev => ({ ...prev, callToAction: e.target.value as any }))}
+                              className="sr-only"
+                            />
+                            <div className={`border-2 rounded-full px-3 py-1 text-center transition-colors whitespace-nowrap ${
+                              aiGenerationSettings.callToAction === cta.value 
+                                ? theme === 'dark' 
+                                  ? 'border-blue-500 bg-blue-900/20' 
+                                  : 'border-blue-500 bg-blue-50'
+                                : theme === 'dark'
+                                  ? 'border-gray-600 hover:border-gray-500 hover:bg-gray-700'
+                                  : 'border-gray-400 hover:border-gray-500 hover:bg-gray-50'
+                            }`}>
+                              <div className={`font-medium text-xs ${
+                                theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                              }`}>{cta.label}</div>
+                            </div>
+                          </label>
+                        ))}
                       </div>
                     </div>
+                  </div>
 
-                    {/* Promotion Settings - Less width */}
-                    <div className="lg:flex-1">
-                      <div className="mb-3">
-                        <div className="flex items-center space-x-2 mb-3">
-                          <Label className="text-xs xs:text-xs sm:text-xs md:text-sm font-medium opacity-70">Include Promotion</Label>
-                          <button
-                            className="text-gray-400 hover:text-gray-600 transition-colors"
-                            title="Add a special offer to encourage engagement"
-                          >
-                            <Info className="w-4 h-4" />
-                          </button>
+                  {/* Promotion Settings - Separate row */}
+                  <div>
+                    <div className="mb-3">
+                      <div className="flex items-center justify-center space-x-2 mb-3">
+                        <Label className="text-xs xs:text-xs sm:text-xs md:text-sm font-medium opacity-70">Include Promotion</Label>
+                        <button
+                          className="text-gray-400 hover:text-gray-600 transition-colors"
+                          title="Add a special offer to encourage engagement"
+                        >
+                          <Info className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <div className="flex flex-col space-y-3 items-center">
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            checked={aiGenerationSettings.includePromotion}
+                            onChange={(e) => setAiGenerationSettings(prev => ({ ...prev, includePromotion: e.target.checked }))}
+                            className="rounded"
+                          />
+                          <span className="text-sm">Include a promotional offer</span>
                         </div>
-                        <div className="flex flex-col space-y-3">
+                        
+                        {aiGenerationSettings.includePromotion && (
                           <div className="flex items-center space-x-2">
-                            <input
-                              type="checkbox"
-                              checked={aiGenerationSettings.includePromotion}
-                              onChange={(e) => setAiGenerationSettings(prev => ({ ...prev, includePromotion: e.target.checked }))}
-                              className="rounded"
-                            />
-                            <span className="text-sm">Include a promotional offer</span>
+                            <span className="text-sm text-gray-600">Type:</span>
+                            <Select
+                              value={aiGenerationSettings.promotionType}
+                              onValueChange={(value) => setAiGenerationSettings(prev => ({ ...prev, promotionType: value }))}
+                            >
+                              <SelectTrigger className="w-auto min-w-[140px]">
+                                <SelectValue placeholder="Select type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="discount">Percentage Discount</SelectItem>
+                                <SelectItem value="fixed_discount">Fixed Amount Discount</SelectItem>
+                                <SelectItem value="free_service">Free Service</SelectItem>
+                                <SelectItem value="limited_time">Limited Time Offer</SelectItem>
+                                <SelectItem value="referral_bonus">Referral Bonus</SelectItem>
+                              </SelectContent>
+                            </Select>
                           </div>
-                          
-                          {aiGenerationSettings.includePromotion && (
-                            <div className="flex items-center space-x-2">
-                              <span className="text-sm text-gray-600">Type:</span>
-                              <Select
-                                value={aiGenerationSettings.promotionType}
-                                onValueChange={(value) => setAiGenerationSettings(prev => ({ ...prev, promotionType: value }))}
-                              >
-                                <SelectTrigger className="w-auto min-w-[140px]">
-                                  <SelectValue placeholder="Select type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="discount">Percentage Discount</SelectItem>
-                                  <SelectItem value="fixed_discount">Fixed Amount Discount</SelectItem>
-                                  <SelectItem value="free_service">Free Service</SelectItem>
-                                  <SelectItem value="limited_time">Limited Time Offer</SelectItem>
-                                  <SelectItem value="referral_bonus">Referral Bonus</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          )}
-                        </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -737,9 +704,9 @@ export default function MarketingEmailAssistantWrapper({
                     <Button
                       onClick={() => handleGenerateContent('general')}
                       disabled={aiGenerationSettings.businessQualities.length === 0}
-                      className="w-full bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 hover:from-purple-700 hover:via-blue-700 hover:to-indigo-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 h-14 text-lg font-semibold rounded-full transform hover:scale-[1.02] hover:-translate-y-0.5"
+                      className="w-full bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 hover:from-purple-700 hover:via-blue-700 hover:to-indigo-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 h-12 text-base font-normal rounded-2xl transform hover:scale-[1.02] hover:-translate-y-0.5"
                     >
-                      <SparklesIcon className="w-6 h-6 mr-3 animate-pulse" />
+                      <SparklesIcon className="w-5 h-5 mr-2 animate-pulse" />
                       Generate Email Content
                     </Button>
                   </div>
@@ -826,10 +793,130 @@ export default function MarketingEmailAssistantWrapper({
               )}
             </div>
 
+            {/* Email Preview - Moved from right column */}
+            <div className="border-b-2 border-gray-300 pb-6">
+              <div className="flex items-center justify-center space-x-2 mb-4">
+                <Eye className="w-5 h-5 text-gray-600" />
+                <h3 className="text-lg font-semibold text-gray-900">Email Preview</h3>
+              </div>
+              
+              {/* Email Preview */}
+              <Card className="bg-transparent border-0 shadow-none">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-center text-base font-normal text-gray-600">
+                    Email Preview
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  {/* Smartphone Frame */}
+                  <div className="mx-auto w-full max-w-[320px]">
+                    {/* Phone Frame */}
+                    <div className="relative bg-black rounded-[12px] p-1 shadow-2xl">
+                      {/* Screen */}
+                      <div className="bg-white rounded-[8px] overflow-hidden min-h-[500px]">
+                        
+                        {/* Email App Header */}
+                        <div className="bg-gray-100 px-4 py-3 border-b border-gray-200">
+                          <div className="flex items-center justify-between">
+                            <h3 className="font-semibold text-gray-900">Mail</h3>
+                            <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                              <span className="text-white text-xs font-bold">M</span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Email Content */}
+                        <div className="p-4 space-y-4">
+                          {/* Email Header Info */}
+                          <div className="space-y-2 pb-4 border-b border-gray-200">
+                            <div className="flex items-center space-x-2">
+                              <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                                <span className="text-gray-600 text-xs font-bold">
+                                  {campaignData.from_name ? campaignData.from_name.charAt(0).toUpperCase() : 'S'}
+                                </span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 truncate">
+                                  {campaignData.from_name || 'Sender Name'}
+                                </p>
+                                <p className="text-xs text-gray-500 truncate">
+                                  {campaignData.from_email || 'sender@example.com'}
+                                </p>
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-1">
+                              <p className="text-sm font-medium text-gray-900">
+                                To: {selectedRecipients.length} recipients
+                              </p>
+                              <p className="text-sm font-semibold text-gray-900">
+                                {campaignData.subject || 'No subject'}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          {/* Email Body */}
+                          <div className="space-y-2">
+                            {emailTemplate.title && (
+                              <h2 className="text-base font-bold text-gray-900 leading-tight">
+                                {emailTemplate.title}
+                              </h2>
+                            )}
+                            
+                            {emailTemplate.image_url && (
+                              <div className="text-center">
+                                <img 
+                                  src={emailTemplate.image_url} 
+                                  alt="Email image" 
+                                  className="w-full h-24 object-cover rounded-lg"
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = 'none'
+                                  }}
+                                />
+                              </div>
+                            )}
+                            
+                            {emailTemplate.main_text && (
+                              <div className="text-gray-800 text-xs leading-relaxed">
+                                {emailTemplate.main_text}
+                              </div>
+                            )}
+                            
+                            {emailTemplate.secondary_text && (
+                              <div className="text-gray-600 text-xs leading-relaxed pt-1 border-t border-gray-100">
+                                {emailTemplate.secondary_text}
+                              </div>
+                            )}
+                            
+                            {emailTemplate.action_button_text && emailTemplate.action_button_url && (
+                              <div className="text-center pt-2">
+                                <a 
+                                  href={emailTemplate.action_button_url}
+                                  className="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg font-medium text-xs hover:bg-blue-700 transition-colors"
+                                >
+                                  {emailTemplate.action_button_text}
+                                </a>
+                              </div>
+                            )}
+                            
+                            {!emailTemplate.title && !emailTemplate.main_text && (
+                              <div className="text-gray-400 text-xs text-center py-6">
+                                Email content will appear here...
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
             {/* Recipients Selection - Moved after Email Content */}
             <div className="border-b-2 border-gray-300 pb-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-2">
+              <div className="flex flex-col items-center mb-4">
+                <div className="flex items-center space-x-2 mb-2">
                   <UsersIcon className="w-5 h-5 text-gray-600" />
                   <h3 className="text-lg font-semibold text-gray-900">Recipients</h3>
                   <button
@@ -959,7 +1046,7 @@ export default function MarketingEmailAssistantWrapper({
 
             {/* From/Reply To Section - Moved after Email Content */}
             <div className="border-b-2 border-gray-300 pb-6">
-              <div className="flex items-center space-x-2 mb-4">
+              <div className="flex items-center justify-center space-x-2 mb-4">
                 <MailIcon className="w-5 h-5 text-gray-600" />
                 <h3 className="text-lg font-semibold text-gray-900">From & Reply To</h3>
                 <button
@@ -1008,7 +1095,7 @@ export default function MarketingEmailAssistantWrapper({
 
             {/* Schedule Campaign */}
             <div className="border-b-2 border-gray-300 pb-6">
-              <div className="flex items-center space-x-2 mb-4">
+              <div className="flex items-center justify-center space-x-2 mb-4">
                 <ClockIcon className="w-5 h-5 text-gray-600" />
                 <h3 className="text-lg font-semibold text-gray-900">Schedule</h3>
                 <button
@@ -1069,7 +1156,7 @@ export default function MarketingEmailAssistantWrapper({
 
             {/* Campaign Name Section - Moved to end */}
             <div className="border-b-2 border-gray-300 pb-6">
-              <div className="flex items-center space-x-2 mb-4">
+              <div className="flex items-center justify-center space-x-2 mb-4">
                 <MailIcon className="w-5 h-5 text-gray-600" />
                 <h3 className="text-lg font-semibold text-gray-900">Campaign Name</h3>
                 <button
@@ -1100,137 +1187,20 @@ export default function MarketingEmailAssistantWrapper({
                 onClick={handleSaveCampaign}
                 disabled={isSaving}
                 variant="outline"
-                className="flex-1 h-12 text-lg font-semibold"
+                className="flex-1 h-10 text-sm font-normal rounded-2xl"
               >
-                <Save className="w-5 h-5 mr-2" />
+                <Save className="w-4 h-4 mr-2" />
                 Save Draft
               </Button>
               <Button
                 onClick={handleSendCampaign}
                 disabled={isSending || selectedRecipients.length === 0}
-                className="flex-1 h-12 text-lg font-semibold bg-green-600 hover:bg-green-700"
+                className="flex-1 h-10 text-sm font-normal bg-green-600 hover:bg-green-700 rounded-2xl"
               >
-                <Send className="w-5 h-5 mr-2" />
+                <Send className="w-4 h-4 mr-2" />
                 Send Campaign
               </Button>
             </div>
-          </div>
-
-          {/* Right Column - Email Preview */}
-          <div className="bg-gradient-to-b from-gray-100 to-gray-200 p-4 rounded-lg space-y-6">
-            {/* Email Preview */}
-            <Card className="bg-transparent border-0 shadow-none">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-center text-base font-normal text-gray-600">
-                  Email Preview
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                {/* Smartphone Frame */}
-                <div className="mx-auto w-full max-w-[320px]">
-                  {/* Phone Frame */}
-                  <div className="relative bg-black rounded-[12px] p-1 shadow-2xl">
-                    {/* Screen */}
-                    <div className="bg-white rounded-[8px] overflow-hidden min-h-[500px]">
-                      
-                      {/* Email App Header */}
-                      <div className="bg-gray-100 px-4 py-3 border-b border-gray-200">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-semibold text-gray-900">Mail</h3>
-                          <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">M</span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Email Content */}
-                      <div className="p-4 space-y-4">
-                        {/* Email Header Info */}
-                        <div className="space-y-2 pb-4 border-b border-gray-200">
-                          <div className="flex items-center space-x-2">
-                            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                              <span className="text-gray-600 text-xs font-bold">
-                                {campaignData.from_name ? campaignData.from_name.charAt(0).toUpperCase() : 'S'}
-                              </span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-gray-900 truncate">
-                                {campaignData.from_name || 'Sender Name'}
-                              </p>
-                              <p className="text-xs text-gray-500 truncate">
-                                {campaignData.from_email || 'sender@example.com'}
-                              </p>
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-1">
-                            <p className="text-sm font-medium text-gray-900">
-                              To: {selectedRecipients.length} recipients
-                            </p>
-                            <p className="text-sm font-semibold text-gray-900">
-                              {campaignData.subject || 'No subject'}
-                            </p>
-                          </div>
-                        </div>
-                        
-                        {/* Email Body */}
-                        <div className="space-y-2">
-                          {emailTemplate.title && (
-                            <h2 className="text-base font-bold text-gray-900 leading-tight">
-                              {emailTemplate.title}
-                            </h2>
-                          )}
-                          
-                          {emailTemplate.image_url && (
-                            <div className="text-center">
-                              <img 
-                                src={emailTemplate.image_url} 
-                                alt="Email image" 
-                                className="w-full h-24 object-cover rounded-lg"
-                                onError={(e) => {
-                                  e.currentTarget.style.display = 'none'
-                                }}
-                              />
-                            </div>
-                          )}
-                          
-                          {emailTemplate.main_text && (
-                            <div className="text-gray-800 text-xs leading-relaxed">
-                              {emailTemplate.main_text}
-                            </div>
-                          )}
-                          
-                          {emailTemplate.secondary_text && (
-                            <div className="text-gray-600 text-xs leading-relaxed pt-1 border-t border-gray-100">
-                              {emailTemplate.secondary_text}
-                            </div>
-                          )}
-                          
-                          {emailTemplate.action_button_text && emailTemplate.action_button_url && (
-                            <div className="text-center pt-2">
-                              <a 
-                                href={emailTemplate.action_button_url}
-                                className="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg font-medium text-xs hover:bg-blue-700 transition-colors"
-                              >
-                                {emailTemplate.action_button_text}
-                              </a>
-                            </div>
-                          )}
-                          
-                          {!emailTemplate.title && !emailTemplate.main_text && (
-                            <div className="text-gray-400 text-xs text-center py-6">
-                              Email content will appear here...
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-
           </div>
         </div>
 

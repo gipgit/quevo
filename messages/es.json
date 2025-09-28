@@ -946,7 +946,10 @@
       "logout": "Cerrar Sesión",
       "manageAccount": "Gestionar Cuenta",
       "marketing": "Marketing",
-      "marketingEmailAssistant": "Asistente de Email"
+      "marketingEmailAssistant": "Asistente de Email",
+      "plan": "Plan",
+      "quotationGenerator": "Generador de Cotizaciones",
+      "selectBusiness": "Seleccionar Negocio"
     }
   },
   "plan": {

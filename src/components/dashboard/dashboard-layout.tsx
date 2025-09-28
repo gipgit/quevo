@@ -43,7 +43,8 @@ import {
   ShareIcon,
   UsersIcon,
   EnvelopeIcon,
-  ChatBubbleLeftRightIcon
+  ChatBubbleLeftRightIcon,
+  SparklesIcon
 } from "@heroicons/react/24/outline"
 
 interface DashboardLayoutProps {
@@ -71,6 +72,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [isAnimating, setIsAnimating] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [showUserDropdown, setShowUserDropdown] = useState(false)
   const { currentBusiness, businesses, switchBusiness, loading, userManager, businessSwitchKey } = useBusiness()
   const { isModalOpen, setIsModalOpen, currentLocale, availableLocales, switchLocale } = useLocaleSwitcher()
   const { theme, toggleTheme } = useTheme()
@@ -83,6 +85,23 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       setIsSidebarCollapsed(savedState)
     }
   }, [])
+
+  // Close user dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showUserDropdown) {
+        const target = event.target as Element
+        if (!target.closest('.user-dropdown-container')) {
+          setShowUserDropdown(false)
+        }
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showUserDropdown])
   
   // Debug logging
   console.log("DashboardLayout: currentBusiness:", currentBusiness)
@@ -263,6 +282,28 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     }
     // For other routes, check if pathname starts with the href
     return pathWithoutLocale.startsWith(href)
+  }
+
+  // Helper function to get the current active section title
+  const getCurrentSectionTitle = () => {
+    // Remove locale prefix from pathname for comparison
+    const pathWithoutLocale = pathname.replace(`/${currentLocale}`, '')
+    
+    // Find the active navigation item
+    const activeItem = navigationItems.find(item => isActiveLink(item.href))
+    
+    if (activeItem) {
+      return activeItem.label
+    }
+    
+    // Fallback for specific routes not in navigationItems
+    const routeTitleMap: Record<string, string> = {
+      '/dashboard/plan': t("nav.plan") || "Plan",
+      '/dashboard/quotation-generator': t("nav.quotationGenerator") || "Quotation Generator",
+      '/dashboard/select-business': t("nav.selectBusiness") || "Select Business",
+    }
+    
+    return routeTitleMap[pathWithoutLocale] || t("nav.home") || "Home"
   }
 
   return (
@@ -632,39 +673,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           <div className="px-6 py-4 lg:py-2 rounded-2xl lg:sticky top-0 z-10 mb-2 bg-[var(--dashboard-bg-primary)]">
             {/* Top Navbar Dashboard*/}
             <div className="flex flex-row justify-between gap-4">
-              {/* Left Column - Public Link (Desktop only) */}
-              <div className="flex items-center">
+              {/* Left Column - Business Name and Section Title (Desktop only) */}
+              <div className="flex items-center gap-4">
                 {currentBusiness && (
                   <div className="flex items-center gap-2">
-                    {/* Collapsed pill for xs to md, full pill for lg+ */}
-                    <div className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm border transition-all duration-300 relative overflow-hidden ${
-                      isAnimating ? 'animate-pill-shine' : ''} ${
-                      // Collapsed on xs to md, full on lg+
-                      'max-w-[40px] md:max-w-[40px] lg:max-w-[250px] bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)]'
-                    }`}>
-                      <GlobeAltIcon className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                      <span className="text-xs truncate hidden lg:block">{publicUrl}</span>
-                    </div>
-                    <button
-                      onClick={handleCopy}
-                      className={`px-2 py-2 rounded-lg border transition-all duration-300 flex items-center justify-center bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)] ${
-                        copied ? 'text-green-600 border-green-200 bg-green-50' : ''
-                      }`}
-                      title={copied ? t("publicLink.copied") : t("publicLink.copy")}
-                    >
-                      {copied ? (
-                        <svg className="w-3 h-3 animate-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      ) : (
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                      )}
-                    </button>
+                     {/* Business Name - Simple Text */}
+                     <span className="text-base font-medium text-[var(--dashboard-text-primary)] truncate max-w-[200px]">
+                       {businessName}
+                     </span>
                     <button
                       onClick={handleOpen}
-                      className="px-2 py-2 rounded-lg border transition-colors flex items-center gap-1 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]"
+                      className="px-1.5 py-1.5 rounded-lg border transition-colors flex items-center gap-1 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]"
                       title={t("publicLink.open")}
                     >
                       <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -681,10 +700,26 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     </button>
                   </div>
                 )}
+                
+                {/* Current Section Title */}
+                <div className="hidden lg:block">
+                  <h1 className="text-base font-normal text-[var(--dashboard-text-primary)]">
+                    {getCurrentSectionTitle()}
+                  </h1>
+                </div>
               </div>
               
               {/* Right Column - Aligned to the right */}
               <div className="flex justify-end items-center gap-x-6">
+                {/* Bell Notification Button */}
+                <Link 
+                  href="/dashboard/notifications" 
+                  className="p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+                  title="Notifications"
+                >
+                  <BellIcon className="h-5 w-5" />
+                </Link>
+                
                 {/* User Plan Card */}
                 {currentBusiness && (
                   <div className="hidden lg:flex items-center gap-4">
@@ -715,7 +750,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                       </Link>
                       <button
                         onClick={handleSupportRequest}
-                        className="px-5 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors border bg-transparent text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]"
+                        className="px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors border bg-transparent text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]"
                       >
                         Support
                       </button>
@@ -727,10 +762,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 {currentBusiness && (
                   <div className="hidden lg:flex items-center gap-2 px-3 py-2 rounded-lg border bg-[var(--dashboard-bg-tertiary)] border-[var(--dashboard-border-primary)]">
                     <div className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                      <div className="flex flex-col">
+                      <SparklesIcon className="w-4 h-4 text-blue-500" />
+                      <div className="flex items-center gap-1">
                         <span className="text-xs text-[var(--dashboard-text-secondary)]">AI Credits</span>
                         <span className="text-sm font-medium text-[var(--dashboard-text-primary)]">
                           {creditsLoading ? (
@@ -744,31 +777,38 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   </div>
                 )}
                 
-                {/* Bell Notification Button */}
-                <Link 
-                  href="/dashboard/notifications" 
-                  className="p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
-                  title="Notifications"
-                >
-                  <BellIcon className="h-5 w-5" />
-                </Link>
-                
                 {/* User Info */}
-                <div className="flex flex-row items-center gap-x-2">
+                <div className="relative flex flex-row items-center gap-x-2">
                   <div className="text-right hidden lg:block">
                     <p className="font-medium text-sm lg:text-base truncate text-[var(--dashboard-text-primary)]">{getManagerFullName()}</p>
-                    <button
-                      onClick={handleLogout}
-                      className="ml-auto flex items-center gap-x-1 rounded-md border px-2 py-1 text-xs transition-all border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-secondary)]"
-                    >
-                      <ArrowRightOnRectangleIcon className="h-3 w-3" />
-                      {t("nav.logout") || "Logout"}
-                    </button>
                   </div>
-                  <div className="h-10 w-10 lg:h-12 lg:w-12 rounded-full bg-blue-600 flex items-center justify-center overflow-hidden flex-shrink-0">
-                    <span className="text-white text-sm lg:text-base font-medium">
-                      {getUserInitial()}
-                    </span>
+                  <div className="relative user-dropdown-container">
+                    <button
+                      onClick={() => setShowUserDropdown(!showUserDropdown)}
+                      className="h-8 w-8 lg:h-10 lg:w-10 rounded-full bg-blue-600 flex items-center justify-center overflow-hidden flex-shrink-0 hover:bg-blue-700 transition-colors"
+                    >
+                      <span className="text-white text-sm lg:text-base font-medium">
+                        {getUserInitial()}
+                      </span>
+                    </button>
+                    
+                    {/* User Dropdown */}
+                    {showUserDropdown && (
+                      <div className="absolute right-0 top-full mt-2 w-48 bg-[var(--dashboard-bg-card)] border border-[var(--dashboard-border-primary)] rounded-lg shadow-lg z-50">
+                        <div className="py-1">
+                          <button
+                            onClick={() => {
+                              handleLogout()
+                              setShowUserDropdown(false)
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)] flex items-center gap-2"
+                          >
+                            <ArrowRightOnRectangleIcon className="h-4 w-4" />
+                            {t("nav.logout") || "Logout"}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -817,7 +857,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 </button>
               </div>
               <div className="p-6">
-                <div className="px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-3 shadow-sm border mb-4 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)]">
+                <div className={`px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-3 shadow-sm border mb-4 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] transition-all duration-300 relative overflow-hidden ${
+                  isAnimating ? 'animate-pill-shine' : ''
+                }`}>
                   <GlobeAltIcon className="w-5 h-5 text-blue-600 flex-shrink-0" />
                   <span className="text-sm break-all">{publicUrl}</span>
                 </div>

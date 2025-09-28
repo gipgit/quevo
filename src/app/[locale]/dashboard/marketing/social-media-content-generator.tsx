@@ -973,10 +973,10 @@ export default function SocialMediaContentGenerator({
         <>
           {/* Service Selection */}
           <div>
-            <h2 className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-2">
+            <h2 className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-2 text-center">
               Select Services to Include
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2">
+            <div className="flex flex-wrap justify-center gap-2">
               {services.map((service) => {
                 const isSelected = selectedServices.includes(service.service_id.toString())
                 
@@ -1008,10 +1008,10 @@ export default function SocialMediaContentGenerator({
 
           {/* Platform Selection */}
           <div>
-            <h2 className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-2">
+            <h2 className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-2 text-center">
               Select Social Media Platforms
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2">
+            <div className="flex flex-wrap justify-center gap-2">
               {SOCIAL_PLATFORMS.map((platform) => {
                 const Icon = platform.icon
                 const isSelected = selectedPlatforms.includes(platform.id)
@@ -1049,10 +1049,10 @@ export default function SocialMediaContentGenerator({
 
       {/* Business Qualities Selection */}
       <div>
-        <h2 className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-2">
+        <h2 className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-2 text-center">
           Select Business Qualities to Highlight
         </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2">
+            <div className="flex flex-wrap justify-center gap-2">
           {BUSINESS_QUALITIES.map((quality) => {
             const Icon = quality.icon
             const isSelected = selectedQualities.includes(quality.id)
@@ -1089,71 +1089,61 @@ export default function SocialMediaContentGenerator({
 
        {/* Post Types Selection */}
        <div>
-         <h2 className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-2">
+         <h2 className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-2 text-center">
            Select Types of Posts to Include
          </h2>
-         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-           {postTypesData.post_types_by_purpose.map((category, categoryIndex) => (
-             <div key={categoryIndex} className="rounded-lg p-3">
-               <p 
-                 className="text-xs font-medium mb-2 cursor-help border-b border-gray-200 dark:border-gray-600 pb-1"
-                 title={category.description}
-               >
-                 {category.category}
-               </p>
-               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                 {category.posts.map((post, postIndex) => {
-                   const isSelected = selectedPostTypes.includes(post.title)
-                   
-                   return (
-                     <button
-                       key={postIndex}
-                       onClick={() => {
-                         setSelectedPostTypes(prev => {
-                           const newSelection = prev.includes(post.title)
-                             ? prev.filter(type => type !== post.title)
-                             : [...prev, post.title]
-                           
-                           // Ensure at least one post type is selected
-                           if (newSelection.length === 0) {
-                             return [post.title]
-                           }
-                           
-                           return newSelection
-                         })
-                       }}
-                       className={`p-2 rounded-lg border-2 transition-all duration-200 text-left relative ${
-                         isSelected
-                           ? theme === 'dark' 
-                             ? 'border-blue-500 bg-blue-900/20 text-blue-100'
-                             : 'border-blue-500 bg-blue-50 text-blue-900'
-                           : theme === 'dark'
-                             ? 'border-gray-600 bg-gray-800 hover:bg-gray-700'
-                             : 'border-gray-200 bg-white hover:bg-gray-50'
-                       }`}
-                       title={post.description}
-                     >
-                       <div className={`font-medium text-xs ${
-                         theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
-                       }`}>{post.title}</div>
-              {isSelected && (
-                         <CheckIcon className="w-3 h-3 absolute top-1 right-1 text-blue-600 dark:text-blue-400" />
-              )}
-            </button>
-          )
-        })}
-               </div>
-             </div>
-           ))}
+         <div className="flex flex-wrap justify-center gap-2">
+           {postTypesData.post_types_by_purpose.flatMap(category => 
+             category.posts.map((post, postIndex) => {
+               const isSelected = selectedPostTypes.includes(post.title)
+               
+               return (
+                 <button
+                   key={`${category.category}-${postIndex}`}
+                   onClick={() => {
+                     setSelectedPostTypes(prev => {
+                       const newSelection = prev.includes(post.title)
+                         ? prev.filter(type => type !== post.title)
+                         : [...prev, post.title]
+                       
+                       // Ensure at least one post type is selected
+                       if (newSelection.length === 0) {
+                         return [post.title]
+                       }
+                       
+                       return newSelection
+                     })
+                   }}
+                   className={`p-2 rounded-lg border-2 transition-all duration-200 text-left relative ${
+                     isSelected
+                       ? theme === 'dark' 
+                         ? 'border-blue-500 bg-blue-900/20 text-blue-100'
+                         : 'border-blue-500 bg-blue-50 text-blue-900'
+                       : theme === 'dark'
+                         ? 'border-gray-600 bg-gray-800 hover:bg-gray-700'
+                         : 'border-gray-200 bg-white hover:bg-gray-50'
+                   }`}
+                   title={`${category.category}: ${post.description}`}
+                 >
+                   <div className={`font-medium text-xs ${
+                     theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                   }`}>{post.title}</div>
+                   {isSelected && (
+                     <CheckIcon className="w-3 h-3 absolute top-1 right-1 text-blue-600 dark:text-blue-400" />
+                   )}
+                 </button>
+               )
+             })
+           )}
         </div>
       </div>
 
        {/* Posting Frequency Selection */}
       <div>
-        <h2 className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-2">
+        <h2 className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-2 text-center">
               Select Posting Frequency
         </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2">
+            <div className="flex flex-wrap justify-center gap-2">
               {[
                 { id: 'minimal', name: 'Minimal', description: 'Conservative approach', color: 'bg-red-500', textColor: 'text-red-600' },
                 { id: 'low', name: 'Low', description: 'Light engagement', color: 'bg-orange-500', textColor: 'text-orange-600' },
@@ -1219,7 +1209,7 @@ export default function SocialMediaContentGenerator({
         </button>
         
         {/* Token Usage Estimation */}
-        <div className="text-center text-xsrounded-lg px-4 py-2">
+        <div className="text-center text-xs rounded-lg px-4 py-2">
           <div className="flex items-center justify-center space-x-4">
             <span>Estimated tokens: ~{Math.round((business.business_name.length + (business.business_descr?.length || 0) + selectedServices.length * 200 + selectedPlatforms.length * 100 + selectedQualities.length * 50 + selectedPostTypes.length * 30) / 3.5)}</span>
             <span>•</span>

@@ -9,6 +9,7 @@ import EmptyState from "@/components/EmptyState"
 import { generateServiceResponse } from './generate-service-response'
 import { useAICredits } from '@/hooks/useAICredits'
 import { LoadingAIGeneration } from '@/components/ui/loading-ai-generation'
+import { AIAssistantIcon } from '@/components/ui/ai-assistant-icon'
 import { 
   EnvelopeIcon, 
   DocumentArrowUpIcon, 
@@ -44,6 +45,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
   const [serviceRequests, setServiceRequests] = useState(initialServiceRequests)
   const [selectedRequest, setSelectedRequest] = useState<any>(initialServiceRequests.length > 0 ? initialServiceRequests[0] : null)
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   
   // AI Generation state
   const [isGenerating, setIsGenerating] = useState(false)
@@ -645,13 +647,51 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
     <DashboardLayout>
       <div className="max-w-7xl mx-auto flex flex-col h-full">
         {/* Header */}
+        {/* Mobile Sidebar Toggle Button */}
+        <div className="lg:hidden fixed top-4 left-4 z-30">
+          <button
+            onClick={() => setIsMobileSidebarOpen(true)}
+            className="p-2 rounded-lg bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)] shadow-lg"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
 
         {/* Main Content - Outlook-like Layout */}
-        <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-6 overflow-hidden">
+        <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-6 overflow-hidden relative">
+          {/* Mobile Sidebar Overlay */}
+          {isMobileSidebarOpen && (
+            <div 
+              className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+              onClick={() => setIsMobileSidebarOpen(false)}
+            />
+          )}
+          
           {/* Left Panel - Request List */}
-          <div className="w-full lg:w-1/6 border-b lg:border-b-0 lg:border-r border-[var(--dashboard-border-primary)] flex flex-col">
+          <div className={`
+            w-full lg:w-1/6 border-b lg:border-b-0 lg:border-r border-[var(--dashboard-border-primary)] flex flex-col
+            fixed lg:static top-0 left-0 h-full z-50 lg:z-auto
+            transform transition-transform duration-300 ease-in-out
+            ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+            bg-[var(--dashboard-bg-primary)] lg:bg-transparent
+            shadow-xl lg:shadow-none
+          `}>
             {/* Navigation & Progress */}
             <div className="p-4 border-b border-[var(--dashboard-border-primary)]">
+              {/* Mobile Close Button */}
+              <div className="lg:hidden flex justify-end mb-4">
+                <button
+                  onClick={() => setIsMobileSidebarOpen(false)}
+                  className="p-2 rounded-lg hover:bg-[var(--dashboard-bg-tertiary)]"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
               {/* Navigation Controls */}
               <div className="flex items-center justify-center gap-2 mb-4">
                 <button
@@ -717,6 +757,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       onClick={() => {
                         setSelectedRequest(request)
                         setSelectedIndex(index)
+                        setIsMobileSidebarOpen(false)
                       }}
                       className={`p-3 rounded-lg cursor-pointer transition-all flex-shrink-0 w-64 lg:w-auto ${
                         isSelected
@@ -775,9 +816,9 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                         {selectedRequest.service?.service_name || 'N/A'}
                       </span>
                       <span className="text-[var(--dashboard-text-secondary)]">•</span>
-                      <h2 className="text-xs text-[var(--dashboard-text-primary)]">
+                      <p className="text-xs text-[var(--dashboard-text-primary)]">
                         {selectedRequest.request_reference}
-                      </h2>
+                      </p>
                       <span className={`px-1.5 py-0.5 rounded-full text-xs md:text-xs ${getStatusColor(selectedRequest.status)}`} style={{ fontSize: 'clamp(0.65rem, 2vw, 0.75rem)' }}>
                         {getStatusText(selectedRequest.status)}
                       </span>
@@ -821,7 +862,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                     </div>
                     
                     {/* Customer Name + Contact Details - 2 Column Layout */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-4 items-center">
                       {/* Left Column - Customer Name */}
                       <div className="flex flex-col">
                         <span className="font-medium text-[var(--dashboard-text-primary)] text-lg lg:text-2xl">{selectedRequest.customer_name}</span>
@@ -833,9 +874,9 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       </div>
                       
                       {/* Right Column - Contact Details */}
-                      <div className="space-y-0 text-right">
+                      <div className="space-y-0 text-left lg:text-right">
                         {/* Email Row */}
-                        <div className="flex items-center justify-end gap-1 text-sm">
+                        <div className="flex items-center justify-start lg:justify-end gap-1 text-sm">
                           <span>{selectedRequest.customer_email}</span>
                           <button
                             onClick={() => navigator.clipboard.writeText(selectedRequest.customer_email)}
@@ -857,7 +898,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                         
                         {/* Phone Row */}
                         {selectedRequest.customer_phone && (
-                          <div className="flex items-center justify-end gap-1 text-sm">
+                          <div className="flex items-center justify-start lg:justify-end gap-1 text-sm">
                             <span>{selectedRequest.customer_phone}</span>
                             <button
                               onClick={() => navigator.clipboard.writeText(selectedRequest.customer_phone)}
@@ -881,11 +922,6 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                         )}
                       </div>
                     </div>
-                    
-                    {/* Price Row */}
-                    <div className="flex items-center gap-3 text-xs lg:text-sm">
-                      <span className="font-medium text-[var(--dashboard-text-primary)]">€{selectedRequest.price_subtotal || 0}</span>
-                    </div>
                   </div>
                 </div>
 
@@ -908,11 +944,11 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           </div>
                             
                           {/* Content */}
-                          <div className="ml-4 flex-1 min-w-0">
+                          <div className="ml-2 lg:ml-4 flex-1 min-w-0">
                             {/* Mobile Layout (xs-md): Two rows */}
                             <div className="block lg:hidden">
                               {/* Row 1: Date/Time */}
-                              <div className="text-xs text-[var(--dashboard-text-tertiary)] mb-1" style={{ fontSize: '0.7rem' }}>
+                              <div className="text-[var(--dashboard-text-tertiary)] mb-1" style={{ fontSize: '0.6rem' }}>
                                 {action.created_at ? (
                                   <span>
                                     {new Date(action.created_at).toLocaleDateString()} {new Date(action.created_at).toLocaleTimeString()}
@@ -1054,7 +1090,12 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
                     {/* Selected Service Items */}
                     <div className="mt-6">
-                      <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Selected Items</h3>
+                        <div className="flex items-center justify-between mb-2 pt-1 border-t border-[var(--dashboard-border-primary)]">
+                          <h3 className="text-xs font-medium uppercase tracking-wide text-[var(--dashboard-text-tertiary)]">Selected Items</h3>
+                          {selectedRequest.price_subtotal !== null && selectedRequest.price_subtotal !== undefined && selectedRequest.price_subtotal > 0 && (
+                            <span className="text-xs font-medium text-[var(--dashboard-text-primary)]">Total: €{selectedRequest.price_subtotal}</span>
+                          )}
+                        </div>
                       {selectedRequest.selected_service_items_snapshot && Array.isArray(selectedRequest.selected_service_items_snapshot) && selectedRequest.selected_service_items_snapshot.length > 0 ? (
                         <div className="space-y-0">
                           {selectedRequest.selected_service_items_snapshot.map((item: any, index: number) => (
@@ -1073,12 +1114,17 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                                     )}
                                   </div>
                                   <div className="flex-shrink-0 text-right">
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-[var(--dashboard-text-secondary)]">{item.qty || item.quantity} x €{item.price_at_req || item.price_at_request}</span>
-                                      <span className="font-medium text-[var(--dashboard-text-primary)]">
-                                        €{((item.qty || item.quantity) * (item.price_at_req || item.price_at_request)).toFixed(2)}
-                                      </span>
-                                    </div>
+                                    {(() => {
+                                      const price = item.price_at_req || item.price_at_request;
+                                      return price !== null && price !== undefined && price > 0;
+                                    })() && (
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-[var(--dashboard-text-secondary)]">{item.qty || item.quantity} x €{item.price_at_req || item.price_at_request}</span>
+                                        <span className="font-medium text-[var(--dashboard-text-primary)]">
+                                          €{((item.qty || item.quantity) * (item.price_at_req || item.price_at_request)).toFixed(2)}
+                                        </span>
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
                               </div>
@@ -1247,7 +1293,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                 <>
                 {/* Generate Section - Independent Container */}
                 <div className="">
-                  <div className="shadow-lg relative overflow-hidden p-5 lg:p-7">
+                  <div className="shadow-lg relative overflow-hidden p-2 lg:p-7">
                     {/* Bottom Color Layer 1 */}
                     <div 
                       className="absolute z-1"
@@ -1295,7 +1341,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                     <div className="relative z-10">
                   {/* Request Reference */}
                   <div className="mb-4 text-left">
-                    <span className="text-2xl font-bold ai-panel-text">#{selectedRequest.request_reference}</span>
+                    <span className="text-lg md:text-2xl font-bold ai-panel-text">Manage #{selectedRequest.request_reference}</span>
                   </div>
                   
                   {/* Quick Actions */}
@@ -1323,7 +1369,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                               <CheckCircleIcon className="w-4 h-4 text-white" />
                             )}
                           </div>
-                          <span className="text-xs ai-panel-text-secondary text-center leading-tight">{isRequestHandled(selectedRequest) ? 'Handled' : 'Mark Handled'}</span>
+                          <span className="text-xs ai-panel-text-secondary text-left leading-tight">{isRequestHandled(selectedRequest) ? 'Handled' : 'Mark Handled'}</span>
                         </button>
                         
                         {/* Toggle Closed */}
@@ -1344,7 +1390,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
                           </div>
-                          <span className="text-xs ai-panel-text-secondary text-center leading-tight">{selectedRequest.is_closed ? 'Closed' : 'Mark Closed'}</span>
+                          <span className="text-xs ai-panel-text-secondary text-left leading-tight">{selectedRequest.is_closed ? 'Closed' : 'Mark Closed'}</span>
                         </button>
                         
                         {/* Toggle Urgency */}
@@ -1363,7 +1409,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           >
                             <FlagIcon className="w-4 h-4 text-white" />
                           </div>
-                          <span className="text-xs ai-panel-text-secondary text-center leading-tight">{selectedRequest.urgency_flag ? 'Urgent' : 'Flag Urgent'}</span>
+                          <span className="text-xs ai-panel-text-secondary text-left leading-tight">{selectedRequest.urgency_flag ? 'Urgent' : 'Flag Urgent'}</span>
                         </button>
                       </div>
 
@@ -1485,6 +1531,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                   {/* Generate Actions */}
                   <div className="mb-6 pt-4 border-t border-white/10">
                       <h4 className="text-xs font-medium mb-3 ai-panel-text-secondary uppercase tracking-wide flex items-center gap-2">
+                        <AIAssistantIcon size="xs" />
                         <SparklesIcon className="w-4 h-4" />
                         Generate Response
                       </h4>
@@ -1747,8 +1794,8 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       
       {/* Generation Confirmation Modal */}
       {showGenerationModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="rounded-2xl w-full max-w-md relative overflow-hidden">
+        <div className={`fixed inset-0 ${theme === 'dark' ? 'bg-black/50' : 'bg-black/30'} backdrop-blur-sm flex items-center justify-center z-50 p-4`}>
+          <div className={`rounded-2xl w-full max-w-md relative overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
               {/* Accent Color Layers */}
               <div 
                 className="absolute z-1"
@@ -1778,9 +1825,14 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
               ></div>
               
               <div className="p-6 text-center relative z-10">
-              <h3 className="text-lg font-semibold ai-panel-text mb-6">
+              <h3 className="text-lg font-medium ai-panel-text mb-4">
                 {isGenerating ? 'Generating Response...' : 'Confirm AI Generation'}
               </h3>
+              {!isGenerating && (
+                <div className="flex justify-center mb-6">
+                  <AIAssistantIcon size="md" />
+                </div>
+              )}
               
               {/* Show loading state or confirmation content */}
               {isGenerating ? (

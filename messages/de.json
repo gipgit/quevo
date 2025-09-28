@@ -640,7 +640,10 @@
       "logout": "Abmelden",
       "manageAccount": "Konto verwalten",
       "marketing": "Marketing",
-      "marketingEmailAssistant": "E-Mail-Assistent"
+      "marketingEmailAssistant": "E-Mail-Assistent",
+      "plan": "Plan",
+      "quotationGenerator": "Angebotsgenerator",
+      "selectBusiness": "Unternehmen auswählen"
     }
   },
   "plan": {

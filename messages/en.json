@@ -659,7 +659,10 @@
       "logout": "Logout",
       "manageAccount": "Manage Account",
       "marketing": "Marketing",
-      "marketingEmailAssistant": "Email Assistant"
+      "marketingEmailAssistant": "Email Assistant",
+      "plan": "Plan",
+      "quotationGenerator": "Quotation Generator",
+      "selectBusiness": "Select Business"
     },
     "support": {
       "title": "Support Request",
