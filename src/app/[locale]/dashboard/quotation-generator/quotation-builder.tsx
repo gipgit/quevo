@@ -106,6 +106,14 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
   const [editingField, setEditingField] = useState<string>('')
   const [editValue, setEditValue] = useState<string>('')
   const [showItemsModal, setShowItemsModal] = useState(false)
+  const [profileImageShape, setProfileImageShape] = useState<'circle' | 'square'>('circle')
+  const [profileImageSize, setProfileImageSize] = useState<'sm' | 'md' | 'lg'>('md')
+  const [businessVisibility, setBusinessVisibility] = useState<{ address: boolean; companyAddress: boolean; email: boolean; phone: boolean }>({
+    address: true,
+    companyAddress: true,
+    email: true,
+    phone: true
+  })
   const quotationRef = useRef<HTMLDivElement>(null)
 
   // Create editable items list with main service and service items
@@ -309,7 +317,10 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
            element.parentNode?.replaceChild(textNode, element)
            return // Skip further processing since we replaced the element
                    } else if (tag === 'img') {
-            element.style.cssText = 'border-radius: 50%; border: 2px solid #ccc; width: 80px; height: 80px; object-fit: cover;'
+            // Apply dynamic profile image styling based on settings
+            const size = profileImageSize === 'sm' ? '48px' : profileImageSize === 'lg' ? '96px' : '80px'
+            const borderRadius = profileImageShape === 'circle' ? '50%' : '8px'
+            element.style.cssText = `border-radius: ${borderRadius}; width: ${size}; height: ${size}; object-fit: cover;`
          } else if (tag === 'div' && element.classList.contains('quotation-preview')) {
            element.style.cssText = 'padding: 40px; background: white; color: black; font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.5; margin: 0; border: none; border-radius: 0; box-shadow: none; width: 100%; box-sizing: border-box; overflow: visible;'
          } else if (tag === 'span') {
@@ -469,6 +480,24 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
       case 'notes':
         setNotes(editValue)
         break
+      case 'profileImageStyle': {
+        const [shape, size] = editValue.split('|') as ['circle' | 'square', 'sm' | 'md' | 'lg']
+        if (shape === 'circle' || shape === 'square') setProfileImageShape(shape)
+        if (size === 'sm' || size === 'md' || size === 'lg') setProfileImageSize(size)
+        break
+      }
+      case 'businessVisibility': {
+        try {
+          const parsed = JSON.parse(editValue) as { address?: boolean; companyAddress?: boolean; email?: boolean; phone?: boolean }
+          setBusinessVisibility(prev => ({
+            address: parsed.address ?? prev.address,
+            companyAddress: parsed.companyAddress ?? prev.companyAddress,
+            email: parsed.email ?? prev.email,
+            phone: parsed.phone ?? prev.phone
+          }))
+        } catch {}
+        break
+      }
     }
     closeEditModal()
   }
@@ -487,6 +516,10 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
         return t('terms') || 'Terms & Conditions'
       case 'notes':
         return t('notes') || 'Notes'
+      case 'profileImageStyle':
+        return 'Profile Image Style'
+      case 'businessVisibility':
+        return 'Business Details Visibility'
       default:
         return field
     }
@@ -506,6 +539,18 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
         return terms.length > 50 ? `${terms.substring(0, 50)}...` : terms || 'Not set'
       case 'notes':
         return notes.length > 50 ? `${notes.substring(0, 50)}...` : notes || 'Not set'
+      case 'profileImageStyle':
+        return `${profileImageShape === 'circle' ? 'Circle' : 'Square'}, ${
+          profileImageSize === 'sm' ? 'Small' : profileImageSize === 'lg' ? 'Large' : 'Medium'
+        }`
+      case 'businessVisibility': {
+        const parts: string[] = []
+        if (businessVisibility.address) parts.push('Address')
+        if (businessVisibility.companyAddress) parts.push('Company Address')
+        if (businessVisibility.email) parts.push('Email')
+        if (businessVisibility.phone) parts.push('Phone')
+        return parts.length ? parts.join(', ') : 'Nothing visible'
+      }
       default:
         return ''
     }
@@ -541,78 +586,57 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className={`text-2xl font-bold ${
-              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-            }`}>
-              {t('title') || 'Quotation Generator'}
-            </h1>
+      <div className="max-w-[1400px] mx-auto">
+        {/* Top Navbar */}
+        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">
+                {t('title') || 'Quotation Generator'}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => window.history.back()}
+                className="text-xs text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors flex items-center gap-1"
+                title="Go Back"
+              >
+                <ArrowLeftIcon className="w-3 h-3" />
+                <span>Back</span>
+              </button>
+            </div>
           </div>
-          <button
-            onClick={() => window.history.back()}
-            className={`p-2 rounded-lg transition-colors ${
-              theme === 'dark' 
-                ? 'bg-zinc-700 text-gray-300 hover:bg-zinc-600' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            <ArrowLeftIcon className="w-5 h-5" />
-          </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-2 md:p-4 lg:p-6">
-                     {/* Settings Panel */}
-           <div className="lg:col-span-1">
-             <div className="p-2 md:p-6">
+        {/* Content Wrapper with Background */}
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+          <div className="flex flex-col h-full min-h-0">
+            {/* Main Content - 3 Column Layout */}
+            <div className="flex-1 flex flex-col lg:flex-row lg:flex-nowrap gap-2 lg:gap-6 overflow-hidden relative min-h-0">
+              
+              {/* Left Panel - Settings */}
+              <div className="w-full lg:basis-[20%] border-b lg:border-b-0 lg:border-r border-[var(--dashboard-border-primary)] flex flex-col">
+                <div className="p-4 lg:p-6">
               <div className="flex items-center gap-2 mb-3 md:mb-6">
                 <Cog6ToothIcon className="w-5 h-5" />
-                <h2 className={`text-lg font-semibold ${
+                <h2 className={`text-base font-normal ${
                   theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
                 }`}>
                   {t('settings') || 'Settings'}
                 </h2>
               </div>
 
-              {/* Template Selection */}
-              <div className="mb-2 md:mb-4">
-                <label className={`block text-sm font-medium mb-1 md:mb-2 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  {t('template') || 'Template'}
-                </label>
-                <select
-                  value={selectedTemplate?.id || ''}
-                  onChange={(e) => {
-                    const template = savedTemplates.find(t => t.id === parseInt(e.target.value))
-                    setSelectedTemplate(template || null)
-                  }}
-                  className={`w-full p-2 rounded-lg border ${
-                    theme === 'dark' 
-                      ? 'bg-zinc-700 border-zinc-600 text-gray-100' 
-                      : 'bg-white border-gray-300 text-gray-900'
-                  }`}
-                >
-                  <option value="">{t('selectTemplate') || 'Select a template'}</option>
-                  {savedTemplates.map(template => (
-                    <option key={template.id} value={template.id}>
-                      {template.template_name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              
 
                              {/* Settings Sections */}
                <div className="space-y-0">
                  {[
+                   'profileImageStyle',
+                   'businessVisibility',
                    'quotationNumber',
                    'validUntil', 
                    'taxPercentage',
-                   'introductoryText',
-                   'terms',
-                   'notes'
+                   'introductoryText'
                  ].map((field, index) => (
                    <div key={field}>
                      <div className="py-2 md:py-4">
@@ -620,7 +644,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                          <div className="flex-1">
                            <p className={`text-xs font-bold uppercase tracking-wide mb-0.5 md:mb-1 ${
                              theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                           }`}>
+                           }`} style={{ fontSize: '0.65rem' }}>
                              {getFieldLabel(field)}
                            </p>
                            <p className={`text-xs md:text-sm ${
@@ -651,8 +675,14 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                                case 'notes':
                                  currentValue = notes
                                  break
-                             }
-                             openEditModal(field, currentValue)
+                          }
+                          if (field === 'profileImageStyle') {
+                            openEditModal('profileImageStyle', `${profileImageShape}|${profileImageSize}`)
+                          } else if (field === 'businessVisibility') {
+                            openEditModal('businessVisibility', JSON.stringify(businessVisibility))
+                          } else {
+                            openEditModal(field, currentValue)
+                          }
                            }}
                            className={`p-2 rounded-lg transition-colors ${
                              theme === 'dark' 
@@ -665,7 +695,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                          </button>
                        </div>
                      </div>
-                     {index < 5 && (
+                     {index < 7 && (
                        <div className={`border-b ${
                          theme === 'dark' ? 'border-zinc-700' : 'border-gray-200'
                        }`}></div>
@@ -701,46 +731,78 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                      </button>
                    </div>
                  </div>
-               </div>
-            </div>
-          </div>
 
-                     {/* Quotation Preview */}
-           <div className="lg:col-span-2 -mx-2 md:mx-0">
-             <div className={`px-0 py-4 md:p-6 rounded-lg ${
-               theme === 'dark' ? 'bg-zinc-800' : 'bg-gray-800'
-             } shadow-lg`}>
-                             {/* Action Buttons */}
-               <div className="flex justify-center gap-2 md:gap-4 mb-4 md:mb-6">
-                 <button
-                   onClick={saveQuotation}
-                   className={`px-3 md:px-6 py-2 md:py-3 rounded-xl transition-all duration-200 flex items-center gap-2 md:gap-3 shadow-lg hover:shadow-xl ${
-                     theme === 'dark' 
-                       ? 'bg-zinc-700 text-gray-300 hover:bg-zinc-600 hover:scale-105' 
-                       : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'
-                   }`}
-                 >
-                   <DocumentTextIcon className="w-4 h-4 md:w-5 md:h-5" />
-                   {t('save') || 'Save'}
-                 </button>
-                 <button
-                   onClick={generatePDF}
-                   disabled={isGenerating}
-                   className={`px-3 md:px-6 py-2 md:py-3 rounded-xl transition-all duration-200 flex items-center gap-2 md:gap-3 shadow-lg hover:shadow-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white ${
-                     isGenerating ? 'opacity-50 cursor-not-allowed hover:scale-100' : 'hover:scale-105'
-                   }`}
-                 >
-                   <DocumentArrowDownIcon className="w-4 h-4 md:w-5 md:h-5" />
-                   {isGenerating ? (t('generating') || 'Generating...') : (t('generatePDF') || 'Generate PDF')}
-                 </button>
+                 {/* Terms Section */}
+                 <div className="py-2 md:py-4">
+                   <div className="flex justify-between items-start">
+                     <div className="flex-1">
+                       <p className={`text-xs font-bold uppercase tracking-wide mb-0.5 md:mb-1 ${
+                         theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                       }`} style={{ fontSize: '0.65rem' }}>
+                         {getFieldLabel('terms')}
+                       </p>
+                       <p className={`text-xs md:text-sm ${
+                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                       }`}>
+                         {getFieldValue('terms')}
+                       </p>
+                     </div>
+                     <button
+                       onClick={() => openEditModal('terms', terms)}
+                       className={`p-2 rounded-lg transition-colors ${
+                         theme === 'dark' 
+                           ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700' 
+                           : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'
+                       }`}
+                       title="Edit"
+                     >
+                       <PencilIcon className="w-4 h-4" />
+                     </button>
+                   </div>
+                 </div>
+
+                 {/* Notes Section */}
+                 <div className="py-2 md:py-4">
+                   <div className="flex justify-between items-start">
+                     <div className="flex-1">
+                       <p className={`text-xs font-bold uppercase tracking-wide mb-0.5 md:mb-1 ${
+                         theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                       }`} style={{ fontSize: '0.65rem' }}>
+                         {getFieldLabel('notes')}
+                       </p>
+                       <p className={`text-xs md:text-sm ${
+                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                       }`}>
+                         {getFieldValue('notes')}
+                       </p>
+                     </div>
+                     <button
+                       onClick={() => openEditModal('notes', notes)}
+                       className={`p-2 rounded-lg transition-colors ${
+                         theme === 'dark' 
+                           ? 'text-gray-400 hover:text-gray-300 hover:bg-zinc-700' 
+                           : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'
+                       }`}
+                       title="Edit"
+                     >
+                       <PencilIcon className="w-4 h-4" />
+                     </button>
+                   </div>
+                 </div>
                </div>
+                </div>
+              </div>
+
+              {/* Middle Panel - Document Preview */}
+              <div className="w-full lg:basis-[48%] flex flex-col min-h-0 lg:min-h-0 h-96 lg:h-auto p-2 lg:p-6 space-y-4 lg:space-y-5">
+              <div className={`p-0 rounded-md ${
+                  theme === 'dark' ? 'bg-zinc-800' : 'bg-gray-800'
+                } shadow-lg`}>
 
               {/* Preview Content */}
                              <div 
                  ref={quotationRef}
-                 className={`quotation-preview p-4 md:p-10 ${
-                   theme === 'dark' ? 'bg-zinc-700' : 'bg-white'
-                 } rounded-lg`}
+                className={`quotation-preview p-4 md:p-10 bg-white rounded-md text-gray-900`}
                  style={{ margin: '0' }}
                >
                              {/* Header */}
@@ -754,30 +816,26 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                             <img
                               src={getProfileImageUrl(currentBusiness)}
                               alt={quotationData.business.name}
-                              className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
+                              className={`${
+                                profileImageSize === 'sm' ? 'w-12 h-12' : profileImageSize === 'lg' ? 'w-24 h-24' : 'w-20 h-20'
+                              } ${profileImageShape === 'circle' ? 'rounded-full' : 'rounded-md'} object-cover`}
                             />
                           </div>
                         )}
-                                                 <h1 className={`text-base md:text-2xl font-bold ${
-                           theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                         }`}>
+                                                 <h1 className="text-base md:text-2xl font-bold text-gray-900">
                            {quotationData.business.name}
                          </h1>
-                                                 {(quotationData.business.address || quotationData.business.companyAddress) && (
-                           <p className={`text-xs leading-tight ${
-                             theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                           }`}>
-                             {quotationData.business.address || quotationData.business.companyAddress}
+                        {(businessVisibility.address || businessVisibility.companyAddress) && (
+                           <p className="text-xs leading-tight text-gray-700">
+                            {(businessVisibility.address && quotationData.business.address) || (businessVisibility.companyAddress && quotationData.business.companyAddress) || ''}
                            </p>
                          )}
                                                  {/* Business Contacts */}
-                         {(quotationData.business.email || quotationData.business.phone) && (
-                           <p className={`text-xs leading-tight ${
-                             theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                           }`}>
-                             {quotationData.business.email && cleanContactDisplay(quotationData.business.email)}
-                             {quotationData.business.email && quotationData.business.phone && ' • '}
-                             {quotationData.business.phone && cleanContactDisplay(quotationData.business.phone)}
+                        {(businessVisibility.email || businessVisibility.phone) && (
+                           <p className="text-xs leading-tight text-gray-700">
+                            {businessVisibility.email && quotationData.business.email && cleanContactDisplay(quotationData.business.email)}
+                            {businessVisibility.email && businessVisibility.phone && quotationData.business.email && quotationData.business.phone && ' • '}
+                            {businessVisibility.phone && quotationData.business.phone && cleanContactDisplay(quotationData.business.phone)}
                            </p>
                          )}
                      </div>
@@ -786,34 +844,24 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                  
                                    {/* Customer Data on the right */}
                   <div className="text-right ml-8">
-                                         <h3 className={`text-xs md:text-lg mb-2 ${
-                       theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                     }`}>
+                                         <h3 className="text-xs md:text-lg mb-2 text-gray-900">
                        {t('customer') || 'Customer'}
                      </h3>
-                                        <p className={`text-xs md:text-lg font-bold ${
-                       theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                     }`}>
+                                        <p className="text-xs md:text-lg font-bold text-gray-900">
                        {quotationData.customer.name}
                      </p>
                                                             {quotationData.customer.email && (
-                       <p className={`text-xs leading-tight ${
-                         theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                       }`}>
+                       <p className="text-xs leading-tight text-gray-700">
                          {quotationData.customer.email}
                        </p>
                      )}
                      {quotationData.customer.phone && (
-                       <p className={`text-xs leading-tight ${
-                         theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                       }`}>
+                       <p className="text-xs leading-tight text-gray-700">
                          {quotationData.customer.phone}
                        </p>
                      )}
                      {(quotationData.customer.address || quotationData.customer.city) && (
-                       <p className={`text-xs leading-tight ${
-                         theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                       }`}>
+                       <p className="text-xs leading-tight text-gray-700">
                          {[quotationData.customer.address, quotationData.customer.city, quotationData.customer.region, quotationData.customer.country]
                            .filter(Boolean)
                            .join(', ')}
@@ -824,9 +872,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
 
                                                                {/* Quotation Data - Document Subject Style */}
                                                       <div className="mb-8">
-                     <div className={`text-xs md:text-lg ${
-                       theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                     }`}>
+                     <div className="text-xs md:text-lg text-gray-900">
                        <span className="font-bold">{t('quotation') || 'QUOTATION'}</span>
                        <span className="text-xs"> N. {quotationNumber} of {formatDate(new Date())}</span>
                        {validUntil && (
@@ -837,9 +883,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
 
                 {/* Introductory Section */}
                                  <div className="mb-8">
-                 <p className={`text-xs md:text-base ${
-                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                 }`}>
+                 <p className="text-xs md:text-base text-gray-700">
                    <span className="font-medium">Dear {quotationData.customer.name},</span>
                    <br />
                    {introductoryText}
@@ -856,24 +900,16 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                        <tr className={`border-b-2 ${
                          theme === 'dark' ? 'border-gray-600' : 'border-gray-300'
                        }`}>
-                                                                                                       <th className={`text-left py-3 px-2 w-2/3 text-xs ${
-                             theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                           }`}>
+                                                                                                       <th className="text-left py-3 px-2 w-2/3 text-xs text-gray-900">
                              {t('item') || 'Item'}
                            </th>
-                           <th className={`text-right py-3 px-2 w-1/6 text-xs ${
-                             theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                           }`}>
+                           <th className="text-right py-3 px-2 w-1/6 text-xs text-gray-900">
                              {t('price') || 'Price'}
                            </th>
-                           <th className={`text-center py-3 px-2 w-1/6 text-xs ${
-                             theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                           }`}>
+                           <th className="text-center py-3 px-2 w-1/6 text-xs text-gray-900">
                              {t('quantity') || 'Qty'}
                            </th>
-                           <th className={`text-right py-3 px-2 w-1/6 text-xs ${
-                             theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                           }`}>
+                           <th className="text-right py-3 px-2 w-1/6 text-xs text-gray-900">
                              {t('total') || 'Total'}
                            </th>
                        </tr>
@@ -884,15 +920,11 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                            theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
                          }`}>
                                                                                                                <td className="py-3 px-2">
-                               <p className={`text-xs md:text-base font-semibold ${
-                                 theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                               }`}>
+                               <p className="text-xs md:text-base font-semibold text-gray-900">
                                  {item.name}
                                </p>
                              </td>
-                                                                                                               <td className={`py-3 px-2 text-right ${
-                               theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                             }`}>
+                                                                                                               <td className="py-3 px-2 text-right text-gray-900">
                                                                <span className="text-xs">
                                   €{item.price.toFixed(2)}
                                   {item.priceType !== 'fixed' && item.priceUnit && (
@@ -904,9 +936,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                                   )}
                                 </span>
                              </td>
-                                                                                                               <td className={`py-3 px-2 text-center text-xs ${
-                               theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                             }`}>
+                                                                                                               <td className="py-3 px-2 text-center text-xs text-gray-900">
                               {item.quantity}
                               {item.priceType !== 'fixed' && item.priceUnit && (
                                 <span className={`text-xs block ${
@@ -916,9 +946,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                                 </span>
                               )}
                             </td>
-                                                                                                               <td className={`py-3 px-2 text-right font-medium text-xs md:text-base ${
-                               theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                             }`}>
+                                                                                                               <td className="py-3 px-2 text-right font-medium text-xs md:text-base text-gray-900">
                                €{(item.price * item.quantity).toFixed(2)}
                              </td>
                          </tr>
@@ -932,23 +960,15 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
               <div className="mb-8">
                 <div className="flex justify-end">
                   <div className="w-64">
-                                                                                                                               <div className={`flex justify-between py-2 text-xs md:text-base ${
-                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                       }`}>
+                                                                                                                               <div className="flex justify-between py-2 text-xs md:text-base text-gray-700">
                          <span>{t('subtotal') || 'Subtotal'}:</span>
                          <span className="text-sm md:text-lg font-medium">€{calculateSubtotal().toFixed(2)}</span>
                        </div>
-                       <div className={`flex justify-between py-2 text-xs md:text-base ${
-                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                       }`}>
+                       <div className="flex justify-between py-2 text-xs md:text-base text-gray-700">
                          <span>{t('tax') || 'Tax'} ({taxPercentage}%):</span>
                          <span className="text-sm md:text-lg font-medium">€{calculateTax().toFixed(2)}</span>
                        </div>
-                     <div className={`flex justify-between py-3 border-t-2 font-bold text-sm md:text-xl ${
-                       theme === 'dark' 
-                         ? 'border-gray-600 text-gray-100' 
-                         : 'border-gray-300 text-gray-900'
-                     }`}>
+                     <div className="flex justify-between py-3 border-t-2 font-bold text-sm md:text-xl border-gray-300 text-gray-900">
                        <span>{t('total') || 'Total'}:</span>
                        <span>€{calculateTotal().toFixed(2)}</span>
                      </div>
@@ -961,28 +981,20 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                 <div className="mb-8">
                   {terms && (
                     <div className="mb-4">
-                                                                                           <h3 className={`text-xs md:text-lg font-semibold mb-2 ${
-                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                        }`}>
+                                                                                           <h3 className="text-xs md:text-lg font-semibold mb-2 text-gray-900">
                           {t('terms') || 'Terms & Conditions'}
                         </h3>
-                        <p className={`text-xs whitespace-pre-wrap ${
-                          theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                        }`}>
+                        <p className="text-xs whitespace-pre-wrap text-gray-700">
                           {terms}
                         </p>
                     </div>
                   )}
                   {notes && (
                     <div className="mb-4">
-                                                                                           <h3 className={`text-xs md:text-lg font-semibold mb-2 ${
-                          theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                        }`}>
+                                                                                           <h3 className="text-xs md:text-lg font-semibold mb-2 text-gray-900">
                           {t('notes') || 'Notes'}
                         </h3>
-                        <p className={`text-xs whitespace-pre-wrap ${
-                          theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                        }`}>
+                        <p className="text-xs whitespace-pre-wrap text-gray-700">
                           {notes}
                         </p>
                     </div>
@@ -996,20 +1008,74 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                    <div className={`w-48 h-20 border-b-2 border-dashed ${
                      theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
                    } mb-2`}></div>
-                                                                               <p className={`text-xs ${
-                       theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                     }`}>
+                                                                               <p className="text-xs text-gray-600">
                        Signature
                      </p>
                  </div>
                </div>
-             </div>
-           </div>
-         </div>
-       </div>
-     </div>
+                </div>
+              </div>
+              </div>
 
-           {/* Edit Modal */}
+              {/* Right Panel - Action Buttons */}
+              <div className="w-full lg:basis-[30%] border-t lg:border-t-0 lg:border-l border-[var(--dashboard-border-primary)] flex flex-col">
+                <div className="p-4 lg:p-6">
+                  <div className="space-y-4">
+                    {/* Save Button */}
+                    <button
+                      onClick={saveQuotation}
+                      className="w-full p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-2 border border-white/20"
+                      title="Save quotation"
+                    >
+                      <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 bg-blue-500/20">
+                        <DocumentTextIcon className="w-4 h-4 text-blue-500" />
+                      </div>
+                      <div className="text-left">
+                        <div className="text-sm font-medium text-[var(--dashboard-text-primary)]">
+                          {t('save') || 'Save'}
+                        </div>
+                        <div className="text-xs text-[var(--dashboard-text-secondary)]">
+                          Save quotation draft
+                        </div>
+                      </div>
+                    </button>
+
+                    {/* Generate PDF Button */}
+                    <button
+                      onClick={generatePDF}
+                      disabled={isGenerating}
+                      className={`w-full p-3 rounded-lg transition-colors flex flex-col items-start justify-start gap-2 border ${
+                        isGenerating 
+                          ? 'bg-gray-500/10 border-gray-500/20 cursor-not-allowed' 
+                          : 'bg-black/10 hover:bg-black/20 border-white/20'
+                      }`}
+                      title="Generate PDF"
+                    >
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        isGenerating ? 'bg-gray-500/20' : 'bg-green-500/20'
+                      }`}>
+                        <DocumentArrowDownIcon className={`w-4 h-4 ${
+                          isGenerating ? 'text-gray-500' : 'text-green-500'
+                        }`} />
+                      </div>
+                      <div className="text-left">
+                        <div className="text-sm font-medium text-[var(--dashboard-text-primary)]">
+                          {isGenerating ? (t('generating') || 'Generating...') : (t('generatePDF') || 'Generate PDF')}
+                        </div>
+                        <div className="text-xs text-[var(--dashboard-text-secondary)]">
+                          {isGenerating ? 'Please wait...' : 'Download PDF document'}
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Edit Modal */}
         {showEditModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg max-w-md w-full mx-4 ${
@@ -1046,6 +1112,61 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                       : 'bg-white border-gray-300 text-gray-900'
                   }`}
                 />
+              ) : editingField === 'profileImageStyle' ? (
+                <div className="space-y-4 mb-4">
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Shape</label>
+                    <div className="flex gap-2">
+                      {['circle','square'].map((shape) => (
+                        <button
+                          key={shape}
+                          onClick={() => setEditValue(`${shape}|${profileImageSize}`)}
+                          className={`px-3 py-2 rounded border ${editValue.startsWith(shape) ? 'bg-blue-600 text-white' : (theme === 'dark' ? 'border-zinc-600' : 'border-gray-300')}`}
+                        >{shape}</button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Size</label>
+                    <div className="flex gap-2">
+                      {['sm','md','lg'].map((size) => (
+                        <button
+                          key={size}
+                          onClick={() => setEditValue(`${editValue.split('|')[0] || profileImageShape}|${size}`)}
+                          className={`px-3 py-2 rounded border ${editValue.endsWith(size) ? 'bg-blue-600 text-white' : (theme === 'dark' ? 'border-zinc-600' : 'border-gray-300')}`}
+                        >{size.toUpperCase()}</button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : editingField === 'businessVisibility' ? (
+                <div className="space-y-3 mb-4">
+                  {([
+                    { key: 'address', label: 'Address' },
+                    { key: 'companyAddress', label: 'Company Address' },
+                    { key: 'email', label: 'Email' },
+                    { key: 'phone', label: 'Phone' },
+                  ] as const).map(({ key, label }) => (
+                    <label key={key} className="flex items-center justify-between gap-3">
+                      <span className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>{label}</span>
+                      <input
+                        type="checkbox"
+                        checked={(JSON.parse(editValue)[key] ?? (businessVisibility as any)[key]) as boolean}
+                        onChange={(e) => {
+                          try {
+                            const parsed = JSON.parse(editValue)
+                            parsed[key] = e.target.checked
+                            setEditValue(JSON.stringify(parsed))
+                          } catch {
+                            const fallback = { ...businessVisibility, [key]: e.target.checked }
+                            setEditValue(JSON.stringify(fallback))
+                          }
+                        }}
+                        className="toggle toggle-sm"
+                      />
+                    </label>
+                  ))}
+                </div>
               ) : editingField === 'introductoryText' || editingField === 'terms' || editingField === 'notes' ? (
                 <textarea
                   value={editValue}
@@ -1336,6 +1457,6 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
           </div>
         </div>
       )}
-     </DashboardLayout>
-   )
- }
+    </DashboardLayout>
+  )
+}
