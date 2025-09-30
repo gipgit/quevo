@@ -618,6 +618,8 @@
       "serviceRequests": { "title": "Demandes de service", "description": "Affichez et gérez les demandes de service." },
       "serviceBoards": { "title": "Tableaux de service", "description": "Gérez vos tableaux de service." },
       "appointments": { "title": "Rendez-vous", "description": "Affichez et gérez les rendez-vous." },
+      "clients": { "title": "Clients", "description": "Gérez vos clients et envoyez des campagnes d'emailing." },
+      "supportRequests": { "title": "Demandes de support", "description": "Affichez et gérez les demandes de support." },
       "products": { "title": "Produits", "description": "Gérez vos produits." },
       "promotions": { "title": "Promotions", "description": "Créez et gérez les promotions." }
     },
@@ -632,6 +634,7 @@
       "supportRequests": "Demandes de support",
       "serviceBoards": "Tableaux de service",
       "appointments": "Rendez-vous",
+      "clients": "Clients",
       "bookings": "Réservations",
       "promotions": "Promotions",
       "surveys": "Enquêtes",

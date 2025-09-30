@@ -922,6 +922,8 @@
       "serviceRequests": { "title": "Solicitudes de Servicio", "description": "Ver y gestionar solicitudes de servicio." },
       "serviceBoards": { "title": "Tableros de Servicio", "description": "Gestiona tus tableros de servicio." },
       "appointments": { "title": "Citas", "description": "Ver y gestionar citas." },
+      "clients": { "title": "Clientes", "description": "Gestiona tus clientes y envía campañas de correo masivo." },
+      "supportRequests": { "title": "Solicitudes de Soporte", "description": "Ver y gestionar solicitudes de soporte." },
       "products": { "title": "Productos", "description": "Gestiona tus productos." },
       "promotions": { "title": "Promociones", "description": "Crear y gestionar promociones." }
     },
@@ -936,6 +938,7 @@
       "supportRequests": "Solicitudes de Soporte",
       "serviceBoards": "Tableros de Servicio",
       "appointments": "Citas",
+      "clients": "Clientes",
       "bookings": "Reservas",
       "promotions": "Promociones",
       "surveys": "Encuestas",

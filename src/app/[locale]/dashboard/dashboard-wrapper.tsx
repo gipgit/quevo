@@ -15,7 +15,8 @@ import {
   Squares2X2Icon, 
   Cog6ToothIcon,
   GlobeAltIcon,
-  UsersIcon
+  UsersIcon,
+  LifebuoyIcon
 } from "@heroicons/react/24/outline"
 import { formatUsageDisplay } from "@/lib/usage-utils"
 import { getPlanColors, capitalizePlanName } from "@/lib/plan-colors"
@@ -78,6 +79,7 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
   const [copied, setCopied] = useState(false)
   const [showBusinessModal, setShowBusinessModal] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
+  const [progressAnimation, setProgressAnimation] = useState<Record<string, number>>({})
   
   // Domain state to avoid hydration mismatch
   const [DOMAIN, setDOMAIN] = useState("https://quevo.vercel.app")
@@ -189,6 +191,34 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
     },
   ]
 
+  // Animate progress bars on load
+  useEffect(() => {
+    if (usage && planLimits) {
+      const animationDelays: Record<string, number> = {}
+      usageCards.forEach((card, index) => {
+        animationDelays[card.feature] = index * 150 // Stagger animations by 150ms each
+      })
+      
+      // Start all animations after a short delay
+      const timer = setTimeout(() => {
+        usageCards.forEach(card => {
+          const max = getPlanLimitValue(card.feature)
+          const current = getUsageValue(card.feature)
+          const targetPercentage = max !== -1 && max !== null ? Math.min((current / max) * 100, 100) : 0
+          
+          setTimeout(() => {
+            setProgressAnimation(prev => ({
+              ...prev,
+              [card.feature]: targetPercentage
+            }))
+          }, animationDelays[card.feature])
+        })
+      }, 300) // Initial delay before starting animations
+      
+      return () => clearTimeout(timer)
+    }
+  }, [usage, planLimits])
+
   // Public link format: DOMAIN/business_urlname
   const publicUrl = `${DOMAIN}/${currentBusiness?.business_urlname || ""}`
 
@@ -227,16 +257,16 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
       href: "/dashboard/services",
     },
     {
-      title: t("cards.products.title"),
-      description: t("cards.products.description"),
-      icon: CubeIcon,
-      href: "/dashboard/products",
-    },
-    {
       title: t("cards.serviceRequests.title"),
       description: t("cards.serviceRequests.description"),
       icon: ClipboardDocumentListIcon,
       href: "/dashboard/service-requests",
+    },
+    {
+      title: t("cards.supportRequests.title"),
+      description: t("cards.supportRequests.description"),
+      icon: LifebuoyIcon,
+      href: "/dashboard/support-requests",
     },
     {
       title: t("cards.serviceBoards.title"),
@@ -266,40 +296,39 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto">
-      {/* Business Selection Modal */}
-      <BusinessSelectionModal 
-        isOpen={showBusinessModal} 
-        onClose={() => setShowBusinessModal(false)}
-      />
-        {/* Current Business Section */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-                         <div className="md:flex md:flex-row md:items-center gap-2 md:gap-4">
-               <div>
-                 <div className="font-semibold text-3xl md:text-4xl text-[var(--dashboard-text-primary)]">{currentBusiness?.business_name}</div>
-               </div>
-             </div>
-            
-              {/* Change Business Section */}
-             <div className="flex items-center gap-3">
-               <div className="flex flex-col md:flex-row gap-2">
-                 <button
-                   onClick={() => setShowBusinessModal(true)}
-                   className="px-2 py-1 w-auto border rounded-lg text-xs font-medium transition-colors bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
-                 >
-                   {t("currentBusiness.change")}
-                 </button>
-                                   <Link
-                    href="/onboarding"
-                    className="px-2 py-1 w-auto border rounded-lg text-xs font-medium whitespace-nowrap transition-colors bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
-                  >
-                    Add Business
-                  </Link>
-               </div>
-             </div>
+      <div className="max-w-[1400px] mx-auto">
+        {/* Business Selection Modal */}
+        <BusinessSelectionModal 
+          isOpen={showBusinessModal} 
+          onClose={() => setShowBusinessModal(false)}
+        />
+
+        {/* Top Navbar (business + actions) */}
+        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">{currentBusiness?.business_name}</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowBusinessModal(true)}
+                className="px-3 py-1.5 rounded-md text-sm text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
+                title={t("currentBusiness.change")}
+              >
+                {t("currentBusiness.change")}
+              </button>
+              <Link
+                href="/onboarding"
+                className="px-3 py-1.5 rounded-md text-sm text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
+              >
+                Add Business
+              </Link>
+            </div>
           </div>
-          
+        </div>
+
+        {/* Content Wrapper */}
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
           {/* Usage Summary */}
           {usage && planLimits && (
             <div className="mb-8">
@@ -309,25 +338,26 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
                   const current = getUsageValue(card.feature)
                   const suffix = getLimitSuffix(card.feature)
                   return (
-                                                              <div key={card.feature} className="min-w-[120px] lg:min-w-0 flex-shrink-0 lg:flex-shrink">
-                       <div className="text-xs md:text-sm mb-2 text-[var(--dashboard-text-secondary)]">{card.label}</div>
-                       <div className="font-medium text-md md:text-lg lg:text-xl mb-1">
-                         <span className="text-md md:text-lg lg:text-xl">{formatUsageDisplay(current, { value: max }).split(' ')[0]}</span>
-                         {formatUsageDisplay(current, { value: max }).includes(' ') && (
-                           <span className="text-xs md:text-sm lg:text-sm text-[var(--dashboard-text-secondary)] ml-1">
-                             {formatUsageDisplay(current, { value: max }).split(' ').slice(1).join(' ')} {suffix}
-                           </span>
-                         )}
-                         {!formatUsageDisplay(current, { value: max }).includes(' ') && suffix && (
-                           <span className="text-xs md:text-sm lg:text-sm text-[var(--dashboard-text-secondary)] ml-1">{suffix}</span>
-                         )}
-                       </div>
+                    <div key={card.feature} className="min-w-[120px] lg:min-w-0 flex-shrink-0 lg:flex-shrink">
+                      <div className="text-xs md:text-sm mb-2 text-[var(--dashboard-text-secondary)]">{card.label}</div>
+                      <div className="font-medium text-lg md:text-xl lg:text-2xl mb-1">
+                        <span className="text-lg md:text-2xl lg:text-3xl">{formatUsageDisplay(current, { value: max }).split(' ')[0]}</span>
+                        {formatUsageDisplay(current, { value: max }).includes(' ') && (
+                          <span className="text-sm md:text-base lg:text-base text-[var(--dashboard-text-secondary)] ml-2">
+                            {formatUsageDisplay(current, { value: max }).split(' ').slice(1).join(' ')} {suffix}
+                          </span>
+                        )}
+                        {!formatUsageDisplay(current, { value: max }).includes(' ') && suffix && (
+                          <span className="text-sm md:text-base lg:text-base text-[var(--dashboard-text-secondary)] ml-2">{suffix}</span>
+                        )}
+                      </div>
                       {max !== -1 && max !== null && (
-                        <div className="w-full rounded-full h-2 bg-[var(--dashboard-bg-tertiary)]">
+                        <div className="w-full rounded-full h-2" style={{ background: 'var(--progress-bg)' }}>
                           <div
-                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                            className="h-2 rounded-full transition-all duration-1000 ease-out"
                             style={{
-                              width: `${Math.min((current / max) * 100, 100)}%`
+                              width: `${progressAnimation[card.feature] || 0}%`,
+                              background: 'var(--progress-fill)'
                             }}
                           ></div>
                         </div>
@@ -338,68 +368,68 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
               </div>
             </div>
           )}
-        </div>
-       
-        {/* Public Link Section */}
-        <div className="mb-8">
-                      <div className={`px-4 py-2 md:px-6 md:py-4 rounded-full text-base font-medium flex items-center justify-between gap-4 shadow-sm border transition-all duration-300 relative overflow-hidden bg-[var(--dashboard-bg-secondary)] text-[var(--dashboard-text-primary)] border-[var(--dashboard-border-primary)] ${isAnimating ? 'animate-pill-shine' : ''}`}>
-            <div className="flex items-center gap-2 min-w-0 flex-1">
-              <GlobeAltIcon className="w-6 h-6 md:w-7 md:h-7 text-blue-600 flex-shrink-0" />
-              <span className="text-sm md:text-lg truncate">{publicUrl}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleCopy}
-                className={`transition-all duration-300 flex items-center gap-2 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] ${copied ? 'text-green-600' : ''}`}
-                title={copied ? t("publicLink.copied") : t("publicLink.copy")}
-              >
-                {copied ? (
-                  <svg className="w-4 h-4 animate-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                ) : (
+
+          {/* Public Link Section */}
+          <div className="mb-8">
+            <div className={`px-4 py-2 md:px-6 md:py-4 rounded-full text-base font-medium flex items-center justify-between gap-4 shadow-sm border transition-all duration-300 relative overflow-hidden bg-[var(--dashboard-bg-secondary)] text-[var(--dashboard-text-primary)] border-[var(--dashboard-border-primary)] ${isAnimating ? 'animate-pill-shine' : ''}`}>
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                <GlobeAltIcon className="w-6 h-6 md:w-7 md:h-7 text-blue-600 flex-shrink-0" />
+                <span className="text-sm md:text-lg truncate">{publicUrl}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleCopy}
+                  className={`transition-all duration-300 flex items-center gap-2 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] ${copied ? 'text-green-600' : ''}`}
+                  title={copied ? t("publicLink.copied") : t("publicLink.copy")}
+                >
+                  {copied ? (
+                    <svg className="w-4 h-4 animate-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  )}
+                  <span className="hidden md:inline text-sm">{copied ? t("publicLink.copied") : t("publicLink.copy")}</span>
+                </button>
+                <button
+                  onClick={handleOpen}
+                  className="transition-colors flex items-center gap-2 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)]"
+                  title={t("publicLink.open")}
+                >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                   </svg>
-                )}
-                <span className="hidden md:inline text-sm">{copied ? t("publicLink.copied") : t("publicLink.copy")}</span>
-              </button>
-              <button
-                onClick={handleOpen}
-                className="transition-colors flex items-center gap-2 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)]"
-                title={t("publicLink.open")}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-                <span className="hidden md:inline text-sm">{t("publicLink.open")}</span>
-              </button>
+                  <span className="hidden md:inline text-sm">{t("publicLink.open")}</span>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Management Cards Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
-          {managementCards.map((card, index) => {
-            const IconComponent = card.icon
-            return (
-              <a
-                key={index}
-                href={card.href}
-                className="rounded-xl p-4 md:p-6 border transition-all duration-200 group bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)]"
-              >
-                <div className="flex flex-col space-y-4">
-                  <div className="transition-transform duration-200">
-                    <IconComponent className="h-12 w-12 text-gray-600 group-hover:text-blue-600 stroke-[1]" />
+          {/* Management Cards Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
+            {managementCards.map((card, index) => {
+              const IconComponent = card.icon
+              return (
+                <a
+                  key={index}
+                  href={card.href}
+                  className="rounded-xl p-4 md:p-6 border transition-all duration-200 group bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)]"
+                >
+                  <div className="flex flex-col space-y-4">
+                    <div className="transition-transform duration-200">
+                      <IconComponent className="h-12 w-12 text-gray-600 group-hover:text-blue-600 stroke-[1]" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg md:text-xl font-medium mb-2 text-[var(--dashboard-text-primary)]">{card.title}</h3>
+                      <p className="text-xs md:text-sm leading-none text-[var(--dashboard-text-secondary)]">{card.description}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-md font-semibold mb-2 text-[var(--dashboard-text-primary)]">{card.title}</h3>
-                    <p className="text-xs md:text-sm leading-none text-[var(--dashboard-text-secondary)]">{card.description}</p>
-                  </div>
-                </div>
-              </a>
-            )
-          })}
+                </a>
+              )
+            })}
+          </div>
         </div>
       </div>
     </DashboardLayout>

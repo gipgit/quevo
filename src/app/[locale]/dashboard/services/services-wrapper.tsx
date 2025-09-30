@@ -219,30 +219,34 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-[var(--dashboard-text-primary)]">{t("title")}</h1>
+      <div className="max-w-[1400px] mx-auto">
+        {/* Top Navbar (simulated) */}
+        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">{t("title")}</p>
+            </div>
+            <Link
+              href="/dashboard/services/create"
+              className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 ${
+                canCreateServices
+                  ? "bg-[var(--dashboard-button-primary-bg)] hover:bg-[var(--dashboard-button-primary-bg-hover)] text-[var(--dashboard-button-primary-text)] border border-[var(--dashboard-button-primary-border)]"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              {t("createService")}
+            </Link>
           </div>
-          <Link
-            href="/dashboard/services/create"
-            className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 ${
-              canCreateServices
-                ? "bg-blue-600 hover:bg-blue-700 text-white"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            {t("createService")}
-          </Link>
         </div>
 
-        {/* Usage Limit Bar - Removed from services page as it's not needed */}
+        {/* Content Wrapper with Background */}
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+          {/* Usage Limit Bar - Removed from services page as it's not needed */}
 
-        {/* Services List */}
+          {/* Services List */}
         {services.length === 0 ? (
           <EmptyState
             icon={<svg className="mx-auto w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>}
@@ -260,7 +264,7 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                   <h2 className="text-xs font-medium text-[var(--dashboard-text-secondary)]">
                     {categoryName}
                   </h2>
-                  <div className="w-16 h-1 mt-2 rounded bg-blue-600"></div>
+                  <div className="w-16 h-px mt-2 rounded bg-[var(--dashboard-border-primary)]"></div>
                 </div>
 
                 {/* Services in this category */}
@@ -372,6 +376,7 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
             ))}
           </div>
         )}
+        </div>
 
         {/* Edit Service Modal */}
         {editModalOpen && serviceToEdit && (

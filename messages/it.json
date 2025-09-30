@@ -643,6 +643,8 @@
       "serviceRequests": { "title": "Richieste Servizi", "description": "Visualizza e gestisci le richieste servizi." },
       "serviceBoards": { "title": "Bacheche Servizi", "description": "Gestisci le bacheche servizi." },
       "appointments": { "title": "Appuntamenti", "description": "Visualizza e gestisci appuntamenti." },
+      "clients": { "title": "Clienti", "description": "Gestisci i tuoi clienti e invia campagne email." },
+      "supportRequests": { "title": "Richieste Supporto", "description": "Visualizza e gestisci le richieste di supporto." },
       "products": { "title": "Prodotti", "description": "Gestisci i tuoi prodotti." },
       "promotions": { "title": "Promozioni", "description": "Crea e gestisci promozioni." }
     },
@@ -657,6 +659,7 @@
       "supportRequests": "Richieste Supporto",
       "serviceBoards": "Bacheche Servizi",
       "appointments": "Appuntamenti",
+      "clients": "Clienti",
       "bookings": "Prenotazioni",
       "promotions": "Promozioni",
       "surveys": "Sondaggi",

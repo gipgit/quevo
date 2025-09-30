@@ -71,6 +71,35 @@ export default function PlanWrapper({
   const [upgrading, setUpgrading] = useState<string | null>(null)
   const [waitingForConfirmation, setWaitingForConfirmation] = useState(false)
   const [showPlansModal, setShowPlansModal] = useState(false)
+  const [progressAnimation, setProgressAnimation] = useState<Record<string, number>>({})
+
+  // Animate progress bars on load
+  useEffect(() => {
+    if (usage && planLimits) {
+      const animationDelays: Record<string, number> = {}
+      usageCards.forEach((card, index) => {
+        animationDelays[card.feature] = index * 150 // Stagger animations by 150ms each
+      })
+      
+      // Start all animations after a short delay
+      const timer = setTimeout(() => {
+        usageCards.forEach(card => {
+          const max = getPlanLimitValue(card.feature)
+          const current = getUsageValue(card.feature)
+          const targetPercentage = max !== -1 && max !== null ? Math.min((current / max) * 100, 100) : 0
+          
+          setTimeout(() => {
+            setProgressAnimation(prev => ({
+              ...prev,
+              [card.feature]: targetPercentage
+            }))
+          }, animationDelays[card.feature])
+        })
+      }, 300) // Initial delay before starting animations
+      
+      return () => clearTimeout(timer)
+    }
+  }, [usage, planLimits])
 
   // Helper to get plan limit value for a feature (same as dashboard)
   const getPlanLimitValue = (feature: string) => {
@@ -210,8 +239,17 @@ export default function PlanWrapper({
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6">{t("title")}</h1>
+        {/* Top Navbar (simulated) */}
+        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">{t("title")}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Content Wrapper with Background */}
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
         
         {loading ? (
           <div className="flex items-center justify-center h-64">
@@ -220,10 +258,11 @@ export default function PlanWrapper({
         ) : (
           <>
         {/* Current Plan Info with Usage Limits - Two Column Layout */}
-        <div className="bg-white rounded-xl border border-gray-100 p-6 mb-8">
+        <div className="mb-8">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Left Column - Plan Details */}
             <div className="lg:w-2/5">
+              <h2 className="text-3xl font-bold mb-2">{currentBusiness.business_name}</h2>
               <p className="text-sm text-gray-600 mb-1">{t("currentPlan")}:</p>
               <div className="mb-6">
                 <div className="flex items-center gap-4">
@@ -245,7 +284,7 @@ export default function PlanWrapper({
                   })()}
                   <button
                     onClick={() => setShowPlansModal(true)}
-                    className="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg transition-colors shadow-md"
+                    className="px-7 py-4 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors shadow-md text-base"
                   >
                     {t("upgradePlan")}
                   </button>
@@ -304,19 +343,20 @@ export default function PlanWrapper({
                     const current = getUsageValue(card.feature)
                     const suffix = getLimitSuffix(card.feature)
                     return (
-                      <div key={card.feature} className="border-b border-gray-200 pb-4 last:border-b-0">
+                      <div key={card.feature} className="pb-4 last:border-b-0" style={{ borderBottom: '1px solid var(--dashboard-border-primary)' }}>
                         <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm text-gray-600">{card.label}</span>
-                          <span className="font-semibold text-lg">
+                          <span className="text-lg font-medium" style={{ color: 'var(--dashboard-text-primary)' }}>{card.label}</span>
+                          <span className="font-medium text-xl">
                             {formatUsageDisplay(current, { value: max })} {suffix}
                           </span>
                         </div>
                         {max !== -1 && max !== null && (
-                          <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div className="w-full rounded-full h-2" style={{ background: 'var(--progress-bg)' }}>
                             <div
-                              className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                              className="h-2 rounded-full transition-all duration-1000 ease-out"
                               style={{
-                                width: `${Math.min((current / max) * 100, 100)}%`
+                                width: `${progressAnimation[card.feature] || 0}%`,
+                                background: 'var(--progress-fill)'
                               }}
                             ></div>
                           </div>
@@ -421,6 +461,7 @@ export default function PlanWrapper({
         )}
           </>
         )}
+        </div>
       </div>
     </DashboardLayout>
   )

@@ -616,6 +616,8 @@
       "serviceRequests": { "title": "Dienstleistungsanfragen", "description": "Anfragen anzeigen und verwalten." },
       "serviceBoards": { "title": "Service Boards", "description": "Verwalten Sie Ihre Service Boards." },
       "appointments": { "title": "Termine", "description": "Termine anzeigen und verwalten." },
+      "clients": { "title": "Kunden", "description": "Verwalten Sie Ihre Kunden und versenden Sie E-Mail-Kampagnen." },
+      "supportRequests": { "title": "Support-Anfragen", "description": "Support-Anfragen anzeigen und verwalten." },
       "products": { "title": "Produkte", "description": "Verwalten Sie Ihre Produkte." },
       "promotions": { "title": "Aktionen", "description": "Aktionen erstellen und verwalten." }
     },
@@ -630,6 +632,7 @@
       "supportRequests": "Support-Anfragen",
       "serviceBoards": "Service Boards",
       "appointments": "Termine",
+      "clients": "Kunden",
       "bookings": "Buchungen",
       "promotions": "Aktionen",
       "surveys": "Umfragen",

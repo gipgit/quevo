@@ -10,6 +10,7 @@ import { generateServiceResponse } from './generate-service-response'
 import { useAICredits } from '@/hooks/useAICredits'
 import { LoadingAIGeneration } from '@/components/ui/loading-ai-generation'
 import { AIAssistantIcon } from '@/components/ui/ai-assistant-icon'
+import { AICostCard } from '@/components/ui/ai-cost-card'
 import { 
   EnvelopeIcon, 
   DocumentArrowUpIcon, 
@@ -624,12 +625,18 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
   if (serviceRequests.length === 0) {
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-[var(--dashboard-text-primary)]">{t("title")}</h1>
+      <div className="max-w-[1400px] mx-auto">
+        {/* Top Navbar (simulated) */}
+        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">{t("title")}</p>
+            </div>
           </div>
         </div>
+
+        {/* Content Wrapper with Background */}
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
 
           <EmptyState
             icon={<svg className="mx-auto w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
@@ -639,15 +646,28 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
             onButtonClick={() => window.location.href = "/dashboard/services"}
           />
         </div>
+        </div>
       </DashboardLayout>
     )
   }
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto flex flex-col h-full">
-        {/* Header */}
-        {/* Mobile Sidebar Toggle Button */}
+      <div className="max-w-[1400px] mx-auto">
+        {/* Top Navbar (simulated) */}
+        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">{t("title")}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Content Wrapper with Background */}
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+          <div className="flex flex-col h-full">
+            {/* Header */}
+            {/* Mobile Sidebar Toggle Button */}
         <div className="lg:hidden fixed top-4 left-4 z-30">
           <button
             onClick={() => setIsMobileSidebarOpen(true)}
@@ -1722,43 +1742,37 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           />
                           </div>
 
-                        {/* Generate Button */}
-                        {!isGenerating && (
-                      <button
-                            onClick={handleGenerateResponse}
-                            disabled={(creditsStatus?.creditsAvailable ?? 0) <= 0}
-                            className="ai-button-generate-gradient w-full py-2 px-4 text-xs font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
-                          >
-                            {/* Gradient Layer */}
-                            <div 
-                              className="ai-button-glow absolute z-1"
-                              style={{
-                                filter: 'blur(15px)',
-                                opacity: 0.3,
-                                borderRadius: '0.5rem',
-                                height: '60%',
-                                width: '80%',
-                                bottom: '0',
-                                left: '50%',
-                                transform: 'translateX(-50%)'
-                              }}
-                            ></div>
-                            
-                            <div className="relative z-10 flex items-center justify-center gap-1">
-                              <SparklesIcon className="w-4 h-4" />
-                              <span className="text-sm">Generate Response</span>
-                            </div>
-                      </button>
-                        )}
+                        {/* Generate Button - always visible; shows loading style when generating */}
+                        <button
+                          onClick={handleGenerateResponse}
+                          disabled={isGenerating || (creditsStatus?.creditsAvailable ?? 0) <= 0}
+                          className={`ai-button-generate-gradient w-full py-2 px-4 text-xs font-medium rounded-lg shadow-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden ${isGenerating ? 'loading' : ''}`}
+                        >
+                          {/* Gradient Layer */}
+                          <div 
+                            className="ai-button-glow absolute z-1"
+                            style={{
+                              filter: 'blur(15px)',
+                              opacity: 0.3,
+                              borderRadius: '0.5rem',
+                              height: '60%',
+                              width: '80%',
+                              bottom: '0',
+                              left: '50%',
+                              transform: 'translateX(-50%)'
+                            }}
+                          ></div>
+
+                          <div className="relative z-10 flex items-center justify-center gap-1">
+                            <SparklesIcon className="w-4 h-4" />
+                            <span className="text-sm">Generate Response</span>
+                          </div>
+                        </button>
                         </>
                       )}
 
-                        {/* Loading State */}
-                        {isGenerating && (
-                          <div className="flex items-center justify-center py-4">
-                            <LoadingAIGeneration size="sm" text="Generating response..." />
-                      </div>
-                        )}
+                        {/* Loading State: removed inline AI loader to keep button context */}
+                        {isGenerating && null}
 
                         {/* Error Display */}
                         {generationError && (
@@ -1795,10 +1809,10 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
       {/* Generation Confirmation Modal */}
       {showGenerationModal && (
         <div className={`fixed inset-0 ${theme === 'dark' ? 'bg-black/50' : 'bg-black/30'} backdrop-blur-sm flex items-center justify-center z-50 p-4`}>
-          <div className={`rounded-2xl w-full max-w-md relative overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
+          <div className={`rounded-2xl w-full max-w-md relative overflow-visible p-0`} style={{ background: 'var(--ai-modal-bg-base)', backgroundImage: 'var(--ai-modal-bg-gradient)' }}>
               {/* Accent Color Layers */}
               <div 
-                className="absolute z-1"
+                className="absolute z-0"
                 style={{
                   background: 'var(--ai-panel-accent-1)',
                   filter: 'blur(40px)',
@@ -1811,7 +1825,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                 }}
               ></div>
               <div 
-                className="absolute z-1"
+                className="absolute z-0"
                 style={{
                   background: 'var(--ai-panel-accent-2)',
                   filter: 'blur(40px)',
@@ -1825,18 +1839,18 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
               ></div>
               
               <div className="p-6 text-center relative z-10">
-              <h3 className="text-lg font-medium ai-panel-text mb-4">
-                {isGenerating ? 'Generating Response...' : 'Confirm AI Generation'}
-              </h3>
               {!isGenerating && (
-                <div className="flex justify-center mb-6">
-                  <AIAssistantIcon size="md" />
-                </div>
+                <>
+                  <h3 className="text-lg font-medium ai-panel-text mb-4">Confirm AI Generation</h3>
+                  <div className="flex justify-center mb-6">
+                    <AIAssistantIcon size="md" />
+                  </div>
+                </>
               )}
               
               {/* Show loading state or confirmation content */}
               {isGenerating ? (
-                <div className="relative z-30 mb-6">
+                <div className="relative z-30 mb-2">
                   <div className="w-full h-48 relative rounded-lg overflow-hidden">
                     <LoadingAIGeneration size="lg" text="Generating your AI response..." />
                   </div>
@@ -1844,7 +1858,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
               ) : (
                 <>
                   {/* Scrollable Content Container */}
-                  <div className="max-h-64 overflow-y-auto mb-4">
+                  <div className="max-h-64 overflow-y-auto mb-2">
                     {/* Request Summary */}
                     <div className="mb-4 pb-4 border-b border-white/10">
                       <h4 className="text-sm font-medium ai-panel-text-secondary mb-2">Request Summary</h4>
@@ -1931,32 +1945,18 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                   </div>
 
                   {/* Generation Cost */}
-                  <div className="mb-4 p-4 bg-black/20 rounded-lg">
-                    <div className="flex flex-col items-center space-y-3">
-                      {/* Remaining Credits - Top */}
-                      <div className="text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          <span className="text-xs font-bold ai-panel-text">{creditsLoading ? "..." : creditsStatus?.creditsAvailable ?? 0}</span>
-                          <span className="text-xs ai-panel-text-secondary">credits remaining</span>
-                        </div>
-                      </div>
-                      
-                      {/* Cost Pill - Bottom */}
-                      <div className="flex flex-col items-center">
-                        <div className="text-xs font-bold ai-panel-text-secondary mb-2 text-center">Credits required for this generation</div>
-                        <div className="px-2 py-1 rounded-full bg-purple-500/20 border-2 border-purple-400/50 flex items-center justify-center gap-1.5">
-                          <div className="text-sm font-bold ai-panel-text">1</div>
-                          <div className="text-xs font-bold ai-panel-text-secondary uppercase">CREDIT</div>
-                        </div>
-                      </div>
-                    </div>
+                  <div className="mb-1">
+                    <AICostCard 
+                      creditsRequired={1}
+                      creditsRemaining={creditsLoading ? '...' : (creditsStatus?.creditsAvailable ?? 0)}
+                    />
                   </div>
                 </>
               )}
 
               {/* Action Buttons */}
               {!isGenerating && (
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 mt-2">
                   <button
                     onClick={handleConfirmGeneration}
                         disabled={(creditsStatus?.creditsAvailable ?? 0) <= 0}
@@ -1993,6 +1993,8 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
             </div>
           </div>
         )}
+          </div>
+        </div>
     </DashboardLayout>
   )
 }

@@ -83,11 +83,11 @@ export function LoadingAIGeneration({
         @keyframes shadowPulse {
           0%, 100% {
             transform: scale(1);
-            opacity: 0.4;
+            opacity: 0.6;
           }
           50% {
-            transform: scale(2.2);
-            opacity: 0.7;
+            transform: scale(1.6);
+            opacity: 0.85;
           }
         }
       `}</style>
@@ -99,8 +99,8 @@ export function LoadingAIGeneration({
           className={`absolute rounded-full ${sizeClasses[size]}`}
           style={{
             background: 'linear-gradient(45deg, rgb(255, 0, 150) 0%, rgb(0, 255, 255) 25%, rgb(255, 255, 0) 50%, rgb(255, 0, 255) 75%, rgb(0, 150, 255) 100%)',
-            filter: 'blur(25px)',
-            opacity: 0.4,
+            filter: 'blur(18px)',
+            opacity: 0.65,
             animation: 'shadowPulse 2.5s ease-in-out infinite',
             zIndex: 0
           }}
@@ -181,26 +181,14 @@ export function LoadingAIGeneration({
       {/* Text below the icon */}
       <div className="flex justify-center mt-4">
         <span 
-          className={`${textSizeClasses[size]} font-medium text-white/80 text-center drop-shadow-sm`}
-          style={{
-            animation: 'textFade 3s ease-in-out infinite'
-          }}
+          className={`${textSizeClasses[size]} font-medium text-center drop-shadow-sm`}
         >
           {text}
         </span>
       </div>
 
       {/* Custom CSS for animations */}
-      <style jsx>{`
-        @keyframes textFade {
-          0%, 100% {
-            opacity: 0.3;
-          }
-          50% {
-            opacity: 1;
-          }
-        }
-      `}</style>
+      <style jsx>{``}</style>
     </div>
   )
 }

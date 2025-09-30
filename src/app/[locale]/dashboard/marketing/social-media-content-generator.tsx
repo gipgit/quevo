@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { useTheme } from "@/contexts/ThemeProvider"
-import AILoading from "@/components/ui/ai-loading"
+import { LoadingAIGeneration } from "@/components/ui/loading-ai-generation"
 import { 
   DocumentDuplicateIcon,
   SparklesIcon,
@@ -22,6 +22,8 @@ import {
   TruckIcon,
   HomeIcon
 } from "@heroicons/react/24/outline"
+import AIActionButton from "@/components/ui/ai-action-button"
+import { AIAssistantIcon } from "@/components/ui/ai-assistant-icon"
 import { 
   FacebookIcon, 
   InstagramIcon, 
@@ -89,6 +91,7 @@ interface SocialMediaContentGeneratorProps {
   business: Business
   services: Service[]
   locale: string
+  onGeneratingChange?: (isGenerating: boolean) => void
 }
 
 const SOCIAL_PLATFORMS = [
@@ -305,7 +308,8 @@ const BUSINESS_QUALITIES = [
 export default function SocialMediaContentGenerator({ 
   business, 
   services, 
-  locale 
+  locale,
+  onGeneratingChange
 }: SocialMediaContentGeneratorProps) {
   const t = useTranslations("marketing")
   const { theme } = useTheme()
@@ -455,6 +459,7 @@ export default function SocialMediaContentGenerator({
     return allPostTypes
   })
   const [isGenerating, setIsGenerating] = useState(false)
+  const [showGenerationModal, setShowGenerationModal] = useState(false)
   const [generatedContent, setGeneratedContent] = useState<SocialMediaContent[]>([])
   const [copiedContent, setCopiedContent] = useState<string | null>(null)
   const [rawResponse, setRawResponse] = useState<string>('')
@@ -680,6 +685,7 @@ export default function SocialMediaContentGenerator({
     }
 
     setIsGenerating(true)
+    onGeneratingChange?.(true)
     
     try {
       const { generateSocialMediaContentAction } = await import('./actions')
@@ -718,7 +724,20 @@ export default function SocialMediaContentGenerator({
       alert('Error generating social media content')
     } finally {
       setIsGenerating(false)
+      onGeneratingChange?.(false)
     }
+  }
+
+  const openGenerationModal = () => {
+    if (selectedPlatforms.length === 0 || selectedServices.length === 0 || selectedPostTypes.length === 0) {
+      // Rely on existing validation in handleGenerateContent after confirm
+    }
+    setShowGenerationModal(true)
+  }
+
+  const handleConfirmGeneration = async () => {
+    setShowGenerationModal(false)
+    await handleGenerateContent()
   }
 
   const copyToClipboard = async (text: string, identifier?: string) => {
@@ -984,22 +1003,20 @@ export default function SocialMediaContentGenerator({
                   <button
                     key={service.service_id}
                     onClick={() => handleServiceToggle(service.service_id.toString())}
-                    className={`p-2 rounded-lg border-2 transition-all duration-200 relative text-center ${
+                    className={`p-2 rounded-lg border transition-all duration-200 relative text-center ${
                       isSelected
                         ? theme === 'dark' 
-                          ? 'border-blue-500 bg-blue-900/20 text-blue-100'
-                          : 'border-blue-500 bg-blue-50 text-blue-900'
+                          ? 'border-gray-400 bg-white/20 text-gray-100'
+                          : 'border-gray-400 bg-gray-200 text-gray-900'
                         : theme === 'dark'
-                          ? 'border-gray-600 bg-gray-700 hover:bg-gray-600'
-                          : 'border-gray-200 bg-gray-50 hover:bg-gray-100'
+                          ? 'border-white/10 bg-white/5 hover:bg-white/10'
+                          : 'border-gray-200/60 bg-gray-50/60 hover:bg-gray-100'
                     }`}
                   >
                     <div className={`font-medium text-sm ${
                       theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
                     }`}>{service.service_name}</div>
-                    {isSelected && (
-                      <CheckIcon className="w-3 h-3 absolute top-1 right-1 text-blue-600 dark:text-blue-400" />
-                    )}
+                    {/* removed checkmark for selected */}
                   </button>
                 )
               })}
@@ -1020,27 +1037,25 @@ export default function SocialMediaContentGenerator({
                   <button
                     key={platform.id}
                     onClick={() => handlePlatformToggle(platform.id)}
-                    className={`p-2 rounded-lg border-2 transition-all duration-200 relative ${
+                    className={`p-2 rounded-lg border transition-all duration-200 relative ${
                       isSelected
                         ? theme === 'dark' 
-                          ? 'border-blue-500 bg-blue-900/20 text-blue-100'
-                          : 'border-blue-500 bg-blue-50 text-blue-900'
+                          ? 'border-gray-400 bg-white/20 text-gray-100'
+                          : 'border-gray-400 bg-gray-200 text-gray-900'
                         : theme === 'dark'
-                          ? 'border-gray-600 bg-gray-700 hover:bg-gray-600'
-                          : 'border-gray-200 bg-gray-50 hover:bg-gray-100'
+                          ? 'border-white/10 bg-white/5 hover:bg-white/10'
+                          : 'border-gray-200/60 bg-gray-50/60 hover:bg-gray-100'
                     }`}
                   >
                     <div className="flex items-center space-x-2">
-                      <div className={`p-1.5 rounded-full ${isSelected ? 'bg-blue-600' : platform.color}`}>
+                      <div className={`p-1.5 rounded-full ${isSelected ? 'bg-gray-600 dark:bg-gray-300' : platform.color}`}>
                         <Icon platform={platform.id} className="w-4 h-4 text-white" />
                       </div>
                       <span className={`font-medium text-sm ${
                         theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
                       }`}>{platform.name}</span>
                     </div>
-                    {isSelected && (
-                      <CheckIcon className="w-3 h-3 absolute top-1 right-1 text-blue-600 dark:text-blue-400" />
-                    )}
+                    {/* removed checkmark for selected */}
                   </button>
                 )
               })}
@@ -1061,26 +1076,24 @@ export default function SocialMediaContentGenerator({
               <button
                 key={quality.id}
                 onClick={() => handleQualityToggle(quality.id)}
-                    className={`group p-2 rounded-lg border-2 transition-all duration-200 relative ${
+                    className={`group p-2 rounded-lg border transition-all duration-200 relative ${
                   isSelected
                         ? theme === 'dark' 
-                          ? 'border-blue-500 bg-blue-900/20 text-blue-100'
-                          : 'border-blue-500 bg-blue-50 text-blue-900'
+                          ? 'border-gray-400 bg-white/20 text-gray-100'
+                          : 'border-gray-400 bg-gray-200 text-gray-900'
                     : theme === 'dark'
-                      ? 'border-gray-600 bg-gray-700 hover:bg-gray-600'
-                      : 'border-gray-200 bg-gray-50 hover:bg-gray-100'
+                      ? 'border-white/10 bg-white/5 hover:bg-white/10'
+                      : 'border-gray-200/60 bg-gray-50/60 hover:bg-gray-100'
                 }`}
                     title={quality.description}
                   >
                     <div className="flex items-center space-x-2">
-                      <Icon className={`w-4 h-4 ${isSelected ? 'text-blue-600 dark:text-blue-400' : quality.textColor}`} />
+                      <Icon className={`w-4 h-4 ${isSelected ? 'text-[var(--dashboard-text-primary)]' : quality.textColor}`} />
                       <div className={`font-medium text-xs ${
                         theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
                       }`}>{quality.name}</div>
                     </div>
-                {isSelected && (
-                      <CheckIcon className="w-3 h-3 absolute top-1 right-1 text-blue-600 dark:text-blue-400" />
-                )}
+                {/* removed checkmark for selected */}
               </button>
             )
           })}
@@ -1114,23 +1127,21 @@ export default function SocialMediaContentGenerator({
                        return newSelection
                      })
                    }}
-                   className={`p-2 rounded-lg border-2 transition-all duration-200 text-left relative ${
-                     isSelected
-                       ? theme === 'dark' 
-                         ? 'border-blue-500 bg-blue-900/20 text-blue-100'
-                         : 'border-blue-500 bg-blue-50 text-blue-900'
-                       : theme === 'dark'
-                         ? 'border-gray-600 bg-gray-800 hover:bg-gray-700'
-                         : 'border-gray-200 bg-white hover:bg-gray-50'
-                   }`}
+                  className={`p-2 rounded-lg border transition-all duration-200 text-left relative ${
+                    isSelected
+                      ? theme === 'dark' 
+                        ? 'border-gray-400 bg-white/20 text-gray-100'
+                        : 'border-gray-400 bg-gray-200 text-gray-900'
+                      : theme === 'dark'
+                        ? 'border-white/10 bg-white/5 hover:bg-white/10'
+                        : 'border-gray-200/60 bg-gray-50/60 hover:bg-gray-100'
+                  }`}
                    title={`${category.category}: ${post.description}`}
                  >
                    <div className={`font-medium text-xs ${
                      theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
                    }`}>{post.title}</div>
-                   {isSelected && (
-                     <CheckIcon className="w-3 h-3 absolute top-1 right-1 text-blue-600 dark:text-blue-400" />
-                   )}
+                   {/* removed checkmark for selected */}
                  </button>
                )
              })
@@ -1157,27 +1168,25 @@ export default function SocialMediaContentGenerator({
               <button
                     key={frequency.id}
                     onClick={() => setSelectedFrequency(frequency.id)}
-                    className={`p-2 rounded-lg border-2 transition-all duration-200 relative text-center ${
+                    className={`p-2 rounded-lg border transition-all duration-200 relative text-center ${
                   isSelected
                         ? theme === 'dark' 
-                          ? 'border-blue-500 bg-blue-900/20 text-blue-100'
-                          : 'border-blue-500 bg-blue-50 text-blue-900'
+                          ? 'border-gray-400 bg-white/20 text-gray-100'
+                          : 'border-gray-400 bg-gray-200 text-gray-900'
                     : theme === 'dark'
-                      ? 'border-gray-600 bg-gray-700 hover:bg-gray-600'
-                      : 'border-gray-200 bg-gray-50 hover:bg-gray-100'
+                      ? 'border-white/10 bg-white/5 hover:bg-white/10'
+                      : 'border-gray-200/60 bg-gray-50/60 hover:bg-gray-100'
                 }`}
                     title={frequency.description}
                   >
                     <div className="flex flex-col items-center space-y-1">
-                      <div className={`w-4 h-4 rounded-full ${isSelected ? 'bg-blue-600' : frequency.color}`}></div>
+                      <div className={`w-4 h-4 rounded-full ${isSelected ? 'bg-gray-600 dark:bg-gray-300' : frequency.color}`}></div>
                       <div className={`font-medium text-xs ${
                         theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
                       }`}>{frequency.name}</div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">{frequency.description}</div>
                 </div>
-                {isSelected && (
-                      <CheckIcon className="w-3 h-3 absolute top-1 right-1 text-blue-600 dark:text-blue-400" />
-                )}
+                {/* removed checkmark for selected */}
               </button>
             )
           })}
@@ -1186,27 +1195,16 @@ export default function SocialMediaContentGenerator({
 
       {/* Generate Button */}
       <div className="flex flex-col items-center space-y-4">
-        <button
-          onClick={handleGenerateContent}
-              disabled={isGenerating || selectedPlatforms.length === 0 || selectedServices.length === 0}
-              className={`flex items-center space-x-3 px-8 py-4 rounded-xl text-white font-semibold text-lg transition-all duration-200 shadow-lg ${
-                isGenerating || selectedPlatforms.length === 0 || selectedServices.length === 0
-                  ? 'bg-gray-400 cursor-not-allowed opacity-50'
-                  : 'bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:from-purple-600 hover:via-purple-700 hover:to-purple-800 transform hover:scale-105 hover:shadow-xl'
-          }`}
-        >
-          {isGenerating ? (
-            <>
-              <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              <span>Generating Content...</span>
-            </>
-          ) : (
-            <>
-              <SparklesIcon className="w-6 h-6" />
-                  <span>Generate AI ✨</span>
-            </>
-          )}
-        </button>
+        <div className="w-full max-w-xs">
+          <AIActionButton
+            text="Generate AI ✨"
+            loadingText="Generating Content..."
+            isLoading={isGenerating}
+            disabled={isGenerating || selectedPlatforms.length === 0 || selectedServices.length === 0}
+            onClick={openGenerationModal}
+            size="lg"
+          />
+        </div>
         
         {/* Token Usage Estimation */}
         <div className="text-center text-xs rounded-lg px-4 py-2">
@@ -1217,17 +1215,87 @@ export default function SocialMediaContentGenerator({
           </div>
         </div>
       </div>
+      {/* Generation Confirmation Modal */}
+      {showGenerationModal && (
+        <div className={`fixed inset-0 bg-black/30 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4`}>
+          <div className={`rounded-2xl w-full max-w-md relative overflow-visible p-0`} style={{ background: 'var(--ai-modal-bg-base)', backgroundImage: 'var(--ai-modal-bg-gradient)' }}>
+            {/* Accent Color Layers */}
+            <div 
+              className="absolute z-0"
+              style={{
+                background: 'var(--ai-panel-accent-1)',
+                filter: 'blur(40px)',
+                opacity: 0.2,
+                height: '80px',
+                bottom: '-40px',
+                left: '0',
+                width: '50%',
+                borderRadius: '100%'
+              }}
+            ></div>
+            <div 
+              className="absolute z-0"
+              style={{
+                background: 'var(--ai-panel-accent-2)',
+                filter: 'blur(40px)',
+                opacity: 0.2,
+                height: '80px',
+                bottom: '-40px',
+                right: '0',
+                width: '50%',
+                borderRadius: '100%'
+              }}
+            ></div>
+            <div className="p-6 text-center relative z-10">
+              <h3 className="text-lg font-medium ai-panel-text mb-4">Confirm AI Generation</h3>
+              <div className="flex justify-center mb-4">
+                <AIAssistantIcon size="md" />
+              </div>
+              <div className="max-h-64 overflow-y-auto mb-4 text-left">
+                <div className="mb-3 pb-3 border-b border-white/10">
+                  <h4 className="text-sm font-medium ai-panel-text-secondary mb-1">Summary</h4>
+                  <div className="text-xs ai-panel-text-secondary">
+                    <div>Services: <span className="ai-panel-text ml-1">{selectedServices.length}</span></div>
+                    <div>Platforms: <span className="ai-panel-text ml-1">{selectedPlatforms.length}</span></div>
+                    <div>Post types: <span className="ai-panel-text ml-1">{selectedPostTypes.length}</span></div>
+                    <div>Frequency: <span className="ai-panel-text ml-1 capitalize">{selectedFrequency}</span></div>
+                  </div>
+                </div>
+                <div className="mb-2">
+                  <h4 className="text-xs font-medium ai-panel-text-secondary mb-2">Estimated Cost</h4>
+                  <div className="text-xs ai-panel-text">
+                    ~{Math.round((business.business_name.length + (business.business_descr?.length || 0) + selectedServices.length * 200 + selectedPlatforms.length * 100 + selectedQualities.length * 50 + selectedPostTypes.length * 30) / 3.5)} tokens
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-3">
+                <AIActionButton
+                  text="Confirm & Generate"
+                  loadingText="Generating..."
+                  isLoading={isGenerating}
+                  disabled={isGenerating}
+                  onClick={handleConfirmGeneration}
+                  size="md"
+                />
+                <button
+                  onClick={() => setShowGenerationModal(false)}
+                  className="text-sm ai-panel-text-secondary hover:ai-panel-text transition-colors underline"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
         </>
       )}
 
       {/* AI Loading State */}
       {isGenerating && (
-        <AILoading 
-          title="AI is Generating Your Content"
-          subtitle="Creating unique posts and building your timeline"
-          showPostCount={true}
-          postCount={calculateTotalPostsNeeded(selectedFrequency, selectedPlatforms)}
-        />
+        <div className="w-full h-64 relative rounded-2xl overflow-hidden border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-primary)]">
+          <LoadingAIGeneration size="lg" text="Generating your AI content..." />
+        </div>
       )}
 
       {/* Compact Parameters Bar - Shown after generation */}
@@ -1300,8 +1368,8 @@ export default function SocialMediaContentGenerator({
       {generatedContent.length > 0 && (
         <div className="space-y-6">
            {/* Unified Posting Timeline */}
-           <div className="bg-white dark:bg-gray-800 rounded-2xl border-2 border-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in-up">
-             <div className="bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20 text-gray-900 dark:text-gray-100 p-4">
+           <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border-2 border-[var(--dashboard-border-primary)] overflow-hidden animate-fade-in-up">
+             <div className="bg-[var(--dashboard-bg-secondary)] text-[var(--dashboard-text-primary)] p-4">
                <h3 className="text-lg font-semibold">
                  📅 Unified 1-Month Posting Timeline ({selectedFrequency} frequency)
                </h3>
@@ -1310,30 +1378,30 @@ export default function SocialMediaContentGenerator({
              <div className="p-6">
                <div className="relative">
                  {/* Timeline Line */}
-                 <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-300 dark:bg-gray-600"></div>
+                 <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-[var(--dashboard-border-primary)]"></div>
                  
                  <div className="space-y-8">
                    {generateUnifiedPostingTimeline(selectedFrequency).map((week, weekIndex) => (
                      <div key={weekIndex} className="space-y-6">
-                       <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2 ml-16">
+                       <h4 className="text-lg font-semibold text-[var(--dashboard-text-primary)] border-b border-[var(--dashboard-border-primary)] pb-2 ml-16">
                          Week {week.week}
                        </h4>
                        
                        {week.days.map((day, dayIndex) => (
                          <div key={dayIndex} className="relative">
                            {/* Timeline Dot */}
-                           <div className="absolute left-6 top-6 w-4 h-4 bg-blue-500 rounded-full border-4 border-white dark:border-gray-800 shadow-lg z-10"></div>
+                           <div className="absolute left-6 top-6 w-4 h-4 bg-[var(--dashboard-text-secondary)] rounded-full border-4 border-[var(--dashboard-bg-primary)] shadow-lg z-10"></div>
                            
                            {/* Day Content */}
-                           <div className="ml-16 bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                           <div className="ml-16 bg-[var(--dashboard-bg-secondary)] rounded-lg p-4">
             <div className="flex items-center justify-between mb-4">
-                               <h5 className="font-medium text-gray-900 dark:text-gray-100 text-lg">
+                               <h5 className="font-medium text-[var(--dashboard-text-primary)] text-lg">
                                  {day.dayName}, {day.date.toLocaleDateString('en-US', { 
                                    month: 'short', 
                                    day: 'numeric' 
                                  })}
                                </h5>
-                               <span className="text-sm text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-600 px-3 py-1 rounded-full">
+                               <span className="text-sm text-[var(--dashboard-text-secondary)] bg-[var(--dashboard-bg-primary)] px-3 py-1 rounded-full">
                                  {day.posts.length} post{day.posts.length !== 1 ? 's' : ''}
                                </span>
                              </div>
@@ -1350,10 +1418,10 @@ export default function SocialMediaContentGenerator({
               return (
                 <div
                                      key={postIndex}
-                                     className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-600 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                                     className="bg-[var(--dashboard-bg-primary)] rounded-xl border border-[var(--dashboard-border-primary)] overflow-hidden shadow-sm hover:shadow-md transition-shadow"
                 >
                   {/* Platform Header */}
-                                     <div className="bg-black text-white p-3 flex items-center justify-between">
+                                     <div className="bg-[var(--dashboard-text-primary)] text-[var(--dashboard-bg-primary)] p-3 flex items-center justify-between">
                                        <div className="flex items-center space-x-2">
                                          <div className={`p-1.5 rounded-full ${platformConfig.color}`}>
                                            <Icon platform={post.platform.toLowerCase()} className="w-4 h-4 text-white" />
@@ -1362,14 +1430,14 @@ export default function SocialMediaContentGenerator({
                                            <span className="font-semibold capitalize text-sm">
                                              {post.platform}
                       </span>
-                                           <div className="text-xs text-gray-300">
+                                           <div className="text-xs text-[var(--dashboard-text-tertiary)]">
                                              {post.timeRange}
                                            </div>
                                          </div>
                     </div>
                     <button
                                          onClick={() => copyFullContent(timelinePost)}
-                                         className="flex items-center space-x-1 bg-white bg-opacity-20 hover:bg-opacity-30 rounded px-2 py-1 transition-colors"
+                                         className="flex items-center space-x-1 bg-[var(--dashboard-bg-primary)] bg-opacity-20 hover:bg-opacity-30 rounded px-2 py-1 transition-colors"
                     >
                                          {copiedContent === timelinePost.platform ? (
                                            <CheckIcon className="w-3 h-3" />
@@ -1387,24 +1455,24 @@ export default function SocialMediaContentGenerator({
                                                            {/* Title */}
                                        <div>
                                          <div className="flex items-center space-x-2 mb-1">
-                                           <h3 className="text-[10px] font-medium text-gray-400 dark:text-gray-500">
+                                           <h3 className="text-[10px] font-medium text-[var(--dashboard-text-secondary)]">
                                              Title
                                            </h3>
                                            <button
                                              onClick={() => copyToClipboard(timelinePost.title, `${timelinePost.platform}-title`)}
-                                             className="flex items-center space-x-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded px-1.5 py-0.5 transition-colors"
+                                             className="flex items-center space-x-1 text-xs bg-[var(--dashboard-bg-secondary)] hover:bg-[var(--dashboard-bg-tertiary)] rounded px-1.5 py-0.5 transition-colors"
                                            >
                                              {copiedContent === `${timelinePost.platform}-title` ? (
                                                <CheckIcon className="w-2.5 h-2.5 text-green-600" />
                                              ) : (
-                                               <DocumentDuplicateIcon className="w-2.5 h-2.5 text-gray-600 dark:text-gray-400" />
+                                               <DocumentDuplicateIcon className="w-2.5 h-2.5 text-[var(--dashboard-text-secondary)]" />
                                              )}
-                                             <span className="text-gray-600 dark:text-gray-400 text-xs">
+                                             <span className="text-[var(--dashboard-text-secondary)] text-xs">
                                                {copiedContent === `${timelinePost.platform}-title` ? 'Copied!' : 'Copy'}
                                              </span>
                                            </button>
                                          </div>
-                                         <p className="text-gray-700 dark:text-gray-300 font-bold text-sm">
+                                         <p className="text-[var(--dashboard-text-primary)] font-bold text-sm">
                                            {timelinePost.title}
                       </p>
                     </div>
@@ -1412,24 +1480,24 @@ export default function SocialMediaContentGenerator({
                                                            {/* Description */}
                                        <div>
                                          <div className="flex items-center space-x-2 mb-1">
-                                           <h3 className="text-[10px] font-medium text-gray-400 dark:text-gray-500">
+                                           <h3 className="text-[10px] font-medium text-[var(--dashboard-text-secondary)]">
                                              Description
                                            </h3>
                                            <button
                                              onClick={() => copyToClipboard(timelinePost.description, `${timelinePost.platform}-description`)}
-                                             className="flex items-center space-x-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded px-1.5 py-0.5 transition-colors"
+                                             className="flex items-center space-x-1 text-xs bg-[var(--dashboard-bg-secondary)] hover:bg-[var(--dashboard-bg-tertiary)] rounded px-1.5 py-0.5 transition-colors"
                                            >
                                              {copiedContent === `${timelinePost.platform}-description` ? (
                                                <CheckIcon className="w-2.5 h-2.5 text-green-600" />
                                              ) : (
-                                               <DocumentDuplicateIcon className="w-2.5 h-2.5 text-gray-600 dark:text-gray-400" />
+                                               <DocumentDuplicateIcon className="w-2.5 h-2.5 text-[var(--dashboard-text-secondary)]" />
                                              )}
-                                             <span className="text-gray-600 dark:text-gray-400 text-xs">
+                                             <span className="text-[var(--dashboard-text-secondary)] text-xs">
                                                {copiedContent === `${timelinePost.platform}-description` ? 'Copied!' : 'Copy'}
                                              </span>
                                            </button>
                                          </div>
-                                         <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap text-xs">
+                                         <p className="text-[var(--dashboard-text-primary)] whitespace-pre-wrap text-xs">
                                            {timelinePost.description}
                       </p>
                     </div>
@@ -1437,19 +1505,19 @@ export default function SocialMediaContentGenerator({
                                                            {/* Hashtags */}
                                        <div>
                                          <div className="flex items-center space-x-2 mb-1">
-                                           <h3 className="text-[10px] font-medium text-gray-400 dark:text-gray-500">
+                                           <h3 className="text-[10px] font-medium text-[var(--dashboard-text-secondary)]">
                                              Hashtags
                                            </h3>
                                            <button
                                              onClick={() => copyToClipboard(timelinePost.hashtags.join(' '), `${timelinePost.platform}-hashtags`)}
-                                             className="flex items-center space-x-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded px-1.5 py-0.5 transition-colors"
+                                             className="flex items-center space-x-1 text-xs bg-[var(--dashboard-bg-secondary)] hover:bg-[var(--dashboard-bg-tertiary)] rounded px-1.5 py-0.5 transition-colors"
                                            >
                                              {copiedContent === `${timelinePost.platform}-hashtags` ? (
                                                <CheckIcon className="w-2.5 h-2.5 text-green-600" />
                                              ) : (
-                                               <DocumentDuplicateIcon className="w-2.5 h-2.5 text-gray-600 dark:text-gray-400" />
+                                               <DocumentDuplicateIcon className="w-2.5 h-2.5 text-[var(--dashboard-text-secondary)]" />
                                              )}
-                                             <span className="text-gray-600 dark:text-gray-400 text-xs">
+                                             <span className="text-[var(--dashboard-text-secondary)] text-xs">
                                                {copiedContent === `${timelinePost.platform}-hashtags` ? 'Copied!' : 'Copy'}
                                              </span>
                                            </button>
@@ -1458,7 +1526,7 @@ export default function SocialMediaContentGenerator({
                                            {timelinePost.hashtags.map((hashtag: string, index: number) => (
                           <span
                             key={index}
-                                               className="px-1.5 py-0.5 rounded-full text-xs text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700"
+                                               className="px-1.5 py-0.5 rounded-full text-xs text-[var(--dashboard-text-primary)] bg-gray-100 dark:bg-gray-700"
                           >
                             {hashtag}
                           </span>
@@ -1469,24 +1537,24 @@ export default function SocialMediaContentGenerator({
                                                            {/* Call to Action */}
                                        <div>
                                          <div className="flex items-center space-x-2 mb-1">
-                                           <h3 className="text-[10px] font-medium text-gray-400 dark:text-gray-500">
+                                           <h3 className="text-[10px] font-medium text-[var(--dashboard-text-secondary)]">
                                              Call to Action
                                            </h3>
                                            <button
                                              onClick={() => copyToClipboard(timelinePost.callToAction, `${timelinePost.platform}-cta`)}
-                                             className="flex items-center space-x-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded px-1.5 py-0.5 transition-colors"
+                                             className="flex items-center space-x-1 text-xs bg-[var(--dashboard-bg-secondary)] hover:bg-[var(--dashboard-bg-tertiary)] rounded px-1.5 py-0.5 transition-colors"
                                            >
                                              {copiedContent === `${timelinePost.platform}-cta` ? (
                                                <CheckIcon className="w-2.5 h-2.5 text-green-600" />
                                              ) : (
-                                               <DocumentDuplicateIcon className="w-2.5 h-2.5 text-gray-600 dark:text-gray-400" />
+                                               <DocumentDuplicateIcon className="w-2.5 h-2.5 text-[var(--dashboard-text-secondary)]" />
                                              )}
-                                             <span className="text-gray-600 dark:text-gray-400 text-xs">
+                                             <span className="text-[var(--dashboard-text-secondary)] text-xs">
                                                {copiedContent === `${timelinePost.platform}-cta` ? 'Copied!' : 'Copy'}
                                              </span>
                                            </button>
                                          </div>
-                                         <p className="font-medium text-gray-700 dark:text-gray-300 text-xs">
+                                         <p className="font-medium text-[var(--dashboard-text-primary)] text-xs">
                                            {timelinePost.callToAction}
                       </p>
                     </div>
@@ -1540,7 +1608,7 @@ export default function SocialMediaContentGenerator({
                    <div className="p-6 space-y-6">
                                           {/* Frequency Section */}
                       <div>
-                        <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
+                        <h3 className="text-sm font-medium text-[var(--dashboard-text-secondary)] mb-3">
                           📊 Posting Frequency
                         </h3>
                         <div className="space-y-3">
@@ -1562,35 +1630,35 @@ export default function SocialMediaContentGenerator({
                              <div className="text-center">
                                <div className="w-3 h-3 bg-red-400 rounded-full mx-auto mb-1"></div>
                                <div className="font-medium text-red-700 dark:text-red-300">Minimal</div>
-                               <div className="text-gray-600 dark:text-gray-400">
+                               <div className="text-[var(--dashboard-text-secondary)]">
                                  {platformData.minimal_frequency.posts_per_week} week
                                </div>
                              </div>
                              <div className="text-center">
                                <div className="w-3 h-3 bg-orange-400 rounded-full mx-auto mb-1"></div>
                                <div className="font-medium text-orange-700 dark:text-orange-300">Low</div>
-                               <div className="text-gray-600 dark:text-gray-400">
+                               <div className="text-[var(--dashboard-text-secondary)]">
                                  {platformData.low_frequency.posts_per_week} week
                                </div>
                              </div>
                              <div className="text-center">
                                <div className="w-3 h-3 bg-yellow-400 rounded-full mx-auto mb-1"></div>
                                <div className="font-medium text-yellow-700 dark:text-yellow-300">Medium</div>
-                               <div className="text-gray-600 dark:text-gray-400">
+                               <div className="text-[var(--dashboard-text-secondary)]">
                                  {platformData.medium_frequency.posts_per_week} week
                                </div>
                              </div>
                              <div className="text-center">
                                <div className="w-3 h-3 bg-green-400 rounded-full mx-auto mb-1"></div>
                                <div className="font-medium text-green-700 dark:text-green-300">High</div>
-                               <div className="text-gray-600 dark:text-gray-400">
+                               <div className="text-[var(--dashboard-text-secondary)]">
                                  {platformData.high_frequency.posts_per_week} week
                                </div>
                              </div>
                              <div className="text-center">
                                <div className="w-3 h-3 bg-blue-500 rounded-full mx-auto mb-1"></div>
                                <div className="font-medium text-blue-700 dark:text-blue-300">Optimal</div>
-                               <div className="text-gray-600 dark:text-gray-400">
+                               <div className="text-[var(--dashboard-text-secondary)]">
                                  {platformData.optimal_frequency.posts_per_week} week
                                </div>
                              </div>
@@ -1600,21 +1668,21 @@ export default function SocialMediaContentGenerator({
 
                                           {/* Timing Section */}
                       <div>
-                        <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
+                        <h3 className="text-sm font-medium text-[var(--dashboard-text-secondary)] mb-3">
                           ⏰ Optimal Posting Times
                         </h3>
                         <div className="flex items-center justify-between text-xs">
                           <div className="text-center">
                             <div className="w-3 h-3 bg-purple-400 rounded-full mx-auto mb-1"></div>
                             <div className="font-medium text-purple-700 dark:text-purple-300">Best Days</div>
-                            <div className="text-gray-600 dark:text-gray-400">
+                            <div className="text-[var(--dashboard-text-secondary)]">
                               {platformData.optimal_times.best_days}
                             </div>
                           </div>
                           <div className="text-center">
                             <div className="w-3 h-3 bg-orange-400 rounded-full mx-auto mb-1"></div>
                             <div className="font-medium text-orange-700 dark:text-orange-300">Time Windows</div>
-                            <div className="text-gray-600 dark:text-gray-400">
+                            <div className="text-[var(--dashboard-text-secondary)]">
                               {platformData.optimal_times.time_windows.join(', ')}
                             </div>
                           </div>
@@ -1637,7 +1705,7 @@ export default function SocialMediaContentGenerator({
                {socialMediaFrequencyData.general_principles.map((principle, index) => (
                  <li key={index} className="flex items-start space-x-2">
                    <span className="text-blue-500 dark:text-blue-400 mt-1">•</span>
-                   <span className="text-sm text-gray-700 dark:text-gray-300">
+                   <span className="text-sm text-[var(--dashboard-text-primary)]">
                      {principle}
                    </span>
                  </li>
@@ -1679,7 +1747,7 @@ export default function SocialMediaContentGenerator({
               <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                 {tokenUsage.inputTokens.toLocaleString()}
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">
+              <div className="text-xs text-[var(--dashboard-text-secondary)]">
                 Input Tokens
               </div>
             </div>
@@ -1687,7 +1755,7 @@ export default function SocialMediaContentGenerator({
               <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                 {tokenUsage.outputTokens.toLocaleString()}
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">
+              <div className="text-xs text-[var(--dashboard-text-secondary)]">
                 Output Tokens
               </div>
             </div>
@@ -1695,7 +1763,7 @@ export default function SocialMediaContentGenerator({
               <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                 {tokenUsage.totalTokens.toLocaleString()}
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">
+              <div className="text-xs text-[var(--dashboard-text-secondary)]">
                 Total Tokens
               </div>
             </div>
@@ -1703,7 +1771,7 @@ export default function SocialMediaContentGenerator({
               <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
                 ${tokenUsage.estimatedCost.toFixed(6)}
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">
+              <div className="text-xs text-[var(--dashboard-text-secondary)]">
                 Estimated Cost
               </div>
             </div>
@@ -1732,7 +1800,7 @@ export default function SocialMediaContentGenerator({
               </button>
             </div>
              <div className="p-4 overflow-auto max-h-[calc(80vh-80px)]">
-               <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-mono">
+               <pre className="text-sm text-[var(--dashboard-text-primary)] whitespace-pre-wrap font-mono">
               {rawResponse}
             </pre>
              </div>

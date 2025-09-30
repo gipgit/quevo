@@ -63,25 +63,69 @@ interface MarketingWrapperProps {
 
 export default function MarketingWrapper({ services, business, locale }: MarketingWrapperProps) {
   const t = useTranslations("marketing")
+  const [isGenerating, setIsGenerating] = useState(false)
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto p-4">
-        {/* Header */}
-        <div className="mb-6">
-          <div className="flex flex-col items-center text-center">
-            <AIAssistantIcon size="md" className="mb-4" />
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
-              {t("title")}
-            </h1>
+      <div className="max-w-[1400px] mx-auto">
+        {/* Top Navbar (simulated) */}
+        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">Marketing</p>
+            </div>
           </div>
         </div>
+
+        {/* Content Wrapper with Background */}
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+          {/* Header with AI accent gradient layers */}
+          {!isGenerating && (
+          <div className="mb-6 relative overflow-visible">
+            {/* Accent Color Layers */}
+            <div
+              className="absolute z-0"
+              style={{
+                background: 'var(--ai-panel-accent-1)',
+                filter: 'blur(40px)',
+                opacity: 0.2,
+                height: '140px',
+                width: '140px',
+                top: '-20px',
+                left: 'calc(50% - 164px)',
+                borderRadius: '24px'
+              }}
+            ></div>
+            <div
+              className="absolute z-0"
+              style={{
+                background: 'var(--ai-panel-accent-2)',
+                filter: 'blur(40px)',
+                opacity: 0.2,
+                height: '140px',
+                width: '140px',
+                top: '-20px',
+                left: 'calc(50% + 24px)',
+                borderRadius: '24px'
+              }}
+            ></div>
+
+            <div className="relative z-10 flex flex-col items-center text-center">
+              <AIAssistantIcon size="md" className="mb-4" />
+              <h1 className="text-2xl lg:text-3xl font-medium text-[var(--dashboard-text-primary)] mb-2">
+                {t("title")}
+              </h1>
+            </div>
+          </div>
+          )}
 
         <SocialMediaContentGenerator
           business={business}
           services={services}
           locale={locale}
+          onGeneratingChange={setIsGenerating}
         />
+        </div>
       </div>
     </DashboardLayout>
   )

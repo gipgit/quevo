@@ -30,6 +30,10 @@ import {
   CheckCircleIcon as CheckCircleSolidIcon,
   ExclamationTriangleIcon as ExclamationTriangleSolidIcon
 } from '@heroicons/react/24/solid'
+import { AIAssistantIcon } from '@/components/ui/ai-assistant-icon'
+import { AIActionButton } from '@/components/ui/ai-action-button'
+import { AICostCard } from '@/components/ui/ai-cost-card'
+import { LoadingAIGeneration } from '@/components/ui/loading-ai-generation'
 import { 
   Dialog, 
   DialogContent, 
@@ -60,8 +64,10 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
   // Modal states
   const [showGenerateResponseModal, setShowGenerateResponseModal] = useState(false)
   const [showTextEnhancementModal, setShowTextEnhancementModal] = useState(false)
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [generationError, setGenerationError] = useState<string | null>(null)
+  const [isGeneratingResponse, setIsGeneratingResponse] = useState(false)
+  const [isEnhancingText, setIsEnhancingText] = useState(false)
+  const [responseError, setResponseError] = useState<string | null>(null)
+  const [enhancementError, setEnhancementError] = useState<string | null>(null)
   const [generatedResponse, setGeneratedResponse] = useState('')
   const [enhancedText, setEnhancedText] = useState('')
 
@@ -223,6 +229,21 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
     }
   }
 
+  const getPriorityPillClasses = (priority: string) => {
+    switch (priority?.toLowerCase()) {
+      case 'urgent':
+        return 'bg-red-100 text-red-800'
+      case 'high':
+        return 'bg-orange-100 text-orange-800'
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800'
+      case 'low':
+        return 'bg-green-100 text-green-800'
+      default:
+        return 'bg-gray-100 text-gray-800'
+    }
+  }
+
   const getPriorityIcon = (priority: string) => {
     switch (priority?.toLowerCase()) {
       case 'urgent':
@@ -289,8 +310,8 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
   const generateResponse = async () => {
     if (!selectedRequest) return
     
-    setIsGenerating(true)
-    setGenerationError(null)
+    setIsGeneratingResponse(true)
+    setResponseError(null)
     
     try {
       const response = await fetch('/api/ai/generate-support-response', {
@@ -309,21 +330,21 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
         setGeneratedResponse(result.response)
       } else {
         const errorData = await response.json()
-        setGenerationError(errorData.error || 'Failed to generate response')
+        setResponseError(errorData.error || 'Failed to generate response')
       }
     } catch (error) {
-      setGenerationError('Error generating response')
+      setResponseError('Error generating response')
       console.error('Error generating response:', error)
     } finally {
-      setIsGenerating(false)
+      setIsGeneratingResponse(false)
     }
   }
 
   const enhanceText = async () => {
     if (!selectedRequest) return
     
-    setIsGenerating(true)
-    setGenerationError(null)
+    setIsEnhancingText(true)
+    setEnhancementError(null)
     
     try {
       const response = await fetch('/api/ai/enhance-support-text', {
@@ -341,13 +362,13 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
         setEnhancedText(result.enhancedText)
       } else {
         const errorData = await response.json()
-        setGenerationError(errorData.error || 'Failed to enhance text')
+        setEnhancementError(errorData.error || 'Failed to enhance text')
       }
     } catch (error) {
-      setGenerationError('Error enhancing text')
+      setEnhancementError('Error enhancing text')
       console.error('Error enhancing text:', error)
     } finally {
-      setIsGenerating(false)
+      setIsEnhancingText(false)
     }
   }
 
@@ -373,22 +394,26 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
   if (supportRequests.length === 0) {
     return (
       <DashboardLayout>
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h1 className={`text-2xl font-bold ${
-                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-              }`}>Support Requests</h1>
+        <div className="max-w-[1400px] mx-auto">
+          {/* Top Navbar (simulated) */}
+          <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">Support Requests</p>
+              </div>
             </div>
           </div>
 
-          <EmptyState
-            icon={<ChatBubbleLeftRightIcon className="mx-auto w-12 h-12" />}
-            title="No Support Requests"
-            description="No support requests have been submitted yet."
-            buttonText="View Service Boards"
-            onButtonClick={() => window.location.href = "/dashboard/service-boards"}
-          />
+          {/* Content Wrapper with Background */}
+          <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+            <EmptyState
+              icon={<ChatBubbleLeftRightIcon className="mx-auto w-12 h-12" />}
+              title="No Support Requests"
+              description="No support requests have been submitted yet."
+              buttonText="View Service Boards"
+              onButtonClick={() => window.location.href = "/dashboard/service-boards"}
+            />
+          </div>
         </div>
       </DashboardLayout>
     )
@@ -396,114 +421,65 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto flex flex-col h-full">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6 flex-shrink-0">
-          <div>
-            <h1 className={`text-2xl font-bold ${
-              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-            }`}>Support Requests</h1>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            {/* Keyboard Shortcuts Button with Tooltip */}
-            <div className="relative group">
-              <button
-                className={`p-2 rounded-lg transition-colors ${
-                  theme === 'dark' 
-                    ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                }`}
-                title="Keyboard shortcuts"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </button>
-              
-              {/* Tooltip */}
-              <div className={`absolute right-0 top-full mt-2 p-3 rounded-lg shadow-lg border z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto ${
-                theme === 'dark' 
-                  ? 'bg-gray-800 border-gray-700 text-gray-300' 
-                  : 'bg-white border-gray-200 text-gray-700'
-              }`}>
-                <div className="text-xs whitespace-nowrap">
-                  <div className="font-medium mb-2">Keyboard Shortcuts:</div>
-                  <div>↑↓ Navigate requests</div>
-                  <div>Enter Mark resolved</div>
-                  <div>Ctrl+R Generate response</div>
-                  <div>Ctrl+E Enhance text</div>
-                  <div>Ctrl+C Copy contacts</div>
-                </div>
-                {/* Arrow pointing up */}
-                <div className={`absolute -top-1 right-4 w-2 h-2 rotate-45 ${
-                  theme === 'dark' 
-                    ? 'bg-gray-800 border-l border-t border-gray-700' 
-                    : 'bg-white border-l border-t border-gray-200'
-                }`}></div>
-              </div>
-            </div>
-            
-            {/* Navigation Arrows */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => navigateRequest(-1)}
-                disabled={selectedIndex === 0}
-                className={`p-2 rounded-lg transition-colors ${
-                  selectedIndex === 0
-                    ? 'opacity-50 cursor-not-allowed'
-                    : theme === 'dark'
-                      ? 'hover:bg-gray-700'
-                      : 'hover:bg-gray-100'
-                }`}
-              >
-                <ArrowLeftIcon className="w-5 h-5" />
-              </button>
-              <span className={`text-sm ${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-              }`}>
-                {selectedIndex + 1} of {supportRequests.length}
-              </span>
-              <button
-                onClick={() => navigateRequest(1)}
-                disabled={selectedIndex === supportRequests.length - 1}
-                className={`p-2 rounded-lg transition-colors ${
-                  selectedIndex === supportRequests.length - 1
-                    ? 'opacity-50 cursor-not-allowed'
-                    : theme === 'dark'
-                      ? 'hover:bg-gray-700'
-                      : 'hover:bg-gray-100'
-                }`}
-              >
-                <ArrowRightIcon className="w-5 h-5" />
-              </button>
+      <div className="max-w-[1400px] mx-auto">
+        {/* Top Navbar (simulated) */}
+        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">Support Requests</p>
             </div>
           </div>
         </div>
 
-        {/* Main Content - Outlook-like Layout */}
-        <div className="flex-1 flex flex-col lg:flex-row gap-6 overflow-hidden">
+        {/* Content Wrapper with Background */}
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+          <div className="flex flex-col h-full">
+            {/* Main Content - 3 Column Layout */}
+        <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-6 overflow-hidden relative">
           {/* Left Panel - Request List */}
-          <div className={`w-full lg:w-72 border-b lg:border-b-0 lg:border-r ${
-            theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
-          } flex flex-col h-64 lg:h-auto`}>
-            {/* Progress Bar */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex justify-between items-center mb-2">
-                <span className={`text-sm font-medium ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  Progress: {resolvedRequests} of {totalRequests} resolved
+          <div className={`w-full lg:w-1/6 border-b lg:border-b-0 lg:border-r border-[var(--dashboard-border-primary)] flex flex-col`}>
+            {/* Navigation & Progress */}
+            <div className="p-4 border-b border-[var(--dashboard-border-primary)]">
+              {/* Navigation Controls */}
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <button
+                  onClick={() => navigateRequest(-1)}
+                  disabled={selectedIndex === 0}
+                  className={`p-1.5 rounded-lg transition-colors ${
+                    selectedIndex === 0
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:bg-[var(--dashboard-bg-tertiary)]'
+                  }`}
+                  title="Previous request"
+                >
+                  <ArrowLeftIcon className="w-3.5 h-3.5" />
+                </button>
+                <span className="text-xs text-[var(--dashboard-text-tertiary)] px-2">
+                  {selectedIndex + 1} of {supportRequests.length}
                 </span>
-                <span className={`text-sm ${
-                  theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                }`}>
+                <button
+                  onClick={() => navigateRequest(1)}
+                  disabled={selectedIndex === supportRequests.length - 1}
+                  className={`p-1.5 rounded-lg transition-colors ${
+                    selectedIndex === supportRequests.length - 1
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:bg-[var(--dashboard-bg-tertiary)]'
+                  }`}
+                  title="Next request"
+                >
+                  <ArrowRightIcon className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              {/* Progress Bar */}
+              <div className="flex justify-between items-center mb-2">
+                <div className="text-xs md:text-sm text-[var(--dashboard-text-primary)]">
+                  {resolvedRequests} of {totalRequests} resolved
+                </div>
+                <span className="text-xs text-[var(--dashboard-text-tertiary)]">
                   {openRequests} open
                 </span>
               </div>
-              <div className={`w-full h-2 rounded-full ${
-                theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
-              }`}>
+              <div className="w-full h-2 rounded-full bg-[var(--dashboard-bg-tertiary)]">
                 <div 
                   className="h-2 bg-green-500 rounded-full transition-all duration-300"
                   style={{ width: `${progressPercentage}%` }}
@@ -529,42 +505,34 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                         setSelectedRequest(request)
                         setSelectedIndex(index)
                       }}
-                      className={`p-3 rounded-lg cursor-pointer transition-all flex-shrink-0 w-64 lg:w-auto ${
+                      className={`p-2 lg:p-3 rounded-lg cursor-pointer transition-all flex-shrink-0 w-60 lg:w-auto ${
                         isSelected
-                          ? theme === 'dark'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-blue-50 border-blue-200 border'
-                          : theme === 'dark'
-                            ? 'hover:bg-gray-700 text-gray-300'
-                            : 'hover:bg-gray-50 text-gray-900'
+                          ? 'bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)] border-l-4 border-[var(--dashboard-active-border)]'
+                          : 'hover:bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)]'
                       }`}
                     >
-                      <div className="flex items-center justify-between text-xs mb-1">
+                      <div className="flex items-center justify-between text-[10px] mb-1">
                         <div className="flex items-center gap-1">
                           <span className="opacity-75">{day} {month} {time}</span>
                         </div>
-                        <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(request.status)}`}>
+                        <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${getStatusColor(request.status)}`}>
                           {getStatusText(request.status)}
                         </span>
                       </div>
                       
                       <div className="flex items-start justify-between mb-1">
                         <div className="flex items-center gap-2">
-                          {request.status === 'resolved' || request.status === 'closed' ? (
-                            <CheckCircleSolidIcon className="w-3.5 h-3.5 text-green-500" />
-                          ) : (
-                            <div className="w-3.5 h-3.5 rounded-full bg-blue-500" />
-                          )}
-                          <span className="font-medium text-xs">{request.board_ref}</span>
-                          <span className="text-xs opacity-75">• {request.usercustomer?.name_first} {request.usercustomer?.name_last}</span>
+                          <div className="w-3 h-3 rounded-full bg-blue-500" />
+                          <span className="font-medium text-[10px]">{request.board_ref}</span>
+                          <span className="text-[10px] opacity-75">• {request.usercustomer?.name_first} {request.usercustomer?.name_last}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           {getPriorityIcon(request.priority || 'medium')}
                         </div>
                       </div>
                       
-                      <div className="text-xs">
-                        <div className="text-xs opacity-75">{request.category}</div>
+                      <div className="text-[10px]">
+                        <div className="opacity-75">{request.category}</div>
                       </div>
                     </div>
                   )
@@ -573,19 +541,17 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
             </div>
           </div>
 
-          {/* Right Panel - Request Details */}
-          <div className="flex-1 flex flex-col min-h-0 lg:min-h-0 h-96 lg:h-auto">
+          {/* Middle Panel - Request Details */}
+          <div className="flex-1 lg:w-2/5 flex flex-col min-h-0 lg:min-h-0 h-96 lg:h-auto p-2 lg:p-6 space-y-4 lg:space-y-5">
             {selectedRequest ? (
               <>
                 {/* Request Header with Action Buttons */}
-                <div className={`p-6 border-b ${
-                  theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
-                }`}>
+                <div className={`p-2 lg:p-0 pb-2`}>
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h2 className={`text-2xl font-bold ${
+                          <h2 className={`text-base lg:text-lg font-bold ${
                             theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
                           }`}>
                             {selectedRequest.board_ref}
@@ -596,224 +562,139 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                           <span className={`px-2 py-0.5 rounded-full text-xs ${getCategoryColor(selectedRequest.category)}`}>
                             {selectedRequest.category}
                           </span>
+                          <span className={`px-2 py-0.5 rounded-full text-xs ${getPriorityPillClasses(selectedRequest.priority)}`}>
+                            {selectedRequest.priority || 'priority'}
+                          </span>
                         </div>
-                        <div className="flex items-center gap-3 text-xs text-gray-500">
-                          <span>{selectedRequest.usercustomer?.name_first} {selectedRequest.usercustomer?.name_last}</span>
-                          <span>•</span>
-                          <span>{selectedRequest.email || selectedRequest.usercustomer?.email}</span>
-                          <span>•</span>
-                          <span>{selectedRequest.priority} priority</span>
-                        </div>
+                        <div className="hidden"></div>
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-2 flex-wrap max-w-sm">
-                      <button
-                        onClick={() => markAsResolved(selectedRequest.support_request_id)}
-                        className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 text-sm ${
-                          selectedRequest.status === 'resolved' || selectedRequest.status === 'closed'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-green-600 text-white hover:bg-green-700'
-                        }`}
-                        title="Mark as resolved (Enter)"
-                      >
-                        {selectedRequest.status === 'resolved' || selectedRequest.status === 'closed' ? (
-                          <CheckCircleSolidIcon className="w-3.5 h-3.5" />
-                        ) : (
-                          <CheckCircleIcon className="w-3.5 h-3.5" />
-                        )}
-                        {selectedRequest.status === 'resolved' || selectedRequest.status === 'closed' ? 'Resolved' : 'Mark Resolved'}
-                      </button>
-                    </div>
+                    <div className="flex items-center gap-2 flex-wrap max-w-sm"></div>
                   </div>
                 </div>
 
-                {/* Support Message - Moved to top and made more prominent */}
-                <div className="flex-1 p-6 pt-0 overflow-y-auto">
+                {/* Content */}
+                <div className="flex-1 pt-0 overflow-y-auto">
                   <div className="space-y-5">
+                    {/* Customer Details - two-column layout, match sizes/paddings */}
                     <div>
-                      <h3 className={`text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide ${
-                        theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
-                      }`}>Support Message</h3>
-                      <div className={`p-6 rounded-xl border-2 shadow-sm ${
-                        theme === 'dark' ? 'border-gray-600 bg-gray-800' : 'border-gray-200 bg-white shadow-md'
-                      }`}>
-                        <div className={`text-base leading-relaxed mb-4 ${
-                          theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
-                        }`}>
-                          {selectedRequest.message}
-                        </div>
-                        
-                        {/* AI Actions - Integrated inside message card */}
-                        <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-200 dark:border-gray-600">
-                          <button
-                            onClick={() => setShowGenerateResponseModal(true)}
-                            className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center gap-2 text-sm font-medium"
-                            title="Generate AI response (Ctrl+R)"
-                          >
-                            <SparklesIcon className="w-4 h-4" />
-                            Generate Response
-                          </button>
-                          
-                          <button
-                            onClick={() => setShowTextEnhancementModal(true)}
-                            className="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors flex items-center gap-2 text-sm font-medium"
-                            title="Enhance text (Ctrl+E)"
-                          >
-                            <WrenchScrewdriverIcon className="w-4 h-4" />
-                            Apply Text Enhancement
-                          </button>
-                        </div>
+                      <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Customer Details</h3>
+                      <div>
+                        {selectedRequest.usercustomer && (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-start">
+                            {/* Left: Name big */}
+                            <div>
+                              <div className="text-base lg:text-lg font-normal text-[var(--dashboard-text-primary)]">
+                                {selectedRequest.usercustomer.name_first} {selectedRequest.usercustomer.name_last}
+                              </div>
+                            </div>
+                            {/* Right: Contacts with copy/actions */}
+                            <div className="flex flex-col gap-2 text-sm">
+                              {/* Email Row */}
+                              <div className="flex items-center justify-start lg:justify-end gap-1">
+                                <span>{selectedRequest.usercustomer.email || selectedRequest.email || '-'}</span>
+                                <button
+                                  onClick={() => navigator.clipboard.writeText(selectedRequest.usercustomer.email || selectedRequest.email || '')}
+                                  className="p-1.5 rounded transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+                                  title="Copy email"
+                                >
+                                  <ClipboardDocumentIcon className="w-4 h-4" />
+                                </button>
+                                {(selectedRequest.usercustomer.email || selectedRequest.email) && (
+                                  <a
+                                    href={`mailto:${selectedRequest.usercustomer.email || selectedRequest.email}`}
+                                    className="p-1.5 rounded transition-colors text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                                    title="Send email"
+                                  >
+                                    <EnvelopeIcon className="w-4 h-4" />
+                                  </a>
+                                )}
+                              </div>
+                              {/* Phone Row */}
+                              {selectedRequest.usercustomer.phone && (
+                                <div className="flex items-center justify-start lg:justify-end gap-1">
+                                  <span>{selectedRequest.usercustomer.phone}</span>
+                                  <button
+                                    onClick={() => navigator.clipboard.writeText(selectedRequest.usercustomer.phone)}
+                                    className="p-1.5 rounded transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+                                    title="Copy phone"
+                                  >
+                                    <ClipboardDocumentIcon className="w-4 h-4" />
+                                  </button>
+                                  <a
+                                    href={`https://wa.me/${selectedRequest.usercustomer.phone.replace(/\D/g, '')}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="p-1.5 rounded transition-colors text-green-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20"
+                                    title="WhatsApp"
+                                  >
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.533 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.451h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.463.703z"/>
+                                    </svg>
+                                  </a>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
 
-                    {/* Open Board Button */}
-                    {selectedRequest.board_ref && (
-                      <div>
-                        <h3 className={`text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide ${
-                          theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
-                        }`}>Service Board</h3>
-                        <div className="flex items-center gap-3">
-                          <a
-                            href={`/${currentBusiness?.business_urlname}/s/${selectedRequest.board_ref}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors flex items-center gap-2 text-sm font-medium"
-                          >
-                            <ArrowTopRightOnSquareIcon className="w-4 h-4" />
-                            Open Board
-                          </a>
-                          <span className={`text-sm ${
-                            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                          }`}>
-                            Board Reference: {selectedRequest.board_ref}
-                          </span>
+                    {/* Support Message */}
+                    <div>
+                      <h3 className={`text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]`}>Support Message</h3>
+                      <div className={`relative p-4 rounded-lg border bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] shadow-sm`}>
+                        <div className={`text-sm leading-relaxed mb-0 text-[var(--dashboard-text-primary)] relative z-10`}>
+                          {selectedRequest.message}
                         </div>
+                        {/* Subtle bottom gradient overlay */}
+                        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 rounded-b-lg bg-gradient-to-b from-transparent to-blue-100/40"></div>
                       </div>
-                    )}
+                    </div>
 
-                    {/* Related Action Display */}
+                    {/* Open Board section removed; button moved to right panel */}
+
+                    {/* Related Action - timeline style */}
                     {selectedRequest.serviceboardaction && (
                       <div>
-                        <h3 className={`text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide ${
-                          theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
-                        }`}>Related Action</h3>
-                        <div className={`p-4 rounded-lg border ${
-                          theme === 'dark' ? 'border-gray-600 bg-gray-800' : 'border-gray-200 bg-white'
-                        }`}>
-                          <div className="space-y-3">
-                            {/* Title row */}
-                            <div className="flex items-center justify-between">
-                              <h4 className={`font-medium ${
-                                theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
-                              }`}>
-                                {selectedRequest.serviceboardaction.action_title}
-                              </h4>
-                              <span className={`px-2 py-1 rounded-full text-xs ${
-                                selectedRequest.serviceboardaction.action_status === 'completed' 
-                                  ? 'bg-green-100 text-green-800'
-                                  : selectedRequest.serviceboardaction.action_status === 'in_progress'
-                                  ? 'bg-blue-100 text-blue-800'
-                                  : 'bg-yellow-100 text-yellow-800'
-                              }`}>
-                                {selectedRequest.serviceboardaction.action_status}
-                              </span>
+                        <h3 className="text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Related Action</h3>
+                        <div className="relative">
+                          <div className="relative flex items-start pb-0">
+                            {/* Timeline dot */}
+                            <div className="relative z-10 w-5 h-5 rounded-full border-2 border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-primary)] flex items-center justify-center">
+                              <div className="w-1.5 h-1.5 rounded-full bg-[var(--dashboard-text-secondary)]"></div>
                             </div>
-                            
-                            {/* Details in one compact row */}
-                            <div className={`text-sm flex flex-wrap items-center gap-4 ${
-                              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                            }`}>
-                              <span><strong>Type:</strong> {selectedRequest.serviceboardaction.action_type}</span>
-                              <span><strong>Priority:</strong> {selectedRequest.serviceboardaction.action_priority}</span>
-                              {selectedRequest.serviceboardaction.due_date && (
-                                <span><strong>Due:</strong> {new Date(selectedRequest.serviceboardaction.due_date).toLocaleDateString()}</span>
-                              )}
-                              {selectedRequest.serviceboardaction.is_customer_action_required && (
-                                <span className="text-orange-600 font-medium">⚠️ Customer action required</span>
-                              )}
-                            </div>
-                            
-                            {/* Description on separate line if available */}
-                            {selectedRequest.serviceboardaction.action_description && (
-                              <div className={`text-sm ${
-                                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                              }`}>
-                                <strong>Description:</strong> {selectedRequest.serviceboardaction.action_description}
+                            {/* Content */}
+                            <div className="ml-2 lg:ml-4 flex-1 min-w-0">
+                              {/* Date/Time */}
+                              <div className="text-xs text-[var(--dashboard-text-tertiary)] mb-1" style={{ fontSize: '0.7rem' }}>
+                                {selectedRequest.serviceboardaction.created_at ? (
+                                  <span>
+                                    {new Date(selectedRequest.serviceboardaction.created_at).toLocaleDateString()} {new Date(selectedRequest.serviceboardaction.created_at).toLocaleTimeString()}
+                                  </span>
+                                ) : (
+                                  <span className="text-[var(--dashboard-text-muted)]">No date</span>
+                                )}
                               </div>
-                            )}
+                              {/* Status + Type + Title */}
+                              <div className="flex items-center gap-2">
+                                {selectedRequest.serviceboardaction.action_status === 'completed' ? (
+                                  <CheckCircleSolidIcon className="w-3 h-3 text-green-500 flex-shrink-0" />
+                                ) : (
+                                  <ClockIcon className="w-3 h-3 text-yellow-500 flex-shrink-0" />
+                                )}
+                                <div className="font-medium text-xs text-[var(--dashboard-text-primary)] flex-1">
+                                  <span className="text-[var(--dashboard-text-tertiary)]">{selectedRequest.serviceboardaction.action_type}</span> • {selectedRequest.serviceboardaction.action_title}
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
                     )}
 
-                    {/* Customer Details - Moved below message */}
-                    <div>
-                      <h3 className={`text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide ${
-                        theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
-                      }`}>Customer Details</h3>
-                      <div className="flex items-center gap-6 text-sm">
-                        {selectedRequest.usercustomer && (
-                          <>
-                            <div className="flex items-center gap-2">
-                              <span>{selectedRequest.usercustomer.name_first} {selectedRequest.usercustomer.name_last}</span>
-                              <button
-                                onClick={() => navigator.clipboard.writeText(`${selectedRequest.usercustomer.name_first} ${selectedRequest.usercustomer.name_last}`)}
-                                className={`p-1 rounded transition-colors ${
-                                  theme === 'dark' 
-                                    ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
-                                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                                }`}
-                                title="Copy name"
-                              >
-                                <ClipboardDocumentIcon className="w-3 h-3" />
-                              </button>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span>{selectedRequest.usercustomer.email}</span>
-                              <button
-                                onClick={() => navigator.clipboard.writeText(selectedRequest.usercustomer.email)}
-                                className={`p-1 rounded transition-colors ${
-                                  theme === 'dark' 
-                                    ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
-                                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                                }`}
-                                title="Copy email"
-                              >
-                                <ClipboardDocumentIcon className="w-3 h-3" />
-                              </button>
-                              <a
-                                href={`mailto:${selectedRequest.usercustomer.email}`}
-                                className={`p-1 rounded transition-colors ${
-                                  theme === 'dark' 
-                                    ? 'text-blue-400 hover:text-blue-300 hover:bg-gray-700' 
-                                    : 'text-blue-600 hover:text-blue-700 hover:bg-blue-50'
-                                }`}
-                                title="Send email"
-                              >
-                                <EnvelopeIcon className="w-3 h-3" />
-                              </a>
-                            </div>
-                            {selectedRequest.usercustomer.phone && (
-                              <div className="flex items-center gap-2">
-                                <span>{selectedRequest.usercustomer.phone}</span>
-                                <button
-                                  onClick={() => navigator.clipboard.writeText(selectedRequest.usercustomer.phone)}
-                                  className={`p-1 rounded transition-colors ${
-                                    theme === 'dark' 
-                                      ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
-                                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                                  }`}
-                                  title="Copy phone"
-                                >
-                                  <ClipboardDocumentIcon className="w-3 h-3" />
-                                </button>
-                              </div>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    </div>
+                    {/* Customer Details - old duplicate removed */}
 
                     {/* Resolution Notes */}
                     {selectedRequest.resolution_notes && (
@@ -879,183 +760,302 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
               </div>
             )}
           </div>
+
+          {/* Right Panel - Actions */}
+          <div className="w-full lg:w-2/5 border-t lg:border-t-0 lg:border-l border-[var(--dashboard-border-primary)] flex flex-col">
+            {selectedRequest ? (
+              <div className="p-2 lg:p-7 space-y-4">
+                <div>
+                  {/* Manage Request Section */}
+                  <div className="mb-6">
+                    <h4 className="text-xs font-medium mb-3 ai-panel-text-secondary uppercase tracking-wide">Manage Request</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => markAsResolved(selectedRequest.support_request_id)}
+                        className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-2 border border-white/20"
+                        title="Mark as resolved (Enter)"
+                      >
+                        <div 
+                          className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
+                          style={{ backgroundColor: (selectedRequest.status === 'resolved' || selectedRequest.status === 'closed') ? '#10b981' : '#059669', minWidth: '24px', minHeight: '24px' }}
+                        >
+                          {(selectedRequest.status === 'resolved' || selectedRequest.status === 'closed') ? (
+                            <CheckCircleSolidIcon className="w-4 h-4 text-white" />
+                          ) : (
+                            <CheckCircleIcon className="w-4 h-4 text-white" />
+                          )}
+                        </div>
+                        <span className="text-xs ai-panel-text-secondary text-left leading-tight">{selectedRequest.status === 'resolved' || selectedRequest.status === 'closed' ? 'Resolved' : 'Mark Resolved'}</span>
+                      </button>
+                      {selectedRequest.board_ref && (
+                        <a
+                          href={`/${currentBusiness?.business_urlname}/s/${selectedRequest.board_ref}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-2 border border-white/20"
+                          title="Open board"
+                        >
+                          <div 
+                            className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
+                            style={{ backgroundColor: '#10b981', minWidth: '24px', minHeight: '24px' }}
+                          >
+                            <ArrowTopRightOnSquareIcon className="w-4 h-4 text-white" />
+                          </div>
+                          <span className="text-xs ai-panel-text-secondary text-left leading-tight">Open Board</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* AI Tools Section (moved below Manage Request) */}
+                  <div className="mb-2 pt-4 border-t border-white/10">
+                    <h4 className="text-xs font-medium mb-3 ai-panel-text-secondary uppercase tracking-wide flex items-center gap-2">
+                      <AIAssistantIcon size="xs" />
+                      <SparklesIcon className="w-4 h-4" />
+                      AI Tools
+                    </h4>
+                    <div className="grid grid-cols-3 gap-2">
+                      <button
+                        onClick={() => setShowGenerateResponseModal(true)}
+                        className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-2 border border-white/20"
+                        title="Generate AI response (Ctrl+R)"
+                      >
+                        <div 
+                          className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
+                          style={{ backgroundColor: '#3b82f6', minWidth: '24px', minHeight: '24px' }}
+                        >
+                          <SparklesIcon className="w-4 h-4 text-white" />
+                        </div>
+                        <span className="text-xs ai-panel-text-secondary text-left leading-tight">Generate Response</span>
+                      </button>
+                      {/* Open Board moved to Manage Request section above */}
+                      <button
+                        onClick={() => setShowTextEnhancementModal(true)}
+                        className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-2 border border-white/20"
+                        title="Enhance text (Ctrl+E)"
+                      >
+                        <div 
+                          className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
+                          style={{ backgroundColor: '#a855f7', minWidth: '24px', minHeight: '24px' }}
+                        >
+                          <WrenchScrewdriverIcon className="w-4 h-4 text-white" />
+                        </div>
+                        <span className="text-xs ai-panel-text-secondary text-left leading-tight">Enhance Text</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="p-4 text-[var(--dashboard-text-tertiary)] text-sm">Select a request to use AI tools</div>
+            )}
+          </div>
         </div>
 
         {/* Generate Response Modal */}
         <Dialog open={showGenerateResponseModal} onOpenChange={setShowGenerateResponseModal}>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle className="flex items-center space-x-2">
-                <SparklesIcon className="w-5 h-5 text-blue-600" />
-                <span>Generate AI Response</span>
-              </DialogTitle>
-              <DialogDescription>
-                Generate an AI-powered response for this support request
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className="space-y-4">
-              {/* Request Summary */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-medium text-sm mb-2">Request Summary:</h4>
-                <div className="text-sm text-gray-600">
-                  <p><strong>Category:</strong> {selectedRequest?.category}</p>
-                  <p><strong>Priority:</strong> {selectedRequest?.priority}</p>
-                  <p><strong>Message:</strong> {selectedRequest?.message}</p>
-                </div>
-              </div>
+          <div className="no-scroll max-w-xl min-w-[520px] relative overflow-visible p-0 rounded-2xl mx-0">
+            <div className="relative rounded-2xl overflow-hidden" style={{ background: 'var(--ai-modal-bg-base)', backgroundImage: 'var(--ai-modal-bg-gradient)' }}>
+            {/* Accent Blur Layers */}
+            <div 
+              className="absolute z-0"
+              style={{
+                background: 'var(--ai-panel-accent-1)',
+                filter: 'blur(40px)',
+                opacity: 0.2,
+                height: '80px',
+                bottom: '-40px',
+                left: '0',
+                width: '50%',
+                borderRadius: '100%'
+              }}
+            ></div>
+            <div 
+              className="absolute z-0"
+              style={{
+                background: 'var(--ai-panel-accent-2)',
+                filter: 'blur(40px)',
+                opacity: 0.2,
+                height: '80px',
+                bottom: '-40px',
+                right: '0',
+                width: '50%',
+                borderRadius: '100%'
+              }}
+            ></div>
 
-              {/* AI Generation Cost */}
-              <div className="bg-blue-50 rounded-lg p-4 text-center">
-                <div className="flex items-center justify-center space-x-4">
-                  <div>
-                    <h4 className="font-semibold text-blue-900">AI Generation Cost</h4>
-                    <p className="text-sm text-blue-700">This will use 1 AI generation credit</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-blue-900">1 Credit</p>
-                    <p className="text-xs text-blue-600">Credits remaining: 10</p>
-                  </div>
-                </div>
+            <div className="relative z-10 text-center space-y-4 p-6">
+              <div className="flex justify-center">
+                {!isGeneratingResponse && <AIAssistantIcon size="md" />}
               </div>
+              <h3 className="text-lg font-medium ai-panel-text">Generate AI Response</h3>
 
-              {/* Error Display */}
-              {generationError && (
-                <div className="bg-red-50 rounded-lg p-4 text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="w-4 h-4 bg-red-400 rounded-full flex items-center justify-center">
-                      <span className="text-red-800 text-xs font-bold">!</span>
+              {isGeneratingResponse ? (
+                <div className="py-6">
+                  <LoadingAIGeneration size="lg" text="Generating response..." />
+                </div>
+              ) : (
+                <div className="space-y-3 text-left">
+                  <div className="ai-panel-card p-3 rounded-lg">
+                    <div className="text-xs ai-panel-text-secondary mb-1">Request Summary</div>
+                    <div className="text-xs ai-panel-text space-y-0.5">
+                      <div><span className="ai-panel-text-secondary">Category:</span> {selectedRequest?.category}</div>
+                      <div><span className="ai-panel-text-secondary">Priority:</span> {selectedRequest?.priority}</div>
+                      <div><span className="ai-panel-text-secondary">Message:</span> {selectedRequest?.message}</div>
                     </div>
-                    <p className="text-sm text-red-800">{generationError}</p>
                   </div>
+
+                  {/* Customer Message Card - matches middle panel card */}
+                  <div>
+                    <div className={`text-xs font-medium mb-2 ai-panel-text-secondary uppercase tracking-wide`}>Customer Message</div>
+                    <div className={`relative p-4 rounded-lg border bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] shadow-sm`}>
+                      <div className={`text-sm leading-relaxed mb-0 text-[var(--dashboard-text-primary)] relative z-10`}>
+                        {selectedRequest?.message}
+                      </div>
+                      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 rounded-b-lg bg-gradient-to-b from-transparent to-blue-100/40"></div>
+                    </div>
+                  </div>
+
+                  {/* Cost Card (always visible) */}
+                  <AICostCard creditsRequired={1} creditsRemaining={'—'} />
+
+                  {responseError && (
+                    <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-3 text-center">
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className="w-4 h-4 bg-red-400 rounded-full flex items-center justify-center">
+                          <span className="text-red-800 text-xs font-bold">!</span>
+                        </div>
+                        <p className="text-xs text-red-800 dark:text-red-200">{responseError}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {generatedResponse && (
+                    <div>
+                      <Label htmlFor="generated-response" className="text-xs ai-panel-text-secondary">Generated Response</Label>
+                      <Textarea
+                        id="generated-response"
+                        value={generatedResponse}
+                        onChange={(e) => setGeneratedResponse(e.target.value)}
+                        rows={8}
+                        className="mt-2"
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
-              {/* Generated Response */}
-              {generatedResponse && (
-                <div>
-                  <Label htmlFor="generated-response">Generated Response:</Label>
-                  <Textarea
-                    id="generated-response"
-                    value={generatedResponse}
-                    onChange={(e) => setGeneratedResponse(e.target.value)}
-                    rows={8}
-                    className="mt-2"
-                  />
-                </div>
-              )}
+              <div className="pt-2">
+                <AIActionButton
+                  onClick={generateResponse}
+                  isLoading={isGeneratingResponse}
+                  text="Generate Response"
+                  loadingText="Generating..."
+                />
+              </div>
             </div>
-
-            <DialogFooter>
-              <Button
-                onClick={generateResponse}
-                disabled={isGenerating}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-              >
-                {isGenerating ? (
-                  <>
-                    <LoadingSparkles className="w-4 h-4 mr-2" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <SparklesIcon className="w-4 h-4 mr-2" />
-                    Generate Response
-                  </>
-                )}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
+            </div>
+          </div>
         </Dialog>
 
         {/* Text Enhancement Modal */}
         <Dialog open={showTextEnhancementModal} onOpenChange={setShowTextEnhancementModal}>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle className="flex items-center space-x-2">
-                <WrenchScrewdriverIcon className="w-5 h-5 text-purple-600" />
-                <span>Apply Text Enhancement</span>
-              </DialogTitle>
-              <DialogDescription>
-                Enhance the support request message with AI-powered improvements
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className="space-y-4">
-              {/* Original Text */}
-              <div>
-                <Label htmlFor="original-text">Original Message:</Label>
-                <Textarea
-                  id="original-text"
-                  value={selectedRequest?.message || ''}
-                  readOnly
-                  rows={4}
-                  className="mt-2 bg-gray-50"
+          <div className="no-scroll max-w-xl min-w-[520px] relative overflow-visible p-0 rounded-2xl mx-0">
+            <div className="relative rounded-2xl overflow-hidden" style={{ background: 'var(--ai-modal-bg-base)', backgroundImage: 'var(--ai-modal-bg-gradient)' }}>
+            {/* Accent Blur Layers */}
+            <div 
+              className="absolute z-0"
+              style={{
+                background: 'var(--ai-panel-accent-2)',
+                filter: 'blur(40px)',
+                opacity: 0.2,
+                height: '80px',
+                bottom: '-40px',
+                left: '0',
+                width: '50%',
+                borderRadius: '100%'
+              }}
+            ></div>
+            <div 
+              className="absolute z-0"
+              style={{
+                background: 'var(--ai-panel-accent-3)',
+                filter: 'blur(40px)',
+                opacity: 0.2,
+                height: '80px',
+                bottom: '-40px',
+                right: '0',
+                width: '50%',
+                borderRadius: '100%'
+              }}
+            ></div>
+
+            <div className="relative z-10 text-center space-y-4 p-6">
+              <div className="flex justify-center">
+                {!isEnhancingText && <AIAssistantIcon size="md" />}
+              </div>
+              <h3 className="text-lg font-medium ai-panel-text">Apply Text Enhancement</h3>
+
+              {isEnhancingText ? (
+                <div className="py-6">
+                  <LoadingAIGeneration size="lg" text="Enhancing text..." />
+                </div>
+              ) : (
+                <div className="space-y-3 text-left">
+                  {/* Customer Message Card - matches middle panel card */}
+                  <div>
+                    <div className={`text-xs font-medium mb-2 ai-panel-text-secondary uppercase tracking-wide`}>Customer Message</div>
+                    <div className={`relative p-4 rounded-lg border bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] shadow-sm`}>
+                      <div className={`text-sm leading-relaxed mb-0 text-[var(--dashboard-text-primary)] relative z-10`}>
+                        {selectedRequest?.message}
+                      </div>
+                      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 rounded-b-lg bg-gradient-to-b from-transparent to-blue-100/40"></div>
+                    </div>
+                  </div>
+
+                  {/* Cost Card (always visible) */}
+                  <AICostCard creditsRequired={1} creditsRemaining={'—'} />
+
+                  {enhancementError && (
+                    <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-3 text-center">
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className="w-4 h-4 bg-red-400 rounded-full flex items-center justify-center">
+                          <span className="text-red-800 text-xs font-bold">!</span>
+                        </div>
+                        <p className="text-xs text-red-800 dark:text-red-200">{enhancementError}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {enhancedText && (
+                    <div>
+                      <Label htmlFor="enhanced-text" className="text-xs ai-panel-text-secondary">Enhanced Message</Label>
+                      <Textarea
+                        id="enhanced-text"
+                        value={enhancedText}
+                        onChange={(e) => setEnhancedText(e.target.value)}
+                        rows={8}
+                        className="mt-2 ai-input"
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div className="pt-2">
+                <AIActionButton
+                  onClick={enhanceText}
+                  isLoading={isEnhancingText}
+                  text="Enhance Text"
+                  loadingText="Enhancing..."
                 />
               </div>
-
-              {/* AI Enhancement Cost */}
-              <div className="bg-purple-50 rounded-lg p-4 text-center">
-                <div className="flex items-center justify-center space-x-4">
-                  <div>
-                    <h4 className="font-semibold text-purple-900">AI Enhancement Cost</h4>
-                    <p className="text-sm text-purple-700">This will use 1 AI generation credit</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-purple-900">1 Credit</p>
-                    <p className="text-xs text-purple-600">Credits remaining: 10</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Error Display */}
-              {generationError && (
-                <div className="bg-red-50 rounded-lg p-4 text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="w-4 h-4 bg-red-400 rounded-full flex items-center justify-center">
-                      <span className="text-red-800 text-xs font-bold">!</span>
-                    </div>
-                    <p className="text-sm text-red-800">{generationError}</p>
-                  </div>
-                </div>
-              )}
-
-              {/* Enhanced Text */}
-              {enhancedText && (
-                <div>
-                  <Label htmlFor="enhanced-text">Enhanced Message:</Label>
-                  <Textarea
-                    id="enhanced-text"
-                    value={enhancedText}
-                    onChange={(e) => setEnhancedText(e.target.value)}
-                    rows={8}
-                    className="mt-2"
-                  />
-                </div>
-              )}
             </div>
-
-            <DialogFooter>
-              <Button
-                onClick={enhanceText}
-                disabled={isGenerating}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
-              >
-                {isGenerating ? (
-                  <>
-                    <LoadingSparkles className="w-4 h-4 mr-2" />
-                    Enhancing...
-                  </>
-                ) : (
-                  <>
-                    <WrenchScrewdriverIcon className="w-4 h-4 mr-2" />
-                    Enhance Text
-                  </>
-                )}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
+            </div>
+          </div>
         </Dialog>
+          </div>
+        </div>
       </div>
     </DashboardLayout>
   )

@@ -74,6 +74,9 @@ import { cn } from '@/lib/utils'
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { LoadingSparkles } from '@/components/ui/loading-sparkles'
 import { useTheme } from "@/contexts/ThemeProvider"
+import AIActionButton from "@/components/ui/ai-action-button"
+import { AICostCard } from "@/components/ui/ai-cost-card"
+import { LoadingAIGeneration } from '@/components/ui/loading-ai-generation'
 
 interface Customer {
   id: string
@@ -455,16 +458,56 @@ export default function MarketingEmailAssistantWrapper({
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="mb-6">
-          <div className="flex flex-col items-center text-center">
-            <AIAssistantIcon size="md" className="mb-4" />
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
-              Marketing Email Assistant
-            </h1>
+      <div className="max-w-[1400px] mx-auto">
+        {/* Top Navbar (simulated) */}
+        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">Email Assistant</p>
+            </div>
           </div>
         </div>
+
+        {/* Content Wrapper with Background */}
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+          <div className="space-y-6">
+            {/* Header with AI accent gradient layers */}
+            <div className="mb-6 relative overflow-visible">
+              {/* Accent Color Layers */}
+              <div
+                className="absolute z-0"
+                style={{
+                  background: 'var(--ai-panel-accent-1)',
+                  filter: 'blur(40px)',
+                  opacity: 0.2,
+                  height: '140px',
+                  width: '140px',
+                  top: '-20px',
+                  left: 'calc(50% - 164px)',
+                  borderRadius: '24px'
+                }}
+              ></div>
+              <div
+                className="absolute z-0"
+                style={{
+                  background: 'var(--ai-panel-accent-2)',
+                  filter: 'blur(40px)',
+                  opacity: 0.2,
+                  height: '140px',
+                  width: '140px',
+                  top: '-20px',
+                  left: 'calc(50% + 24px)',
+                  borderRadius: '24px'
+                }}
+              ></div>
+
+              <div className="relative z-10 flex flex-col items-center text-center">
+                <AIAssistantIcon size="md" className="mb-4" />
+                <h1 className="text-2xl lg:text-3xl font-medium text-[var(--dashboard-text-primary)] mb-2">
+                  Marketing Email Assistant
+                </h1>
+              </div>
+            </div>
 
         {/* Main Content */}
         <div className="space-y-6 max-w-3xl mx-auto">
@@ -526,14 +569,14 @@ export default function MarketingEmailAssistantWrapper({
                         ].map((quality) => (
                           <div
                             key={quality}
-                            className={`border-2 rounded-full cursor-pointer transition-colors px-3 py-1 text-center whitespace-nowrap ${
+                            className={`border rounded-full cursor-pointer transition-colors px-3 py-1 text-center whitespace-nowrap ${
                               aiGenerationSettings.businessQualities.includes(quality)
                                 ? theme === 'dark' 
-                                  ? 'border-blue-500 bg-blue-900/20 ring-2 ring-blue-200'
-                                  : 'border-blue-500 bg-blue-50 ring-2 ring-blue-200'
+                                  ? 'border-gray-400 bg-white/20'
+                                  : 'border-gray-400 bg-gray-200'
                                 : theme === 'dark'
-                                  ? 'border-gray-600 hover:border-gray-500 hover:bg-gray-700'
-                                  : 'border-gray-400 hover:border-gray-500 hover:bg-gray-50'
+                                  ? 'border-white/10 hover:bg-white/10'
+                                  : 'border-gray-200/60 hover:bg-gray-100'
                             }`}
                             onClick={() => {
                               if (aiGenerationSettings.businessQualities.includes(quality)) {
@@ -550,7 +593,7 @@ export default function MarketingEmailAssistantWrapper({
                             }}
                           >
                             <span className={`text-xs font-medium ${
-                              theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
                             }`}>{quality}</span>
                           </div>
                         ))}
@@ -586,17 +629,17 @@ export default function MarketingEmailAssistantWrapper({
                               onChange={(e) => setAiGenerationSettings(prev => ({ ...prev, tone: e.target.value as any }))}
                               className="sr-only"
                             />
-                            <div className={`border-2 rounded-full px-3 py-1 text-center transition-colors whitespace-nowrap ${
+                            <div className={`border rounded-full px-3 py-1 text-center transition-colors whitespace-nowrap ${
                               aiGenerationSettings.tone === tone.value 
                                 ? theme === 'dark' 
-                                  ? 'border-blue-500 bg-blue-900/20' 
-                                  : 'border-blue-500 bg-blue-50'
+                                  ? 'border-gray-400 bg-white/20' 
+                                  : 'border-gray-400 bg-gray-200'
                                 : theme === 'dark'
-                                  ? 'border-gray-600 hover:border-gray-500 hover:bg-gray-700'
-                                  : 'border-gray-400 hover:border-gray-500 hover:bg-gray-50'
+                                  ? 'border-white/10 hover:bg-white/10'
+                                  : 'border-gray-200/60 hover:bg-gray-100'
                             }`}>
                               <div className={`font-medium text-xs ${
-                                theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
                               }`}>{tone.label}</div>
                             </div>
                           </label>
@@ -633,17 +676,17 @@ export default function MarketingEmailAssistantWrapper({
                               onChange={(e) => setAiGenerationSettings(prev => ({ ...prev, callToAction: e.target.value as any }))}
                               className="sr-only"
                             />
-                            <div className={`border-2 rounded-full px-3 py-1 text-center transition-colors whitespace-nowrap ${
+                            <div className={`border rounded-full px-3 py-1 text-center transition-colors whitespace-nowrap ${
                               aiGenerationSettings.callToAction === cta.value 
                                 ? theme === 'dark' 
-                                  ? 'border-blue-500 bg-blue-900/20' 
-                                  : 'border-blue-500 bg-blue-50'
+                                  ? 'border-gray-400 bg-white/20' 
+                                  : 'border-gray-400 bg-gray-200'
                                 : theme === 'dark'
-                                  ? 'border-gray-600 hover:border-gray-500 hover:bg-gray-700'
-                                  : 'border-gray-400 hover:border-gray-500 hover:bg-gray-50'
+                                  ? 'border-white/10 hover:bg-white/10'
+                                  : 'border-gray-200/60 hover:bg-gray-100'
                             }`}>
                               <div className={`font-medium text-xs ${
-                                theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
+                                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
                               }`}>{cta.label}</div>
                             </div>
                           </label>
@@ -701,14 +744,14 @@ export default function MarketingEmailAssistantWrapper({
 
                   {/* Generate Button */}
                   <div className="pt-4">
-                    <Button
-                      onClick={() => handleGenerateContent('general')}
+                    <AIActionButton
+                      text="Generate Email Content"
+                      loadingText="Generating content..."
+                      isLoading={isGenerating}
                       disabled={aiGenerationSettings.businessQualities.length === 0}
-                      className="w-full bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 hover:from-purple-700 hover:via-blue-700 hover:to-indigo-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 h-12 text-base font-normal rounded-2xl transform hover:scale-[1.02] hover:-translate-y-0.5"
-                    >
-                      <SparklesIcon className="w-5 h-5 mr-2 animate-pulse" />
-                      Generate Email Content
-                    </Button>
+                      onClick={() => handleGenerateContent('general')}
+                      size="lg"
+                    />
                   </div>
                 </div>
               ) : (
@@ -1205,127 +1248,128 @@ export default function MarketingEmailAssistantWrapper({
         </div>
 
                  {/* AI Generation Confirmation Modal */}
-         <Dialog open={showAIGenerationModal} onOpenChange={setShowAIGenerationModal}>
-           <DialogContent className="max-w-2xl text-center">
-             <DialogHeader className="text-center">
-               <DialogTitle className="flex items-center justify-center space-x-2">
-                 <SparklesIcon className="w-5 h-5 text-purple-600" />
-                 <span>Confirm AI Generation</span>
-               </DialogTitle>
-             </DialogHeader>
-             
-             <div className="space-y-6">
-               {/* Settings Summary */}
-               <div className="bg-gray-50 rounded-lg p-4 text-center">
-                <div className="space-y-3">
-                  <div>
-                    <span className="text-xs text-gray-500">Business Qualities:</span>
-                    <div className="flex flex-wrap gap-1 mt-1 justify-center">
-                      {aiGenerationSettings.businessQualities.map((quality) => (
-                        <Badge key={quality} variant="outline" className="text-xs">
-                          {quality}
-                        </Badge>
-                      ))}
+        {showAIGenerationModal && (
+          <div className={`fixed inset-0 ${theme === 'dark' ? 'bg-black/50' : 'bg-black/30'} backdrop-blur-sm flex items-center justify-center z-50 p-4`}>
+            <div className={`rounded-2xl w-full max-w-md relative overflow-visible p-0`} style={{ background: 'var(--ai-modal-bg-base)', backgroundImage: 'var(--ai-modal-bg-gradient)', minWidth: '360px' }}>
+              {/* Accent Color Layers */}
+              <div 
+                className="absolute z-0"
+                style={{
+                  background: 'var(--ai-panel-accent-1)',
+                  filter: 'blur(40px)',
+                  opacity: 0.2,
+                  height: '80px',
+                  bottom: '-40px',
+                  left: '0',
+                  width: '50%',
+                  borderRadius: '100%'
+                }}
+              ></div>
+              <div 
+                className="absolute z-0"
+                style={{
+                  background: 'var(--ai-panel-accent-2)',
+                  filter: 'blur(40px)',
+                  opacity: 0.2,
+                  height: '80px',
+                  bottom: '-40px',
+                  right: '0',
+                  width: '50%',
+                  borderRadius: '100%'
+                }}
+              ></div>
+
+              <div className="p-6 text-center relative z-10">
+                {!isGenerating && (
+                  <>
+                    <h3 className="text-lg font-medium ai-panel-text mb-4">Confirm AI Generation</h3>
+                    <div className="flex justify-center mb-4">
+                      <AIAssistantIcon size="md" />
+                    </div>
+                  </>
+                )}
+
+                {isGenerating ? (
+                  <div className="relative z-30 mb-2">
+                    <div className="w-full h-48 relative rounded-lg overflow-hidden">
+                      <LoadingAIGeneration size="lg" text="Generating your AI content..." />
                     </div>
                   </div>
-                  
-                  <div>
-                    <span className="text-xs text-gray-500">Tone:</span>
-                    <span className="text-xs text-gray-600 ml-2 capitalize">{aiGenerationSettings.tone}</span>
-                  </div>
-                  
-                  <div>
-                    <span className="text-xs text-gray-500">Call to Action:</span>
-                    <span className="text-xs text-gray-600 ml-2 capitalize">
-                      {aiGenerationSettings.callToAction.replace('_', ' ')}
-                    </span>
-                  </div>
-                  
-                  {aiGenerationSettings.includePromotion && (
-                    <div>
-                      <span className="text-xs text-gray-500">Promotion:</span>
-                      <span className="text-xs text-gray-600 ml-2 capitalize">
-                        {aiGenerationSettings.promotionType.replace('_', ' ')}
-                      </span>
+                ) : (
+                  <>
+                    {/* Scrollable Content Container */}
+                    <div className="max-h-64 overflow-y-auto mb-2 text-center">
+                      {/* Settings Summary */}
+                      <div className="mb-4 pb-4 border-b border-white/10">
+                        <h4 className="text-sm font-medium ai-panel-text-secondary mb-2">Generation Settings</h4>
+                        <div className="space-y-2 text-xs">
+                          <div>
+                            <span className="ai-panel-text-secondary">Business Qualities:</span>
+                            <div className="flex flex-wrap gap-1 mt-1 justify-center">
+                              {aiGenerationSettings.businessQualities.map((quality) => (
+                                <span key={quality} className="px-2 py-0.5 rounded-full border text-[10px] ai-panel-text" style={{ borderColor: 'rgba(255,255,255,0.15)' }}>
+                                  {quality}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          <div>
+                            <span className="ai-panel-text-secondary">Tone:</span>
+                            <span className="ai-panel-text ml-2 capitalize">{aiGenerationSettings.tone}</span>
+                          </div>
+                          <div>
+                            <span className="ai-panel-text-secondary">Call to Action:</span>
+                            <span className="ai-panel-text ml-2 capitalize">{aiGenerationSettings.callToAction.replace('_', ' ')}</span>
+                          </div>
+                          {aiGenerationSettings.includePromotion && (
+                            <div>
+                              <span className="ai-panel-text-secondary">Promotion:</span>
+                              <span className="ai-panel-text ml-2 capitalize">{aiGenerationSettings.promotionType.replace('_', ' ')}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Credits Summary */}
+                      <div className="mb-1 flex justify-center">
+                        <AICostCard 
+                          creditsRequired={1}
+                          creditsRemaining={aiContentGenerationRateLimitStatus.generationsAvailable}
+                        />
+                      </div>
+
+                      {/* Error */}
+                      {generationError && (
+                        <div className="mt-3">
+                          <div className="text-xs font-medium text-red-300">{generationError}</div>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col gap-3 mt-2">
+                      <AIActionButton
+                        text="Confirm & Generate"
+                        loadingText="Generating..."
+                        isLoading={isGenerating}
+                        disabled={isGenerating || aiContentGenerationRateLimitStatus.generationsAvailable <= 0}
+                        onClick={handleConfirmAIGeneration}
+                        size="md"
+                      />
+                      <button
+                        onClick={() => setShowAIGenerationModal(false)}
+                        className="text-sm ai-panel-text-secondary hover:ai-panel-text transition-colors underline"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
-
-              {/* Credit Cost */}
-              <div className="bg-blue-50 rounded-lg p-4 text-center">
-                <div className="flex items-center justify-center space-x-4">
-                  <div>
-                    <h4 className="font-semibold text-blue-900">AI Generation Cost</h4>
-                    <p className="text-sm text-blue-700">This will use 1 AI generation credit</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-blue-900">1 Credit</p>
-                    <p className="text-xs text-blue-600">
-                      {aiContentGenerationRateLimitStatus.generationsAvailable} remaining
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-                             {/* Warning if low credits */}
-               {aiContentGenerationRateLimitStatus.generationsAvailable <= 2 && (
-                 <div className="bg-yellow-50 rounded-lg p-4 text-center">
-                   <div className="flex items-center justify-center space-x-2">
-                     <div className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center">
-                       <span className="text-yellow-800 text-xs font-bold">!</span>
-                     </div>
-                     <p className="text-sm text-yellow-800">
-                       Low AI generation credits remaining. Consider upgrading your plan.
-                     </p>
-                   </div>
-                 </div>
-               )}
-
-               {/* Error Display */}
-               {generationError && (
-                 <div className="bg-red-50 rounded-lg p-4 text-center">
-                   <div className="flex items-center justify-center space-x-2">
-                     <div className="w-4 h-4 bg-red-400 rounded-full flex items-center justify-center">
-                       <span className="text-red-800 text-xs font-bold">!</span>
-                     </div>
-                     <p className="text-sm text-red-800">
-                       {generationError}
-                     </p>
-                   </div>
-                 </div>
-               )}
             </div>
-
-                         <DialogFooter className="flex flex-col space-y-2 pt-4">
-               <Button
-                 onClick={handleConfirmAIGeneration}
-                 disabled={isGenerating || aiContentGenerationRateLimitStatus.generationsAvailable <= 0}
-                 className="w-full bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 hover:from-violet-600 hover:via-purple-600 hover:to-fuchsia-600 text-white border-0 h-14 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5 relative overflow-hidden group"
-               >
-                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
-                 <SparklesIcon className="w-5 h-5 mr-2 relative z-10" />
-                 <span className="relative z-10">Generate Content</span>
-               </Button>
-              <button
-                onClick={() => setShowAIGenerationModal(false)}
-                className="text-gray-500 hover:text-gray-700 text-sm font-medium transition-colors"
-              >
-                Cancel
-              </button>
-            </DialogFooter>
-
-                         {/* AI Loading Overlay */}
-             {isGenerating && (
-               <div className="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-lg flex items-center justify-center z-50">
-                 <LoadingSparkles />
-               </div>
-             )}
-          </DialogContent>
-        </Dialog>
-
-
-
+          </div>
+        )}
+        
         {/* Recipients Modal */}
         <Dialog open={showRecipientsModal} onOpenChange={setShowRecipientsModal}>
           <DialogContent className="max-w-2xl max-h-[80vh]">
@@ -1444,6 +1488,8 @@ export default function MarketingEmailAssistantWrapper({
             </div>
           </DialogContent>
         </Dialog>
+          </div>
+        </div>
       </div>
     </DashboardLayout>
   )

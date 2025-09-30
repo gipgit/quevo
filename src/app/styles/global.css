@@ -43,6 +43,10 @@
   /* AI Panel Specific */
   --ai-panel-bg-base: #fafbfc;
   --ai-panel-bg-gradient: linear-gradient(135deg, #f1f5f9, #e2e8f0, #f8fafc);
+  
+  /* AI Modal Specific */
+  --ai-modal-bg-base: var(--ai-panel-bg-base);
+  --ai-modal-bg-gradient: var(--ai-panel-bg-gradient);
   --ai-panel-text: #1f2937;
   --ai-panel-text-secondary: #4b5563;
   --ai-panel-accent-1: #8b5cf6;
@@ -52,7 +56,7 @@
   /* AI Button Specific */
   --ai-button-bg: linear-gradient(to bottom, #212121, #2c2b2b);
   --ai-button-glow: linear-gradient(135deg, #6366f1 0%, #3b82f6 50%, #ecf163 100%);
-  --ai-button-border-gradient: linear-gradient(to right, #60a5fa, #8b5cf6, #ec4899, #f59e0b, #3b82f6);
+  --ai-button-border-gradient: linear-gradient(to right, #60a5fa, #8b5cf6, #f59e0b, #3b82f6);
   --ai-button-text: #ffffff;
   --ai-button-copy-bg: #3b82f6;
   --ai-button-copy-hover: #2563eb;
@@ -73,12 +77,28 @@
   --ai-panel-card-hover-border: rgba(75, 85, 99, 0.6);
   --ai-panel-card-selected-bg: rgba(75, 85, 99, 0.15);
   --ai-panel-card-selected-border: rgba(75, 85, 99, 0.8);
+  
+  /* Progress Bar Specific */
+  --progress-bg: linear-gradient(135deg, #f1f5f9, #e2e8f0, #cbd5e1);
+  --progress-fill: linear-gradient(135deg, #3b82f6, #2563eb, #1d4ed8);
+  --progress-fill-hover: linear-gradient(135deg, #2563eb, #1d4ed8, #1e40af);
+
+  /* Dashboard Button Variables - Light */
+  --dashboard-button-primary-bg: var(--dashboard-bg-secondary);
+  --dashboard-button-primary-bg-hover: var(--dashboard-bg-tertiary);
+  --dashboard-button-primary-text: var(--dashboard-text-primary);
+  --dashboard-button-primary-border: var(--dashboard-border-tertiary);
+
+  --dashboard-button-secondary-bg: transparent;
+  --dashboard-button-secondary-bg-hover: var(--dashboard-bg-tertiary);
+  --dashboard-button-secondary-text: var(--dashboard-text-secondary);
+  --dashboard-button-secondary-border: var(--dashboard-border-primary);
 }
 
 .dark {
-  /* Dark theme colors - warmer neutral grays */
-  --dashboard-bg-primary: #0a0a0a;
-  --dashboard-bg-secondary: #141414;
+  /* Dark theme colors - warmer neutral grays (invert primary/secondary) */
+  --dashboard-bg-primary: #141414;
+  --dashboard-bg-secondary: #0a0a0a;
   --dashboard-bg-tertiary: #1a1a1a;
   --dashboard-bg-card: #141414;
   --dashboard-bg-input: #1a1a1a;
@@ -111,6 +131,10 @@
   /* AI Panel Specific */
   --ai-panel-bg-base: #171717;
   --ai-panel-bg-gradient: linear-gradient(180deg, #0d0d0d, #1d1d1d, #212121);
+  
+  /* AI Modal Specific */
+  --ai-modal-bg-base: var(--ai-panel-bg-base);
+  --ai-modal-bg-gradient: var(--ai-panel-bg-gradient);
   --ai-panel-text: #ffffff;
   --ai-panel-text-secondary: rgba(255, 255, 255, 0.7);
   --ai-panel-accent-1: #8A5FBF;
@@ -120,7 +144,7 @@
   /* AI Button Specific */
   --ai-button-bg: linear-gradient(to bottom, #2d2e2e, #3c3d3e);
   --ai-button-glow: linear-gradient(135deg, #eaf1ec 0%, #f7f8e8 50%, #eeefe9 100%);
-  --ai-button-border-gradient: linear-gradient(to right, #60a5fa, #8b5cf6, #ec4899, #f59e0b, #3b82f6);
+  --ai-button-border-gradient: linear-gradient(to right, #60a5fa, #8b5cf6, #f59e0b, #3b82f6);
   --ai-button-text: #ffffff;
   --ai-button-copy-bg: #3b82f6;
   --ai-button-copy-hover: #2563eb;
@@ -141,6 +165,22 @@
   --ai-panel-card-hover-border: rgba(156, 163, 175, 0.6);
   --ai-panel-card-selected-bg: rgba(156, 163, 175, 0.2);
   --ai-panel-card-selected-border: rgba(156, 163, 175, 0.8);
+  
+  /* Progress Bar Specific */
+  --progress-bg: linear-gradient(135deg, #1a1a1a, #2a2a2a, #3a3a3a);
+  --progress-fill: linear-gradient(135deg, #60a5fa, #3b82f6, #2563eb);
+  --progress-fill-hover: linear-gradient(135deg, #3b82f6, #2563eb, #1d4ed8);
+
+  /* Dashboard Button Variables - Dark */
+  --dashboard-button-primary-bg: #262626;
+  --dashboard-button-primary-bg-hover: #2f2f2f;
+  --dashboard-button-primary-text: var(--dashboard-text-primary);
+  --dashboard-button-primary-border: var(--dashboard-border-tertiary);
+
+  --dashboard-button-secondary-bg: transparent;
+  --dashboard-button-secondary-bg-hover: var(--dashboard-bg-tertiary);
+  --dashboard-button-secondary-text: var(--dashboard-text-secondary);
+  --dashboard-button-secondary-border: var(--dashboard-border-primary);
 }
 
 /* Action Bar Component Styles */
@@ -173,12 +213,64 @@
   background-image: var(--ai-button-bg), var(--ai-button-border-gradient);
   background-origin: border-box;
   background-clip: padding-box, border-box;
-  border: 2px solid transparent;
+  /* Prepare moving border gradient */
+  background-size: 100% 100%, 200% 100%;
+  background-position: 0 0, 0 0;
+  border: 4px solid transparent;
   color: var(--ai-button-text);
 }
 
 .ai-button-generate-gradient .ai-button-glow {
   background: var(--ai-button-glow);
+}
+
+/* Subtle sliding effect of the colored border on hover */
+@keyframes aiBorderSlide {
+  0% { background-position: 0 0, 0% 0; }
+  100% { background-position: 0 0, 200% 0; }
+}
+
+.ai-button-generate-gradient:hover {
+  animation: aiBorderSlide 3.5s linear infinite;
+}
+
+/* Glow/shine swipe effect for loading state */
+@keyframes aiShineSwipe {
+  0% {
+    background-position: -100% 0, 0 0, 0 0; /* shine, inner, border */
+  }
+  50% {
+    background-position: 100% 0, 0 0, 200% 0; /* move border halfway faster */
+  }
+  100% {
+    background-position: 200% 0, 0 0, 400% 0; /* complete border lap faster */
+  }
+}
+
+.ai-button-generate-gradient.loading {
+  animation: aiShineSwipe 3.5s linear infinite;
+  background-image: 
+    /* Simple neutral white shine */
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 40%,
+      rgba(255, 255, 255, 0.15) 45%,
+      rgba(255, 255, 255, 0.25) 50%,
+      rgba(255, 255, 255, 0.15) 55%,
+      transparent 60%,
+      transparent 100%
+    ),
+    var(--ai-button-bg), 
+    var(--ai-button-border-gradient);
+  /* Make the border gradient move faster by increasing its virtual width */
+  background-size: 200% 100%, 100% 100%, 400% 100%;
+  box-shadow: none;
+}
+
+/* Keep single shine rhythm during loading; disable hover border animation */
+.ai-button-generate-gradient.loading:hover {
+  animation: aiShineSwipe 3.5s linear infinite;
 }
 
 .ai-button-copy {
@@ -341,27 +433,27 @@
 
 @font-face {
     font-family: "FontMain";
-    src: url("../../../public/fonts/custom/Geist-Light.otf") format("opentype");
+    src: url("../../../public/fonts/custom/ABC\ Diatype\ Light.otf") format("opentype");
 }
 
 @font-face {
     font-family: "FontSemiBold";
-    src: url("../../../public/fonts/custom/Geist-Medium.otf") format("truetype");
+    src: url("../../../public/fonts/custom/ABC\ Diatype\ Medium.otf") format("truetype");
 }
 
 @font-face {
     font-family: "FontBold";
-    src: url("../../../public/fonts/custom/Geist-Medium.otf") format("truetype");
+    src: url("../../../public/fonts/custom/ABC\ Diatype\ Medium.otf") format("truetype");
 }
 
 @font-face {
     font-family: "FontHeading";
-    src: url("../../../public/fonts/custom/Geist-Medium.otf") format("truetype");
+    src: url("../../../public/fonts/custom/ABC\ Diatype\ Medium.otf") format("truetype");
 }
 
 @font-face {
     font-family: "FontButton";
-    src: url("../../../public/fonts/custom/Geist-Regular.otf") format("truetype");
+    src: url("../../../public/fonts/custom/ABC\ Diatype\ Regular.otf") format("truetype");
 }
 
 @font-face {
@@ -412,6 +504,7 @@ body.bg-transition {
 
 h1,h2,h3,h4,h5,h6{
     font-family: "FontHeading", sans-serif;
+    font-weight: inherit;
     line-height: 1;
     letter-spacing: 0px;
     margin: 0;

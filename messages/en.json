@@ -634,6 +634,7 @@
       "serviceBoards": { "title": "Service Boards", "description": "Manage your service boards." },
       "appointments": { "title": "Appointments", "description": "View and manage appointments." },
       "clients": { "title": "Clients", "description": "Manage your clients and send mass email campaigns." },
+      "supportRequests": { "title": "Support Requests", "description": "View and manage support requests." },
       "products": { "title": "Products", "description": "Manage your products." },
       "promotions": { "title": "Promotions", "description": "Create and manage promotions." }
     },

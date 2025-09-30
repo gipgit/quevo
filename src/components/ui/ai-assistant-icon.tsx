@@ -80,26 +80,16 @@ export function AIAssistantIcon({
           }
         }
         
-        @keyframes shadowPulse {
-          0%, 100% {
-            transform: scale(1);
-            opacity: 0.3;
-          }
-          50% {
-            transform: scale(1.4);
-            opacity: 0.5;
-          }
-        }
+        @keyframes shadowPulse { }
       `}</style>
       
-      {/* Animated Shadow */}
+      {/* Static Shadow */}
       <div 
         className={`absolute rounded-full ${shadowSizeClasses[size]}`}
         style={{
           background: 'linear-gradient(45deg, rgb(147, 51, 234) 0%, rgb(59, 130, 246) 50%, rgb(236, 72, 153) 100%)',
-          filter: 'blur(20px)',
-          opacity: 0.3,
-          animation: 'shadowPulse 3s ease-in-out infinite',
+          filter: 'blur(16px)',
+          opacity: 0.35,
           zIndex: 0
         }}
       ></div>

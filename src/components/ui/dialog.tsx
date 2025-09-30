@@ -54,7 +54,7 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div 
-        className="fixed inset-0 bg-black bg-opacity-50" 
+        className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" 
         onClick={() => onOpenChange(false)}
       />
       <div className="relative z-50">
@@ -65,8 +65,11 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
 }
 
 export function DialogContent({ children, className = '' }: DialogContentProps) {
+  const disableScroll = className?.includes('no-scroll');
+  const base = `bg-white dark:bg-zinc-800 rounded-lg shadow-xl max-w-md w-full mx-4`;
+  const scroll = disableScroll ? '' : ' max-h-[90vh] overflow-y-auto';
   return (
-    <div className={`bg-white dark:bg-zinc-800 rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto ${className}`}>
+    <div className={`${base}${scroll} ${className}`}>
       {children}
     </div>
   );

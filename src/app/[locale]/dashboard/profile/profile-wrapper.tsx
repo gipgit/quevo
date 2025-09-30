@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useCallback } from "react"
 import { useTranslations } from "next-intl"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { useBusiness } from "@/lib/business-context"
@@ -22,7 +21,10 @@ import {
   LinkIcon, 
   CreditCardIcon, 
   Cog6ToothIcon, 
-  SwatchIcon 
+  SwatchIcon,
+  ShareIcon,
+  XMarkIcon,
+  GlobeAltIcon
 } from "@heroicons/react/24/outline"
 
 interface SocialLink {
@@ -91,22 +93,13 @@ export default function ProfileWrapper({
 }: ProfileWrapperProps) {
   const { currentBusiness } = useBusiness()
   
-  // Domain state to avoid hydration mismatch
-  const [DOMAIN, setDOMAIN] = useState("https://quevo.vercel.app")
-  
   // Section state for client-side navigation
   const [section, setSection] = useState(initialSection)
   
   const t = useTranslations("profile")
   const tCommon = useTranslations("Common")
   const { showToast } = useToaster()
-  const router = useRouter();
   
-  // Set the correct domain after component mounts
-  useEffect(() => {
-    const isLocalhost = window.location.hostname.includes("localhost")
-    setDOMAIN(isLocalhost ? "http://localhost:3000" : "https://quevo.vercel.app")
-  }, [])
   
   // Initialize state with server-fetched data
   const [currentProfileData, setCurrentProfileData] = useState<any>(initialProfileData || {})
@@ -128,6 +121,11 @@ export default function ProfileWrapper({
   const [profileImgPreview, setProfileImgPreview] = useState<string | null>(null)
   const [coverImgPreview, setCoverImgPreview] = useState<string | null>(null)
   const [clearImagePreviews, setClearImagePreviews] = useState<(() => void) | null>(null)
+  
+  // Share modal state
+  const [showShareModal, setShowShareModal] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const [isAnimating, setIsAnimating] = useState(false)
 
   // Change detection functions
   const hasInfoChanges = useCallback(() => {
@@ -520,6 +518,27 @@ export default function ProfileWrapper({
     setSection(tabId);
   };
 
+  // Share functionality
+  const publicUrl = currentBusiness ? `https://quevo.vercel.app/${currentBusiness.business_public_uuid}` : '';
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(publicUrl);
+      setCopied(true);
+      setIsAnimating(true);
+      setTimeout(() => {
+        setCopied(false);
+        setIsAnimating(false);
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+    }
+  };
+
+  const handleOpen = () => {
+    window.open(`${publicUrl}`, "_blank");
+  };
+
   const renderTabIcon = (iconName: string, isActive: boolean) => {
     const iconMap: Record<string, any> = {
       UserIcon,
@@ -543,8 +562,7 @@ export default function ProfileWrapper({
     { id: "appearance", label: t("tabs.appearance"), icon: "SwatchIcon" },
   ];
 
-  // Public URL
-  const publicUrl = `${DOMAIN}/${currentBusiness?.business_urlname || ""}`;
+  
 
   if (!currentBusiness) {
     return (
@@ -558,25 +576,39 @@ export default function ProfileWrapper({
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto p-2pm">
-        {/* Header */}
-        <div className="flex flex-row justify-between items-start sm:items-center gap-4 mb-8">
-          <div>
-            <h1 className="text-xl lg:text-2xl font-bold text-[var(--dashboard-text-primary)]">{t("title")}</h1>
-          </div>
-          <div>
-            <a 
-              href={publicUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2 bg-zinc-900 text-white rounded-lg hover:bg-zinc-800 font-medium transition-colors"
-            >
-              {t("openProfile")}
-            </a>
+      <div className="max-w-[1400px] mx-auto">
+        {/* Top Navbar (simulated) */}
+        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">Profile</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleOpen}
+                className="text-xs text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors flex items-center gap-1"
+                title="Open Public Profile"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                <span>Open</span>
+              </button>
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="text-xs text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors flex items-center gap-1"
+                title="Share Link"
+              >
+                <ShareIcon className="w-3 h-3" />
+                <span>Share</span>
+              </button>
+            </div>
           </div>
         </div>
-        
-        {/* Tab Navigation */}
+
+        {/* Content Wrapper with Background */}
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+          {/* Tab Navigation */}
         <div className="rounded-lg p-2 mb-8 bg-[var(--dashboard-bg-secondary)]">
           <nav className="flex justify-between overflow-x-auto">
             {tabs.map((tab) => {
@@ -717,7 +749,66 @@ export default function ProfileWrapper({
             </div>
           </div>
         </div>
+        </div>
       </div>
+
+      {/* Share Link Modal */}
+      {showShareModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="max-w-md w-full rounded-lg shadow-xl bg-[var(--dashboard-bg-card)] text-[var(--dashboard-text-primary)]">
+            <div className="flex items-center justify-between p-6 border-b border-[var(--dashboard-border-primary)]">
+              <h3 className="text-lg font-semibold">Share Your Business Link</h3>
+              <button
+                onClick={() => setShowShareModal(false)}
+                className="p-1 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+              >
+                <XMarkIcon className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="p-6">
+              <div className={`px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-3 shadow-sm border mb-4 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] transition-all duration-300 relative overflow-hidden ${
+                isAnimating ? 'animate-pill-shine' : ''
+              }`}>
+                <GlobeAltIcon className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                <span className="text-sm break-all">{publicUrl}</span>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleCopy}
+                  className={`flex-1 px-4 py-2 rounded-lg border transition-all duration-300 flex items-center justify-center gap-2 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)] ${
+                    copied ? 'text-green-600 border-green-200 bg-green-50' : ''
+                  }`}
+                >
+                  {copied ? (
+                    <>
+                      <svg className="w-4 h-4 animate-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span>Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      <span>Copy Link</span>
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={handleOpen}
+                  className="px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  <span>Open</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }

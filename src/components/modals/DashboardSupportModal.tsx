@@ -88,17 +88,24 @@ export default function DashboardSupportModal({
       {/* Modal */}
       <div className="relative w-full max-w-md rounded-2xl shadow-xl bg-white dark:bg-zinc-800">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            {t('support.title') || 'Support Request'}
-          </h2>
+        <div className="relative p-6 border-b border-gray-200 dark:border-gray-700">
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+            className="absolute right-6 top-6 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
             disabled={isSubmitting}
           >
             <XMarkIcon className="w-6 h-6" />
           </button>
+          <div className="text-center">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              {t('support.title') || 'Support Request'}
+            </h2>
+            <div className="mt-1">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-600 dark:bg-zinc-700 dark:text-gray-300 border border-gray-200 dark:border-zinc-600">
+                {t('support.expectedReplyTime') || 'Expected reply: ~2h'}
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Content */}
@@ -142,6 +149,14 @@ export default function DashboardSupportModal({
                    )}
                  </div>
                </div>
+              {/* Helpful links under textarea */}
+              <div className="mt-2 text-xs text-gray-600 dark:text-gray-300">
+                <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">Guides</a>
+                <span className="mx-2 text-gray-400">·</span>
+                <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">Faqs</a>
+                <span className="mx-2 text-gray-400">·</span>
+                <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">Updates</a>
+              </div>
              </>
            )}
         </form>

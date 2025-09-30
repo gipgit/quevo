@@ -20,7 +20,6 @@ import {
   CalendarIcon,
   ListBulletIcon,
   ClockIcon,
-  UserIcon,
   MapPinIcon,
   PhoneIcon,
   EnvelopeIcon,
@@ -80,6 +79,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
   const [currentDate, setCurrentDate] = useState<Date>(startOfDay(new Date()))
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [showDetailsMobile, setShowDetailsMobile] = useState(false)
 
   // Refetch appointments when business changes
   useEffect(() => {
@@ -345,22 +345,26 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
   if (appointments.length === 0) {
     return (
       <DashboardLayout>
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h1 className={`text-2xl font-bold ${
-                theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-              }`}>{t('title')}</h1>
+        <div className="max-w-[1400px] mx-auto">
+          {/* Top Navbar (simulated) */}
+          <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">{t('title')}</p>
+              </div>
             </div>
           </div>
 
-          <EmptyState
+          {/* Content Wrapper with Background */}
+          <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+            <EmptyState
             title={t('empty.title')}
             description={t('empty.description')}
             buttonText={t('addFirst')}
             onButtonClick={() => setSelectedDate(new Date())}
             icon={<svg className="mx-auto w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
           />
+          </div>
         </div>
       </DashboardLayout>
     )
@@ -368,94 +372,97 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto flex flex-col h-full">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-1 lg:mb-6 flex-shrink-0">
-          <div>
-            <h1 className={`text-xl lg:text-2xl font-bold ${
-              theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-            }`}>{t('title')}</h1>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            {/* Keyboard Shortcuts Button with Tooltip */}
-            <div className="relative group">
-              <button
-                className={`p-2 rounded-lg transition-colors ${
-                  theme === 'dark' 
-                    ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                }`}
-                title="Keyboard shortcuts"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </button>
-              
-              {/* Tooltip */}
-              <div className={`absolute right-0 top-full mt-2 p-3 rounded-lg shadow-lg border z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto ${
-                theme === 'dark' 
-                  ? 'bg-gray-800 border-gray-700 text-gray-300' 
-                  : 'bg-white border-gray-200 text-gray-700'
-              }`}>
-                <div className="text-xs whitespace-nowrap">
-                  <div className="font-medium mb-2">Keyboard Shortcuts:</div>
-                  <div>↑↓ Navigate appointments</div>
-                  <div>Enter Open appointment</div>
-                </div>
-                {/* Arrow pointing up */}
-                <div className={`absolute -top-1 right-4 w-2 h-2 rotate-45 ${
-                  theme === 'dark' 
-                    ? 'bg-gray-800 border-l border-t border-gray-700' 
-                    : 'bg-white border-l border-t border-gray-200'
-                }`}></div>
-              </div>
-            </div>
-            
-            {/* Navigation Arrows */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => navigateAppointment(-1)}
-                disabled={selectedIndex === 0}
-                className={`p-2 rounded-lg transition-colors ${
-                  selectedIndex === 0
-                    ? 'opacity-50 cursor-not-allowed'
-                    : theme === 'dark'
-                      ? 'hover:bg-gray-700'
-                      : 'hover:bg-gray-100'
-                }`}
-              >
-                <ArrowLeftIcon className="w-5 h-5" />
-              </button>
-              <span className={`text-sm ${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-              }`}>
-                {selectedIndex + 1} of {appointments.length}
-              </span>
-              <button
-                onClick={() => navigateAppointment(1)}
-                disabled={selectedIndex === appointments.length - 1}
-                className={`p-2 rounded-lg transition-colors ${
-                  selectedIndex === appointments.length - 1
-                    ? 'opacity-50 cursor-not-allowed'
-                    : theme === 'dark'
-                      ? 'hover:bg-gray-700'
-                      : 'hover:bg-gray-100'
-                }`}
-              >
-                <ArrowRightIcon className="w-5 h-5" />
-              </button>
+      <div className="max-w-[1400px] mx-auto">
+        {/* Top Navbar (simulated) */}
+        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">{t('title')}</p>
             </div>
           </div>
         </div>
 
-        {/* Main Content - Outlook-like Layout */}
+        {/* Content Wrapper with Background */}
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+          <div className="flex flex-col h-full">
+          </div>
+
+        {/* Main Content - 3 Column Layout */}
         <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-6 overflow-hidden">
           {/* Left Panel - Calendar/List View */}
           <div className={`w-full lg:w-80 border-b lg:border-b-0 lg:border-r ${
             theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
           } flex flex-col`}>
+            {/* Navigation Arrows (moved above progress bar) */}
+            <div className="p-2 lg:p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {selectedIndex + 1} of {appointments.length}
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => navigateAppointment(-1)}
+                    disabled={selectedIndex === 0}
+                    className={`p-2 rounded-lg transition-colors ${
+                      selectedIndex === 0
+                        ? 'opacity-50 cursor-not-allowed'
+                        : theme === 'dark'
+                          ? 'hover:bg-gray-700'
+                          : 'hover:bg-gray-100'
+                    }`}
+                  >
+                    <ArrowLeftIcon className="w-5 h-5" />
+                  </button>
+                  {/* Keyboard Shortcuts Button with Tooltip (center) */}
+                  <div className="relative group">
+                    <button
+                      className={`p-2 rounded-lg transition-colors ${
+                        theme === 'dark' 
+                          ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
+                          : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                      }`}
+                      title="Keyboard shortcuts"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </button>
+                    
+                    {/* Tooltip */}
+                    <div className={`absolute right-0 top-full mt-2 p-3 rounded-lg shadow-lg border z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto ${
+                      theme === 'dark' 
+                        ? 'bg-gray-800 border-gray-700 text-gray-300' 
+                        : 'bg-white border-gray-200 text-gray-700'
+                    }`}>
+                      <div className="text-xs whitespace-nowrap">
+                        <div className="font-medium mb-2">Keyboard Shortcuts:</div>
+                        <div>↑↓ Navigate appointments</div>
+                        <div>Enter Open appointment</div>
+                      </div>
+                      {/* Arrow pointing up */}
+                      <div className={`absolute -top-1 right-4 w-2 h-2 rotate-45 ${
+                        theme === 'dark' 
+                          ? 'bg-gray-800 border-l border-t border-gray-700' 
+                          : 'bg-white border-l border-t border-gray-200'
+                      }`}></div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => navigateAppointment(1)}
+                    disabled={selectedIndex === appointments.length - 1}
+                    className={`p-2 rounded-lg transition-colors ${
+                      selectedIndex === appointments.length - 1
+                        ? 'opacity-50 cursor-not-allowed'
+                        : theme === 'dark'
+                          ? 'hover:bg-gray-700'
+                          : 'hover:bg-gray-100'
+                    }`}
+                  >
+                    <ArrowRightIcon className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
             {/* Progress Bar */}
             <div className="p-2 lg:p-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-2 gap-1 lg:gap-0">
@@ -517,6 +524,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                   List
                 </button>
               </div>
+              {/* Shortcuts removed from here (moved to nav row above progress) */}
             </div>
             
             {/* Calendar/List Content */}
@@ -556,25 +564,15 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                         }}
                         className={`p-3 rounded-lg cursor-pointer transition-all flex-shrink-0 w-64 lg:w-auto ${
                           isSelected
-                            ? theme === 'dark'
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-blue-50 border-blue-200 border'
-                            : theme === 'dark'
-                              ? 'hover:bg-gray-700 text-gray-300'
-                              : 'hover:bg-gray-50 text-gray-900'
+                            ? 'bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)] border-l-4 border-[var(--dashboard-active-border)]'
+                            : 'hover:bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)]'
                         }`}
                       >
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex items-center gap-1">
-                            <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(appointment.status)}`}>
-                              {getStatusText(appointment.status)}
-                            </span>
-                          </div>
-                        </div>
+                        {/* Status pill moved to right, above title */}
                         
-                        <div className="flex gap-4">
+                        <div className="flex items-center gap-4">
                           {/* Left Column - Date and Time */}
-                          <div className="flex-shrink-0 w-16 lg:w-20">
+                          <div className="flex-shrink-0 w-14 lg:w-16">
                             <div className="text-center">
                               <div className="text-xs opacity-75 mb-1">
                                 {new Date(appointment.start).toLocaleDateString('it-IT', { 
@@ -590,7 +588,12 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                           
                           {/* Right Column - Appointment and Customer */}
                           <div className="flex-1 min-w-0">
-                            <div className="font-medium text-sm mb-1 truncate">
+                            <div className="flex justify-end mb-1">
+                              <span className={`px-1.5 py-0 rounded text-[10px] ${getStatusColor(appointment.status)}`}>
+                                {getStatusText(appointment.status)}
+                              </span>
+                            </div>
+                            <div className="font-medium text-xs mb-0.5 truncate">
                               {appointment.title}
                             </div>
                             <div className="text-xs opacity-75 truncate">
@@ -606,8 +609,8 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
             </div>
           </div>
 
-          {/* Right Panel - Appointment Details */}
-          <div className="flex-1 flex flex-col min-h-0 lg:min-h-0 h-96 lg:h-auto">
+          {/* Middle Panel - Appointment Details (toggle on mobile) */}
+          <div className={`flex-1 flex flex-col min-h-0 lg:min-h-0 h-96 lg:h-auto ${selectedAppointment ? '' : ''} ${showDetailsMobile ? '' : 'hidden lg:flex'}`}>
             {selectedAppointment ? (
               <>
                 {/* Appointment Header */}
@@ -627,63 +630,20 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                             {getStatusText(selectedAppointment.status)}
                           </span>
                         </div>
-                        <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
-                          <span>{selectedAppointment.customerName}</span>
-                          <span>•</span>
-                          <span>{formatTime(selectedAppointment.start)} - {formatTime(selectedAppointment.end)}</span>
-                          <span>•</span>
-                          <span>{formatDate(selectedAppointment.start)}</span>
-                        </div>
+                        {/* Subtitle removed to avoid duplication with details below */}
                       </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto lg:max-w-sm">
-                      <button
-                        onClick={() => handleStatusChange(selectedAppointment.id, 'confirmed')}
-                        className={`px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm ${
-                          selectedAppointment.status === 'confirmed'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-green-600 text-white hover:bg-green-700'
-                        }`}
-                        title="Confirm appointment"
-                      >
-                        <CheckCircleIcon className="w-3.5 h-3.5" />
-                        {selectedAppointment.status === 'confirmed' ? 'Confirmed' : 'Confirm'}
-                      </button>
-                      
-                      <button
-                        onClick={() => handleStatusChange(selectedAppointment.id, 'cancelled')}
-                        className={`px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm ${
-                          selectedAppointment.status === 'cancelled'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-red-600 text-white hover:bg-red-700'
-                        }`}
-                        title="Cancel appointment"
-                      >
-                        <XCircleIcon className="w-3.5 h-3.5" />
-                        {selectedAppointment.status === 'cancelled' ? 'Cancelled' : 'Cancel'}
-                      </button>
-                      
-                      <button
-                        onClick={() => handleDeleteAppointment(selectedAppointment.id)}
-                        className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors flex items-center gap-1 lg:gap-1.5 text-xs lg:text-sm"
-                        title="Delete appointment"
-                      >
-                        <TrashIcon className="w-3.5 h-3.5" />
-                        Delete
-                      </button>
                     </div>
                   </div>
                   
                   {/* Appointment Details - Each on its own row */}
                   <div className="space-y-2 lg:space-y-3 mt-3">
                     <div className="flex items-center gap-2 lg:gap-3">
-                      <ClockIcon className="w-4 lg:w-5 h-4 lg:h-5" />
-                      <span className="text-sm lg:text-base font-medium">{formatTime(selectedAppointment.start)} - {formatTime(selectedAppointment.end)}</span>
-                    </div>
-                    <div className="flex items-center gap-2 lg:gap-3">
                       <CalendarIcon className="w-4 lg:w-5 h-4 lg:h-5" />
                       <span className="text-sm lg:text-base font-medium">{formatDate(selectedAppointment.start)}</span>
+                    </div>
+                    <div className="flex items-center gap-2 lg:gap-3">
+                      <ClockIcon className="w-4 lg:w-5 h-4 lg:h-5" />
+                      <span className="text-sm lg:text-base font-medium">{formatTime(selectedAppointment.start)} - {formatTime(selectedAppointment.end)}</span>
                     </div>
                     {selectedAppointment.appointment_location && (
                       <div className="flex items-center gap-2 lg:gap-3">
@@ -699,21 +659,69 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                   <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
                     theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
                   }`}>Customer Details</h3>
-                  <div className="flex flex-wrap items-center gap-3 lg:gap-6 text-xs lg:text-sm">
-                    <div className="flex items-center gap-2">
-                      <UserIcon className="w-3.5 lg:w-4 h-3.5 lg:h-4" />
-                      <span>{selectedAppointment.customerName}</span>
+                  <div className="flex items-start justify-between gap-4">
+                    {/* Left: Customer Name prominent */}
+                    <div className="min-w-0">
+                      <span className={`font-semibold truncate ${
+                        theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                      } text-base lg:text-lg`}>{selectedAppointment.customerName}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <EnvelopeIcon className="w-3.5 lg:w-4 h-3.5 lg:h-4" />
-                      <span>{selectedAppointment.customerEmail}</span>
-                    </div>
-                    {selectedAppointment.customerPhone && (
-                      <div className="flex items-center gap-2">
-                        <PhoneIcon className="w-3.5 lg:w-4 h-3.5 lg:h-4" />
-                        <span>{selectedAppointment.customerPhone}</span>
+                    {/* Right: Email and Phone stacked with actions */}
+                    <div className="flex flex-col items-start gap-2 text-xs lg:text-sm">
+                      {/* Email row */}
+                      <div className="flex items-center gap-2 break-all">
+                        <EnvelopeIcon className="w-3.5 lg:w-4 h-3.5 lg:h-4" />
+                        <span className="truncate max-w-[180px] lg:max-w-none">{selectedAppointment.customerEmail}</span>
+                        <div className="flex items-center gap-1 ml-1">
+                          <button
+                            onClick={() => navigator.clipboard.writeText(selectedAppointment.customerEmail)}
+                            className="p-1 rounded hover:bg-black/10"
+                            title="Copy email"
+                          >
+                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                          </button>
+                          <a
+                            href={`mailto:${selectedAppointment.customerEmail}`}
+                            className="p-1 rounded hover:bg-black/10"
+                            title="Send email"
+                          >
+                            <EnvelopeIcon className="w-3.5 h-3.5" />
+                          </a>
+                        </div>
                       </div>
-                    )}
+                      {/* Phone row */}
+                      {selectedAppointment.customerPhone && (
+                        <div className="flex items-center gap-2">
+                          <PhoneIcon className="w-3.5 lg:w-4 h-3.5 lg:h-4" />
+                          <span>{selectedAppointment.customerPhone}</span>
+                          <div className="flex items-center gap-1 ml-1">
+                            <button
+                              onClick={() => navigator.clipboard.writeText(selectedAppointment.customerPhone || '')}
+                              className="p-1 rounded hover:bg-black/10"
+                              title="Copy phone"
+                            >
+                              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </button>
+                            <a
+                              href={`tel:${selectedAppointment.customerPhone}`}
+                              className="p-1 rounded hover:bg-black/10"
+                              title="Call"
+                            >
+                              <PhoneIcon className="w-3.5 h-3.5" />
+                            </a>
+                            <a
+                              href={`https://wa.me/${selectedAppointment.customerPhone}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-1 rounded hover:bg-black/10"
+                              title="WhatsApp"
+                            >
+                              <svg className="w-3.5 h-3.5" viewBox="0 0 32 32" fill="currentColor"><path d="M19.11 17.21c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.98-.94 1.18-.17.2-.35.22-.65.07-.3-.15-1.26-.47-2.4-1.49-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.87 1.22 3.07.15.2 2.11 3.22 5.1 4.52.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z"/><path d="M26.64 5.36C23.9 2.61 20.12 1 16.09 1 8.24 1 1.93 7.31 1.93 15.16c0 2.48.65 4.86 1.88 6.97L1 31l9.08-2.77a14.13 14.13 0 006.01 1.31h.01c7.84 0 14.16-6.31 14.16-14.16 0-3.78-1.47-7.34-4.16-10.02zM16.09 28.3h-.01a12.2 12.2 0 01-5.88-1.58l-.42-.25-5.39 1.64 1.65-5.25-.28-.43a12.2 12.2 0 01-1.87-6.67c0-6.74 5.49-12.23 12.23-12.23 3.27 0 6.35 1.27 8.66 3.58a12.17 12.17 0 013.58 8.66c0 6.74-5.49 12.23-12.23 12.23z"/></svg>
+                            </a>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -807,6 +815,101 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Right Panel - Actions/Manage */}
+          <div className={`w-full lg:w-2/5 border-t lg:border-t-0 lg:border-l border-[var(--dashboard-border-primary)] flex flex-col`}>
+            <div className="p-2 lg:p-6 h-full flex flex-col gap-3">
+              {selectedAppointment ? (
+                <>
+                  <h4 className="text-xs font-medium mb-2 ai-panel-text-secondary uppercase tracking-wide">Manage Appointment</h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => handleStatusChange(selectedAppointment.id, 'confirmed')}
+                      className={`p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-1.5 border border-white/20 ${
+                        selectedAppointment.status === 'confirmed' ? '' : ''
+                      }`}
+                      title="Confirm appointment"
+                    >
+                      <CheckCircleIcon className="w-5 h-5 text-green-500" />
+                      <span className="text-xs lg:text-sm text-left">{selectedAppointment.status === 'confirmed' ? 'Confirmed' : 'Confirm'}</span>
+                    </button>
+                    <button
+                      onClick={() => handleStatusChange(selectedAppointment.id, 'cancelled')}
+                      className={`p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-1.5 border border-white/20 ${
+                        selectedAppointment.status === 'cancelled' ? '' : ''
+                      }`}
+                      title="Cancel appointment"
+                    >
+                      <XCircleIcon className="w-5 h-5 text-red-500" />
+                      <span className="text-xs lg:text-sm text-left">{selectedAppointment.status === 'cancelled' ? 'Cancelled' : 'Cancel'}</span>
+                    </button>
+                    <button
+                      onClick={() => handleDeleteAppointment(selectedAppointment.id)}
+                      className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-1.5 border border-white/20 col-span-2"
+                      title="Delete appointment"
+                    >
+                      <TrashIcon className="w-5 h-5 text-gray-500" />
+                      <span className="text-xs lg:text-sm text-left">Delete</span>
+                    </button>
+                  </div>
+
+                  {/* Contact Actions Group */}
+                  {(selectedAppointment.customerPhone || selectedAppointment.customerEmail) && (
+                    <>
+                      <h4 className="text-xs font-medium mt-4 ai-panel-text-secondary uppercase tracking-wide">Contact</h4>
+                      <div className="grid grid-cols-2 gap-2">
+                        {selectedAppointment.customerPhone && (
+                          <a
+                            href={`tel:${selectedAppointment.customerPhone}`}
+                            className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-1.5 border border-white/20"
+                            title={`Call ${selectedAppointment.customerPhone}`}
+                          >
+                            <PhoneIcon className="w-5 h-5 text-blue-500" />
+                            <span className="text-xs lg:text-sm text-left">Call</span>
+                          </a>
+                        )}
+                        {selectedAppointment.customerEmail && (
+                          <a
+                            href={`mailto:${selectedAppointment.customerEmail}`}
+                            className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-1.5 border border-white/20"
+                            title={`Email ${selectedAppointment.customerEmail}`}
+                          >
+                            <EnvelopeIcon className="w-5 h-5 text-purple-500" />
+                            <span className="text-xs lg:text-sm text-left">Email</span>
+                          </a>
+                        )}
+                        {selectedAppointment.customerPhone && (
+                          <a
+                            href={`https://wa.me/${selectedAppointment.customerPhone}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-1.5 border border-white/20 col-span-2"
+                            title="WhatsApp"
+                          >
+                            <svg className="w-5 h-5 text-green-500" viewBox="0 0 32 32" fill="currentColor"><path d="M19.11 17.21c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.98-.94 1.18-.17.2-.35.22-.65.07-.3-.15-1.26-.47-2.4-1.49-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.87 1.22 3.07.15.2 2.11 3.22 5.1 4.52.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z"/><path d="M26.64 5.36C23.9 2.61 20.12 1 16.09 1 8.24 1 1.93 7.31 1.93 15.16c0 2.48.65 4.86 1.88 6.97L1 31l9.08-2.77a14.13 14.13 0 006.01 1.31h.01c7.84 0 14.16-6.31 14.16-14.16 0-3.78-1.47-7.34-4.16-10.02zM16.09 28.3h-.01a12.2 12.2 0 01-5.88-1.58l-.42-.25-5.39 1.64 1.65-5.25-.28-.43a12.2 12.2 0 01-1.87-6.67c0-6.74 5.49-12.23 12.23-12.23 3.27 0 6.35 1.27 8.66 3.58a12.17 12.17 0 013.58 8.66c0 6.74-5.49 12.23-12.23 12.23z"/></svg>
+                            <span className="text-xs lg:text-sm text-left">WhatsApp</span>
+                          </a>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </>
+              ) : (
+                <div className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Select an appointment to manage</div>
+              )}
+
+              {/* Mobile Details Toggle */}
+              <div className="lg:hidden mt-auto">
+                <button
+                  onClick={() => setShowDetailsMobile(!showDetailsMobile)}
+                  className="w-full px-3 py-2 rounded-lg border bg-[var(--dashboard-bg-tertiary)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]"
+                >
+                  {showDetailsMobile ? 'Hide Details' : 'Show Details'}
+                </button>
+              </div>
+            </div>
+          </div>
           </div>
         </div>
       </div>
