@@ -86,22 +86,22 @@ export default function DashboardSupportModal({
       />
       
       {/* Modal */}
-      <div className="relative w-full max-w-md rounded-2xl shadow-xl bg-white dark:bg-zinc-800">
+      <div className="relative w-full max-w-md rounded-2xl shadow-xl bg-[var(--dashboard-bg-card)] text-[var(--dashboard-text-primary)]">
         {/* Header */}
-        <div className="relative p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="relative p-6 border-b border-[var(--dashboard-border-primary)]">
           <button
             onClick={handleClose}
-            className="absolute right-6 top-6 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+            className="absolute right-6 top-6 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
             disabled={isSubmitting}
           >
             <XMarkIcon className="w-6 h-6" />
           </button>
           <div className="text-center">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-[var(--dashboard-text-primary)]">
               {t('support.title') || 'Support Request'}
             </h2>
             <div className="mt-1">
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-600 dark:bg-zinc-700 dark:text-gray-300 border border-gray-200 dark:border-zinc-600">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border border-[var(--dashboard-border-primary)]">
                 {t('support.expectedReplyTime') || 'Expected reply: ~2h'}
               </span>
             </div>
@@ -117,10 +117,10 @@ export default function DashboardSupportModal({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium mb-2 text-gray-900 dark:text-white">
+              <h3 className="text-lg font-medium mb-2 text-[var(--dashboard-text-primary)]">
                 {t('support.success.title') || 'Request Submitted'}
               </h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-[var(--dashboard-text-secondary)]">
                 {t('support.success.message') || "Thank you! We'll get back to you soon."}
               </p>
             </div>
@@ -128,7 +128,7 @@ export default function DashboardSupportModal({
              <>
                {/* Message Textarea */}
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium mb-2 text-[var(--dashboard-text-secondary)] text-center">
                   {t('support.message') || 'Message'} *
                 </label>
                                  <textarea
@@ -136,12 +136,12 @@ export default function DashboardSupportModal({
                    onChange={(e) => setMessage(e.target.value)}
                    rows={4}
                    maxLength={1000}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-zinc-700 text-gray-900 dark:text-white"
+                 className="w-full px-3 py-2 border border-[var(--dashboard-border-primary)] rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-[var(--dashboard-ring-primary)] bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)]"
                   placeholder={t('support.messagePlaceholder') || "Describe your issue or question..."}
                   disabled={isSubmitting}
                                  />
                  <div className="flex justify-between items-center mt-1">
-                   <span className="text-xs text-gray-500 dark:text-gray-400">
+                   <span className="text-xs text-[var(--dashboard-text-secondary)]">
                      {message.length}/1000 {t('support.characters') || 'characters'}
                    </span>
                    {error && (
@@ -150,7 +150,7 @@ export default function DashboardSupportModal({
                  </div>
                </div>
               {/* Helpful links under textarea */}
-              <div className="mt-2 text-xs text-gray-600 dark:text-gray-300">
+              <div className="mt-2 text-xs text-[var(--dashboard-text-secondary)] text-center">
                 <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">Guides</a>
                 <span className="mx-2 text-gray-400">·</span>
                 <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">Faqs</a>
@@ -163,11 +163,11 @@ export default function DashboardSupportModal({
 
         {/* Footer */}
         {!success && (
-          <div className="flex justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex justify-end gap-3 p-6 border-t border-[var(--dashboard-border-primary)]">
             <button
               type="button"
               onClick={handleClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors hover:bg-gray-50 dark:hover:bg-zinc-700"
+              className="px-4 py-2 text-sm font-medium text-[var(--dashboard-text-primary)] border border-[var(--dashboard-border-primary)] rounded-lg transition-colors hover:bg-[var(--dashboard-bg-tertiary)]"
               disabled={isSubmitting}
             >
               {t('support.cancel') || 'Cancel'}
@@ -175,7 +175,7 @@ export default function DashboardSupportModal({
             <button
               type="submit"
               onClick={handleSubmit}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-[var(--dashboard-bg-primary)] text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]"
               disabled={isSubmitting}
             >
               {isSubmitting ? (

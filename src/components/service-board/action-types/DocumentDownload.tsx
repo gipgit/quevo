@@ -22,12 +22,7 @@ export default function DocumentDownload({ details, action_id }: Props) {
 
   const typeLower = (details.file_type || 'file').toLowerCase()
   const typeLabel = (details.file_type || 'file').toUpperCase()
-  const typeClasses = (() => {
-    if (typeLower.includes('pdf')) return 'bg-red-100 text-red-800'
-    if (typeLower.includes('word') || typeLower.includes('doc')) return 'bg-blue-100 text-blue-800'
-    if (typeLower.includes('sheet') || typeLower.includes('excel') || typeLower.includes('xls')) return 'bg-green-100 text-green-800'
-    return 'bg-gray-200 text-gray-800'
-  })()
+  const typeClasses = 'bg-transparent border border-gray-300 text-gray-700'
 
   const handleSecureDownload = async () => {
     setIsDownloading(true)
@@ -60,29 +55,31 @@ export default function DocumentDownload({ details, action_id }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex items-center gap-2 lg:gap-3 min-w-0">
-          <span className={`inline-flex items-center px-2 py-1 lg:px-2.5 lg:py-1 rounded-lg text-xs font-medium flex-shrink-0 ${typeClasses}`}>
-            {typeLabel}
-          </span>
-          <h4 className="text-sm lg:text-xl font-medium text-gray-900 truncate">
-            {details.document_name || t('document')}
-          </h4>
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+        <div className="bg-gradient-to-b from-white to-blue-100/50 border border-gray-200 rounded-2xl p-4 flex-1">
+          <div className="flex items-center gap-2 lg:gap-3 min-w-0">
+            <span className={`inline-flex items-center px-1.5 py-0.5 lg:px-2.5 lg:py-1 rounded-lg text-xs font-medium flex-shrink-0 ${typeClasses}`}>
+              {typeLabel}
+            </span>
+            <h4 className="text-sm lg:text-xl font-bold text-gray-900 truncate">
+              {details.document_name || t('document')}
+            </h4>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto">
           {Boolean((details as any).download_password_hash) && (
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder={t('enterPassword')}
-              className="px-2 py-1 text-sm border border-gray-300 rounded"
+              className="px-2 py-1 text-sm border border-gray-300 rounded sm:flex-shrink-0"
             />
           )}
           <button
             onClick={handleSecureDownload}
             disabled={isDownloading}
-            className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50"
+            className="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-b from-blue-100 to-blue-200 text-blue-800 rounded-lg hover:from-blue-200 hover:to-blue-300 transition-all disabled:opacity-50 w-full sm:w-auto"
           >
             <svg
               className="w-5 h-5 mr-2"

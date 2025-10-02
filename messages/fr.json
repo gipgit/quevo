@@ -1161,7 +1161,10 @@
     "cancelAppointment": "Annuler le rendez-vous",
     "cancelWarning": "L'entreprise verra le rendez-vous comme annulé et pourrait vous contacter pour clarification.",
     "confirmCancel": "Confirmer l'annulation",
-    "optionalReasonPrompt": "Si vous le souhaitez, vous pouvez fournir une raison pour votre demande :"
+    "optionalReasonPrompt": "Si vous le souhaitez, vous pouvez fournir une raison pour votre demande :",
+    "appointments": "Rendez-vous",
+    "timeline": "Chronologie",
+    "businessInfo": "Info Entreprise"
   },
   "HowPoints": {
     "title": "Comment ça fonctionne",

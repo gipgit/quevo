@@ -19,6 +19,7 @@ interface Business {
   business_img_cover: string | null
   business_public_uuid: string
   date_created: string
+  plan?: Plan
 }
 
 interface Plan {
@@ -92,7 +93,15 @@ export default async function ServerBusinessProvider({ children }: ServerBusines
       business_img_profile: true,
       business_img_cover: true,
       business_public_uuid: true,
-      date_created: true
+      date_created: true,
+      plan: {
+        select: {
+          plan_id: true,
+          plan_name: true,
+          display_price: true,
+          display_frequency: true
+        }
+      }
     },
     // Force fresh data by adding a timestamp to the query
     ...(forceFresh && { 
@@ -144,7 +153,15 @@ export default async function ServerBusinessProvider({ children }: ServerBusines
            business_img_profile: true,
            business_img_cover: true,
            business_public_uuid: true,
-           date_created: true
+           date_created: true,
+           plan: {
+             select: {
+               plan_id: true,
+               plan_name: true,
+               display_price: true,
+               display_frequency: true
+             }
+           }
          }
                }).then(businesses => businesses.map(business => ({
           ...business,
@@ -154,7 +171,8 @@ export default async function ServerBusinessProvider({ children }: ServerBusines
           business_email: String(business.business_email || ""),
           business_phone: String(business.business_phone || ""),
           business_public_uuid: business.business_public_uuid || "",
-          date_created: business.date_created?.toISOString() || new Date().toISOString()
+          date_created: business.date_created?.toISOString() || new Date().toISOString(),
+          plan: business.plan
         })))
       
              console.log(`[ServerBusinessProvider] Using verification data: ${fullBusinesses.length} businesses`)
@@ -221,7 +239,8 @@ export default async function ServerBusinessProvider({ children }: ServerBusines
     business_img_profile: b.business_img_profile,
     business_img_cover: b.business_img_cover,
     business_public_uuid: b.business_public_uuid || '',
-    date_created: b.date_created?.toISOString() || new Date().toISOString()
+    date_created: b.date_created?.toISOString() || new Date().toISOString(),
+    plan: b.plan
   }))
 
   // Only transform current business if we have one
@@ -238,7 +257,8 @@ export default async function ServerBusinessProvider({ children }: ServerBusines
     business_img_profile: currentBusiness.business_img_profile,
     business_img_cover: currentBusiness.business_img_cover,
     business_public_uuid: currentBusiness.business_public_uuid || '',
-    date_created: currentBusiness.date_created?.toISOString() || new Date().toISOString()
+    date_created: currentBusiness.date_created?.toISOString() || new Date().toISOString(),
+    plan: currentBusiness.plan
   } : null
 
 

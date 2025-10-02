@@ -150,16 +150,6 @@ export default function ServiceBoardActionCard({ action, onActionUpdate, onAppoi
     `}>
       <div className="flex items-start justify-between mb-4">
         <div>
-            <div className="flex items-center justify-center flex-wrap gap-1 mb-3">
-              <span className="text-gray-600 text-xs lg:text-base">
-                {format(new Date(action.created_at), "PPP", { locale: locale === 'it' ? it : enUS })}
-              </span>
-              {action.due_date && (
-                <span className="text-orange-600 text-xs md:text-md">
-                  {t("dueBy")}: {format(new Date(action.due_date), "PPP", { locale: locale === 'it' ? it : enUS })}
-                </span>
-              )}
-            </div>
           <h3 className="text-xl md:text-2xl font-bold mb-1">{action.action_title}</h3>
           <p className="text-gray-500 text-xs md:text-sm">{action.action_description}</p>
         </div>
@@ -192,18 +182,29 @@ export default function ServiceBoardActionCard({ action, onActionUpdate, onAppoi
       )}
 
       {/* Status and Action Required Pills - moved to the end */}
-      <div className="inline-flex items-center flex-wrap gap-2 mt-4 pt-3 border-t border-gray-100">
-        <span className={`
-          text-xs md:text-md font-medium
-          ${getStatusColor(action.action_status)}
-        `}>
-          {getStatusText(action.action_status, t)}
-        </span>
-        {action.is_customer_action_required && action.action_status !== 'completed' && (
-          <span className="px-2 py-1 rounded-full text-blue-600 text-xs md:text-md font-medium">
-            {t("actionRequired")}
+      <div className="mt-4 pt-3 border-t border-gray-100">
+        <div className="flex items-center justify-center lg:justify-start flex-wrap gap-2">
+          <span className="text-gray-600 text-xs lg:text-base">
+            {format(new Date(action.created_at), "PPP", { locale: locale === 'it' ? it : enUS })}
           </span>
-        )}
+          <span className={`
+            text-xs md:text-md font-medium
+            ${getStatusColor(action.action_status)}
+          `}>
+            {getStatusText(action.action_status, t)}
+          </span>
+          {action.is_customer_action_required && action.action_status !== 'completed' && (
+            <span className="px-2 py-1 rounded-full text-blue-600 text-xs md:text-md font-medium">
+              {t("actionRequired")}
+            </span>
+          )}
+          {action.due_date && (
+            <span className="text-gray-600 text-xs md:text-md flex items-center gap-1">
+              <span className="bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs font-bold">!</span>
+              {t("dueBy")}: {format(new Date(action.due_date), "PPP", { locale: locale === 'it' ? it : enUS })}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   )

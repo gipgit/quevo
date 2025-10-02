@@ -1159,7 +1159,10 @@
     "cancelAppointment": "Termin stornieren",
     "cancelWarning": "Das Unternehmen wird den Termin als storniert sehen und Sie möglicherweise zur Klärung kontaktieren.",
     "confirmCancel": "Stornierung bestätigen",
-    "optionalReasonPrompt": "Falls Sie möchten, können Sie einen Grund für Ihre Anfrage angeben:"
+    "optionalReasonPrompt": "Falls Sie möchten, können Sie einen Grund für Ihre Anfrage angeben:",
+    "appointments": "Termine",
+    "timeline": "Zeitachse",
+    "businessInfo": "Unternehmensinfo"
   },
   "HowPoints": {
     "title": "Wie es funktioniert",

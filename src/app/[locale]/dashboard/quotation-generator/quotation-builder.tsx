@@ -847,7 +847,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                                          <h3 className="text-xs md:text-lg mb-2 text-gray-900">
                        {t('customer') || 'Customer'}
                      </h3>
-                                        <p className="text-xs md:text-lg font-bold text-gray-900">
+                                        <p className=" text-xs md:text-lg font-bold text-gray-900">
                        {quotationData.customer.name}
                      </p>
                                                             {quotationData.customer.email && (

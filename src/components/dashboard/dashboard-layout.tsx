@@ -427,7 +427,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                             </div>
                             {/* Plan Badge, Manage Button, and Action Buttons under Business Name */}
                             <div className="flex items-center gap-2 mt-1">
-                              {currentBusiness.plan ? (() => {
+                              {loading ? (
+                                <div className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium uppercase whitespace-nowrap bg-gray-200 animate-pulse">
+                                  <div className="w-12 h-3 bg-gray-300 rounded"></div>
+                                </div>
+                              ) : currentBusiness.plan ? (() => {
                                 const planColors = getPlanColors(currentBusiness.plan.plan_name);
                                 return (
                                   <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium uppercase whitespace-nowrap ${planColors.gradient} ${planColors.textColor}`}>
@@ -534,7 +538,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-base truncate text-[var(--dashboard-text-primary)]">{getManagerFullName()}</p>
-                        {currentBusiness && currentBusiness.plan && (
+                        {loading ? (
+                          <div className="flex items-center gap-1 mt-1">
+                            <span className="text-xs text-[var(--dashboard-text-secondary)]">Plan:</span>
+                            <div className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-200 animate-pulse">
+                              <div className="w-16 h-3 bg-gray-300 rounded"></div>
+                            </div>
+                          </div>
+                        ) : currentBusiness && currentBusiness.plan && (
                           <div className="flex items-center gap-1 mt-1">
                             <span className="text-xs text-[var(--dashboard-text-secondary)]">Plan:</span>
                             <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${(() => {

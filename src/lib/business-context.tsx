@@ -94,6 +94,10 @@ export function BusinessProvider({
   const [businessSwitchKey, setBusinessSwitchKey] = useState(0) // Force re-render key
   const [cacheBuster, setCacheBuster] = useState(`?v=${Date.now()}`) // Cache buster for server-side data
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  
+  // Plan data cache with TTL
+  const [planCache, setPlanCache] = useState<Map<string, { data: any[], timestamp: number }>>(new Map())
+  const PLAN_CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
   const fetchManagerDashboard = useCallback(async (retryCount = 0) => {
     try {
@@ -212,15 +216,31 @@ export function BusinessProvider({
     try {
       console.log("BusinessContext: fetchPlanLimits called, currentBusiness:", currentBusiness)
       if (!currentBusiness?.plan?.plan_id) return
+      
+      const planId = currentBusiness.plan.plan_id.toString()
+      const now = Date.now()
+      
+      // Check cache first
+      const cached = planCache.get(planId)
+      if (cached && (now - cached.timestamp) < PLAN_CACHE_TTL) {
+        console.log("BusinessContext: Using cached plan limits for plan", planId)
+        setPlanLimits(cached.data)
+        return
+      }
+      
+      console.log("BusinessContext: Fetching fresh plan limits for plan", planId)
       const response = await fetch(`/api/plan-limits/${currentBusiness.plan.plan_id}`)
       if (!response.ok) throw new Error("Failed to fetch plan limits")
       const data = await response.json()
+      
+      // Update cache
+      setPlanCache(prev => new Map(prev).set(planId, { data: data.limits, timestamp: now }))
       setPlanLimits(data.limits)
       console.log("BusinessContext: setPlanLimits", data.limits)
     } catch (err) {
       console.error("Error fetching plan limits:", err)
     }
-  }, [currentBusiness?.plan?.plan_id])
+  }, [currentBusiness?.plan?.plan_id, planCache])
 
   const fetchUsage = useCallback(async () => {
     try {
@@ -296,6 +316,24 @@ export function BusinessProvider({
       fetchUsage()
     }
   }, [currentBusiness?.business_id, planLimits, fetchUsage])
+
+  // Cache cleanup effect - remove expired entries every minute
+  useEffect(() => {
+    const cleanupInterval = setInterval(() => {
+      const now = Date.now()
+      setPlanCache(prev => {
+        const newCache = new Map()
+        prev.forEach((value, key) => {
+          if ((now - value.timestamp) < PLAN_CACHE_TTL) {
+            newCache.set(key, value)
+          }
+        })
+        return newCache
+      })
+    }, 60000) // Clean up every minute
+
+    return () => clearInterval(cleanupInterval)
+  }, [])
 
   const refreshBusinesses = useCallback(async () => {
     await fetchManagerDashboard()

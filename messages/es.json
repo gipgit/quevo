@@ -1364,7 +1364,10 @@
     "enterYourReason": "Ingresa tu motivo",
     "cancelWarning": "El negocio verá la cita como cancelada y podría contactarte para aclaraciones.",
     "confirmCancel": "Confirmar Cancelación",
-    "optionalReasonPrompt": "Si quieres, puedes proporcionar un motivo para tu solicitud:"
+    "optionalReasonPrompt": "Si quieres, puedes proporcionar un motivo para tu solicitud:",
+    "appointments": "Citas",
+    "timeline": "Cronología",
+    "businessInfo": "Info Negocio"
   },
   "HowPoints": {
     "title": "Cómo Funciona",

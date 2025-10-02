@@ -270,35 +270,35 @@ const getTimelineDotColor = (action: ServiceBoardAction) => {
   if (action.action_type === 'appointment_scheduling' && isAppointmentSchedulingDetails(action.action_details)) {
     const status = action.action_details.confirmation_status.toLowerCase();
     if (status.includes('confirm')) {
-      return 'bg-green-500 border-green-600';
+      return 'bg-green-500';
     }
     if (status.includes('reject')) {
-      return 'bg-red-500 border-red-600';
+      return 'bg-red-500';
     }
     if (status.includes('cancel')) {
-      return 'bg-gray-500 border-gray-600';
+      return 'bg-gray-500';
     }
     if (status.includes('reschedul')) {
-      return 'bg-orange-500 border-orange-600';
+      return 'bg-orange-500';
     }
-    return 'bg-yellow-500 border-yellow-600';
+    return 'bg-yellow-500';
   }
 
   // For other action types, use action_status
   const status = action.action_status.toLowerCase();
   if (status === 'completed') {
-    return 'bg-green-500 border-green-600';
+    return 'bg-green-500';
   }
   if (status === 'failed') {
-    return 'bg-red-500 border-red-600';
+    return 'bg-red-500';
   }
   if (status === 'cancelled') {
-    return 'bg-gray-500 border-gray-600';
+    return 'bg-gray-500';
   }
   if (status === 'in_progress') {
-    return 'bg-blue-500 border-blue-600';
+    return 'bg-blue-500';
   }
-  return 'bg-yellow-500 border-yellow-600';
+  return 'bg-yellow-500';
 };
 
 // Move these above getAppointmentShareText
@@ -399,6 +399,9 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
   
   // Animation state for new actions
   const [newlyAddedActionId, setNewlyAddedActionId] = useState<string | null>(null);
+  
+  // Mobile tab navigation state
+  const [activeMobileTab, setActiveMobileTab] = useState<'appointments' | 'timeline' | 'business'>('timeline');
   
   const { board_ref } = params;
   const searchParams = useSearchParams();
@@ -784,8 +787,8 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
       </div>
 
       {/* Top Navbar */}
-      <div className="px-6 lg:px-8 py-2 lg:py-5 pb-0">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div className="px-6 lg:px-8 py-2 lg:py-3 pb-0">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2 lg:gap-4 text-center lg:text-left">
           {/* Left Column - Board Info */}
           <div className="flex-1 flex items-center justify-center lg:justify-start gap-x-4">
             <div className="hidden lg:block w-14 h-14 lg:w-20 lg:h-20 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
@@ -806,47 +809,58 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                   )}
             </div>
             {boardData && (
-              <div className="flex flex-col gap-y-3 gap-x-8">
+              <div className="flex flex-col gap-y-2 gap-x-8 text-center lg:text-left">
                 <div>
-                  <h1 className="text-2xl md:text-3xl font-bold">{boardData.board_title}</h1>
+                  <h1 className="text-xl md:text-2xl font-bold">{boardData.board_title}</h1>
+                  
+                  {/* Desktop: All info in one row */}
                   <div className="hidden lg:flex items-center flex-wrap gap-y-1 gap-x-2 mt-1">
-                  <p className="font-semibold">{businessData.business_name}</p>
-                  {boardData.service && (
-                       <div className="text-sm">
-                            <p className="text-sm opacity-80 font-medium">{boardData.service.service_name}</p>
-                       </div>
-                  )}
-                  {boardData.board_description && (
-                    <p className="hidden text-xs line-clamp-1 opacity-80">{boardData.board_description}</p>
-                  )}
-                </div>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className={`rounded-lg px-2 py-1 lg:px-2 lg:py-1 font-medium whitespace-nowrap ${
-                    boardData.status === 'active' ? 'bg-green-100 text-green-800 border border-green-200' :
-                    boardData.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
-                    boardData.status === 'completed' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
-                    boardData.status === 'cancelled' ? 'bg-red-100 text-red-800 border border-red-200' :
-                    'bg-gray-100 text-gray-800 border border-gray-200'
-                  }`}>{getStatusText(boardData.status, tServiceBoard)}</span>
-                  <button
-                    onClick={() => setShowShareModal(true)}
-                    className="lg:hidden flex items-center gap-1 px-2 py-1 bg-gray-600 text-white rounded-lg text-xs hover:bg-gray-700 transition-colors"
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
-                    </svg>
-                    Share
-                  </button>
-                  <span className='border-1 border-gray-400 rounded-lg px-2 py-1 text-xs whitespace-nowrap'>Ref: {params.board_ref}</span>
-                  <span className='hidden lg:block text-xs whitespace-nowrap'>{getRelativeTime(boardData.created_at, tServiceBoard)}</span>
+                    <p className="font-semibold">{businessData.business_name}</p>
+                    {boardData.service && (
+                      <p className="text-sm opacity-80 font-medium">{boardData.service.service_name}</p>
+                    )}
+                    <span className={`rounded-lg px-2 py-1 font-medium whitespace-nowrap ${
+                      boardData.status === 'active' ? 'bg-green-100 text-green-800 border border-green-200' :
+                      boardData.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
+                      boardData.status === 'completed' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
+                      boardData.status === 'cancelled' ? 'bg-red-100 text-red-800 border border-red-200' :
+                      'bg-gray-100 text-gray-800 border border-gray-200'
+                    }`}>{getStatusText(boardData.status, tServiceBoard)}</span>
+                    <span className='border-1 border-gray-400 rounded-lg px-2 py-1 text-xs whitespace-nowrap'>Ref: {params.board_ref}</span>
+                    <span className='text-xs whitespace-nowrap'>{getRelativeTime(boardData.created_at, tServiceBoard)}</span>
+                  </div>
+                  
+                  {/* Mobile: Status alone in its own row */}
+                  <div className="lg:hidden flex justify-center mt-1">
+                    <span className={`rounded-lg px-2 py-1 font-medium whitespace-nowrap ${
+                      boardData.status === 'active' ? 'bg-green-100 text-green-800 border border-green-200' :
+                      boardData.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
+                      boardData.status === 'completed' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
+                      boardData.status === 'cancelled' ? 'bg-red-100 text-red-800 border border-red-200' :
+                      'bg-gray-100 text-gray-800 border border-gray-200'
+                    }`}>{getStatusText(boardData.status, tServiceBoard)}</span>
+                  </div>
+                  
+                  {/* Mobile: Other elements in separate row */}
+                  <div className="lg:hidden flex items-center gap-2 flex-wrap justify-center mt-1">
+                    <span className='border-1 border-gray-400 rounded-lg px-2 py-1 text-xs whitespace-nowrap'>Ref: {params.board_ref}</span>
+                    <button
+                      onClick={() => setShowShareModal(true)}
+                      className="flex items-center gap-1 px-2 py-1 text-gray-600 border border-gray-300 rounded-lg text-xs hover:bg-gray-50 hover:border-gray-400 transition-colors"
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+                      </svg>
+                      Share
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
           </div>
           
           {/* Right Column - Actions and Share */}
-          <div className="flex-shrink-0 flex items-center gap-4">
+          <div className="flex-shrink-0 flex items-center gap-4 justify-center lg:justify-end">
             {/* Share Menu Container - Hidden on xs to md, visible on lg+ */}
             <div className="relative share-menu-container hidden lg:block">
               {/* Pill Link Container */}
@@ -942,11 +956,51 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row justify-between">
+      {/* Mobile Tab Navigation - Hidden on lg+ */}
+      <div className="lg:hidden px-6 border-b border-gray-200">
+        <div className="flex overflow-x-auto scrollbar-hide">
+          <div className="flex min-w-max space-x-6">
+            <button
+              onClick={() => setActiveMobileTab('timeline')}
+              className={`whitespace-nowrap px-1 py-3 pb-1 text-sm font-medium transition-colors ${
+                activeMobileTab === 'timeline'
+                  ? 'border-b-2 border-gray-900 text-gray-900'
+                  : 'border-b border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              {tServiceBoard('timeline')}
+            </button>
+            <button
+              onClick={() => setActiveMobileTab('appointments')}
+              className={`whitespace-nowrap px-1 py-3 pb-1 text-sm font-medium transition-colors ${
+                activeMobileTab === 'appointments'
+                  ? 'border-b-2 border-gray-900 text-gray-900'
+                  : 'border-b border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              {tServiceBoard('appointments')}
+            </button>
+            <button
+              onClick={() => setActiveMobileTab('business')}
+              className={`whitespace-nowrap px-1 py-3 pb-1 text-sm font-medium transition-colors ${
+                activeMobileTab === 'business'
+                  ? 'border-b-2 border-gray-900 text-gray-900'
+                  : 'border-b border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              {tServiceBoard('businessInfo')}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col lg:flex-row justify-between" style={{backgroundColor: themeColorBackgroundSecondary}}>
 
         {/* Appointments section */}
         {appointments && appointments.length > 0 && (
-                <div className="mb-5 lg:w-[25%] lg:order-2 p-5 md:p-6 bg-black/5 lg:bg-transparent">
+                <div className={`mb-5 lg:w-[25%] lg:order-2 p-5 md:p-6 ${
+                  activeMobileTab === 'appointments' ? 'block' : 'hidden'
+                } lg:block`}>
                   <div className="space-y-4 sticky top-0 lg:pt-2">
                     {appointments.map((appointment) => (
                       <div key={appointment.id} className="text-gray-900 bg-white rounded-2xl border border-gray-200 p-5 lg:p-6 shadow-sm">
@@ -954,39 +1008,40 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                           {/* Left column: appointment details */}
                           <div className="flex-1 min-w-0">
                         {appointment.appointment_title && (
-                          <div className="mb-3 flex flex-row items-center justify-between gap-2">
-                            <h3 className="text-xl font-semibold text-gray-900">{appointment.appointment_title}</h3>
-                            <span className={`text-xs md:text-sm px-3 py-1 capitalize rounded-full ${getStatusColor(appointment.status)}`}>
+                          <div className="mb-3 flex flex-col gap-2">
+                            <h3 className="text-lg lg:text-xl font-semibold text-gray-900">{appointment.appointment_title}</h3>
+                            <span className={`text-xs md:text-sm px-3 py-1 capitalize rounded-full w-fit ${getStatusColor(appointment.status)}`}>
                               {getStatusText(appointment.status, tServiceBoard)}
                             </span>
                           </div>
                         )}
-                        <div className="flex items-center flex-row flex-wrap gap-x-6 gap-y-2 mb-3">
+                        <div className="flex items-center flex-row gap-x-4 gap-y-2 mb-3">
+                          {/* Date Block */}
                           <div className="flex items-center gap-2">
-                            {/* Date and Time */}
-                            <div className="flex items-center gap-2">
-                              <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
-                              <div className="flex flex-col -space-y-1">
-                                <span className="text-lg lg:text-xl font-medium text-gray-900">
-                                  {formatAppointmentDate(appointment.appointment_datetime, params.locale)}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                              <span className="text-lg lg:text-xl font-medium text-gray-900">
-                                {formatAppointmentTime(appointment.appointment_datetime, params.locale)}
+                            <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <div className="flex flex-col -space-y-1">
+                              <span className="text-base lg:text-xl font-medium text-gray-900">
+                                {formatAppointmentDate(appointment.appointment_datetime, params.locale)}
                               </span>
                             </div>
                           </div>
-                          <div>
-                                  {/* Location with Maps/Waze*/}
-                                  {appointment.appointment_location && appointment.appointment_type !== 'online' && (
-                                        <div className="flex items-center gap-2 flex-wrap">
+                          
+                          {/* Time Block */}
+                          <div className="flex items-center gap-2">
+                            <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span className="text-base lg:text-xl font-medium text-gray-900">
+                              {formatAppointmentTime(appointment.appointment_datetime, params.locale)}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        {/* Location with Maps/Waze - Separate Row */}
+                        {appointment.appointment_location && appointment.appointment_type !== 'online' && (
+                                        <div className="flex items-center gap-1 md:gap-2 flex-wrap">
                                       <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -1004,25 +1059,23 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                                               const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(appointment.appointment_location)}`;
                                               window.open(url, '_blank');
                                             }}
-                                            className="px-2 py-1 text-xs font-medium text-white bg-[#4285F4] hover:bg-[#357ae8] rounded-full shadow-sm transition-colors flex items-center gap-1"
+                                            className="p-1.5 bg-blue-400 hover:bg-blue-500 rounded-full transition-colors flex items-center justify-center"
                                             title="Open in Google Maps"
                                           >
-                                            <img src="/icons/appointments/googlemaps.svg" alt="Google Maps" className="w-4 h-4 mr-1" />Maps
+                                            <img src="/icons/appointments/googlemaps.svg" alt="Google Maps" className="w-3.5 h-3.5" />
                                           </button>
                                           <button
                                             onClick={() => {
                                               const url = `https://waze.com/ul?q=${encodeURIComponent(appointment.appointment_location)}`;
                                               window.open(url, '_blank');
                                             }}
-                                            className="px-2 py-1 text-xs font-medium text-white bg-[#33CCFF] hover:bg-[#1eb8e6] rounded-full shadow-sm transition-colors flex items-center gap-1"
+                                            className="p-1.5 bg-[#33CCFF] hover:bg-[#1eb8e6] rounded-full transition-colors flex items-center justify-center"
                                             title="Open in Waze"
                                           >
-                                            <img src="/icons/appointments/waze.svg" alt="Waze" className="w-4 h-4 mr-1" />Waze
+                                            <img src="/icons/appointments/waze.svg" alt="Waze" className="w-3.5 h-3.5" />
                                           </button>
                                     </div>
                                   )}
-                          </div>
-                        </div>
                         
                         {/* Platform with Icon and Link - Now outside the flex-wrap container */}
                         {(appointment.platform_name || appointment.platform_link) && (
@@ -1088,26 +1141,25 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                           )}
                         </div>
                       </div>
-                          {/* Right column: utility and action buttons */}
-                          <div className="flex flex-col gap-0 w-full">
-                            {/* Utility share buttons */}
-                            <div className="flex flex-col gap-1 mb-2 w-full md:w-auto">
-                              {/* Utility share buttons in a row */}
-                              <div className="flex flex-row gap-2 mb-1 w-full md:w-auto">
+                          {/* Footer: Share and Actions in 2-column layout */}
+                          <div className="mt-4 pt-4 border-t border-gray-200">
+                            <div className="grid grid-cols-2 gap-3">
+                              {/* Left column: Share buttons */}
+                              <div className="flex flex-col gap-2">
                                 <button
                                   onClick={() => {
                                     const text = getAppointmentShareText(appointment, params.locale);
                                     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
                                     window.open(url, '_blank');
                                   }}
-                                  className="flex-1 px-3 py-2 lg:px-4 lg:py-2 text-xs font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 rounded-full shadow flex items-center gap-1 transition-colors justify-center min-w-[0]"
+                                  className="w-full text-left text-xs text-gray-600 hover:text-gray-800 hover:underline flex items-center gap-2 transition-colors"
                                   title="Share via WhatsApp"
                                 >
-                                  <span className="flex-none inline-flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 bg-green-500 text-white rounded-full mr-1">
-                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
-                        </svg>
+                                  <span className="flex-none inline-flex items-center justify-center w-4 h-4 bg-green-500 text-white rounded-full">
+                                    <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                                  </svg>
                                   </span>
-                                  <span className="whitespace-nowrap">WhatsApp</span>
+                                  <span>Share on WhatsApp</span>
                                 </button>
                                 <button
                                   onClick={() => {
@@ -1115,31 +1167,34 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                                     const url = `mailto:?subject=Appointment&body=${encodeURIComponent(text)}`;
                                     window.open(url, '_blank');
                                   }}
-                                  className="flex-1 px-3 py-2 lg:px-4 lg:py-2 text-xs font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 rounded-full shadow flex items-center gap-1 transition-colors justify-center min-w-[0]"
+                                  className="w-full text-left text-xs text-gray-600 hover:text-gray-800 hover:underline flex items-center gap-2 transition-colors"
                                   title="Share via Email"
                                 >
-                                  <span className="flex-none inline-flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 bg-blue-500 text-white rounded-full mr-1">
-                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                  <span className="flex-none inline-flex items-center justify-center w-4 h-4 bg-blue-500 text-white rounded-full">
+                                    <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                                   </span>
-                                  <span className="whitespace-nowrap">Email</span>
+                                  <span>Share via Email</span>
                                 </button>
                               </div>
-                            </div>
-                            {/* Appointment Actions: Reschedule & Cancel in a row */}
-                            {['confirmed', 'scheduled'].includes(appointment.status) && (
-                              <div className="w-full md:w-auto flex flex-col justify-end">
-                                <div className="text-xs text-gray-500 mb-1 text-center md:text-right">
-                                  {tServiceBoard('rescheduleOrCancelPrompt')}{' '}
-                                  <button
-                                    onClick={() => {
-                                      setShowRescheduleCancelModal(appointment.id);
-                                      setRescheduleCancelReason('');
-                                    }}
-                                    className="text-blue-600 hover:text-blue-800 underline font-medium"
-                                  >
-                                    {tServiceBoard('rescheduleOrCancel')}
-                                  </button>
-                                </div>
+                              
+                              {/* Right column: Actions */}
+                              <div className="flex flex-col gap-2">
+                                {['confirmed', 'scheduled'].includes(appointment.status) && (
+                                  <div className="flex flex-col">
+                                    <div className="text-xs text-gray-500 mb-1">
+                                      {tServiceBoard('rescheduleOrCancelPrompt')}
+                                    </div>
+                                    <button
+                                      onClick={() => {
+                                        setShowRescheduleCancelModal(appointment.id);
+                                        setRescheduleCancelReason('');
+                                      }}
+                                      className="text-xs text-gray-600 hover:text-gray-800 underline font-medium text-left"
+                                    >
+                                      {tServiceBoard('rescheduleOrCancel')}
+                                    </button>
+                                  </div>
+                                )}
                                 {/* Modal for reschedule/cancel */}
                                 {showRescheduleCancelModal === appointment.id && (
                                   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
@@ -1265,7 +1320,7 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                                   </div>
                                 )}
                               </div>
-                            )}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1275,7 +1330,9 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
           )}
         
         {/* Timeline Section */}
-        <div className="w-full  text-gray-900 flex-1 lg:min-w-[50%] lg:max-w-[800px] lg:order-1 p-5 md:p-6">
+        <div className={`w-full text-gray-900 flex-1 lg:min-w-[50%] lg:max-w-[800px] lg:order-1 p-5 md:p-6 ${
+          activeMobileTab === 'timeline' ? 'block' : 'hidden'
+        } lg:block`}>
           {/* Board Data at the beginning of timeline */}
 
           {/* Timeline */}
@@ -1292,9 +1349,11 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
                       : 'opacity-100 scale-100'
                   }`}
                 >
-                  <div className={`absolute left-[-7px] lg:left-[20px] -translate-x-1/2 w-4 h-4 md:w-5 md:h-5 rounded-full border-2 ${getTimelineDotColor(action)} transition-all duration-500 ${
+                  <div className={`absolute left-[-7px] lg:left-[20px] -translate-x-1/2 w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 rounded-full border-2 border-zinc-400 bg-white flex items-center justify-center transition-all duration-500 ${
                     newlyAddedActionId === action.action_id ? 'animate-pulse scale-110' : ''
-                  }`}></div>
+                  }`}>
+                    <div className={`w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full ${getTimelineDotColor(action)}`}></div>
+                  </div>
                   <ServiceBoardActionCard 
                     action={action}
                     onActionUpdate={fetchServiceBoardActions}
@@ -1309,7 +1368,9 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
               {/* Service Request - First Step (at the bottom) */}
               {boardData?.servicerequest && (
                 <div className="relative pl-1 lg:pl-10">
-                  <div className="absolute left-[-7px] lg:left-[20px] -translate-x-1/2 w-4 h-4 md:w-5 md:h-5 rounded-full border-2 bg-blue-500 border-blue-600"></div>
+                  <div className="absolute left-[-7px] lg:left-[20px] -translate-x-1/2 w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 rounded-full border-2 border-zinc-400 bg-white flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full bg-blue-500"></div>
+                  </div>
                   <div className="bg-white border border-gray-200 rounded-xl p-5 md:p-6 lg:p-7 shadow-sm">
                    
                       <div className="flex items-center justify-between text-xs text-gray-400 mb-2">
@@ -1576,10 +1637,12 @@ export default function ServiceBoardPage({ params }: ServiceBoardPageProps) {
         </div>
 
         {/* Business Info Section - Responsive */}
-        <div className="w-full flex-1 lg:max-w-[50%] lg:order-3">
+        <div className={`w-full flex-1 lg:max-w-[50%] lg:order-3 ${
+          activeMobileTab === 'business' ? 'block' : 'hidden'
+        } lg:block`}>
           <div className="sticky top-0 p-6">
             <div className="flex flex-col items-center">
-              <div className="board-cover relative w-full h-[180px] lg:h-[200px] overflow-hidden rounded-t-2xl">
+              <div className="board-cover relative w-full h-[120px] lg:h-[200px] overflow-hidden rounded-t-2xl">
                 <Image
                   src={businessCoverImageUrl}
                   alt={businessData.business_name || 'Business cover'}

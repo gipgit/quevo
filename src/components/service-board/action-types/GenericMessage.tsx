@@ -54,31 +54,31 @@ export default function GenericMessage({ details }: Props) {
   const safeSeverity = typeof details.severity === 'string' ? details.severity : 'info'
 
   return (
-    <div className={`rounded-lg border p-3 lg:p-4 ${getSeverityStyles(safeSeverity)}`}>
-      <div className="flex relative">
-        <div className="flex-shrink-0 absolute lg:relative top-0 left-0 translate-y-[50%] -translate-x-[100%] lg:translate-x-0 lg:translate-y-0">
+    <div className="flex flex-col lg:flex-row lg:items-start gap-1 lg:gap-3">
+      <div className="flex-shrink-0 flex justify-center lg:justify-start">
+        <div className="h-5 w-5 lg:h-6 lg:w-6">
           {getSeverityIcon(safeSeverity)}
         </div>
-        <div className="ml-2">
-          <div className="text-sm leading-tight lg:leading-normal">
-            {typeof details.message_content === 'string' ? details.message_content : JSON.stringify(details.message_content)}
-          </div>
-          {details.requires_acknowledgment && !details.acknowledged_at && (
-            <div className="mt-4">
-              <button
-                type="button"
-                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Acknowledge
-              </button>
-            </div>
-          )}
-          {details.acknowledged_at && (
-            <div className="mt-2 text-sm opacity-75">
-              Acknowledged on {new Date(details.acknowledged_at).toLocaleDateString()}
-            </div>
-          )}
+      </div>
+      <div className="flex-1">
+        <div className="text-sm leading-tight lg:text-lg lg:leading-normal">
+          {typeof details.message_content === 'string' ? details.message_content : JSON.stringify(details.message_content)}
         </div>
+        {details.requires_acknowledgment && !details.acknowledged_at && (
+          <div className="mt-4">
+            <button
+              type="button"
+              className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Acknowledge
+            </button>
+          </div>
+        )}
+        {details.acknowledged_at && (
+          <div className="mt-2 text-sm opacity-75">
+            Acknowledged on {new Date(details.acknowledged_at).toLocaleDateString()}
+          </div>
+        )}
       </div>
     </div>
   )

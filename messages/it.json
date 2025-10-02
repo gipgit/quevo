@@ -1207,7 +1207,10 @@
     "requestReschedule": "Richiedi Riprogrammazione",
     "cancelAppointment": "Annulla Appuntamento",
     "cancelWarning": "L'attività vedrà l'appuntamento come annullato e potrebbe contattarti per chiarimenti.",
-    "confirmCancel": "Conferma Annullamento"
+    "confirmCancel": "Conferma Annullamento",
+    "appointments": "Appuntamenti",
+    "timeline": "Timeline",
+    "businessInfo": "Info Azienda"
   },
   "HowPoints": {
     "title": "Come Funziona",

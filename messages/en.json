@@ -1285,7 +1285,10 @@
     "cancelAppointment": "Cancel Appointment",
     "cancelWarning": "The business will see the appointment as cancelled and may contact you for clarification.",
     "confirmCancel": "Confirm Cancel",
-    "optionalReasonPrompt": "If you want, you can provide a reason for your request:"
+    "optionalReasonPrompt": "If you want, you can provide a reason for your request:",
+    "appointments": "Appointments",
+    "timeline": "Timeline",
+    "businessInfo": "Business Info"
   },
   "HowPoints": {
     "title": "How It Works",
