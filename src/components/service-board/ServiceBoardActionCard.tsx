@@ -148,7 +148,7 @@ export default function ServiceBoardActionCard({ action, onActionUpdate, onAppoi
     <div className={`p-5 md:p-6 lg:p-7 rounded-2xl text-center lg:text-left 
       ${action.is_customer_action_required && action.action_status !== 'completed' ? "bg-white border-[1px] border-gray-300 shadow-sm" : "bg-white border-[1px] border-gray-200"}
     `}>
-      <div className="flex items-start justify-between mb-4">
+      <div className="relative mb-4">
         <div>
           <h3 className="text-xl md:text-2xl font-bold mb-1">{action.action_title}</h3>
           <p className="text-gray-500 text-xs md:text-sm">{action.action_description}</p>
@@ -156,21 +156,23 @@ export default function ServiceBoardActionCard({ action, onActionUpdate, onAppoi
         {shouldShowExpandButton && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-gray-400 hover:text-gray-600"
+            className="absolute -top-1 -right-1 lg:top-0 lg:right-0 text-gray-400 hover:text-gray-600"
           >
-            <svg
-              className={`w-6 h-6 transform transition-transform ${isExpanded ? "rotate-180" : ""}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
+            <span className="w-6 h-6 lg:w-8 lg:h-8 bg-white rounded-full shadow-sm flex items-center justify-center hover:shadow-md transition-shadow">
+              <svg
+                className={`w-3 h-3 lg:w-4 lg:h-4 transform transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </span>
           </button>
         )}
       </div>

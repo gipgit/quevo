@@ -58,49 +58,42 @@ export default function ResourceLink({ details }: Props) {
   }
 
   return (
-    <div className="space-y-2 lg:space-y-4">
-      <div className="flex items-start space-x-2 lg:space-x-4">
-        <div className="flex-shrink-0">
-          {getResourceIcon(details.resource_type)}
+    <div className="space-y-4">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+        <div className="bg-gradient-to-b from-white to-blue-100/50 border border-gray-200 rounded-2xl p-4 flex-1">
+          <div className="flex items-start gap-2 lg:gap-3 min-w-0">
+            <span className="inline-flex items-center px-1.5 py-0.5 lg:px-2.5 lg:py-1 rounded-lg text-xs font-medium flex-shrink-0 bg-transparent border border-gray-300 text-gray-700">
+              {details.resource_type?.toUpperCase() || 'RESOURCE'}
+            </span>
+            <div className="flex-1 min-w-0">
+              <h4 className="text-sm lg:text-xl font-bold text-gray-900 truncate">
+                {details.resource_title || t('resource')}
+              </h4>
+              {details.description && (
+                <p className="text-xs lg:text-sm text-gray-600 mt-0.5">
+                  {details.description}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="text-sm lg:text-lg font-medium text-gray-900">
-            {details.resource_title || t('resource')}
-          </h3>
-          {details.description && (
-            <p className="mt-1 text-sm text-gray-500">
-              {details.description}
-            </p>
-          )}
-        </div>
-      </div>
-
-      <div>
-        <a
-          href={details.resource_url || '#'}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`
-            inline-flex items-center px-2 py-1 lg:px-4 lg:py-2 text-xs lg:text-sm font-medium
-            ${details.requires_login
-              ? 'text-blue-600 hover:text-blue-700'
-              : 'text-blue-800  hover:text-blue-900'
-            }
-            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
-          `}
-        >
-          {details.is_external && (
-            <svg className="mr-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
-              <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto">
+          <a
+            href={details.resource_url || '#'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-b from-blue-100 to-blue-200 text-blue-800 rounded-lg hover:from-blue-200 hover:to-blue-300 transition-all w-full sm:w-auto"
+          >
+            {details.requires_login ? t('loginAndAccessResource') : t('accessResource')}
+            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-          )}
-          {details.requires_login ? t('loginAndAccessResource') : t('accessResource')}
-        </a>
+          </a>
+        </div>
       </div>
 
       {details.customer_notes && (
-        <div className="mt-4 bg-gray-50 rounded-md p-4">
+        <div className="bg-gray-50 rounded-md p-4">
           <p className="text-sm text-gray-700">{details.customer_notes}</p>
         </div>
       )}
