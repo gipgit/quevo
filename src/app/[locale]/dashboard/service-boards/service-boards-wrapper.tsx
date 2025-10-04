@@ -199,7 +199,7 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
   if (serviceBoards.length === 0) {
     return (
       <DashboardLayout>
-        <div className="max-w-[1400px] mx-auto">
+        <div className="max-w-[1600px] mx-auto">
           {/* Top Navbar (simulated) */}
           <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
             <div className="flex justify-between items-center">
@@ -215,8 +215,6 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
               icon={<svg className="mx-auto w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
               title={t("noServiceBoards")}
               description={t("noServiceBoardsDescription")}
-              buttonText={t("createFirstServiceBoard")}
-              onButtonClick={() => window.location.href = "/dashboard/service-boards/create"}
             />
           </div>
         </div>
@@ -226,7 +224,7 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
 
   return (
     <DashboardLayout>
-      <div className="max-w-[1400px] mx-auto">
+      <div className="max-w-[1600px] mx-auto">
         {/* Top Navbar (simulated) */}
         <div className="sticky top-0 z-10 px-4 py-3 lg:py-2 rounded-2xl mb-6 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
           <div className="flex justify-between items-center">

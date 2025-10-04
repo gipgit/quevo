@@ -159,10 +159,10 @@ export default function ProfileInfoSection({ profileData, onChange }: ProfileInf
       {/* Business URL Name */}
       <div>
         <label className="block text-xs font-medium text-gray-500 mb-1">{t("businessUrlName")}</label>
-        <div className="flex items-center rounded-full shadow-sm overflow-hidden bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200">
-          <div className="flex items-center px-3 py-2 md:px-4 md:py-3 bg-gradient-to-r from-gray-100 to-gray-200 border-r border-gray-300">
-            <GlobeAltIcon className="w-5 h-5 text-gray-600 mr-2" />
-            <span className="font-medium text-gray-700">
+        <div className="flex items-center rounded-full shadow-sm overflow-hidden bg-[var(--dashboard-bg-input)] border border-[var(--dashboard-border-primary)]">
+          <div className="flex items-center px-3 py-2 md:px-4 md:py-3 bg-[var(--dashboard-bg-tertiary)] border-r border-[var(--dashboard-border-primary)]">
+            <GlobeAltIcon className="w-5 h-5 text-[var(--dashboard-text-secondary)] mr-2" />
+            <span className="font-medium text-[var(--dashboard-text-primary)]">
               quevo.app/
             </span>
           </div>

@@ -28,10 +28,10 @@
   --dashboard-ring-primary: #3b82f6;
   --dashboard-ring-secondary: #6366f1;
   
-  --dashboard-active-bg: #dbeafe;
-  --dashboard-active-border: #3b82f6;
-  --dashboard-active-text: #1d4ed8;
-  --dashboard-active-text-secondary: #2563eb;
+  --dashboard-active-bg: #f1f5f9;
+  --dashboard-active-border: #64748b;
+  --dashboard-active-text: #1e293b;
+  --dashboard-active-text-secondary: #334155;
   
   --dashboard-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --dashboard-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -116,9 +116,9 @@
   --dashboard-ring-primary: #60a5fa;
   --dashboard-ring-secondary: #818cf8;
   
-  --dashboard-active-bg: #1a1a1a;
-  --dashboard-active-border: #60a5fa;
-  --dashboard-active-text: #acb8c8;
+  --dashboard-active-bg: #2a2a2a;
+  --dashboard-active-border: #9ca8b8;
+  --dashboard-active-text: #c8d0d8;
   --dashboard-active-text-secondary: #9ca8b8;
   
   --dashboard-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);

@@ -54,11 +54,11 @@ export default function ProfileSettingsStep({
   )
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
     
       {/* Default Page */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">{t("defaultPage")}</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t("defaultPage")}</label>
         <select
           value={formData.settings.default_page}
           onChange={(e) => updateSetting("default_page", e.target.value)}
@@ -73,7 +73,7 @@ export default function ProfileSettingsStep({
       </div>
 
       {/* Visibility Settings */}
-      <div className="space-y-4">
+      <div className="space-y-2">
         <h4 className="text-sm font-medium text-gray-700">{t("visibleElements")}</h4>
 
         <div className="space-y-0">
@@ -94,7 +94,7 @@ export default function ProfileSettingsStep({
       </div>
 
       {/* Button Settings */}
-      <div className="space-y-4">
+      <div className="space-y-2">
         <h4 className="text-sm font-medium text-gray-700">{t("actionButtons")}</h4>
 
         <div className="space-y-0">

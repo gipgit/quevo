@@ -6,6 +6,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const {
       business_id,
+      board_id,
       board_ref,
       customer_id,
       message,
@@ -22,6 +23,9 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // If board_id is provided, validate it; otherwise we'll look it up
+    let validatedBoardId = board_id;
 
     if (message.length > 500) {
       return NextResponse.json(
@@ -53,13 +57,27 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify that the service board exists
-    const serviceBoard = await prisma.serviceboard.findFirst({
-      where: {
-        business_id,
-        board_ref
-      },
-      select: { board_id: true }
-    });
+    let serviceBoard;
+    if (board_id) {
+      // If board_id is provided, validate it directly
+      serviceBoard = await prisma.serviceboard.findFirst({
+        where: {
+          board_id,
+          business_id,
+          board_ref
+        },
+        select: { board_id: true }
+      });
+    } else {
+      // Otherwise, look it up by board_ref
+      serviceBoard = await prisma.serviceboard.findFirst({
+        where: {
+          business_id,
+          board_ref
+        },
+        select: { board_id: true }
+      });
+    }
 
     if (!serviceBoard) {
       return NextResponse.json(
@@ -67,6 +85,8 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       );
     }
+
+    validatedBoardId = serviceBoard.board_id;
 
     // If related_action_id is provided, verify it exists
     if (related_action_id) {
@@ -87,6 +107,7 @@ export async function POST(request: NextRequest) {
     const supportRequest = await prisma.servicesupportrequest.create({
       data: {
         business_id,
+        board_id: validatedBoardId, // Use the validated board_id foreign key
         board_ref,
         customer_id: customer_id || null,
         message: message.trim(),

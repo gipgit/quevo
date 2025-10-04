@@ -35,6 +35,7 @@ export async function GET(
       },
       select: {
         support_request_id: true,
+        // board_id: true, // Using direct relationship instead
         board_ref: true,
         message: true,
         email: true,
@@ -62,6 +63,15 @@ export async function GET(
             name_first: true,
             name_last: true,
             email: true
+          }
+        },
+        // Include service board data
+        serviceboard: {
+          select: {
+            board_id: true,
+            board_title: true,
+            board_description: true,
+            board_ref: true
           }
         },
         // Include related service board action

@@ -14,7 +14,6 @@ declare module "@/lib/data/booking" {
     customer_user_id: string | null;
     service: {
       service_name: string;
-      duration_minutes: number | null;
       price_base: number | null;
       active_booking: boolean | null;
     };

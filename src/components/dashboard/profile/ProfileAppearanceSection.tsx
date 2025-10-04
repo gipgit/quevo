@@ -36,13 +36,13 @@ export default function ProfileAppearanceSection({
               type="color" 
               value={profileSettings.theme_color_background || "#FFFFFF"} 
               onChange={e => onColorChange("theme_color_background", e.target.value)} 
-              className="w-full h-10 rounded border border-gray-300 cursor-pointer" 
+              className="w-full h-10 rounded border border-[var(--dashboard-border-primary)] cursor-pointer" 
             />
             <input 
               type="text" 
               value={profileSettings.theme_color_background || "#FFFFFF"} 
               onChange={e => onColorChange("theme_color_background", e.target.value)} 
-              className="w-full px-2 py-1 text-sm border border-gray-300 rounded text-center" 
+              className="w-full px-2 py-1 text-sm border border-[var(--dashboard-border-primary)] rounded text-center bg-[var(--dashboard-bg-input)] text-[var(--dashboard-text-primary)]" 
               placeholder="#FFFFFF" 
             />
           </div>
@@ -53,13 +53,13 @@ export default function ProfileAppearanceSection({
               type="color" 
               value={profileSettings.theme_color_text || "#000000"} 
               onChange={e => onColorChange("theme_color_text", e.target.value)} 
-              className="w-full h-10 rounded border border-gray-300 cursor-pointer" 
+              className="w-full h-10 rounded border border-[var(--dashboard-border-primary)] cursor-pointer" 
             />
             <input 
               type="text" 
               value={profileSettings.theme_color_text || "#000000"} 
               onChange={e => onColorChange("theme_color_text", e.target.value)} 
-              className="w-full px-2 py-1 text-sm border border-gray-300 rounded text-center" 
+              className="w-full px-2 py-1 text-sm border border-[var(--dashboard-border-primary)] rounded text-center bg-[var(--dashboard-bg-input)] text-[var(--dashboard-text-primary)]" 
               placeholder="#000000" 
             />
           </div>
@@ -70,13 +70,13 @@ export default function ProfileAppearanceSection({
               type="color" 
               value={profileSettings.theme_color_button || "#3B82F6"} 
               onChange={e => onColorChange("theme_color_button", e.target.value)} 
-              className="w-full h-10 rounded border border-gray-300 cursor-pointer" 
+              className="w-full h-10 rounded border border-[var(--dashboard-border-primary)] cursor-pointer" 
             />
             <input 
               type="text" 
               value={profileSettings.theme_color_button || "#3B82F6"} 
               onChange={e => onColorChange("theme_color_button", e.target.value)} 
-              className="w-full px-2 py-1 text-sm border border-gray-300 rounded text-center" 
+              className="w-full px-2 py-1 text-sm border border-[var(--dashboard-border-primary)] rounded text-center bg-[var(--dashboard-bg-input)] text-[var(--dashboard-text-primary)]" 
               placeholder="#3B82F6" 
             />
           </div>
@@ -94,8 +94,8 @@ export default function ProfileAppearanceSection({
               onClick={() => onFontChange(font.value)}
               className={`px-4 py-2 w-full rounded-sm flex items-center gap-2 border transition-colors ${
                 profileSettings.theme_font === font.value 
-                  ? "border-blue-500 bg-blue-50 text-blue-700" 
-                  : "border-gray-300 hover:border-gray-400"
+                  ? "border-[var(--dashboard-active-border)] bg-[var(--dashboard-active-bg)] text-[var(--dashboard-active-text)]" 
+                  : "border-[var(--dashboard-border-primary)] hover:border-[var(--dashboard-border-secondary)]"
               } ${font.className}`}
               style={{ fontFamily: font.label }}
             >

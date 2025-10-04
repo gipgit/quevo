@@ -100,16 +100,19 @@ export default function ProfileColorsFontStep({
       {/* Font Selection */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-3">{t("font")}</label>
-        <div className="flex flex-row lg:flex-col gap-2 overflow-x-scroll">
+        <div className="flex flex-row gap-2 overflow-x-auto pb-2 lg:flex-wrap lg:overflow-x-visible lg:pb-0">
           {FONT_OPTIONS.map((font) => (
             <button
               key={font.value}
               type="button"
               onClick={() => updateSetting("theme_font", font.value)}
-              className={`px-4 py-2 w-full rounded-xl flex items-center gap-2 border transition-colors ${formData.settings.theme_font === font.value ? "border-blue-500 bg-blue-50 text-blue-700" : "border-gray-300 hover:border-gray-400"} ${font.className}`}
+              className={`px-4 py-2 min-w-[120px] lg:min-w-[160px] flex-shrink-0 lg:flex-1 rounded-xl flex flex-col items-start border transition-colors ${formData.settings.theme_font === font.value ? "border-blue-500 bg-blue-50 text-blue-700" : "border-gray-300 hover:border-gray-400"} ${font.className}`}
               style={{ fontFamily: font.label }}
             >
               <span className={`${font.className} text-xl lg:text-2xl font-bold`} style={{ fontFamily: font.label }}>
+                {formData.business_name || 'Business Name'}
+              </span>
+              <span className={`${font.className} text-sm lg:text-base -mt-1`} style={{ fontFamily: font.label }}>
                 {formData.business_name || 'Business Name'}
               </span>
             </button>

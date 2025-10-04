@@ -60,6 +60,7 @@ model usermanager {
   appsupportresponse                                           appsupportresponse[]
   business                                                     business[]
   servicesupportrequest                                        servicesupportrequest[]
+  servicesupportresponse                                       servicesupportresponse[]
   usercustomerredemption                                       usercustomerredemption[]
   userguestredemption                                          userguestredemption[]
 }
@@ -385,6 +386,7 @@ model business {
   serviceeventavailability       serviceeventavailability[]
   servicerequest                 servicerequest[]
   servicesupportrequest          servicesupportrequest[]
+  servicesupportresponse         servicesupportresponse[]
   surveyquestionprebuiltfavorite surveyquestionprebuiltfavorite[]
 }
 
@@ -811,26 +813,27 @@ model service {
 }
 
 model serviceboard {
-  board_id              String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  business_id           String               @db.Uuid
-  customer_id           String               @db.Uuid
-  request_id            String?              @db.Uuid
-  service_id            String?              @db.Uuid
-  board_title           String               @db.VarChar(255)
+  board_id              String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  business_id           String                  @db.Uuid
+  customer_id           String                  @db.Uuid
+  request_id            String?                 @db.Uuid
+  service_id            String?                 @db.Uuid
+  board_title           String                  @db.VarChar(255)
   board_description     String?
-  board_ref             String               @unique @db.VarChar(255)
-  is_password_protected Boolean              @default(false)
-  board_password        String?              @db.VarChar(30)
-  status                String               @default("pending") @db.VarChar(50)
-  action_count          Int                  @default(0)
-  created_at            DateTime             @default(now()) @db.Timestamptz(6)
-  updated_at            DateTime             @default(now()) @db.Timestamptz(6)
+  board_ref             String                  @unique @db.VarChar(255)
+  is_password_protected Boolean                 @default(false)
+  board_password        String?                 @db.VarChar(30)
+  status                String                  @default("pending") @db.VarChar(50)
+  action_count          Int                     @default(0)
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
   appointment           appointment[]
-  business              business             @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sb_business")
-  service               service?             @relation(fields: [service_id], references: [service_id], onUpdate: NoAction, map: "fk_sb_service")
-  servicerequest        servicerequest?      @relation(fields: [request_id], references: [request_id], onUpdate: NoAction, map: "fk_sb_service_request")
-  usercustomer          usercustomer         @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_sb_user_customer")
+  business              business                @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sb_business")
+  service               service?                @relation(fields: [service_id], references: [service_id], onUpdate: NoAction, map: "fk_sb_service")
+  servicerequest        servicerequest?         @relation(fields: [request_id], references: [request_id], onUpdate: NoAction, map: "fk_sb_service_request")
+  usercustomer          usercustomer            @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_sb_user_customer")
   serviceboardaction    serviceboardaction[]
+  servicesupportrequest servicesupportrequest[]
 }
 
 model serviceboardaction {
@@ -1072,25 +1075,28 @@ model servicerequirementblock {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model servicesupportrequest {
-  support_request_id String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  business_id        String                    @db.Uuid
-  board_ref          String                    @db.VarChar(255)
-  customer_id        String?                   @db.Uuid
-  message            String
-  related_action_id  String?                   @db.Uuid
-  email              String?                   @db.VarChar(255)
-  priority           service_support_priority?
-  category           service_support_category  @default(general)
-  status             service_support_status    @default(open)
-  assigned_to        String?                   @db.Uuid
-  resolution_notes   String?
-  created_at         DateTime?                 @default(now()) @db.Timestamptz(6)
-  updated_at         DateTime?                 @default(now()) @db.Timestamptz(6)
-  attachments        attachments[]
-  usermanager        usermanager?              @relation(fields: [assigned_to], references: [user_id], onUpdate: NoAction, map: "fk_ssr_assigned_to")
-  business           business                  @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ssr_business")
-  usercustomer       usercustomer?             @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_ssr_customer")
-  serviceboardaction serviceboardaction?       @relation(fields: [related_action_id], references: [action_id], onUpdate: NoAction, map: "fk_ssr_related_action")
+  support_request_id     String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  business_id            String                    @db.Uuid
+  board_id               String?                   @db.Uuid
+  board_ref              String                    @db.VarChar(255)
+  customer_id            String?                   @db.Uuid
+  message                String
+  related_action_id      String?                   @db.Uuid
+  email                  String?                   @db.VarChar(255)
+  priority               service_support_priority?
+  category               service_support_category  @default(general)
+  status                 service_support_status    @default(open)
+  assigned_to            String?                   @db.Uuid
+  resolution_notes       String?
+  created_at             DateTime?                 @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime?                 @default(now()) @db.Timestamptz(6)
+  attachments            attachments[]
+  usermanager            usermanager?              @relation(fields: [assigned_to], references: [user_id], onUpdate: NoAction, map: "fk_ssr_assigned_to")
+  serviceboard           serviceboard?             @relation(fields: [board_id], references: [board_id], onUpdate: NoAction, map: "fk_ssr_board")
+  business               business                  @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ssr_business")
+  usercustomer           usercustomer?             @relation(fields: [customer_id], references: [user_id], onUpdate: NoAction, map: "fk_ssr_customer")
+  serviceboardaction     serviceboardaction?       @relation(fields: [related_action_id], references: [action_id], onUpdate: NoAction, map: "fk_ssr_related_action")
+  servicesupportresponse servicesupportresponse[]
 
   @@index([board_ref], map: "idx_servicesupportrequest_board_ref")
   @@index([business_id, board_ref], map: "idx_servicesupportrequest_business_board")
@@ -1102,6 +1108,7 @@ model servicesupportrequest {
   @@index([priority], map: "idx_servicesupportrequest_priority")
   @@index([related_action_id], map: "idx_servicesupportrequest_related_action_id")
   @@index([status], map: "idx_servicesupportrequest_status")
+  @@index([board_id], map: "idx_servicesupportrequest_board_id")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -1244,6 +1251,35 @@ model userguestredemption {
   usermanager            usermanager? @relation(fields: [redeemed_by_manager_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model servicesupportresponse {
+  response_id           String                          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  support_request_id    String                          @db.Uuid
+  business_id           String                          @db.Uuid
+  responder_id          String                          @db.Uuid
+  response_text         String
+  response_type         service_support_response_type   @default(manual)
+  is_ai_generated       Boolean                         @default(false)
+  ai_model              String?                         @db.VarChar(100)
+  ai_customizations     String[]
+  status                service_support_response_status @default(draft)
+  sent_at               DateTime?                       @db.Timestamptz(6)
+  created_at            DateTime?                       @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime?                       @default(now()) @db.Timestamptz(6)
+  business              business                        @relation(fields: [business_id], references: [business_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ssr_business")
+  usermanager           usermanager                     @relation(fields: [responder_id], references: [user_id], onUpdate: NoAction, map: "fk_ssr_responder")
+  servicesupportrequest servicesupportrequest           @relation(fields: [support_request_id], references: [support_request_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ssr_support_request")
+
+  @@index([business_id], map: "idx_servicesupportresponse_business_id")
+  @@index([business_id, status], map: "idx_servicesupportresponse_business_status")
+  @@index([created_at], map: "idx_servicesupportresponse_created_at")
+  @@index([is_ai_generated], map: "idx_servicesupportresponse_is_ai_generated")
+  @@index([responder_id], map: "idx_servicesupportresponse_responder_id")
+  @@index([sent_at], map: "idx_servicesupportresponse_sent_at")
+  @@index([status], map: "idx_servicesupportresponse_status")
+  @@index([support_request_id], map: "idx_servicesupportresponse_support_request_id")
+}
+
 enum business_sponsorship_level {
   basic
   premium
@@ -1375,4 +1411,16 @@ enum service_support_status {
   in_progress
   resolved
   closed
+}
+
+enum service_support_response_status {
+  draft
+  sent
+  failed
+}
+
+enum service_support_response_type {
+  manual
+  ai_generated
+  template
 }

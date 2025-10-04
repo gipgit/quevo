@@ -130,7 +130,7 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                   type="button"
            className={`flex flex-col items-center justify-center p-2 rounded-lg transition-all focus:outline-none h-16 ${
              isActive
-               ? "ring-2 ring-[var(--dashboard-ring-primary)] bg-[var(--dashboard-bg-tertiary)] shadow-md"
+               ? "border-[var(--dashboard-active-border)] bg-[var(--dashboard-active-bg)] shadow-md"
                : "border border-[var(--dashboard-border-primary)] hover:border-[var(--dashboard-border-secondary)] bg-[var(--dashboard-bg-card)]"
            }`}
                   onClick={() => handleToggle(method.id)}
@@ -149,7 +149,7 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                     }}
                   />
                   <span className={`text-xs font-medium ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                    isActive ? 'text-[var(--dashboard-active-text)]' : 'text-[var(--dashboard-text-secondary)]'
                   }`}>{method.name}</span>
                 </button>
               )
@@ -169,7 +169,7 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                   type="button"
            className={`flex flex-col items-center justify-center p-2 rounded-lg transition-all focus:outline-none h-16 ${
              isActive
-               ? "ring-2 ring-[var(--dashboard-ring-primary)] bg-[var(--dashboard-bg-tertiary)] shadow-md"
+               ? "border-[var(--dashboard-active-border)] bg-[var(--dashboard-active-bg)] shadow-md"
                : "border border-[var(--dashboard-border-primary)] hover:border-[var(--dashboard-border-secondary)] bg-[var(--dashboard-bg-card)]"
            }`}
                   onClick={() => handleToggle(method.id)}
@@ -188,7 +188,7 @@ export default function ProfilePaymentMethodsSection({ paymentMethods, onChange 
                     }}
                   />
                   <span className={`text-xs font-medium ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                    isActive ? 'text-[var(--dashboard-active-text)]' : 'text-[var(--dashboard-text-secondary)]'
                   }`}>{method.name}</span>
                 </button>
               )

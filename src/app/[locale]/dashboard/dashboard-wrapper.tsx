@@ -296,7 +296,7 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
 
   return (
     <DashboardLayout>
-      <div className="max-w-[1400px] mx-auto">
+      <div className="max-w-[1600px] mx-auto">
         {/* Business Selection Modal */}
         <BusinessSelectionModal 
           isOpen={showBusinessModal} 

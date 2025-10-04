@@ -10,7 +10,6 @@ import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { useRouter } from "next/navigation"
 import { useToaster } from "@/components/ui/ToasterProvider"
 import { canCreateMore, formatUsageDisplay } from "@/lib/usage-utils"
-import { UsageLimitBar } from "@/components/dashboard/UsageLimitBar"
 import RichTextEditor from "@/components/ui/RichTextEditor"
 import { sanitizeHtmlContent } from "@/lib/utils/html-sanitizer"
 import ServiceImageUpload from "@/components/service/ServiceImageUpload"
@@ -530,14 +529,23 @@ export default function CreateServicePage() {
   if (contextLoading) {
     return (
       <DashboardLayout>
-        <div className="mx-auto">
-          <div className="mb-8">
-            <h1 className="text-2xl lg:text-3xl font-bold text-[var(--dashboard-text-primary)]">{t("createService")}</h1>
+        <div className="max-w-[1400px] mx-auto">
+          {/* Top Navbar (simulated) */}
+          <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-2xl lg:text-3xl font-bold text-[var(--dashboard-text-primary)]">{t("createService")}</h1>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-[var(--dashboard-text-secondary)]">{tCommon("loading")}</p>
+
+          {/* Content Wrapper with Background */}
+          <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className="text-[var(--dashboard-text-secondary)]">{tCommon("loading")}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -549,34 +557,42 @@ export default function CreateServicePage() {
   if (serviceLimitReached) {
     return (
       <DashboardLayout>
-        <div className="mx-auto">
-          <div className="mb-8">
-            <h1 className="text-2xl lg:text-3xl font-bold text-[var(--dashboard-text-primary)]">{t("createService")}</h1>
-          </div>
-          
-          <div className="bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 rounded-lg p-8 text-center min">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
-              <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
+        <div className="max-w-[1400px] mx-auto">
+          {/* Top Navbar (simulated) */}
+          <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-2xl lg:text-3xl font-bold text-[var(--dashboard-text-primary)]">{t("createService")}</h1>
+              </div>
             </div>
-            <h3 className="text-lg font-medium text-red-800 mb-2">{t("maxServicesReached")}</h3>
-            <p className="text-red-700 mb-6">
-              {formatUsageDisplay(currentUsage, planLimitServices || { value: 0 })}
-            </p>
-            <div className="flex justify-center gap-4">
-              <button
-                onClick={() => router.push("/dashboard/services")}
-                className="px-4 py-2 bg-zinc-600 text-white rounded-lg hover:bg-zinc-700 transition-colors"
-              >
-                {t("cancel")}
-              </button>
-              <button
-                onClick={() => router.push("/dashboard/plan")}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                {t("upgradePlan")}
-              </button>
+          </div>
+
+          {/* Content Wrapper with Background */}
+          <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+            <div className="bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 rounded-lg p-8 text-center min">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-red-800 mb-2">{t("maxServicesReached")}</h3>
+              <p className="text-red-700 mb-6">
+                {formatUsageDisplay(currentUsage, planLimitServices || { value: 0 })}
+              </p>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={() => router.push("/dashboard/services")}
+                  className="px-4 py-2 bg-zinc-600 text-white rounded-lg hover:bg-zinc-700 transition-colors"
+                >
+                  {t("cancel")}
+                </button>
+                <button
+                  onClick={() => router.push("/dashboard/plan")}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  {t("upgradePlan")}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -586,25 +602,18 @@ export default function CreateServicePage() {
 
   return (
     <DashboardLayout>
-      <div className="mx-auto">
-        <div className="mb-4 lg:mb-6">
+      <div className="max-w-[1400px] mx-auto">
+        {/* Top Navbar (simulated) */}
+        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl lg:text-3xl font-bold text-[var(--dashboard-text-primary)]">{t("createService")}</h1>
-            {planLimitServices && (
-              <div className="ml-4 min-w-[220px]">
-                <UsageLimitBar
-                  current={currentUsage}
-                  max={planLimitServices.value}
-                  label={formatUsageDisplay(currentUsage, planLimitServices)}
-                  showUpgrade={true}
-                  onUpgrade={() => router.push("/dashboard/plan")}
-                  upgradeText={t("upgradePlan")}
-                  unlimitedText={t("unlimited")}
-                />
-              </div>
-            )}
+            <div>
+              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">{t("createService")}</p>
+            </div>
           </div>
         </div>
+
+        {/* Content Wrapper with Background */}
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
         <form onSubmit={handleSubmit} className="">
           {/* Basic Information */}
           <div className="pb-4 lg:pb-6 border-b border-[var(--dashboard-border-primary)]">
@@ -1350,7 +1359,8 @@ export default function CreateServicePage() {
               </button>
             </div>
          </form>
-       </div>
+        </div>
+      </div>
      </DashboardLayout>
    )
  }

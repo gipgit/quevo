@@ -86,13 +86,13 @@ export default function ProfileLinksSection({ socialLinks, onChange }: ProfileLi
                 type="button"
            className={`flex flex-col items-center justify-center p-2 rounded-lg transition-all focus:outline-none h-16 ${
              isActive
-               ? "ring-2 ring-[var(--dashboard-ring-primary)] bg-[var(--dashboard-bg-tertiary)] shadow-md"
+               ? "border-[var(--dashboard-active-border)] bg-[var(--dashboard-active-bg)] shadow-md"
                : "border border-[var(--dashboard-border-primary)] hover:border-[var(--dashboard-border-secondary)] bg-[var(--dashboard-bg-card)]"
            }`}
                 onClick={() => handleSelect(social.id)}
               >
                 <img src={social.iconPath} alt={social.name} className="w-5 h-5 mb-1" />
-                <span className="text-xs font-medium text-[var(--dashboard-text-secondary)]">{social.name}</span>
+                <span className={`text-xs font-medium ${isActive ? "text-[var(--dashboard-active-text)]" : "text-[var(--dashboard-text-secondary)]"}`}>{social.name}</span>
               </button>
             )
           })}

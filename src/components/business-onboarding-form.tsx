@@ -148,22 +148,26 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
   }, [onFormDataChange])
 
   const handleNext = () => {
+    let nextStep = currentStep
     if (currentStep === 8 && formData.selected_links.length === 0) {
       // Skip step 9 if no social links selected
-      setCurrentStep(10)
+      nextStep = 10
     } else if (currentStep < STEPS.length) {
-      setCurrentStep(currentStep + 1)
+      nextStep = currentStep + 1
     }
+    setCurrentStep(nextStep)
     setCanProceed(false)
   }
 
   const handlePrevious = () => {
+    let prevStep = currentStep
     if (currentStep === 10 && formData.selected_links.length === 0) {
       // Skip step 9 when going back if no social links selected
-      setCurrentStep(8)
+      prevStep = 8
     } else if (currentStep > 1) {
-      setCurrentStep(currentStep - 1)
+      prevStep = currentStep - 1
     }
+    setCurrentStep(prevStep)
   }
 
   const handleSkip = () => {
@@ -356,26 +360,16 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
   return (
     <>
       {/* Step Header */}
-      <div className="mb-8 text-center lg:text-left">
-        <h2 className="text-2xl lg:text-3xl font-semibold text-gray-900">{t(STEPS[currentStep - 1].name)}</h2>
-        <p className="text-sm text-gray-500">{STEPS[currentStep - 1].description ? t(STEPS[currentStep - 1].description) : ""}</p>
+      <div className="mb-4 lg:mb-6 text-center lg:text-left">
+        <p className="text-xl lg:text-xl font-semibold text-gray-900">{t(STEPS[currentStep - 1].name)}</p>
+        <p className="text-sm text-gray-600">{STEPS[currentStep - 1].description ? t(STEPS[currentStep - 1].description) : ""}</p>
       </div>
 
       {/* Step Content */}
       <div className="mb-8">{renderStep()}</div>
 
-      {/* Fixed Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
-        {/* Progress Bar for xs to md - attached to bottom edge */}
-        <div className="lg:hidden">
-          <div className="w-full bg-gray-200 h-1">
-            <div
-              className="bg-blue-600 h-1 transition-all duration-300"
-              style={{ width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%` }}
-            />
-          </div>
-        </div>
-
+      {/* Absolute Bottom Navigation */}
+      <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200">
         {/* Navigation Buttons */}
         <div className="px-4 lg:px-6 py-4">
           <div className="flex justify-between items-center min-w-0">
@@ -388,13 +382,10 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
               {t("back")}
             </button>
 
-            {/* Progress Bar for lg+ - in the middle of navigation buttons */}
+            {/* Spacer for centering */}
             <div className="hidden lg:flex flex-1 mx-4 justify-center min-w-0">
-              <div className="w-full max-w-4xl bg-gray-200 rounded-full h-1">
-                <div
-                  className="bg-blue-600 h-1 rounded-full transition-all duration-300"
-                  style={{ width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%` }}
-                />
+              <div className="text-sm text-gray-500">
+                {/* Empty spacer to center the buttons */}
               </div>
             </div>
 

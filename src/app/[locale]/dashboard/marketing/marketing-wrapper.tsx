@@ -67,7 +67,7 @@ export default function MarketingWrapper({ services, business, locale }: Marketi
 
   return (
     <DashboardLayout>
-      <div className="max-w-[1400px] mx-auto">
+      <div className="max-w-[1600px] mx-auto">
         {/* Top Navbar (simulated) */}
         <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
           <div className="flex justify-between items-center">

@@ -485,7 +485,8 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
         requestId: selectedRequest.request_id,
         customerNotes: selectedRequest.customer_notes,
         requestDetails: {
-          customerName: selectedRequest.customer_name,
+          customerName: selectedRequest.customer_name ? 
+            selectedRequest.customer_name.trim().split(' ')[0] : 'Customer',
           serviceName: selectedRequest.service?.service_name || 'Service',
           requestReference: selectedRequest.request_reference,
           questionResponses: selectedRequest.question_responses_snapshot,
@@ -625,7 +626,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
   if (serviceRequests.length === 0) {
   return (
     <DashboardLayout>
-      <div className="max-w-[1400px] mx-auto">
+      <div className="max-w-[1600px] mx-auto">
         {/* Top Navbar (simulated) */}
         <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
           <div className="flex justify-between items-center">
@@ -642,8 +643,6 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
             icon={<svg className="mx-auto w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
             title={t("noServiceRequests")}
             description={t("noServiceRequestsDescription")}
-            buttonText={t("createFirstServiceRequest")}
-            onButtonClick={() => window.location.href = "/dashboard/services"}
           />
         </div>
         </div>
@@ -653,7 +652,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
   return (
     <DashboardLayout>
-      <div className="max-w-[1400px] mx-auto">
+      <div className="max-w-[1600px] mx-auto">
         {/* Top Navbar (simulated) */}
         <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
           <div className="flex justify-between items-center">

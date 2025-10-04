@@ -576,7 +576,7 @@ export default function ProfileWrapper({
 
   return (
     <DashboardLayout>
-      <div className="max-w-[1400px] mx-auto">
+      <div className="max-w-[1600px] mx-auto">
         {/* Top Navbar (simulated) */}
         <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
           <div className="flex justify-between items-center">
@@ -606,10 +606,8 @@ export default function ProfileWrapper({
           </div>
         </div>
 
-        {/* Content Wrapper with Background */}
-        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
-          {/* Tab Navigation */}
-        <div className="rounded-lg p-2 mb-8 bg-[var(--dashboard-bg-secondary)]">
+        {/* Tab Navigation */}
+        <div className="rounded-lg p-2 mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
           <nav className="flex justify-between overflow-x-auto">
             {tabs.map((tab) => {
               const isActive = section === tab.id;
@@ -617,10 +615,10 @@ export default function ProfileWrapper({
                 <button
                   key={tab.id}
                   onClick={() => handleTabClick(tab.id)}
-                  className={`flex items-center space-x-2 py-3 px-4 rounded-md font-medium text-sm whitespace-nowrap transition-colors flex-1 ${
+                  className={`flex items-center space-x-2 py-3 px-4 rounded-md font-medium text-sm whitespace-nowrap transition-all duration-200 flex-1 border-b-2 ${
                     isActive
-                      ? "bg-[var(--dashboard-bg-card)] text-[var(--dashboard-text-primary)] shadow-sm" 
-                      : "text-[var(--dashboard-text-secondary)]"
+                      ? "bg-[var(--dashboard-bg-secondary)] text-[var(--dashboard-text-primary)] border-b-[var(--dashboard-border-primary)]" 
+                      : "text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)] border-b-transparent hover:border-b-[var(--dashboard-border-secondary)]"
                   }`}
                 >
                   {renderTabIcon(tab.icon, isActive)}
@@ -630,6 +628,9 @@ export default function ProfileWrapper({
             })}
           </nav>
         </div>
+
+        {/* Content Wrapper with Background */}
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
         
         {/* Main Content */}
         <div className="flex flex-col lg:flex-row justify-between gap-8">

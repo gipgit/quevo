@@ -24,7 +24,10 @@ import {
   EyeIcon,
   EyeSlashIcon,
   SparklesIcon,
-  WrenchScrewdriverIcon
+  WrenchScrewdriverIcon,
+  PencilIcon,
+  CheckIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline'
 import { 
   CheckCircleIcon as CheckCircleSolidIcon,
@@ -34,6 +37,10 @@ import { AIAssistantIcon } from '@/components/ui/ai-assistant-icon'
 import { AIActionButton } from '@/components/ui/ai-action-button'
 import { AICostCard } from '@/components/ui/ai-cost-card'
 import { LoadingAIGeneration } from '@/components/ui/loading-ai-generation'
+import { useAICredits } from '@/hooks/useAICredits'
+import { generateSupportResponse } from './generate-support-response'
+import { enhanceSupportText } from './enhance-support-text'
+import { sendSupportResponse } from './send-support-response'
 import { 
   Dialog, 
   DialogContent, 
@@ -44,10 +51,10 @@ import {
   DialogFooter
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { LoadingSparkles } from '@/components/ui/loading-sparkles'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
 
 interface SupportRequestsWrapperProps {
   supportRequests: any[]
@@ -70,6 +77,68 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
   const [enhancementError, setEnhancementError] = useState<string | null>(null)
   const [generatedResponse, setGeneratedResponse] = useState('')
   const [enhancedText, setEnhancedText] = useState('')
+  
+  // Edit states for responses
+  const [isEditingResponse, setIsEditingResponse] = useState(false)
+  const [isEditingEnhancedText, setIsEditingEnhancedText] = useState(false)
+  const [editableResponse, setEditableResponse] = useState('')
+  const [editableEnhancedText, setEditableEnhancedText] = useState('')
+  const [isSavingResponse, setIsSavingResponse] = useState(false)
+  const [isSavingEnhancedText, setIsSavingEnhancedText] = useState(false)
+  
+  // Response management states
+  const [responses, setResponses] = useState<any[]>([])
+  const [responseIsSent, setResponseIsSent] = useState(false)
+  
+  // Response customization options
+  const [responseCustomizations, setResponseCustomizations] = useState<string[]>([])
+  
+  // Predefined response customization options
+  const responseCustomizationOptions = [
+    {
+      id: 'ask_to_call',
+      label: 'Ask customer to call',
+      description: 'Include a request for the customer to call for immediate assistance'
+    },
+    {
+      id: 'we_will_call',
+      label: 'We will call you',
+      description: 'Inform that the business will call the customer back'
+    },
+    {
+      id: 'checking_and_get_back',
+      label: 'We are checking and will get back',
+      description: 'Let customer know we are investigating and will follow up'
+    },
+    {
+      id: 'provide_solution',
+      label: 'Provide immediate solution',
+      description: 'Focus on providing a direct solution or workaround'
+    },
+    {
+      id: 'schedule_follow_up',
+      label: 'Schedule follow-up',
+      description: 'Propose a specific time for follow-up contact'
+    },
+    {
+      id: 'escalate_to_specialist',
+      label: 'Escalate to specialist',
+      description: 'Inform that the issue will be escalated to a technical specialist'
+    },
+    {
+      id: 'request_additional_info',
+      label: 'Request additional information',
+      description: 'Ask for more details to better understand the issue'
+    },
+    {
+      id: 'confirm_understanding',
+      label: 'Confirm understanding',
+      description: 'Acknowledge and confirm understanding of the customer issue'
+    }
+  ]
+
+  // AI Credits hook
+  const { creditsStatus, featureCosts, loading: creditsLoading, refetch: refetchCredits } = useAICredits(currentBusiness?.business_id || null)
 
   // Debug: Log initial support requests
   useEffect(() => {
@@ -116,6 +185,29 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
       setSelectedIndex(0)
     }
   }, [supportRequests, selectedRequest])
+
+  // Load responses when a request is selected
+  useEffect(() => {
+    const loadResponses = async () => {
+      if (!selectedRequest?.support_request_id) {
+        setResponses([])
+        return
+      }
+      
+      try {
+        const response = await fetch(`/api/support-requests/${selectedRequest.support_request_id}/responses`)
+        if (response.ok) {
+          const data = await response.json()
+          setResponses(data.responses || [])
+        }
+      } catch (error) {
+        console.error('Error loading responses:', error)
+        setResponses([])
+      }
+    }
+
+    loadResponses()
+  }, [selectedRequest?.support_request_id])
 
   // Keyboard navigation
   useEffect(() => {
@@ -174,6 +266,22 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
     const newIndex = Math.max(0, Math.min(supportRequests.length - 1, selectedIndex + direction))
     setSelectedIndex(newIndex)
     setSelectedRequest(supportRequests[newIndex])
+    // Clear AI responses and customizations when switching requests
+    setGeneratedResponse('')
+    setEnhancedText('')
+    setResponseError(null)
+    setEnhancementError(null)
+    setResponseCustomizations([])
+    // Clear edit states
+    setIsEditingResponse(false)
+    setIsEditingEnhancedText(false)
+    setEditableResponse('')
+    setEditableEnhancedText('')
+    setIsSavingResponse(false)
+    setIsSavingEnhancedText(false)
+    // Clear response management states
+    setResponses([])
+    setResponseIsSent(false)
   }, [selectedIndex, supportRequests])
 
   const formatDate = (dateString: string) => {
@@ -307,6 +415,14 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
     }
   }
 
+  const handleCustomizationToggle = (optionId: string) => {
+    setResponseCustomizations(prev => 
+      prev.includes(optionId) 
+        ? prev.filter(id => id !== optionId)
+        : [...prev, optionId]
+    )
+  }
+
   const generateResponse = async () => {
     if (!selectedRequest) return
     
@@ -314,23 +430,22 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
     setResponseError(null)
     
     try {
-      const response = await fetch('/api/ai/generate-support-response', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          supportRequestId: selectedRequest.support_request_id,
-          message: selectedRequest.message,
-          category: selectedRequest.category,
-          priority: selectedRequest.priority
-        })
+      const result = await generateSupportResponse({
+        supportRequestId: selectedRequest.support_request_id,
+        message: selectedRequest.message,
+        category: selectedRequest.category,
+        priority: selectedRequest.priority,
+        customizations: responseCustomizations
       })
       
-      if (response.ok) {
-        const result = await response.json()
-        setGeneratedResponse(result.response)
+      if (result.success && result.data) {
+        setGeneratedResponse(result.data.response)
+        // Refresh credits after successful generation
+        refetchCredits()
+        // Close modal after successful generation
+        setShowGenerateResponseModal(false)
       } else {
-        const errorData = await response.json()
-        setResponseError(errorData.error || 'Failed to generate response')
+        setResponseError(result.errorMessage || 'Failed to generate response')
       }
     } catch (error) {
       setResponseError('Error generating response')
@@ -347,22 +462,20 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
     setEnhancementError(null)
     
     try {
-      const response = await fetch('/api/ai/enhance-support-text', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          supportRequestId: selectedRequest.support_request_id,
-          message: selectedRequest.message,
-          category: selectedRequest.category
-        })
+      const result = await enhanceSupportText({
+        supportRequestId: selectedRequest.support_request_id,
+        message: selectedRequest.message,
+        category: selectedRequest.category
       })
       
-      if (response.ok) {
-        const result = await response.json()
-        setEnhancedText(result.enhancedText)
+      if (result.success && result.data) {
+        setEnhancedText(result.data.enhancedText)
+        // Refresh credits after successful enhancement
+        refetchCredits()
+        // Close modal after successful enhancement
+        setShowTextEnhancementModal(false)
       } else {
-        const errorData = await response.json()
-        setEnhancementError(errorData.error || 'Failed to enhance text')
+        setEnhancementError(result.errorMessage || 'Failed to enhance text')
       }
     } catch (error) {
       setEnhancementError('Error enhancing text')
@@ -385,6 +498,233 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
     }
   }
 
+  // Edit and save functions for generated response
+  const startEditingResponse = () => {
+    setEditableResponse(generatedResponse)
+    setIsEditingResponse(true)
+  }
+
+  const cancelEditingResponse = () => {
+    setEditableResponse('')
+    setIsEditingResponse(false)
+  }
+
+  const sendEditedResponse = async () => {
+    if (!selectedRequest || !editableResponse.trim()) return
+    
+    setIsSavingResponse(true)
+    try {
+      const result = await sendSupportResponse({
+        supportRequestId: selectedRequest.support_request_id,
+        responseText: editableResponse,
+        responseType: 'ai_generated',
+        isAiGenerated: true,
+        aiModel: 'gpt-4o-mini',
+        aiCustomizations: responseCustomizations
+      })
+      
+      if (result.success) {
+        setGeneratedResponse(editableResponse)
+        setIsEditingResponse(false)
+        setEditableResponse('')
+        // Clear customizations after sending
+        setResponseCustomizations([])
+        
+        // Add response to local state
+        const newResponse = {
+          response_id: result.responseId,
+          response_text: editableResponse,
+          response_type: 'ai_generated',
+          is_ai_generated: true,
+          ai_model: 'gpt-4o-mini',
+          ai_customizations: responseCustomizations,
+          status: 'sent',
+          sent_at: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+        
+        setResponses(prev => [newResponse, ...prev])
+        
+        
+        setResponseIsSent(true)
+        
+        // Reset sent status after 3 seconds
+        setTimeout(() => setResponseIsSent(false), 3000)
+      } else {
+        console.error('Failed to send response:', result.error)
+      }
+    } catch (error) {
+      console.error('Error sending response:', error)
+    } finally {
+      setIsSavingResponse(false)
+    }
+  }
+
+  const sendCurrentResponse = async () => {
+    console.log('sendCurrentResponse called', { selectedRequest, generatedResponse, responseCustomizations })
+    
+    if (!selectedRequest || !generatedResponse.trim()) {
+      console.log('Early return: missing selectedRequest or generatedResponse')
+      return
+    }
+    
+    setIsSavingResponse(true)
+    try {
+      console.log('Calling sendSupportResponse...')
+      const result = await sendSupportResponse({
+        supportRequestId: selectedRequest.support_request_id,
+        responseText: generatedResponse,
+        responseType: 'ai_generated',
+        isAiGenerated: true,
+        aiModel: 'gpt-4o-mini',
+        aiCustomizations: responseCustomizations
+      })
+      
+      console.log('Send result:', result)
+      
+      if (result.success) {
+        // Clear customizations after sending
+        setResponseCustomizations([])
+        
+        // Add response to local state
+        const newResponse = {
+          response_id: result.responseId,
+          response_text: generatedResponse,
+          response_type: 'ai_generated',
+          is_ai_generated: true,
+          ai_model: 'gpt-4o-mini',
+          ai_customizations: responseCustomizations,
+          status: 'sent',
+          sent_at: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+        
+        setResponses(prev => [newResponse, ...prev])
+        
+        
+        setResponseIsSent(true)
+        
+        // Reset sent status after 3 seconds
+        setTimeout(() => setResponseIsSent(false), 3000)
+        
+        console.log('Response sent successfully')
+      } else {
+        console.error('Failed to send response:', result.error)
+      }
+    } catch (error) {
+      console.error('Error sending response:', error)
+    } finally {
+      setIsSavingResponse(false)
+    }
+  }
+
+  // Edit and save functions for enhanced text
+  const startEditingEnhancedText = () => {
+    setEditableEnhancedText(enhancedText)
+    setIsEditingEnhancedText(true)
+  }
+
+  const cancelEditingEnhancedText = () => {
+    setEditableEnhancedText('')
+    setIsEditingEnhancedText(false)
+  }
+
+  const sendEditedEnhancedText = async () => {
+    if (!selectedRequest || !editableEnhancedText.trim()) return
+    
+    setIsSavingEnhancedText(true)
+    try {
+      const result = await sendSupportResponse({
+        supportRequestId: selectedRequest.support_request_id,
+        responseText: editableEnhancedText,
+        responseType: 'ai_generated',
+        isAiGenerated: true,
+        aiModel: 'gpt-4o-mini'
+      })
+      
+      if (result.success) {
+        setEnhancedText(editableEnhancedText)
+        setIsEditingEnhancedText(false)
+        setEditableEnhancedText('')
+        
+        // Add response to local state
+        const newResponse = {
+          response_id: result.responseId,
+          response_text: editableEnhancedText,
+          response_type: 'ai_generated',
+          is_ai_generated: true,
+          ai_model: 'gpt-4o-mini',
+          status: 'sent',
+          sent_at: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+        
+        setResponses(prev => [newResponse, ...prev])
+        
+        
+        setResponseIsSent(true)
+        
+        // Reset sent status after 3 seconds
+        setTimeout(() => setResponseIsSent(false), 3000)
+      } else {
+        console.error('Failed to send enhanced text:', result.error)
+      }
+    } catch (error) {
+      console.error('Error sending enhanced text:', error)
+    } finally {
+      setIsSavingEnhancedText(false)
+    }
+  }
+
+  const sendCurrentEnhancedText = async () => {
+    if (!selectedRequest || !enhancedText.trim()) return
+    
+    setIsSavingEnhancedText(true)
+    try {
+      const result = await sendSupportResponse({
+        supportRequestId: selectedRequest.support_request_id,
+        responseText: enhancedText,
+        responseType: 'ai_generated',
+        isAiGenerated: true,
+        aiModel: 'gpt-4o-mini'
+      })
+      
+      if (result.success) {
+        // Add response to local state
+        const newResponse = {
+          response_id: result.responseId,
+          response_text: enhancedText,
+          response_type: 'ai_generated',
+          is_ai_generated: true,
+          ai_model: 'gpt-4o-mini',
+          status: 'sent',
+          sent_at: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+        
+        setResponses(prev => [newResponse, ...prev])
+        
+        
+        setResponseIsSent(true)
+        
+        // Reset sent status after 3 seconds
+        setTimeout(() => setResponseIsSent(false), 3000)
+        
+        console.log('Enhanced text sent successfully')
+      } else {
+        console.error('Failed to send enhanced text:', result.error)
+      }
+    } catch (error) {
+      console.error('Error sending enhanced text:', error)
+    } finally {
+      setIsSavingEnhancedText(false)
+    }
+  }
+
   // Calculate progress
   const totalRequests = supportRequests.length
   const resolvedRequests = supportRequests.filter(req => req.status === 'resolved' || req.status === 'closed').length
@@ -394,7 +734,7 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
   if (supportRequests.length === 0) {
     return (
       <DashboardLayout>
-        <div className="max-w-[1400px] mx-auto">
+        <div className="max-w-[1600px] mx-auto">
           {/* Top Navbar (simulated) */}
           <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
             <div className="flex justify-between items-center">
@@ -410,8 +750,6 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
               icon={<ChatBubbleLeftRightIcon className="mx-auto w-12 h-12" />}
               title="No Support Requests"
               description="No support requests have been submitted yet."
-              buttonText="View Service Boards"
-              onButtonClick={() => window.location.href = "/dashboard/service-boards"}
             />
           </div>
         </div>
@@ -421,7 +759,7 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
 
   return (
     <DashboardLayout>
-      <div className="max-w-[1400px] mx-auto">
+      <div className="max-w-[1600px] mx-auto">
         {/* Top Navbar (simulated) */}
         <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
           <div className="flex justify-between items-center">
@@ -504,6 +842,22 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                       onClick={() => {
                         setSelectedRequest(request)
                         setSelectedIndex(index)
+                        // Clear AI responses and customizations when switching requests
+                        setGeneratedResponse('')
+                        setEnhancedText('')
+                        setResponseError(null)
+                        setEnhancementError(null)
+                        setResponseCustomizations([])
+                        // Clear edit states
+                        setIsEditingResponse(false)
+                        setIsEditingEnhancedText(false)
+                        setEditableResponse('')
+                        setEditableEnhancedText('')
+                        setIsSavingResponse(false)
+                        setIsSavingEnhancedText(false)
+                        // Clear response management states
+                        setResponses([])
+                        setResponseIsSent(false)
                       }}
                       className={`p-2 lg:p-3 rounded-lg cursor-pointer transition-all flex-shrink-0 w-60 lg:w-auto ${
                         isSelected
@@ -554,7 +908,7 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                           <h2 className={`text-base lg:text-lg font-bold ${
                             theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
                           }`}>
-                            {selectedRequest.board_ref}
+                            {selectedRequest.serviceboard?.board_title || selectedRequest.board_ref}
                           </h2>
                           <span className={`px-2 py-0.5 rounded-full text-xs ${getStatusColor(selectedRequest.status)}`}>
                             {getStatusText(selectedRequest.status)}
@@ -566,7 +920,12 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                             {selectedRequest.priority || 'priority'}
                           </span>
                         </div>
-                        <div className="hidden"></div>
+                        {/* Board Reference */}
+                        {selectedRequest.board_ref && (
+                          <div className="text-sm text-[var(--dashboard-text-secondary)] mt-1">
+                            <span className="text-[var(--dashboard-text-tertiary)]">Reference:</span> {selectedRequest.board_ref}
+                          </div>
+                        )}
                       </div>
                     </div>
                     
@@ -714,6 +1073,54 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                       </div>
                     )}
 
+                    {/* Responses */}
+                    {responses && responses.length > 0 && (
+                      <div>
+                        <h3 className={`text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]`}>Responses</h3>
+                        <div className="space-y-3">
+                          {responses.map((response: any) => (
+                            <div key={response.response_id} className={`p-3 rounded-lg border bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)]`}>
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs text-[var(--dashboard-text-tertiary)]">
+                                  Sent: {response.sent_at 
+                                    ? new Date(response.sent_at).toLocaleDateString() + ' ' + 
+                                      new Date(response.sent_at).toLocaleTimeString()
+                                    : 'Unknown'}
+                                </span>
+                                <div className="flex gap-1">
+                                  {response.is_ai_generated && (
+                                    <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-blue-100 text-blue-800 text-xs">
+                                      <SparklesIcon className="w-3 h-3" />
+                                      AI
+                                    </div>
+                                  )}
+                                  <button
+                                    onClick={() => navigator.clipboard.writeText(response.response_text)}
+                                    className="p-1 rounded transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+                                    title="Copy response"
+                                  >
+                                    <ClipboardDocumentIcon className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              </div>
+                              <div className="text-sm text-[var(--dashboard-text-secondary)] leading-relaxed">
+                                {response.response_text}
+                              </div>
+                              {response.ai_customizations && response.ai_customizations.length > 0 && (
+                                <div className="mt-2 flex flex-wrap gap-1">
+                                  {response.ai_customizations.map((customization: string, index: number) => (
+                                    <span key={index} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                                      {customization.replace(/_/g, ' ')}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Attachments */}
                     {selectedRequest.attachments && selectedRequest.attachments.length > 0 && (
                       <div>
@@ -844,6 +1251,200 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                       </button>
                     </div>
                   </div>
+
+                  {/* Generated Response Section */}
+                  {generatedResponse && (
+                    <div className="mb-6 pt-4 border-t border-white/10">
+                      <h4 className="text-xs font-medium mb-3 ai-panel-text-secondary uppercase tracking-wide flex items-center gap-2">
+                        <SparklesIcon className="w-4 h-4" />
+                        Generated Response
+                      </h4>
+                      <div className="bg-[var(--dashboard-bg-card)] border border-[var(--dashboard-border-primary)] rounded-lg p-4">
+                        {isEditingResponse ? (
+                          <div className="space-y-3">
+                            <Label htmlFor="editable-response" className="text-xs font-medium text-[var(--dashboard-text-secondary)]">
+                              Edit Response
+                            </Label>
+                            <Textarea
+                              id="editable-response"
+                              value={editableResponse}
+                              onChange={(e) => setEditableResponse(e.target.value)}
+                              className="min-h-[120px] text-sm"
+                              placeholder="Edit the generated response..."
+                            />
+                            <div className="flex gap-2">
+                              <button
+                                onClick={sendEditedResponse}
+                                disabled={isSavingResponse || !editableResponse.trim()}
+                                className="px-3 py-1.5 text-xs bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded transition-colors flex items-center gap-1"
+                              >
+                                {isSavingResponse ? (
+                                  <>
+                                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    Sending...
+                                  </>
+                                ) : (
+                                  <>
+                                    <CheckIcon className="w-3 h-3" />
+                                    Send Response
+                                  </>
+                                )}
+                              </button>
+                              <button
+                                onClick={cancelEditingResponse}
+                                disabled={isSavingResponse}
+                                className="px-3 py-1.5 text-xs bg-gray-500 hover:bg-gray-600 disabled:bg-gray-400 text-white rounded transition-colors flex items-center gap-1"
+                              >
+                                <XMarkIcon className="w-3 h-3" />
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="text-sm text-[var(--dashboard-text-primary)] leading-relaxed mb-3">
+                              {generatedResponse}
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => navigator.clipboard.writeText(generatedResponse)}
+                                className="px-3 py-1.5 text-xs bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-secondary)] text-[var(--dashboard-text-primary)] rounded transition-colors"
+                              >
+                                Copy
+                              </button>
+                              <button
+                                onClick={startEditingResponse}
+                                className="px-3 py-1.5 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors flex items-center gap-1"
+                              >
+                                <PencilIcon className="w-3 h-3" />
+                                Edit
+                              </button>
+                              <button
+                                onClick={sendCurrentResponse}
+                                disabled={isSavingResponse}
+                                className="px-3 py-1.5 text-xs bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded transition-colors flex items-center gap-1"
+                              >
+                                {isSavingResponse ? (
+                                  <>
+                                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    Sending...
+                                  </>
+                                ) : (
+                                  <>
+                                    <CheckIcon className="w-3 h-3" />
+                                    Send Response
+                                  </>
+                                )}
+                              </button>
+                              <button
+                                onClick={() => setGeneratedResponse('')}
+                                className="px-3 py-1.5 text-xs bg-red-100 hover:bg-red-200 text-red-700 rounded transition-colors"
+                              >
+                                Clear
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Enhanced Text Section */}
+                  {enhancedText && (
+                    <div className="mb-6 pt-4 border-t border-white/10">
+                      <h4 className="text-xs font-medium mb-3 ai-panel-text-secondary uppercase tracking-wide flex items-center gap-2">
+                        <WrenchScrewdriverIcon className="w-4 h-4" />
+                        Enhanced Text
+                      </h4>
+                      <div className="bg-[var(--dashboard-bg-card)] border border-[var(--dashboard-border-primary)] rounded-lg p-4">
+                        {isEditingEnhancedText ? (
+                          <div className="space-y-3">
+                            <Label htmlFor="editable-enhanced-text" className="text-xs font-medium text-[var(--dashboard-text-secondary)]">
+                              Edit Enhanced Text
+                            </Label>
+                            <Textarea
+                              id="editable-enhanced-text"
+                              value={editableEnhancedText}
+                              onChange={(e) => setEditableEnhancedText(e.target.value)}
+                              className="min-h-[120px] text-sm"
+                              placeholder="Edit the enhanced text..."
+                            />
+                            <div className="flex gap-2">
+                              <button
+                                onClick={sendEditedEnhancedText}
+                                disabled={isSavingEnhancedText || !editableEnhancedText.trim()}
+                                className="px-3 py-1.5 text-xs bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded transition-colors flex items-center gap-1"
+                              >
+                                {isSavingEnhancedText ? (
+                                  <>
+                                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    Sending...
+                                  </>
+                                ) : (
+                                  <>
+                                    <CheckIcon className="w-3 h-3" />
+                                    Send Response
+                                  </>
+                                )}
+                              </button>
+                              <button
+                                onClick={cancelEditingEnhancedText}
+                                disabled={isSavingEnhancedText}
+                                className="px-3 py-1.5 text-xs bg-gray-500 hover:bg-gray-600 disabled:bg-gray-400 text-white rounded transition-colors flex items-center gap-1"
+                              >
+                                <XMarkIcon className="w-3 h-3" />
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="text-sm text-[var(--dashboard-text-primary)] leading-relaxed mb-3">
+                              {enhancedText}
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => navigator.clipboard.writeText(enhancedText)}
+                                className="px-3 py-1.5 text-xs bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-secondary)] text-[var(--dashboard-text-primary)] rounded transition-colors"
+                              >
+                                Copy
+                              </button>
+                              <button
+                                onClick={startEditingEnhancedText}
+                                className="px-3 py-1.5 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors flex items-center gap-1"
+                              >
+                                <PencilIcon className="w-3 h-3" />
+                                Edit
+                              </button>
+                              <button
+                                onClick={sendCurrentEnhancedText}
+                                disabled={isSavingEnhancedText}
+                                className="px-3 py-1.5 text-xs bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded transition-colors flex items-center gap-1"
+                              >
+                                {isSavingEnhancedText ? (
+                                  <>
+                                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    Sending...
+                                  </>
+                                ) : (
+                                  <>
+                                    <CheckIcon className="w-3 h-3" />
+                                    Send Response
+                                  </>
+                                )}
+                              </button>
+                              <button
+                                onClick={() => setEnhancedText('')}
+                                className="px-3 py-1.5 text-xs bg-red-100 hover:bg-red-200 text-red-700 rounded transition-colors"
+                              >
+                                Clear
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ) : (
@@ -898,10 +1499,10 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                 <div className="space-y-3 text-left">
                   <div className="ai-panel-card p-3 rounded-lg">
                     <div className="text-xs ai-panel-text-secondary mb-1">Request Summary</div>
-                    <div className="text-xs ai-panel-text space-y-0.5">
+                    <div className="text-xs ai-panel-text flex flex-wrap gap-x-3 gap-y-0.5">
                       <div><span className="ai-panel-text-secondary">Category:</span> {selectedRequest?.category}</div>
                       <div><span className="ai-panel-text-secondary">Priority:</span> {selectedRequest?.priority}</div>
-                      <div><span className="ai-panel-text-secondary">Message:</span> {selectedRequest?.message}</div>
+                      <div className="flex-1 min-w-0"><span className="ai-panel-text-secondary">Message:</span> {selectedRequest?.message}</div>
                     </div>
                   </div>
 
@@ -913,6 +1514,42 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                         {selectedRequest?.message}
                       </div>
                       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 rounded-b-lg bg-gradient-to-b from-transparent to-blue-100/40"></div>
+                    </div>
+                  </div>
+
+                  {/* Response Customization Options */}
+                  <div>
+                    <div className={`text-xs font-medium mb-3 ai-panel-text-secondary uppercase tracking-wide`}>Response Customization</div>
+                    <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+                      {responseCustomizationOptions.map((option) => (
+                        <button
+                          key={option.id}
+                          onClick={() => handleCustomizationToggle(option.id)}
+                          className={`p-3 rounded-lg border text-left transition-colors ${
+                            responseCustomizations.includes(option.id)
+                              ? 'bg-blue-100 border-blue-300 text-blue-800'
+                              : 'bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="text-xs font-medium mb-1">{option.label}</div>
+                              <div className="text-xs opacity-75 leading-tight">{option.description}</div>
+                            </div>
+                            <div className={`ml-2 w-4 h-4 rounded border-2 flex items-center justify-center ${
+                              responseCustomizations.includes(option.id)
+                                ? 'bg-blue-500 border-blue-500'
+                                : 'border-gray-300'
+                            }`}>
+                              {responseCustomizations.includes(option.id) && (
+                                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                        </button>
+                      ))}
                     </div>
                   </div>
 
@@ -930,18 +1567,6 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                     </div>
                   )}
 
-                  {generatedResponse && (
-                    <div>
-                      <Label htmlFor="generated-response" className="text-xs ai-panel-text-secondary">Generated Response</Label>
-                      <Textarea
-                        id="generated-response"
-                        value={generatedResponse}
-                        onChange={(e) => setGeneratedResponse(e.target.value)}
-                        rows={8}
-                        className="mt-2"
-                      />
-                    </div>
-                  )}
                 </div>
               )}
 
@@ -1027,18 +1652,6 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                     </div>
                   )}
 
-                  {enhancedText && (
-                    <div>
-                      <Label htmlFor="enhanced-text" className="text-xs ai-panel-text-secondary">Enhanced Message</Label>
-                      <Textarea
-                        id="enhanced-text"
-                        value={enhancedText}
-                        onChange={(e) => setEnhancedText(e.target.value)}
-                        rows={8}
-                        className="mt-2 ai-input"
-                      />
-                    </div>
-                  )}
                 </div>
               )}
 

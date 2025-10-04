@@ -11,10 +11,25 @@ import { LocaleSelectModal } from "@/components/ui/LocaleSelectModal"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import { useLocale } from "next-intl"
 
+// Step titles mapping
+const STEP_TITLES = [
+  { id: 1, name: "businessInfo" },
+  { id: 2, name: "profileLink" },
+  { id: 3, name: "location" },
+  { id: 4, name: "contacts" },
+  { id: 5, name: "images" },
+  { id: 6, name: "profileSettings" },
+  { id: 7, name: "colorsAndFont" },
+  { id: 8, name: "socials" },
+  { id: 9, name: "socialLinks" },
+  { id: 10, name: "confirm" },
+]
+
 export default function OnboardingPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const t = useTranslations("onboarding")
+  const tBusiness = useTranslations("BusinessOnboarding")
   const locale = useLocale()
   const [isLocaleModalOpen, setIsLocaleModalOpen] = useState(false)
   const [formData, setFormData] = useState<any>({
@@ -27,6 +42,7 @@ export default function OnboardingPage() {
     cover_image_desktop: null,
     selected_links: [],
     link_urls: {},
+    currentStep: 1,
     settings: {
       default_page: "services",
       theme_color_background: "#FFFFFF",
@@ -56,6 +72,10 @@ export default function OnboardingPage() {
     const currentPath = window.location.pathname
     const newPath = currentPath.replace(`/${locale}`, `/${newLocale}`)
     router.push(newPath)
+  }
+
+  const handleFormDataChange = (newFormData: any) => {
+    setFormData(newFormData)
   }
 
   const availableLocales = [
@@ -128,47 +148,136 @@ export default function OnboardingPage() {
   }, {})
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Top Navbar */}
-      <div className="px-4 lg:px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex-1 opacity-50">
-            <h1 className="text-md lg:text-2xl font-bold text-gray-900">Flowia</h1>
-          </div>
-          <div className="flex-1 text-sm text-gray-800 text-center">
-              {t("createBusinessTitle")}
-          </div>
-          <div className="flex-1 opacity-50 text-right">
-            <LocaleSwitcherButton onClick={handleLocaleButtonClick} />
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col lg:flex-row max-w-4xl mx-auto w-full pb-24 lg:items-center py-4 px-6">
-        {/* Left Column - Form */}
-        <div className="lg:flex-1 min-w-0 p-4 lg:p-6">
-          <BusinessOnboardingForm 
-            onFormDataChange={setFormData}
-            formData={formData}
-          />
-        </div>
-        
-        {/* Right Column - Preview */}
-        <div className="w-full lg:w-96 flex-shrink-0 p-4 lg:p-6">
-          <div className="lg:sticky lg:top-6">
-            <div className="bg-gradient-to-br from-gray-100 to-gray-200 p-4 border rounded-xl flex flex-col">
-              <div className="flex items-center justify-center">
-                <ProfilePreview
-                  profileData={profileData}
-                  profileSettings={formData.settings}
-                  profileImg={profileImgUrl}
-                  coverImg={coverImgUrl}
-                  businessName={formData.business_name || "Business Name"}
-                  socialLinks={socialLinks}
-                />
+    <div className="min-h-screen flex flex-col md:flex-row">
+      {/* Left Panel - Form with Header and Navigation */}
+      <div className="flex-1 flex flex-col bg-white relative">
+        {/* Header */}
+        <div className="px-4 lg:px-6 py-4">
+          <div className="flex items-center">
+            <div className="w-1/5 opacity-50">
+              <h1 className="text-md lg:text-2xl font-bold text-gray-900">Flowia</h1>
+            </div>
+            <div className="flex-1 text-center">
+              <div className="text-center mb-2">
+                <span className="text-xs text-gray-800">{t("createBusinessTitle")}</span>
+                <span className="text-xs text-gray-500 ml-2">
+                  {tBusiness(STEP_TITLES.find(step => step.id === (formData.currentStep || 1))?.name || "businessInfo")}
+                </span>
+              </div>
+              <div className="w-full px-4">
+                <div className="w-full bg-gray-200 rounded-full h-1">
+                  <div
+                    className="bg-blue-600 h-1 rounded-full transition-all duration-300"
+                    style={{ width: `${((formData.currentStep || 1) - 1) / 9 * 100}%` }}
+                  />
+                </div>
               </div>
             </div>
+            <div className="w-1/5 opacity-50 text-right">
+              <LocaleSwitcherButton onClick={handleLocaleButtonClick} />
+            </div>
+          </div>
+        </div>
+
+         {/* Form Content */}
+         <div className="flex-1 flex items-center justify-center p-8 pb-32">
+           <div className="w-full max-w-[400px]">
+             <BusinessOnboardingForm 
+               onFormDataChange={handleFormDataChange}
+               formData={formData}
+             />
+           </div>
+         </div>
+      </div>
+      
+      {/* Right Panel - Profile Preview */}
+      <div className="flex-1 bg-gray-900 flex items-center justify-center text-white p-8 relative overflow-hidden">
+        {/* Gradient Layer 1 */}
+        <div 
+          className="absolute z-1"
+          style={{
+            background: 'linear-gradient(143.241deg, rgb(128, 169, 252) 0%, rgb(211, 123, 255) 31.087%, rgb(252, 171, 131) 70.4599%, rgb(255, 73, 212) 100%)',
+            filter: 'blur(80px)',
+            borderRadius: '100%',
+            opacity: 0.24,
+            height: '400px',
+            left: '-200px',
+            top: '-100px',
+            width: '500px'
+          }}
+        ></div>
+        
+        {/* Gradient Layer 2 */}
+        <div 
+          className="absolute z-1"
+          style={{
+            background: 'linear-gradient(140.017deg, rgb(239, 232, 246) 0%, rgb(213, 136, 251) 60.8266%, rgb(255, 73, 212) 100%)',
+            filter: 'blur(80px)',
+            borderRadius: '100%',
+            opacity: 0.18,
+            height: '400px',
+            right: '-150px',
+            bottom: '-100px',
+            width: '500px'
+          }}
+        ></div>
+        
+        {/* Bottom Color Layer 1 */}
+        <div 
+          className="absolute z-1"
+          style={{
+            background: '#8A5FBF',
+            filter: 'blur(80px)',
+            opacity: 0.9,
+            height: '180px',
+            bottom: '-90px',
+            left: '0',
+            width: '33.33%',
+            borderRadius: '100%'
+          }}
+        ></div>
+        
+        {/* Bottom Color Layer 2 */}
+        <div 
+          className="absolute z-1"
+          style={{
+            background: '#FFB366',
+            filter: 'blur(80px)',
+            opacity: 0.9,
+            height: '180px',
+            bottom: '-90px',
+            left: '33.33%',
+            width: '33.33%',
+            borderRadius: '100%'
+          }}
+        ></div>
+        
+        {/* Bottom Color Layer 3 */}
+        <div 
+          className="absolute z-1"
+          style={{
+            background: '#7ED321',
+            filter: 'blur(80px)',
+            opacity: 0.9,
+            height: '180px',
+            bottom: '-90px',
+            left: '66.66%',
+            width: '33.33%',
+            borderRadius: '100%'
+          }}
+        ></div>
+        
+        {/* Profile Preview */}
+        <div className="text-center py-8 max-w-md relative z-10">
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+            <ProfilePreview
+              profileData={profileData}
+              profileSettings={formData.settings}
+              profileImg={profileImgUrl}
+              coverImg={coverImgUrl}
+              businessName={formData.business_name || "Business Name"}
+              socialLinks={socialLinks}
+            />
           </div>
         </div>
       </div>

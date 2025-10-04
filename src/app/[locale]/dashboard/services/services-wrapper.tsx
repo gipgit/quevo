@@ -108,7 +108,7 @@ interface ServicesWrapperProps {
 export default function ServicesWrapper({ services: initialServices }: ServicesWrapperProps) {
   const t = useTranslations("services")
   const tCommon = useTranslations("Common")
-  const { currentBusiness, refreshUsageForFeature, businessSwitchKey } = useBusiness()
+  const { currentBusiness, refreshUsageForFeature, businessSwitchKey, planLimits, usage } = useBusiness()
   const [services, setServices] = useState<Service[]>(initialServices)
   const [loading, setLoading] = useState(false)
   const { showToast } = useToaster()
@@ -117,6 +117,11 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
   const [deleting, setDeleting] = useState(false)
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [serviceToEdit, setServiceToEdit] = useState<Service | null>(null)
+
+  // Usage and plan limits logic
+  const planLimitServices = planLimits?.find(l => l.feature === 'services' && l.limit_type === 'count' && l.scope === 'global')
+  const currentUsage = usage?.services ?? 0
+  const canCreateServices = planLimitServices ? canCreateMore(currentUsage, planLimitServices) : true
 
   // Force refresh on business change
   useForceRefreshOnBusinessChange()
@@ -213,32 +218,44 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
 
 
 
-  // Note: Usage and plan limits are not needed for services page
-  // They are only needed for the dashboard overview
-  const canCreateServices = true // Simplified for now
 
   return (
     <DashboardLayout>
-      <div className="max-w-[1400px] mx-auto">
+      <div className="max-w-[1600px] mx-auto">
         {/* Top Navbar (simulated) */}
         <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">{t("title")}</p>
             </div>
-            <Link
-              href="/dashboard/services/create"
-              className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 ${
-                canCreateServices
-                  ? "bg-[var(--dashboard-button-primary-bg)] hover:bg-[var(--dashboard-button-primary-bg-hover)] text-[var(--dashboard-button-primary-text)] border border-[var(--dashboard-button-primary-border)]"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              {t("createService")}
-            </Link>
+            <div className="flex items-center gap-4">
+              {planLimitServices && (
+                <div className="min-w-[220px]">
+                  <UsageLimitBar
+                    current={currentUsage}
+                    max={planLimitServices.value}
+                    label={formatUsageDisplay(currentUsage, planLimitServices)}
+                    showUpgrade={true}
+                    onUpgrade={() => window.location.href = "/dashboard/plan"}
+                    upgradeText={t("upgradePlan")}
+                    unlimitedText={t("unlimited")}
+                  />
+                </div>
+              )}
+              <Link
+                href="/dashboard/services/create"
+                className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 ${
+                  canCreateServices
+                    ? "bg-[var(--dashboard-button-primary-bg)] hover:bg-[var(--dashboard-button-primary-bg-hover)] text-[var(--dashboard-button-primary-text)] border border-[var(--dashboard-button-primary-border)]"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                {t("createService")}
+              </Link>
+            </div>
           </div>
         </div>
 

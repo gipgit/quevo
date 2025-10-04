@@ -105,20 +105,83 @@ export default function ImageUploadStep({ formData, updateFormData, onValidation
 
   return (
     <div className="space-y-8">
+      {/* Profile Image */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1 text-center lg:text-left">{t("profilePhoto")}</label>
+        
+        {/* Mobile Layout: Centered */}
+        <div className="lg:hidden">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="relative">
+              <div className="w-32 h-32 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
+                {profilePreview ? (
+                  <img src={profilePreview || "/placeholder.svg"} alt="Profile preview" className="w-full h-full object-cover rounded-full" />
+                ) : (
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <PhotoIcon className="w-10 h-10 text-gray-400 mb-2" />
+                    <p className="text-xs text-gray-500">{t("imageFormatInfo")}</p>
+                  </div>
+                )}
+              </div>
+              {profilePreview && (
+                <button onClick={() => removeImage("profile")} className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600">
+                  <XMarkIcon className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+            <div className="text-center">
+              <input type="file" id="profile-image" accept="image/*" onChange={(e) => handleImageChange("profile", e.target.files?.[0] || null)} className="hidden" />
+              <label htmlFor="profile-image" className="cursor-pointer inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 border border-gray-300 rounded-md shadow-sm text-xs md:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                {t("uploadProfilePhoto")}
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop Layout: Left-aligned */}
+        <div className="hidden lg:block">
+          <div className="flex items-center space-x-6">
+            <div className="relative">
+              <div className="w-32 h-32 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
+                {profilePreview ? (
+                  <img src={profilePreview || "/placeholder.svg"} alt="Profile preview" className="w-full h-full object-cover rounded-full" />
+                ) : (
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <PhotoIcon className="w-10 h-10 text-gray-400 mb-2" />
+                    <p className="text-xs text-gray-500">{t("imageFormatInfo")}</p>
+                  </div>
+                )}
+              </div>
+              {profilePreview && (
+                <button onClick={() => removeImage("profile")} className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600">
+                  <XMarkIcon className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+            <div>
+              <input type="file" id="profile-image-desktop" accept="image/*" onChange={(e) => handleImageChange("profile", e.target.files?.[0] || null)} className="hidden" />
+              <label htmlFor="profile-image-desktop" className="cursor-pointer inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 border border-gray-300 rounded-md shadow-sm text-xs md:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                {t("uploadProfilePhoto")}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Cover Image */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-4 text-center lg:text-left">{t("coverImage")}</label>
-        <div className="space-y-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1 text-center lg:text-left">{t("coverImage")}</label>
+        <div className="space-y-2">
           {/* Mobile Layout: Centered */}
           <div className="lg:hidden">
             <div className="relative flex justify-center">
-              <div className="w-full h-32 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden">
+              <div className="w-full h-28 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden">
                 {coverPreview ? (
                   <img src={coverPreview || "/placeholder.svg"} alt="Cover preview" className="w-full h-full object-cover rounded-lg" />
                 ) : (
                   <div className="text-center">
                     <PhotoIcon className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm text-gray-500">{t("coverImagePlaceholder")}</p>
+                    <p className="text-xs text-gray-500">{t("coverImageFormatInfo")}</p>
                   </div>
                 )}
               </div>
@@ -151,7 +214,6 @@ export default function ImageUploadStep({ formData, updateFormData, onValidation
                 <label htmlFor="cover-image" className="cursor-pointer inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 border border-gray-300 rounded-md shadow-sm text-xs md:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                   {t("uploadCoverImage")}
                 </label>
-                <p className="text-xs text-gray-500 mt-1">{t("coverImageFormatInfo")}</p>
               </div>
             </div>
           </div>
@@ -161,13 +223,13 @@ export default function ImageUploadStep({ formData, updateFormData, onValidation
             <div className="flex items-start space-x-6">
               <div className="flex-1">
                 <div className="relative">
-                  <div className="w-full h-32 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden">
+                  <div className="w-full h-28 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden">
                     {coverPreview ? (
                       <img src={coverPreview || "/placeholder.svg"} alt="Cover preview" className="w-full h-full object-cover rounded-lg" />
                     ) : (
                       <div className="text-center">
                         <PhotoIcon className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-500">{t("coverImagePlaceholder")}</p>
+                        <p className="text-xs text-gray-500">{t("coverImageFormatInfo")}</p>
                       </div>
                     )}
                   </div>
@@ -183,7 +245,6 @@ export default function ImageUploadStep({ formData, updateFormData, onValidation
                   <label htmlFor="cover-image-desktop" className="cursor-pointer inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 border border-gray-300 rounded-md shadow-sm text-xs md:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                     {t("uploadCoverImage")}
                   </label>
-                  <p className="text-xs text-gray-500 mt-1">{t("coverImageFormatInfo")}</p>
                 </div>
               </div>
               
@@ -200,65 +261,6 @@ export default function ImageUploadStep({ formData, updateFormData, onValidation
                   </div>
                 </div>
               )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Profile Image */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-4 text-center lg:text-left">{t("profilePhoto")}</label>
-        
-        {/* Mobile Layout: Centered */}
-        <div className="lg:hidden">
-          <div className="flex flex-col items-center space-y-4">
-            <div className="relative">
-              <div className="w-24 h-24 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
-                {profilePreview ? (
-                  <img src={profilePreview || "/placeholder.svg"} alt="Profile preview" className="w-full h-full object-cover rounded-full" />
-                ) : (
-                  <PhotoIcon className="w-8 h-8 text-gray-400" />
-                )}
-              </div>
-              {profilePreview && (
-                <button onClick={() => removeImage("profile")} className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600">
-                  <XMarkIcon className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-            <div className="text-center">
-              <input type="file" id="profile-image" accept="image/*" onChange={(e) => handleImageChange("profile", e.target.files?.[0] || null)} className="hidden" />
-              <label htmlFor="profile-image" className="cursor-pointer inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 border border-gray-300 rounded-md shadow-sm text-xs md:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                {t("uploadProfilePhoto")}
-              </label>
-              <p className="text-xs text-gray-500 mt-1">{t("imageFormatInfo")}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Desktop Layout: Left-aligned */}
-        <div className="hidden lg:block">
-          <div className="flex items-center space-x-6">
-            <div className="relative">
-              <div className="w-24 h-24 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
-                {profilePreview ? (
-                  <img src={profilePreview || "/placeholder.svg"} alt="Profile preview" className="w-full h-full object-cover rounded-full" />
-                ) : (
-                  <PhotoIcon className="w-8 h-8 text-gray-400" />
-                )}
-              </div>
-              {profilePreview && (
-                <button onClick={() => removeImage("profile")} className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600">
-                  <XMarkIcon className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-            <div>
-              <input type="file" id="profile-image-desktop" accept="image/*" onChange={(e) => handleImageChange("profile", e.target.files?.[0] || null)} className="hidden" />
-              <label htmlFor="profile-image-desktop" className="cursor-pointer inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 border border-gray-300 rounded-md shadow-sm text-xs md:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                {t("uploadProfilePhoto")}
-              </label>
-              <p className="text-xs text-gray-500 mt-1">{t("imageFormatInfo")}</p>
             </div>
           </div>
         </div>
