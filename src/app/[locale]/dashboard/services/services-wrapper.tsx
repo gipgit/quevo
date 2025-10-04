@@ -9,7 +9,7 @@ import { useForceRefreshOnBusinessChange } from "@/hooks/useForceRefreshOnBusine
 import Link from "next/link"
 import { UsageLimitBar } from "@/components/dashboard/UsageLimitBar"
 import { useToaster } from "@/components/ui/ToasterProvider"
-import EmptyState from "@/components/EmptyState"
+import EmptyState from "@/components/ui/EmptyState"
 import RichTextDisplay from "@/components/ui/RichTextDisplay"
 import ServiceEditModal from "./ServiceEditModal"
 import ServiceImageDisplay from "@/components/service/ServiceImageDisplay"

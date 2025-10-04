@@ -13,7 +13,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import { useToaster } from '@/components/ui/ToasterProvider'
 import { useTheme } from '@/contexts/ThemeProvider'
 import { useBusiness } from '@/lib/business-context'
-import EmptyState from '@/components/EmptyState'
+import EmptyState from '@/components/ui/EmptyState'
 import { 
   ArrowLeftIcon,
   ArrowRightIcon,

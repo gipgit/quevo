@@ -7,7 +7,7 @@ import { useTheme } from "@/contexts/ThemeProvider"
 import { canCreateMore, formatUsageDisplay } from "@/lib/usage-utils"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { UsageLimitBar } from "@/components/dashboard/UsageLimitBar"
-import EmptyState from "@/components/EmptyState"
+import EmptyState from "@/components/ui/EmptyState"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 
 export default function ProductsPage() {

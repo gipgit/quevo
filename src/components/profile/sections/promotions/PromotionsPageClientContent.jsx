@@ -6,10 +6,10 @@ import React from 'react';
 import { useBusinessProfile } from '@/contexts/BusinessProfileContext';
 import { useTranslations } from 'next-intl';
 import PromotionCard from './PromotionCard'; // Import the new PromotionCard component
-import EmptyState from '@/components/ui/EmptyState';
+import EmptyStateProfile from '@/components/ui/EmptyStateProfile';
 
 export default function PromotionsPageClientContent({ initialPromotionsData }) {
-    const { themeColorText, themeColorBackground, themeColorButton, locale } = useBusinessProfile(); // Get locale from context if available, otherwise pass it down.
+    const { themeColorText, themeColorBackground, themeColorBackgroundSecondary, themeColorButton, themeColorBorder, locale } = useBusinessProfile(); // Get locale from context if available, otherwise pass it down.
     const t = useTranslations('Promotions');
 
     const { businessData, promotions } = initialPromotionsData;
@@ -19,7 +19,7 @@ export default function PromotionsPageClientContent({ initialPromotionsData }) {
     }
 
     return (
-        <div className="container max-w-3xl mx-auto py-8 px-4">
+        <div className="container mx-auto py-8 px-4">
 
             {promotions && promotions.length > 0 ? (
                 <div className="grid grid-cols-1 gap-6">
@@ -35,12 +35,13 @@ export default function PromotionsPageClientContent({ initialPromotionsData }) {
                     ))}
                 </div>
             ) : (
-                <EmptyState 
-                    primaryTitle={t('noPromotionsYet')}
-                    secondaryTitle={t('checkBackLater')}
-                    textColor="text-gray-600"
-                    backgroundColor="bg-gray-50"
-                    borderColor="border-gray-200"
+                <EmptyStateProfile 
+                    icon={<svg className="mx-auto w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+                    title={t('noPromotionsYet')}
+                    description={t('checkBackLater')}
+                    titleColor={themeColorText}
+                    backgroundColor={themeColorBackgroundSecondary}
+                    borderColor={themeColorBorder}
                 />
             )}
         </div>

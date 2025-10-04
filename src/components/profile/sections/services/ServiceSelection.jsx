@@ -30,7 +30,7 @@ if (typeof document !== 'undefined') {
   document.head.appendChild(styleSheet);
 }
 import { useTranslations } from 'next-intl';
-import EmptyState from '@/components/ui/EmptyState';
+import EmptyStateProfile from '@/components/ui/EmptyStateProfile';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import Image from 'next/image';
 
@@ -43,6 +43,7 @@ export default function ServiceSelection({
     themeColorText,
     themeColorButton,
     themeColorBackgroundCard,
+    themeColorBackgroundSecondary,
     themeColorBorder,
     businessPublicUuid, // Business public UUID for image paths
     locale, // Passed for currency formatting
@@ -297,11 +298,13 @@ export default function ServiceSelection({
                     ))}
                 </div>
             ) : (
-                <EmptyState 
-                    primaryTitle={t('noServicesAvailable')}
-                    textColor="text-gray-600"
-                    backgroundColor="bg-gray-50"
-                    borderColor="border-gray-200"
+                <EmptyStateProfile 
+                    icon={<svg className="mx-auto w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>}
+                    title={t('noServicesAvailable')}
+                    description=""
+                    titleColor={themeColorText}
+                    backgroundColor={themeColorBackgroundSecondary}
+                    borderColor={themeColorBorder}
                 />
             )}
         </div>
