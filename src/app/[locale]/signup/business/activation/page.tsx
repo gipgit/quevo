@@ -157,8 +157,7 @@ export default function BusinessActivationPage() {
         {status === 'loading' && (
           <>
             <LoadingSpinner size="lg" color="blue" className="mt-6 mb-4" />
-            <p className="font-medium text-lg mb-4">{t('activatingAccount')}</p>
-            <p className="text-gray-700">{t('pleaseWait')}</p>
+            <p className="text-lg mb-4">{t('activatingAccount')}</p>
           </>
         )}
 

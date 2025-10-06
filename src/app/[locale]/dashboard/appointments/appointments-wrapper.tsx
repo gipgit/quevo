@@ -733,7 +733,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                         <div className="flex items-center justify-start lg:justify-end gap-1 text-sm">
                           <span>{selectedAppointment.customerPhone}</span>
                           <button
-                            onClick={() => navigator.clipboard.writeText(selectedAppointment.customerPhone)}
+                            onClick={() => navigator.clipboard.writeText(selectedAppointment.customerPhone || '')}
                             className="p-1.5 rounded transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
                             title="Copy phone"
                           >
