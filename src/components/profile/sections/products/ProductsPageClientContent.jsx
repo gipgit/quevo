@@ -6,6 +6,7 @@ import React, { useRef, useEffect, useCallback } from 'react';
 import { useBusinessProfile } from '@/contexts/BusinessProfileContext'; // Keep for now to get global theme/business data
 import MenuCategoryAccordion from '@/components/profile/sections/products/MenuCategoryAccordion';
 import { useTranslations } from 'next-intl';
+import EmptyStateProfile from '@/components/ui/EmptyStateProfile';
 
 // IMPORTANT: This component now receives businessMenuItems as a prop.
 // Other global data (businessData, businessSettings, theme colors) are still pulled from context for now.
@@ -146,9 +147,26 @@ export default function ProductsPageClientContent({ businessMenuItems }) {
         };
     }, [businessMenuItems, activeCategory, businessSettings]); // Added businessSettings to deps if it affects any of the logic
 
-    // Handle case where no products are available (now handled by parent server component primarily)
+    // Handle case where no products are available
     if (!businessMenuItems || businessMenuItems.length === 0) {
-        return null; // Parent server component will render the "no products" message
+        return (
+            <section className="business-menu-items px-4 mx-auto max-w-3xl mt-4 pb-20">
+                <EmptyStateProfile
+                    icon={
+                        <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+                    }
+                    title={t('products.noProducts')}
+                    description={t('products.noProductsDescription')}
+                    backgroundColor={themeColorBackground || '#f9fafb'}
+                    borderColor={themeColorBorder || '#e5e7eb'}
+                    iconColor={themeColorText || '#6b7280'}
+                    titleColor={themeColorText || '#374151'}
+                    descriptionColor={themeColorText || '#6b7280'}
+                />
+            </section>
+        );
     }
 
     return (

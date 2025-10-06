@@ -7,7 +7,7 @@ import { useTheme } from "@/contexts/ThemeProvider"
 import { canCreateMore, formatUsageDisplay } from "@/lib/usage-utils"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { UsageLimitBar } from "@/components/dashboard/UsageLimitBar"
-import EmptyState from "@/components/ui/EmptyState"
+import EmptyStateDashboard from "@/components/ui/EmptyStateDashboard"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 
 export default function ProductsPage() {
@@ -224,12 +224,26 @@ export default function ProductsPage() {
           ))
         )}
         {products.length === 0 && !loading && (
-          <EmptyState
-            title={t("noProducts")}
-            description={t("noProductsDescription")}
+          <EmptyStateDashboard
+            primaryTitle={t("noProducts")}
+            secondaryTitle={t("noProductsDescription")}
             buttonText={t("addElement")}
             onButtonClick={() => { /* You can replace this with your add product handler */ window.location.href = "/dashboard/products/create"; }}
-            icon={<svg className="mx-auto w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>}
+            icon={
+              <svg 
+                className="w-12 h-12 text-[var(--dashboard-text-secondary)]" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M12 4v16m8-8H4" 
+                />
+              </svg>
+            }
           />
         )}
       </div>

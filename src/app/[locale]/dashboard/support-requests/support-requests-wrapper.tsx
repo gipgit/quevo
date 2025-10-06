@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl"
 import { useTheme } from "@/contexts/ThemeProvider"
 import { useBusiness } from "@/lib/business-context"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
-import EmptyState from "@/components/ui/EmptyState"
+import EmptyStateDashboard from "@/components/ui/EmptyStateDashboard"
 import { 
   EnvelopeIcon, 
   DocumentArrowUpIcon, 
@@ -746,10 +746,12 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
 
           {/* Content Wrapper with Background */}
           <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
-            <EmptyState
-              icon={<ChatBubbleLeftRightIcon className="mx-auto w-12 h-12" />}
-              title="No Support Requests"
-              description="No support requests have been submitted yet."
+            <EmptyStateDashboard
+              icon={
+                <ChatBubbleLeftRightIcon className="w-12 h-12 text-[var(--dashboard-text-secondary)]" />
+              }
+              primaryTitle="No Support Requests"
+              secondaryTitle="No support requests have been submitted yet."
             />
           </div>
         </div>

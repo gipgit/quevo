@@ -5,7 +5,6 @@ import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import ProductsPageClientContent from '@/components/profile/sections/products/ProductsPageClientContent'; // Adjust import path if you moved the file
-import EmptyState from '@/components/ui/EmptyState';
 // Set revalidation time for products data (e.g., every 5 minutes, or based on how often products change)
 // Caching disabled for development - change ENABLE_CACHING in /lib/config/caching.ts to enable
 export const revalidate = 0; // No caching
@@ -106,19 +105,6 @@ export default async function ProductsSectionPage({ params }: { params: { busine
             }
             return a.category_name.localeCompare(b.category_name);
         });
-
-    if (sortedMenuCategoriesWithItems.length === 0) {
-        return (
-            <section className="business-menu-items px-4 mx-auto max-w-3xl mt-4 pb-20">
-                <EmptyState 
-                    primaryTitle={t('noProductsAvailable')}
-                    textColor="text-gray-600"
-                    backgroundColor="bg-gray-50"
-                    borderColor="border-gray-200"
-                />
-            </section>
-        );
-    }
 
     // Now, pass the processed data to the Client Component
     return (

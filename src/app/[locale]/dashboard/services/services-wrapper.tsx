@@ -9,7 +9,7 @@ import { useForceRefreshOnBusinessChange } from "@/hooks/useForceRefreshOnBusine
 import Link from "next/link"
 import { UsageLimitBar } from "@/components/dashboard/UsageLimitBar"
 import { useToaster } from "@/components/ui/ToasterProvider"
-import EmptyState from "@/components/ui/EmptyState"
+import EmptyStateDashboard from "@/components/ui/EmptyStateDashboard"
 import RichTextDisplay from "@/components/ui/RichTextDisplay"
 import ServiceEditModal from "./ServiceEditModal"
 import ServiceImageDisplay from "@/components/service/ServiceImageDisplay"
@@ -265,10 +265,24 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
 
           {/* Services List */}
         {services.length === 0 ? (
-          <EmptyState
-            icon={<svg className="mx-auto w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>}
-            title={t("noServices")}
-            description={t("noServicesDescription")}
+          <EmptyStateDashboard
+            icon={
+              <svg 
+                className="w-12 h-12 text-[var(--dashboard-text-secondary)]" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M12 4v16m8-8H4" 
+                />
+              </svg>
+            }
+            primaryTitle={t("noServices")}
+            secondaryTitle={t("noServicesDescription")}
             buttonText={t("createFirstService")}
             onButtonClick={() => window.location.href = "/dashboard/services/create"}
           />

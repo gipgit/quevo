@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl"
 import { useTheme } from "@/contexts/ThemeProvider"
 import { useBusiness } from "@/lib/business-context"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
-import EmptyState from "@/components/ui/EmptyState"
+import EmptyStateDashboard from "@/components/ui/EmptyStateDashboard"
 import CopyButton from "@/components/CopyButton"
 import Link from "next/link"
 import { 
@@ -211,10 +211,24 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
 
           {/* Content Wrapper with Background */}
           <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
-            <EmptyState
-              icon={<svg className="mx-auto w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
-              title={t("noServiceBoards")}
-              description={t("noServiceBoardsDescription")}
+            <EmptyStateDashboard
+              icon={
+                <svg 
+                  className="w-12 h-12 text-[var(--dashboard-text-secondary)]" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M9 5l7 7-7 7" 
+                  />
+                </svg>
+              }
+              primaryTitle={t("noServiceBoards")}
+              secondaryTitle={t("noServiceBoardsDescription")}
             />
           </div>
         </div>
