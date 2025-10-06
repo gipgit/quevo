@@ -80,6 +80,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [showDetailsMobile, setShowDetailsMobile] = useState(false)
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
 
   // Refetch appointments when business changes
   useEffect(() => {
@@ -347,16 +348,16 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
       <DashboardLayout>
         <div className="max-w-[1600px] mx-auto">
           {/* Top Navbar (simulated) */}
-          <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+          <div className="sticky top-0 z-10 p-4 lg:p-6 rounded-t-none lg:rounded-2xl mb-2 md:mb-3 bg-[var(--dashboard-bg-primary)] lg:border lg:border-[var(--dashboard-border-primary)]">
             <div className="flex justify-between items-center">
               <div>
-                <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">{t('title')}</p>
+                <p className="text-base md:text-lg font-medium text-[var(--dashboard-text-primary)]">{t('title')}</p>
               </div>
             </div>
           </div>
 
           {/* Content Wrapper with Background */}
-          <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+          <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl lg:border lg:border-[var(--dashboard-border-primary)] p-4 lg:p-6">
             <EmptyStateDashboard
               primaryTitle={t('empty.title')}
               secondaryTitle={t('empty.description')}
@@ -388,116 +389,137 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
     <DashboardLayout>
       <div className="max-w-[1600px] mx-auto">
         {/* Top Navbar (simulated) */}
-        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">{t('title')}</p>
+        <div className="sticky top-0 z-10 p-4 lg:p-6 rounded-t-none lg:rounded-2xl mb-2 md:mb-3 bg-[var(--dashboard-bg-primary)] lg:border lg:border-[var(--dashboard-border-primary)]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {/* Mobile Sidebar Toggle Button */}
+              <button
+                onClick={() => setIsMobileSidebarOpen(true)}
+                className="lg:hidden p-1.5 rounded-lg bg-[var(--dashboard-bg-secondary)] border border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-tertiary)] transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+              <div>
+                <p className="text-base md:text-lg font-medium text-[var(--dashboard-text-primary)]">{t('title')}</p>
+              </div>
+            </div>
+            
+            {/* Navigation Controls and Shortcuts */}
+            <div className="flex items-center gap-1 md:gap-2">
+              {/* Navigation Controls */}
+              <div className="flex items-center gap-0.5 md:gap-1">
+                <button
+                  onClick={() => navigateAppointment(-1)}
+                  disabled={selectedIndex === 0}
+                  className={`p-1 md:p-1.5 rounded-lg transition-colors ${
+                    selectedIndex === 0
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:bg-[var(--dashboard-bg-tertiary)]'
+                  }`}
+                  title="Previous appointment"
+                >
+                  <ArrowLeftIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                </button>
+                <span className="text-xs md:text-xs text-[var(--dashboard-text-tertiary)] px-1 md:px-2">
+                  {selectedIndex + 1} of {appointments.length}
+                </span>
+                <button
+                  onClick={() => navigateAppointment(1)}
+                  disabled={selectedIndex === appointments.length - 1}
+                  className={`p-1 md:p-1.5 rounded-lg transition-colors ${
+                    selectedIndex === appointments.length - 1
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:bg-[var(--dashboard-bg-tertiary)]'
+                  }`}
+                  title="Next appointment"
+                >
+                  <ArrowRightIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                </button>
+              </div>
+
+              {/* Keyboard Shortcuts Button */}
+              <div className="relative group hidden md:block">
+                <button
+                  className="p-1.5 rounded-lg hover:bg-[var(--dashboard-bg-tertiary)]"
+                  title="Keyboard shortcuts"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </button>
+                <div className="absolute right-0 top-full mt-2 p-3 rounded-lg shadow-lg border z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto bg-[var(--dashboard-bg-primary)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-secondary)]">
+                  <div className="text-xs whitespace-nowrap">
+                    <div className="font-medium mb-2">Keyboard Shortcuts:</div>
+                    <div>↑↓ Navigate appointments</div>
+                    <div>Enter Open appointment</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Content Wrapper with Background */}
-        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl lg:border lg:border-[var(--dashboard-border-primary)] p-4 lg:p-6">
           <div className="flex flex-col h-full">
           </div>
 
         {/* Main Content - 3 Column Layout */}
         <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-6 overflow-hidden">
+          {/* Mobile Sidebar Overlay */}
+          {isMobileSidebarOpen && (
+            <div 
+              className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+              onClick={() => setIsMobileSidebarOpen(false)}
+            />
+          )}
+          
           {/* Left Panel - Calendar/List View */}
-          <div className={`w-full lg:w-80 border-b lg:border-b-0 lg:border-r ${
-            theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
-          } flex flex-col`}>
-            {/* Navigation Arrows (moved above progress bar) */}
-            <div className="p-2 lg:p-4 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between">
-                <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  {selectedIndex + 1} of {appointments.length}
-                </span>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => navigateAppointment(-1)}
-                    disabled={selectedIndex === 0}
-                    className={`p-2 rounded-lg transition-colors ${
-                      selectedIndex === 0
-                        ? 'opacity-50 cursor-not-allowed'
-                        : theme === 'dark'
-                          ? 'hover:bg-gray-700'
-                          : 'hover:bg-gray-100'
-                    }`}
-                  >
-                    <ArrowLeftIcon className="w-5 h-5" />
-                  </button>
-                  {/* Keyboard Shortcuts Button with Tooltip (center) */}
-                  <div className="relative group">
-                    <button
-                      className={`p-2 rounded-lg transition-colors ${
-                        theme === 'dark' 
-                          ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' 
-                          : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                      }`}
-                      title="Keyboard shortcuts"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                      </svg>
-                    </button>
-                    
-                    {/* Tooltip */}
-                    <div className={`absolute right-0 top-full mt-2 p-3 rounded-lg shadow-lg border z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto ${
-                      theme === 'dark' 
-                        ? 'bg-gray-800 border-gray-700 text-gray-300' 
-                        : 'bg-white border-gray-200 text-gray-700'
-                    }`}>
-                      <div className="text-xs whitespace-nowrap">
-                        <div className="font-medium mb-2">Keyboard Shortcuts:</div>
-                        <div>↑↓ Navigate appointments</div>
-                        <div>Enter Open appointment</div>
-                      </div>
-                      {/* Arrow pointing up */}
-                      <div className={`absolute -top-1 right-4 w-2 h-2 rotate-45 ${
-                        theme === 'dark' 
-                          ? 'bg-gray-800 border-l border-t border-gray-700' 
-                          : 'bg-white border-l border-t border-gray-200'
-                      }`}></div>
-                    </div>
+          <div className={`
+            w-full lg:w-80 border-b lg:border-b-0 lg:border-r flex flex-col
+            fixed lg:static top-0 left-0 h-full z-50 lg:z-auto
+            transform transition-transform duration-300 ease-in-out
+            ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+            bg-[var(--dashboard-bg-primary)] lg:bg-transparent
+            shadow-lg lg:shadow-none
+            ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}
+          `}>
+            {/* Mobile Header with Progress Bar and Close Button */}
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between mb-3">
+                {/* Progress Bar */}
+                <div className="flex-1">
+                  {/* Page Title */}
+                  <div className="text-sm font-medium text-[var(--dashboard-text-primary)] mb-2">
+                    {t('title')}
                   </div>
-                  <button
-                    onClick={() => navigateAppointment(1)}
-                    disabled={selectedIndex === appointments.length - 1}
-                    className={`p-2 rounded-lg transition-colors ${
-                      selectedIndex === appointments.length - 1
-                        ? 'opacity-50 cursor-not-allowed'
-                        : theme === 'dark'
-                          ? 'hover:bg-gray-700'
-                          : 'hover:bg-gray-100'
-                    }`}
-                  >
-                    <ArrowRightIcon className="w-5 h-5" />
-                  </button>
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="text-xs md:text-sm text-[var(--dashboard-text-primary)]">
+                      {appointments.length} appointments
+                    </div>
+                    <span className="text-xs text-[var(--dashboard-text-tertiary)]">
+                      {appointments.length} total
+                    </span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-[var(--dashboard-bg-tertiary)]">
+                    <div 
+                      className="h-2 bg-green-500 rounded-full transition-all duration-300"
+                      style={{ width: '100%' }}
+                    />
+                  </div>
                 </div>
-              </div>
-            </div>
-            {/* Progress Bar */}
-            <div className="p-2 lg:p-4 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-2 gap-1 lg:gap-0">
-                <span className={`text-xs lg:text-sm font-medium ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  Progress: {confirmedAppointments + completedAppointments} of {totalAppointments} confirmed
-                </span>
-                <span className={`text-xs lg:text-sm ${
-                  theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                }`}>
-                  {totalAppointments - (confirmedAppointments + completedAppointments)} pending
-                </span>
-              </div>
-              <div className={`w-full h-1.5 lg:h-2 rounded-full ${
-                theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
-              }`}>
-                <div 
-                  className="h-1.5 lg:h-2 bg-green-500 rounded-full transition-all duration-300"
-                  style={{ width: `${progressPercentage}%` }}
-                />
+                
+                {/* Mobile Close Button */}
+                <button
+                  onClick={() => setIsMobileSidebarOpen(false)}
+                  className="lg:hidden ml-3 p-2 rounded-lg bg-[var(--dashboard-bg-secondary)] border border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-tertiary)] transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
             </div>
 
@@ -576,7 +598,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                           setSelectedAppointment(appointment)
                           setSelectedIndex(index)
                         }}
-                        className={`p-3 rounded-lg cursor-pointer transition-all flex-shrink-0 w-64 lg:w-auto ${
+                        className={`p-4 lg:p-3 rounded-lg cursor-pointer transition-all flex-shrink-0 w-full lg:w-auto ${
                           isSelected
                             ? 'bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)] border-l-4 border-[var(--dashboard-active-border)]'
                             : 'hover:bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)]'
@@ -624,7 +646,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
           </div>
 
           {/* Middle Panel - Appointment Details (toggle on mobile) */}
-          <div className={`flex-1 flex flex-col min-h-0 lg:min-h-0 h-96 lg:h-auto ${selectedAppointment ? '' : ''} ${showDetailsMobile ? '' : 'hidden lg:flex'}`}>
+          <div className={`flex-1 flex flex-col min-h-0 lg:min-h-0 h-96 lg:h-auto ${selectedAppointment ? '' : ''}`}>
             {selectedAppointment ? (
               <>
                 {/* Appointment Header */}

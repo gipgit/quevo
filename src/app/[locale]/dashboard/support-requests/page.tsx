@@ -54,6 +54,15 @@ export default async function SupportRequestsPage() {
           email: true
         }
       },
+      // Include service board data
+      serviceboard: {
+        select: {
+          board_id: true,
+          board_title: true,
+          board_description: true,
+          board_ref: true
+        }
+      },
       // Include related service board action
       serviceboardaction: {
         select: {

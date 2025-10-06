@@ -304,7 +304,7 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
         />
 
         {/* Top Navbar (business + actions) */}
-        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+        <div className="sticky top-0 z-10 p-4 lg:p-6 rounded-t-none lg:rounded-2xl mb-2 md:mb-3 bg-[var(--dashboard-bg-primary)] lg:border lg:border-[var(--dashboard-border-primary)]">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">{currentBusiness?.business_name}</p>
@@ -328,7 +328,7 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
         </div>
 
         {/* Content Wrapper */}
-        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl lg:border lg:border-[var(--dashboard-border-primary)] p-4 lg:p-6">
           {/* Usage Summary */}
           {usage && planLimits && (
             <div className="mb-8">
@@ -422,7 +422,7 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
                       <IconComponent className="h-12 w-12 text-gray-600 group-hover:text-blue-600 stroke-[1]" />
                     </div>
                     <div>
-                      <h3 className="text-lg md:text-xl font-medium mb-2 text-[var(--dashboard-text-primary)]">{card.title}</h3>
+                      <h3 className="text-sm md:text-base font-medium mb-2 leading-tight text-[var(--dashboard-text-primary)]">{card.title}</h3>
                       <p className="text-xs md:text-sm leading-none text-[var(--dashboard-text-secondary)]">{card.description}</p>
                     </div>
                   </div>

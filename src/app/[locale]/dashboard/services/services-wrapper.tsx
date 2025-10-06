@@ -223,14 +223,14 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
     <DashboardLayout>
       <div className="max-w-[1600px] mx-auto">
         {/* Top Navbar (simulated) */}
-        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+        <div className="sticky top-0 z-10 p-4 lg:p-6 rounded-t-none lg:rounded-2xl mb-2 md:mb-3 bg-[var(--dashboard-bg-primary)] lg:border lg:border-[var(--dashboard-border-primary)]">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">{t("title")}</p>
+              <p className="text-base md:text-lg font-medium text-[var(--dashboard-text-primary)]">{t("title")}</p>
             </div>
             <div className="flex items-center gap-4">
               {planLimitServices && (
-                <div className="min-w-[220px]">
+                <div className="min-w-10 lg:min-w-16">
                   <UsageLimitBar
                     current={currentUsage}
                     max={planLimitServices.value}
@@ -260,7 +260,7 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
         </div>
 
         {/* Content Wrapper with Background */}
-        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl lg:border lg:border-[var(--dashboard-border-primary)] p-4 lg:p-6">
           {/* Usage Limit Bar - Removed from services page as it's not needed */}
 
           {/* Services List */}

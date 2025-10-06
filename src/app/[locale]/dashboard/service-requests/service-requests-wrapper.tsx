@@ -628,16 +628,80 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
     <DashboardLayout>
       <div className="max-w-[1600px] mx-auto">
         {/* Top Navbar (simulated) */}
-        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">{t("title")}</p>
+        <div className="sticky top-0 z-10 p-4 lg:p-6 rounded-t-none lg:rounded-2xl mb-2 md:mb-3 bg-[var(--dashboard-bg-primary)] lg:border lg:border-[var(--dashboard-border-primary)]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {/* Mobile Sidebar Toggle Button */}
+              <button
+                onClick={() => setIsMobileSidebarOpen(true)}
+                className="lg:hidden p-1.5 rounded-lg bg-[var(--dashboard-bg-secondary)] border border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-tertiary)] transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+              <div>
+                <p className="text-base md:text-lg font-medium text-[var(--dashboard-text-primary)]">{t("title")}</p>
+              </div>
+            </div>
+            
+            {/* Navigation Controls and Shortcuts */}
+            <div className="flex items-center gap-1 md:gap-2">
+              {/* Navigation Controls */}
+              <div className="flex items-center gap-0.5 md:gap-1">
+                <button
+                  onClick={() => navigateRequest(-1)}
+                  disabled={selectedIndex === 0}
+                  className={`p-1 md:p-1.5 rounded-lg transition-colors ${
+                    selectedIndex === 0
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:bg-[var(--dashboard-bg-tertiary)]'
+                  }`}
+                  title="Previous request"
+                >
+                  <ArrowLeftIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                </button>
+                <span className="text-xs md:text-xs text-[var(--dashboard-text-tertiary)] px-1 md:px-2">
+                  {selectedIndex + 1} of {serviceRequests.length}
+                </span>
+                <button
+                  onClick={() => navigateRequest(1)}
+                  disabled={selectedIndex === serviceRequests.length - 1}
+                  className={`p-1 md:p-1.5 rounded-lg transition-colors ${
+                    selectedIndex === serviceRequests.length - 1
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:bg-[var(--dashboard-bg-tertiary)]'
+                  }`}
+                  title="Next request"
+                >
+                  <ArrowRightIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                </button>
+              </div>
+
+              {/* Keyboard Shortcuts Button */}
+              <div className="relative group hidden md:block">
+                <button
+                  className="p-1.5 rounded-lg hover:bg-[var(--dashboard-bg-tertiary)]"
+                  title="Keyboard shortcuts"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </button>
+                <div className="absolute right-0 top-full mt-2 p-3 rounded-lg shadow-lg border z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto bg-[var(--dashboard-bg-primary)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-secondary)]">
+                  <div className="text-xs whitespace-nowrap">
+                    <div className="font-medium mb-2">Keyboard Shortcuts:</div>
+                    <div>↑↓ Navigate requests</div>
+                    <div>Enter Open request</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Content Wrapper with Background */}
-        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl lg:border lg:border-[var(--dashboard-border-primary)] p-4 lg:p-6">
 
           <EmptyStateDashboard
             icon={
@@ -668,29 +732,82 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
     <DashboardLayout>
       <div className="max-w-[1600px] mx-auto">
         {/* Top Navbar (simulated) */}
-        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">{t("title")}</p>
+        <div className="sticky top-0 z-10 p-4 lg:p-6 rounded-t-none lg:rounded-2xl mb-2 md:mb-3 bg-[var(--dashboard-bg-primary)] lg:border lg:border-[var(--dashboard-border-primary)]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {/* Mobile Sidebar Toggle Button */}
+              <button
+                onClick={() => setIsMobileSidebarOpen(true)}
+                className="lg:hidden p-1.5 rounded-lg bg-[var(--dashboard-bg-secondary)] border border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-tertiary)] transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+              <div>
+                <p className="text-base md:text-lg font-medium text-[var(--dashboard-text-primary)]">{t("title")}</p>
+              </div>
+            </div>
+            
+            {/* Navigation Controls and Shortcuts */}
+            <div className="flex items-center gap-1 md:gap-2">
+              {/* Navigation Controls */}
+              <div className="flex items-center gap-0.5 md:gap-1">
+                <button
+                  onClick={() => navigateRequest(-1)}
+                  disabled={selectedIndex === 0}
+                  className={`p-1 md:p-1.5 rounded-lg transition-colors ${
+                    selectedIndex === 0
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:bg-[var(--dashboard-bg-tertiary)]'
+                  }`}
+                  title="Previous request"
+                >
+                  <ArrowLeftIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                </button>
+                <span className="text-xs md:text-xs text-[var(--dashboard-text-tertiary)] px-1 md:px-2">
+                  {selectedIndex + 1} of {serviceRequests.length}
+                </span>
+                <button
+                  onClick={() => navigateRequest(1)}
+                  disabled={selectedIndex === serviceRequests.length - 1}
+                  className={`p-1 md:p-1.5 rounded-lg transition-colors ${
+                    selectedIndex === serviceRequests.length - 1
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:bg-[var(--dashboard-bg-tertiary)]'
+                  }`}
+                  title="Next request"
+                >
+                  <ArrowRightIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                </button>
+              </div>
+
+              {/* Keyboard Shortcuts Button */}
+              <div className="relative group hidden md:block">
+                <button
+                  className="p-1.5 rounded-lg hover:bg-[var(--dashboard-bg-tertiary)]"
+                  title="Keyboard shortcuts"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </button>
+                <div className="absolute right-0 top-full mt-2 p-3 rounded-lg shadow-lg border z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto bg-[var(--dashboard-bg-primary)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-secondary)]">
+                  <div className="text-xs whitespace-nowrap">
+                    <div className="font-medium mb-2">Keyboard Shortcuts:</div>
+                    <div>↑↓ Navigate requests</div>
+                    <div>Enter Open request</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Content Wrapper with Background */}
-        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl lg:border lg:border-[var(--dashboard-border-primary)] p-4 lg:p-6">
           <div className="flex flex-col h-full">
             {/* Header */}
-            {/* Mobile Sidebar Toggle Button */}
-        <div className="lg:hidden fixed top-4 left-4 z-30">
-          <button
-            onClick={() => setIsMobileSidebarOpen(true)}
-            className="p-2 rounded-lg bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)] shadow-lg"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-        </div>
 
         {/* Main Content - Outlook-like Layout */}
         <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-6 overflow-hidden relative">
@@ -713,63 +830,39 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
           `}>
             {/* Navigation & Progress */}
             <div className="p-4 border-b border-[var(--dashboard-border-primary)]">
-              {/* Mobile Close Button */}
-              <div className="lg:hidden flex justify-end mb-4">
+              {/* Mobile Header with Progress Bar and Close Button */}
+              <div className="flex items-center justify-between mb-3">
+                {/* Progress Bar */}
+                <div className="flex-1">
+                  {/* Page Title */}
+                  <div className="text-sm font-medium text-[var(--dashboard-text-primary)] mb-2">
+                    {t("title")}
+                  </div>
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="text-xs md:text-sm text-[var(--dashboard-text-primary)]">
+                      {handledRequests} of {totalRequests} handled
+                    </div>
+                    <span className="text-xs text-[var(--dashboard-text-tertiary)]">
+                      {unhandledRequests} remaining
+                    </span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-[var(--dashboard-bg-tertiary)]">
+                    <div 
+                      className="h-2 bg-green-500 rounded-full transition-all duration-300"
+                      style={{ width: `${progressPercentage}%` }}
+                    />
+                  </div>
+                </div>
+                
+                {/* Mobile Close Button */}
                 <button
                   onClick={() => setIsMobileSidebarOpen(false)}
-                  className="p-2 rounded-lg hover:bg-[var(--dashboard-bg-tertiary)]"
+                  className="lg:hidden ml-3 p-2 rounded-lg bg-[var(--dashboard-bg-secondary)] border border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-tertiary)] transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
-              </div>
-              
-              {/* Navigation Controls */}
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <button
-                  onClick={() => navigateRequest(-1)}
-                  disabled={selectedIndex === 0}
-                  className={`p-1.5 rounded-lg transition-colors ${
-                    selectedIndex === 0
-                      ? 'opacity-50 cursor-not-allowed'
-                      : 'hover:bg-[var(--dashboard-bg-tertiary)]'
-                  }`}
-                  title="Previous request"
-                >
-                  <ArrowLeftIcon className="w-3.5 h-3.5" />
-                </button>
-                <span className="text-xs text-[var(--dashboard-text-tertiary)] px-2">
-                  {selectedIndex + 1} of {serviceRequests.length}
-                </span>
-                <button
-                  onClick={() => navigateRequest(1)}
-                  disabled={selectedIndex === serviceRequests.length - 1}
-                  className={`p-1.5 rounded-lg transition-colors ${
-                    selectedIndex === serviceRequests.length - 1
-                      ? 'opacity-50 cursor-not-allowed'
-                      : 'hover:bg-[var(--dashboard-bg-tertiary)]'
-                  }`}
-                  title="Next request"
-                >
-                  <ArrowRightIcon className="w-3.5 h-3.5" />
-                </button>
-              </div>
-              
-              {/* Progress Bar */}
-              <div className="flex justify-between items-center mb-2">
-                <div className="text-xs md:text-sm text-[var(--dashboard-text-primary)]">
-                  {handledRequests} of {totalRequests} handled
-                </div>
-                <span className="text-xs text-[var(--dashboard-text-tertiary)]">
-                  {unhandledRequests} remaining
-                </span>
-              </div>
-              <div className="w-full h-2 rounded-full bg-[var(--dashboard-bg-tertiary)]">
-                <div 
-                  className="h-2 bg-green-500 rounded-full transition-all duration-300"
-                  style={{ width: `${progressPercentage}%` }}
-                />
               </div>
             </div>
             
@@ -792,7 +885,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                         setSelectedIndex(index)
                         setIsMobileSidebarOpen(false)
                       }}
-                      className={`p-3 rounded-lg cursor-pointer transition-all flex-shrink-0 w-64 lg:w-auto ${
+                      className={`p-4 lg:p-3 rounded-lg cursor-pointer transition-all flex-shrink-0 w-full lg:w-auto ${
                         isSelected
                           ? 'bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)] border-l-4 border-[var(--dashboard-active-border)]'
                           : 'hover:bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)]'

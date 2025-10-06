@@ -67,6 +67,7 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
   const [supportRequests, setSupportRequests] = useState(initialSupportRequests)
   const [selectedRequest, setSelectedRequest] = useState<any>(null)
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   
   // Modal states
   const [showGenerateResponseModal, setShowGenerateResponseModal] = useState(false)
@@ -736,16 +737,16 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
       <DashboardLayout>
         <div className="max-w-[1600px] mx-auto">
           {/* Top Navbar (simulated) */}
-          <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+          <div className="sticky top-0 z-10 p-4 lg:p-6 rounded-t-none lg:rounded-2xl mb-2 md:mb-3 bg-[var(--dashboard-bg-primary)] lg:border lg:border-[var(--dashboard-border-primary)]">
             <div className="flex justify-between items-center">
               <div>
-                <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">Support Requests</p>
+                <p className="text-base md:text-lg font-medium text-[var(--dashboard-text-primary)]">Support Requests</p>
               </div>
             </div>
           </div>
 
           {/* Content Wrapper with Background */}
-          <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+          <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl lg:border lg:border-[var(--dashboard-border-primary)] p-4 lg:p-6">
             <EmptyStateDashboard
               icon={
                 <ChatBubbleLeftRightIcon className="w-12 h-12 text-[var(--dashboard-text-secondary)]" />
@@ -763,67 +764,133 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
     <DashboardLayout>
       <div className="max-w-[1600px] mx-auto">
         {/* Top Navbar (simulated) */}
-        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
-          <div className="flex justify-between items-center">
+        <div className="sticky top-0 z-10 p-4 lg:p-6 rounded-t-none lg:rounded-2xl mb-2 md:mb-3 bg-[var(--dashboard-bg-primary)] lg:border lg:border-[var(--dashboard-border-primary)]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {/* Mobile Sidebar Toggle Button */}
+              <button
+                onClick={() => setIsMobileSidebarOpen(true)}
+                className="lg:hidden p-1.5 rounded-lg bg-[var(--dashboard-bg-secondary)] border border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-tertiary)] transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
             <div>
-              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">Support Requests</p>
-            </div>
+                <p className="text-base md:text-lg font-medium text-[var(--dashboard-text-primary)]">Support Requests</p>
           </div>
         </div>
 
-        {/* Content Wrapper with Background */}
-        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
-          <div className="flex flex-col h-full">
-            {/* Main Content - 3 Column Layout */}
-        <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-6 overflow-hidden relative">
-          {/* Left Panel - Request List */}
-          <div className={`w-full lg:w-1/6 border-b lg:border-b-0 lg:border-r border-[var(--dashboard-border-primary)] flex flex-col`}>
-            {/* Navigation & Progress */}
-            <div className="p-4 border-b border-[var(--dashboard-border-primary)]">
+            {/* Navigation Controls and Shortcuts */}
+            <div className="flex items-center gap-1 md:gap-2">
               {/* Navigation Controls */}
-              <div className="flex items-center justify-center gap-2 mb-4">
+              <div className="flex items-center gap-0.5 md:gap-1">
                 <button
                   onClick={() => navigateRequest(-1)}
                   disabled={selectedIndex === 0}
-                  className={`p-1.5 rounded-lg transition-colors ${
+                  className={`p-1 md:p-1.5 rounded-lg transition-colors ${
                     selectedIndex === 0
                       ? 'opacity-50 cursor-not-allowed'
                       : 'hover:bg-[var(--dashboard-bg-tertiary)]'
                   }`}
                   title="Previous request"
                 >
-                  <ArrowLeftIcon className="w-3.5 h-3.5" />
+                  <ArrowLeftIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 </button>
-                <span className="text-xs text-[var(--dashboard-text-tertiary)] px-2">
+                <span className="text-xs md:text-xs text-[var(--dashboard-text-tertiary)] px-1 md:px-2">
                   {selectedIndex + 1} of {supportRequests.length}
                 </span>
                 <button
                   onClick={() => navigateRequest(1)}
                   disabled={selectedIndex === supportRequests.length - 1}
-                  className={`p-1.5 rounded-lg transition-colors ${
+                  className={`p-1 md:p-1.5 rounded-lg transition-colors ${
                     selectedIndex === supportRequests.length - 1
                       ? 'opacity-50 cursor-not-allowed'
                       : 'hover:bg-[var(--dashboard-bg-tertiary)]'
                   }`}
                   title="Next request"
                 >
-                  <ArrowRightIcon className="w-3.5 h-3.5" />
+                  <ArrowRightIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 </button>
               </div>
-              {/* Progress Bar */}
-              <div className="flex justify-between items-center mb-2">
-                <div className="text-xs md:text-sm text-[var(--dashboard-text-primary)]">
-                  {resolvedRequests} of {totalRequests} resolved
+
+              {/* Keyboard Shortcuts Button */}
+              <div className="relative group hidden md:block">
+                <button
+                  className="p-1.5 rounded-lg hover:bg-[var(--dashboard-bg-tertiary)]"
+                  title="Keyboard shortcuts"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </button>
+                <div className="absolute right-0 top-full mt-2 p-3 rounded-lg shadow-lg border z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto bg-[var(--dashboard-bg-primary)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-secondary)]">
+                  <div className="text-xs whitespace-nowrap">
+                    <div className="font-medium mb-2">Keyboard Shortcuts:</div>
+                    <div>↑↓ Navigate requests</div>
+                    <div>Enter Open request</div>
+                  </div>
                 </div>
-                <span className="text-xs text-[var(--dashboard-text-tertiary)]">
-                  {openRequests} open
-                </span>
               </div>
-              <div className="w-full h-2 rounded-full bg-[var(--dashboard-bg-tertiary)]">
-                <div 
-                  className="h-2 bg-green-500 rounded-full transition-all duration-300"
-                  style={{ width: `${progressPercentage}%` }}
-                />
+            </div>
+          </div>
+        </div>
+
+        {/* Content Wrapper with Background */}
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl lg:border lg:border-[var(--dashboard-border-primary)] p-4 lg:p-6">
+          <div className="flex flex-col h-full">
+            {/* Main Content - 3 Column Layout */}
+        <div className="flex-1 flex flex-col lg:flex-row gap-2 lg:gap-6 overflow-hidden relative">
+          {/* Mobile Sidebar Overlay */}
+          {isMobileSidebarOpen && (
+            <div 
+              className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+              onClick={() => setIsMobileSidebarOpen(false)}
+            />
+          )}
+          
+          {/* Left Panel - Request List */}
+          <div className={`
+            w-full lg:w-1/6 border-b lg:border-b-0 lg:border-r border-[var(--dashboard-border-primary)] flex flex-col
+            fixed lg:static top-0 left-0 h-full z-50 lg:z-auto
+            transform transition-transform duration-300 ease-in-out
+            ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+            bg-[var(--dashboard-bg-primary)] lg:bg-transparent
+            shadow-lg lg:shadow-none
+          `}>
+            {/* Navigation & Progress */}
+            <div className="p-4 border-b border-[var(--dashboard-border-primary)]">
+              {/* Mobile Header with Progress Bar and Close Button */}
+              <div className="flex items-center justify-between mb-3">
+                {/* Progress Bar */}
+                <div className="flex-1">
+                  {/* Page Title */}
+                  <div className="text-sm font-medium text-[var(--dashboard-text-primary)] mb-2">
+                    Support Requests
+                  </div>
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="text-xs md:text-sm text-[var(--dashboard-text-primary)]">
+                      {resolvedRequests} of {totalRequests} resolved
+                    </div>
+                    <span className="text-xs text-[var(--dashboard-text-tertiary)]">
+                      {openRequests} open
+                    </span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-[var(--dashboard-bg-tertiary)]">
+                    <div 
+                      className="h-2 bg-green-500 rounded-full transition-all duration-300"
+                      style={{ width: `${progressPercentage}%` }}
+                    />
+                  </div>
+                </div>
+                
+                {/* Mobile Close Button */}
+                <button
+                  onClick={() => setIsMobileSidebarOpen(false)}
+                  className="lg:hidden ml-3 p-2 rounded-lg bg-[var(--dashboard-bg-secondary)] border border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-tertiary)] transition-colors"
+                >
+                  <XMarkIcon className="w-5 h-5" />
+                </button>
               </div>
             </div>
             
@@ -861,7 +928,7 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                         setResponses([])
                         setResponseIsSent(false)
                       }}
-                      className={`p-2 lg:p-3 rounded-lg cursor-pointer transition-all flex-shrink-0 w-60 lg:w-auto ${
+                      className={`p-4 lg:p-3 rounded-lg cursor-pointer transition-all flex-shrink-0 w-full lg:w-auto ${
                         isSelected
                           ? 'bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)] border-l-4 border-[var(--dashboard-active-border)]'
                           : 'hover:bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)]'
@@ -938,6 +1005,32 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                 {/* Content */}
                 <div className="flex-1 pt-0 overflow-y-auto">
                   <div className="space-y-5">
+                    {/* Support Message */}
+                    <div>
+                      <h3 className={`text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]`}>Support Message</h3>
+                      <div className={`relative p-4 rounded-lg border bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] shadow-sm`}>
+                        <div className="flex items-center justify-between mb-3 text-xs text-[var(--dashboard-text-tertiary)]">
+                          <span>
+                            Request submitted: {selectedRequest.created_at ? (
+                              <>
+                                {new Date(selectedRequest.created_at).toLocaleDateString('it-IT')} at {new Date(selectedRequest.created_at).toLocaleTimeString('it-IT', {
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </>
+                            ) : (
+                              'Date not available'
+                            )}
+                          </span>
+                        </div>
+                        <div className={`text-base leading-relaxed mb-0 text-[var(--dashboard-text-primary)] relative z-10`}>
+                          {selectedRequest.message}
+                        </div>
+                        {/* Subtle bottom gradient overlay */}
+                        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 rounded-b-lg bg-gradient-to-b from-transparent to-blue-100/40"></div>
+                      </div>
+                    </div>
+
                     {/* Customer Details - two-column layout, match sizes/paddings */}
                     <div>
                       <h3 className="text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]">Customer Details</h3>
@@ -999,18 +1092,6 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                             </div>
                           </div>
                         )}
-                      </div>
-                    </div>
-
-                    {/* Support Message */}
-                    <div>
-                      <h3 className={`text-xs font-medium mb-3 pt-1 border-t uppercase tracking-wide text-[var(--dashboard-text-tertiary)] border-[var(--dashboard-border-primary)]`}>Support Message</h3>
-                      <div className={`relative p-4 rounded-lg border bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] shadow-sm`}>
-                        <div className={`text-sm leading-relaxed mb-0 text-[var(--dashboard-text-primary)] relative z-10`}>
-                          {selectedRequest.message}
-                        </div>
-                        {/* Subtle bottom gradient overlay */}
-                        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 rounded-b-lg bg-gradient-to-b from-transparent to-blue-100/40"></div>
                       </div>
                     </div>
 

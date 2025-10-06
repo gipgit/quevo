@@ -67,7 +67,7 @@ export default function BusinessSelectionPage() {
   if (status === "loading" || contextLoading) {
     console.log("SelectBusinessPage: Showing loading state")
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-800 flex items-center justify-center">
         <LoadingSpinner size="lg" color="white" />
       </div>
     )
@@ -82,7 +82,7 @@ export default function BusinessSelectionPage() {
   if (businesses.length === 0) {
     console.log("SelectBusinessPage: No businesses found")
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-800 flex items-center justify-center">
         <div className="text-center text-white">
           <h2 className="text-2xl font-bold mb-4">No businesses found</h2>
           <p>Please contact support if you believe this is an error.</p>
@@ -129,16 +129,16 @@ export default function BusinessSelectionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-zinc-800 text-white flex items-center justify-center">
       <div className="container mx-auto px-4 py-12">
-        <div className="text-center mb-8">
-          <p className="text-lg lg:text-xl mb-2">
+        <div className="text-center mb-6">
+          <p className="mb-2 text-gray-300">
             {t("welcome", { name: session.user?.name?.split(" ")[0] || "" })}
           </p>
-          <p className="text-2xl lg:text-3xl font-medium mb-12">{t("whatToManage")}</p>
+          <p className="text-xl lg:text-2xl font-medium mb-8 text-white">{t("whatToManage")}</p>
         </div>
 
-        <div className="flex flex-wrap gap-3 lg:gap-4 max-w-6xl justify-center items-center mx-auto">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3 lg:gap-4 max-w-7xl justify-center items-center mx-auto">
           {businesses.map((business) => {
             const isSelecting = selectingBusiness === business.business_id
             const isDisabled = selectingBusiness !== null
@@ -148,12 +148,12 @@ export default function BusinessSelectionPage() {
                 key={business.business_id}
                 onClick={() => handleBusinessSelect(business.business_id)}
                 disabled={isDisabled}
-                className={`min-w-[200px] bg-white text-gray-900 rounded-2xl p-4 lg:p-6 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 ${
+                className={`w-full sm:min-w-[200px] sm:w-auto bg-white text-gray-900 rounded-2xl p-4 lg:p-6 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 ${
                   isSelecting 
                     ? 'opacity-75 cursor-not-allowed ring-2 ring-blue-500' 
                     : isDisabled
                     ? 'opacity-50 cursor-not-allowed'
-                    : 'hover:shadow-lg hover:bg-gray-100'
+                    : 'hover:shadow-lg hover:bg-gray-50'
                 }`}
               >
                 <div className="flex flex-col items-center text-center">

@@ -36,14 +36,14 @@ export const UsageLimitBar: React.FC<UsageLimitBarProps> = ({
       <div className="flex items-center gap-4">
         <div className="flex-1">
           <div className="flex justify-between items-center">
-            <span className="text-sm text-[var(--dashboard-text-secondary)]">
+            <span className="text-xs sm:text-sm text-[var(--dashboard-text-secondary)]">
               {label.replace("{current}", String(current)).replace("{max}", max === -1 ? unlimitedText : String(max))}
             </span>
           </div>
           {max !== -1 && max !== null && (
-            <div className="w-full rounded-full h-2 mt-1" style={{ background: 'var(--progress-bg)' }}>
+            <div className="w-full rounded-full h-1 sm:h-2 mt-1" style={{ background: 'var(--progress-bg)' }}>
               <div
-                className="h-2 rounded-full transition-all duration-1000 ease-out"
+                className="h-1 sm:h-2 rounded-full transition-all duration-1000 ease-out"
                 style={{
                   width: `${progressAnimation}%`,
                   background: 'var(--progress-fill)'
@@ -54,7 +54,7 @@ export const UsageLimitBar: React.FC<UsageLimitBarProps> = ({
         </div>
         {showUpgrade && max !== -1 && current >= max && (
           <button
-            className="px-4 py-2 bg-yellow-500 text-white rounded text-sm hover:bg-yellow-600 transition-colors whitespace-nowrap"
+            className="px-3 py-1.5 sm:px-4 sm:py-2 bg-yellow-500 text-white rounded text-xs sm:text-sm hover:bg-yellow-600 transition-colors whitespace-nowrap"
             onClick={onUpgrade}
           >
             {upgradeText}

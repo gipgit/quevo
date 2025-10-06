@@ -51,6 +51,15 @@ interface DashboardLayoutProps {
   children: React.ReactNode
 }
 
+interface NavigationItem {
+  href: string
+  label: string
+  icon: React.ComponentType<{ className?: string }>
+  comingSoon?: boolean
+  isAction?: boolean
+  onClick?: () => void
+}
+
 // Utility function to get profile image URL following the same pattern as business layout
 const getProfileImageUrl = (business: any) => {
   const R2_PUBLIC_DOMAIN = "https://pub-eac238aed876421982e277e0221feebc.r2.dev";
@@ -176,7 +185,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const businessImage = currentBusiness.business_img_profile
   const businessUrlName = currentBusiness.business_urlname || ""
 
-  const navigationItems = [
+  const navigationItems: NavigationItem[] = [
     { href: "/dashboard", label: t("nav.home") || "Home", icon: HomeIcon },
     { href: "/dashboard/profile", label: t("nav.profile") || "Profilo", icon: UserIcon },
     { href: "/dashboard/services", label: t("nav.services") || "Servizi", icon: WrenchScrewdriverIcon },
@@ -187,6 +196,31 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     { href: "/dashboard/clients", label: t("nav.clients") || "Clients", icon: UsersIcon },
     { href: "/dashboard/marketing", label: t("nav.marketing") || "Marketing", icon: ShareIcon, comingSoon: true },
     { href: "/dashboard/marketing-email-assistant", label: t("nav.marketingEmailAssistant") || "Email Assistant", icon: EnvelopeIcon, comingSoon: true },
+  ]
+
+  // Mobile-specific navigation items (includes Support and Settings)
+  const mobileNavigationItems: NavigationItem[] = [
+    ...navigationItems,
+    { 
+      href: "#", 
+      label: "Support", 
+      icon: ChatBubbleLeftRightIcon, 
+      isAction: true,
+      onClick: () => {
+        handleSupportRequest()
+        setIsMobileMenuOpen(false)
+      }
+    },
+    { 
+      href: "#", 
+      label: "Settings", 
+      icon: Cog6ToothIcon, 
+      isAction: true,
+      onClick: () => {
+        setShowSettingsModal(true)
+        setIsMobileMenuOpen(false)
+      }
+    }
   ]
 
   const handleLogout = async () => {
@@ -656,139 +690,185 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             bottom: isMobileMenuOpen ? '0' : '-100vh'
           }}
         >
-          <div className="flex h-full flex-col px-6 py-6 bg-[var(--dashboard-bg-secondary)]">
-            {/* Close Button */}
-            <div className="flex justify-end mb-4 relative">
+          <div className="flex h-full flex-col bg-[var(--dashboard-bg-secondary)]">
+            {/* Header with Logo and Close Button */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--dashboard-border-primary)]">
+              {/* Left - App Logo and Name */}
+              <div className="flex items-center space-x-3">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-slate-600 to-gray-700 flex items-center justify-center">
+                  <span className="text-white text-lg font-bold">Q</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h2 className="font-semibold text-base lg:text-lg text-[var(--dashboard-text-primary)]">Quevo</h2>
+                </div>
+              </div>
+              
+              {/* Right - Close Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="absolute top-0 right-0 p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+                className="p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
             </div>
 
-            {/* Business Info Card */}
-            <div className="p-4 cursor-pointer transition-colors mb-4 hover:bg-[var(--dashboard-bg-tertiary)]" onClick={() => {
-              setShowBusinessModal(true)
-              setIsMobileMenuOpen(false)
-            }}>
-              <div className="flex items-center space-x-3">
-                <div className="h-10 w-10 rounded-full bg-zinc-600 flex items-center justify-center overflow-hidden">
-                  {(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? (
-                    <img
-                      src={getProfileImageUrl(currentBusiness)}
-                      alt={businessName}
-                      className="h-full w-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement
-                        target.style.display = "none"
-                        target.nextElementSibling?.classList.remove("hidden")
-                      }}
-                    />
-                  ) : null}
-                  <span className={`text-white text-sm font-medium ${(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? "hidden" : ""}`}>
-                    {getBusinessInitial()}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h2 className="font-semibold text-sm truncate text-[var(--dashboard-text-primary)]">{businessName}</h2>
-                </div>
-              </div>
-            </div>
+            {/* Content Area */}
+            <div className="flex-1 flex flex-col px-6 py-6">
 
             {/* Navigation Items */}
             <nav className="flex-1">
               <ul className="space-y-0">
-                {navigationItems.map((item) => {
+                {mobileNavigationItems.map((item) => {
                   const IconComponent = item.icon
                   return (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        className={`flex items-center gap-x-3 rounded-md p-2 text-sm md:text-base leading-6 transition-all duration-200 ${
-                          isActiveLink(item.href)
-                            ? "bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)] border border-[var(--dashboard-border-primary)]"
-                            : "text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)] hover:text-[var(--dashboard-text-primary)]"
-                        }`}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        <IconComponent className="h-5 w-5" />
-                        <span className="flex-1">{item.label}</span>
-                        {item.comingSoon && (
-                          <span className="text-[10px] px-1 py-0 rounded bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
-                            Coming Soon
-                          </span>
-                        )}
-                      </Link>
+                    <li key={item.href + item.label}>
+                      {item.isAction ? (
+                        <button
+                          onClick={item.onClick}
+                          className="flex items-center gap-x-3 rounded-md p-1.5 text-sm md:text-base leading-5 transition-all duration-200 w-full text-left text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)] hover:text-[var(--dashboard-text-primary)]"
+                        >
+                          <IconComponent className="h-5 w-5" />
+                          <span className="flex-1">{item.label}</span>
+                        </button>
+                      ) : (
+                        <Link
+                          href={item.href}
+                          className={`flex items-center gap-x-3 rounded-md p-1.5 text-sm md:text-base leading-5 transition-all duration-200 ${
+                            isActiveLink(item.href)
+                              ? "bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-primary)] border border-[var(--dashboard-border-primary)]"
+                              : "text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)] hover:text-[var(--dashboard-text-primary)]"
+                          }`}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          <IconComponent className="h-5 w-5" />
+                          <span className="flex-1">{item.label}</span>
+                          {item.comingSoon && (
+                            <span className="text-[10px] px-1 py-0 rounded bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
+                              Coming Soon
+                            </span>
+                          )}
+                        </Link>
+                      )}
                     </li>
                   )
                 })}
               </ul>
             </nav>
 
-            {/* AI Credits, Theme Toggle, and Locale Switcher */}
-            <div className="mt-auto">
-              <div className="flex flex-col gap-3">
-                {/* AI Credits Block */}
-                {currentBusiness && (
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg border bg-[var(--dashboard-bg-tertiary)] border-[var(--dashboard-border-primary)]">
-                    <div className="flex items-center gap-2">
-                      <SparklesIcon className="w-4 h-4 text-blue-500" />
+            {/* Business Plan and Credits Card - Mobile */}
+            {currentBusiness && (
+              <div className="rounded-lg border bg-[var(--dashboard-bg-tertiary)] border-[var(--dashboard-border-primary)] mt-4">
+                {/* Header */}
+                <div className="flex items-center justify-between gap-3 px-4 py-3">
+                  {/* Left - Profile Image, Business Name, Actions, and Plan Badge */}
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 rounded-full bg-zinc-600 flex items-center justify-center overflow-hidden flex-shrink-0">
+                      {(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? (
+                        <img
+                          src={getProfileImageUrl(currentBusiness)}
+                          alt={businessName}
+                          className="h-full w-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement
+                            target.style.display = "none"
+                            target.nextElementSibling?.classList.remove("hidden")
+                          }}
+                        />
+                      ) : null}
+                      <span className={`text-white text-xs font-medium ${(currentBusiness?.business_img_profile || currentBusiness?.business_public_uuid) ? "hidden" : ""}`}>
+                        {getBusinessInitial()}
+                      </span>
+                    </div>
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1">
-                        <span className="text-xs text-[var(--dashboard-text-secondary)]">AI Credits</span>
-                        <span className="text-sm font-medium text-[var(--dashboard-text-primary)]">
-                          {creditsLoading ? (
-                            <div className="w-8 h-4 bg-gray-200 rounded animate-pulse"></div>
-                          ) : (
-                            creditsStatus?.creditsAvailable ?? 0
-                          )}
-                        </span>
+                        <span className="text-sm font-medium text-[var(--dashboard-text-primary)] truncate">{businessName}</span>
+                      </div>
+                      {/* Plan Badge, Manage Button, and Action Buttons under Business Name */}
+                      <div className="flex items-center gap-2 mt-1">
+                        {loading ? (
+                          <div className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium uppercase whitespace-nowrap bg-gray-200 animate-pulse">
+                            <div className="w-12 h-3 bg-gray-300 rounded"></div>
+                          </div>
+                        ) : currentBusiness.plan ? (() => {
+                          const planColors = getPlanColors(currentBusiness.plan.plan_name);
+                          return (
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium uppercase whitespace-nowrap ${planColors.gradient} ${planColors.textColor}`}>
+                              {planColors.showStar && (
+                                <svg className="w-2 h-2 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                              )}
+                              {capitalizePlanName(currentBusiness.plan.plan_name)}
+                            </span>
+                          );
+                        })() : (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium uppercase whitespace-nowrap bg-black text-white">No Plan</span>
+                        )}
+                        <Link 
+                          href="/dashboard/plan" 
+                          className="px-2 py-0.5 rounded text-[10px] font-medium transition-colors border bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]"
+                        >
+                          Manage
+                        </Link>
+                        {/* Action Buttons (Open, Share) */}
+                        <div className="flex items-center gap-0">
+                          <button
+                            onClick={handleOpen}
+                            className="p-1 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
+                            title="Open Public Profile"
+                          >
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() => setShowShareModal(true)}
+                            className="p-1 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
+                            title="Share Link"
+                          >
+                            <ShareIcon className="w-3 h-3" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                )}
-              {/* Support, Locale Switcher and Theme Toggle - 3 Column Layout for Mobile */}
-              <div className="grid grid-cols-3 gap-2">
-                <button 
-                  onClick={() => {
-                    handleSupportRequest()
-                    setIsMobileMenuOpen(false)
-                  }}
-                  className="p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)] flex items-center justify-center"
-                  title="Support"
-                >
-                  <ChatBubbleLeftRightIcon className="h-5 w-5" />
-                </button>
-                <LocaleSwitcherButton 
-                  onClick={() => {
-                    setIsModalOpen(true)
-                    setIsMobileMenuOpen(false)
-                  }}
-                  className="w-full"
-                />
-                <div className="flex items-center gap-2">
-                  <SunIcon className="h-4 w-4 text-[var(--dashboard-text-secondary)]" />
-                  <button
-                    onClick={() => {
-                      toggleTheme()
-                      setIsMobileMenuOpen(false)
-                    }}
-                    className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--dashboard-ring-primary)] focus:ring-offset-2 bg-[var(--dashboard-border-secondary)]"
-                    title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-                  >
-                    <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
-                        theme === 'dark' ? 'translate-x-6' : 'translate-x-1'
-                      }`}
-                    />
-                    <span className="sr-only">
-                      {theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-                    </span>
-                  </button>
-                  <MoonIcon className="h-4 w-4 text-[var(--dashboard-text-secondary)]" />
+
+                  {/* Right - Toggle Button */}
+                  <div className="flex items-center">
+                    <button
+                      onClick={() => {
+                        setShowBusinessModal(true)
+                        setIsMobileMenuOpen(false)
+                      }}
+                      className="p-2 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-secondary)] rounded-lg transition-colors"
+                      title="Change Business"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
+
+                {/* Content */}
+                <div className="flex items-center justify-between gap-3 px-4 py-3 border-t border-[var(--dashboard-border-primary)]">
+                  {/* AI Credits Label Left */}
+                  <div className="flex items-center gap-2">
+                    <SparklesIcon className="w-4 h-4 text-blue-500" />
+                    <span className="text-xs text-[var(--dashboard-text-secondary)]">AI Credits</span>
+                  </div>
+                  {/* AI Credits Value Right */}
+                  <span className="text-sm font-medium text-[var(--dashboard-text-primary)] ml-auto">
+                    {creditsLoading ? (
+                      <span className="inline-block w-8 h-4 bg-gray-200 rounded animate-pulse"></span>
+                    ) : (
+                      creditsStatus?.creditsAvailable ?? 0
+                    )}
+                  </span>
                 </div>
               </div>
+            )}
+
             </div>
           </div>
         </div>
