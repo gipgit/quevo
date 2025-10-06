@@ -478,7 +478,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
           
           {/* Left Panel - Calendar/List View */}
           <div className={`
-            w-full lg:w-80 border-b lg:border-b-0 lg:border-r flex flex-col
+            w-full lg:w-64 border-b lg:border-b-0 lg:border-r flex flex-col
             fixed lg:static top-0 left-0 h-full z-50 lg:z-auto
             transform transition-transform duration-300 ease-in-out
             ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -491,8 +491,8 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
               <div className="flex items-center justify-between mb-3">
                 {/* Progress Bar */}
                 <div className="flex-1">
-                  {/* Page Title */}
-                  <div className="text-sm font-medium text-[var(--dashboard-text-primary)] mb-2">
+                  {/* Page Title - Mobile Only */}
+                  <div className="text-sm font-medium text-[var(--dashboard-text-primary)] mb-2 lg:hidden">
                     {t('title')}
                   </div>
                   <div className="flex justify-between items-center mb-2">
@@ -530,7 +530,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
               }`}>
                 <button
                   onClick={() => setViewMode('calendar')}
-                  className={`py-1 lg:py-1.5 px-2 lg:px-3 text-xs font-medium rounded-md transition-colors flex items-center gap-1 lg:gap-1.5 ${
+                  className={`flex-1 py-1 lg:py-1.5 px-2 lg:px-3 text-xs font-medium rounded-md transition-colors flex items-center justify-center gap-1 lg:gap-1.5 ${
                     viewMode === 'calendar'
                       ? theme === 'dark' 
                         ? 'bg-zinc-600 text-gray-100 shadow-sm' 
@@ -546,7 +546,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`py-1 lg:py-1.5 px-2 lg:px-3 text-xs font-medium rounded-md transition-colors flex items-center gap-1 lg:gap-1.5 ${
+                  className={`flex-1 py-1 lg:py-1.5 px-2 lg:px-3 text-xs font-medium rounded-md transition-colors flex items-center justify-center gap-1 lg:gap-1.5 ${
                     viewMode === 'list'
                       ? theme === 'dark' 
                         ? 'bg-zinc-600 text-gray-100 shadow-sm' 
@@ -695,66 +695,61 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                   <h3 className={`text-xs font-medium mb-2 pt-1 border-t uppercase tracking-wide ${
                     theme === 'dark' ? 'text-gray-400 border-gray-700' : 'text-gray-500 border-gray-200'
                   }`}>Customer Details</h3>
-                  <div className="flex items-start justify-between gap-4">
-                    {/* Left: Customer Name prominent */}
-                    <div className="min-w-0">
-                      <span className={`font-semibold truncate ${
-                        theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                      } text-base lg:text-lg`}>{selectedAppointment.customerName}</span>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-4 items-center">
+                    {/* Left Column - Customer Name */}
+                    <div className="flex flex-col">
+                      <span className="font-medium text-[var(--dashboard-text-primary)] text-lg lg:text-2xl">
+                        {selectedAppointment.customerName}
+                      </span>
                     </div>
-                    {/* Right: Email and Phone stacked with actions */}
-                    <div className="flex flex-col items-start gap-2 text-xs lg:text-sm">
-                      {/* Email row */}
-                      <div className="flex items-center gap-2 break-all">
-                        <EnvelopeIcon className="w-3.5 lg:w-4 h-3.5 lg:h-4" />
-                        <span className="truncate max-w-[180px] lg:max-w-none">{selectedAppointment.customerEmail}</span>
-                        <div className="flex items-center gap-1 ml-1">
-                          <button
-                            onClick={() => navigator.clipboard.writeText(selectedAppointment.customerEmail)}
-                            className="p-1 rounded hover:bg-black/10"
-                            title="Copy email"
-                          >
-                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                          </button>
+                    
+                    {/* Right Column - Contact Details */}
+                    <div className="space-y-0 text-left lg:text-right">
+                      {/* Email Row */}
+                      <div className="flex items-center justify-start lg:justify-end gap-1 text-sm">
+                        <span>{selectedAppointment.customerEmail || 'No email'}</span>
+                        <button
+                          onClick={() => navigator.clipboard.writeText(selectedAppointment.customerEmail || '')}
+                          className="p-1.5 rounded transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+                          title="Copy email"
+                        >
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        </button>
+                        {selectedAppointment.customerEmail && (
                           <a
                             href={`mailto:${selectedAppointment.customerEmail}`}
-                            className="p-1 rounded hover:bg-black/10"
+                            className="p-1.5 rounded transition-colors text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                             title="Send email"
                           >
-                            <EnvelopeIcon className="w-3.5 h-3.5" />
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
                           </a>
-                        </div>
+                        )}
                       </div>
-                      {/* Phone row */}
+                      
+                      {/* Phone Row */}
                       {selectedAppointment.customerPhone && (
-                        <div className="flex items-center gap-2">
-                          <PhoneIcon className="w-3.5 lg:w-4 h-3.5 lg:h-4" />
+                        <div className="flex items-center justify-start lg:justify-end gap-1 text-sm">
                           <span>{selectedAppointment.customerPhone}</span>
-                          <div className="flex items-center gap-1 ml-1">
-                            <button
-                              onClick={() => navigator.clipboard.writeText(selectedAppointment.customerPhone || '')}
-                              className="p-1 rounded hover:bg-black/10"
-                              title="Copy phone"
-                            >
-                              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                            </button>
-                            <a
-                              href={`tel:${selectedAppointment.customerPhone}`}
-                              className="p-1 rounded hover:bg-black/10"
-                              title="Call"
-                            >
-                              <PhoneIcon className="w-3.5 h-3.5" />
-                            </a>
-                            <a
-                              href={`https://wa.me/${selectedAppointment.customerPhone}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="p-1 rounded hover:bg-black/10"
-                              title="WhatsApp"
-                            >
-                              <svg className="w-3.5 h-3.5" viewBox="0 0 32 32" fill="currentColor"><path d="M19.11 17.21c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.98-.94 1.18-.17.2-.35.22-.65.07-.3-.15-1.26-.47-2.4-1.49-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.87 1.22 3.07.15.2 2.11 3.22 5.1 4.52.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z"/><path d="M26.64 5.36C23.9 2.61 20.12 1 16.09 1 8.24 1 1.93 7.31 1.93 15.16c0 2.48.65 4.86 1.88 6.97L1 31l9.08-2.77a14.13 14.13 0 006.01 1.31h.01c7.84 0 14.16-6.31 14.16-14.16 0-3.78-1.47-7.34-4.16-10.02zM16.09 28.3h-.01a12.2 12.2 0 01-5.88-1.58l-.42-.25-5.39 1.64 1.65-5.25-.28-.43a12.2 12.2 0 01-1.87-6.67c0-6.74 5.49-12.23 12.23-12.23 3.27 0 6.35 1.27 8.66 3.58a12.17 12.17 0 013.58 8.66c0 6.74-5.49 12.23-12.23 12.23z"/></svg>
-                            </a>
-                          </div>
+                          <button
+                            onClick={() => navigator.clipboard.writeText(selectedAppointment.customerPhone)}
+                            className="p-1.5 rounded transition-colors text-[var(--dashboard-text-tertiary)] hover:text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)]"
+                            title="Copy phone"
+                          >
+                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                          </button>
+                          <a
+                            href={`https://wa.me/${selectedAppointment.customerPhone.replace(/\D/g, '')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1.5 rounded transition-colors text-green-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20"
+                            title="WhatsApp"
+                          >
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.533 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.451h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.463.703z"/>
+                            </svg>
+                          </a>
                         </div>
                       )}
                     </div>
@@ -854,7 +849,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
           </div>
 
           {/* Right Panel - Actions/Manage */}
-          <div className={`w-full lg:w-2/5 border-t lg:border-t-0 lg:border-l border-[var(--dashboard-border-primary)] flex flex-col`}>
+          <div className={`w-full lg:w-1/3 border-t lg:border-t-0 lg:border-l border-[var(--dashboard-border-primary)] flex flex-col`}>
             <div className="p-2 lg:p-6 h-full flex flex-col gap-3">
               {selectedAppointment ? (
                 <>

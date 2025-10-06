@@ -680,14 +680,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
         {/* Mobile Sidebar Overlay */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-70" onClick={() => setIsMobileMenuOpen(false)} />
+          <div className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-70 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
         )}
 
         {/* Mobile Sidebar */}
         <div 
-          className="lg:hidden fixed inset-x-0 z-50 h-screen transition-all duration-300 ease-in-out"
+          className="lg:hidden fixed inset-x-0 z-50 transition-all duration-300 ease-in-out"
           style={{ 
-            bottom: isMobileMenuOpen ? '0' : '-100vh'
+            bottom: isMobileMenuOpen ? '0' : '-100vh',
+            height: '90vh',
+            maxHeight: '90vh'
           }}
         >
           <div className="flex h-full flex-col bg-[var(--dashboard-bg-secondary)]">
