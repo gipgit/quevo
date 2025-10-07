@@ -624,7 +624,7 @@
     "activationSuccessful": "¡Activación Completada!",
     "activationSuccessDefault": "Tu cuenta ha sido activada exitosamente.",
     "welcomeMessage": "¡Bienvenido a Flowia, {recipientName}!",
-    "accountActiveMessage": "Tu cuenta Business está activa y tu perfil está en línea.",
+    "accountActiveMessage": "Tu cuenta está activa.",
     "verificationNote": "Realizamos verificaciones para evitar usos no autorizados de identidades empresariales. Si tenemos preguntas, te lo haremos saber.",
     "redirectingToDashboard": "Redirigiendo al panel de control...",
     "accountAlreadyActiveTitle": "Cuenta Ya Activa",

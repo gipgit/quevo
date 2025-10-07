@@ -411,7 +411,7 @@
     "activationSuccessful": "Activation terminée !",
     "activationSuccessDefault": "Votre compte a été activé avec succès !",
     "welcomeMessage": "Bienvenue chez Flowia, {recipientName}.",
-    "accountActiveMessage": "Votre compte Business est actif et votre profil est en ligne.",
+    "accountActiveMessage": "Votre compte est actif.",
     "verificationNote": "Nous effectuons des vérifications pour éviter l'utilisation non autorisée des identités d'entreprise. Si nous avons des questions, nous vous le ferons savoir.",
     "yourUserId": "Votre ID utilisateur",
     "yourEmail": "Votre e-mail",
