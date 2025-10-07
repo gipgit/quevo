@@ -889,6 +889,7 @@
   },
   "dashboard": {
     "welcome": "Bienvenido {name}",
+    "whatToManage": "¿Qué quieres gestionar?",
     "changeLocale": "Cambiar idioma",
     "loading": "Cargando dashboard...",
     "currentBusiness": {

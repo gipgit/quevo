@@ -585,6 +585,7 @@
   },
   "dashboard": {
     "welcome": "Bienvenue {name}",
+    "whatToManage": "Que souhaitez-vous gérer ?",
     "changeLocale": "Changer de langue",
     "loading": "Chargement du tableau de bord...",
     "currentBusiness": {

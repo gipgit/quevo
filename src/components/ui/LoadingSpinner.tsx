@@ -26,16 +26,54 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 
   return (
     <div className={`flex items-center justify-center ${className}`}>
+      <style jsx>{`
+        @keyframes pulse-alternate-1 {
+          0%, 100% {
+            opacity: 0.3;
+            transform: scale(0.95);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.05);
+          }
+        }
+        
+        @keyframes pulse-alternate-2 {
+          0%, 100% {
+            opacity: 1;
+            transform: scale(1.05);
+          }
+          50% {
+            opacity: 0.3;
+            transform: scale(0.95);
+          }
+        }
+        
+        .pulse-blue {
+          animation: pulse-alternate-1 2s ease-in-out infinite;
+        }
+        
+        .pulse-purple {
+          animation: pulse-alternate-2 2s ease-in-out infinite;
+        }
+      `}</style>
       <div className={`relative ${sizeClasses[size]}`}>
         {/* Outer ring */}
         <div className={`absolute inset-0 rounded-full border-2 border-transparent ${colorClasses[color]} opacity-20`}></div>
         {/* Spinning ring */}
         <div className={`absolute inset-0 rounded-full border-2 border-transparent border-t-current ${colorClasses[color]} animate-spin`}></div>
-        {/* Inner dot */}
+        {/* Inner dot - Blue layer */}
         <div 
-          className={`absolute inset-3 rounded-full blur-sm animate-pulse`}
+          className="absolute inset-3 rounded-full blur-sm pulse-blue"
           style={{
-            background: 'radial-gradient(circle, #fbbf24 0%, #f97316 50%, #ef4444 100%)'
+            background: 'radial-gradient(circle, #60a5fa 0%, #3b82f6 50%, #2563eb 100%)'
+          }}
+        ></div>
+        {/* Inner dot - Purple layer */}
+        <div 
+          className="absolute inset-3 rounded-full blur-sm pulse-purple"
+          style={{
+            background: 'radial-gradient(circle, #c084fc 0%, #a855f7 50%, #9333ea 100%)'
           }}
         ></div>
       </div>

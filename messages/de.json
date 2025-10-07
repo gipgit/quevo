@@ -583,6 +583,7 @@
   },
   "dashboard": {
     "welcome": "Willkommen {name}",
+    "whatToManage": "Was möchten Sie verwalten?",
     "changeLocale": "Sprache ändern",
     "loading": "Dashboard wird geladen...",
     "currentBusiness": {

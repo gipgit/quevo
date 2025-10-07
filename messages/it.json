@@ -367,11 +367,6 @@
     "unexpectedError": "Si è verificato un errore imprevisto. Riprova.",
     "connectionError": "Errore di connessione. Controlla la tua connessione internet e riprova."
   },
-  "Dashboard": {
-    "welcome": "Benvenuto {name}",
-    "whatToManage": "Cosa vuoi gestire?",
-    "loading": "Caricamento..."
-  },
   "Validation": {
     "emailManagerExists": "Un account manager con questa email esiste già",
     "emailSupabaseExists": "Questa email è già registrata nel sistema",
@@ -610,6 +605,7 @@
   },
   "dashboard": {
     "welcome": "Benvenuto {name}",
+    "whatToManage": "Cosa vuoi gestire?",
     "changeLocale": "Cambia lingua",
     "loading": "Caricamento dashboard...",
     "currentBusiness": {

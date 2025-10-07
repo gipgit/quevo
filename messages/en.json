@@ -600,6 +600,7 @@
   },
   "dashboard": {
     "welcome": "Welcome {name}",
+    "whatToManage": "What would you like to manage?",
     "changeLocale": "Change language",
     "loading": "Loading dashboard...",
     "currentBusiness": {

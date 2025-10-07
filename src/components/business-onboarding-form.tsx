@@ -438,12 +438,6 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
                // Loading state
                <div className="text-center py-4">
                  <LoadingSpinner size="lg" color="blue" />
-                 <h3 className="text-xl font-semibold text-gray-900 mt-4 mb-2">
-                   Creazione Business in corso...
-                 </h3>
-                 <p className="text-xs text-gray-600">
-                   Perfavore, attendi. Questo potrebbe richiedere alcuni secondi.
-                 </p>
                </div>
                            ) : (
                  // Success or Error state
