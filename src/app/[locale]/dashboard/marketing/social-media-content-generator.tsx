@@ -4,24 +4,24 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { useTheme } from "@/contexts/ThemeProvider"
 import { LoadingAIGeneration } from "@/components/ui/loading-ai-generation"
-import { 
-  DocumentDuplicateIcon,
-  SparklesIcon,
-  CheckIcon,
-  BoltIcon,
-  UserGroupIcon,
-  CalendarIcon,
-  CurrencyEuroIcon,
-  StarIcon,
-  AcademicCapIcon,
-  ShieldCheckIcon,
-  ClockIcon,
-  HeartIcon,
-  CogIcon,
-  LightBulbIcon,
-  TruckIcon,
-  HomeIcon
-} from "@heroicons/react/24/outline"
+import {
+  Copy as DocumentDuplicateIcon,
+  Sparkles as SparklesIcon,
+  Check as CheckIcon,
+  Zap as BoltIcon,
+  UsersRound as UserGroupIcon,
+  Calendar as CalendarIcon,
+  Euro as CurrencyEuroIcon,
+  Star as StarIcon,
+  GraduationCap as AcademicCapIcon,
+  ShieldCheck as ShieldCheckIcon,
+  Clock as ClockIcon,
+  Heart as HeartIcon,
+  Cog as CogIcon,
+  Lightbulb as LightBulbIcon,
+  Truck as TruckIcon,
+  Home as HomeIcon
+} from 'lucide-react'
 import AIActionButton from "@/components/ui/ai-action-button"
 import { AIAssistantIcon } from "@/components/ui/ai-assistant-icon"
 import { 
@@ -1088,7 +1088,7 @@ export default function SocialMediaContentGenerator({
                     title={quality.description}
                   >
                     <div className="flex items-center space-x-2">
-                      <Icon className={`w-4 h-4 ${isSelected ? 'text-[var(--dashboard-text-primary)]' : quality.textColor}`} />
+                      <Icon className={`w-4 h-4 ${isSelected ? 'text-[var(--dashboard-text-primary)]' : quality.textColor}`} strokeWidth={1} />
                       <div className={`font-medium text-xs ${
                         theme === 'dark' ? 'text-gray-200' : 'text-gray-900'
                       }`}>{quality.name}</div>

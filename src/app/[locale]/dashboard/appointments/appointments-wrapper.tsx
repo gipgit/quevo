@@ -14,22 +14,19 @@ import { useToaster } from '@/components/ui/ToasterProvider'
 import { useTheme } from '@/contexts/ThemeProvider'
 import { useBusiness } from '@/lib/business-context'
 import EmptyStateDashboard from '@/components/ui/EmptyStateDashboard'
-import { 
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  CalendarIcon,
-  ListBulletIcon,
-  ClockIcon,
-  MapPinIcon,
-  PhoneIcon,
-  EnvelopeIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  TrashIcon
-} from '@heroicons/react/24/outline'
-import { 
-  CheckCircleIcon as CheckCircleSolidIcon
-} from '@heroicons/react/24/solid'
+import {
+  ArrowLeft as ArrowLeftIcon,
+  ArrowRight as ArrowRightIcon,
+  Calendar as CalendarIcon,
+  List as ListBulletIcon,
+  Clock as ClockIcon,
+  MapPin as MapPinIcon,
+  Phone as PhoneIcon,
+  Mail as EnvelopeIcon,
+  CheckCircle as CheckCircleIcon,
+  XCircle as XCircleIcon,
+  Trash as TrashIcon
+} from 'lucide-react'
 
 const locales = {
   'en-US': enUS,
@@ -420,7 +417,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                   }`}
                   title="Previous appointment"
                 >
-                  <ArrowLeftIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                  <ArrowLeftIcon className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={1} />
                 </button>
                 <span className="text-xs md:text-xs text-[var(--dashboard-text-tertiary)] px-1 md:px-2">
                   {selectedIndex + 1} of {appointments.length}
@@ -435,7 +432,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                   }`}
                   title="Next appointment"
                 >
-                  <ArrowRightIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                  <ArrowRightIcon className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={1} />
                 </button>
               </div>
 
@@ -540,7 +537,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                         : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  <CalendarIcon className="w-3 lg:w-3.5 h-3 lg:h-3.5" />
+                  <CalendarIcon className="w-3 lg:w-3.5 h-3 lg:h-3.5" strokeWidth={1} />
                   <span className="hidden sm:inline">Calendar</span>
                   <span className="sm:hidden">Cal</span>
                 </button>
@@ -556,7 +553,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                         : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  <ListBulletIcon className="w-3 lg:w-3.5 h-3 lg:h-3.5" />
+                  <ListBulletIcon className="w-3 lg:w-3.5 h-3 lg:h-3.5" strokeWidth={1} />
                   List
                 </button>
               </div>
@@ -674,16 +671,16 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                   {/* Appointment Details - Each on its own row */}
                   <div className="space-y-2 lg:space-y-3 mt-3">
                     <div className="flex items-center gap-2 lg:gap-3">
-                      <CalendarIcon className="w-4 lg:w-5 h-4 lg:h-5" />
+                      <CalendarIcon className="w-4 lg:w-5 h-4 lg:h-5" strokeWidth={1} />
                       <span className="text-sm lg:text-base font-medium">{formatDate(selectedAppointment.start)}</span>
                     </div>
                     <div className="flex items-center gap-2 lg:gap-3">
-                      <ClockIcon className="w-4 lg:w-5 h-4 lg:h-5" />
+                      <ClockIcon className="w-4 lg:w-5 h-4 lg:h-5" strokeWidth={1} />
                       <span className="text-sm lg:text-base font-medium">{formatTime(selectedAppointment.start)} - {formatTime(selectedAppointment.end)}</span>
                     </div>
                     {selectedAppointment.appointment_location && (
                       <div className="flex items-center gap-2 lg:gap-3">
-                        <MapPinIcon className="w-4 lg:w-5 h-4 lg:h-5" />
+                        <MapPinIcon className="w-4 lg:w-5 h-4 lg:h-5" strokeWidth={1} />
                         <span className="text-sm lg:text-base font-medium">{selectedAppointment.appointment_location}</span>
                       </div>
                     )}
@@ -841,7 +838,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                 <div className={`text-center ${
                   theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                 }`}>
-                  <CalendarIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <CalendarIcon className="w-12 h-12 mx-auto mb-4 opacity-50" strokeWidth={1} />
                   <p>Select an appointment to view details</p>
                 </div>
               </div>
@@ -862,7 +859,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                       }`}
                       title="Confirm appointment"
                     >
-                      <CheckCircleIcon className="w-5 h-5 text-green-500" />
+                      <CheckCircleIcon className="w-5 h-5 text-green-500" strokeWidth={1} />
                       <span className="text-xs lg:text-sm text-left">{selectedAppointment.status === 'confirmed' ? 'Confirmed' : 'Confirm'}</span>
                     </button>
                     <button
@@ -872,7 +869,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                       }`}
                       title="Cancel appointment"
                     >
-                      <XCircleIcon className="w-5 h-5 text-red-500" />
+                      <XCircleIcon className="w-5 h-5 text-red-500" strokeWidth={1} />
                       <span className="text-xs lg:text-sm text-left">{selectedAppointment.status === 'cancelled' ? 'Cancelled' : 'Cancel'}</span>
                     </button>
                     <button
@@ -880,7 +877,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                       className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-1.5 border border-white/20 col-span-2"
                       title="Delete appointment"
                     >
-                      <TrashIcon className="w-5 h-5 text-gray-500" />
+                      <TrashIcon className="w-5 h-5 text-gray-500" strokeWidth={1} />
                       <span className="text-xs lg:text-sm text-left">Delete</span>
                     </button>
                   </div>
@@ -896,7 +893,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                             className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-1.5 border border-white/20"
                             title={`Call ${selectedAppointment.customerPhone}`}
                           >
-                            <PhoneIcon className="w-5 h-5 text-blue-500" />
+                            <PhoneIcon className="w-5 h-5 text-blue-500" strokeWidth={1} />
                             <span className="text-xs lg:text-sm text-left">Call</span>
                           </a>
                         )}
@@ -906,7 +903,7 @@ export default function AppointmentsWrapper({ appointments: initialAppointments 
                             className="p-3 rounded-lg bg-black/10 hover:bg-black/20 transition-colors flex flex-col items-start justify-start gap-1.5 border border-white/20"
                             title={`Email ${selectedAppointment.customerEmail}`}
                           >
-                            <EnvelopeIcon className="w-5 h-5 text-purple-500" />
+                            <EnvelopeIcon className="w-5 h-5 text-purple-500" strokeWidth={1} />
                             <span className="text-xs lg:text-sm text-left">Email</span>
                           </a>
                         )}

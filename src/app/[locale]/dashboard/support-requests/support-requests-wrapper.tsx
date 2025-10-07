@@ -6,33 +6,29 @@ import { useTheme } from "@/contexts/ThemeProvider"
 import { useBusiness } from "@/lib/business-context"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import EmptyStateDashboard from "@/components/ui/EmptyStateDashboard"
-import { 
-  EnvelopeIcon, 
-  DocumentArrowUpIcon, 
-  ClipboardDocumentIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  ClockIcon,
-  UserIcon,
-  TagIcon,
-  ChatBubbleLeftRightIcon,
-  ShareIcon,
-  FlagIcon,
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  ArrowTopRightOnSquareIcon,
-  EyeIcon,
-  EyeSlashIcon,
-  SparklesIcon,
-  WrenchScrewdriverIcon,
-  PencilIcon,
-  CheckIcon,
-  XMarkIcon
-} from '@heroicons/react/24/outline'
-import { 
-  CheckCircleIcon as CheckCircleSolidIcon,
-  ExclamationTriangleIcon as ExclamationTriangleSolidIcon
-} from '@heroicons/react/24/solid'
+import {
+  Mail as EnvelopeIcon,
+  FileUp as DocumentArrowUpIcon,
+  Clipboard as ClipboardDocumentIcon,
+  CheckCircle as CheckCircleIcon,
+  TriangleAlert as ExclamationTriangleIcon,
+  Clock as ClockIcon,
+  User as UserIcon,
+  Tag as TagIcon,
+  MessagesSquare as ChatBubbleLeftRightIcon,
+  Share2 as ShareIcon,
+  Flag as FlagIcon,
+  ArrowLeft as ArrowLeftIcon,
+  ArrowRight as ArrowRightIcon,
+  ExternalLink as ArrowTopRightOnSquareIcon,
+  Eye as EyeIcon,
+  EyeOff as EyeSlashIcon,
+  Sparkles as SparklesIcon,
+  Wrench as WrenchScrewdriverIcon,
+  Pencil as PencilIcon,
+  Check as CheckIcon,
+  X as XMarkIcon
+} from 'lucide-react'
 import { AIAssistantIcon } from '@/components/ui/ai-assistant-icon'
 import { AIActionButton } from '@/components/ui/ai-action-button'
 import { AICostCard } from '@/components/ui/ai-cost-card'
@@ -356,7 +352,7 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
   const getPriorityIcon = (priority: string) => {
     switch (priority?.toLowerCase()) {
       case 'urgent':
-        return <ExclamationTriangleSolidIcon className="w-4 h-4 text-red-600" />
+        return <ExclamationTriangleIcon className="w-4 h-4 text-red-600" strokeWidth={1} />
       case 'high':
         return <ExclamationTriangleIcon className="w-4 h-4 text-orange-600" />
       case 'medium':
@@ -795,7 +791,7 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                   }`}
                   title="Previous request"
                 >
-                  <ArrowLeftIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                  <ArrowLeftIcon className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={1} />
                 </button>
                 <span className="text-xs md:text-xs text-[var(--dashboard-text-tertiary)] px-1 md:px-2">
                   {selectedIndex + 1} of {supportRequests.length}
@@ -810,7 +806,7 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                   }`}
                   title="Next request"
                 >
-                  <ArrowRightIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                  <ArrowRightIcon className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={1} />
                 </button>
               </div>
 
@@ -1122,9 +1118,9 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                               {/* Status + Type + Title */}
                               <div className="flex items-center gap-2">
                                 {selectedRequest.serviceboardaction.action_status === 'completed' ? (
-                                  <CheckCircleSolidIcon className="w-3 h-3 text-green-500 flex-shrink-0" />
+                                  <CheckCircleIcon className="w-3 h-3 text-green-500 flex-shrink-0" strokeWidth={1} />
                                 ) : (
-                                  <ClockIcon className="w-3 h-3 text-yellow-500 flex-shrink-0" />
+                                  <ClockIcon className="w-3 h-3 text-yellow-500 flex-shrink-0" strokeWidth={1} />
                                 )}
                                 <div className="font-medium text-xs text-[var(--dashboard-text-primary)] flex-1">
                                   <span className="text-[var(--dashboard-text-tertiary)]">{selectedRequest.serviceboardaction.action_type}</span> • {selectedRequest.serviceboardaction.action_title}
@@ -1244,7 +1240,7 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                 <div className={`text-center ${
                   theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                 }`}>
-                  <EyeIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <EyeIcon className="w-12 h-12 mx-auto mb-4 opacity-50" strokeWidth={1} />
                   <p>Select a support request to view details</p>
                 </div>
               </div>
@@ -1270,9 +1266,9 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                           style={{ backgroundColor: (selectedRequest.status === 'resolved' || selectedRequest.status === 'closed') ? '#10b981' : '#059669', minWidth: '24px', minHeight: '24px' }}
                         >
                           {(selectedRequest.status === 'resolved' || selectedRequest.status === 'closed') ? (
-                            <CheckCircleSolidIcon className="w-4 h-4 text-white" />
+                            <CheckCircleIcon className="w-4 h-4 text-white" strokeWidth={1} />
                           ) : (
-                            <CheckCircleIcon className="w-4 h-4 text-white" />
+                            <CheckCircleIcon className="w-4 h-4 text-white" strokeWidth={1} />
                           )}
                         </div>
                         <span className="text-xs ai-panel-text-secondary text-left leading-tight">{selectedRequest.status === 'resolved' || selectedRequest.status === 'closed' ? 'Resolved' : 'Mark Resolved'}</span>

@@ -6,18 +6,22 @@ import { useBusiness } from "@/lib/business-context"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import BusinessSelectionModal from "@/components/modals/BusinessSelectionModal"
 import Link from "next/link"
-import { 
-  UserIcon, 
-  CubeIcon, 
-  CalendarIcon, 
-  MegaphoneIcon,
-  ClipboardDocumentListIcon, 
-  Squares2X2Icon, 
-  Cog6ToothIcon,
-  GlobeAltIcon,
-  UsersIcon,
-  LifebuoyIcon
-} from "@heroicons/react/24/outline"
+import {
+  User as UserIcon,
+  Calendar as CalendarIcon,
+  Megaphone as MegaphoneIcon,
+  ClipboardList as ClipboardDocumentListIcon,
+  Grid2X2 as Squares2X2Icon,
+  Cog as Cog6ToothIcon,
+  Globe2 as GlobeAltIcon,
+  Users as UsersIcon,
+  LifeBuoy as LifebuoyIcon,
+  MessageCircleQuestion as MessageCircleQuestionIcon,
+  BookOpenText as BookOpenTextIcon,
+  ClipboardPen as ClipboardPenIcon,
+  ArrowLeftRight as ArrowLeftRightIcon,
+  Plus as PlusIcon
+} from 'lucide-react'
 import { formatUsageDisplay } from "@/lib/usage-utils"
 import { getPlanColors, capitalizePlanName } from "@/lib/plan-colors"
 
@@ -253,7 +257,7 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
     {
       title: t("cards.services.title"),
       description: t("cards.services.description"),
-      icon: Squares2X2Icon,
+      icon: BookOpenTextIcon,
       href: "/dashboard/services",
     },
     {
@@ -265,13 +269,13 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
     {
       title: t("cards.supportRequests.title"),
       description: t("cards.supportRequests.description"),
-      icon: LifebuoyIcon,
+      icon: MessageCircleQuestionIcon,
       href: "/dashboard/support-requests",
     },
     {
       title: t("cards.serviceBoards.title"),
       description: t("cards.serviceBoards.description"),
-      icon: Squares2X2Icon,
+      icon: ClipboardPenIcon,
       href: "/dashboard/service-boards",
     },
     {
@@ -307,21 +311,23 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
         <div className="sticky top-0 z-10 p-4 lg:p-6 rounded-t-none lg:rounded-2xl mb-2 md:mb-3 bg-[var(--dashboard-bg-primary)] lg:border lg:border-[var(--dashboard-border-primary)]">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">{currentBusiness?.business_name}</p>
+              <p className="text-base lg:text-lg font-medium leading-tight text-[var(--dashboard-text-primary)]">{currentBusiness?.business_name}</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 lg:gap-3">
               <button
                 onClick={() => setShowBusinessModal(true)}
-                className="px-3 py-1.5 rounded-md text-sm text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
+                className="px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-md text-xs md:text-sm text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors inline-flex items-center gap-1.5"
                 title={t("currentBusiness.change")}
               >
-                {t("currentBusiness.change")}
+                <ArrowLeftRightIcon className="w-4 h-4 md:w-4 md:h-4" strokeWidth={1.5} aria-hidden="true" />
+                <span className="hidden md:inline">{t("currentBusiness.change")}</span>
               </button>
               <Link
                 href="/onboarding"
-                className="px-3 py-1.5 rounded-md text-sm text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
+                className="px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-md text-xs md:text-sm text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors inline-flex items-center gap-1.5"
               >
-                Add Business
+                <PlusIcon className="w-4 h-4 md:w-4 md:h-4" strokeWidth={1.5} aria-hidden="true" />
+                <span className="hidden md:inline">Add Business</span>
               </Link>
             </div>
           </div>
@@ -331,7 +337,7 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
         <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl lg:border lg:border-[var(--dashboard-border-primary)] p-4 lg:p-6">
           {/* Usage Summary */}
           {usage && planLimits && (
-            <div className="mb-8">
+            <div className="mb-4 lg:mb-8">
               <div className="flex overflow-x-auto lg:grid lg:grid-cols-5 gap-1 md:gap-4 items-end pb-2 lg:pb-0">
                 {usageCards.map(card => {
                   const max = getPlanLimitValue(card.feature)
@@ -370,10 +376,10 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
           )}
 
           {/* Public Link Section */}
-          <div className="mb-8">
+          <div className="mb-4 lg:mb-8">
             <div className={`px-4 py-2 md:px-6 md:py-4 rounded-full text-base font-medium flex items-center justify-between gap-4 shadow-sm border transition-all duration-300 relative overflow-hidden bg-[var(--dashboard-bg-secondary)] text-[var(--dashboard-text-primary)] border-[var(--dashboard-border-primary)] ${isAnimating ? 'animate-pill-shine' : ''}`}>
               <div className="flex items-center gap-2 min-w-0 flex-1">
-                <GlobeAltIcon className="w-6 h-6 md:w-7 md:h-7 text-blue-600 flex-shrink-0" />
+                <GlobeAltIcon className="w-6 h-6 md:w-7 md:h-7 text-blue-600 flex-shrink-0" strokeWidth={1} />
                 <span className="text-sm md:text-lg truncate">{publicUrl}</span>
               </div>
               <div className="flex items-center gap-2">
@@ -419,7 +425,7 @@ export default function DashboardWrapper({ usage, planLimits, autoSelectBusiness
                 >
                   <div className="flex flex-col space-y-4">
                     <div className="transition-transform duration-200">
-                      <IconComponent className="h-12 w-12 text-gray-600 group-hover:text-blue-600 stroke-[1]" />
+                      <IconComponent className="h-12 w-12 text-gray-600 group-hover:text-blue-600" strokeWidth={1.25} />
                     </div>
                     <div>
                       <h3 className="text-sm md:text-base font-medium mb-2 leading-tight text-[var(--dashboard-text-primary)]">{card.title}</h3>

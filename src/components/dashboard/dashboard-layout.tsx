@@ -15,37 +15,37 @@ import LocaleSelectModal from "@/components/ui/LocaleSelectModal"
 import DashboardSupportModal from "@/components/modals/DashboardSupportModal"
 import { useLocaleSwitcher } from "@/hooks/useLocaleSwitcher"
 import { useTheme } from "@/contexts/ThemeProvider"
-import { GlobeAltIcon } from "@heroicons/react/24/outline"
+import { Globe2 as GlobeAltIcon } from 'lucide-react'
 import CacheBusterWrapper from "./CacheBusterWrapper"
 import { useBusinessSwitchTracker } from "@/hooks/useBusinessSwitchTracker"
 import NavigationInterceptor from "./NavigationInterceptor"
 import { useForceRefreshOnBusinessChange } from "@/hooks/useForceRefreshOnBusinessChange"
 import { useAICredits } from "@/hooks/useAICredits"
 
-import { 
-  HomeIcon, 
-  UserIcon, 
-  WrenchScrewdriverIcon, 
-  CubeIcon, 
-  CalendarIcon, 
-  CreditCardIcon,
-  ChartBarIcon,
-  DevicePhoneMobileIcon,
-  ArrowRightOnRectangleIcon,
-  XMarkIcon,
-  ClipboardDocumentListIcon,
-  ClipboardDocumentIcon,
-  Bars3Icon,
-  Cog6ToothIcon,
-  SunIcon,
-  MoonIcon,
-  BellIcon,
-  ShareIcon,
-  UsersIcon,
-  EnvelopeIcon,
-  ChatBubbleLeftRightIcon,
-  SparklesIcon
-} from "@heroicons/react/24/outline"
+import {
+  Home as HomeIcon,
+  User as UserIcon,
+  Wrench as WrenchScrewdriverIcon,
+  Calendar as CalendarIcon,
+  LogOut as ArrowRightOnRectangleIcon,
+  X as XMarkIcon,
+  ClipboardList as ClipboardDocumentListIcon,
+  Clipboard as ClipboardDocumentIcon,
+  ClipboardPen as ClipboardPenIcon,
+  BookOpenText as BookOpenTextIcon,
+  Menu as Bars3Icon,
+  Cog as Cog6ToothIcon,
+  Settings as SettingsIcon,
+  Sun as SunIcon,
+  Moon as MoonIcon,
+  Bell as BellIcon,
+  Share2 as ShareIcon,
+  Users as UsersIcon,
+  Mail as EnvelopeIcon,
+  MessagesSquare as ChatBubbleLeftRightIcon,
+  MessageCircleQuestion as MessageCircleQuestionIcon,
+  Sparkles as SparklesIcon
+} from 'lucide-react'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -54,7 +54,7 @@ interface DashboardLayoutProps {
 interface NavigationItem {
   href: string
   label: string
-  icon: React.ComponentType<{ className?: string }>
+  icon: React.ComponentType<any>
   comingSoon?: boolean
   isAction?: boolean
   onClick?: () => void
@@ -188,10 +188,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const navigationItems: NavigationItem[] = [
     { href: "/dashboard", label: t("nav.home") || "Home", icon: HomeIcon },
     { href: "/dashboard/profile", label: t("nav.profile") || "Profilo", icon: UserIcon },
-    { href: "/dashboard/services", label: t("nav.services") || "Servizi", icon: WrenchScrewdriverIcon },
+    { href: "/dashboard/services", label: t("nav.services") || "Servizi", icon: BookOpenTextIcon },
     { href: "/dashboard/service-requests", label: t("nav.serviceRequests") || "Richieste Servizi", icon: ClipboardDocumentListIcon },
     { href: "/dashboard/support-requests", label: t("nav.supportRequests") || "Support Requests", icon: ChatBubbleLeftRightIcon },
-    { href: "/dashboard/service-boards", label: t("nav.serviceBoards") || "Bacheche Servizi", icon: ClipboardDocumentIcon },
+    { href: "/dashboard/service-boards", label: t("nav.serviceBoards") || "Bacheche Servizi", icon: ClipboardPenIcon },
     { href: "/dashboard/appointments", label: t("nav.appointments") || "Appuntamenti", icon: CalendarIcon },
     { href: "/dashboard/clients", label: t("nav.clients") || "Clients", icon: UsersIcon },
     { href: "/dashboard/marketing", label: t("nav.marketing") || "Marketing", icon: ShareIcon, comingSoon: true },
@@ -204,7 +204,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     { 
       href: "#", 
       label: "Support", 
-      icon: ChatBubbleLeftRightIcon, 
+      icon: MessageCircleQuestionIcon, 
       isAction: true,
       onClick: () => {
         handleSupportRequest()
@@ -214,7 +214,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     { 
       href: "#", 
       label: "Settings", 
-      icon: Cog6ToothIcon, 
+      icon: SettingsIcon, 
       isAction: true,
       onClick: () => {
         setShowSettingsModal(true)
@@ -382,7 +382,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                         }`}
                         title={isSidebarCollapsed ? item.label : undefined}
                       >
-                        <IconComponent className="h-5 w-5 flex-shrink-0" />
+                        <IconComponent className="h-5 w-5 flex-shrink-0" strokeWidth={1.5} />
                         {!isSidebarCollapsed && (
                           <>
                             <span className="flex-1">{item.label}</span>
@@ -412,7 +412,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                           onClick={handleSupportRequest}
                           className="flex items-center gap-x-3 rounded-md p-1 text-xs md:text-sm leading-tight transition-all duration-200 w-full text-left text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)] hover:text-[var(--dashboard-text-primary)]"
                         >
-                          <ChatBubbleLeftRightIcon className="h-5 w-5 flex-shrink-0" />
+                          <MessageCircleQuestionIcon className="h-5 w-5 flex-shrink-0" strokeWidth={1.5} />
                           <span>Support</span>
                         </button>
                       </li>
@@ -421,10 +421,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                           onClick={() => setShowSettingsModal(true)}
                           className="flex items-center gap-x-3 rounded-md p-1 text-xs md:text-sm leading-tight transition-all duration-200 w-full text-left text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)] hover:text-[var(--dashboard-text-primary)]"
                         >
-                          <svg className="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
+                          <SettingsIcon className="h-5 w-5 flex-shrink-0" strokeWidth={1.5} />
                           <span>Settings</span>
                         </button>
                       </li>
@@ -493,7 +490,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                                   className="p-1 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
                                   title="Share Link"
                                 >
-                                  <ShareIcon className="w-3 h-3" />
+                                  <ShareIcon className="w-3 h-3" strokeWidth={1} />
                                 </button>
                               </div>
                             </div>
@@ -518,7 +515,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                       <div className="flex items-center justify-between gap-3 px-3 py-2 border-t border-[var(--dashboard-border-primary)]">
                         {/* AI Credits Label Left */}
                         <div className="flex items-center gap-2">
-                          <SparklesIcon className="w-4 h-4 text-blue-500" />
+                          <SparklesIcon className="w-4 h-4 text-blue-500" strokeWidth={1} />
                           <span className="text-xs text-[var(--dashboard-text-secondary)]">AI Credits</span>
                         </div>
                         {/* AI Credits Value Right */}
@@ -636,14 +633,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                       className="p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
                       title="Support"
                     >
-                      <ChatBubbleLeftRightIcon className="h-5 w-5" />
+                      <ChatBubbleLeftRightIcon className="h-5 w-5" strokeWidth={1} />
                     </button>
                     <button
                       onClick={() => setShowSettingsModal(true)}
                       className="p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
                       title="Settings"
                     >
-                      <Cog6ToothIcon className="h-5 w-5" />
+                      <Cog6ToothIcon className="h-5 w-5" strokeWidth={1} />
                     </button>
                   </div>
                 </div>
@@ -701,7 +698,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="p-2 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
               >
-                <XMarkIcon className="h-6 w-6" />
+                <XMarkIcon className="h-6 w-6" strokeWidth={1.5} />
               </button>
             </div>
 
@@ -720,7 +717,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                           onClick={item.onClick}
                           className="flex items-center gap-x-3 rounded-md p-1.5 text-sm md:text-base leading-5 transition-all duration-200 w-full text-left text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-tertiary)] hover:text-[var(--dashboard-text-primary)]"
                         >
-                          <IconComponent className="h-5 w-5" />
+                          <IconComponent className="h-5 w-5" strokeWidth={1.5} />
                           <span className="flex-1">{item.label}</span>
                         </button>
                       ) : (
@@ -733,7 +730,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                           }`}
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
-                          <IconComponent className="h-5 w-5" />
+                          <IconComponent className="h-5 w-5" strokeWidth={1.5} />
                           <span className="flex-1">{item.label}</span>
                           {item.comingSoon && (
                             <span className="text-[10px] px-1 py-0 rounded bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
@@ -869,7 +866,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   : "text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
               }`}
             >
-              <ClipboardDocumentListIcon className="h-5 w-5" />
+              <ClipboardDocumentListIcon className="h-5 w-5" strokeWidth={1.5} />
               <span className="text-[10px] mt-0.5 font-normal">Requests</span>
             </Link>
 
@@ -881,7 +878,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   : "text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
               }`}
             >
-              <CalendarIcon className="h-5 w-5" />
+              <CalendarIcon className="h-5 w-5" strokeWidth={1.5} />
               <span className="text-[10px] mt-0.5 font-normal">Appointments</span>
             </Link>
 
@@ -893,7 +890,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   : "text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
               }`}
             >
-              <WrenchScrewdriverIcon className="h-5 w-5" />
+              <BookOpenTextIcon className="h-5 w-5" strokeWidth={1.5} />
               <span className="text-[10px] mt-0.5 font-normal">Services</span>
             </Link>
 
@@ -905,7 +902,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   : "text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
               }`}
             >
-              <ClipboardDocumentIcon className="h-5 w-5" />
+              <ClipboardPenIcon className="h-5 w-5" strokeWidth={1.5} />
               <span className="text-[10px] mt-0.5 font-normal">Boards</span>
             </Link>
 
@@ -917,7 +914,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   : "text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
               }`}
             >
-              <UserIcon className="h-5 w-5" />
+              <UserIcon className="h-5 w-5" strokeWidth={1.5} />
               <span className="text-[10px] mt-0.5 font-normal">Profile</span>
             </Link>
 
@@ -927,7 +924,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               onClick={() => setIsMobileMenuOpen(true)}
               className="flex flex-col items-center p-1.5 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
             >
-              <Bars3Icon className="h-5 w-5" />
+              <Bars3Icon className="h-5 w-5" strokeWidth={1.5} />
               <span className="text-[10px] mt-0.5 font-normal">Menu</span>
             </button>
           </div>

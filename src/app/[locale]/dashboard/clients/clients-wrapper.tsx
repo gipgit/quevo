@@ -3,15 +3,15 @@
 import { useState, useMemo } from "react"
 import { useTheme } from "@/contexts/ThemeProvider"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
-import { 
-  UsersIcon, 
-  UserGroupIcon, 
-  EnvelopeIcon, 
-  PhoneIcon, 
-  CalendarIcon,
-  DocumentArrowDownIcon,
-  MagnifyingGlassIcon
-} from "@heroicons/react/24/outline"
+import {
+  Users as UsersIcon,
+  UserRound as UserGroupIcon,
+  Mail as EnvelopeIcon,
+  Phone as PhoneIcon,
+  Calendar as CalendarIcon,
+  Download as DocumentArrowDownIcon,
+  Search as MagnifyingGlassIcon
+} from 'lucide-react'
 import { formatUsageDisplay } from "@/lib/usage-utils"
 
 interface Business {
@@ -198,7 +198,7 @@ export default function ClientsWrapper({
           <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-4 mb-6">
              <div className="bg-[var(--dashboard-bg-card)] p-2 md:p-4 rounded-lg border border-[var(--dashboard-border-primary)]">
                <div className="flex items-center gap-2 md:gap-3">
-                 <UserGroupIcon className="w-6 h-6 md:w-8 md:h-8 text-green-600" />
+                 <UserGroupIcon className="w-6 h-6 md:w-8 md:h-8 text-green-600" strokeWidth={1} />
                  <div>
                    <p className="text-xs md:text-sm text-[var(--dashboard-text-secondary)]">Active</p>
                    <p className="text-lg md:text-2xl font-bold text-[var(--dashboard-text-primary)]">
@@ -209,7 +209,7 @@ export default function ClientsWrapper({
              </div>
              <div className="bg-[var(--dashboard-bg-card)] p-2 md:p-4 rounded-lg border border-[var(--dashboard-border-primary)]">
                <div className="flex items-center gap-2 md:gap-3">
-                 <UsersIcon className="w-6 h-6 md:w-8 md:h-8 text-blue-600" />
+                 <UsersIcon className="w-6 h-6 md:w-8 md:h-8 text-blue-600" strokeWidth={1} />
                  <div>
                    <p className="text-xs md:text-sm text-[var(--dashboard-text-secondary)]">Past</p>
                    <p className="text-lg md:text-2xl font-bold text-[var(--dashboard-text-primary)]">
@@ -220,7 +220,7 @@ export default function ClientsWrapper({
              </div>
              <div className="bg-[var(--dashboard-bg-card)] p-2 md:p-4 rounded-lg border border-[var(--dashboard-border-primary)]">
                <div className="flex items-center gap-2 md:gap-3">
-                 <UsersIcon className="w-6 h-6 md:w-8 md:h-8 text-orange-600" />
+                 <UsersIcon className="w-6 h-6 md:w-8 md:h-8 text-orange-600" strokeWidth={1} />
                  <div>
                    <p className="text-xs md:text-sm text-[var(--dashboard-text-secondary)]">Uncommitted</p>
                    <p className="text-lg md:text-2xl font-bold text-[var(--dashboard-text-primary)]">
@@ -231,7 +231,7 @@ export default function ClientsWrapper({
              </div>
              <div className="bg-[var(--dashboard-bg-card)] p-2 md:p-4 rounded-lg border border-[var(--dashboard-border-primary)] col-span-3 md:col-span-1">
                <div className="flex items-center gap-2 md:gap-3">
-                 <EnvelopeIcon className="w-6 h-6 md:w-8 md:h-8 text-purple-600" />
+                 <EnvelopeIcon className="w-6 h-6 md:w-8 md:h-8 text-purple-600" strokeWidth={1} />
                  <div>
                    <p className="text-xs md:text-sm text-[var(--dashboard-text-secondary)]">Newsletter</p>
                    <p className="text-lg md:text-2xl font-bold text-[var(--dashboard-text-primary)]">
@@ -297,7 +297,7 @@ export default function ClientsWrapper({
         {/* Search */}
         <div className="mb-6 flex items-center gap-4">
           <div className="flex-1 relative">
-            <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" strokeWidth={1} />
             <input
               type="text"
               placeholder="Search customers..."
@@ -367,17 +367,17 @@ export default function ClientsWrapper({
                   </div>
 
                   <div className="flex items-center gap-2 text-sm text-[var(--dashboard-text-secondary)]">
-                    <EnvelopeIcon className="w-4 h-4" />
+                    <EnvelopeIcon className="w-4 h-4" strokeWidth={1} />
                     <span>{customer.email || 'No email'}</span>
                   </div>
 
                   <div className="flex items-center gap-2 text-sm text-[var(--dashboard-text-secondary)]">
-                    <PhoneIcon className="w-4 h-4" />
+                    <PhoneIcon className="w-4 h-4" strokeWidth={1} />
                     <span>{customer.phone || 'No phone'}</span>
                   </div>
 
                   <div className="flex items-center gap-2 text-sm text-[var(--dashboard-text-secondary)]">
-                    <CalendarIcon className="w-4 h-4" />
+                    <CalendarIcon className="w-4 h-4" strokeWidth={1} />
                     <span>Joined: {formatDate(customer.date_created)}</span>
                   </div>
 

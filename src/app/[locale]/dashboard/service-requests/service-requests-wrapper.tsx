@@ -11,29 +11,25 @@ import { useAICredits } from '@/hooks/useAICredits'
 import { LoadingAIGeneration } from '@/components/ui/loading-ai-generation'
 import { AIAssistantIcon } from '@/components/ui/ai-assistant-icon'
 import { AICostCard } from '@/components/ui/ai-cost-card'
-import { 
-  EnvelopeIcon, 
-  DocumentArrowUpIcon, 
-  ClipboardDocumentIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  ClockIcon,
-  UserIcon,
-  TagIcon,
-  ChatBubbleLeftRightIcon,
-  ShareIcon,
-  FlagIcon,
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  ArrowTopRightOnSquareIcon,
-  EyeIcon,
-  EyeSlashIcon,
-  SparklesIcon
-} from '@heroicons/react/24/outline'
-import { 
-  CheckCircleIcon as CheckCircleSolidIcon,
-  ExclamationTriangleIcon as ExclamationTriangleSolidIcon
-} from '@heroicons/react/24/solid'
+import {
+  Mail as EnvelopeIcon,
+  FileUp as DocumentArrowUpIcon,
+  Clipboard as ClipboardDocumentIcon,
+  CheckCircle as CheckCircleIcon,
+  TriangleAlert as ExclamationTriangleIcon,
+  Clock as ClockIcon,
+  User as UserIcon,
+  Tag as TagIcon,
+  MessagesSquare as ChatBubbleLeftRightIcon,
+  Share2 as ShareIcon,
+  Flag as FlagIcon,
+  ArrowLeft as ArrowLeftIcon,
+  ArrowRight as ArrowRightIcon,
+  ExternalLink as ArrowTopRightOnSquareIcon,
+  Eye as EyeIcon,
+  EyeOff as EyeSlashIcon,
+  Sparkles as SparklesIcon
+} from 'lucide-react'
 
 interface ServiceRequestsWrapperProps {
   serviceRequests: any[]
@@ -295,7 +291,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
   const getPriorityIcon = (priority: string) => {
     switch (priority?.toLowerCase()) {
       case 'urgent':
-        return <ExclamationTriangleSolidIcon className="w-4 h-4 text-red-600" />
+        return <ExclamationTriangleIcon className="w-4 h-4 text-red-600" strokeWidth={1} />
       case 'high':
         return <ExclamationTriangleIcon className="w-4 h-4 text-orange-600" />
       case 'medium':
@@ -909,7 +905,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       {/* Row 1: Customer Name + Request Reference */}
                       <div className="flex items-center gap-2 mb-1">
                         {isRequestHandled(request) ? (
-                          <CheckCircleSolidIcon className="w-3 h-3 text-green-500" />
+                          <CheckCircleIcon className="w-3 h-3 text-green-500" strokeWidth={1} />
                         ) : (
                           <div className="w-3 h-3 rounded-full bg-blue-500" />
                         )}
@@ -1087,9 +1083,9 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                               {/* Row 2: Status + Action Type + Title */}
                               <div className="flex items-center gap-2">
                                 {action.action_status === 'completed' ? (
-                                  <CheckCircleSolidIcon className="w-3 h-3 text-green-500 flex-shrink-0" />
+                                  <CheckCircleIcon className="w-3 h-3 text-green-500 flex-shrink-0" strokeWidth={1} />
                                 ) : (
-                                  <ClockIcon className="w-3 h-3 text-yellow-500 flex-shrink-0" />
+                                  <ClockIcon className="w-3 h-3 text-yellow-500 flex-shrink-0" strokeWidth={1} />
                                 )}
                                 <div className="font-medium text-xs text-[var(--dashboard-text-primary)] flex-1">
                                   <span className="text-[var(--dashboard-text-tertiary)]">{action.action_type}</span> • {action.action_title}
@@ -1113,9 +1109,9 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                               {/* Status, Action Type, and Title in one row */}
                               <div className="flex items-center gap-2">
                                 {action.action_status === 'completed' ? (
-                                  <CheckCircleSolidIcon className="w-3 h-3 text-green-500 flex-shrink-0" />
+                                  <CheckCircleIcon className="w-3 h-3 text-green-500 flex-shrink-0" strokeWidth={1} />
                                 ) : (
-                                  <ClockIcon className="w-3 h-3 text-yellow-500 flex-shrink-0" />
+                                  <ClockIcon className="w-3 h-3 text-yellow-500 flex-shrink-0" strokeWidth={1} />
                                 )}
                                 <div className="font-medium text-xs text-[var(--dashboard-text-primary)] flex-1">
                                   <span className="text-[var(--dashboard-text-tertiary)]">{action.action_type}</span> • {action.action_title}
@@ -1490,9 +1486,9 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                             }}
                           >
                             {isRequestHandled(selectedRequest) ? (
-                              <CheckCircleSolidIcon className="w-4 h-4 text-white" />
+                              <CheckCircleIcon className="w-4 h-4 text-white" strokeWidth={1} />
                             ) : (
-                              <CheckCircleIcon className="w-4 h-4 text-white" />
+                              <CheckCircleIcon className="w-4 h-4 text-white" strokeWidth={1} />
                             )}
                           </div>
                           <span className="text-xs ai-panel-text-secondary text-left leading-tight">{isRequestHandled(selectedRequest) ? 'Handled' : 'Mark Handled'}</span>

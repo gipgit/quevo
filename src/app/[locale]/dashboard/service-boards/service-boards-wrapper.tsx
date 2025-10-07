@@ -8,21 +8,16 @@ import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import EmptyStateDashboard from "@/components/ui/EmptyStateDashboard"
 import CopyButton from "@/components/CopyButton"
 import Link from "next/link"
-import { 
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  ArrowTopRightOnSquareIcon,
-  EyeIcon,
-  ClipboardDocumentIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  ExclamationTriangleIcon,
-  Bars3Icon,
-  XMarkIcon
-} from '@heroicons/react/24/outline'
-import { 
-  CheckCircleIcon as CheckCircleSolidIcon
-} from '@heroicons/react/24/solid'
+import {
+  ArrowLeft as ArrowLeftIcon,
+  ArrowRight as ArrowRightIcon,
+  ExternalLink as ArrowTopRightOnSquareIcon,
+  Eye as EyeIcon,
+  Clipboard as ClipboardDocumentIcon,
+  CheckCircle as CheckCircleIcon,
+  Clock as ClockIcon,
+  X as XMarkIcon
+} from 'lucide-react'
 
 interface ServiceBoardsWrapperProps {
   serviceBoards: any[]
@@ -271,7 +266,7 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
                   }`}
                   title="Previous board"
                 >
-                  <ArrowLeftIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                  <ArrowLeftIcon className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={1} />
                 </button>
                 <span className="text-xs md:text-xs text-[var(--dashboard-text-tertiary)] px-1 md:px-2">
                   {selectedIndex + 1} of {serviceBoards.length}
@@ -286,7 +281,7 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
                   }`}
                   title="Next board"
                 >
-                  <ArrowRightIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                  <ArrowRightIcon className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={1} />
                 </button>
               </div>
 
@@ -365,7 +360,7 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
                   onClick={() => setIsListOpenMobile(false)}
                   className="lg:hidden ml-3 p-2 rounded-lg bg-[var(--dashboard-bg-secondary)] border border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-tertiary)] transition-colors"
                 >
-                  <XMarkIcon className="w-5 h-5" />
+                  <XMarkIcon className="w-5 h-5" strokeWidth={1} />
                 </button>
               </div>
             </div>
@@ -541,9 +536,9 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
                                   {/* Status + Type + Title */}
                                   <div className="flex items-center gap-2">
                                     {action.action_status === 'completed' ? (
-                                      <CheckCircleSolidIcon className="w-3 h-3 text-green-500 flex-shrink-0" />
+                                      <CheckCircleIcon className="w-3 h-3 text-green-500 flex-shrink-0" strokeWidth={1} />
                                     ) : (
-                                      <ClockIcon className="w-3 h-3 text-yellow-500 flex-shrink-0" />
+                                      <ClockIcon className="w-3 h-3 text-yellow-500 flex-shrink-0" strokeWidth={1} />
                                     )}
                                     <div className="font-medium text-xs text-[var(--dashboard-text-primary)] flex-1">
                                       <span className="text-[var(--dashboard-text-tertiary)]">{action.action_type}</span> • {action.action_title}
@@ -565,9 +560,9 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
                                   {/* Status + Type + Title */}
                                   <div className="flex items-center gap-2">
                                     {action.action_status === 'completed' ? (
-                                      <CheckCircleSolidIcon className="w-3 h-3 text-green-500 flex-shrink-0" />
+                                      <CheckCircleIcon className="w-3 h-3 text-green-500 flex-shrink-0" strokeWidth={1} />
                                     ) : (
-                                      <ClockIcon className="w-3 h-3 text-yellow-500 flex-shrink-0" />
+                                      <ClockIcon className="w-3 h-3 text-yellow-500 flex-shrink-0" strokeWidth={1} />
                                     )}
                                     <div className="font-medium text-xs text-[var(--dashboard-text-primary)] flex-1">
                                       <span className="text-[var(--dashboard-text-tertiary)]">{action.action_type}</span> • {action.action_title}
@@ -594,7 +589,7 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
                 <div className={`text-center ${
                   theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                 }`}>
-                  <EyeIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <EyeIcon className="w-12 h-12 mx-auto mb-4 opacity-50" strokeWidth={1} />
                   <p>Select a board to view details</p>
                 </div>
               </div>
@@ -625,7 +620,7 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
                             className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
                             style={{ backgroundColor: '#6b7280', minWidth: '24px', minHeight: '24px' }}
                           >
-                            <ArrowTopRightOnSquareIcon className="w-4 h-4 text-white" />
+                            <ArrowTopRightOnSquareIcon className="w-4 h-4 text-white" strokeWidth={1} />
                           </div>
                           <span className="text-xs ai-panel-text-secondary text-left leading-tight">Open Board</span>
                         </button>
@@ -640,7 +635,7 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
                             className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
                             style={{ backgroundColor: '#f59e0b', minWidth: '24px', minHeight: '24px' }}
                           >
-                            <ClipboardDocumentIcon className="w-4 h-4 text-white" />
+                            <ClipboardDocumentIcon className="w-4 h-4 text-white" strokeWidth={1} />
                         </div>
                           <span className="text-xs ai-panel-text-secondary text-left leading-tight">Copy Link</span>
                         </button>

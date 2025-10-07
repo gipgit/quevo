@@ -90,7 +90,7 @@ export default function BusinessSelectionModal({ isOpen, onClose }: BusinessSele
            <XMarkIcon className="h-6 w-6" />
          </button>
          <div className="p-4 lg:p-0 h-full flex flex-col max-h-screen overflow-hidden">
-           <h2 className="text-xl lg:text-3xl font-bold mb-4 text-center mt-8 lg:mt-0 flex-shrink-0 text-[var(--dashboard-text-primary)]">{t("currentBusiness.selectBusiness")}</h2>
+           <h2 className="text-lg lg:text-xl font-medium mb-4 text-center mt-8 lg:mt-0 flex-shrink-0 text-[var(--dashboard-text-primary)]">{t("currentBusiness.selectBusiness")}</h2>
            {selectingBusiness && (
              <div className="text-blue-500 text-sm font-medium animate-pulse text-center mb-4">
                Switching to business...

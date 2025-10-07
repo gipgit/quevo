@@ -7,15 +7,15 @@ import { useBusiness } from '@/lib/business-context'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import DashboardLayout from '@/components/dashboard/dashboard-layout'
-import { 
-  DocumentArrowDownIcon, 
-  DocumentTextIcon, 
-  Cog6ToothIcon,
-  ArrowLeftIcon,
-  CheckIcon,
-  XMarkIcon,
-  PencilIcon
-} from '@heroicons/react/24/outline'
+import {
+  Download as DocumentArrowDownIcon,
+  FileText as DocumentTextIcon,
+  Cog as Cog6ToothIcon,
+  ArrowLeft as ArrowLeftIcon,
+  Check as CheckIcon,
+  X as XMarkIcon,
+  Pencil as PencilIcon
+} from 'lucide-react'
 
 interface QuotationData {
   requestId: string
@@ -601,7 +601,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                 className="text-xs text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors flex items-center gap-1"
                 title="Go Back"
               >
-                <ArrowLeftIcon className="w-3 h-3" />
+                <ArrowLeftIcon className="w-3 h-3" strokeWidth={1} />
                 <span>Back</span>
               </button>
             </div>
@@ -618,7 +618,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
               <div className="w-full lg:basis-[20%] border-b lg:border-b-0 lg:border-r border-[var(--dashboard-border-primary)] flex flex-col">
                 <div className="p-4 lg:p-6">
               <div className="flex items-center gap-2 mb-3 md:mb-6">
-                <Cog6ToothIcon className="w-5 h-5" />
+                <Cog6ToothIcon className="w-5 h-5" strokeWidth={1} />
                 <h2 className={`text-base font-normal ${
                   theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
                 }`}>
@@ -691,7 +691,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                            }`}
                            title="Edit"
                          >
-                           <PencilIcon className="w-4 h-4" />
+                          <PencilIcon className="w-4 h-4" strokeWidth={1} />
                          </button>
                        </div>
                      </div>
@@ -727,7 +727,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                        }`}
                        title="Edit Items"
                      >
-                       <PencilIcon className="w-4 h-4" />
+                       <PencilIcon className="w-4 h-4" strokeWidth={1} />
                      </button>
                    </div>
                  </div>
@@ -756,7 +756,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                        }`}
                        title="Edit"
                      >
-                       <PencilIcon className="w-4 h-4" />
+                       <PencilIcon className="w-4 h-4" strokeWidth={1} />
                      </button>
                    </div>
                  </div>
@@ -1028,7 +1028,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                       title="Save quotation"
                     >
                       <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 bg-blue-500/20">
-                        <DocumentTextIcon className="w-4 h-4 text-blue-500" />
+                        <DocumentTextIcon className="w-4 h-4 text-blue-500" strokeWidth={1} />
                       </div>
                       <div className="text-left">
                         <div className="text-sm font-medium text-[var(--dashboard-text-primary)]">
@@ -1056,7 +1056,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                       }`}>
                         <DocumentArrowDownIcon className={`w-4 h-4 ${
                           isGenerating ? 'text-gray-500' : 'text-green-500'
-                        }`} />
+                        }`} strokeWidth={1} />
                       </div>
                       <div className="text-left">
                         <div className="text-sm font-medium text-[var(--dashboard-text-primary)]">
@@ -1240,7 +1240,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                       : 'bg-blue-600 text-white hover:bg-blue-700'
                   }`}
                 >
-                  <CheckIcon className="w-4 h-4" />
+                  <CheckIcon className="w-4 h-4" strokeWidth={1} />
                   Add Item
                 </button>
                 <button
@@ -1251,7 +1251,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                       : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  <XMarkIcon className="w-5 h-5" />
+                  <XMarkIcon className="w-5 h-5" strokeWidth={1} />
                 </button>
               </div>
             </div>
