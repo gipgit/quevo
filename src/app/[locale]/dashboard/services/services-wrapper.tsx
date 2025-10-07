@@ -303,9 +303,9 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
                   {groupedServices[categoryName].map((service) => (
                     <div
                       key={service.service_id}
-                      className="rounded-xl shadow-sm border p-6 bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)]"
+                      className="rounded-xl shadow-sm border p-4 lg:p-6 bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)]"
                     >
-                      <div className="flex flex-col lg:flex-row gap-6">
+                      <div className="flex flex-col lg:flex-row gap-3 lg:gap-6">
                         {/* Column 1: Service image - slightly more width, less height */}
                         <div className="lg:w-1/3">
                           <ServiceImageDisplay
@@ -321,7 +321,7 @@ export default function ServicesWrapper({ services: initialServices }: ServicesW
 
                         {/* Column 2: Service title, description, price, duration - given more width */}
                         <div className="lg:w-2/5">
-                          <h3 className="text-xl font-semibold mb-3 text-[var(--dashboard-text-primary)]">{service.service_name}</h3>
+                          <h3 className="text-xl font-medium leading-snug md:leading-normal mb-1 md:mb-3 text-[var(--dashboard-text-primary)]">{service.service_name}</h3>
 
                           {service.description && (
                             <div className="mb-1 md:mb-3">

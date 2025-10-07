@@ -16,16 +16,16 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import SaveButton from "@/components/ui/SaveButton"
 import { useToaster } from "@/components/ui/ToasterProvider"
 import { 
-  UserIcon, 
-  PhotoIcon, 
-  LinkIcon, 
-  CreditCardIcon, 
-  Cog6ToothIcon, 
-  SwatchIcon,
-  ShareIcon,
-  XMarkIcon,
-  GlobeAltIcon
-} from "@heroicons/react/24/outline"
+  User as UserIcon,
+  Image as PhotoIcon,
+  Link as LinkIcon,
+  CreditCard as CreditCardIcon,
+  Cog as Cog6ToothIcon,
+  Palette as SwatchIcon,
+  Share2 as ShareIcon,
+  X as XMarkIcon,
+  Globe2 as GlobeAltIcon
+} from "lucide-react"
 
 interface SocialLink {
   url: string;
@@ -549,7 +549,7 @@ export default function ProfileWrapper({
       SwatchIcon,
     };
     const IconComponent = iconMap[iconName];
-    return IconComponent ? <IconComponent className="h-5 w-5" /> : null;
+    return IconComponent ? <IconComponent className="h-5 w-5" strokeWidth={1} /> : null;
   };
 
   // Tab configuration
@@ -586,7 +586,7 @@ export default function ProfileWrapper({
             <div className="flex items-center gap-3">
               <button
                 onClick={handleOpen}
-                className="text-xs text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors flex items-center gap-1"
+                className="text-xs lg:text-sm text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors flex items-center gap-1"
                 title="Open Public Profile"
               >
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -596,10 +596,10 @@ export default function ProfileWrapper({
               </button>
               <button
                 onClick={() => setShowShareModal(true)}
-                className="text-xs text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors flex items-center gap-1"
+                className="text-xs lg:text-sm text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors flex items-center gap-1"
                 title="Share Link"
               >
-                <ShareIcon className="w-3 h-3" />
+                <ShareIcon className="w-3 h-3" strokeWidth={1} />
                 <span>Share</span>
               </button>
             </div>
@@ -630,12 +630,12 @@ export default function ProfileWrapper({
         </div>
 
         {/* Content Wrapper with Background */}
-        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-4 lg:p-8">
         
         {/* Main Content */}
         <div className="flex flex-col lg:flex-row justify-between gap-8">
           {/* Left Column - Content Area */}
-          <div className="max-w-2xl w-full">
+          <div className="max-w-5xl w-full">
             {/* Tab Content */}
             {section === "info" && (
               <>
@@ -733,7 +733,7 @@ export default function ProfileWrapper({
           </div>
           
           {/* Right Column - Preview */}
-          <div className="w-full lg:w-96 flex-shrink-0">
+          <div className="w-full flex-shrink-1">
             <div className="lg:sticky lg:top-6 lg:h-full">
               <div className="h-full p-4 border rounded-xl flex flex-col bg-gradient-to-br from-[var(--dashboard-bg-tertiary)] to-[var(--dashboard-bg-secondary)] border-[var(--dashboard-border-primary)]">
                 <div className="flex-1 flex items-center justify-center">
@@ -763,14 +763,14 @@ export default function ProfileWrapper({
                 onClick={() => setShowShareModal(false)}
                 className="p-1 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
               >
-                <XMarkIcon className="h-5 w-5" />
+                <XMarkIcon className="h-5 w-5" strokeWidth={1} />
               </button>
             </div>
             <div className="p-6">
               <div className={`px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-3 shadow-sm border mb-4 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] transition-all duration-300 relative overflow-hidden ${
                 isAnimating ? 'animate-pill-shine' : ''
               }`}>
-                <GlobeAltIcon className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                <GlobeAltIcon className="w-5 h-5 text-blue-600 flex-shrink-0" strokeWidth={1} />
                 <span className="text-sm break-all">{publicUrl}</span>
               </div>
               <div className="flex gap-2">

@@ -435,7 +435,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   {currentBusiness && (
                     <div className="rounded-lg border bg-[var(--dashboard-bg-tertiary)] border-[var(--dashboard-border-primary)]">
                       {/* Header */}
-                      <div className="flex items-center justify-between gap-3 px-4 py-3">
+                      <div className="flex items-center justify-between gap-3 px-3 py-2">
                         {/* Left - Profile Image, Business Name, Actions, and Plan Badge */}
                         <div className="flex items-center gap-2">
                           <div className="h-8 w-8 rounded-full bg-zinc-600 flex items-center justify-center overflow-hidden flex-shrink-0">
@@ -457,7 +457,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                           </div>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-1">
-                              <span className="text-sm font-medium text-[var(--dashboard-text-primary)] truncate">{businessName}</span>
+                              <span className="text-xs font-medium text-[var(--dashboard-text-primary)] truncate">{businessName}</span>
                             </div>
                             {/* Plan Badge, Manage Button, and Action Buttons under Business Name */}
                             <div className="flex items-center gap-2 mt-1">
@@ -486,17 +486,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                               >
                                 Manage
                               </Link>
-                              {/* Action Buttons (Open, Share) */}
+                              {/* Action Buttons (Share) */}
                               <div className="flex items-center gap-0">
-                                <button
-                                  onClick={handleOpen}
-                                  className="p-1 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
-                                  title="Open Public Profile"
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                  </svg>
-                                </button>
                                 <button
                                   onClick={() => setShowShareModal(true)}
                                   className="p-1 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
@@ -513,10 +504,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                         <div className="flex items-center">
                           <button
                             onClick={() => setShowBusinessModal(true)}
-                            className="p-2 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-secondary)] rounded-lg transition-colors"
+                            className="p-2 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] bg-[var(--dashboard-bg-tertiary)] border border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] rounded-lg transition-colors"
                             title="Change Business"
                           >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                             </svg>
                           </button>
@@ -524,7 +515,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                       </div>
 
                       {/* Content */}
-                      <div className="flex items-center justify-between gap-3 px-4 py-3 border-t border-[var(--dashboard-border-primary)]">
+                      <div className="flex items-center justify-between gap-3 px-3 py-2 border-t border-[var(--dashboard-border-primary)]">
                         {/* AI Credits Label Left */}
                         <div className="flex items-center gap-2">
                           <SparklesIcon className="w-4 h-4 text-blue-500" />
@@ -761,7 +752,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             {currentBusiness && (
               <div className="rounded-lg border bg-[var(--dashboard-bg-tertiary)] border-[var(--dashboard-border-primary)] mt-4">
                 {/* Header */}
-                <div className="flex items-center justify-between gap-3 px-4 py-3">
+                <div className="flex items-center justify-between gap-3 px-3 py-2">
                   {/* Left - Profile Image, Business Name, Actions, and Plan Badge */}
                   <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-full bg-zinc-600 flex items-center justify-center overflow-hidden flex-shrink-0">
@@ -783,7 +774,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1">
-                        <span className="text-sm font-medium text-[var(--dashboard-text-primary)] truncate">{businessName}</span>
+                        <span className="text-xs font-medium text-[var(--dashboard-text-primary)] truncate">{businessName}</span>
                       </div>
                       {/* Plan Badge, Manage Button, and Action Buttons under Business Name */}
                       <div className="flex items-center gap-2 mt-1">
@@ -812,17 +803,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                         >
                           Manage
                         </Link>
-                        {/* Action Buttons (Open, Share) */}
+                        {/* Action Buttons (Share) */}
                         <div className="flex items-center gap-0">
-                          <button
-                            onClick={handleOpen}
-                            className="p-1 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
-                            title="Open Public Profile"
-                          >
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                          </button>
                           <button
                             onClick={() => setShowShareModal(true)}
                             className="p-1 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
@@ -842,10 +824,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                         setShowBusinessModal(true)
                         setIsMobileMenuOpen(false)
                       }}
-                      className="p-2 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-secondary)] rounded-lg transition-colors"
+                      className="p-2 text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] bg-[var(--dashboard-bg-tertiary)] border border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] rounded-lg transition-colors"
                       title="Change Business"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                       </svg>
                     </button>
@@ -853,7 +835,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 </div>
 
                 {/* Content */}
-                <div className="flex items-center justify-between gap-3 px-4 py-3 border-t border-[var(--dashboard-border-primary)]">
+                <div className="flex items-center justify-between gap-3 px-3 py-2 border-t border-[var(--dashboard-border-primary)]">
                   {/* AI Credits Label Left */}
                   <div className="flex items-center gap-2">
                     <SparklesIcon className="w-4 h-4 text-blue-500" />
@@ -953,7 +935,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
         {/* Main Content */}
         <main className="min-w-0">
-          <div className="rounded-2xl min-h-screen text-[var(--dashboard-text-primary)]">
+          <div className="rounded-2xl min-h-screen text-[var(--dashboard-text-primary)] pb-20 lg:pb-0">
             <CacheBusterWrapper>
               {children}
             </CacheBusterWrapper>

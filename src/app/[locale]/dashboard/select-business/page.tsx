@@ -41,7 +41,7 @@ const getInitial = (name: string) => name?.charAt(0)?.toUpperCase() || "?"
 export default function BusinessSelectionPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const t = useTranslations("Dashboard")
+  const t = useTranslations("dashboard")
   const { businesses, switchBusiness, loading: contextLoading } = useBusiness()
   const [avatarError, setAvatarError] = useState<{ [id: string]: boolean }>({})
   const [selectingBusiness, setSelectingBusiness] = useState<string | null>(null)
@@ -129,7 +129,7 @@ export default function BusinessSelectionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-800 text-white flex items-center justify-center">
+    <div className="min-h-screen bg-zinc-900 text-white flex items-center justify-center">
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-6">
           <p className="mb-2 text-gray-300">
