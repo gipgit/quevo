@@ -38,10 +38,10 @@ export const PasswordRequirements = ({ password, show }: PasswordRequirementsPro
 
   return (
     <div className="mt-2 p-3 bg-gray-50 rounded-md border">
-      <p className="text-sm font-medium text-gray-700 mb-2">{t("passwordRequirementsTitle")}</p>
-      <ul className="space-y-1">
+      <p className="text-xs md:text-sm font-medium text-gray-700 mb-2">{t("passwordRequirementsTitle")}</p>
+      <ul className="space-y-0.5">
         {requirements.map((req, index) => (
-          <li key={index} className="flex items-center text-sm">
+          <li key={index} className="flex items-center text-xs md:text-sm">
             {req.met ? (
               <CheckIcon className="w-4 h-4 text-green-500 mr-2" />
             ) : (

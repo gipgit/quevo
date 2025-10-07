@@ -278,14 +278,20 @@ export default function BusinessSignupPage() {
         <div className="flex-1 flex items-center justify-center bg-white p-8">
           <div className="w-full max-w-[400px]">
             <div className="mb-6">
-              <h1 className="text-lg font-bold text-gray-900 mb-2">{t("brandTitle")}</h1>
-              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">{t("pageTitle")}</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h1 className="text-lg font-bold text-gray-900">{t("brandTitle")}</h1>
+                <LocaleSwitcherButton 
+                  onClick={() => setIsModalOpen(true)}
+                  className="text-gray-600 hover:text-gray-800"
+                />
+              </div>
+              <p className="text-xl lg:text-2xl font-medium text-gray-900 mb-2">{t("pageTitle")}</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-2">
               {/* Name Field */}
               <div>
-                <label htmlFor="name_first" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="name_first" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
                   {t("nameLabel")} *
                 </label>
                 <input
@@ -295,7 +301,7 @@ export default function BusinessSignupPage() {
                   value={formData.name_first}
                   onChange={handleChange}
                   disabled={loading}
-                  className={`w-full p-4 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                  className={`w-full p-3 text-base border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                     errors.name_first ? "border-red-300 bg-red-50" : "border-gray-300"
                   }`}
                   placeholder={t("namePlaceholder")}
@@ -305,7 +311,7 @@ export default function BusinessSignupPage() {
 
               {/* Email Field with Real-time Validation */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
                   {tCommon("mailLabel")} *
                 </label>
                 <div className="relative">
@@ -317,7 +323,7 @@ export default function BusinessSignupPage() {
                     onChange={handleChange}
                     onBlur={handleEmailBlur}
                     disabled={loading}
-                    className={`w-full p-4 pr-12 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`w-full p-3 pr-12 text-base border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                       errors.email
                         ? "border-red-300 bg-red-50"
                         : emailValidation.status === "available"
@@ -348,7 +354,7 @@ export default function BusinessSignupPage() {
 
               {/* Password Field with Requirements and Toggle */}
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="password" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
                   {tCommon("passwordLabel")} *
                 </label>
                 <div className="relative">
@@ -361,7 +367,7 @@ export default function BusinessSignupPage() {
                     onFocus={handlePasswordFocus}
                     onBlur={handlePasswordBlur}
                     disabled={loading}
-                    className={`w-full p-4 pr-12 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`w-full p-3 pr-12 text-base border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                       errors.password
                         ? "border-red-300 bg-red-50"
                         : passwordValidation.status === "valid"
@@ -392,7 +398,7 @@ export default function BusinessSignupPage() {
 
               {/* Promotional Code Field (hidden for now) */}
               <div className="hidden">
-                <label htmlFor="promotional_code" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="promotional_code" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
                   {t("promotionalCodeLabel")}
                 </label>
                 <input
@@ -402,7 +408,7 @@ export default function BusinessSignupPage() {
                   value={formData.promotional_code}
                   onChange={handleChange}
                   disabled={loading}
-                  className={`w-full p-4 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                  className={`w-full p-3 text-base border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                     errors.promotional_code ? "border-red-300 bg-red-50" : "border-gray-300"
                   }`}
                   placeholder={t("promotionalCodePlaceholder")}
@@ -410,10 +416,13 @@ export default function BusinessSignupPage() {
                 {errors.promotional_code && <p className="mt-1 text-sm text-red-600">{errors.promotional_code}</p>}
               </div>
 
+              {/* Spacer wrapper */}
+              <div className="mt-6"></div>
+
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full py-4 bg-gray-900 text-white rounded-md hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
+                className="w-full py-3 bg-gray-900 text-white rounded-md hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed text-base transition-colors"
                 disabled={loading || emailValidation.status === "checking" || emailValidation.status === "unavailable"}
               >
                 {loading ? (
@@ -442,24 +451,16 @@ export default function BusinessSignupPage() {
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600 mb-2">
                 {t("alreadyHaveAccount")}{" "}
-                <Link href="/signin/business" className="font-medium text-blue-600 hover:text-blue-500">
+                <Link href="/signin/business" className="font-medium text-gray-600 hover:text-gray-700">
                   {t("signInLink")}
                 </Link>
               </p>
               <p className="text-xs text-gray-600 mb-4">
                 {t("rightSideSubtitle")}{" "}
-                <Link href="/signup/general" className="text-blue-600 hover:text-blue-300 underline">
+                <Link href="/signup/general" className="text-gray-600 hover:text-gray-700 underline">
                   {t("rightSideLink")}
                 </Link>
               </p>
-              
-              {/* Locale Switcher */}
-              <div className="flex justify-center">
-                <LocaleSwitcherButton 
-                  onClick={() => setIsModalOpen(true)}
-                  className="text-gray-600 hover:text-gray-800"
-                />
-              </div>
             </div>
           </div>
         </div>

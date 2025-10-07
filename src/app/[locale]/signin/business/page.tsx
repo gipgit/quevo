@@ -230,12 +230,12 @@ export default function ManagerSignInPage() {
   }, [error.show])
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4 relative overflow-hidden">
       {/* Light Neutral Gradient Layer 1 */}
       <div 
         className="absolute z-1"
         style={{
-          background: 'linear-gradient(143.241deg, rgb(248, 250, 252) 0%, rgb(241, 245, 249) 31.087%, rgb(226, 232, 240) 70.4599%, rgb(248, 250, 252) 100%)',
+          background: 'linear-gradient(143.241deg, rgb(255, 255, 255) 0%, rgb(252, 253, 254) 31.087%, rgb(248, 250, 252) 70.4599%, rgb(250, 251, 253) 100%)',
           filter: 'blur(80px)',
           borderRadius: '100%',
           opacity: 0.8,
@@ -250,7 +250,7 @@ export default function ManagerSignInPage() {
       <div 
         className="absolute z-1"
         style={{
-          background: 'linear-gradient(140.017deg, rgb(241, 245, 249) 0%, rgb(226, 232, 240) 60.8266%, rgb(248, 250, 252) 100%)',
+          background: 'linear-gradient(140.017deg, rgb(255, 255, 255) 0%, rgb(252, 253, 254) 60.8266%, rgb(250, 251, 253) 100%)',
           filter: 'blur(80px)',
           borderRadius: '100%',
           opacity: 0.6,
@@ -311,11 +311,11 @@ export default function ManagerSignInPage() {
         <p className="text-gray-600">{t("subtitle")}</p>
       </div>
       
-                 <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 w-full max-w-[380px] relative z-10">
+                 <div className="bg-white p-6 lg:p-8 rounded-2xl shadow-lg border border-gray-200 w-full max-w-[380px] relative z-10">
          
          <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="email" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
               {tCommon("mailLabel")}
             </label>
             <input
@@ -326,7 +326,7 @@ export default function ManagerSignInPage() {
               required
               value={form.email}
               onChange={handleChange}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+              className={`w-full px-4 py-3 text-base md:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                 error.show && error.type === "credentials" ? "border-red-300" : "border-gray-300"
               }`}
               disabled={loading}
@@ -335,7 +335,7 @@ export default function ManagerSignInPage() {
           </div>
           
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="password" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
               {tCommon("passwordLabel")}
             </label>
             <div className="relative">
@@ -347,7 +347,7 @@ export default function ManagerSignInPage() {
                 required
                 value={form.password}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+                className={`w-full px-4 py-3 pr-12 text-base md:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                   error.show && error.type === "credentials" ? "border-red-300" : "border-gray-300"
                 }`}
                 disabled={loading}
@@ -370,7 +370,7 @@ export default function ManagerSignInPage() {
           
           <button
             type="submit"
-            className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-200 flex items-center justify-center relative overflow-hidden ${
+            className={`w-full py-3 px-4 rounded-lg font-medium text-base md:text-sm transition-all duration-200 flex items-center justify-center relative overflow-hidden ${
               loading
                 ? "bg-black text-white cursor-not-allowed"
                 : "bg-black text-white hover:bg-gray-800 active:transform active:scale-95"
@@ -423,7 +423,7 @@ export default function ManagerSignInPage() {
            {t("noAccountText")}{" "}
            <a 
              href="/signup/business" 
-             className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
+             className="text-gray-600 hover:text-gray-700 underline font-medium transition-colors"
            >
              {tCommon("createAccountLink")}
            </a>

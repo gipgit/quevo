@@ -13,9 +13,9 @@ import SupportButton from "@/components/ui/SupportButton"
 import LocaleSwitcherButton from "@/components/ui/LocaleSwitcherButton"
 import LocaleSelectModal from "@/components/ui/LocaleSelectModal"
 import DashboardSupportModal from "@/components/modals/DashboardSupportModal"
+import ShareProfileModal from "@/components/modals/ShareProfileModal"
 import { useLocaleSwitcher } from "@/hooks/useLocaleSwitcher"
 import { useTheme } from "@/contexts/ThemeProvider"
-import { Globe2 as GlobeAltIcon } from 'lucide-react'
 import CacheBusterWrapper from "./CacheBusterWrapper"
 import { useBusinessSwitchTracker } from "@/hooks/useBusinessSwitchTracker"
 import NavigationInterceptor from "./NavigationInterceptor"
@@ -77,8 +77,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [showBusinessModal, setShowBusinessModal] = useState(false)
   const [showSupportModal, setShowSupportModal] = useState(false)
-  const [copied, setCopied] = useState(false)
-  const [isAnimating, setIsAnimating] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [showUserDropdown, setShowUserDropdown] = useState(false)
@@ -261,21 +259,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   // Public link format: DOMAIN/business_urlname
   const publicUrl = `${DOMAIN}/${currentBusiness?.business_urlname || ""}`
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(publicUrl)
-      setCopied(true)
-      setIsAnimating(true)
-      setTimeout(() => setCopied(false), 2000)
-      setTimeout(() => setIsAnimating(false), 300)
-    } catch (err) {
-      console.error("Failed to copy: ", err)
-    }
-  }
-
-  const handleOpen = () => {
-    window.open(`${publicUrl}`, "_blank")
-  }
 
   const getManagerFullName = () => {
     if (!userManager) return ""
@@ -1021,63 +1004,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           </div>
         )}
 
-        {/* Share Link Modal */}
-        {showShareModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="max-w-md w-full rounded-lg shadow-xl bg-[var(--dashboard-bg-card)] text-[var(--dashboard-text-primary)]">
-              <div className="flex items-center justify-between p-6 border-b border-[var(--dashboard-border-primary)]">
-                <h3 className="text-lg font-semibold">Share Your Business Link</h3>
-                <button
-                  onClick={() => setShowShareModal(false)}
-                  className="p-1 rounded-lg transition-colors text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]"
-                >
-                  <XMarkIcon className="h-5 w-5" />
-                </button>
-              </div>
-              <div className="p-6">
-                <div className={`px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-3 shadow-sm border mb-4 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] transition-all duration-300 relative overflow-hidden ${
-                  isAnimating ? 'animate-pill-shine' : ''
-                }`}>
-                  <GlobeAltIcon className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                  <span className="text-sm break-all">{publicUrl}</span>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleCopy}
-                    className={`flex-1 px-4 py-2 rounded-lg border transition-all duration-300 flex items-center justify-center gap-2 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)] ${
-                      copied ? 'text-green-600 border-green-200 bg-green-50' : ''
-                    }`}
-                  >
-                    {copied ? (
-                      <>
-                        <svg className="w-4 h-4 animate-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span>Copied!</span>
-                      </>
-                    ) : (
-                      <>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        <span>Copy Link</span>
-                      </>
-                    )}
-                  </button>
-                  <button
-                    onClick={handleOpen}
-                    className="px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                    <span>Open</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Share Profile Modal */}
+        <ShareProfileModal
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+          businessUrlname={currentBusiness?.business_urlname || ""}
+          businessName={currentBusiness?.business_name}
+        />
       </div>
     </>
   )
