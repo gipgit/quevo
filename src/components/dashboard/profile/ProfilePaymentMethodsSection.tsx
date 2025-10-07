@@ -5,7 +5,7 @@ import {
   getPaymentMethodsByCategory 
 } from "@/lib/payment-methods-config"
 import { useTranslations } from "next-intl"
-import { XMarkIcon } from "@heroicons/react/24/outline"
+import { X as XMarkIcon } from 'lucide-react'
 import { useTheme } from "@/contexts/ThemeProvider"
 
 interface PaymentMethod {

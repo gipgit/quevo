@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { signIn } from "next-auth/react"
-import { ExclamationTriangleIcon, XMarkIcon, CheckCircleIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline"
+import { TriangleAlert as ExclamationTriangleIcon, X as XMarkIcon, CheckCircle as CheckCircleIcon, Eye as EyeIcon, EyeOff as EyeSlashIcon } from 'lucide-react'
 import LocaleSwitcherButton from "@/components/ui/LocaleSwitcherButton"
 import LocaleSelectModal from "@/components/ui/LocaleSelectModal"
 import { useLocaleSwitcher } from "@/hooks/useLocaleSwitcher"

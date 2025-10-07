@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { X as XMarkIcon } from 'lucide-react'
 
 interface DashboardSupportModalProps {
   isOpen: boolean;

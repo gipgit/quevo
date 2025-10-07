@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl"
 import { ALLOWED_SOCIAL_LINKS } from "@/lib/social-links-config"
-import { GlobeAltIcon } from "@heroicons/react/24/outline"
+import { Globe2 as GlobeAltIcon } from 'lucide-react'
 
 interface ProfilePreviewProps {
   profileData: Record<string, any>

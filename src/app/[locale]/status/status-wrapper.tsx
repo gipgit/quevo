@@ -4,13 +4,13 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { 
-  CheckCircleIcon, 
-  ExclamationTriangleIcon, 
-  InformationCircleIcon,
-  WrenchScrewdriverIcon,
-  PlusIcon,
-  ClockIcon
-} from '@heroicons/react/24/outline'
+  CheckCircle as CheckCircleIcon, 
+  TriangleAlert as ExclamationTriangleIcon, 
+  Info as InformationCircleIcon,
+  Wrench as WrenchScrewdriverIcon,
+  Plus as PlusIcon,
+  Clock as ClockIcon
+} from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 

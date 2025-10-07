@@ -1,5 +1,5 @@
 import React from 'react'
-import { SunIcon, MoonIcon } from '@heroicons/react/24/outline'
+import { Sun as SunIcon, Moon as MoonIcon } from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeProvider'
 
 interface ThemeToggleButtonProps {

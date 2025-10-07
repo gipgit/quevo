@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react"
 import { useTranslations } from "next-intl"
-import { PhotoIcon, XMarkIcon, SparklesIcon } from "@heroicons/react/24/outline"
+import { Image as PhotoIcon, X as XMarkIcon, Sparkles as SparklesIcon } from 'lucide-react'
 import dynamic from "next/dynamic"
 import type { ImageCropperRef } from "@/components/dashboard/profile/ImageCropper"
 import AIImageGenerationModal from "./AIImageGenerationModal"

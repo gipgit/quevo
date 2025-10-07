@@ -1,5 +1,5 @@
 import React from 'react'
-import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline'
+import { MessageCircleQuestion as QuestionMarkCircleIcon } from 'lucide-react'
 
 interface SupportButtonProps {
   onClick?: () => void

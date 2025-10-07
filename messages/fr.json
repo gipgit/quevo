@@ -650,7 +650,9 @@
       "plan": "Plan",
       "quotationGenerator": "Générateur de Devis",
       "selectBusiness": "Sélectionner l'Entreprise"
-    }
+    },
+    "businessCreated": "Votre entreprise a été créée !",
+    "redirecting": "Redirection en cours..."
   },
   "plan": {
     "title": "Votre plan",

@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { ArrowLeftIcon, ArrowRightIcon, CheckIcon, ArrowPathIcon, XMarkIcon, ClipboardDocumentIcon } from "@heroicons/react/24/outline"
+import { ArrowLeft as ArrowLeftIcon, ArrowRight as ArrowRightIcon, Check as CheckIcon, RefreshCcw as ArrowPathIcon, X as XMarkIcon, Clipboard as ClipboardDocumentIcon } from 'lucide-react'
 import { BusinessInfoStep } from "./onboarding-steps/business-info-step"
 import { BusinessUrlStep } from "./onboarding-steps/business-url-step"
 import { BusinessLocationStep } from "./onboarding-steps/business-location-step"
@@ -82,6 +82,7 @@ const STEPS = [
 export function BusinessOnboardingForm({ onFormDataChange, formData: externalFormData }: BusinessOnboardingFormProps) {
   const router = useRouter()
   const t = useTranslations("BusinessOnboarding")
+  const tDashboard = useTranslations("dashboard")
   
   // Try to get addBusiness from context, but handle case where context is not available
   let addBusiness: ((business: any) => void) | null = null
@@ -99,6 +100,7 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
   const [submissionError, setSubmissionError] = useState<string | null>(null)
   const [submissionErrorDetails, setSubmissionErrorDetails] = useState<any>(null)
   const [submissionSuccess, setSubmissionSuccess] = useState(false)
+  const [isRedirecting, setIsRedirecting] = useState(false)
 
   const [formData, setFormData] = useState<BusinessFormData>({
     business_name: "",
@@ -260,6 +262,7 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
         
         // Wait longer to ensure database transaction is fully committed, then force a complete page reload
         setTimeout(() => {
+          setIsRedirecting(true)
           window.location.href = `/dashboard?t=${Date.now()}&fresh=true`
         }, 3000)
       } else {
@@ -529,20 +532,19 @@ export function BusinessOnboardingForm({ onFormDataChange, formData: externalFor
                 
                 {submissionSuccess && (
                   <div className="text-center rounded relative mb-4" role="alert">
-                    <span className="text-xl"> Il tuo business è stato creato!</span>
+                    <div className="flex flex-col items-center">
+                      <CheckIcon className="w-12 h-12 text-green-600 mb-3" />
+                      <span className="text-lg">{tDashboard("businessCreated")}</span>
+                    </div>
                   </div>
                 )}
                 
-                                 {!loading && (
-                   <div className="flex justify-center">
-                     <button
-                       onClick={closeSubmissionModal}
-                       className="px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800"
-                     >
-                       Chiudi
-                     </button>
-                   </div>
-                 )}
+                {isRedirecting && (
+                  <div className="flex flex-col items-center justify-center py-4">
+                    <LoadingSpinner size="lg" color="blue" />
+                    <span className="mt-3 text-base text-gray-600">{tDashboard("redirecting")}</span>
+                  </div>
+                )}
                </div>
              )}
           </div>

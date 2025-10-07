@@ -6,7 +6,7 @@ import { useState, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { CheckIcon, ArrowPathIcon, ExclamationTriangleIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid"
+import { Check as CheckIcon, RefreshCcw as ArrowPathIcon, TriangleAlert as ExclamationTriangleIcon, Eye as EyeIcon, EyeOff as EyeSlashIcon } from 'lucide-react'
 import { PasswordRequirements } from "@/components/password-requirements"
 import LocaleSwitcherButton from "@/components/ui/LocaleSwitcherButton"
 import LocaleSelectModal from "@/components/ui/LocaleSelectModal"

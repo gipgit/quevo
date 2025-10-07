@@ -15,7 +15,6 @@
     "@auth/supabase-adapter": "^1.10.0",
     "@aws-sdk/client-s3": "^3.859.0",
     "@aws-sdk/s3-request-presigner": "^3.859.0",
-    "@heroicons/react": "^2.2.0",
     "@prisma/client": "^6.10.1",
     "@radix-ui/react-slot": "^1.2.3",
     "@stripe/stripe-js": "^7.4.0",

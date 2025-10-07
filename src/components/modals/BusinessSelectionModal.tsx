@@ -1,7 +1,7 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { XMarkIcon } from "@heroicons/react/24/outline"
+import { X as XMarkIcon } from 'lucide-react'
 import { useBusiness } from "@/lib/business-context"
 import { useState, useEffect } from "react"
 

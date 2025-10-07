@@ -1,6 +1,6 @@
 import { useState, useRef } from "react"
 import { useTranslations } from "next-intl"
-import { CheckIcon, XMarkIcon, ArrowPathIcon, GlobeAltIcon } from "@heroicons/react/24/outline"
+import { Check as CheckIcon, X as XMarkIcon, RefreshCcw as ArrowPathIcon, Globe2 as GlobeAltIcon } from 'lucide-react'
 import { useTheme } from "@/contexts/ThemeProvider"
 
 interface ProfileInfoSectionProps {

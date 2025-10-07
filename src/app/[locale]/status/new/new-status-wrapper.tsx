@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { ArrowLeftIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { ArrowLeft as ArrowLeftIcon, Plus as PlusIcon, X as XMarkIcon } from 'lucide-react'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 
 export default function NewStatusWrapper() {

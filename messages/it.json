@@ -691,7 +691,9 @@
         "technical": "Problema Tecnico",
         "account": "Problema Account"
       }
-    }
+    },
+    "businessCreated": "Il tuo business è stato creato!",
+    "redirecting": "Reindirizzamento..."
   },
   "plan": {
     "title": "Il tuo Piano",

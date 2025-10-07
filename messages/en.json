@@ -686,7 +686,9 @@
         "technical": "Technical Issue",
         "account": "Account Issue"
       }
-    }
+    },
+    "businessCreated": "Your business has been created!",
+    "redirecting": "Redirecting..."
   },
   "plan": {
     "title": "Your Plan",

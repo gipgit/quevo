@@ -14,7 +14,7 @@ const nextConfig = {
   
   // Bundle optimization
   experimental: {
-    optimizePackageImports: ['@heroicons/react', 'lucide-react'],
+    optimizePackageImports: ['lucide-react'],
   },
   
   // Image optimization

@@ -1,6 +1,6 @@
 "use client"
 
-import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid"
+import { Check as CheckIcon, X as XMarkIcon } from 'lucide-react'
 import { useTranslations } from "next-intl"
 
 interface PasswordRequirementsProps {

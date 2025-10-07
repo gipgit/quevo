@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from "react"
 import { useTranslations } from "next-intl"
-import { PencilIcon } from "@heroicons/react/24/outline"
+import { Pencil as PencilIcon } from 'lucide-react'
 import ImageCropper from "./ImageCropper"
 import dynamic from "next/dynamic"
 

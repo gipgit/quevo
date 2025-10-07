@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react"
 import { useTranslations } from "next-intl"
-import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline"
+import { Image as PhotoIcon, X as XMarkIcon } from 'lucide-react'
 import type { BusinessFormData } from "../business-onboarding-form"
 import dynamic from "next/dynamic"
 import type { ImageCropperRef } from "@/components/dashboard/profile/ImageCropper"

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
-import { PlusIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline"
+import { Plus as PlusIcon, Trash2 as TrashIcon, X as XMarkIcon } from 'lucide-react'
 import type { BusinessFormData } from "../business-onboarding-form"
 import { parseContacts, Contact, isValidEmail, isValidPhone } from "@/lib/utils/contacts"
 

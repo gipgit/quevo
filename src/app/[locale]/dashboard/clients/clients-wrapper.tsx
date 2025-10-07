@@ -183,9 +183,22 @@ export default function ClientsWrapper({
       <div className="max-w-7xl mx-auto">
         {/* Top Navbar (simulated) */}
         <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center gap-3">
             <div>
               <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">Clients</p>
+            </div>
+            {/* Right column: Search */}
+            <div className="w-full max-w-xs md:max-w-sm">
+              <div className="relative">
+                <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" strokeWidth={1} />
+                <input
+                  type="text"
+                  placeholder="Search customers..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-[var(--dashboard-border-primary)] rounded-lg bg-[var(--dashboard-bg-input)] text-[var(--dashboard-text-primary)]"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -195,8 +208,8 @@ export default function ClientsWrapper({
           {/* Header */}
           <div className="mb-8">
           {/* Stats */}
-          <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-4 mb-6">
-             <div className="bg-[var(--dashboard-bg-card)] p-2 md:p-4 rounded-lg border border-[var(--dashboard-border-primary)]">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mb-6">
+             <div onClick={() => setActiveTab('active')} role="button" className={`bg-[var(--dashboard-bg-card)] p-2 md:p-4 rounded-lg border transition-colors cursor-pointer ${activeTab === 'active' ? 'border-green-500 ring-1 ring-green-500/50' : 'border-[var(--dashboard-border-primary)] hover:border-[var(--dashboard-border-secondary)]'}`}>
                <div className="flex items-center gap-2 md:gap-3">
                  <UserGroupIcon className="w-6 h-6 md:w-8 md:h-8 text-green-600" strokeWidth={1} />
                  <div>
@@ -207,7 +220,7 @@ export default function ClientsWrapper({
                  </div>
                </div>
              </div>
-             <div className="bg-[var(--dashboard-bg-card)] p-2 md:p-4 rounded-lg border border-[var(--dashboard-border-primary)]">
+             <div onClick={() => setActiveTab('past')} role="button" className={`bg-[var(--dashboard-bg-card)] p-2 md:p-4 rounded-lg border transition-colors cursor-pointer ${activeTab === 'past' ? 'border-blue-500 ring-1 ring-blue-500/50' : 'border-[var(--dashboard-border-primary)] hover:border-[var(--dashboard-border-secondary)]'}`}>
                <div className="flex items-center gap-2 md:gap-3">
                  <UsersIcon className="w-6 h-6 md:w-8 md:h-8 text-blue-600" strokeWidth={1} />
                  <div>
@@ -218,7 +231,7 @@ export default function ClientsWrapper({
                  </div>
                </div>
              </div>
-             <div className="bg-[var(--dashboard-bg-card)] p-2 md:p-4 rounded-lg border border-[var(--dashboard-border-primary)]">
+             <div onClick={() => setActiveTab('uncommitted')} role="button" className={`bg-[var(--dashboard-bg-card)] p-2 md:p-4 rounded-lg border transition-colors cursor-pointer ${activeTab === 'uncommitted' ? 'border-orange-500 ring-1 ring-orange-500/50' : 'border-[var(--dashboard-border-primary)] hover:border-[var(--dashboard-border-secondary)]'}`}>
                <div className="flex items-center gap-2 md:gap-3">
                  <UsersIcon className="w-6 h-6 md:w-8 md:h-8 text-orange-600" strokeWidth={1} />
                  <div>
@@ -229,7 +242,7 @@ export default function ClientsWrapper({
                  </div>
                </div>
              </div>
-             <div className="bg-[var(--dashboard-bg-card)] p-2 md:p-4 rounded-lg border border-[var(--dashboard-border-primary)] col-span-3 md:col-span-1">
+            <div onClick={() => setActiveTab('newsletter')} role="button" className={`bg-[var(--dashboard-bg-card)] p-2 md:p-4 rounded-lg border transition-colors cursor-pointer ${activeTab === 'newsletter' ? 'border-purple-500 ring-1 ring-purple-500/50' : 'border-[var(--dashboard-border-primary)] hover:border-[var(--dashboard-border-secondary)]'}`}>
                <div className="flex items-center gap-2 md:gap-3">
                  <EnvelopeIcon className="w-6 h-6 md:w-8 md:h-8 text-purple-600" strokeWidth={1} />
                  <div>
@@ -243,76 +256,13 @@ export default function ClientsWrapper({
            </div>
         </div>
 
-                 {/* Tabs */}
-        <div className="mb-6">
-          <div className="border-b border-[var(--dashboard-border-primary)]">
-             <nav className="-mb-px flex space-x-4 md:space-x-8">
-               <button
-                 onClick={() => setActiveTab('active')}
-                 className={`py-2 px-1 border-b-2 font-medium text-xs md:text-sm ${
-                   activeTab === 'active'
-                     ? 'border-green-500 text-green-600 dark:text-green-400'
-                    : 'border-transparent text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:border-[var(--dashboard-border-secondary)]'
-                 }`}
-               >
-                 <span className="hidden sm:inline">Active Clients</span>
-                 <span className="sm:hidden">Active</span> ({activeCustomers.length})
-               </button>
-               <button
-                 onClick={() => setActiveTab('past')}
-                 className={`py-2 px-1 border-b-2 font-medium text-xs md:text-sm ${
-                   activeTab === 'past'
-                     ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                    : 'border-transparent text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:border-[var(--dashboard-border-secondary)]'
-                 }`}
-               >
-                 <span className="hidden sm:inline">Past Clients</span>
-                 <span className="sm:hidden">Past</span> ({pastCustomers.length})
-               </button>
-               <button
-                 onClick={() => setActiveTab('uncommitted')}
-                 className={`py-2 px-1 border-b-2 font-medium text-xs md:text-sm ${
-                   activeTab === 'uncommitted'
-                     ? 'border-orange-500 text-orange-600 dark:text-orange-400'
-                    : 'border-transparent text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:border-[var(--dashboard-border-secondary)]'
-                 }`}
-               >
-                 Uncommitted ({uncommittedCustomers.length})
-               </button>
-               <button
-                 onClick={() => setActiveTab('newsletter')}
-                 className={`py-2 px-1 border-b-2 font-medium text-xs md:text-sm ${
-                   activeTab === 'newsletter'
-                     ? 'border-purple-500 text-purple-600 dark:text-purple-400'
-                    : 'border-transparent text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:border-[var(--dashboard-border-secondary)]'
-                 }`}
-               >
-                 <span className="hidden sm:inline">Newsletter Consent</span>
-                 <span className="sm:hidden">Newsletter</span> ({newsletterConsentCustomers.length})
-               </button>
-             </nav>
-           </div>
-         </div>
-
-        {/* Search */}
-        <div className="mb-6 flex items-center gap-4">
-          <div className="flex-1 relative">
-            <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" strokeWidth={1} />
-            <input
-              type="text"
-              placeholder="Search customers..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-[var(--dashboard-border-primary)] rounded-lg bg-[var(--dashboard-bg-input)] text-[var(--dashboard-text-primary)]"
-            />
-          </div>
-        </div>
+        {/* Tabs removed: cards are now the tab selectors */}
 
         {/* Customers List */}
         <div className="bg-[var(--dashboard-bg-card)] rounded-lg border border-[var(--dashboard-border-primary)]">
           <div className="p-4 border-b border-[var(--dashboard-border-primary)]">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium text-[var(--dashboard-text-primary)]">
+              <h3 className="text-sm sm:text-base md:text-lg font-medium text-[var(--dashboard-text-primary)]">
                 {activeTab === 'active' ? 'Active' : 
                  activeTab === 'past' ? 'Past' : 
                  activeTab === 'uncommitted' ? 'Uncommitted' : 
@@ -321,7 +271,7 @@ export default function ClientsWrapper({
               <div className="flex items-center gap-2 md:gap-3">
                 <button
                   onClick={() => exportToCSV(currentCustomers)}
-                  className="flex items-center gap-1 md:gap-2 px-2 md:px-4 py-1.5 md:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm md:text-base"
+                  className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1.5 md:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs sm:text-sm md:text-base"
                 >
                   <DocumentArrowDownIcon className="w-3 h-3 md:w-4 md:h-4" />
                   <span className="hidden sm:inline">Export CSV</span>
@@ -329,7 +279,7 @@ export default function ClientsWrapper({
                 </button>
                 <button
                   onClick={() => exportToTXT(currentCustomers)}
-                  className="flex items-center gap-1 md:gap-2 px-2 md:px-4 py-1.5 md:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm md:text-base"
+                  className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1.5 md:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-sm md:text-base"
                 >
                   <DocumentArrowDownIcon className="w-3 h-3 md:w-4 md:h-4" />
                   <span className="hidden sm:inline">Export TXT</span>
@@ -345,11 +295,14 @@ export default function ClientsWrapper({
                 key={customer.id}
                 className="p-4 hover:bg-[var(--dashboard-bg-tertiary)] transition-colors"
               >
-                <div className="grid grid-cols-1 md:grid-cols-5 items-center gap-3 md:gap-4">
-                  <div className="flex items-center justify-between md:justify-start gap-2">
-                    <h4 className="text-lg font-medium text-[var(--dashboard-text-primary)]">
+                <div className="grid grid-cols-1 md:grid-cols-12 items-center gap-2 md:gap-4">
+                  <div className="flex items-center justify-between md:justify-start gap-2 md:col-span-2">
+                    <h4 className="text-base md:text-lg font-medium text-[var(--dashboard-text-primary)]">
                       {getCustomerFullName(customer)}
                     </h4>
+                  </div>
+                  
+                  <div className="flex items-center justify-start md:col-span-1">
                     <span className={`px-2 py-1 text-xs rounded-full ${
                       activeTab === 'active'
                         ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
@@ -366,22 +319,22 @@ export default function ClientsWrapper({
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-sm text-[var(--dashboard-text-secondary)]">
+                  <div className="flex items-center gap-2 text-xs md:text-sm text-[var(--dashboard-text-secondary)] md:col-span-3">
                     <EnvelopeIcon className="w-4 h-4" strokeWidth={1} />
                     <span>{customer.email || 'No email'}</span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-sm text-[var(--dashboard-text-secondary)]">
+                  <div className="flex items-center gap-2 text-xs md:text-sm text-[var(--dashboard-text-secondary)] md:col-span-2">
                     <PhoneIcon className="w-4 h-4" strokeWidth={1} />
                     <span>{customer.phone || 'No phone'}</span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-sm text-[var(--dashboard-text-secondary)]">
+                  <div className="flex items-center gap-2 text-xs md:text-sm text-[var(--dashboard-text-secondary)] md:col-span-1">
                     <CalendarIcon className="w-4 h-4" strokeWidth={1} />
                     <span>Joined: {formatDate(customer.date_created)}</span>
                   </div>
 
-                  <div className="text-xs md:text-sm text-[var(--dashboard-text-secondary)] md:text-right">
+                  <div className="text-xs md:text-sm text-[var(--dashboard-text-secondary)] md:text-right md:col-span-3">
                     {customer.requests.length} request{customer.requests.length !== 1 ? 's' : ''} • Last activity: {formatDate(customer.lastActivity)}
                   </div>
                 </div>
