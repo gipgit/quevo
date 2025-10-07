@@ -1,9 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
+import { Globe2 as GlobeAltIcon } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 
 const MobileMenuOverlay = ({
     isOpen,
@@ -25,6 +27,34 @@ const MobileMenuOverlay = ({
     getButtonIconStyle
 }) => {
     const t = useTranslations('Common');
+    const [DOMAIN, setDOMAIN] = useState("https://quevo.vercel.app");
+    const [copied, setCopied] = useState(false);
+    const [isAnimating, setIsAnimating] = useState(false);
+    
+    // Set the correct domain after component mounts
+    useEffect(() => {
+        const isLocalhost = window.location.hostname.includes("localhost");
+        setDOMAIN(isLocalhost ? "http://localhost:3000" : "https://quevo.vercel.app");
+    }, []);
+    
+    // Public link format: DOMAIN/business_urlname
+    const publicUrl = `${DOMAIN}/${businessUrlnameInPath || ""}`;
+
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(publicUrl);
+            setCopied(true);
+            setIsAnimating(true);
+            setTimeout(() => setCopied(false), 2000);
+            setTimeout(() => setIsAnimating(false), 300);
+        } catch (err) {
+            console.error("Failed to copy: ", err);
+        }
+    };
+
+    const handleOpen = () => {
+        window.open(`${publicUrl}`, "_blank");
+    };
 
     if (!isOpen) {
         return null;
@@ -43,10 +73,10 @@ const MobileMenuOverlay = ({
                     </svg>
                 </button>
 
-                <div className="p-6 pt-16">
-                    {/* Profile Image Only */}
-                    <div className="flex justify-center mb-6">
-                        <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                <div className="pt-12">
+                    {/* Profile Image with QR Code and Link */}
+                    <div className="flex flex-col items-center mb-6 px-6">
+                        <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex-shrink-0 mb-4">
                             {businessData.business_img_profile ? (
                                 <Image
                                     src={businessData.business_img_profile}
@@ -59,10 +89,134 @@ const MobileMenuOverlay = ({
                                 <div className="w-full h-full" style={{ backgroundColor: themeColorText + '20' }}></div>
                             )}
                         </div>
+                        
+                        {/* Business Name */}
+                        <h2 className="text-lg font-semibold mb-4 text-center" style={{ color: themeColorText }}>
+                            {businessData.business_name}
+                        </h2>
+                        
+                        {/* QR Code */}
+                        <div className="flex justify-center mb-4">
+                            <div className="p-3 bg-white rounded-lg border border-gray-200">
+                                <QRCodeSVG
+                                    value={publicUrl}
+                                    size={120}
+                                    bgColor="white"
+                                    fgColor="black"
+                                    level="M"
+                                />
+                            </div>
+                        </div>
+                        
+                        {/* Link Pill with ShareProfileModal styling and integrated copy button */}
+                        <div className={`px-3 py-2 rounded-full text-sm font-medium flex items-center gap-2 shadow-sm border mb-4 bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 border-gray-200 transition-all duration-300 relative overflow-hidden ${
+                            isAnimating ? 'animate-pill-shine' : ''
+                        }`}>
+                            <GlobeAltIcon className="w-4 h-4 text-blue-600 flex-shrink-0" strokeWidth={1} />
+                            <span className="text-xs truncate flex-1">{publicUrl}</span>
+                            <button
+                                onClick={handleCopy}
+                                className={`p-1 rounded-full transition-all duration-300 flex items-center justify-center ${
+                                    copied ? 'text-green-600 bg-green-50' : 'text-gray-600 hover:bg-gray-200'
+                                }`}
+                            >
+                                {copied ? (
+                                    <svg className="w-4 h-4 animate-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                ) : (
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                    </svg>
+                                )}
+                            </button>
+                        </div>
                     </div>
 
+                    {/* Phone, Email, and Address buttons as links */}
+                    {(businessSettings.show_btn_phone && hasPhones) || (businessSettings.show_btn_email && hasEmails) || (businessSettings.show_address && businessData.business_address) ? (
+                        <div className="px-6 mb-2">
+                            <div className="flex gap-3">
+                                {businessSettings.show_btn_phone && hasPhones && (
+                                    <button 
+                                        onClick={() => {
+                                            toggleContactModal('phone');
+                                            onClose();
+                                        }} 
+                                        className="flex-1 py-3 px-4 transition-colors duration-200 text-lg border-b border-gray-200 text-center flex flex-col items-center gap-2"
+                                        style={{ color: themeColorText }}
+                                    >
+                                        <div 
+                                            className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                                            style={{ backgroundColor: themeColorButton }}
+                                        >
+                                            <Image
+                                                src="/icons/iconsax/phone.svg"
+                                                alt={t('call')}
+                                                width={18}
+                                                height={18}
+                                                style={{ filter: 'brightness(0) invert(1)' }}
+                                            />
+                                        </div>
+                                        <span className="font-normal text-sm">{t('call')}</span>
+                                    </button>
+                                )}
+
+                                {businessSettings.show_btn_email && hasEmails && (
+                                    <button 
+                                        onClick={() => {
+                                            toggleContactModal('email');
+                                            onClose();
+                                        }} 
+                                        className="flex-1 py-3 px-4 transition-colors duration-200 text-lg border-b border-gray-200 text-center flex flex-col items-center gap-2"
+                                        style={{ color: themeColorText }}
+                                    >
+                                        <div 
+                                            className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                                            style={{ backgroundColor: themeColorButton }}
+                                        >
+                                            <Image
+                                                src="/icons/iconsax/email.svg"
+                                                alt={t('email')}
+                                                width={18}
+                                                height={18}
+                                                style={{ filter: 'brightness(0) invert(1)' }}
+                                            />
+                                        </div>
+                                        <span className="font-normal text-sm">{t('email')}</span>
+                                    </button>
+                                )}
+
+                                {businessSettings.show_address && businessData.business_address && (
+                                    <button 
+                                        onClick={() => {
+                                            toggleAddressModal();
+                                            onClose();
+                                        }} 
+                                        className="flex-1 py-3 px-4 transition-colors duration-200 text-lg border-b border-gray-200 text-center flex flex-col items-center gap-2"
+                                        style={{ color: themeColorText }}
+                                    >
+                                        <div 
+                                            className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                                            style={{ backgroundColor: themeColorButton }}
+                                        >
+                                            <Image
+                                                src="/icons/iconsax/location.svg"
+                                                alt="Indirizzo"
+                                                width={18}
+                                                height={18}
+                                                style={{ filter: 'brightness(0) invert(1)' }}
+                                            />
+                                        </div>
+                                        <span className="font-normal text-sm">Indirizzo</span>
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    ) : null}
+
                     {/* Navigation Links - With borders to separate */}
-                    <div className="space-y-0 mb-4">
+                    <div className="space-y-0 mb-4 w-full">
                         <Link
                             href={`/${businessUrlnameInPath}/services`}
                             onClick={onClose}
@@ -90,16 +244,28 @@ const MobileMenuOverlay = ({
                         <Link
                             href={`/${businessUrlnameInPath}/rewards`}
                             onClick={onClose}
-                            className={`block py-3 px-4 transition-colors duration-200 text-lg ${activeSection === 'rewards' ? 'font-semibold' : 'font-normal'}`}
+                            className={`block py-3 px-4 transition-colors duration-200 text-lg border-b border-gray-200 ${activeSection === 'rewards' ? 'font-semibold' : 'font-normal'}`}
                             style={activeSection === 'rewards' ? { backgroundColor: themeColorButton + '20', color: themeColorText } : { color: themeColorText }}
                         >
                             {t('rewards')}
                         </Link>
+                        {businessSettings.show_btn_payments && (
+                            <button 
+                                onClick={() => {
+                                    togglePaymentsModal();
+                                    onClose();
+                                }} 
+                                className="block py-3 px-4 transition-colors duration-200 text-lg w-full text-left"
+                                style={{ color: themeColorText }}
+                            >
+                                Pagamenti
+                            </button>
+                        )}
                     </div>
 
                     {/* Google Review Button */}
                     {businessSettings.show_btn_review && googleReviewLinkUrl && (
-                        <div className="mb-3">
+                        <div className="mb-3 px-6">
                             <Link 
                                 href={googleReviewLinkUrl} 
                                 target="_blank" 
@@ -119,110 +285,7 @@ const MobileMenuOverlay = ({
                         </div>
                     )}
 
-                    {/* Action Buttons */}
-                    <div className="space-y-3">
-                        {businessSettings.show_btn_payments && (
-                            <button 
-                                onClick={() => {
-                                    togglePaymentsModal();
-                                    onClose();
-                                }} 
-                                className="w-full py-3 px-4 rounded-lg text-sm font-medium transition-colors duration-200"
-                                style={primaryButtonStyle}
-                            >
-                                Pagamenti
-                            </button>
-                        )}
 
-                        {/* Phone, Email, and Address buttons in same row */}
-                        {(businessSettings.show_btn_phone && hasPhones) || (businessSettings.show_btn_email && hasEmails) || (businessSettings.show_address && businessData.business_address) ? (
-                            <div className="flex gap-3">
-                                {businessSettings.show_btn_phone && hasPhones && (
-                                    <button 
-                                        onClick={() => {
-                                            toggleContactModal('phone');
-                                            onClose();
-                                        }} 
-                                        className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-medium transition-colors duration-200"
-                                        style={primaryButtonStyle}
-                                    >
-                                        <Image
-                                            src="/icons/iconsax/phone.svg"
-                                            alt={t('call')}
-                                            width={18}
-                                            height={18}
-                                            style={getButtonIconStyle()}
-                                        />
-                                        <span className="text-base font-medium">{t('call')}</span>
-                                    </button>
-                                )}
-
-                                {businessSettings.show_btn_email && hasEmails && (
-                                    <button 
-                                        onClick={() => {
-                                            toggleContactModal('email');
-                                            onClose();
-                                        }} 
-                                        className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-medium transition-colors duration-200"
-                                        style={primaryButtonStyle}
-                                    >
-                                        <Image
-                                            src="/icons/iconsax/email.svg"
-                                            alt={t('email')}
-                                            width={18}
-                                            height={18}
-                                            style={getButtonIconStyle()}
-                                        />
-                                        <span className="text-base font-medium">{t('email')}</span>
-                                    </button>
-                                )}
-
-                                {businessSettings.show_address && businessData.business_address && (
-                                    <button 
-                                        onClick={() => {
-                                            toggleAddressModal();
-                                            onClose();
-                                        }} 
-                                        className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-medium transition-colors duration-200"
-                                        style={primaryButtonStyle}
-                                    >
-                                        <Image
-                                            src="/icons/iconsax/location.svg"
-                                            alt="Indirizzo"
-                                            width={18}
-                                            height={18}
-                                            style={getButtonIconStyle()}
-                                        />
-                                        <span className="text-base font-medium">Indirizzo</span>
-                                    </button>
-                                )}
-                            </div>
-                                                 ) : null}
-                     </div>
-
-                     {/* Page URL with Copy Button - Moved to bottom */}
-                     <div className="mt-6 pt-4 border-t border-gray-200">
-                         <div className="flex items-center justify-between bg-gray-50 rounded-full p-2 border border-gray-200">
-                             <div className="flex-1 min-w-0">
-                                 <p className="text-xs font-medium truncate" style={{ color: themeColorText }}>
-                                     {typeof window !== 'undefined' ? window.location.href : ''}
-                                 </p>
-                             </div>
-                             <button
-                                 onClick={() => {
-                                     if (typeof window !== 'undefined') {
-                                         navigator.clipboard.writeText(window.location.href);
-                                         // You could add a toast notification here
-                                     }
-                                 }}
-                                 className="ml-2 p-1 rounded-full bg-white hover:bg-gray-100 transition-colors flex-shrink-0"
-                             >
-                                 <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 2z" />
-                                 </svg>
-                             </button>
-                         </div>
-                     </div>
                  </div>
              </div>
          </div>

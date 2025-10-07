@@ -80,11 +80,11 @@ export default function ShareProfileModal({
             </div>
           </div>
           
-          <div className={`px-4 py-3 rounded-full text-sm font-medium flex items-center gap-3 shadow-sm border mb-4 bg-gradient-to-r from-[var(--dashboard-bg-tertiary)] to-[var(--dashboard-bg-secondary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] transition-all duration-300 relative overflow-hidden ${
+          <div className={`px-3 md:px-4 py-3 rounded-full text-sm font-medium flex items-center gap-2 md:gap-3 shadow-sm border mb-4 bg-gradient-to-r from-[var(--dashboard-bg-tertiary)] to-[var(--dashboard-bg-secondary)] text-[var(--dashboard-text-secondary)] border-[var(--dashboard-border-primary)] transition-all duration-300 relative overflow-hidden ${
             isAnimating ? 'animate-pill-shine' : ''
           }`}>
             <GlobeAltIcon className="w-4 h-4 md:w-5 md:h-5 text-blue-600 flex-shrink-0" strokeWidth={1} />
-            <span className="text-xs md:text-sm break-all">{publicUrl}</span>
+            <span className="text-xs md:text-sm truncate">{publicUrl}</span>
           </div>
           
           <div className="flex gap-2">
