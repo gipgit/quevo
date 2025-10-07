@@ -258,6 +258,11 @@ export default function CreateServicePage() {
   }
 
   const addItem = () => {
+    // Automatically enable quotation when first item is added
+    if (items.length === 0) {
+      setAvailableQuotation(true)
+    }
+    
     setItems([
       ...items,
       {
@@ -277,7 +282,13 @@ export default function CreateServicePage() {
   }
 
   const removeItem = (index: number) => {
-    setItems(items.filter((_, i) => i !== index))
+    const updatedItems = items.filter((_, i) => i !== index)
+    setItems(updatedItems)
+    
+    // Automatically disable quotation when all items are removed
+    if (updatedItems.length === 0) {
+      setAvailableQuotation(false)
+    }
   }
 
   const addExtra = () => {
@@ -304,6 +315,11 @@ export default function CreateServicePage() {
   }
 
   const addEvent = () => {
+    // Automatically enable booking when first event is added
+    if (events.length === 0) {
+      setAvailableBooking(true)
+    }
+    
     setEvents([
       ...events,
       {
@@ -356,7 +372,13 @@ export default function CreateServicePage() {
   }
 
   const removeEvent = (index: number) => {
-    setEvents(events.filter((_, i) => i !== index))
+    const updatedEvents = events.filter((_, i) => i !== index)
+    setEvents(updatedEvents)
+    
+    // Automatically disable booking when all events are removed
+    if (updatedEvents.length === 0) {
+      setAvailableBooking(false)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -559,7 +581,7 @@ export default function CreateServicePage() {
       <DashboardLayout>
         <div className="max-w-[1400px] mx-auto">
           {/* Top Navbar (simulated) */}
-          <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+          <div className="sticky top-0 z-10 px-4 lg:px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
             <div className="flex justify-between items-center">
               <div>
                 <h1 className="text-2xl lg:text-3xl font-bold text-[var(--dashboard-text-primary)]">{t("createService")}</h1>
@@ -568,7 +590,7 @@ export default function CreateServicePage() {
           </div>
 
           {/* Content Wrapper with Background */}
-          <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+          <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-4 lg:p-6">
             <div className="bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 rounded-lg p-8 text-center min">
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
                 <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -604,7 +626,7 @@ export default function CreateServicePage() {
     <DashboardLayout>
       <div className="max-w-[1400px] mx-auto">
         {/* Top Navbar (simulated) */}
-        <div className="sticky top-0 z-10 px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
+        <div className="sticky top-0 z-10 px-4 lg:px-6 py-4 lg:py-2 rounded-2xl mb-3 bg-[var(--dashboard-bg-primary)] border border-[var(--dashboard-border-primary)]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-lg font-medium text-[var(--dashboard-text-primary)]">{t("createService")}</p>
@@ -613,7 +635,7 @@ export default function CreateServicePage() {
         </div>
 
         {/* Content Wrapper with Background */}
-        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-4 lg:p-8">
         <form onSubmit={handleSubmit} className="">
           {/* Basic Information */}
           <div className="pb-4 lg:pb-6 border-b border-[var(--dashboard-border-primary)]">
@@ -731,7 +753,7 @@ export default function CreateServicePage() {
                                     {/* Service Extras Section */}
                    <div className="mb-8">
                        <div className="flex justify-between items-center mb-6">
-                         <h2 className="text-xl font-bold text-[var(--dashboard-text-primary)]">Service Extras</h2>
+                         <h2 className="text-sm md:text-lg font-bold text-[var(--dashboard-text-primary)] uppercase">Service Extras</h2>
                         <button
                           type="button"
                         onClick={addExtra}
@@ -743,7 +765,76 @@ export default function CreateServicePage() {
 
                                        {extras.map((extra, index) => (
                          <div key={index} className="mb-3 border rounded-xl p-3 lg:py-2 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
-                                                                                                                                               <div className="space-y-4 lg:space-y-0 lg:flex lg:gap-4 lg:items-center">
+                           {/* Mobile Layout */}
+                           <div className="lg:hidden space-y-4">
+                             {/* Header with number and delete button */}
+                             <div className="flex items-center justify-between">
+                               <div className="flex items-center gap-2">
+                                 <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
+                                   {index + 1}
+                                 </div>
+                                 <span className="text-sm font-medium text-[var(--dashboard-text-secondary)]">Extra {index + 1}</span>
+                               </div>
+                               <button
+                                 type="button"
+                                 onClick={() => removeExtra(index)}
+                                 className="w-6 h-6 rounded-full flex items-center justify-center transition-colors bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-red-600 hover:text-white"
+                               >
+                                 ×
+                               </button>
+                             </div>
+                             
+                             {/* Full width inputs on mobile */}
+                             <div className="space-y-4">
+                               <div>
+                                 <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">Extra Name</label>
+                                 <input
+                                   type="text"
+                                   value={extra.extra_name}
+                                   onChange={(e) => updateExtra(index, "extra_name", e.target.value)}
+                                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                                 />
+                               </div>
+                               
+                               <div>
+                                 <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">Extra Description</label>
+                                 <input
+                                   type="text"
+                                   value={extra.extra_description}
+                                   onChange={(e) => updateExtra(index, "extra_description", e.target.value)}
+                                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                                 />
+                               </div>
+                               
+                               <div className="grid grid-cols-2 gap-4">
+                                 <div>
+                                   <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("price")}</label>
+                                   <input
+                                     type="number"
+                                     step="0.01"
+                                     value={extra.price_base}
+                                     onChange={(e) => updateExtra(index, "price_base", Number.parseFloat(e.target.value) || 0)}
+                                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                                   />
+                                 </div>
+                                 
+                                 <div>
+                                   <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("priceType")}</label>
+                                   <select
+                                     value={extra.price_type}
+                                     onChange={(e) => updateExtra(index, "price_type", e.target.value)}
+                                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                                   >
+                                     <option value="fixed">{t("fixed")}</option>
+                                     <option value="percentage">{t("percentage")}</option>
+                                   </select>
+                                 </div>
+                               </div>
+                             </div>
+                           </div>
+
+                           {/* Desktop Layout */}
+                           <div className="hidden lg:flex lg:gap-4 lg:items-center">
                           {/* Circular number icon - minimal width */}
                           <div className="flex items-center justify-center w-8 flex-shrink-0">
                             <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
@@ -813,40 +904,91 @@ export default function CreateServicePage() {
                       ))}
                     </div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               {/* Quotation Section with Conditional Content */}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               {/* Quotation Section */}
                                             <div className="border-t-2 border-[var(--dashboard-border-primary)] pt-10 mb-10">
                       <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-xl font-bold text-[var(--dashboard-text-primary)]">Quotation</h2>
+                        <h2 className="text-sm md:text-lg font-bold text-[var(--dashboard-text-primary)] uppercase">Quotation</h2>
                        <button
                          type="button"
-                           onClick={() => setAvailableQuotation(!availableQuotation)}
-                           className={`px-3 py-1 rounded-lg text-sm transition-colors ${
-                             availableQuotation
-                               ? 'bg-blue-600 text-white hover:bg-blue-700'
-                               : 'bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]'
-                           }`}
-                         >
-                           Configura Preventivo Online
+                         onClick={addItem}
+                         className="px-3 py-1 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] rounded-lg text-sm hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
+                       >
+                         Add Item
                          </button>
                        </div>
                    
-                                                                             {/* Items for Quotation Section - Only show when quotation is active and items exist */}
-                                         {availableQuotation && items.length > 0 && (
-                       <div className="mt-6">
-                        <div className="flex justify-between items-center mb-4">
-                          <h2 className="text-lg font-semibold text-[var(--dashboard-text-primary)]">Items for Quotation</h2>
+                                                 {items.map((item, index) => (
+                        <div key={index} className="mb-3 border rounded-xl p-3 lg:py-2 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
+                           {/* Mobile Layout */}
+                           <div className="lg:hidden space-y-4">
+                             {/* Header with number and delete button */}
+                             <div className="flex items-center justify-between">
+                               <div className="flex items-center gap-2">
+                                 <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
+                                   {index + 1}
+                                 </div>
+                                 <span className="text-sm font-medium text-[var(--dashboard-text-secondary)]">Item {index + 1}</span>
+                               </div>
                           <button
                             type="button"
-                            onClick={addItem}
-                         className="px-3 py-1 bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] rounded-lg text-sm hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)] transition-colors"
+                                 onClick={() => removeItem(index)}
+                                 className="w-6 h-6 rounded-full flex items-center justify-center transition-colors bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-red-600 hover:text-white"
                        >
-                             Add Item
+                                 ×
                        </button>
                      </div>
 
-                                                 {items.map((item, index) => (
-                        <div key={index} className="mb-3 border rounded-xl p-3 lg:py-2 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
-                                                                                                                                                                                                                               <div className="space-y-3 lg:space-y-0 lg:flex lg:gap-4 lg:items-center">
+                             {/* Full width inputs on mobile */}
+                             <div className="space-y-4">
+                               <div>
+                                 <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("itemName")}</label>
+                                 <input
+                                   type="text"
+                                   value={item.item_name}
+                                   onChange={(e) => updateItem(index, "item_name", e.target.value)}
+                                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                                 />
+                               </div>
+                               
+                               <div>
+                                 <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("itemDescription")}</label>
+                                 <input
+                                   type="text"
+                                   value={item.item_description}
+                                   onChange={(e) => updateItem(index, "item_description", e.target.value)}
+                                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                                 />
+                               </div>
+                               
+                               <div className="grid grid-cols-2 gap-4">
+                                 <div>
+                                   <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("price")}</label>
+                                   <input
+                                     type="number"
+                                     step="0.01"
+                                     value={item.price_base}
+                                     onChange={(e) => updateItem(index, "price_base", Number.parseFloat(e.target.value) || 0)}
+                                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                                   />
+                                 </div>
+                                 
+                                 <div>
+                                   <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("priceType")}</label>
+                                   <select
+                                     value={item.price_type}
+                                     onChange={(e) => updateItem(index, "price_type", e.target.value)}
+                                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                                   >
+                                     <option value="fixed">{t("fixed")}</option>
+                                     <option value="percentage">{t("percentage")}</option>
+                                   </select>
+                                 </div>
+                               </div>
+                             </div>
+                           </div>
+
+                           {/* Desktop Layout */}
+                           <div className="hidden lg:flex lg:gap-4 lg:items-center">
                               {/* Circular number icon - minimal width */}
                               <div className="flex items-center justify-center w-8 flex-shrink-0">
                                 <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
@@ -914,34 +1056,13 @@ export default function CreateServicePage() {
                          </div>
                        </div>
                      ))}
-                   </div>
-                    )}
-
 
                                  </div>
 
-                                                                       {/* Booking Section with Conditional Content */}
+                                                                       {/* Booking Section */}
                                           <div className="border-t-2 border-[var(--dashboard-border-primary)] pt-10 mb-10">
                        <div className="flex justify-between items-center mb-6">
-                         <h2 className="text-xl font-bold text-[var(--dashboard-text-primary)]">Booking</h2>
-                        <button
-                          type="button"
-                          onClick={() => setAvailableBooking(!availableBooking)}
-                          className={`px-3 py-1 rounded-lg text-sm transition-colors ${
-                            availableBooking
-                              ? 'bg-blue-600 text-white hover:bg-blue-700'
-                              : 'bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]'
-                          }`}
-                        >
-                          Configura Prenotazione
-                        </button>
-                      </div>
-                  
-                                     {/* Events Section - Only show when booking is active and events exist */}
-                   {availableBooking && events.length > 0 && (
-                     <div className="mt-6">
-                      <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-lg font-semibold text-[var(--dashboard-text-primary)]">{t("events")}</h2>
+                         <h2 className="text-sm md:text-lg font-bold text-[var(--dashboard-text-primary)] uppercase">Booking</h2>
                         <button
                           type="button"
                           onClick={addEvent}
@@ -950,10 +1071,76 @@ export default function CreateServicePage() {
                           {t("addEvent")}
                         </button>
                       </div>
-
+                  
                                              {events.map((event, index) => (
                          <div key={index} className="mb-3 border rounded-xl p-3 lg:py-2 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
-                                                                                                           <div className="space-y-3 lg:space-y-0 lg:flex lg:gap-4 lg:items-center">
+                           {/* Mobile Layout */}
+                           <div className="lg:hidden space-y-4">
+                             {/* Header with number and delete button */}
+                             <div className="flex items-center justify-between">
+                               <div className="flex items-center gap-2">
+                                 <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
+                                   {index + 1}
+                                 </div>
+                                 <span className="text-sm font-medium text-[var(--dashboard-text-secondary)]">Event {index + 1}</span>
+                               </div>
+                        <button
+                          type="button"
+                                 onClick={() => removeEvent(index)}
+                                 className="w-6 h-6 rounded-full flex items-center justify-center transition-colors bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-red-600 hover:text-white"
+                        >
+                                 ×
+                        </button>
+                      </div>
+
+                             {/* Full width inputs on mobile */}
+                             <div className="space-y-4">
+                               <div>
+                                 <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("eventName")}</label>
+                                 <input
+                                   type="text"
+                                   value={event.event_name}
+                                   onChange={(e) => updateEvent(index, "event_name", e.target.value)}
+                                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                                 />
+                               </div>
+                               
+                               <div>
+                                 <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("eventDescription")}</label>
+                                 <input
+                                   type="text"
+                                   value={event.event_description}
+                                   onChange={(e) => updateEvent(index, "event_description", e.target.value)}
+                                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                                 />
+                               </div>
+                               
+                               <div className="grid grid-cols-2 gap-4">
+                                 <div>
+                                   <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("duration")} ({t("minutes")})</label>
+                                   <input
+                                     type="number"
+                                     value={event.duration_minutes}
+                                     onChange={(e) => updateEvent(index, "duration_minutes", Number.parseInt(e.target.value) || 60)}
+                                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                                   />
+                                 </div>
+                                 
+                                 <div>
+                                   <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("bufferTime")} ({t("minutes")})</label>
+                                   <input
+                                     type="number"
+                                     value={event.buffer_minutes}
+                                     onChange={(e) => updateEvent(index, "buffer_minutes", Number.parseInt(e.target.value) || 0)}
+                                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                                   />
+                                 </div>
+                               </div>
+                             </div>
+                           </div>
+
+                           {/* Desktop Layout */}
+                           <div className="hidden lg:flex lg:gap-4 lg:items-center">
                               {/* Circular number icon - minimal width */}
                               <div className="flex items-center justify-center w-8 flex-shrink-0">
                                 <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
@@ -1031,7 +1218,55 @@ export default function CreateServicePage() {
                                  { key: 'sunday', label: 'Sunday' }
                                ].map((day) => (
                                                                    <div key={day.key} className="p-2 rounded border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-tertiary)]">
-                                    <div className="flex items-center gap-3">
+                                    {/* Mobile Layout - Stacked */}
+                                    <div className="lg:hidden space-y-3">
+                                      {/* Day name and toggle */}
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-sm font-medium text-[var(--dashboard-text-secondary)]">{day.label}</span>
+                                        <button
+                                          type="button"
+                                          onClick={() => updateEventAvailability(index, day.key, 'enabled', !event.availability[day.key as keyof typeof event.availability].enabled)}
+                                          className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                                            event.availability[day.key as keyof typeof event.availability].enabled
+                                              ? 'bg-blue-600'
+                                              : 'bg-gray-300'
+                                          }`}
+                                        >
+                                          <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                                            event.availability[day.key as keyof typeof event.availability].enabled
+                                              ? 'translate-x-5'
+                                              : 'translate-x-1'
+                                          }`} />
+                                        </button>
+                                      </div>
+                                      
+                                      {/* Time Fields - Full width on mobile */}
+                                      <div className="grid grid-cols-2 gap-3">
+                                        <div className="flex items-center gap-1 px-2 py-1 rounded border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-input)]">
+                                          <label className={`text-xs text-gray-500`}>Start</label>
+                                          <input
+                                            type="time"
+                                            value={event.availability[day.key as keyof typeof event.availability].start}
+                                            onChange={(e) => updateEventAvailability(index, day.key, 'start', e.target.value)}
+                                            disabled={!event.availability[day.key as keyof typeof event.availability].enabled}
+                                            className={`w-full px-1 py-0.5 text-xs border-0 bg-transparent focus:ring-0 focus:outline-none text-[var(--dashboard-text-primary)] ${!event.availability[day.key as keyof typeof event.availability].enabled ? 'opacity-50' : ''}`}
+                                          />
+                                        </div>
+                                        <div className="flex items-center gap-1 px-2 py-1 rounded border border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-input)]">
+                                          <label className={`text-xs text-gray-500`}>End</label>
+                                          <input
+                                            type="time"
+                                            value={event.availability[day.key as keyof typeof event.availability].end}
+                                            onChange={(e) => updateEventAvailability(index, day.key, 'end', e.target.value)}
+                                            disabled={!event.availability[day.key as keyof typeof event.availability].enabled}
+                                            className={`w-full px-1 py-0.5 text-xs border-0 bg-transparent focus:ring-0 focus:outline-none text-[var(--dashboard-text-primary)] ${!event.availability[day.key as keyof typeof event.availability].enabled ? 'opacity-50' : ''}`}
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* Desktop Layout - Horizontal */}
+                                    <div className="hidden lg:flex items-center gap-3">
                                       <span className="text-sm font-medium w-20 text-[var(--dashboard-text-secondary)]">{day.label}</span>
                                       
                                       {/* Toggle Switch */}
@@ -1081,8 +1316,6 @@ export default function CreateServicePage() {
                            </div>
                         </div>
                       ))}
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
@@ -1095,7 +1328,7 @@ export default function CreateServicePage() {
                                                                                        {/* Requirements Section */}
                <div className="border-t-2 border-[var(--dashboard-border-primary)] pt-10 mb-10">
              <div className="flex justify-between items-center mb-6">
-               <h2 className="text-xl font-bold text-[var(--dashboard-text-primary)]">{t("requirements")}</h2>
+               <h2 className="text-sm md:text-lg font-bold text-[var(--dashboard-text-primary)] uppercase">{t("requirements")}</h2>
               <button
                 type="button"
                 onClick={addRequirement}
@@ -1107,7 +1340,63 @@ export default function CreateServicePage() {
 
                          {requirements.map((requirement, index) => (
                <div key={index} className="mb-3 border rounded-xl p-3 lg:py-2 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
-                <div className="space-y-4 lg:space-y-0 lg:flex lg:gap-4 lg:items-center">
+                 {/* Mobile Layout */}
+                 <div className="lg:hidden space-y-4">
+                   {/* Header with number and delete button */}
+                   <div className="flex items-center justify-between">
+                     <div className="flex items-center gap-2">
+                       <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
+                         {index + 1}
+                       </div>
+                       <span className="text-sm font-medium text-[var(--dashboard-text-secondary)]">Requirement {index + 1}</span>
+                     </div>
+                     <button
+                       type="button"
+                       onClick={() => removeRequirement(index)}
+                       className="w-6 h-6 rounded-full flex items-center justify-center transition-colors bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-red-600 hover:text-white"
+                     >
+                       ×
+                     </button>
+                   </div>
+                   
+                   {/* Full width inputs on mobile */}
+                   <div className="space-y-4">
+                     <div>
+                       <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("requirementTitle")}</label>
+                       <input
+                         type="text"
+                         value={requirement.title}
+                         onChange={(e) => updateRequirement(index, "title", e.target.value)}
+                         className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                       />
+                     </div>
+                     
+                     <div>
+                       <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("requirementText")}</label>
+                       <input
+                         type="text"
+                         value={requirement.requirements_text}
+                         onChange={(e) => updateRequirement(index, "requirements_text", e.target.value)}
+                         className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                       />
+                     </div>
+                     
+                     <div className="flex items-center">
+                       <label className="flex items-center">
+                         <input
+                           type="checkbox"
+                           checked={requirement.is_required}
+                           onChange={(e) => updateRequirement(index, "is_required", e.target.checked)}
+                           className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                         />
+                         <span className="ml-2 text-xs text-[var(--dashboard-text-secondary)]">{t("required")}</span>
+                       </label>
+                     </div>
+                   </div>
+                 </div>
+
+                 {/* Desktop Layout */}
+                 <div className="hidden lg:flex lg:gap-4 lg:items-center">
                   {/* Circular number icon - minimal width */}
                   <div className="flex items-center justify-center w-8 flex-shrink-0">
                     <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
@@ -1168,7 +1457,7 @@ export default function CreateServicePage() {
                                                                                        {/* Questions Section */}
                <div className="border-t-2 border-[var(--dashboard-border-primary)] pt-10 mb-10">
              <div className="flex justify-between items-center mb-6">
-               <h2 className="text-xl font-bold text-[var(--dashboard-text-primary)]">{t("questions")}</h2>
+               <h2 className="text-sm md:text-lg font-bold text-[var(--dashboard-text-primary)] uppercase">{t("questions")}</h2>
               <button
                 type="button"
                 onClick={addQuestion}
@@ -1180,7 +1469,86 @@ export default function CreateServicePage() {
 
                              {questions.map((question, index) => (
                  <div key={index} className="mb-3 border rounded-xl p-3 lg:py-2 shadow-sm border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-card)]">
-                  <div className="space-y-4 lg:space-y-0 lg:flex lg:gap-4 lg:items-center">
+                   {/* Mobile Layout */}
+                   <div className="lg:hidden space-y-4">
+                     {/* Header with number and delete button */}
+                     <div className="flex items-center justify-between">
+                       <div className="flex items-center gap-2">
+                         <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">
+                           {index + 1}
+                         </div>
+                         <span className="text-sm font-medium text-[var(--dashboard-text-secondary)]">Question {index + 1}</span>
+                       </div>
+                       <button
+                         type="button"
+                         onClick={() => removeQuestion(index)}
+                         className="w-6 h-6 rounded-full flex items-center justify-center transition-colors bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] hover:bg-red-600 hover:text-white"
+                       >
+                         ×
+                       </button>
+                     </div>
+                     
+                     {/* Full width inputs on mobile */}
+                     <div className="space-y-4">
+                       <div>
+                         <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("questionType")}</label>
+                         <select
+                           value={question.question_type}
+                           onChange={(e) => updateQuestion(index, "question_type", e.target.value)}
+                           className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                         >
+                           <option value="open">📝 {t("openText")}</option>
+                           <option value="checkbox_single">☑️ {t("singleCheckbox")}</option>
+                           <option value="checkbox_multi">☑️☑️ {t("multipleChoice")}</option>
+                         </select>
+                       </div>
+                       
+                       <div>
+                         <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("questionText")}</label>
+                         <input
+                           type="text"
+                           value={question.question_text}
+                           onChange={(e) => updateQuestion(index, "question_text", e.target.value)}
+                           className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                         />
+                       </div>
+                       
+                       {/* Max Length - only for open questions */}
+                       {question.question_type === "open" && (
+                         <div>
+                           <label className="block text-xs font-medium mb-1 text-[var(--dashboard-text-secondary)]">{t("maxLength")}</label>
+                           <input
+                             type="number"
+                             value={question.max_length || ""}
+                             onChange={(e) =>
+                               updateQuestion(
+                                 index,
+                                 "max_length",
+                                 e.target.value ? Number.parseInt(e.target.value) : undefined,
+                               )
+                             }
+                             placeholder="500"
+                             className="w-full px-3 py-2 border rounded-lg text-sm bg-[var(--dashboard-bg-input)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)]"
+                           />
+                         </div>
+                       )}
+                       
+                       <div className="flex items-center">
+                         <label className="flex items-center">
+                           <input
+                             type="checkbox"
+                             checked={question.is_required}
+                             onChange={(e) => updateQuestion(index, "is_required", e.target.checked)}
+                             className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                           />
+                           <span className="ml-2 text-xs text-[var(--dashboard-text-secondary)]">{t("required")}</span>
+                         </label>
+                       </div>
+                     </div>
+                   </div>
+
+                   {/* Desktop Layout */}
+                   <div className="hidden lg:flex lg:gap-4 lg:items-center">
                     {/* Circular number icon - minimal width */}
                     <div className="flex items-center justify-center w-8 flex-shrink-0">
                       <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)]">

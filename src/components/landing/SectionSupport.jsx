@@ -61,7 +61,7 @@ export default function SectionSupport({ locale }) {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative overflow-hidden">
+    <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-slate-50 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_25%_25%,rgba(59,130,246,0.1)_2px,transparent_2px)] bg-[length:40px_40px]"></div>
@@ -107,7 +107,8 @@ export default function SectionSupport({ locale }) {
           ))}
         </div>
 
-        {/* Testimonials Section */}
+        {/* Testimonials Section - Hidden for now */}
+        {/* 
         <div className="bg-white rounded-3xl p-8 lg:p-12 shadow-xl border border-gray-100">
           <div className="text-center mb-12">
             <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4">
@@ -139,6 +140,7 @@ export default function SectionSupport({ locale }) {
             ))}
           </div>
         </div>
+        */}
 
       </div>
     </section>

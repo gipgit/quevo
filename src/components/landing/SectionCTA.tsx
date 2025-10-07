@@ -7,10 +7,10 @@ export default function SectionCTA() {
     const t = useTranslations('Landing');
     
     return (
-        <section className="py-16 px-4 lg:px-8">
-            <div className="max-w-7xl mx-auto">
+        <section className="">
+            <div className="mx-auto">
                 <div 
-                    className="relative rounded-3xl p-8 lg:p-16 overflow-hidden"
+                    className="relative p-8 lg:p-20 overflow-hidden"
                     style={{ backgroundColor: 'rgb(27, 12, 37)' }}
                 >
                     {/* Gradient Layer 1 */}

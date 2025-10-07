@@ -169,7 +169,7 @@ export default function ServiceImageUpload({ onImageChange, currentImage, theme 
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-blue-600 hover:bg-blue-700 text-white"
+                  className="px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-[var(--dashboard-bg-tertiary)] hover:bg-[var(--dashboard-bg-secondary)] text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] border border-[var(--dashboard-border-primary)]"
                 >
                   {t("selectImage")}
                 </button>
