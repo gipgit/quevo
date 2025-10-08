@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl"
 import { ALLOWED_SOCIAL_LINKS } from "@/lib/social-links-config"
-import { Globe2 as GlobeAltIcon } from 'lucide-react'
+import { Globe2 as GlobeAltIcon, ImageIcon } from 'lucide-react'
 
 interface ProfilePreviewProps {
   profileData: Record<string, any>
@@ -53,24 +53,32 @@ export default function ProfilePreview({
         
         {/* Profile Card */}
         <div 
-          className="max-w-[360px] min-w-[250px] w-full overflow-hidden shadow-md" 
+          className="max-w-[360px] min-w-[250px] w-full rounded-xl overflow-hidden shadow-md" 
           style={{ background: profileSettings.theme_color_background || "#FFFFFF" }}
         >
           {/* Cover */}
           <div 
-            className="w-full h-24 bg-gray-200" 
+            className="relative w-full h-28 bg-gray-400 overflow-hidden" 
             style={{ 
               backgroundImage: coverImg ? `url(${coverImg})` : undefined, 
               backgroundSize: 'cover', 
               backgroundPosition: 'center' 
             }} 
-          />
+          >
+            {/* Gradient overlay for fade effect from bottom */}
+            <div 
+              className="absolute inset-0"
+              style={{
+                background: `linear-gradient(to top, ${profileSettings.theme_color_background || "#FFFFFF"} 20%, ${profileSettings.theme_color_background || "#FFFFFF"}90, transparent)`
+              }}
+            />
+          </div>
           {/* Profile + Name + Button */}
           <div 
             className="flex flex-col items-center py-6" 
             style={{ background: profileSettings.theme_color_background || "#FFFFFF" }}
           >
-            <div className="w-[100px] h-[100px] rounded-full bg-gray-300 border-2 border-white -mt-[60px] mb-1 overflow-hidden flex items-center justify-center">
+            <div className="relative z-10 w-[72px] h-[72px] rounded-full bg-gray-300 -mt-[68px] mb-1 overflow-hidden flex items-center justify-center">
               {profileImg ? (
                 <img 
                   src={profileImg} 
@@ -78,7 +86,7 @@ export default function ProfilePreview({
                   className="w-full h-full object-cover rounded-full" 
                 />
               ) : (
-                <span className="text-gray-400">IMG</span>
+                <ImageIcon className="w-8 h-8 text-gray-400" />
               )}
             </div>
             
@@ -112,10 +120,7 @@ export default function ProfilePreview({
                   return (
                     <div 
                       key={social.id}
-                      className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center"
-                      style={{ 
-                        background: profileSettings.theme_color_background === "#FFFFFF" ? "#F3F4F6" : profileSettings.theme_color_background 
-                      }}
+                      className="w-6 h-6 rounded-full flex items-center justify-center"
                     >
                       <img 
                         src={social.iconPath} 

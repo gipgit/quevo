@@ -38,6 +38,31 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
         buttonContentColor, // Use server-calculated button text color
     } = useBusinessProfile();
 
+    // Create a secondary background color - lighter shade for cards/containers
+    const createSecondaryColor = (hexColor, isDark) => {
+        if (!hexColor || !hexColor.startsWith('#')) return hexColor;
+        
+        // Remove # and convert to RGB
+        const hex = hexColor.slice(1);
+        const r = parseInt(hex.slice(0, 2), 16);
+        const g = parseInt(hex.slice(2, 4), 16);
+        const b = parseInt(hex.slice(4, 6), 16);
+        
+        // Adjust brightness
+        const adjustment = isDark ? 40 : -40;
+        const newR = Math.max(0, Math.min(255, r + adjustment));
+        const newG = Math.max(0, Math.min(255, g + adjustment));
+        const newB = Math.max(0, Math.min(255, b + adjustment));
+        
+        // Convert back to hex
+        return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+    };
+    
+    const themeColorBackgroundSecondary = createSecondaryColor(themeColorBackground, isDarkBackground);
+    
+    // Create a border color - subtle variation for borders
+    const themeColorBorder = createSecondaryColor(themeColorBackground, !isDarkBackground);
+
     const t = useTranslations('Common');
     const tBooking = useTranslations('Booking');
 
@@ -399,6 +424,9 @@ const BusinessProfileHeader = ({ toggleContactModal, togglePaymentsModal, toggle
                 activeSection={activeSection}
                 themeColorText={themeColorText}
                 themeColorButton={themeColorButton}
+                themeColorBackground={themeColorBackground}
+                themeColorBackgroundSecondary={themeColorBackgroundSecondary}
+                themeColorBorder={themeColorBorder}
                 googleReviewLinkUrl={googleReviewLinkUrl}
                 hasPhones={hasPhones}
                 hasEmails={hasEmails}

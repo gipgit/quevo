@@ -78,7 +78,7 @@ export default function DashboardSupportModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 lg:p-4">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
@@ -97,13 +97,21 @@ export default function DashboardSupportModal({
             <XMarkIcon className="w-6 h-6" />
           </button>
           <div className="text-center">
-            <h2 className="text-xl font-semibold text-[var(--dashboard-text-primary)]">
+            <h2 className="text-lg font-medium text-[var(--dashboard-text-primary)]">
               {t('support.title') || 'Support Request'}
             </h2>
             <div className="mt-1">
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-[var(--dashboard-bg-tertiary)] text-[var(--dashboard-text-secondary)] border border-[var(--dashboard-border-primary)]">
                 {t('support.expectedReplyTime') || 'Expected reply: ~2h'}
               </span>
+            </div>
+            {/* Helpful links in header */}
+            <div className="mt-3 text-xs text-[var(--dashboard-text-secondary)]">
+              <a href="#" target="_blank" className="text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:underline">Guides</a>
+              <span className="mx-2 text-gray-400">·</span>
+              <a href="#" target="_blank" className="text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:underline">Faqs</a>
+              <span className="mx-2 text-gray-400">·</span>
+              <a href="/status" target="_blank" className="text-[var(--dashboard-text-secondary)] hover:text-[var(--dashboard-text-primary)] hover:underline">Updates</a>
             </div>
           </div>
         </div>
@@ -140,46 +148,45 @@ export default function DashboardSupportModal({
                   placeholder={t('support.messagePlaceholder') || "Describe your issue or question..."}
                   disabled={isSubmitting}
                                  />
-                 <div className="flex justify-between items-center mt-1">
-                   <span className="text-xs text-[var(--dashboard-text-secondary)]">
-                     {message.length}/1000 {t('support.characters') || 'characters'}
-                   </span>
+                 <div className="mt-1">
+                   <div className="text-center">
+                     <span className="text-xs text-gray-400 dark:text-gray-500">
+                       {message.length}/1000 {t('support.characters') || 'characters'}
+                     </span>
+                   </div>
                    {error && (
-                     <span className="text-xs text-red-500">{error}</span>
+                     <div className="text-center mt-1">
+                       <span className="text-xs text-red-500">{error}</span>
+                     </div>
                    )}
                  </div>
                </div>
-              {/* Helpful links under textarea */}
-              <div className="mt-2 text-xs text-[var(--dashboard-text-secondary)] text-center">
-                <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">Guides</a>
-                <span className="mx-2 text-gray-400">·</span>
-                <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">Faqs</a>
-                <span className="mx-2 text-gray-400">·</span>
-                <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">Updates</a>
-              </div>
              </>
            )}
         </form>
 
         {/* Footer */}
         {!success && (
-          <div className="flex justify-end gap-3 p-6 border-t border-[var(--dashboard-border-primary)]">
-            <button
-              type="button"
-              onClick={handleClose}
-              className="px-4 py-2 text-sm font-medium text-[var(--dashboard-text-primary)] border border-[var(--dashboard-border-primary)] rounded-lg transition-colors hover:bg-[var(--dashboard-bg-tertiary)]"
-              disabled={isSubmitting}
-            >
-              {t('support.cancel') || 'Cancel'}
-            </button>
+          <div className="p-6 border-t border-[var(--dashboard-border-primary)]">
             <button
               type="submit"
               onClick={handleSubmit}
-              className="px-4 py-2 text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-[var(--dashboard-bg-primary)] text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-secondary)] hover:text-[var(--dashboard-text-primary)]"
+              className="w-full px-4 py-2 text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                backgroundColor: 'var(--dashboard-button-primary-bg)',
+                color: 'var(--dashboard-button-primary-text)',
+                border: '1px solid var(--dashboard-button-primary-border)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--dashboard-button-primary-bg-hover)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--dashboard-button-primary-bg)';
+              }}
               disabled={isSubmitting}
             >
               {isSubmitting ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center gap-2">
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   {t('support.submitting') || 'Submitting...'}
                 </div>

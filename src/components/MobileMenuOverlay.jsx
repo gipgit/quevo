@@ -16,6 +16,9 @@ const MobileMenuOverlay = ({
     activeSection,
     themeColorText,
     themeColorButton,
+    themeColorBackground,
+    themeColorBackgroundSecondary,
+    themeColorBorder,
     googleReviewLinkUrl,
     hasPhones,
     hasEmails,
@@ -61,8 +64,8 @@ const MobileMenuOverlay = ({
     }
 
     return (
-        <div className="lg:hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end">
-            <div className="bg-white rounded-t-3xl w-full max-h-[85vh] overflow-y-auto relative">
+        <div className="lg:hidden fixed inset-0 backdrop-blur-sm z-50 flex items-end" style={{ backgroundColor: `${themeColorBackgroundSecondary}CC` }}>
+            <div className="rounded-t-3xl w-full max-h-[85vh] overflow-y-auto relative" style={{ backgroundColor: themeColorBackground }}>
                 {/* Close Button - Absolute positioned */}
                 <button
                     onClick={onClose}
@@ -73,9 +76,9 @@ const MobileMenuOverlay = ({
                     </svg>
                 </button>
 
-                <div className="pt-12">
+                <div className="pt-8">
                     {/* Profile Image with QR Code and Link */}
-                    <div className="flex flex-col items-center mb-6 px-6">
+                    <div className="flex flex-col items-center mb-2 px-6">
                         <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex-shrink-0 mb-4">
                             {businessData.business_img_profile ? (
                                 <Image
@@ -97,19 +100,19 @@ const MobileMenuOverlay = ({
                         
                         {/* QR Code */}
                         <div className="flex justify-center mb-4">
-                            <div className="p-3 bg-white rounded-lg border border-gray-200">
+                            <div className="p-3 rounded-lg" style={{ backgroundColor: themeColorBackgroundSecondary || '#f9fafb' }}>
                                 <QRCodeSVG
                                     value={publicUrl}
                                     size={120}
-                                    bgColor="white"
-                                    fgColor="black"
+                                    bgColor={themeColorBackgroundSecondary || '#f9fafb'}
+                                    fgColor={themeColorText || '#000000'}
                                     level="M"
                                 />
                             </div>
                         </div>
                         
                         {/* Link Pill with ShareProfileModal styling and integrated copy button */}
-                        <div className={`px-3 py-2 rounded-full text-sm font-medium flex items-center gap-2 shadow-sm border mb-4 bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 border-gray-200 transition-all duration-300 relative overflow-hidden ${
+                        <div className={`max-w-[100%] mx-auto px-3 py-2 rounded-full text-sm font-medium flex items-center gap-2 shadow-sm border mb-4 bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 border-gray-200 transition-all duration-300 relative overflow-hidden ${
                             isAnimating ? 'animate-pill-shine' : ''
                         }`}>
                             <GlobeAltIcon className="w-4 h-4 text-blue-600 flex-shrink-0" strokeWidth={1} />
@@ -143,7 +146,7 @@ const MobileMenuOverlay = ({
                                             toggleContactModal('phone');
                                             onClose();
                                         }} 
-                                        className="flex-1 py-3 px-4 transition-colors duration-200 text-lg border-b border-gray-200 text-center flex flex-col items-center gap-2"
+                                        className="flex-1 py-3 px-4 transition-colors duration-200 text-lg text-center flex flex-col items-center gap-2"
                                         style={{ color: themeColorText }}
                                     >
                                         <div 
@@ -168,7 +171,7 @@ const MobileMenuOverlay = ({
                                             toggleContactModal('email');
                                             onClose();
                                         }} 
-                                        className="flex-1 py-3 px-4 transition-colors duration-200 text-lg border-b border-gray-200 text-center flex flex-col items-center gap-2"
+                                        className="flex-1 py-3 px-4 transition-colors duration-200 text-lg text-center flex flex-col items-center gap-2"
                                         style={{ color: themeColorText }}
                                     >
                                         <div 
@@ -193,7 +196,7 @@ const MobileMenuOverlay = ({
                                             toggleAddressModal();
                                             onClose();
                                         }} 
-                                        className="flex-1 py-3 px-4 transition-colors duration-200 text-lg border-b border-gray-200 text-center flex flex-col items-center gap-2"
+                                        className="flex-1 py-3 px-4 transition-colors duration-200 text-lg text-center flex flex-col items-center gap-2"
                                         style={{ color: themeColorText }}
                                     >
                                         <div 
@@ -220,32 +223,24 @@ const MobileMenuOverlay = ({
                         <Link
                             href={`/${businessUrlnameInPath}/services`}
                             onClick={onClose}
-                            className={`block py-3 px-4 transition-colors duration-200 text-lg border-b border-gray-200 ${activeSection === 'services' ? 'font-semibold' : 'font-normal'}`}
-                            style={activeSection === 'services' ? { backgroundColor: themeColorButton + '20', color: themeColorText } : { color: themeColorText }}
+                            className={`block py-2 px-4 transition-colors duration-200 text-lg border-b ${activeSection === 'services' ? 'font-semibold' : 'font-normal'}`}
+                            style={activeSection === 'services' ? { backgroundColor: themeColorButton + '20', color: themeColorText, borderColor: themeColorBorder || '#e5e7eb' } : { color: themeColorText, borderColor: themeColorBorder || '#e5e7eb' }}
                         >
                             {t('services')}
                         </Link>
                         <Link
-                            href={`/${businessUrlnameInPath}/products`}
-                            onClick={onClose}
-                            className={`block py-3 px-4 transition-colors duration-200 text-lg border-b border-gray-200 ${activeSection === 'products' ? 'font-semibold' : 'font-normal'}`}
-                            style={activeSection === 'products' ? { backgroundColor: themeColorButton + '20', color: themeColorText } : { color: themeColorText }}
-                        >
-                            {t('products')}
-                        </Link>
-                        <Link
                             href={`/${businessUrlnameInPath}/promotions`}
                             onClick={onClose}
-                            className={`block py-3 px-4 transition-colors duration-200 text-lg border-b border-gray-200 ${activeSection === 'promotions' ? 'font-semibold' : 'font-normal'}`}
-                            style={activeSection === 'promotions' ? { backgroundColor: themeColorButton + '20', color: themeColorText } : { color: themeColorText }}
+                            className={`block py-2 px-4 transition-colors duration-200 text-lg border-b ${activeSection === 'promotions' ? 'font-semibold' : 'font-normal'}`}
+                            style={activeSection === 'promotions' ? { backgroundColor: themeColorButton + '20', color: themeColorText, borderColor: themeColorBorder || '#e5e7eb' } : { color: themeColorText, borderColor: themeColorBorder || '#e5e7eb' }}
                         >
                             {t('promotions')}
                         </Link>
                         <Link
                             href={`/${businessUrlnameInPath}/rewards`}
                             onClick={onClose}
-                            className={`block py-3 px-4 transition-colors duration-200 text-lg border-b border-gray-200 ${activeSection === 'rewards' ? 'font-semibold' : 'font-normal'}`}
-                            style={activeSection === 'rewards' ? { backgroundColor: themeColorButton + '20', color: themeColorText } : { color: themeColorText }}
+                            className={`block py-2 px-4 transition-colors duration-200 text-lg border-b ${activeSection === 'rewards' ? 'font-semibold' : 'font-normal'}`}
+                            style={activeSection === 'rewards' ? { backgroundColor: themeColorButton + '20', color: themeColorText, borderColor: themeColorBorder || '#e5e7eb' } : { color: themeColorText, borderColor: themeColorBorder || '#e5e7eb' }}
                         >
                             {t('rewards')}
                         </Link>

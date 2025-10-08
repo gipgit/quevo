@@ -84,10 +84,10 @@
   --progress-fill-hover: linear-gradient(135deg, #2563eb, #1d4ed8, #1e40af);
 
   /* Dashboard Button Variables - Light */
-  --dashboard-button-primary-bg: var(--dashboard-bg-secondary);
-  --dashboard-button-primary-bg-hover: var(--dashboard-bg-tertiary);
-  --dashboard-button-primary-text: var(--dashboard-text-primary);
-  --dashboard-button-primary-border: var(--dashboard-border-tertiary);
+  --dashboard-button-primary-bg: #000000;
+  --dashboard-button-primary-bg-hover: #1a1a1a;
+  --dashboard-button-primary-text: #ffffff;
+  --dashboard-button-primary-border: #000000;
 
   --dashboard-button-secondary-bg: transparent;
   --dashboard-button-secondary-bg-hover: var(--dashboard-bg-tertiary);
@@ -172,8 +172,8 @@
   --progress-fill-hover: linear-gradient(135deg, #3b82f6, #2563eb, #1d4ed8);
 
   /* Dashboard Button Variables - Dark */
-  --dashboard-button-primary-bg: #262626;
-  --dashboard-button-primary-bg-hover: #2f2f2f;
+  --dashboard-button-primary-bg: #3a3a3a;
+  --dashboard-button-primary-bg-hover: #4a4a4a;
   --dashboard-button-primary-text: var(--dashboard-text-primary);
   --dashboard-button-primary-border: var(--dashboard-border-tertiary);
 
