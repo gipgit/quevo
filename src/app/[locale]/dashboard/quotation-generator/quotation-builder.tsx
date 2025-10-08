@@ -10,7 +10,7 @@ import DashboardLayout from '@/components/dashboard/dashboard-layout'
 import {
   Download as DocumentArrowDownIcon,
   FileText as DocumentTextIcon,
-  Cog as Cog6ToothIcon,
+  Settings,
   ArrowLeft as ArrowLeftIcon,
   Check as CheckIcon,
   X as XMarkIcon,
@@ -609,7 +609,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
         </div>
 
         {/* Content Wrapper with Background */}
-        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-6">
+        <div className="bg-[var(--dashboard-bg-primary)] rounded-2xl border border-[var(--dashboard-border-primary)] p-4 lg:p-6">
           <div className="flex flex-col h-full min-h-0">
             {/* Main Content - 3 Column Layout */}
             <div className="flex-1 flex flex-col lg:flex-row lg:flex-nowrap gap-2 lg:gap-6 overflow-hidden relative min-h-0">
@@ -618,7 +618,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
               <div className="w-full lg:basis-[20%] border-b lg:border-b-0 lg:border-r border-[var(--dashboard-border-primary)] flex flex-col">
                 <div className="p-4 lg:p-6">
               <div className="flex items-center gap-2 mb-3 md:mb-6">
-                <Cog6ToothIcon className="w-5 h-5" strokeWidth={1} />
+                <Settings className="w-5 h-5" strokeWidth={1} />
                 <h2 className={`text-base font-normal ${
                   theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
                 }`}>
@@ -794,7 +794,7 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
               </div>
 
               {/* Middle Panel - Document Preview */}
-              <div className="w-full lg:basis-[48%] flex flex-col min-h-0 lg:min-h-0 h-96 lg:h-auto p-2 lg:p-6 space-y-4 lg:space-y-5">
+              <div className="w-full lg:basis-[48%] flex flex-col min-h-0 p-2 lg:p-6 space-y-4 lg:space-y-5">
               <div className={`p-0 rounded-md ${
                   theme === 'dark' ? 'bg-zinc-800' : 'bg-gray-800'
                 } shadow-lg`}>
@@ -1078,10 +1078,10 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
       {/* Edit Modal */}
         {showEditModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className={`p-6 rounded-lg max-w-md w-full mx-4 ${
+            <div className={`p-4 md:p-6 rounded-lg max-w-md w-full mx-4 ${
               theme === 'dark' ? 'bg-zinc-800' : 'bg-white'
             }`}>
-              <h3 className={`text-lg font-semibold mb-4 ${
+              <h3 className={`text-base md:text-lg font-medium mb-4 ${
                 theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
               }`}>
                 Edit {getFieldLabel(editingField)}
@@ -1222,11 +1222,11 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
       {/* Items Modal */}
       {showItemsModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className={`p-6 rounded-lg max-w-4xl w-full mx-4 max-h-[80vh] overflow-y-auto ${
+          <div className={`p-4 md:p-6 rounded-lg max-w-4xl lg:max-w-5xl w-full mx-4 max-h-[80vh] overflow-y-auto ${
             theme === 'dark' ? 'bg-zinc-800' : 'bg-white'
           }`}>
             <div className="flex justify-between items-center mb-6">
-              <h3 className={`text-lg font-semibold ${
+              <h3 className={`text-base md:text-lg font-medium ${
                 theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
               }`}>
                 Edit Items ({editableItems.length})
@@ -1234,13 +1234,13 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
               <div className="flex gap-2">
                 <button
                   onClick={addNewItem}
-                  className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-2 ${
+                  className={`px-2 md:px-3 py-1.5 md:py-2 rounded-lg transition-colors flex items-center gap-1 md:gap-2 text-sm ${
                     theme === 'dark' 
-                      ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                      ? 'bg-zinc-700 text-gray-300 hover:bg-zinc-600' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  <CheckIcon className="w-4 h-4" strokeWidth={1} />
+                  <CheckIcon className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={1} />
                   Add Item
                 </button>
                 <button
@@ -1263,175 +1263,175 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                     ? 'bg-zinc-700 border-zinc-600' 
                     : 'bg-gray-50 border-gray-200'
                 }`}>
-                                     <div className="grid grid-cols-12 gap-3 items-end">
-                     {/* Item Name */}
-                     <div className="col-span-3">
-                       <label className={`block text-xs font-medium mb-1 ${
-                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                       }`}>
-                         Item Name
-                       </label>
-                       <input
-                         type="text"
-                         value={item.name}
-                         onChange={(e) => {
-                           setEditableItems(prev => prev.map(i =>
-                             i.id === item.id ? { ...i, name: e.target.value } : i
-                           ))
-                         }}
-                         className={`w-full p-2 rounded-lg border text-sm ${
-                           theme === 'dark' 
-                             ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
-                             : 'bg-white border-gray-300 text-gray-900'
-                         }`}
-                         placeholder="Enter item name"
-                       />
-                     </div>
+                  <div className="flex flex-col lg:flex-row lg:items-end gap-2 lg:gap-2">
+                    {/* Item Name */}
+                    <div className="flex-1 lg:flex-none lg:w-[20%]">
+                      <label className={`block text-[0.6875rem] font-medium mb-1 ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
+                        Item Name
+                      </label>
+                      <input
+                        type="text"
+                        value={item.name}
+                        onChange={(e) => {
+                          setEditableItems(prev => prev.map(i =>
+                            i.id === item.id ? { ...i, name: e.target.value } : i
+                          ))
+                        }}
+                        className={`w-full p-2 rounded-lg border text-sm ${
+                          theme === 'dark' 
+                            ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
+                            : 'bg-white border-gray-300 text-gray-900'
+                        }`}
+                        placeholder="Enter item name"
+                      />
+                    </div>
 
-                     {/* Notes */}
-                     <div className="col-span-2">
-                       <label className={`block text-xs font-medium mb-1 ${
-                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                       }`}>
-                         Notes
-                       </label>
-                       <input
-                         type="text"
-                         value={item.description || ''}
-                         onChange={(e) => {
-                           setEditableItems(prev => prev.map(i =>
-                             i.id === item.id ? { ...i, description: e.target.value } : i
-                           ))
-                         }}
-                         className={`w-full p-2 rounded-lg border text-sm ${
-                           theme === 'dark' 
-                             ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
-                             : 'bg-white border-gray-300 text-gray-900'
-                         }`}
-                         placeholder="Optional notes"
-                       />
-                     </div>
+                    {/* Notes */}
+                    <div className="flex-1 lg:flex-none lg:w-[16%]">
+                      <label className={`block text-[0.6875rem] font-medium mb-1 ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
+                        Notes
+                      </label>
+                      <input
+                        type="text"
+                        value={item.description || ''}
+                        onChange={(e) => {
+                          setEditableItems(prev => prev.map(i =>
+                            i.id === item.id ? { ...i, description: e.target.value } : i
+                          ))
+                        }}
+                        className={`w-full p-2 rounded-lg border text-sm ${
+                          theme === 'dark' 
+                            ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
+                            : 'bg-white border-gray-300 text-gray-900'
+                        }`}
+                        placeholder="Optional notes"
+                      />
+                    </div>
 
-                     {/* Price Type */}
-                     <div className="col-span-2">
-                       <label className={`block text-xs font-medium mb-1 ${
-                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                       }`}>
-                         Price Type
-                       </label>
-                       <select
-                         value={item.priceType}
-                         onChange={(e) => {
-                           setEditableItems(prev => prev.map(i =>
-                             i.id === item.id ? { ...i, priceType: e.target.value } : i
-                           ))
-                         }}
-                         className={`w-full p-2 rounded-lg border text-sm ${
-                           theme === 'dark' 
-                             ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
-                             : 'bg-white border-gray-300 text-gray-900'
-                         }`}
-                       >
-                         <option value="fixed">Fixed</option>
-                         <option value="per_unit">Per Unit</option>
-                         <option value="per_hour">Per Hour</option>
-                         <option value="per_day">Per Day</option>
-                       </select>
-                     </div>
+                    {/* Price Type */}
+                    <div className="flex-1 lg:flex-none lg:w-[11%]">
+                      <label className={`block text-[0.6875rem] font-medium mb-1 ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
+                        Price Type
+                      </label>
+                      <select
+                        value={item.priceType}
+                        onChange={(e) => {
+                          setEditableItems(prev => prev.map(i =>
+                            i.id === item.id ? { ...i, priceType: e.target.value } : i
+                          ))
+                        }}
+                        className={`w-full p-2 rounded-lg border text-sm ${
+                          theme === 'dark' 
+                            ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
+                            : 'bg-white border-gray-300 text-gray-900'
+                        }`}
+                      >
+                        <option value="fixed">Fixed</option>
+                        <option value="per_unit">Per Unit</option>
+                        <option value="per_hour">Per Hour</option>
+                        <option value="per_day">Per Day</option>
+                      </select>
+                    </div>
 
-                     {/* Price Unit */}
-                     <div className="col-span-2">
-                       <label className={`block text-xs font-medium mb-1 ${
-                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                       }`}>
-                         Price Unit
-                       </label>
-                       <input
-                         type="text"
-                         value={item.priceUnit || ''}
-                         onChange={(e) => {
-                           setEditableItems(prev => prev.map(i =>
-                             i.id === item.id ? { ...i, priceUnit: e.target.value } : i
-                           ))
-                         }}
-                         className={`w-full p-2 rounded-lg border text-sm ${
-                           theme === 'dark' 
-                             ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
-                             : 'bg-white border-gray-300 text-gray-900'
-                         }`}
-                         placeholder="e.g., piece, hour"
-                       />
-                     </div>
+                    {/* Price Unit */}
+                    <div className="flex-1 lg:flex-none lg:w-[11%]">
+                      <label className={`block text-[0.6875rem] font-medium mb-1 ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
+                        Price Unit
+                      </label>
+                      <input
+                        type="text"
+                        value={item.priceUnit || ''}
+                        onChange={(e) => {
+                          setEditableItems(prev => prev.map(i =>
+                            i.id === item.id ? { ...i, priceUnit: e.target.value } : i
+                          ))
+                        }}
+                        className={`w-full p-2 rounded-lg border text-sm ${
+                          theme === 'dark' 
+                            ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
+                            : 'bg-white border-gray-300 text-gray-900'
+                        }`}
+                        placeholder="e.g., piece, hour"
+                      />
+                    </div>
 
-                     {/* Quantity */}
-                     <div className="col-span-1">
-                       <label className={`block text-xs font-medium mb-1 ${
-                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                       }`}>
-                         Qty
-                       </label>
-                       <input
-                         type="number"
-                         min="1"
-                         value={item.quantity}
-                         onChange={(e) => updateItemQuantity(item.id, parseInt(e.target.value) || 1)}
-                         className={`w-full p-2 rounded-lg border text-sm ${
-                           theme === 'dark' 
-                             ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
-                             : 'bg-white border-gray-300 text-gray-900'
-                         }`}
-                       />
-                     </div>
+                    {/* Quantity */}
+                    <div className="flex-1 lg:flex-none lg:w-[7%]">
+                      <label className={`block text-[0.6875rem] font-medium mb-1 ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
+                        Qty
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={item.quantity}
+                        onChange={(e) => updateItemQuantity(item.id, parseInt(e.target.value) || 1)}
+                        className={`w-full p-2 rounded-lg border text-sm ${
+                          theme === 'dark' 
+                            ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
+                            : 'bg-white border-gray-300 text-gray-900'
+                        }`}
+                      />
+                    </div>
 
-                     {/* Price */}
-                     <div className="col-span-1">
-                       <label className={`block text-xs font-medium mb-1 ${
-                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                       }`}>
-                         Price (€)
-                       </label>
-                       <input
-                         type="number"
-                         min="0"
-                         step="0.01"
-                         value={item.price}
-                         onChange={(e) => updateItemPrice(item.id, parseFloat(e.target.value) || 0)}
-                         className={`w-full p-2 rounded-lg border text-sm ${
-                           theme === 'dark' 
-                             ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
-                             : 'bg-white border-gray-300 text-gray-900'
-                         }`}
-                       />
-                     </div>
+                    {/* Price */}
+                    <div className="flex-1 lg:flex-none lg:w-[10%]">
+                      <label className={`block text-[0.6875rem] font-medium mb-1 ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
+                        Price (€)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={item.price}
+                        onChange={(e) => updateItemPrice(item.id, parseFloat(e.target.value) || 0)}
+                        className={`w-full p-2 rounded-lg border text-sm ${
+                          theme === 'dark' 
+                            ? 'bg-zinc-600 border-zinc-500 text-gray-100' 
+                            : 'bg-white border-gray-300 text-gray-900'
+                        }`}
+                      />
+                    </div>
 
-                     {/* Total */}
-                     <div className="col-span-1">
-                       <label className={`block text-xs font-medium mb-1 ${
-                         theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                       }`}>
-                         Total
-                       </label>
-                       <p className={`text-sm font-medium p-2 ${
-                         theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-                       }`}>
-                         €{(item.price * item.quantity).toFixed(2)}
-                       </p>
-                     </div>
-                   </div>
+                    {/* Total */}
+                    <div className="flex-1 lg:flex-none lg:w-[10%]">
+                      <label className={`block text-[0.6875rem] font-medium mb-1 ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
+                        Total
+                      </label>
+                      <p className={`text-sm font-medium p-2 ${
+                        theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
+                      }`}>
+                        €{(item.price * item.quantity).toFixed(2)}
+                      </p>
+                    </div>
 
-                  {/* Remove Button */}
-                  <div className="flex justify-end mt-2">
-                    <button
-                      onClick={() => removeItem(item.id)}
-                      className={`px-2 py-1 rounded text-xs transition-colors flex items-center gap-1 ${
-                        theme === 'dark' 
-                          ? 'text-red-400 hover:text-red-300 hover:bg-red-900/20' 
-                          : 'text-red-600 hover:text-red-700 hover:bg-red-50'
-                      }`}
-                    >
-                      <XMarkIcon className="w-3 h-3" />
-                      Remove
-                    </button>
+                    {/* Remove Button */}
+                    <div className="flex justify-end lg:justify-center lg:flex-none lg:w-[7%]">
+                      <button
+                        onClick={() => removeItem(item.id)}
+                        className={`px-2 py-1 lg:p-2 rounded text-xs transition-colors flex items-center gap-1 ${
+                          theme === 'dark' 
+                            ? 'text-red-400 hover:text-red-300 hover:bg-red-900/20' 
+                            : 'text-red-600 hover:text-red-700 hover:bg-red-50'
+                        }`}
+                      >
+                        <XMarkIcon className="w-3 h-3" />
+                        <span className="lg:hidden">Remove</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

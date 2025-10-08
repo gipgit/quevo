@@ -504,7 +504,7 @@ body.bg-transition {
 
 h1,h2,h3,h4,h5,h6{
     font-family: "FontHeading", sans-serif;
-    font-weight: inherit;
+    font-weight: 300;
     line-height: 1;
     letter-spacing: 0px;
     margin: 0;

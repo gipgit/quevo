@@ -1534,7 +1534,7 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
 
         {/* Generate Response Modal */}
         <Dialog open={showGenerateResponseModal} onOpenChange={setShowGenerateResponseModal}>
-          <div className="no-scroll max-w-xl min-w-[520px] relative overflow-visible p-0 rounded-2xl mx-0">
+          <div className="no-scroll w-full max-w-xl md:min-w-[520px] relative overflow-visible p-0 rounded-2xl mx-0">
             <div className="relative rounded-2xl overflow-hidden" style={{ background: 'var(--ai-modal-bg-base)', backgroundImage: 'var(--ai-modal-bg-gradient)' }}>
             {/* Accent Blur Layers */}
             <div 
@@ -1564,11 +1564,11 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
               }}
             ></div>
 
-            <div className="relative z-10 text-center space-y-4 p-6">
+            <div className="relative z-10 text-center space-y-4 p-4 md:p-6">
               <div className="flex justify-center">
                 {!isGeneratingResponse && <AIAssistantIcon size="md" />}
               </div>
-              <h3 className="text-lg font-medium ai-panel-text">Generate AI Response</h3>
+              <h3 className="text-base md:text-lg font-medium ai-panel-text">Generate AI Response</h3>
 
               {isGeneratingResponse ? (
                 <div className="py-6">
@@ -1577,19 +1577,20 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
               ) : (
                 <div className="space-y-3 text-left">
                   <div className="ai-panel-card p-3 rounded-lg">
-                    <div className="text-xs ai-panel-text-secondary mb-1">Request Summary</div>
-                    <div className="text-xs ai-panel-text flex flex-wrap gap-x-3 gap-y-0.5">
-                      <div><span className="ai-panel-text-secondary">Category:</span> {selectedRequest?.category}</div>
-                      <div><span className="ai-panel-text-secondary">Priority:</span> {selectedRequest?.priority}</div>
-                      <div className="flex-1 min-w-0"><span className="ai-panel-text-secondary">Message:</span> {selectedRequest?.message}</div>
+                    <div className="text-xs ai-panel-text-secondary mb-2">Request Summary</div>
+                    <div className="text-xs ai-panel-text">
+                      <div className="flex flex-wrap gap-x-3 gap-y-1">
+                        <div><span className="ai-panel-text-secondary">Category:</span> {selectedRequest?.category}</div>
+                        <div><span className="ai-panel-text-secondary">Priority:</span> {selectedRequest?.priority}</div>
+                      </div>
                     </div>
                   </div>
 
                   {/* Customer Message Card - matches middle panel card */}
                   <div>
                     <div className={`text-xs font-medium mb-2 ai-panel-text-secondary uppercase tracking-wide`}>Customer Message</div>
-                    <div className={`relative p-4 rounded-lg border bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] shadow-sm`}>
-                      <div className={`text-sm leading-relaxed mb-0 text-[var(--dashboard-text-primary)] relative z-10`}>
+                    <div className={`relative p-3 md:p-4 rounded-lg border bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] shadow-sm`}>
+                      <div className={`text-sm leading-normal mb-0 text-[var(--dashboard-text-primary)] relative z-10 break-words`}>
                         {selectedRequest?.message}
                       </div>
                       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 rounded-b-lg bg-gradient-to-b from-transparent to-blue-100/40"></div>
@@ -1599,23 +1600,23 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                   {/* Response Customization Options */}
                   <div>
                     <div className={`text-xs font-medium mb-3 ai-panel-text-secondary uppercase tracking-wide`}>Response Customization</div>
-                    <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-48 overflow-y-auto">
                       {responseCustomizationOptions.map((option) => (
                         <button
                           key={option.id}
                           onClick={() => handleCustomizationToggle(option.id)}
-                          className={`p-3 rounded-lg border text-left transition-colors ${
+                          className={`p-2.5 md:p-3 rounded-lg border text-left transition-colors ${
                             responseCustomizations.includes(option.id)
                               ? 'bg-blue-100 border-blue-300 text-blue-800'
                               : 'bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] text-[var(--dashboard-text-primary)] hover:bg-[var(--dashboard-bg-tertiary)]'
                           }`}
                         >
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 min-w-0">
                               <div className="text-xs font-medium mb-1">{option.label}</div>
                               <div className="text-xs opacity-75 leading-tight">{option.description}</div>
                             </div>
-                            <div className={`ml-2 w-4 h-4 rounded border-2 flex items-center justify-center ${
+                            <div className={`flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center ${
                               responseCustomizations.includes(option.id)
                                 ? 'bg-blue-500 border-blue-500'
                                 : 'border-gray-300'
@@ -1664,7 +1665,7 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
 
         {/* Text Enhancement Modal */}
         <Dialog open={showTextEnhancementModal} onOpenChange={setShowTextEnhancementModal}>
-          <div className="no-scroll max-w-xl min-w-[520px] relative overflow-visible p-0 rounded-2xl mx-0">
+          <div className="no-scroll w-full max-w-xl md:min-w-[520px] relative overflow-visible p-0 rounded-2xl mx-0">
             <div className="relative rounded-2xl overflow-hidden" style={{ background: 'var(--ai-modal-bg-base)', backgroundImage: 'var(--ai-modal-bg-gradient)' }}>
             {/* Accent Blur Layers */}
             <div 
@@ -1694,11 +1695,11 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
               }}
             ></div>
 
-            <div className="relative z-10 text-center space-y-4 p-6">
+            <div className="relative z-10 text-center space-y-4 p-4 md:p-6">
               <div className="flex justify-center">
                 {!isEnhancingText && <AIAssistantIcon size="md" />}
               </div>
-              <h3 className="text-lg font-medium ai-panel-text">Apply Text Enhancement</h3>
+              <h3 className="text-base md:text-lg font-medium ai-panel-text">Apply Text Enhancement</h3>
 
               {isEnhancingText ? (
                 <div className="py-6">
@@ -1709,8 +1710,8 @@ export default function SupportRequestsWrapper({ supportRequests: initialSupport
                   {/* Customer Message Card - matches middle panel card */}
                   <div>
                     <div className={`text-xs font-medium mb-2 ai-panel-text-secondary uppercase tracking-wide`}>Customer Message</div>
-                    <div className={`relative p-4 rounded-lg border bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] shadow-sm`}>
-                      <div className={`text-sm leading-relaxed mb-0 text-[var(--dashboard-text-primary)] relative z-10`}>
+                    <div className={`relative p-3 md:p-4 rounded-lg border bg-[var(--dashboard-bg-card)] border-[var(--dashboard-border-primary)] shadow-sm`}>
+                      <div className={`text-sm leading-normal mb-0 text-[var(--dashboard-text-primary)] relative z-10 break-words`}>
                         {selectedRequest?.message}
                       </div>
                       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 rounded-b-lg bg-gradient-to-b from-transparent to-blue-100/40"></div>

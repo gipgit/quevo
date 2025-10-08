@@ -267,12 +267,17 @@ model appsupportrequest {
   support_request_id                                     String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   business_id                                            String                @db.Uuid
   manager_id                                             String                @db.Uuid
+  subject                                                String                @db.VarChar(255)
   message                                                String
+  section                                                String                @db.VarChar(50)
   priority                                               app_support_priority? @default(medium)
   category                                               app_support_category  @default(general)
   status                                                 app_support_status    @default(open)
   assigned_to                                            String?               @db.Uuid
   resolution_notes                                       String?
+  user_name                                              String?               @db.VarChar(255)
+  user_email                                             String?               @db.VarChar(255)
+  screenshot_url                                         String?
   created_at                                             DateTime?             @default(now()) @db.Timestamptz(6)
   updated_at                                             DateTime?             @default(now()) @db.Timestamptz(6)
   usermanager_appsupportrequest_assigned_toTousermanager usermanager?          @relation("appsupportrequest_assigned_toTousermanager", fields: [assigned_to], references: [user_id], onUpdate: NoAction, map: "fk_asr_assigned_to")
@@ -286,6 +291,7 @@ model appsupportrequest {
   @@index([created_at], map: "idx_appsupportrequest_created_at")
   @@index([manager_id], map: "idx_appsupportrequest_manager_id")
   @@index([priority], map: "idx_appsupportrequest_priority")
+  @@index([section], map: "idx_appsupportrequest_section")
   @@index([status], map: "idx_appsupportrequest_status")
 }
 

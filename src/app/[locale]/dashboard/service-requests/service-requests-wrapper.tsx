@@ -1910,7 +1910,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                       
       {/* Generation Confirmation Modal */}
       {showGenerationModal && (
-        <div className={`fixed inset-0 ${theme === 'dark' ? 'bg-black/50' : 'bg-black/30'} backdrop-blur-sm flex items-center justify-center z-50 p-4`}>
+        <div className={`fixed inset-0 ${theme === 'dark' ? 'bg-black/50' : 'bg-black/30'} backdrop-blur-sm flex items-center justify-center z-50 p-2 lg:p-4`}>
           <div className={`rounded-2xl w-full max-w-md relative overflow-visible p-0`} style={{ background: 'var(--ai-modal-bg-base)', backgroundImage: 'var(--ai-modal-bg-gradient)' }}>
               {/* Accent Color Layers */}
               <div 
@@ -1940,7 +1940,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                 }}
               ></div>
               
-              <div className="p-6 text-center relative z-10">
+              <div className="p-4 lg:p-6 text-center relative z-10">
               {!isGenerating && (
                 <>
                   <h3 className="text-lg font-medium ai-panel-text mb-4">Confirm AI Generation</h3>
@@ -1962,36 +1962,29 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                   {/* Scrollable Content Container */}
                   <div className="max-h-64 overflow-y-auto mb-2">
                     {/* Request Summary */}
-                    <div className="mb-4 pb-4 border-b border-white/10">
-                      <h4 className="text-sm font-medium ai-panel-text-secondary mb-2">Request Summary</h4>
-                      <div className="space-y-1 text-xs">
-                              <div>
-                          <span className="ai-panel-text-secondary">Customer:</span> 
-                          <span className="ai-panel-text ml-2">{selectedRequest?.customer_name}</span>
-                              </div>
-                              <div>
-                          <span className="ai-panel-text-secondary">Service:</span> 
-                          <span className="ai-panel-text ml-2">{selectedRequest?.service?.service_name || 'N/A'}</span>
-                                </div>
-                              <div>
-                          <span className="ai-panel-text-secondary">Reference:</span> 
-                          <span className="ai-panel-text ml-2">{selectedRequest?.request_reference}</span>
-                                  </div>
-                                </div>
-                              </div>
+                    <div className="ai-panel-card p-3 rounded-lg mb-4">
+                      <div className="text-xs ai-panel-text-secondary mb-1">Request Summary</div>
+                      <div className="text-xs ai-panel-text">
+                        <div className="flex flex-wrap gap-x-3 gap-y-1">
+                          <div><span className="ai-panel-text-secondary">Customer:</span> {selectedRequest?.customer_name}</div>
+                          <div><span className="ai-panel-text-secondary">Service:</span> {selectedRequest?.service?.service_name || 'N/A'}</div>
+                          <div><span className="ai-panel-text-secondary">Reference:</span> {selectedRequest?.request_reference}</div>
+                        </div>
+                      </div>
+                    </div>
 
                     {/* Customer Notes Clarification */}
                     {customerNotesClarification && (
-                      <div className="mb-4 pb-4 border-b border-white/10">
-                        <h4 className="text-xs font-medium ai-panel-text-secondary mb-2">Customer Notes Clarification</h4>
-                        <p className="text-sm ai-panel-text">{customerNotesClarification}</p>
+                      <div className="ai-panel-card p-3 rounded-lg mb-4">
+                        <div className="text-xs ai-panel-text-secondary mb-1">Customer Notes Clarification</div>
+                        <div className="text-sm ai-panel-text">{customerNotesClarification}</div>
                       </div>
                     )}
 
                     {/* Selected Questions for Clarification */}
                     {selectedQuestionsForClarification.length > 0 && (
-                      <div className="mb-4 pb-4 border-b border-white/10">
-                        <h4 className="text-xs font-medium ai-panel-text-secondary mb-2">Selected Questions Needing Clarification</h4>
+                      <div className="ai-panel-card p-3 rounded-lg mb-4">
+                        <div className="text-xs ai-panel-text-secondary mb-1">Selected Questions Needing Clarification</div>
                         <div className="space-y-2">
                           {selectedQuestionsForClarification.map((questionIndex) => {
                             const question = selectedRequest?.question_responses_snapshot[questionIndex]
@@ -2017,8 +2010,8 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
                     {/* Selected Requirements for Clarification */}
                     {selectedRequirementsForClarification.length > 0 && (
-                      <div className="mb-4 pb-4 border-b border-white/10">
-                        <h4 className="text-xs font-medium ai-panel-text-secondary mb-2">Selected Requirements Needing Clarification</h4>
+                      <div className="ai-panel-card p-3 rounded-lg mb-4">
+                        <div className="text-xs ai-panel-text-secondary mb-1">Selected Requirements Needing Clarification</div>
                         <div className="space-y-2">
                           {selectedRequirementsForClarification.map((requirementIndex) => {
                             const requirement = selectedRequest?.requirement_responses_snapshot[requirementIndex]
@@ -2039,9 +2032,9 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
 
                     {/* Additional Questions */}
                     {manualQuestions && (
-                      <div className="mb-4 pb-4 border-b border-white/10">
-                        <h4 className="text-xs font-medium ai-panel-text-secondary mb-2">Additional Questions</h4>
-                        <p className="text-sm ai-panel-text">{manualQuestions}</p>
+                      <div className="ai-panel-card p-3 rounded-lg mb-4">
+                        <div className="text-xs ai-panel-text-secondary mb-1">Additional Questions</div>
+                        <div className="text-sm ai-panel-text">{manualQuestions}</div>
                       </div>
                     )}
                   </div>
