@@ -110,6 +110,9 @@ export default function Header() {
               <Link href="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors">
                 {tHeader('pricing')}
               </Link>
+              <Link href="/privacy" className="text-gray-600 hover:text-gray-900 transition-colors">
+                {tHeader('privacy')}
+              </Link>
               <Link href="/support" className="text-gray-600 hover:text-gray-900 transition-colors">
                 {tHeader('support')}
               </Link>
@@ -119,7 +122,7 @@ export default function Header() {
             <div className="flex items-center space-x-1.5 lg:space-x-4">
               <Link 
                 href="/signin/business" 
-                className="border border-gray-900 text-gray-900 text-sm lg:text-base px-3 lg:px-4 py-1.5 lg:py-2 rounded-md hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                className="border border-black text-gray-900 text-sm lg:text-base px-3 lg:px-4 py-1.5 lg:py-2 rounded-md hover:text-black transition-colors"
               >
                 {tHeader('signIn')}
               </Link>
@@ -147,51 +150,74 @@ export default function Header() {
                   className="flex items-center space-x-2"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <img src="/icons/home.png" alt={tHeader('logoAlt')} className="h-8 w-8" />
                   <span className="text-2xl font-bold text-gray-900">{tHeader('brandName')}</span>
                 </Link>
                 
-                <button
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
-                  aria-label={tHeader('closeMobileMenu')}
-                >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                <div className="flex items-center space-x-3">
+                  <LocaleSwitcherButton 
+                    onClick={() => {
+                      setIsModalOpen(true);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="text-gray-600 hover:text-gray-800"
+                  />
+                  
+                  <button
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
+                    aria-label={tHeader('closeMobileMenu')}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
 
               {/* Mobile Navigation Links */}
               <nav className="flex-1 px-6 py-8">
-                <div className="space-y-8">
+                <div className="space-y-4">
                   <Link 
                     href="/features" 
-                    className="block text-4xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                    className="block text-4xl font-medium text-gray-900 hover:text-blue-600 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {tHeader('features')}
                   </Link>
                   <Link 
                     href="/pricing" 
-                    className="block text-4xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                    className="block text-4xl font-medium text-gray-900 hover:text-blue-600 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {tHeader('pricing')}
                   </Link>
                   <Link 
-                    href="/contact" 
-                    className="block text-2xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                    href="/privacy" 
+                    className="block text-2xl font-medium text-gray-900 hover:text-blue-600 transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {tHeader('privacy')}
+                  </Link>
+                  <Link 
+                    href="/terms" 
+                    className="block text-2xl font-medium text-gray-900 hover:text-blue-600 transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {tHeader('terms')}
+                  </Link>
+                  <Link 
+                    href="/support" 
+                    className="block text-2xl font-medium text-gray-900 hover:text-blue-600 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {tHeader('support')}
@@ -199,22 +225,12 @@ export default function Header() {
                 </div>
               </nav>
 
-              {/* Mobile Bottom Section - Auth buttons and locale switcher */}
-              <div className="p-6 border-t border-gray-200 space-y-4">
-                <div className="flex justify-center">
-                  <LocaleSwitcherButton 
-                    onClick={() => {
-                      setIsModalOpen(true);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="text-gray-600 hover:text-gray-800 text-lg"
-                  />
-                </div>
-                
+              {/* Mobile Bottom Section - Auth buttons */}
+              <div className="p-6 border-t border-gray-200">
                 <div className="space-y-3">
                   <Link 
                     href="/signin/business" 
-                    className="block w-full text-center py-3 text-lg font-medium bg-black text-white rounded-lg hover:text-blue-600 transition-colors"
+                    className="block w-full text-center py-3 text-lg font-medium border border-black text-gray-900 rounded-lg hover:text-black transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {tHeader('signIn')}
