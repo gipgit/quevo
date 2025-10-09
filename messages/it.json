@@ -1526,5 +1526,293 @@
       "subtitle": "Unisciti a migliaia di aziende che già utilizzano l'AI per semplificare le loro operazioni e aumentare la produttività",
       "button": "Inizia Gratis"
     }
+  },
+  "Privacy": {
+    "title": "Informativa sulla Privacy",
+    "subtitle": "La tua privacy è importante per noi",
+    "description": "Questa informativa spiega come raccogliamo, utilizziamo e proteggiamo i tuoi dati personali in conformità con il GDPR e la legge italiana.",
+    "lastUpdated": "Ultimo Aggiornamento",
+    "backToHome": "Torna alla Home",
+    "viewMode": {
+      "formal": "Versione Formale",
+      "visual": "Versione Visuale"
+    },
+    "notice": {
+      "title": "EU/Italian Data Protection Compliance",
+      "content": "We are committed to protecting your personal data in compliance with the General Data Protection Regulation (GDPR - EU Regulation 2016/679) and Italian Data Protection Code (D.Lgs. 196/2003 as amended)."
+    },
+    "practices": {
+      "title": "I Nostri Impegni sulla Privacy",
+      "gdprCompliance": {
+        "title": "Conforme a GDPR e Legge Italiana",
+        "description": "Pienamente conforme al GDPR (Regolamento UE 2016/679) e al Codice Privacy Italiano (D.Lgs. 196/2003). I tuoi dati sono protetti dalle leggi sulla privacy più rigorose al mondo."
+      },
+      "dataMinimization": {
+        "title": "Minimizzazione dei Dati",
+        "description": "Raccogliamo solo i dati minimi necessari per ogni funzionalità. Funzioni AI limitate a 100 caratteri, form strutturati con solo campi obbligatori."
+      },
+      "aiProtection": {
+        "title": "Protezione Privacy AI",
+        "description": "NON inviamo MAI dati personali (nomi clienti, email, numeri di telefono) ai servizi AI. Condividiamo solo contesto aziendale e dettagli servizi anonimi."
+      },
+      "euStorage": {
+        "title": "Archiviazione Dati UE",
+        "description": "L'archiviazione file può essere configurata per ubicazioni solo UE. Utilizziamo Cloudflare R2 con data center europei disponibili."
+      },
+      "encryption": {
+        "title": "Sicurezza End-to-End",
+        "description": "Tutti i dati criptati in transito (HTTPS/TLS). Password hashate con bcrypt. File privati protetti con URL firmati a tempo limitato."
+      },
+      "transparency": {
+        "title": "Totale Trasparenza",
+        "description": "Divulgazione completa di tutte le attività di trattamento dati, fornitori terzi e trasferimenti internazionali con garanzie."
+      },
+      "yourControl": {
+        "title": "Tu Hai il Controllo",
+        "description": "Esercita tutti i diritti GDPR: accesso, cancellazione, esportazione, correzione dei tuoi dati. Tempo di risposta garantito 30 giorni."
+      }
+    },
+    "sections": {
+      "introduction": {
+        "title": "1. Introduzione",
+        "content": "<p>Benvenuto nella nostra Informativa sulla Privacy. Questo documento spiega come raccogliamo, utilizziamo, conserviamo e proteggiamo i tuoi dati personali quando utilizzi la nostra piattaforma SaaS. Siamo impegnati alla trasparenza e alla protezione dei tuoi diritti alla privacy secondo le leggi UE e italiane.</p><p>Utilizzando i nostri servizi, riconosci di aver letto e compreso questa Informativa sulla Privacy.</p>"
+      },
+      "controller": {
+        "title": "2. Titolare del Trattamento",
+        "content": "<p><strong>Nome Azienda:</strong> [IN LAVORAZIONE]</p><p><strong>Sede Legale:</strong> [IN LAVORAZIONE]</p><p><strong>Partita IVA:</strong> [IN LAVORAZIONE]</p><p><strong>Email:</strong> privacy@example.com [IN LAVORAZIONE]</p><p><strong>Responsabile Protezione Dati (DPO):</strong> [Se applicabile - IN LAVORAZIONE]</p>"
+      },
+      "dataCollected": {
+        "title": "3. Dati che Raccogliamo",
+        "content": "<p>We collect the following categories of personal data to provide and improve our services:</p><p><strong>User Registration Data:</strong></p><ul><li>Identity information: First name, last name, email address</li><li>Demographic data: Birth date, birth country, gender (optional)</li><li>Location data: Country, region, city, address</li><li>Account credentials: Email and hashed password</li><li>Phone number (optional)</li></ul><p><strong>Business Information (for Business Accounts):</strong></p><ul><li>Business details: Company name, business name, description</li><li>Legal information: VAT number, company address</li><li>Contact information: Business email and phone numbers</li><li>Profile images and cover photos</li></ul><p><strong>Service Usage Data:</strong></p><ul><li>Service requests and quotations you submit</li><li>Appointments you schedule</li><li>Documents and files you upload</li><li>Support tickets and communications</li><li>Preferences and settings</li></ul><p><strong>Payment Information (processed by Stripe):</strong></p><ul><li>Payment method metadata (card brand, last 4 digits)</li><li>Billing address</li><li>Subscription plan and status</li><li>Transaction history</li><li>Note: Full payment card details are handled exclusively by Stripe and never stored on our servers</li></ul><p><strong>AI Interaction Data (with Privacy Protection):</strong></p><ul><li>Messages you send to our AI chatbot (limited to 100 characters)</li><li>Conversation history and context</li><li>AI-generated responses</li><li>Session identifiers</li><li>Note: We collect this data only with your consent and for providing AI services</li><li>Important: We NEVER share customer personal data with AI providers - only anonymized service descriptions and business context</li></ul><p><strong>Technical and Usage Data:</strong></p><ul><li>IP address (for security and rate limiting)</li><li>Browser type and version</li><li>Device information</li><li>Pages visited and features used</li><li>Timestamps of activities</li><li>User agent strings</li><li>Error logs and performance data</li></ul><p><strong>Marketing Communications Data (with consent):</strong></p><ul><li>Email address for newsletters</li><li>Communication preferences</li><li>Marketing campaign engagement</li></ul><p><strong>Data from End Customers (B2B2C):</strong></p><p>When businesses using our platform collect data from their customers, we process:</p><ul><li>Customer names and contact information</li><li>Service request details</li><li>Appointment information</li><li>Documents provided by customers</li><li>Consent records (newsletter, privacy policy)</li></ul><p>Note: Businesses using our platform are independent data controllers for their customer data and must have their own privacy policies.</p>"
+      },
+      "purposes": {
+        "title": "4. Finalità del Trattamento",
+        "content": "<p>Trattiamo i tuoi dati personali per le seguenti finalità:</p><ul><li><strong>Erogazione del Servizio:</strong> Per fornirti accesso alla nostra piattaforma e alle sue funzionalità</li><li><strong>Gestione Account:</strong> Per creare e mantenere il tuo account</li><li><strong>Elaborazione Pagamenti:</strong> Per elaborare pagamenti abbonamenti e fatture</li><li><strong>Assistenza Clienti:</strong> Per rispondere alle tue richieste e fornire assistenza tecnica</li><li><strong>Miglioramento Servizio:</strong> Per analizzare i modelli di utilizzo e migliorare la nostra piattaforma</li><li><strong>Funzionalità AI:</strong> Per fornire assistenza AI e generazione contenuti (con il tuo consenso)</li><li><strong>Comunicazioni Marketing:</strong> Per inviarti aggiornamenti e materiale promozionale (con il tuo consenso)</li><li><strong>Conformità Legale:</strong> Per rispettare obblighi legali come requisiti fiscali e contabili</li></ul>"
+      },
+      "legalBasis": {
+        "title": "5. Base Giuridica del Trattamento",
+        "content": "<p>Trattiamo i tuoi dati personali sulla base dei seguenti fondamenti giuridici:</p><ul><li><strong>Esecuzione Contratto:</strong> Trattamento necessario per adempiere al nostro contratto con te (GDPR Art. 6(1)(b))</li><li><strong>Consenso:</strong> Per funzionalità AI, comunicazioni marketing e servizi opzionali (GDPR Art. 6(1)(a))</li><li><strong>Interesse Legittimo:</strong> Per prevenzione frodi, sicurezza e miglioramento servizio (GDPR Art. 6(1)(f))</li><li><strong>Obbligo Legale:</strong> Per requisiti fiscali, contabili e altri requisiti legali (GDPR Art. 6(1)(c))</li></ul>"
+      },
+      "thirdParties": {
+        "title": "6. Fornitori di Servizi Terzi",
+        "content": "<p>We work with trusted third-party service providers to deliver our services. Each provider has been carefully selected and is contractually bound to protect your data through Data Processing Agreements (DPAs).</p><p><strong>Why We Use Third-Party Providers:</strong></p><ul><li>To provide secure and reliable services</li><li>To leverage specialized expertise (payment processing, AI, cloud storage)</li><li>To ensure platform performance and availability</li><li>To offer advanced features that enhance your experience</li></ul><p><strong>Our Third-Party Service Providers:</strong></p><p>Below is a complete list of third-party processors we use, what data they process, where they are located, and what safeguards are in place.</p><p><strong>Primary Infrastructure (EU-Based):</strong></p><ul><li><strong>Supabase (Database):</strong> PostgreSQL hosted in Central Europe (Zurich, Switzerland via AWS). All user data stored in EU/EEA region with full GDPR compliance.</li><li><strong>Cloudflare R2 (File Storage):</strong> Configured for EU data centers. All uploaded files stored in European Union.</li></ul><p><strong>Third-Party Services (with Safeguards):</strong></p>"
+      },
+      "internationalTransfers": {
+        "title": "7. Trasferimenti Internazionali di Dati",
+        "content": "<p>Alcuni dei nostri fornitori di servizi si trovano al di fuori dello Spazio Economico Europeo (SEE). Garantiamo che siano in vigore garanzie appropriate:</p><ul><li><strong>Clausole Contrattuali Standard (SCC):</strong> Utilizziamo SCC approvate dall'UE con Stripe (USA) e OpenAI (USA)</li><li><strong>Accordi sulla Protezione dei Dati:</strong> Tutti i responsabili del trattamento hanno firmato Accordi completi sul Trattamento dei Dati</li><li><strong>Valutazioni d'Impatto sul Trasferimento:</strong> Abbiamo condotto valutazioni per garantire una protezione adeguata</li></ul><p>Hai il diritto di ottenere una copia delle garanzie che abbiamo implementato. Contattaci per ulteriori informazioni.</p>"
+      },
+      "retention": {
+        "title": "8. Conservazione dei Dati",
+        "content": "<p>Conserviamo i tuoi dati personali solo per il tempo necessario:</p><ul><li><strong>Account Attivi:</strong> Durata del tuo abbonamento più 2 anni dopo la chiusura dell'account</li><li><strong>Cronologia Conversazioni AI:</strong> 12 mesi, poi automaticamente eliminata</li><li><strong>Registri Pagamenti:</strong> 10 anni (requisito legale italiano per documenti contabili)</li><li><strong>Ticket Supporto:</strong> 2 anni dopo la risoluzione</li><li><strong>Dati Marketing:</strong> Fino al ritiro del consenso</li></ul><p>Dopo il periodo di conservazione, eliminiamo o anonimizziamo in modo sicuro i tuoi dati.</p>"
+      },
+      "yourRights": {
+        "title": "9. I Tuoi Diritti sulla Privacy",
+        "content": "<p>Under GDPR (Articles 15-22) and Italian Data Protection Code, you have the following rights:</p><p><strong>1. Right to Access (Article 15):</strong></p><ul><li>You can request a copy of all personal data we hold about you</li><li>We will provide this information in a commonly used electronic format</li><li>First request is free; additional requests may incur a reasonable fee</li></ul><p><strong>2. Right to Rectification (Article 16):</strong></p><ul><li>You can request correction of inaccurate or incomplete personal data</li><li>We will update your information promptly upon verification</li></ul><p><strong>3. Right to Erasure - 'Right to be Forgotten' (Article 17):</strong></p><ul><li>You can request deletion of your personal data in certain circumstances</li><li>Exceptions apply for legal obligations (e.g., 10-year retention for tax records)</li><li>We will notify third parties if we have shared your data with them</li></ul><p><strong>4. Right to Restriction of Processing (Article 18):</strong></p><ul><li>You can request that we limit processing of your data in certain situations</li><li>For example, while we verify accuracy or process your objection</li></ul><p><strong>5. Right to Data Portability (Article 20):</strong></p><ul><li>You can receive your personal data in a machine-readable format (JSON/CSV)</li><li>You can request transfer of your data to another service provider</li><li>Available for data processed based on consent or contract</li></ul><p><strong>6. Right to Object (Article 21):</strong></p><ul><li>You can object to processing based on legitimate interests</li><li>You can object to direct marketing at any time (including profiling)</li><li>We will stop processing unless we have compelling legitimate grounds</li></ul><p><strong>7. Right Not to be Subject to Automated Decision-Making (Article 22):</strong></p><ul><li>You have the right not to be subject to decisions based solely on automated processing</li><li>Note: We do not currently use automated decision-making that produces legal effects</li></ul><p><strong>8. Right to Withdraw Consent:</strong></p><ul><li>For processing based on consent (AI features, marketing), you can withdraw consent at any time</li><li>Withdrawal does not affect the lawfulness of processing before withdrawal</li></ul><p><strong>How to Exercise Your Rights:</strong></p><ul><li>Email us at privacy@example.com [WORK IN PROGRESS]</li><li>We will respond within 30 days (can be extended by 2 months if complex)</li><li>We may request identity verification to protect your data</li><li>All requests are free unless excessive or repetitive</li></ul><p><strong>Right to Lodge a Complaint:</strong></p><ul><li>If you believe we have violated your privacy rights, you can file a complaint with the Italian Data Protection Authority (Garante per la protezione dei dati personali)</li><li>Website: <a href='https://www.gpdp.it/' target='_blank' rel='noopener noreferrer' class='text-blue-600 hover:text-blue-800'>www.gpdp.it</a></li><li>Email: garante@gpdp.it</li><li>Phone: +39 06 69677 1</li><li>Address: Piazza Venezia 11, 00187 Roma, Italy</li></ul>"
+      },
+      "security": {
+        "title": "10. Sicurezza dei Dati",
+        "content": "<p>Implementiamo misure di sicurezza standard del settore per proteggere i tuoi dati:</p><ul><li><strong>Crittografia:</strong> Crittografia HTTPS/TLS per tutti i dati in transito</li><li><strong>Protezione Password:</strong> Hashing Bcrypt per l'archiviazione delle password</li><li><strong>Controlli Accesso:</strong> Accesso basato su ruoli e autenticazione</li><li><strong>Archiviazione Sicura:</strong> Archiviazione file privati con URL firmati e accesso a tempo limitato</li><li><strong>Backup Regolari:</strong> Backup automatizzati con crittografia</li><li><strong>Monitoraggio:</strong> Monitoraggio sicurezza 24/7 e registrazione</li></ul><p>In caso di violazione dei dati, ti notificheremo e informeremo il Garante per la Protezione dei Dati Personali entro 72 ore come richiesto dalla legge.</p>"
+      },
+      "cookies": {
+        "title": "11. Cookie e Tracciamento",
+        "content": "<p>Utilizziamo cookie essenziali per fornire i nostri servizi:</p><ul><li><strong>Cookie di Sessione:</strong> Per mantenerti connesso (durata 30 giorni)</li><li><strong>Preferenza Lingua:</strong> Per ricordare la tua scelta linguistica</li></ul><p>Non utilizziamo cookie non essenziali senza il tuo consenso. Per ulteriori informazioni, consulta la nostra <a href='/cookie-policy' class='text-blue-600 hover:text-blue-800'>Cookie Policy</a>.</p>"
+      },
+      "contact": {
+        "title": "12. Contattaci ed Esercita i Tuoi Diritti",
+        "content": "<p>Per esercitare i tuoi diritti sulla privacy o se hai domande:</p><p><strong>Email:</strong> privacy@example.com [IN LAVORAZIONE]</p><p><strong>Tempo di Risposta:</strong> Entro 30 giorni</p><p><strong>Autorità Garante per la Protezione dei Dati Personali:</strong></p><ul><li>Sito web: <a href='https://www.gpdp.it/' target='_blank' rel='noopener noreferrer' class='text-blue-600 hover:text-blue-800'>www.gpdp.it</a></li><li>Email: garante@gpdp.it</li><li>Telefono: +39 06 69677 1</li></ul><p>Hai il diritto di presentare un reclamo al Garante se ritieni che abbiamo violato i tuoi diritti sulla privacy.</p>"
+      }
+    },
+    "dataTypes": {
+      "title": "Tipi di Dati Raccolti:",
+      "identity": "Dati Identità",
+      "identityDesc": "Nome, cognome, username",
+      "contact": "Dati Contatto",
+      "contactDesc": "Indirizzo email, numero telefono, indirizzo aziendale",
+      "technical": "Dati Tecnici",
+      "technicalDesc": "Indirizzo IP, tipo browser, informazioni dispositivo, modelli di utilizzo",
+      "usage": "Dati Utilizzo",
+      "usageDesc": "Come interagisci con la nostra piattaforma, funzionalità utilizzate, preferenze",
+      "payment": "Dati Pagamento",
+      "paymentDesc": "Dettagli carta pagamento (elaborati da Stripe), indirizzo fatturazione, cronologia transazioni"
+    },
+    "thirdParties": {
+      "purpose": "Scopo",
+      "location": "Ubicazione",
+      "data": "Dati Trattati",
+      "database": {
+        "name": "Database PostgreSQL Supabase (Archiviazione Dati Primaria)",
+        "purpose": "Archiviazione di tutti i dati dell'applicazione inclusi account utente, informazioni aziendali e contenuti della piattaforma",
+        "location": "Unione Europea - Europa Centrale (Zurigo, Svizzera via AWS). La Svizzera ha decisione di adeguatezza UE - pienamente conforme GDPR.",
+        "data": "Tutti i dati utente, informazioni aziendali, richieste servizi, appuntamenti, ticket supporto, cronologia conversazioni AI, metadati pagamenti"
+      },
+      "cloudflare": {
+        "name": "Cloudflare R2 (Archiviazione File)",
+        "purpose": "Archiviazione immagini aziendali, documenti e caricamenti clienti",
+        "location": "Unione Europea (configurabile per archiviazione solo UE)",
+        "data": "Immagini profilo, immagini servizi, documenti, contratti, firme"
+      },
+      "stripe": {
+        "name": "Stripe (Elaborazione Pagamenti)",
+        "purpose": "Elaborazione pagamenti abbonamenti e gestione fatturazione",
+        "location": "USA con opzioni elaborazione UE",
+        "data": "Informazioni carta pagamento, dettagli fatturazione, registri transazioni",
+        "safeguards": "Protetto da Clausole Contrattuali Standard (SCC) e Accordo Trattamento Dati Stripe"
+      },
+      "openai": {
+        "name": "OpenAI (Servizi AI)",
+        "purpose": "Fornitura chatbot AI e generazione contenuti",
+        "location": "USA",
+        "data": "Messaggi utente (limitati a 100 caratteri), contesto aziendale, cronologia conversazioni",
+        "safeguards": "Protetto da Clausole Contrattuali Standard (SCC). I dati non sono utilizzati per addestrare modelli AI. Conservazione 30 giorni da OpenAI."
+      },
+      "email": {
+        "name": "Provider Servizio Email (SMTP)",
+        "purpose": "Invio email transazionali (attivazione account, notifiche, risposte supporto)",
+        "location": "[IN LAVORAZIONE - Provider da identificare e verificare]",
+        "data": "Indirizzi email, nomi destinatari, contenuto email"
+      }
+    },
+    "rights": {
+      "access": {
+        "title": "Diritto di Accesso",
+        "desc": "Richiedi una copia di tutti i dati personali che deteniamo su di te"
+      },
+      "rectification": {
+        "title": "Diritto di Rettifica",
+        "desc": "Richiedi la correzione di dati inesatti o incompleti"
+      },
+      "erasure": {
+        "title": "Diritto alla Cancellazione",
+        "desc": "Richiedi la cancellazione dei tuoi dati personali ('diritto all'oblio')"
+      },
+      "portability": {
+        "title": "Diritto alla Portabilità dei Dati",
+        "desc": "Ricevi i tuoi dati in un formato leggibile da dispositivo"
+      },
+      "restriction": {
+        "title": "Diritto di Limitazione",
+        "desc": "Richiedi la limitazione del trattamento in determinate circostanze"
+      },
+      "objection": {
+        "title": "Diritto di Opposizione",
+        "desc": "Opponi al trattamento basato su interessi legittimi o marketing diretto"
+      }
+    },
+    "supportSection": {
+      "title": "Domande o problemi?",
+      "description": "Il Team Quevo è qui per aiutarti con qualsiasi dubbio sulla privacy o domande su come trattiamo i tuoi dati.",
+      "button": "Contatta Supporto"
+    },
+    "footer": {
+      "terms": "Termini di Servizio",
+      "support": "Contatta Supporto",
+      "italianDPA": "Autorità Garante per la Protezione dei Dati Personali",
+      "compliance": "Questa informativa è conforme al GDPR (Regolamento UE 2016/679) e al Codice Privacy Italiano (D.Lgs. 196/2003 e successive modifiche)"
+    }
+  },
+  "Terms": {
+    "title": "Termini di Servizio",
+    "subtitle": "Si prega di leggere attentamente questi termini prima di utilizzare i nostri servizi. Accedendo o utilizzando la nostra piattaforma, accetti di essere vincolato da questi termini.",
+    "description": "Questi Termini di Servizio costituiscono un accordo legalmente vincolante tra te e la nostra azienda. Si prega di leggere attentamente questi termini prima di utilizzare i nostri servizi. Accedendo o utilizzando la nostra piattaforma, accetti di essere vincolato da questi termini. Se non accetti questi termini, non puoi accedere o utilizzare i nostri servizi.",
+    "effectiveDate": "Data di Entrata in Vigore",
+    "backToHome": "Torna alla Home",
+    "notice": {
+      "title": "Legal Agreement",
+      "content": "These Terms of Service constitute a legally binding agreement between you and our company. If you do not agree to these terms, you may not access or use our services."
+    },
+    "sections": {
+      "acceptance": {
+        "title": "1. Accettazione dei Termini",
+        "content": "<p>By creating an account or using our SaaS platform ('Service'), you agree to be bound by these Terms of Service ('Terms'). If you are using the Service on behalf of an organization, you represent that you have the authority to bind that organization to these Terms.</p><p>These Terms apply to all users, including business owners, managers, and end customers who interact with your business through our platform.</p>"
+      },
+      "definitions": {
+        "title": "2. Definizioni",
+        "content": "<ul><li><strong>'Service' or 'Platform':</strong> Our SaaS business management application and all related features</li><li><strong>'User' or 'You':</strong> Any person or entity using the Service</li><li><strong>'Business Account':</strong> An account created by a business owner or manager</li><li><strong>'Customer Account':</strong> An account created by an end customer of a business</li><li><strong>'Subscription':</strong> A paid plan providing access to premium features</li><li><strong>'Content':</strong> Any data, text, images, or other materials uploaded to the Service</li></ul>"
+      },
+      "account": {
+        "title": "3. Registrazione Account e Sicurezza",
+        "content": "<p><strong>Account Creation:</strong></p><ul><li>You must provide accurate and complete information when creating an account</li><li>You are responsible for maintaining the security of your account credentials</li><li>You must notify us immediately of any unauthorized access</li><li>You must be at least 18 years old to create a Business Account</li></ul><p><strong>Account Responsibilities:</strong></p><ul><li>You are responsible for all activities that occur under your account</li><li>You may not share your account credentials with others</li><li>You may not create multiple accounts to circumvent service limitations</li><li>You must not impersonate another person or entity</li></ul>"
+      },
+      "subscription": {
+        "title": "4. Abbonamento e Fatturazione",
+        "content": "<p><strong>Subscription Plans:</strong></p><p>We offer various subscription plans with different features and pricing tiers. Current plans and pricing are available on our website. Each plan includes:</p><ul><li>Access to core platform features</li><li>Storage limits based on plan tier</li><li>Number of service requests/boards</li><li>AI credits allocation (where applicable)</li><li>Customer support level</li></ul><p><strong>Free Trial:</strong></p><ul><li>We may offer a free trial period for new users (typically 14-30 days)</li><li>You may cancel before the trial ends to avoid charges</li><li>Credit card information may be required to start a trial</li><li>After the trial, you will be automatically charged unless you cancel</li><li>Trial limitations may apply (e.g., reduced features or usage limits)</li></ul><p><strong>Payment Processing:</strong></p><ul><li>All payments are processed securely through Stripe, our payment processor</li><li>We accept major credit and debit cards (Visa, Mastercard, American Express)</li><li>We do not store full credit card details on our servers</li><li>Only the last 4 digits and card brand are retained for display purposes</li><li>Stripe complies with PCI-DSS Level 1 requirements</li></ul><p><strong>Billing Cycles:</strong></p><ul><li>Subscriptions are billed monthly or annually depending on your chosen plan</li><li>Annual plans may offer discounted pricing</li><li>Billing occurs on the same day each month (or annually) from your subscription start date</li><li>You will receive an invoice by email after each successful payment</li></ul><p><strong>Automatic Renewal:</strong></p><ul><li>Subscriptions automatically renew at the end of each billing period</li><li>Your payment method will be charged automatically unless you cancel</li><li>You will receive email reminders before renewal</li><li>Renewal is at the then-current price (we will notify you of price changes)</li></ul><p><strong>Price Changes:</strong></p><ul><li>We reserve the right to modify subscription prices</li><li>You will be notified at least 30 days before any price increase</li><li>Price changes do not affect your current billing period</li><li>If you do not accept the new price, you may cancel your subscription</li></ul><p><strong>Taxes:</strong></p><ul><li>Prices are exclusive of taxes unless otherwise stated</li><li>You are responsible for applicable taxes (VAT, sales tax, etc.)</li><li>We will collect and remit taxes as required by law</li><li>Tax rates depend on your billing address</li></ul><p><strong>Failed Payments:</strong></p><ul><li>If payment fails, we will retry automatically</li><li>You will receive email notifications about payment issues</li><li>Your account may be suspended after multiple failed payment attempts</li><li>You will have an opportunity to update payment information</li></ul><p><strong>Cancellation:</strong></p><ul><li>You may cancel your subscription at any time from account settings</li><li>Cancellation takes effect at the end of your current billing period</li><li>You will retain access to paid features until the end of the billing period</li><li>No partial refunds for unused time within a billing period</li><li>You may export your data before cancellation</li></ul><p><strong>Refund Policy:</strong></p><ul><li>Refunds are handled in accordance with Italian Consumer Code (Codice del Consumo)</li><li>For EU consumers: 14-day right of withdrawal applies to online contracts</li><li>Annual subscriptions may be eligible for pro-rata refunds in certain circumstances</li><li>To request a refund, contact our support team</li><li>Refunds are processed to the original payment method within 14 days</li><li>Some fees (e.g., payment processing fees) may be non-refundable</li></ul><p><strong>Downgrades and Upgrades:</strong></p><ul><li>You may upgrade your plan at any time; changes take effect immediately</li><li>Upgrades are pro-rated for the current billing period</li><li>Downgrades take effect at the end of your current billing period</li><li>Data and features exceeding the downgraded plan limits may be restricted</li></ul>"
+      },
+      "usage": {
+        "title": "5. Uso Accettabile",
+        "content": "<p>You agree to use the Service only for lawful purposes and in accordance with these Terms. You are responsible for all content you upload and activities you perform on the platform.</p><p><strong>Your Responsibilities:</strong></p><ul><li><strong>Legal Compliance:</strong> Comply with all applicable local, national, and international laws and regulations</li><li><strong>Accurate Information:</strong> Provide truthful and accurate information in your profile and business listings</li><li><strong>Intellectual Property:</strong> Respect copyright, trademark, and other intellectual property rights</li><li><strong>Customer Privacy:</strong> Protect your customers' personal data in compliance with GDPR and privacy laws</li><li><strong>Security:</strong> Maintain appropriate security measures for your account and data</li><li><strong>Good Faith:</strong> Use the Service honestly and in good faith</li><li><strong>Professional Conduct:</strong> Maintain professional standards in your interactions</li><li><strong>Content Responsibility:</strong> Ensure all content you upload is legal, appropriate, and you have rights to use it</li></ul><p><strong>For Business Accounts:</strong></p><ul><li>You must have legal authorization to represent the business</li><li>You must ensure your use of the platform complies with your business licenses and permits</li><li>You are responsible for your business's compliance with consumer protection laws</li><li>You must maintain your own privacy policy and terms for your end customers</li><li>You must obtain appropriate consents from your customers for data processing</li></ul><p><strong>Data Protection Obligations:</strong></p><ul><li>As a business using our platform, you are an independent data controller for your customer data</li><li>You must comply with GDPR, Italian Data Protection Code, and other applicable privacy laws</li><li>You must have a lawful basis for processing customer data</li><li>You must obtain appropriate consents and provide privacy notices to your customers</li><li>You must respond to data subject requests from your customers</li><li>You must implement appropriate security measures</li></ul><p><strong>Content Standards:</strong></p><ul><li>Content must not be offensive, discriminatory, or hateful</li><li>Content must not be defamatory or misleading</li><li>Content must not violate anyone's privacy or publicity rights</li><li>Content must be appropriate for a business/professional context</li><li>Images and documents must comply with size and format requirements</li></ul>"
+      },
+      "prohibited": {
+        "title": "6. Attività Proibite",
+        "content": "<p>You must not use the Service to engage in or promote any of the following activities. Violation of these prohibitions may result in immediate account suspension or termination:</p><p><strong>Illegal Activities:</strong></p><ul><li>Violate any local, national, or international laws or regulations</li><li>Engage in or facilitate fraud, money laundering, or other financial crimes</li><li>Sell or promote illegal goods or services</li><li>Engage in illegal gambling or betting activities</li><li>Facilitate human trafficking or exploitation</li></ul><p><strong>Harmful Content and Behavior:</strong></p><ul><li>Upload viruses, malware, or other malicious code</li><li>Attempt to gain unauthorized access to our systems or other users' accounts</li><li>Use the Service to harass, threaten, or abuse others</li><li>Post content that is defamatory, libelous, or intentionally false</li><li>Share content that promotes violence, hatred, or discrimination</li><li>Share sexually explicit or inappropriate content</li><li>Share content that exploits or harms minors</li></ul><p><strong>Platform Abuse:</strong></p><ul><li>Spam users with unsolicited messages or communications</li><li>Create multiple accounts to circumvent restrictions or limitations</li><li>Manipulate or artificially inflate metrics, ratings, or reviews</li><li>Use automated tools or bots without authorization</li><li>Scrape or copy content from the Service without permission</li><li>Reverse engineer, decompile, or disassemble any part of the Service</li><li>Attempt to bypass security measures or authentication</li><li>Overload or disrupt our servers or networks (DoS attacks)</li></ul><p><strong>Intellectual Property Violations:</strong></p><ul><li>Infringe on copyrights, trademarks, patents, or other intellectual property rights</li><li>Upload content you do not have rights to use</li><li>Impersonate other businesses, brands, or individuals</li><li>Use our trademarks or branding without permission</li></ul><p><strong>Privacy Violations:</strong></p><ul><li>Collect or harvest personal data from users without authorization</li><li>Share others' personal information without consent (doxxing)</li><li>Violate GDPR or other privacy laws</li><li>Use data for purposes not disclosed in your privacy policy</li></ul><p><strong>Deceptive Practices:</strong></p><ul><li>Make false or misleading representations about your business</li><li>Engage in bait-and-switch tactics</li><li>Hide fees or terms from customers</li><li>Use misleading pricing or advertising</li><li>Create fake reviews or testimonials</li></ul><p><strong>AI Feature Misuse:</strong></p><ul><li>Attempt to manipulate AI responses for harmful purposes</li><li>Use AI features to generate spam or misleading content</li><li>Attempt to extract training data or reverse engineer AI models</li><li>Use AI to impersonate real people without disclosure</li></ul><p><strong>Payment and Financial Violations:</strong></p><ul><li>Use stolen credit cards or payment information</li><li>Engage in chargeback fraud</li><li>Attempt to evade or manipulate billing</li><li>Use the Service for Ponzi schemes or pyramid schemes</li></ul><p><strong>Consequences of Violations:</strong></p><ul><li>We reserve the right to investigate suspected violations</li><li>Violations may result in warning, suspension, or permanent termination</li><li>Serious violations may be reported to law enforcement</li><li>You may be held liable for damages resulting from violations</li><li>Refunds may be withheld in cases of Terms violations</li></ul>"
+      },
+      "intellectualProperty": {
+        "title": "7. Diritti di Proprietà Intellettuale",
+        "content": "<p><strong>Our Rights:</strong></p><ul><li>The Service, including its software, design, and content, is owned by us and protected by intellectual property laws</li><li>You may not copy, modify, distribute, or reverse-engineer any part of the Service</li><li>Our trademarks and logos may not be used without written permission</li></ul><p><strong>Your Content:</strong></p><ul><li>You retain ownership of content you upload to the Service</li><li>You grant us a license to store, process, and display your content to provide the Service</li><li>You are responsible for ensuring you have rights to all content you upload</li><li>You may export and delete your content at any time</li></ul>"
+      },
+      "liability": {
+        "title": "8. Limitazione di Responsabilità",
+        "content": "<p><strong>Service Availability:</strong></p><ul><li>We strive to provide 99.9% uptime but do not guarantee uninterrupted service</li><li>We are not liable for service interruptions or data loss</li><li>You are responsible for maintaining backups of your important data</li></ul><p><strong>Disclaimer:</strong></p><p>THE SERVICE IS PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND. [WORK IN PROGRESS - Legal review required for liability limitations under Italian law]</p><p><strong>Maximum Liability:</strong></p><p>[WORK IN PROGRESS - To be defined based on subscription plan and Italian Consumer Code requirements]</p>"
+      },
+      "termination": {
+        "title": "9. Chiusura Account",
+        "content": "<p><strong>Termination by You:</strong></p><ul><li>You may cancel your subscription at any time from your account settings</li><li>Cancellation takes effect at the end of your current billing period</li><li>You will retain access until the end of the paid period</li><li>You may export your data before termination</li></ul><p><strong>Termination by Us:</strong></p><ul><li>We may suspend or terminate your account for violation of these Terms</li><li>We may terminate accounts for non-payment</li><li>We will provide notice before termination when possible</li><li>In case of serious violations, we may terminate immediately</li></ul><p><strong>Effect of Termination:</strong></p><ul><li>You will lose access to the Service and your data</li><li>We will retain data as required by law (e.g., 10 years for accounting records)</li><li>Other data will be deleted according to our Privacy Policy</li></ul>"
+      },
+      "changes": {
+        "title": "10. Modifiche ai Termini",
+        "content": "<p>We reserve the right to modify these Terms at any time:</p><ul><li>We will notify you of material changes via email or platform notification</li><li>Changes take effect 30 days after notification</li><li>Continued use of the Service after changes constitutes acceptance</li><li>If you do not agree to changes, you may cancel your subscription</li></ul>"
+      },
+      "governingLaw": {
+        "title": "11. Legge Applicabile e Giurisdizione",
+        "content": "<p><strong>Applicable Law:</strong></p><p>These Terms are governed by Italian law and EU regulations. [WORK IN PROGRESS - Specific jurisdiction to be defined]</p><p><strong>Dispute Resolution:</strong></p><ul><li>We encourage resolving disputes through good-faith negotiation</li><li>For B2C disputes: Italian courts have jurisdiction, and you may use EU Online Dispute Resolution platform</li><li>For B2B disputes: [WORK IN PROGRESS - Arbitration clause to be defined]</li></ul><p><strong>Consumer Rights:</strong></p><p>Nothing in these Terms affects your statutory rights under Italian Consumer Code (Codice del Consumo) or EU consumer protection laws.</p>"
+      },
+      "contact": {
+        "title": "12. Informazioni di Contatto",
+        "content": "<p>For questions about these Terms:</p><p><strong>Email:</strong> legal@example.com [WORK IN PROGRESS]</p><p><strong>Address:</strong> [WORK IN PROGRESS]</p><p><strong>Support:</strong> <a href='/support' class='text-indigo-600 hover:text-indigo-800'>Contact Support</a></p>"
+      }
+    },
+    "prohibited": {
+      "listTitle": "Le Attività Proibite Includono:",
+      "item1": "Violare qualsiasi legge o regolamento",
+      "item2": "Violare i diritti di proprietà intellettuale",
+      "item3": "Caricare codice dannoso o virus",
+      "item4": "Inviare spam, molestare o abusare di altri utenti",
+      "item5": "Tentare di ottenere accesso non autorizzato al Servizio",
+      "item6": "Utilizzare il Servizio per attività illegali (frode, riciclaggio di denaro, ecc.)"
+    },
+    "subscription": {
+      "payment": {
+        "title": "Elaborazione Pagamenti",
+        "desc": "I pagamenti sono elaborati in modo sicuro da Stripe. Non conserviamo i dettagli completi della tua carta di credito."
+      },
+      "renewal": {
+        "title": "Rinnovo Automatico",
+        "desc": "Gli abbonamenti si rinnovano automaticamente alla fine di ogni periodo di fatturazione salvo cancellazione."
+      },
+      "cancellation": {
+        "title": "Politica di Cancellazione",
+        "desc": "Puoi cancellare in qualsiasi momento. La cancellazione ha effetto alla fine del periodo di fatturazione corrente."
+      },
+      "refunds": {
+        "title": "Politica di Rimborso",
+        "desc": "I rimborsi sono elaborati in conformità con il Codice del Consumo Italiano. Contatta il supporto per richieste di rimborso."
+      }
+    },
+    "termination": {
+      "warning": {
+        "title": "Conservazione Dati Dopo la Chiusura",
+        "desc": "Dopo la chiusura dell'account, conserviamo i dati come richiesto dalla legge (es. 10 anni per registri fiscali). Altri dati vengono eliminati secondo la nostra politica di conservazione descritta nella nostra Informativa sulla Privacy."
+      }
+    },
+    "supportSection": {
+      "title": "Domande o problemi?",
+      "description": "Il Team Quevo è qui per aiutarti con qualsiasi domanda legale o di conformità sui nostri Termini di Servizio.",
+      "button": "Contatta Supporto"
+    },
+    "footer": {
+      "privacy": "Informativa sulla Privacy",
+      "support": "Contatta Supporto",
+      "euConsumerRights": "Diritti dei Consumatori UE",
+      "compliance": "Questi termini sono conformi alla legge italiana e ai regolamenti UE inclusa la Direttiva sui Diritti dei Consumatori"
+    }
   }
 }

@@ -241,17 +241,16 @@ export default function GuidePage() {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                className="lg:hidden p-1 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               >
                 {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 {/* App Logo Placeholder */}
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-md">
                   <span className="text-white font-bold text-lg">Q</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="text-lg md:text-2xl font-bold text-gray-900">Quevo</div>
                   <span className="text-xs md:text-sm text-gray-500">Documentation</span>
                 </div>
               </div>
@@ -260,7 +259,7 @@ export default function GuidePage() {
             <div className="flex items-center gap-2">
               <Link 
                 href="/dashboard"
-                className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium"
+                className="hidden lg:flex items-center gap-1.5 text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span className="hidden sm:inline">Back to Dashboard</span>
@@ -268,7 +267,7 @@ export default function GuidePage() {
               <div className="w-px h-6 bg-gray-300 mx-1"></div>
               <Link 
                 href="/status" 
-                className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                className="hidden lg:flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
               >
                 <Activity className="w-4 h-4" />
                 <span className="hidden sm:inline">Status</span>
