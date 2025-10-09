@@ -267,12 +267,12 @@ model appsupportrequest {
   support_request_id                                     String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   business_id                                            String                @db.Uuid
   manager_id                                             String                @db.Uuid
-  subject                                                String                @db.VarChar(255)
-  message                                                String
+  category                                               app_support_category  @default(general)
   section                                                String                @db.VarChar(50)
   priority                                               app_support_priority? @default(medium)
-  category                                               app_support_category  @default(general)
   status                                                 app_support_status    @default(open)
+  subject                                                String?               @db.VarChar(255)
+  message                                                String
   assigned_to                                            String?               @db.Uuid
   resolution_notes                                       String?
   user_name                                              String?               @db.VarChar(255)

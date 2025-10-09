@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect, useRef } from 'react'
-import { Menu, X, ChevronRight, BookOpen, Home, Users, Calendar, FileText, Settings, Zap, MessageSquare, BarChart3, CreditCard, Search, Lightbulb, CheckCircle, AlertTriangle, Bot, Target, Lock, Gift, Star, Link as LinkIcon, Layout, Building, FileText as FileTextIcon, DollarSign, HelpCircle, ThumbsUp, MapPin, ClipboardList, Upload } from 'lucide-react'
+import { Menu, X, ChevronRight, BookOpen, Home, Users, Calendar, FileText, Settings, Zap, MessageSquare, BarChart3, CreditCard, Search, Lightbulb, CheckCircle, AlertTriangle, Bot, Target, Lock, Gift, Star, Link as LinkIcon, Layout, Building, FileText as FileTextIcon, DollarSign, HelpCircle, ThumbsUp, MapPin, ClipboardList, Upload, Activity, MessageCircleQuestion, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 export default function GuidePage() {
@@ -233,7 +233,7 @@ export default function GuidePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white border-b border-gray-200">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -245,48 +245,40 @@ export default function GuidePage() {
               >
                 {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
-              <Link href="/dashboard" className="flex items-center gap-2">
-                <div className="text-2xl font-bold text-gray-900">Quevo</div>
-                <span className="text-sm text-gray-500">Documentation</span>
-              </Link>
-            </div>
-            
-            {/* Search Button */}
-            <div className="hidden md:flex items-center flex-1 max-w-md mx-8">
-              <button
-                onClick={openSearchModal}
-                className="relative w-full px-4 py-2 text-left border border-gray-300 rounded-lg hover:border-gray-400 transition-colors bg-white"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-gray-500">
-                    <Search className="w-5 h-5" />
-                    <span className="text-sm">Search documentation...</span>
-                  </div>
-                  <kbd className="px-2 py-1 text-xs text-gray-500 bg-gray-100 border border-gray-300 rounded">
-                    ⌘K
-                  </kbd>
+              <div className="flex items-center gap-3">
+                {/* App Logo Placeholder */}
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-md">
+                  <span className="text-white font-bold text-lg">Q</span>
                 </div>
-              </button>
+                <div className="flex items-center gap-2">
+                  <div className="text-lg md:text-2xl font-bold text-gray-900">Quevo</div>
+                  <span className="text-xs md:text-sm text-gray-500">Documentation</span>
+                </div>
+              </div>
             </div>
 
             <div className="flex items-center gap-2">
               <Link 
-                href="/status" 
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                href="/dashboard"
+                className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium"
               >
-                Status
+                <ArrowLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">Back to Dashboard</span>
+              </Link>
+              <div className="w-px h-6 bg-gray-300 mx-1"></div>
+              <Link 
+                href="/status" 
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+              >
+                <Activity className="w-4 h-4" />
+                <span className="hidden sm:inline">Status</span>
               </Link>
               <Link 
                 href="/support" 
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
               >
-                Support
-              </Link>
-              <Link 
-                href="/dashboard" 
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
-              >
-                Dashboard
+                <MessageCircleQuestion className="w-4 h-4" />
+                <span className="hidden sm:inline">Support</span>
               </Link>
             </div>
           </div>
@@ -294,19 +286,6 @@ export default function GuidePage() {
       </header>
 
       <div className="max-w-[1600px] mx-auto">
-        {/* Mobile Search Button */}
-        <div className="md:hidden p-4 bg-white border-b border-gray-200">
-          <button
-            onClick={openSearchModal}
-            className="relative w-full px-4 py-2 text-left border border-gray-300 rounded-lg hover:border-gray-400 transition-colors bg-white"
-          >
-            <div className="flex items-center gap-2 text-gray-500">
-              <Search className="w-5 h-5" />
-              <span className="text-sm">Search documentation...</span>
-            </div>
-          </button>
-        </div>
-
         <div className="flex">
           {/* Sidebar */}
           <aside className={`
@@ -315,6 +294,24 @@ export default function GuidePage() {
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           `}>
             <nav className="p-4 space-y-1">
+              {/* Search Bar */}
+              <div className="mb-4">
+                <button
+                  onClick={openSearchModal}
+                  className="relative w-full px-3 py-2 text-left border border-gray-300 rounded-lg hover:border-gray-400 transition-colors bg-white"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-gray-500">
+                      <Search className="w-4 h-4" />
+                      <span className="text-sm">Search...</span>
+                    </div>
+                    <kbd className="px-1.5 py-0.5 text-xs text-gray-500 bg-gray-100 border border-gray-300 rounded">
+                      ⌘K
+                    </kbd>
+                  </div>
+                </button>
+              </div>
+
               {sections.map((section) => {
                 const Icon = section.icon
                 const isExpanded = expandedSections.has(section.id)
@@ -366,25 +363,48 @@ export default function GuidePage() {
 
           {/* Main Content */}
           <main className="flex-1 p-6 lg:p-12 overflow-y-auto">
-            <div className="max-w-4xl">
+            <div>
               {/* Hero Section */}
-              <div className="mb-12">
-                <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                  Quevo Guide
-                </h1>
-                <p className="text-xl text-gray-600">
-                  Everything you need to know to manage your business with Quevo
-                </p>
+              <div className="mb-12 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <div className="flex-1">
+                  <h1 className="text-2xl md:text-5xl font-bold text-gray-900 mb-4">
+                    Quevo Guide
+                  </h1>
+                  <p className="text-base md:text-xl text-gray-600">
+                    Everything you need to know to manage your business with Quevo
+                  </p>
+                </div>
+                
+                {/* Quick Links */}
+                <div>
+                  <Link 
+                    href="/support"
+                    className="flex items-center gap-4 text-gray-700 hover:text-gray-900 transition-colors group"
+                  >
+                    <div className="flex items-center relative">
+                      <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg z-10 relative">
+                        <span className="text-white font-bold text-2xl">Q</span>
+                      </div>
+                      <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-200 transition-colors flex-shrink-0 -ml-4 shadow-md">
+                        <MessageCircleQuestion className="w-6 h-6 text-blue-600" />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-base font-medium text-gray-900">Get Support</div>
+                      <div className="text-sm text-gray-500">Contact us for help</div>
+                    </div>
+                  </Link>
+                </div>
               </div>
 
               {/* Getting Started */}
               <section id="getting-started" className="mb-16 scroll-mt-20">
-                <h2 className="text-3xl font-bold text-gray-900 mb-8 pb-3 border-b border-gray-200">
+                <h2 className="text-base md:text-xl font-bold text-gray-900 uppercase mb-8 pb-3 border-b border-gray-200">
                   Getting Started
                 </h2>
 
                 <div id="introduction" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">What is Quevo?</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">What is Quevo?</h3>
                   <p className="text-gray-700 mb-4">
                     Quevo is a comprehensive business management platform that helps you:
                   </p>
@@ -401,7 +421,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="signup" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Create Your Account</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Create Your Account</h3>
                   <p className="text-gray-700 mb-4">
                     Follow these steps to create your Quevo account:
                   </p>
@@ -431,7 +451,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="onboarding" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Business Onboarding</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Business Onboarding</h3>
                   <p className="text-gray-700 mb-4">
                     After activating your account, you'll go through a 10-step onboarding process to set up your business profile:
                   </p>
@@ -456,34 +476,34 @@ export default function GuidePage() {
                 </div>
 
                 <div id="dashboard-overview" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Dashboard Overview</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Dashboard Overview</h3>
                   <p className="text-gray-700 mb-4">
                     Your dashboard is the central hub for managing your business. Here's what you'll find:
                   </p>
                   <div className="space-y-4">
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <h4 className="text-sm md:text-base font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <BarChart3 className="w-4 h-4" />
                         Usage Summary
                       </h4>
                       <p className="text-gray-700">Track your current usage across all features with visual progress bars showing your limits.</p>
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <h4 className="text-sm md:text-base font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <LinkIcon className="w-4 h-4" />
                         Public Profile Link
                       </h4>
                       <p className="text-gray-700">Quick access to copy and share your public profile URL with customers.</p>
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <h4 className="text-sm md:text-base font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <Layout className="w-4 h-4" />
                         Management Cards
                       </h4>
                       <p className="text-gray-700">Quick access to all main features: Profile, Services, Service Requests, Support Requests, Service Boards, Appointments, Clients, and Promotions.</p>
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <h4 className="text-sm md:text-base font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <Building className="w-4 h-4" />
                         Business Switcher
                       </h4>
@@ -495,12 +515,12 @@ export default function GuidePage() {
 
               {/* Business Profile */}
               <section id="business-profile" className="mb-16 scroll-mt-20">
-                <h2 className="text-3xl font-bold text-gray-900 mb-8 pb-3 border-b border-gray-200">
+                <h2 className="text-base md:text-xl font-bold text-gray-900 uppercase mb-8 pb-3 border-b border-gray-200">
                   Business Profile
                 </h2>
 
                 <div id="profile-info" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Profile Information</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Profile Information</h3>
                   <p className="text-gray-700 mb-4">
                     Keep your business information up to date:
                   </p>
@@ -522,7 +542,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="profile-images" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Images & Branding</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Images & Branding</h3>
                   <p className="text-gray-700 mb-4">
                     Upload images to make your profile stand out:
                   </p>
@@ -547,7 +567,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="profile-colors" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Colors & Fonts</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Colors & Fonts</h3>
                   <p className="text-gray-700 mb-4">
                     Customize your profile's appearance to match your brand:
                   </p>
@@ -567,7 +587,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="social-links" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Social Media Links</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Social Media Links</h3>
                   <p className="text-gray-700 mb-4">
                     Connect your social media accounts to your profile:
                   </p>
@@ -591,7 +611,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="payment-methods" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Payment Methods</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Payment Methods</h3>
                   <p className="text-gray-700 mb-4">
                     Let customers know how they can pay you:
                   </p>
@@ -614,7 +634,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="profile-settings" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Profile Settings</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Profile Settings</h3>
                   <p className="text-gray-700 mb-4">
                     Configure what appears on your public profile:
                   </p>
@@ -647,12 +667,12 @@ export default function GuidePage() {
 
               {/* Services Management */}
               <section id="services" className="mb-16 scroll-mt-20">
-                <h2 className="text-3xl font-bold text-gray-900 mb-8 pb-3 border-b border-gray-200">
+                <h2 className="text-base md:text-xl font-bold text-gray-900 uppercase mb-8 pb-3 border-b border-gray-200">
                   Services Management
                 </h2>
 
                 <div id="create-service" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Creating a Service</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Creating a Service</h3>
                   <p className="text-gray-700 mb-4">
                     Services are the core of what you offer to customers. Here's how to create one:
                   </p>
@@ -672,7 +692,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="service-details" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Service Details & Pricing</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Service Details & Pricing</h3>
                   <p className="text-gray-700 mb-4">
                     Set up pricing and service details:
                   </p>
@@ -697,12 +717,12 @@ export default function GuidePage() {
                 </div>
 
                 <div id="service-items" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Service Items & Extras</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Service Items & Extras</h3>
                   <p className="text-gray-700 mb-4">
                     Add selectable options to your service:
                   </p>
                   
-                  <h4 className="font-semibold text-gray-900 mt-4 mb-2">Service Items (Main Options):</h4>
+                  <h4 className="text-sm md:text-base font-semibold text-gray-900 mt-4 mb-2">Service Items (Main Options):</h4>
                   <ol className="list-decimal list-inside space-y-2 text-gray-700 ml-4">
                     <li>Click <strong>"Add Service Item"</strong></li>
                     <li>Enter:
@@ -715,7 +735,7 @@ export default function GuidePage() {
                     <li>Add multiple items if you offer different tiers or options</li>
                   </ol>
 
-                  <h4 className="font-semibold text-gray-900 mt-6 mb-2">Service Extras (Add-ons):</h4>
+                  <h4 className="text-sm md:text-base font-semibold text-gray-900 mt-6 mb-2">Service Extras (Add-ons):</h4>
                   <ol className="list-decimal list-inside space-y-2 text-gray-700 ml-4">
                     <li>Click <strong>"Add Extra"</strong></li>
                     <li>Enter:
@@ -730,7 +750,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="service-questions" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Custom Questions</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Custom Questions</h3>
                   <p className="text-gray-700 mb-4">
                     Collect specific information from customers when they request your service:
                   </p>
@@ -759,7 +779,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="service-requirements" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Requirements & Instructions</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Requirements & Instructions</h3>
                   <p className="text-gray-700 mb-4">
                     Add requirement blocks to specify what customers need to provide:
                   </p>
@@ -777,7 +797,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="service-events" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Appointments & Events</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Appointments & Events</h3>
                   <p className="text-gray-700 mb-4">
                     If your service requires scheduling, set up events:
                   </p>
@@ -807,12 +827,12 @@ export default function GuidePage() {
 
               {/* Service Requests */}
               <section id="service-requests" className="mb-16 scroll-mt-20">
-                <h2 className="text-3xl font-bold text-gray-900 mb-8 pb-3 border-b border-gray-200">
+                <h2 className="text-base md:text-xl font-bold text-gray-900 uppercase mb-8 pb-3 border-b border-gray-200">
                   Service Requests
                 </h2>
 
                 <div id="view-requests" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Viewing Requests</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Viewing Requests</h3>
                   <p className="text-gray-700 mb-4">
                     Access all service requests from customers:
                   </p>
@@ -841,7 +861,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="manage-requests" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Managing Request Status</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Managing Request Status</h3>
                   <p className="text-gray-700 mb-4">
                     Keep track of request progress:
                   </p>
@@ -863,7 +883,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="ai-responses" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">AI-Powered Responses</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">AI-Powered Responses</h3>
                   <p className="text-gray-700 mb-4">
                     Use AI to generate professional responses to service requests:
                   </p>
@@ -891,7 +911,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="create-board" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Create Service Board</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Create Service Board</h3>
                   <p className="text-gray-700 mb-4">
                     Turn a service request into an interactive service board for better project management:
                   </p>
@@ -913,12 +933,12 @@ export default function GuidePage() {
 
               {/* Service Boards */}
               <section id="service-boards" className="mb-16 scroll-mt-20">
-                <h2 className="text-3xl font-bold text-gray-900 mb-8 pb-3 border-b border-gray-200">
+                <h2 className="text-base md:text-xl font-bold text-gray-900 uppercase mb-8 pb-3 border-b border-gray-200">
                   Service Boards
                 </h2>
 
                 <div id="what-is-board" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">What is a Service Board?</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">What is a Service Board?</h3>
                   <p className="text-gray-700 mb-4">
                     A Service Board is an interactive, shareable workspace where you can:
                   </p>
@@ -938,7 +958,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="create-board-manual" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Creating a Board</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Creating a Board</h3>
                   <p className="text-gray-700 mb-4">
                     Create a new service board:
                   </p>
@@ -958,14 +978,14 @@ export default function GuidePage() {
                 </div>
 
                 <div id="board-actions" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Adding Actions</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Adding Actions</h3>
                   <p className="text-gray-700 mb-4">
                     Actions are the building blocks of a service board. Add different types based on what you need:
                   </p>
                   
                   <div className="space-y-4 mt-4">
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <h4 className="text-sm md:text-base font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <FileTextIcon className="w-4 h-4" />
                         Text Block
                       </h4>
@@ -973,7 +993,7 @@ export default function GuidePage() {
                     </div>
                     
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <h4 className="text-sm md:text-base font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <CheckCircle className="w-4 h-4" />
                         Checklist
                       </h4>
@@ -981,7 +1001,7 @@ export default function GuidePage() {
                     </div>
                     
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <h4 className="text-sm md:text-base font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <Upload className="w-4 h-4" />
                         File Upload
                       </h4>
@@ -989,7 +1009,7 @@ export default function GuidePage() {
                     </div>
                     
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <h4 className="text-sm md:text-base font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <DollarSign className="w-4 h-4" />
                         Payment Request
                       </h4>
@@ -997,7 +1017,7 @@ export default function GuidePage() {
                     </div>
                     
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <h4 className="text-sm md:text-base font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <HelpCircle className="w-4 h-4" />
                         Question
                       </h4>
@@ -1005,7 +1025,7 @@ export default function GuidePage() {
                     </div>
                     
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <h4 className="text-sm md:text-base font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <ThumbsUp className="w-4 h-4" />
                         Approval
                       </h4>
@@ -1013,7 +1033,7 @@ export default function GuidePage() {
                     </div>
                     
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <h4 className="text-sm md:text-base font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <Calendar className="w-4 h-4" />
                         Date Selection
                       </h4>
@@ -1021,7 +1041,7 @@ export default function GuidePage() {
                     </div>
                     
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <h4 className="text-sm md:text-base font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <MapPin className="w-4 h-4" />
                         Address
                       </h4>
@@ -1042,7 +1062,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="share-board" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Sharing with Customers</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Sharing with Customers</h3>
                   <p className="text-gray-700 mb-4">
                     Give customers access to their service board:
                   </p>
@@ -1070,7 +1090,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="board-status" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Tracking Progress</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Tracking Progress</h3>
                   <p className="text-gray-700 mb-4">
                     Monitor the status of service boards:
                   </p>
@@ -1092,12 +1112,12 @@ export default function GuidePage() {
 
               {/* Appointments */}
               <section id="appointments" className="mb-16 scroll-mt-20">
-                <h2 className="text-3xl font-bold text-gray-900 mb-8 pb-3 border-b border-gray-200">
+                <h2 className="text-base md:text-xl font-bold text-gray-900 uppercase mb-8 pb-3 border-b border-gray-200">
                   Appointments
                 </h2>
 
                 <div id="view-calendar" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Calendar View</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Calendar View</h3>
                   <p className="text-gray-700 mb-4">
                     Manage all your appointments in one place:
                   </p>
@@ -1117,7 +1137,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="manage-appointments" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Managing Appointments</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Managing Appointments</h3>
                   <p className="text-gray-700 mb-4">
                     Handle appointment requests and changes:
                   </p>
@@ -1140,12 +1160,12 @@ export default function GuidePage() {
 
               {/* Clients */}
               <section id="clients" className="mb-16 scroll-mt-20">
-                <h2 className="text-3xl font-bold text-gray-900 mb-8 pb-3 border-b border-gray-200">
+                <h2 className="text-base md:text-xl font-bold text-gray-900 uppercase mb-8 pb-3 border-b border-gray-200">
                   Client Management
                 </h2>
 
                 <div id="view-clients" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">View Client List</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">View Client List</h3>
                   <p className="text-gray-700 mb-4">
                     Access your complete customer database:
                   </p>
@@ -1164,7 +1184,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="client-details" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Client Information</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Client Information</h3>
                   <p className="text-gray-700 mb-4">
                     View detailed information about each client:
                   </p>
@@ -1187,12 +1207,12 @@ export default function GuidePage() {
 
               {/* AI Features */}
               <section id="ai-features" className="mb-16 scroll-mt-20">
-                <h2 className="text-3xl font-bold text-gray-900 mb-8 pb-3 border-b border-gray-200">
+                <h2 className="text-base md:text-xl font-bold text-gray-900 uppercase mb-8 pb-3 border-b border-gray-200">
                   AI Features
                 </h2>
 
                 <div id="ai-chat" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">AI Chat Assistant</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">AI Chat Assistant</h3>
                   <p className="text-gray-700 mb-4">
                     Your customers can interact with an AI assistant on your public profile:
                   </p>
@@ -1220,7 +1240,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="ai-marketing" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Marketing Content Generator</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Marketing Content Generator</h3>
                   <p className="text-gray-700 mb-4">
                     Generate professional marketing content for your services:
                   </p>
@@ -1249,7 +1269,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="ai-quotations" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Quotation Generator</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Quotation Generator</h3>
                   <p className="text-gray-700 mb-4">
                     Create professional quotations quickly:
                   </p>
@@ -1273,12 +1293,12 @@ export default function GuidePage() {
 
               {/* Customer Experience */}
               <section id="customer-experience" className="mb-16 scroll-mt-20">
-                <h2 className="text-3xl font-bold text-gray-900 mb-8 pb-3 border-b border-gray-200">
+                <h2 className="text-base md:text-xl font-bold text-gray-900 uppercase mb-8 pb-3 border-b border-gray-200">
                   Customer Experience
                 </h2>
 
                 <div id="public-profile" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Your Public Profile</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Your Public Profile</h3>
                   <p className="text-gray-700 mb-4">
                     Your public profile is what customers see. It's accessible at:
                   </p>
@@ -1298,7 +1318,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="customer-requests" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">How Customers Request Services</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">How Customers Request Services</h3>
                   <p className="text-gray-700 mb-4">
                     Understanding the customer's journey helps you design better services:
                   </p>
@@ -1323,7 +1343,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="customer-boards" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Customer Service Boards</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Customer Service Boards</h3>
                   <p className="text-gray-700 mb-4">
                     When you share a service board with a customer, they can:
                   </p>
@@ -1354,18 +1374,18 @@ export default function GuidePage() {
 
               {/* Subscription */}
               <section id="subscription" className="mb-16 scroll-mt-20">
-                <h2 className="text-3xl font-bold text-gray-900 mb-8 pb-3 border-b border-gray-200">
+                <h2 className="text-base md:text-xl font-bold text-gray-900 uppercase mb-8 pb-3 border-b border-gray-200">
                   Plans & Billing
                 </h2>
 
                 <div id="plans" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Understanding Plans</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Understanding Plans</h3>
                   <p className="text-gray-700 mb-4">
                     Quevo offers different plans to suit your business needs:
                   </p>
                   <div className="space-y-4">
                     <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <h4 className="text-sm md:text-base font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <Gift className="w-4 h-4" />
                         Free Plan
                       </h4>
@@ -1378,7 +1398,7 @@ export default function GuidePage() {
                     </div>
                     
                     <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <h4 className="text-sm md:text-base font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <Star className="w-4 h-4" />
                         Premium Plans
                       </h4>
@@ -1394,7 +1414,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="upgrade" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Upgrading Your Plan</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Upgrading Your Plan</h3>
                   <p className="text-gray-700 mb-4">
                     Upgrade when you need more features:
                   </p>
@@ -1411,7 +1431,7 @@ export default function GuidePage() {
                 </div>
 
                 <div id="usage-limits" className="mb-10 scroll-mt-20">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Usage & Limits</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold text-gray-900 mb-4">Usage & Limits</h3>
                   <p className="text-gray-700 mb-4">
                     Keep track of your feature usage:
                   </p>

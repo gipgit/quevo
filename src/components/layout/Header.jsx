@@ -110,7 +110,7 @@ export default function Header() {
               <Link href="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors">
                 {tHeader('pricing')}
               </Link>
-              <Link href="/contact" className="text-gray-600 hover:text-gray-900 transition-colors">
+              <Link href="/support" className="text-gray-600 hover:text-gray-900 transition-colors">
                 {tHeader('support')}
               </Link>
             </nav>

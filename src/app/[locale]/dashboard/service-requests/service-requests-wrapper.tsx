@@ -1061,7 +1061,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                           )}
                           
                           {/* Timeline dot */}
-                          <div className="relative z-10 w-5 h-5 rounded-full border-2 border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-primary)] flex items-center justify-center">
+                          <div className="relative w-5 h-5 rounded-full border-2 border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-primary)] flex items-center justify-center">
                             <div className="w-1.5 h-1.5 rounded-full bg-[var(--dashboard-text-secondary)]"></div>
                           </div>
                             
@@ -1460,7 +1460,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                         borderRadius: '100%'
                       }}
                     ></div>
-                    <div className="relative z-10">
+                    <div className="relative">
                   {/* Request Reference */}
                   <div className="mb-4 text-left">
                     <span className="text-lg md:text-2xl font-bold ai-panel-text">Manage #{selectedRequest.request_reference}</span>
@@ -1865,7 +1865,7 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                             }}
                           ></div>
 
-                          <div className="relative z-10 flex items-center justify-center gap-1">
+                          <div className="relative flex items-center justify-center gap-1">
                             <SparklesIcon className="w-4 h-4" />
                             <span className="text-sm">Generate Response</span>
                           </div>
@@ -1940,7 +1940,8 @@ export default function ServiceRequestsWrapper({ serviceRequests: initialService
                 }}
               ></div>
               
-              <div className="p-4 lg:p-6 text-center relative z-10">
+              <div className="p-4 lg:in header right column, add Support button that points to /support 
+p-6 text-center relative z-10">
               {!isGenerating && (
                 <>
                   <h3 className="text-lg font-medium ai-panel-text mb-4">Confirm AI Generation</h3>

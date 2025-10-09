@@ -1,15 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { getPlanColors, capitalizePlanName } from '@/lib/plan-colors'
 import { 
   BookOpen, 
   Activity, 
   Send, 
   AlertCircle, 
-  Lightbulb, 
+  ShieldAlert, 
   Bug, 
   HelpCircle,
   Settings,
@@ -24,11 +25,12 @@ import {
   Upload,
   X,
   CheckCircle,
-  AlertTriangle
+  AlertTriangle,
+  ArrowLeft,
+  LogIn
 } from 'lucide-react'
 
-type IssueCategory = 'bug' | 'feature' | 'question' | 'account' | 'billing' | 'other'
-type Priority = 'low' | 'medium' | 'high' | 'urgent'
+type IssueCategory = 'bug' | 'question' | 'account' | 'billing' | 'other'
 type Section = 'dashboard' | 'services' | 'service-requests' | 'service-boards' | 'appointments' | 'clients' | 'profile' | 'marketing' | 'ai-features' | 'billing' | 'other'
 
 export default function SupportPage() {
@@ -38,9 +40,7 @@ export default function SupportPage() {
   const [formData, setFormData] = useState({
     category: '' as IssueCategory | '',
     section: '' as Section | '',
-    priority: 'medium' as Priority,
-    subject: '',
-    description: '',
+    message: '',
     email: '',
     screenshot: null as File | null
   })
@@ -49,10 +49,38 @@ export default function SupportPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [submitError, setSubmitError] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [planName, setPlanName] = useState<string | null>(null)
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setErrors({})
+    setSubmitError('')
+  }
+
+  // Fetch user's business plan
+  useEffect(() => {
+    const fetchBusinessPlan = async () => {
+      if (!session?.user?.email) return
+
+      try {
+        const response = await fetch('/api/user/business-plan')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.planName) {
+            setPlanName(data.planName)
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching business plan:', error)
+      }
+    }
+
+    fetchBusinessPlan()
+  }, [session])
 
   const issueCategories = [
-    { id: 'bug' as IssueCategory, label: 'Bug Report', icon: Bug, description: 'Something is not working correctly', color: 'red' },
-    { id: 'feature' as IssueCategory, label: 'Feature Request', icon: Lightbulb, description: 'Suggest a new feature or improvement', color: 'blue' },
+    { id: 'bug' as IssueCategory, label: 'Bug Report', icon: ShieldAlert, description: 'Something is not working correctly', color: 'red' },
     { id: 'question' as IssueCategory, label: 'Question', icon: HelpCircle, description: 'I have a question about how to use something', color: 'purple' },
     { id: 'account' as IssueCategory, label: 'Account Issue', icon: User, description: 'Problem with my account or login', color: 'orange' },
     { id: 'billing' as IssueCategory, label: 'Billing', icon: CreditCard, description: 'Questions about payments or subscriptions', color: 'green' },
@@ -71,13 +99,6 @@ export default function SupportPage() {
     { id: 'ai-features' as Section, label: 'AI Features', icon: Zap },
     { id: 'billing' as Section, label: 'Billing & Plans', icon: CreditCard },
     { id: 'other' as Section, label: 'Other', icon: Settings },
-  ]
-
-  const priorities = [
-    { id: 'low' as Priority, label: 'Low', description: 'Minor issue, can wait', color: 'bg-gray-100 text-gray-700 border-gray-300' },
-    { id: 'medium' as Priority, label: 'Medium', description: 'Normal priority', color: 'bg-blue-50 text-blue-700 border-blue-300' },
-    { id: 'high' as Priority, label: 'High', description: 'Important issue', color: 'bg-orange-50 text-orange-700 border-orange-300' },
-    { id: 'urgent' as Priority, label: 'Urgent', description: 'Critical, needs immediate attention', color: 'bg-red-50 text-red-700 border-red-300' },
   ]
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,11 +132,8 @@ export default function SupportPage() {
     if (!formData.section) {
       newErrors.section = 'Please select the section where you found the issue'
     }
-    if (!formData.subject.trim()) {
-      newErrors.subject = 'Subject is required'
-    }
-    if (!formData.description.trim()) {
-      newErrors.description = 'Description is required'
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message is required'
     }
     if (!session && !formData.email.trim()) {
       newErrors.email = 'Email is required when not logged in'
@@ -148,14 +166,12 @@ export default function SupportPage() {
       const submitData = new FormData()
       submitData.append('category', formData.category)
       submitData.append('section', formData.section)
-      submitData.append('priority', formData.priority)
-      submitData.append('subject', formData.subject)
-      submitData.append('description', formData.description)
+      submitData.append('message', formData.message)
       if (formData.screenshot) {
         submitData.append('screenshot', formData.screenshot)
       }
 
-      const response = await fetch('/api/support', {
+      const response = await fetch('/api/app-support-requests', {
         method: 'POST',
         body: submitData,
       })
@@ -166,20 +182,20 @@ export default function SupportPage() {
         setFormData({
           category: '',
           section: '',
-          priority: 'medium',
-          subject: '',
-          description: '',
+          message: '',
           email: '',
           screenshot: null
         })
         
-        // Redirect to dashboard after 3 seconds
+        // Close modal and redirect after 2 seconds
         setTimeout(() => {
+          handleCloseModal()
+          setSubmitSuccess(false)
           router.push('/dashboard')
-        }, 3000)
+        }, 2000)
       } else {
         const data = await response.json()
-        setSubmitError(data.message || 'Failed to submit support request. Please try again.')
+        setSubmitError(data.error || data.message || 'Failed to submit support request. Please try again.')
       }
     } catch (error) {
       console.error('Error submitting support request:', error)
@@ -189,128 +205,237 @@ export default function SupportPage() {
     }
   }
 
-  const getCategoryColor = (color: string) => {
+  const getIconColor = (color: string) => {
     const colors = {
-      red: 'border-red-200 hover:border-red-300 hover:bg-red-50',
-      blue: 'border-blue-200 hover:border-blue-300 hover:bg-blue-50',
-      purple: 'border-purple-200 hover:border-purple-300 hover:bg-purple-50',
-      orange: 'border-orange-200 hover:border-orange-300 hover:bg-orange-50',
-      green: 'border-green-200 hover:border-green-300 hover:bg-green-50',
-      gray: 'border-gray-200 hover:border-gray-300 hover:bg-gray-50',
+      red: 'text-red-500',
+      blue: 'text-blue-500',
+      purple: 'text-purple-500',
+      orange: 'text-orange-500',
+      green: 'text-green-500',
+      gray: 'text-gray-500',
     }
     return colors[color as keyof typeof colors] || colors.gray
   }
 
-  const getSelectedCategoryColor = (color: string) => {
-    const colors = {
-      red: 'border-red-500 bg-red-50',
-      blue: 'border-blue-500 bg-blue-50',
-      purple: 'border-purple-500 bg-purple-50',
-      orange: 'border-orange-500 bg-orange-50',
-      green: 'border-green-500 bg-green-50',
-      gray: 'border-gray-500 bg-gray-50',
-    }
-    return colors[color as keyof typeof colors] || colors.gray
-  }
-
-  if (submitSuccess) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="w-8 h-8 text-green-600" />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Request Submitted!</h2>
-          <p className="text-gray-600 mb-6">
-            Thank you for contacting us. We've received your support request and will get back to you as soon as possible.
-          </p>
-          <Link
-            href="/dashboard"
-            className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Return to Dashboard
-          </Link>
-        </div>
-      </div>
-    )
-  }
+    <div className="min-h-screen relative overflow-hidden" style={{ backgroundColor: 'rgb(249, 250, 251)' }}>
+      {/* Page Background Gradient Layers */}
+      <div 
+        className="absolute z-0"
+        style={{
+          background: 'linear-gradient(160deg, rgb(224, 242, 254) 0%, rgb(224, 231, 255) 100%)',
+          filter: 'blur(100px)',
+          borderRadius: '100%',
+          opacity: 0.4,
+          height: '600px',
+          left: '-200px',
+          top: '300px',
+          width: '700px'
+        }}
+      ></div>
+      
+      <div 
+        className="absolute z-0"
+        style={{
+          background: 'linear-gradient(200deg, rgb(243, 232, 255) 0%, rgb(219, 234, 254) 100%)',
+          filter: 'blur(100px)',
+          borderRadius: '100%',
+          opacity: 0.35,
+          height: '550px',
+          right: '-150px',
+          top: '500px',
+          width: '650px'
+        }}
+      ></div>
+      
+      <div 
+        className="absolute z-0"
+        style={{
+          background: 'linear-gradient(180deg, rgb(236, 254, 255) 0%, rgb(240, 253, 244) 100%)',
+          filter: 'blur(80px)',
+          borderRadius: '100%',
+          opacity: 0.3,
+          height: '500px',
+          left: '50%',
+          bottom: '100px',
+          transform: 'translateX(-50%)',
+          width: '600px'
+        }}
+      ></div>
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Support Center</h1>
-              <p className="text-gray-600 mt-1">We're here to help you</p>
+      {/* Hero Header */}
+      <header className="relative overflow-hidden z-10 h-64 md:h-80" style={{ backgroundColor: 'rgb(248, 250, 252)' }}>
+        {/* Gradient Layer 1 - Top Left */}
+        <div 
+          className="absolute z-1"
+          style={{
+            background: 'linear-gradient(143.241deg, rgb(147, 197, 253) 0%, rgb(196, 181, 253) 50%, rgb(167, 243, 208) 100%)',
+            filter: 'blur(60px)',
+            borderRadius: '100%',
+            opacity: 0.3,
+            height: '400px',
+            left: '-150px',
+            top: '-100px',
+            width: '500px'
+          }}
+        ></div>
+        
+        {/* Gradient Layer 2 - Top Right */}
+        <div 
+          className="absolute z-1"
+          style={{
+            background: 'linear-gradient(140.017deg, rgb(221, 214, 254) 0%, rgb(147, 197, 253) 60%, rgb(129, 140, 248) 100%)',
+            filter: 'blur(60px)',
+            borderRadius: '100%',
+            opacity: 0.25,
+            height: '350px',
+            right: '-100px',
+            top: '-80px',
+            width: '450px'
+          }}
+        ></div>
+        
+        {/* Bottom Accent Layer */}
+        <div 
+          className="absolute z-1"
+          style={{
+            background: 'linear-gradient(90deg, rgb(186, 230, 253) 0%, rgb(191, 219, 254) 100%)',
+            filter: 'blur(40px)',
+            opacity: 0.2,
+            height: '100px',
+            bottom: '-50px',
+            left: '0',
+            width: '100%',
+            borderRadius: '100%'
+          }}
+        ></div>
+
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6">
+          <div className="flex items-center justify-between gap-2 md:gap-4">
+            {/* Left: Logo + Title */}
+            <div className="flex items-center gap-1.5 md:gap-3">
+              {/* Logo Placeholder */}
+              <div className="w-7 h-7 md:w-10 md:h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-sm md:text-xl">Q</span>
+              </div>
+              <h1 className="text-sm md:text-xl font-bold text-gray-900">Support Center</h1>
             </div>
-            <Link
-              href="/dashboard"
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
-            >
-              Back to Dashboard
-            </Link>
+
+            {/* Right: Back Button + User Status */}
+            <div className="flex items-center gap-1.5 md:gap-3">
+              {/* Back to Dashboard Button */}
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-1 md:gap-1.5 px-2 py-1 md:px-4 md:py-2 text-gray-600 hover:text-gray-900 rounded-lg hover:bg-white/40 transition-all text-xs md:text-sm font-medium"
+              >
+                <ArrowLeft className="w-3 h-3 md:w-4 md:h-4" />
+                <span className="hidden sm:inline">Back to Dashboard</span>
+              </Link>
+
+              {/* User Status */}
+              {session ? (
+                <div className="flex items-center gap-1.5 md:gap-2 px-2 py-1 md:px-3 md:py-1.5 bg-white/60 backdrop-blur-sm rounded-lg border border-gray-200">
+                  <span className="text-[10px] md:text-xs font-medium text-gray-700 max-w-[80px] md:max-w-none truncate">
+                    {session.user?.name || session.user?.email}
+                  </span>
+                  <div className="w-5 h-5 md:w-6 md:h-6 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center">
+                    <User className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" />
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  href="/signin/business"
+                  className="flex items-center gap-1 md:gap-2 px-2 py-1 md:px-3 md:py-1.5 bg-blue-50/80 backdrop-blur-sm border border-blue-200 text-blue-700 rounded-lg hover:bg-blue-100 transition-all text-[10px] md:text-xs font-medium"
+                >
+                  <LogIn className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                  <span className="hidden md:inline">Login to send message</span>
+                  <span className="md:hidden">Login</span>
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Quick Actions */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          {/* Status Card */}
-          <Link
-            href="/status"
-            className="bg-white rounded-lg border-2 border-gray-200 p-6 hover:border-blue-500 hover:shadow-lg transition-all group"
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-green-200 transition-colors">
-                <Activity className="w-6 h-6 text-green-600" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">System Status</h3>
-                <p className="text-gray-600 text-sm">
-                  Check if all systems are operational and view any ongoing incidents
-                </p>
-              </div>
-            </div>
-          </Link>
-
-          {/* Guide Card */}
-          <Link
-            href="/guide"
-            className="bg-white rounded-lg border-2 border-gray-200 p-6 hover:border-blue-500 hover:shadow-lg transition-all group"
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-blue-200 transition-colors">
-                <BookOpen className="w-6 h-6 text-blue-600" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">Documentation</h3>
-                <p className="text-gray-600 text-sm">
-                  Browse our comprehensive guide to learn how to use all features
-                </p>
-              </div>
-            </div>
-          </Link>
-        </div>
-
-        {/* Support Form */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6 md:p-8">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Submit a Support Request</h2>
-            <p className="text-gray-600">
-              Fill out the form below with as much detail as possible to help us resolve your issue quickly.
-            </p>
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-40 md:-mt-48 pb-8">
+        {/* Simplified Support Section - No Card */}
+        <div className="mb-4 md:mb-6">
+          <div className="mb-3 md:mb-4 text-center">
+            <h2 className="text-2xl md:text-5xl font-bold text-gray-900">How can we help?</h2>
           </div>
 
+          {/* Enhanced Textarea - Opens Modal on Focus */}
+          <div>
+            <div className="relative">
+              <textarea
+                onFocus={() => setIsModalOpen(true)}
+                onClick={() => setIsModalOpen(true)}
+                rows={5}
+                className="w-full px-6 py-4 text-base md:text-lg bg-gradient-to-br from-white to-blue-50/30 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer resize-none hover:border-blue-300 hover:shadow-lg transition-all shadow-md"
+                placeholder="Describe your issue or question..."
+                readOnly
+              />
+            </div>
+            
+            {/* Plan Badge - Below Textarea */}
+            {planName && session && (
+              <div className="mt-3 md:mt-4 flex justify-center">
+                <div 
+                  className="inline-flex items-center gap-1.5 md:gap-2 px-2.5 py-0.5 md:px-3 md:py-1 rounded-lg text-xs md:text-sm font-semibold"
+                  style={getPlanColors(planName).style}
+                >
+                  {getPlanColors(planName).showStar && (
+                    <span className="text-yellow-300 text-xs md:text-sm">★</span>
+                  )}
+                  <span>{capitalizePlanName(planName)} Plan</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Support Request Modal */}
+        {isModalOpen && (
+          <div 
+            className="fixed inset-0 z-50 flex items-center justify-center p-2 lg:p-4 bg-black/50 backdrop-blur-sm"
+            onClick={handleCloseModal}
+          >
+            <div 
+              className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-white rounded-xl shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="sticky top-0 bg-white border-b border-gray-200 px-4 md:px-6 py-3 md:py-4 flex items-center justify-between">
+                <h3 className="text-lg md:text-2xl font-medium text-gray-900">How can we help?</h3>
+                <button
+                  onClick={handleCloseModal}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  type="button"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+        </div>
+
+              {/* Modal Content */}
+              <div className="p-4 md:p-6">
+                {submitSuccess ? (
+                  <div className="text-center py-8">
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <CheckCircle className="w-8 h-8 text-green-600" />
+                    </div>
+                    <h3 className="text-lg font-medium mb-2 text-gray-900">Request Submitted!</h3>
+            <p className="text-gray-600">
+                      Thank you for contacting us. We'll get back to you as soon as possible.
+            </p>
+          </div>
+                ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Issue Category */}
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-3">
                 What type of issue are you experiencing? *
               </label>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div className="flex flex-wrap lg:flex-nowrap gap-3">
                 {issueCategories.map((category) => {
                   const Icon = category.icon
                   const isSelected = formData.category === category.id
@@ -319,15 +444,17 @@ export default function SupportPage() {
                       key={category.id}
                       type="button"
                       onClick={() => setFormData({ ...formData, category: category.id })}
-                      className={`p-4 border-2 rounded-lg text-left transition-all ${
+                      className={`flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-[calc(33.333%-0.5rem)] lg:min-w-0 p-4 border-2 rounded-lg text-left transition-all flex flex-col justify-between ${
                         isSelected 
-                          ? getSelectedCategoryColor(category.color)
-                          : `border-gray-200 ${getCategoryColor(category.color)}`
+                          ? 'border-gray-900 bg-gray-100 shadow-sm'
+                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                       }`}
                     >
-                      <Icon className="w-5 h-5 mb-2" />
-                      <div className="font-medium text-sm mb-1">{category.label}</div>
-                      <div className="text-xs text-gray-600">{category.description}</div>
+                      <div>
+                        <Icon className={`w-5 h-5 mb-2 ${getIconColor(category.color)}`} />
+                        <div className="font-medium text-sm">{category.label}</div>
+                      </div>
+                      <div className="text-xs font-normal text-gray-500">{category.description}</div>
                     </button>
                   )
                 })}
@@ -356,12 +483,12 @@ export default function SupportPage() {
                       onClick={() => setFormData({ ...formData, section: section.id })}
                       className={`p-3 border-2 rounded-lg text-left transition-all flex items-center gap-2 ${
                         isSelected 
-                          ? 'border-blue-500 bg-blue-50'
+                          ? 'border-gray-900 bg-gray-100 shadow-sm'
                           : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                       }`}
                     >
                       <Icon className="w-4 h-4 flex-shrink-0" />
-                      <span className="text-sm font-medium">{section.label}</span>
+                      <span className="text-xs md:text-sm">{section.label}</span>
                     </button>
                   )
                 })}
@@ -374,70 +501,23 @@ export default function SupportPage() {
               )}
             </div>
 
-            {/* Priority */}
+            {/* Message */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-3">
-                Priority Level
-              </label>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {priorities.map((priority) => {
-                  const isSelected = formData.priority === priority.id
-                  return (
-                    <button
-                      key={priority.id}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, priority: priority.id })}
-                      className={`p-3 border-2 rounded-lg text-left transition-all ${
-                        isSelected 
-                          ? priority.color
-                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      <div className="font-medium text-sm mb-1">{priority.label}</div>
-                      <div className="text-xs opacity-75">{priority.description}</div>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* Subject */}
-            <div>
-              <label htmlFor="subject" className="block text-sm font-medium text-gray-900 mb-2">
-                Subject *
-              </label>
-              <input
-                type="text"
-                id="subject"
-                value={formData.subject}
-                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.subject ? 'border-red-300' : 'border-gray-300'
-                }`}
-                placeholder="Brief summary of your issue"
-              />
-              {errors.subject && (
-                <p className="mt-1 text-sm text-red-600">{errors.subject}</p>
-              )}
-            </div>
-
-            {/* Description */}
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-900 mb-2">
-                Description *
+              <label htmlFor="message" className="block text-sm font-medium text-gray-900 mb-2">
+                Message *
               </label>
               <textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                id="message"
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 rows={6}
                 className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.description ? 'border-red-300' : 'border-gray-300'
+                  errors.message ? 'border-red-300' : 'border-gray-300'
                 }`}
                 placeholder="Please provide as much detail as possible about your issue. Include steps to reproduce if applicable."
               />
-              {errors.description && (
-                <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+              {errors.message && (
+                <p className="mt-1 text-sm text-red-600">{errors.message}</p>
               )}
             </div>
 
@@ -465,11 +545,13 @@ export default function SupportPage() {
 
             {/* Screenshot Upload */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                Screenshot (optional)
-              </label>
-              <div className="text-sm text-gray-600 mb-3">
-                Upload a screenshot to help us understand your issue better
+              <div className="flex items-center gap-2 mb-2">
+                <label className="text-sm font-medium text-gray-900">
+                  Screenshot (optional)
+                </label>
+                <span className="text-xs text-gray-500">
+                  Upload a screenshot to help us understand your issue better
+                </span>
               </div>
               
               {!formData.screenshot ? (
@@ -534,29 +616,83 @@ export default function SupportPage() {
             )}
 
             {/* Submit Button */}
-            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-              <div className="text-sm text-gray-600">
-                * Required fields
-              </div>
-              <button
-                type="submit"
-                disabled={isSubmitting || !session}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 font-medium"
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5" />
-                    Submit Request
-                  </>
+            <div className="flex items-center justify-end pt-4 border-t border-gray-200">
+              <div className="flex items-center gap-3">
+                {/* Plan Badge */}
+                {planName && session && (
+                  <div 
+                    className="inline-flex items-center gap-1.5 md:gap-2 px-2.5 py-0.5 md:px-3 md:py-1 rounded-lg text-xs md:text-sm font-semibold"
+                    style={getPlanColors(planName).style}
+                  >
+                    {getPlanColors(planName).showStar && (
+                      <span className="text-yellow-300 text-xs md:text-sm">★</span>
+                    )}
+                    <span>{capitalizePlanName(planName)} Plan</span>
+                  </div>
                 )}
-              </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !session}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 font-medium"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5" />
+                      Submit Request
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </form>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Quick Actions */}
+        <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+          {/* Status Card */}
+          <Link
+            href="/status"
+            className="bg-white/95 backdrop-blur-sm rounded-2xl border border-gray-200 p-4 md:p-6 hover:border-gray-300 hover:shadow-lg transition-all group"
+          >
+            <div className="flex items-start gap-3 md:gap-4">
+              <div className="w-8 h-8 md:w-12 md:h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-green-200 transition-colors">
+                <Activity className="w-4 h-4 md:w-6 md:h-6 text-green-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-1">System Status</h3>
+                <p className="text-gray-600 text-xs md:text-sm">
+                  Check if all systems are operational and view any ongoing incidents
+                </p>
+              </div>
+            </div>
+          </Link>
+
+          {/* Guide Card */}
+          <Link
+            href="/guide"
+            className="bg-white/95 backdrop-blur-sm rounded-2xl border border-gray-200 p-4 md:p-6 hover:border-gray-300 hover:shadow-lg transition-all group"
+          >
+            <div className="flex items-start gap-3 md:gap-4">
+              <div className="w-8 h-8 md:w-12 md:h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-blue-200 transition-colors">
+                <BookOpen className="w-4 h-4 md:w-6 md:h-6 text-blue-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-1">Documentation</h3>
+                <p className="text-gray-600 text-xs md:text-sm">
+                  Browse our comprehensive guide to learn how to use all features
+                </p>
+              </div>
+            </div>
+          </Link>
         </div>
       </div>
     </div>

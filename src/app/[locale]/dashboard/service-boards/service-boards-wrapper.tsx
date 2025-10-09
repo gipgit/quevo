@@ -516,7 +516,7 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
                                 <div className="absolute left-2.5 top-6 w-0.5 h-full bg-[var(--dashboard-border-primary)]"></div>
                               )}
                               {/* Timeline dot */}
-                              <div className="relative z-10 w-5 h-5 rounded-full border-2 border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-primary)] flex items-center justify-center">
+                              <div className="relative w-5 h-5 rounded-full border-2 border-[var(--dashboard-border-primary)] bg-[var(--dashboard-bg-primary)] flex items-center justify-center">
                                 <div className="w-1.5 h-1.5 rounded-full bg-[var(--dashboard-text-secondary)]"></div>
                               </div>
                               {/* Content */}
@@ -605,7 +605,7 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
                 <div className="space-y-4">
                   {/* Service Board Actions Group - match reference button style */}
                   <div className="relative overflow-hidden">
-                    <div className="relative z-10">
+                    <div className="relative">
                       <div className="mb-3 text-left">
                         <span className="text-sm font-medium ai-panel-text">Board Quick Actions</span>
                       </div>
@@ -645,7 +645,7 @@ export default function ServiceBoardsWrapper({ serviceBoards: initialServiceBoar
 
                   {/* Additional Actions Group */}
                   <div className="relative overflow-hidden">
-                    <div className="relative z-10">
+                    <div className="relative">
                       <div className="mb-3 text-left">
                         <span className="text-sm font-medium ai-panel-text">Additional Actions</span>
                       </div>
