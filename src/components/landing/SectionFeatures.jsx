@@ -9,25 +9,52 @@ export default function SectionFeatures({ locale }) {
   const t = useTranslations('Landing');
   const [selectedFeature, setSelectedFeature] = useState('serviceRequests');
 
-  // Features data
+  // Features data with unique colors
   const featuresCards = [
     {
       id: 'serviceRequests',
       icon: "✓",
       title: t('Features.cards.serviceRequests.title'),
-      description: t('Features.cards.serviceRequests.description')
+      description: t('Features.cards.serviceRequests.description'),
+      color: {
+        primary: '#8B5CF6', // violet-500
+        shadow: '#A78BFA', // violet-400
+        gradient: {
+          from: '#DDD6FE', // violet-200
+          via: '#C4B5FD', // violet-300
+          to: '#A78BFA' // violet-400
+        }
+      }
     },
     {
       id: 'appointmentsScheduling',
       icon: "✓",
       title: t('Features.cards.appointmentsScheduling.title'),
-      description: t('Features.cards.appointmentsScheduling.description')
+      description: t('Features.cards.appointmentsScheduling.description'),
+      color: {
+        primary: '#10B981', // emerald-500
+        shadow: '#34D399', // emerald-400
+        gradient: {
+          from: '#A7F3D0', // emerald-200
+          via: '#6EE7B7', // emerald-300
+          to: '#34D399' // emerald-400
+        }
+      }
     },
     {
       id: 'quoteSimulation',
       icon: "✓",
       title: t('Features.cards.quoteSimulation.title'),
-      description: t('Features.cards.quoteSimulation.description')
+      description: t('Features.cards.quoteSimulation.description'),
+      color: {
+        primary: '#F59E0B', // amber-500
+        shadow: '#FBBF24', // amber-400
+        gradient: {
+          from: '#FDE68A', // amber-200
+          via: '#FCD34D', // amber-300
+          to: '#FBBF24' // amber-400
+        }
+      }
     },
     
   ];
@@ -45,50 +72,76 @@ export default function SectionFeatures({ locale }) {
           </p>
         </div>
 
-        {/* Mobile Layout - Preview First, then Cards */}
+        {/* Mobile Layout - Features List First, then Preview */}
         <div className="lg:hidden space-y-8">
-          {/* Mobile Preview - Show first on mobile */}
-          <div>
-            <FeaturePreview featureType={selectedFeature} locale={locale} />
-          </div>
-          
-          {/* Mobile Features List - Show below preview */}
-          <div className="space-y-4">
+          {/* Mobile Features List - Show first on mobile */}
+          <div className="space-y-2">
             {featuresCards.map((card, index) => (
               <div
                 key={index}
                 onClick={() => setSelectedFeature(card.id)}
-                className={`p-3 cursor-pointer transition-all duration-200 border-l-4 ${
+                className={`relative p-3 pl-6 cursor-pointer transition-all duration-200 border-l-4 border-transparent ${
                   selectedFeature === card.id 
-                    ? 'border-blue-500 bg-blue-50/30' 
-                    : 'border-transparent hover:border-gray-300 hover:bg-gray-50/50'
+                    ? 'bg-gray-50/50' 
+                    : 'hover:bg-gray-50/50'
                 }`}
               >
-                <div className="flex flex-row gap-4 items-start">
-                  <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
-                    selectedFeature === card.id ? 'bg-blue-500' : 'bg-gray-200'
-                  }`}>
-                    <svg className={`w-4 h-4 ${
-                      selectedFeature === card.id ? 'text-white' : 'text-gray-600'
-                    }`} fill="currentColor" viewBox="0 0 20 20">
+                {/* Absolutely positioned checkmark icon with custom shadow */}
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2">
+                  {/* Custom shadow layer */}
+                  <div 
+                    className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-xl transition-all duration-300 ease-linear ${
+                      selectedFeature === card.id 
+                        ? 'w-10 h-10 opacity-60' 
+                        : 'w-6 h-6 bg-gray-400 opacity-25'
+                    }`}
+                    style={selectedFeature === card.id ? { backgroundColor: card.color.shadow } : {}}
+                  ></div>
+                  
+                  {/* Checkmark icon */}
+                  <div 
+                    className={`relative w-5 h-5 rounded-full flex items-center justify-center transition-all ${
+                      selectedFeature === card.id 
+                        ? 'border-2' 
+                        : 'bg-white border-2 border-gray-300'
+                    }`}
+                    style={selectedFeature === card.id ? { 
+                      backgroundColor: card.color.primary,
+                      borderColor: card.color.primary
+                    } : {}}
+                  >
+                    <svg className={`w-3 h-3 ${
+                      selectedFeature === card.id ? 'text-white' : 'text-gray-400'
+                    }`} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <div className="flex-1">
-                    <h3 className={`text-lg font-semibold mb-1 leading-tight ${
-                      selectedFeature === card.id ? 'text-blue-900' : 'text-gray-900'
-                    }`}>
-                      {card.title}
-                    </h3>
-                  </div>
                 </div>
-                {selectedFeature === card.id && (
-                  <p className="text-xs lg:text-sm text-gray-600 leading-tight lg:leading-relaxed mt-2 ml-10">
-                    {card.description}
-                  </p>
-                )}
+                
+                {/* Content */}
+                <div>
+                  <h3 className={`text-base lg:text-xl font-medium mb-1 leading-tight ${
+                    selectedFeature === card.id ? 'text-gray-900' : 'text-gray-500'
+                  }`}>
+                    {card.title}
+                  </h3>
+                  {selectedFeature === card.id && (
+                    <p className="text-xs lg:text-sm text-gray-600 leading-tight lg:leading-relaxed mt-2">
+                      {card.description}
+                    </p>
+                  )}
+                </div>
               </div>
             ))}
+          </div>
+          
+          {/* Mobile Preview - Show below features list */}
+          <div>
+            <FeaturePreview 
+              featureType={selectedFeature} 
+              locale={locale}
+              featureColor={featuresCards.find(f => f.id === selectedFeature)?.color}
+            />
           </div>
         </div>
 
@@ -100,25 +153,47 @@ export default function SectionFeatures({ locale }) {
               <div
                 key={index}
                 onClick={() => setSelectedFeature(card.id)}
-                className={`p-3 cursor-pointer transition-all duration-200 border-l-4 ${
+                className={`p-3 cursor-pointer transition-all duration-200 border-l-4 border-transparent ${
                   selectedFeature === card.id 
-                    ? 'border-blue-500 bg-blue-50/30' 
-                    : 'border-transparent hover:border-gray-300 hover:bg-gray-50/50'
+                    ? 'bg-gray-50/50' 
+                    : 'hover:bg-gray-50/50'
                 }`}
               >
                 <div className="flex flex-row gap-4 items-start">
-                  <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
-                    selectedFeature === card.id ? 'bg-blue-500' : 'bg-gray-200'
-                  }`}>
-                    <svg className={`w-4 h-4 ${
-                      selectedFeature === card.id ? 'text-white' : 'text-gray-600'
-                    }`} fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
+                  {/* Checkmark icon with custom shadow */}
+                  <div className="flex-shrink-0 relative">
+                    {/* Custom shadow layer */}
+                    <div 
+                      className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-xl transition-all duration-300 ease-linear ${
+                        selectedFeature === card.id 
+                          ? 'w-12 h-12 opacity-60' 
+                          : 'w-7 h-7 bg-gray-400 opacity-25'
+                      }`}
+                      style={selectedFeature === card.id ? { backgroundColor: card.color.shadow } : {}}
+                    ></div>
+                    
+                    {/* Checkmark icon */}
+                    <div 
+                      className={`relative w-6 h-6 rounded-full flex items-center justify-center transition-all ${
+                        selectedFeature === card.id 
+                          ? 'border-2' 
+                          : 'bg-white border-2 border-gray-300'
+                      }`}
+                      style={selectedFeature === card.id ? { 
+                        backgroundColor: card.color.primary,
+                        borderColor: card.color.primary
+                      } : {}}
+                    >
+                      <svg className={`w-4 h-4 ${
+                        selectedFeature === card.id ? 'text-white' : 'text-gray-400'
+                      }`} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
                   </div>
                   <div className="flex-1">
-                    <h3 className={`text-lg font-semibold mb-1 leading-tight ${
-                      selectedFeature === card.id ? 'text-blue-900' : 'text-gray-900'
+                    <h3 className={`text-base lg:text-xl font-medium mb-1 leading-tight ${
+                      selectedFeature === card.id ? 'text-gray-900' : 'text-gray-500'
                     }`}>
                       {card.title}
                     </h3>
@@ -135,7 +210,11 @@ export default function SectionFeatures({ locale }) {
 
           {/* Right Column - Feature Preview */}
           <div className="col-span-3">
-            <FeaturePreview featureType={selectedFeature} locale={locale} />
+            <FeaturePreview 
+              featureType={selectedFeature} 
+              locale={locale}
+              featureColor={featuresCards.find(f => f.id === selectedFeature)?.color}
+            />
           </div>
         </div>
       </div>

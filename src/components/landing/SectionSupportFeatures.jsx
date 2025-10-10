@@ -8,36 +8,51 @@ export default function SectionSupportFeatures({ locale }) {
   const t = useTranslations('Landing');
   const [selectedFeature, setSelectedFeature] = useState('textCorrection');
 
-  // Support features data
+  // Support features data with unique colors
   const supportFeatures = [
     {
       id: 'aiTicketClassification',
       icon: "🤖",
       title: t('SupportFeatures.features.aiTicketClassification.title'),
-      description: t('SupportFeatures.features.aiTicketClassification.description')
+      description: t('SupportFeatures.features.aiTicketClassification.description'),
+      color: {
+        primary: '#EC4899', // pink-500
+        shadow: '#F472B6' // pink-400
+      }
     },
     {
       id: 'smartResponseSuggestions',
       icon: "💡",
       title: t('SupportFeatures.features.smartResponseSuggestions.title'),
-      description: t('SupportFeatures.features.smartResponseSuggestions.description')
+      description: t('SupportFeatures.features.smartResponseSuggestions.description'),
+      color: {
+        primary: '#06B6D4', // cyan-500
+        shadow: '#22D3EE' // cyan-400
+      }
     },
     {
       id: 'textCorrection',
       icon: "✏️",
       title: t('SupportFeatures.features.textCorrection.title'),
-      description: t('SupportFeatures.features.textCorrection.description')
+      description: t('SupportFeatures.features.textCorrection.description'),
+      color: {
+        primary: '#A855F7', // purple-500
+        shadow: '#C084FC' // purple-400
+      }
     }
   ];
 
   const renderFeaturePreview = () => {
+    const currentFeature = supportFeatures.find(f => f.id === selectedFeature);
+    
     switch (selectedFeature) {
       case 'aiTicketClassification':
         return (
           <div 
-            className="rounded-3xl p-4 lg:p-8 w-full shadow-[0_4px_20px_rgba(148,163,184,0.15)] backdrop-blur-sm"
+            className="rounded-3xl p-4 lg:p-8 w-full shadow-[0_4px_20px_rgba(148,163,184,0.15)] backdrop-blur-sm transition-all duration-300 ease-linear border"
             style={{
-              background: 'linear-gradient(135deg, #64748b 0%, #475569 50%, #334155 100%)'
+              background: `linear-gradient(to bottom right, #000000, ${currentFeature?.color.primary || '#9CA3AF'})`,
+              borderColor: currentFeature?.color.primary || '#9CA3AF'
             }}
           >
             <div className="space-y-2">
@@ -86,9 +101,10 @@ export default function SectionSupportFeatures({ locale }) {
       case 'smartResponseSuggestions':
         return (
           <div 
-            className="rounded-3xl p-4 lg:p-8 w-full shadow-[0_4px_20px_rgba(148,163,184,0.15)] backdrop-blur-sm"
+            className="rounded-3xl p-4 lg:p-8 w-full shadow-[0_4px_20px_rgba(148,163,184,0.15)] backdrop-blur-sm transition-all duration-300 ease-linear border"
             style={{
-              background: 'linear-gradient(135deg, #64748b 0%, #475569 50%, #334155 100%)'
+              background: `linear-gradient(to bottom right, #000000, ${currentFeature?.color.primary || '#9CA3AF'})`,
+              borderColor: currentFeature?.color.primary || '#9CA3AF'
             }}
           >
             <div className="space-y-2">
@@ -168,9 +184,10 @@ export default function SectionSupportFeatures({ locale }) {
       case 'textCorrection':
         return (
           <div 
-            className="rounded-3xl p-4 lg:p-8 w-full shadow-[0_4px_20px_rgba(148,163,184,0.15)] backdrop-blur-sm"
+            className="rounded-3xl p-4 lg:p-8 w-full shadow-[0_4px_20px_rgba(148,163,184,0.15)] backdrop-blur-sm transition-all duration-300 ease-linear border"
             style={{
-              background: 'linear-gradient(135deg, #64748b 0%, #475569 50%, #334155 100%)'
+              background: `linear-gradient(to bottom right, #000000, ${currentFeature?.color.primary || '#9CA3AF'})`,
+              borderColor: currentFeature?.color.primary || '#9CA3AF'
             }}
           >
             <div className="space-y-2">
@@ -217,22 +234,57 @@ export default function SectionSupportFeatures({ locale }) {
   };
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black flex items-center relative overflow-hidden">
-      {/* AI Pattern Overlay */}
-      <div className="absolute inset-0 opacity-15">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[length:20px_20px]"></div>
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_75%_25%,rgba(148,163,184,0.06)_2px,transparent_2px)] bg-[length:30px_30px]"></div>
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_25%_75%,rgba(255,255,255,0.04)_1.5px,transparent_1.5px)] bg-[length:25px_25px]"></div>
-      </div>
+    <section 
+      className="min-h-screen flex items-center relative overflow-hidden"
+      style={{ backgroundColor: 'rgb(17, 17, 17)' }}
+    >
+      {/* Gradient Layer 1 - Top Left - Cyan/Blue */}
+      <div 
+        className="absolute pointer-events-none"
+        style={{
+          background: 'linear-gradient(143deg, rgb(6, 182, 212) 0%, rgb(34, 211, 238) 50%, rgb(103, 232, 249) 100%)',
+          filter: 'blur(80px)',
+          borderRadius: '100%',
+          opacity: 0.22,
+          height: '548px',
+          left: '-246px',
+          top: '-186px',
+          width: '658px',
+          zIndex: 1
+        }}
+      ></div>
       
-      {/* Animated gradient orbs with shine effects */}
-      <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-slate-600/15 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gray-600/15 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
-      <div className="absolute top-1/2 right-1/3 w-48 h-48 bg-slate-500/15 rounded-full blur-3xl animate-pulse" style={{animationDelay: '4s'}}></div>
+      {/* Gradient Layer 2 - Bottom Right - Pink/Rose */}
+      <div 
+        className="absolute pointer-events-none"
+        style={{
+          background: 'linear-gradient(140deg, rgb(236, 72, 153) 0%, rgb(244, 114, 182) 60%, rgb(251, 207, 232) 100%)',
+          filter: 'blur(80px)',
+          borderRadius: '100%',
+          opacity: 0.18,
+          height: '548px',
+          right: '-86px',
+          bottom: '-100px',
+          width: '658px',
+          zIndex: 1
+        }}
+      ></div>
       
-      {/* Shine effects */}
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-transparent via-white/5 to-transparent"></div>
-      <div className="absolute top-1/3 right-1/4 w-32 h-32 bg-white/10 rounded-full blur-2xl animate-pulse" style={{animationDelay: '1s'}}></div>
+      {/* Center gradient accent layer - Purple */}
+      <div 
+        className="absolute pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle, rgb(168, 85, 247) 0%, rgb(147, 51, 234) 40%, transparent 100%)',
+          filter: 'blur(100px)',
+          opacity: 0.16,
+          height: '500px',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '900px',
+          zIndex: 1
+        }}
+      ></div>
       
       <div className="container mx-auto px-6 lg:px-12 py-16 max-w-7xl relative z-10">
         {/* Title Section */}
@@ -245,39 +297,56 @@ export default function SectionSupportFeatures({ locale }) {
           </p>
         </div>
 
-        {/* 2-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 max-w-7xl mx-auto">
-          {/* Mobile Preview - Show first on mobile */}
-          <div className="lg:order-2 flex justify-center">
-            <div className="w-full max-w-xl">
-              {renderFeaturePreview()}
-            </div>
-          </div>
-
-          {/* Features List - Show second on mobile */}
-          <div className="lg:order-1 space-y-3 lg:space-y-6">
+        {/* Mobile Layout - Features List First, then Preview */}
+        <div className="lg:hidden space-y-8">
+          {/* Mobile Features List - Show first on mobile */}
+          <div className="space-y-2">
             {supportFeatures.map((feature, index) => (
               <div
                 key={index}
                 onClick={() => setSelectedFeature(feature.id)}
-                className={`flex flex-row gap-4 p-3 items-start cursor-pointer transition-all duration-200 border-l-4 rounded-r-lg ${
+                className={`relative p-3 pl-6 cursor-pointer transition-all duration-200 border-l-4 border-transparent rounded-r-lg ${
                   selectedFeature === feature.id 
-                    ? 'border-purple-400 bg-white/10 backdrop-blur-sm' 
-                    : 'border-transparent hover:border-purple-300/50 hover:bg-white/5'
+                    ? 'bg-white/10 backdrop-blur-sm' 
+                    : 'hover:bg-white/5'
                 }`}
               >
-                <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
-                  selectedFeature === feature.id ? 'bg-purple-400' : 'bg-white/20'
-                }`}>
-                  <svg className={`w-4 h-4 ${
-                    selectedFeature === feature.id ? 'text-white' : 'text-gray-300'
-                  }`} fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
+                {/* Absolutely positioned checkmark icon with custom shadow */}
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2">
+                  {/* Custom shadow layer */}
+                  <div 
+                    className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-xl transition-all duration-300 ease-linear ${
+                      selectedFeature === feature.id 
+                        ? 'w-10 h-10 opacity-60' 
+                        : 'w-6 h-6 bg-gray-400 opacity-25'
+                    }`}
+                    style={selectedFeature === feature.id ? { backgroundColor: feature.color.shadow } : {}}
+                  ></div>
+                  
+                  {/* Checkmark icon */}
+                  <div 
+                    className={`relative w-5 h-5 rounded-full flex items-center justify-center transition-all ${
+                      selectedFeature === feature.id 
+                        ? 'border-2' 
+                        : 'bg-white/20 border-2 border-transparent'
+                    }`}
+                    style={selectedFeature === feature.id ? { 
+                      backgroundColor: feature.color.primary,
+                      borderColor: feature.color.primary
+                    } : {}}
+                  >
+                    <svg className={`w-3 h-3 ${
+                      selectedFeature === feature.id ? 'text-white' : 'text-gray-300'
+                    }`} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className={`text-lg font-semibold mb-1 leading-tight ${
-                    selectedFeature === feature.id ? 'text-white' : 'text-gray-200'
+                
+                {/* Content */}
+                <div>
+                  <h3 className={`text-base lg:text-xl font-medium mb-1 leading-tight ${
+                    selectedFeature === feature.id ? 'text-white' : 'text-gray-400'
                   }`}>
                     {feature.title}
                   </h3>
@@ -287,6 +356,81 @@ export default function SectionSupportFeatures({ locale }) {
                 </div>
               </div>
             ))}
+          </div>
+          
+          {/* Mobile Preview - Show below features list */}
+          <div className="flex justify-center">
+            <div className="w-full max-w-xl">
+              {renderFeaturePreview()}
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop Layout - 2-Column Layout */}
+        <div className="hidden lg:grid grid-cols-2 gap-6 lg:gap-12 max-w-7xl mx-auto">
+          {/* Features List */}
+          <div className="space-y-6">
+            {supportFeatures.map((feature, index) => (
+              <div
+                key={index}
+                onClick={() => setSelectedFeature(feature.id)}
+                className={`flex flex-row gap-4 p-3 items-start cursor-pointer transition-all duration-200 border-l-4 border-transparent rounded-r-lg ${
+                  selectedFeature === feature.id 
+                    ? 'bg-white/10 backdrop-blur-sm' 
+                    : 'hover:bg-white/5'
+                }`}
+              >
+                {/* Checkmark icon with custom shadow */}
+                <div className="flex-shrink-0 relative">
+                  {/* Custom shadow layer */}
+                  <div 
+                    className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-xl transition-all duration-300 ease-linear ${
+                      selectedFeature === feature.id 
+                        ? 'w-12 h-12 opacity-60' 
+                        : 'w-7 h-7 bg-gray-400 opacity-25'
+                    }`}
+                    style={selectedFeature === feature.id ? { backgroundColor: feature.color.shadow } : {}}
+                  ></div>
+                  
+                  {/* Checkmark icon */}
+                  <div 
+                    className={`relative w-6 h-6 rounded-full flex items-center justify-center transition-all ${
+                      selectedFeature === feature.id 
+                        ? 'border-2' 
+                        : 'bg-white/20 border-2 border-transparent'
+                    }`}
+                    style={selectedFeature === feature.id ? { 
+                      backgroundColor: feature.color.primary,
+                      borderColor: feature.color.primary
+                    } : {}}
+                  >
+                    <svg className={`w-4 h-4 ${
+                      selectedFeature === feature.id ? 'text-white' : 'text-gray-300'
+                    }`} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+                
+                <div className="flex-1">
+                  <h3 className={`text-base lg:text-xl font-medium mb-1 leading-tight ${
+                    selectedFeature === feature.id ? 'text-white' : 'text-gray-400'
+                  }`}>
+                    {feature.title}
+                  </h3>
+                  <p className="text-xs lg:text-sm text-gray-300 leading-tight lg:leading-relaxed">
+                    {feature.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Preview */}
+          <div className="flex justify-center">
+            <div className="w-full max-w-xl">
+              {renderFeaturePreview()}
+            </div>
           </div>
         </div>
       </div>

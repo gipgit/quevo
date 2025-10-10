@@ -7,6 +7,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import LocaleModalWrapper from '@/components/ui/LocaleModalWrapper';
 import { LocaleSwitcherProvider } from '@/components/ui/LocaleSwitcherProvider';
+import FloatingSupportChat from '@/components/landing/FloatingSupportChat';
 
 export const metadata = {
   title: 'Flowia', 
@@ -26,6 +27,7 @@ export default function MainLayout({
       </main>
       <Footer />
       <LocaleModalWrapper />
+      <FloatingSupportChat />
     </LocaleSwitcherProvider>
   );
 }

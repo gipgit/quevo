@@ -836,17 +836,6 @@ button {
     background: #fff;
 }
 
-/* Selection indicators - neutral gray colors */
-.w-6.h-6.rounded-full {
-    border-color: #d1d5db;
-    background-color: transparent;
-}
-
-.selected .w-6.h-6.rounded-full {
-    border-color: #374151;
-    background-color: #374151;
-}
-
 .text-black{
     color: #000;
 }

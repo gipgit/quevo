@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 
-export default function FeaturePreview({ featureType, locale }) {
+export default function FeaturePreview({ featureType, locale, featureColor }) {
   const t = useTranslations('Landing');
 
   const getPreviewContent = () => {
@@ -132,7 +132,16 @@ export default function FeaturePreview({ featureType, locale }) {
 
   return (
     <div className="sticky top-8">
-      <div className="bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 rounded-3xl p-4 lg:p-10 border border-gray-400 flex justify-center">
+      <div 
+        className="rounded-3xl p-4 lg:p-10 border flex justify-center transition-all duration-300 ease-linear"
+        style={featureColor ? {
+          background: `linear-gradient(to bottom right, #000000, ${featureColor.primary})`,
+          borderColor: featureColor.primary
+        } : {
+          background: 'linear-gradient(to bottom right, #000000, #9CA3AF)',
+          borderColor: '#9CA3AF'
+        }}
+      >
         {getPreviewContent()}
       </div>
     </div>

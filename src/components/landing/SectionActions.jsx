@@ -548,6 +548,25 @@ export default function SectionActions({ locale }) {
   // Use the passed locale prop instead of detecting from URL
   const currentLocale = ['it', 'en', 'es', 'de', 'fr'].includes(locale) ? locale : 'it';
 
+  // Map action types to gradient colors
+  const getActionGradientColor = (actionType) => {
+    const colorMap = {
+      'generic_message': '#3B82F6', // blue-500
+      'payment_request': '#10B981', // emerald-500
+      'appointment_scheduling': '#8B5CF6', // violet-500
+      'information_request': '#EAB308', // yellow-500
+      'document_download': '#0EA5E9', // sky-500
+      'signature_request': '#EF4444', // red-500
+      'approval_request': '#F97316', // orange-500
+      'feedback_request': '#06B6D4', // cyan-500
+      'milestone_update': '#14B8A6', // teal-500
+      'resource_link': '#22D3EE', // cyan-400
+      'checklist': '#6366F1', // indigo-500
+      'opt_in_request': '#84CC16', // lime-500
+    };
+    return colorMap[actionType] || '#3B82F6'; // default to blue
+  };
+
   // Auto-play slideshow
   useEffect(() => {
     if (!isAutoPlaying) {
@@ -875,7 +894,13 @@ export default function SectionActions({ locale }) {
 
         {/* Action Card Screenshot Preview - Now full width below the actions */}
         <div className="flex justify-center">
-          <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-3xl p-2 lg:p-6 overflow-hidden max-w-4xl w-full">
+          <div 
+            className="rounded-3xl p-2 lg:p-6 overflow-hidden max-w-4xl w-full transition-all duration-300 ease-linear border"
+            style={{
+              background: `linear-gradient(to bottom right, #000000, ${getActionGradientColor(currentAction.key)})`,
+              borderColor: getActionGradientColor(currentAction.key)
+            }}
+          >
             <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-4 lg:p-12">
               {/* Action Card Screenshot */}
               <div className="flex justify-center mb-4 lg:mb-6">

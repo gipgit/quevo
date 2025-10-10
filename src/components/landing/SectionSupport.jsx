@@ -2,37 +2,38 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { BookOpen, Clock, Globe, Zap, MessageSquare } from 'lucide-react';
 
 export default function SectionSupport({ locale }) {
   const t = useTranslations('Landing');
 
   const supportFeatures = [
     {
-      icon: "📚",
+      icon: BookOpen,
       title: t('Support.features.knowledgeBase.title'),
       description: t('Support.features.knowledgeBase.description'),
       badge: t('Support.features.knowledgeBase.badge')
     },
     {
-      icon: "🕐",
+      icon: Clock,
       title: t('Support.features.premiumSupport.title'),
       description: t('Support.features.premiumSupport.description'),
       badge: t('Support.features.premiumSupport.badge')
     },
     {
-      icon: "🌍",
+      icon: Globe,
       title: t('Support.features.multiLanguage.title'),
       description: t('Support.features.multiLanguage.description'),
       badge: t('Support.features.multiLanguage.badge')
     },
     {
-      icon: "⚡",
+      icon: Zap,
       title: t('Support.features.fastResponse.title'),
       description: t('Support.features.fastResponse.description'),
       badge: t('Support.features.fastResponse.badge')
     },
     {
-      icon: "💬",
+      icon: MessageSquare,
       title: t('Support.features.multipleChannels.title'),
       description: t('Support.features.multipleChannels.description'),
       badge: t('Support.features.multipleChannels.badge')
@@ -85,8 +86,8 @@ export default function SectionSupport({ locale }) {
             >
               {/* Icon and title in same row for mobile */}
               <div className="flex items-center justify-center lg:flex-col mb-1 lg:mb-2">
-                <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-blue-50 flex items-center justify-center text-lg md:text-xl lg:text-2xl lg:mb-3 mr-3 lg:mr-0">
-                  {feature.icon}
+                <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-blue-50 flex items-center justify-center lg:mb-3 mr-3 lg:mr-0">
+                  <feature.icon className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 text-blue-600" />
                 </div>
                 <h3 className="text-base md:text-lg font-semibold text-gray-900">
                   {feature.title}

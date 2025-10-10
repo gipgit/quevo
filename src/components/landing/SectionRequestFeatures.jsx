@@ -8,27 +8,44 @@ export default function SectionRequestFeatures({ locale }) {
   const t = useTranslations('Landing');
   const [selectedFeature, setSelectedFeature] = useState('requestManagement');
 
-  // Request features data
+  // Request features data with unique colors
   const requestFeatures = [
     {
       id: 'requestManagement',
       icon: "📋",
       title: t('RequestFeatures.features.requestManagement.title'),
-      description: t('RequestFeatures.features.requestManagement.description')
+      description: t('RequestFeatures.features.requestManagement.description'),
+      color: {
+        primary: '#3B82F6', // blue-500
+        shadow: '#60A5FA' // blue-400
+      }
     },
     {
       id: 'quotationGenerator',
       icon: "📄",
       title: t('RequestFeatures.features.quotationGenerator.title'),
-      description: t('RequestFeatures.features.quotationGenerator.description')
+      description: t('RequestFeatures.features.quotationGenerator.description'),
+      color: {
+        primary: '#14B8A6', // teal-500
+        shadow: '#2DD4BF' // teal-400
+      }
     }
   ];
 
   const renderFeaturePreview = () => {
+    const currentFeature = requestFeatures.find(f => f.id === selectedFeature);
+    
     switch (selectedFeature) {
       case 'quotationGenerator':
         return (
-          <div className="bg-white rounded-2xl shadow-2xl p-4 lg:p-8 border border-gray-100">
+          <div 
+            className="rounded-2xl shadow-2xl p-4 lg:p-8 border transition-all duration-300 ease-linear"
+            style={{
+              background: `linear-gradient(to bottom right, #000000, ${currentFeature?.color.primary || '#9CA3AF'})`,
+              borderColor: currentFeature?.color.primary || '#9CA3AF'
+            }}
+          >
+            <div className="bg-white rounded-xl p-4 lg:p-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
               {/* Settings Panel */}
               <div className="lg:col-span-1 bg-gray-50 rounded-xl p-4">
@@ -179,9 +196,10 @@ export default function SectionRequestFeatures({ locale }) {
                 </div>
               </div>
             </div>
+              </div>
 
-                {/* Action Buttons - Moved below PDF */}
-                <div className="flex justify-center gap-3 mt-4">
+              {/* Action Buttons - Moved below PDF */}
+              <div className="lg:col-span-3 flex justify-center gap-3 mt-4">
                   <div className="px-3 py-1.5 bg-gray-600 text-white rounded-lg flex items-center gap-1.5 text-sm">
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -197,13 +215,19 @@ export default function SectionRequestFeatures({ locale }) {
               </div>
             </div>
             </div>
-
           </div>
         );
 
       case 'requestManagement':
         return (
-          <div className="bg-white rounded-2xl shadow-2xl p-4 lg:p-8 border border-gray-100">
+          <div 
+            className="rounded-2xl shadow-2xl p-4 lg:p-8 border transition-all duration-300 ease-linear"
+            style={{
+              background: `linear-gradient(to bottom right, #000000, ${currentFeature?.color.primary || '#9CA3AF'})`,
+              borderColor: currentFeature?.color.primary || '#9CA3AF'
+            }}
+          >
+            <div className="bg-white rounded-xl p-4 lg:p-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
               {/* Left Column - Request List */}
               <div className="lg:col-span-1 space-y-4 bg-gray-50 rounded-lg p-4">
@@ -568,9 +592,10 @@ export default function SectionRequestFeatures({ locale }) {
                         </span>
                       </div>
                     </div>
-                </div>
+                  </div>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         );
@@ -594,50 +619,72 @@ export default function SectionRequestFeatures({ locale }) {
           </p>
         </div>
 
-        {/* Mobile Layout - Preview First, then Cards */}
-        <div className="lg:hidden space-y-6">
-          {/* Mobile Preview - Show first on mobile */}
-          <div>
-            {renderFeaturePreview()}
-          </div>
-          
-          {/* Mobile Features List - Show below preview */}
-          <div className="space-y-4">
+        {/* Mobile Layout - Features List First, then Preview */}
+        <div className="lg:hidden space-y-8">
+          {/* Mobile Features List - Show first on mobile */}
+          <div className="space-y-2">
             {requestFeatures.map((feature, index) => (
               <div
                 key={index}
                 onClick={() => setSelectedFeature(feature.id)}
-                className={`p-3 cursor-pointer transition-all duration-200 border-l-4 ${
+                className={`relative p-3 pl-6 cursor-pointer transition-all duration-200 border-l-4 border-transparent ${
                   selectedFeature === feature.id 
-                    ? 'border-blue-500 bg-blue-50/30' 
-                    : 'border-transparent hover:border-gray-300 hover:bg-gray-50/50'
+                    ? 'bg-gray-50/50' 
+                    : 'hover:bg-gray-50/50'
                 }`}
               >
-                <div className="flex flex-row gap-4 items-start">
-                  <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
-                    selectedFeature === feature.id ? 'bg-blue-500' : 'bg-gray-200'
-                  }`}>
-                    <svg className={`w-4 h-4 ${
-                      selectedFeature === feature.id ? 'text-white' : 'text-gray-600'
-                    }`} fill="currentColor" viewBox="0 0 20 20">
+                {/* Absolutely positioned checkmark icon with custom shadow */}
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2">
+                  {/* Custom shadow layer */}
+                  <div 
+                    className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-xl transition-all duration-300 ease-linear ${
+                      selectedFeature === feature.id 
+                        ? 'w-10 h-10 opacity-60' 
+                        : 'w-6 h-6 bg-gray-400 opacity-25'
+                    }`}
+                    style={selectedFeature === feature.id ? { backgroundColor: feature.color.shadow } : {}}
+                  ></div>
+                  
+                  {/* Checkmark icon */}
+                  <div 
+                    className={`relative w-5 h-5 rounded-full flex items-center justify-center transition-all ${
+                      selectedFeature === feature.id 
+                        ? 'border-2' 
+                        : 'bg-white border-2 border-gray-300'
+                    }`}
+                    style={selectedFeature === feature.id ? { 
+                      backgroundColor: feature.color.primary,
+                      borderColor: feature.color.primary
+                    } : {}}
+                  >
+                    <svg className={`w-3 h-3 ${
+                      selectedFeature === feature.id ? 'text-white' : 'text-gray-400'
+                    }`} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <div className="flex-1">
-                    <h3 className={`text-lg font-semibold mb-2 leading-tight ${
-                      selectedFeature === feature.id ? 'text-blue-900' : 'text-gray-900'
+                </div>
+                
+                {/* Content */}
+                <div>
+                  <h3 className={`text-base lg:text-xl font-medium mb-1 leading-tight ${
+                    selectedFeature === feature.id ? 'text-gray-900' : 'text-gray-500'
                     }`}>
                       {feature.title}
                     </h3>
-                  </div>
-                </div>
                 {selectedFeature === feature.id && (
-                  <p className="text-xs lg:text-sm text-gray-600 leading-tight lg:leading-snug mt-2 ml-10">
+                    <p className="text-xs lg:text-sm text-gray-600 leading-tight lg:leading-relaxed mt-2">
                     {feature.description}
                   </p>
                 )}
+                </div>
               </div>
             ))}
+          </div>
+          
+          {/* Mobile Preview - Show below features list */}
+          <div>
+            {renderFeaturePreview()}
           </div>
         </div>
 
@@ -649,35 +696,58 @@ export default function SectionRequestFeatures({ locale }) {
               <div
                 key={index}
                 onClick={() => setSelectedFeature(feature.id)}
-                className={`p-3 cursor-pointer transition-all duration-200 border-l-4 ${
+                className={`p-3 cursor-pointer transition-all duration-200 border-l-4 border-transparent ${
                   selectedFeature === feature.id 
-                    ? 'border-blue-500 bg-blue-50/30' 
-                    : 'border-transparent hover:border-gray-300 hover:bg-gray-50/50'
+                    ? 'bg-gray-50/50' 
+                    : 'hover:bg-gray-50/50'
                 }`}
               >
                 <div className="flex flex-row gap-4 items-start">
-                  <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
-                    selectedFeature === feature.id ? 'bg-blue-500' : 'bg-gray-200'
-                  }`}>
+                  {/* Checkmark icon with custom shadow */}
+                  <div className="flex-shrink-0 relative">
+                    {/* Custom shadow layer */}
+                    <div 
+                      className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-xl transition-all duration-300 ease-linear ${
+                        selectedFeature === feature.id 
+                          ? 'w-12 h-12 opacity-60' 
+                          : 'w-7 h-7 bg-gray-400 opacity-25'
+                      }`}
+                      style={selectedFeature === feature.id ? { backgroundColor: feature.color.shadow } : {}}
+                    ></div>
+                    
+                    {/* Checkmark icon */}
+                    <div 
+                      className={`relative w-6 h-6 rounded-full flex items-center justify-center transition-all ${
+                        selectedFeature === feature.id 
+                          ? 'border-2' 
+                          : 'bg-white border-2 border-gray-300'
+                      }`}
+                      style={selectedFeature === feature.id ? { 
+                        backgroundColor: feature.color.primary,
+                        borderColor: feature.color.primary
+                      } : {}}
+                    >
                     <svg className={`w-4 h-4 ${
-                      selectedFeature === feature.id ? 'text-white' : 'text-gray-600'
-                    }`} fill="currentColor" viewBox="0 0 20 20">
+                        selectedFeature === feature.id ? 'text-white' : 'text-gray-400'
+                      }`} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
+                    </div>
                   </div>
+                  
                   <div className="flex-1">
-                    <h3 className={`text-lg font-semibold mb-2 leading-tight ${
-                      selectedFeature === feature.id ? 'text-blue-900' : 'text-gray-900'
+                    <h3 className={`text-base lg:text-xl font-medium mb-1 leading-tight ${
+                      selectedFeature === feature.id ? 'text-gray-900' : 'text-gray-500'
                     }`}>
                       {feature.title}
                     </h3>
+                    {selectedFeature === feature.id && (
+                      <p className="text-xs lg:text-sm text-gray-600 leading-tight lg:leading-relaxed mt-2">
+                        {feature.description}
+                      </p>
+                    )}
                   </div>
                 </div>
-                {selectedFeature === feature.id && (
-                  <p className="text-xs lg:text-sm text-gray-600 leading-tight lg:leading-snug mt-2 ml-10">
-                    {feature.description}
-                  </p>
-                )}
               </div>
             ))}
           </div>

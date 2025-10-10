@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { ArrowRight, BookOpen, MessageCircle } from 'lucide-react';
 
 export default function SectionFaqs() {
   const t = useTranslations('Landing');
@@ -168,6 +169,26 @@ export default function SectionFaqs() {
                         </button>
                     </div>
                 )}
+
+                {/* Links to Guide and Support */}
+                <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mt-12">
+                  <a 
+                    href="/guide"
+                    className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors font-medium group"
+                  >
+                    <BookOpen className="w-5 h-5" />
+                    <span>View Complete Guide</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </a>
+                  <a 
+                    href="/support"
+                    className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors font-medium group"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    <span>Contact Support</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </a>
+                </div>
             </div>
         </section>
     );
