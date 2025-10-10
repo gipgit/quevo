@@ -642,11 +642,11 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                      <div className="py-2 md:py-4">
                        <div className="flex justify-between items-start">
                          <div className="flex-1">
-                           <p className={`text-xs font-bold uppercase tracking-wide mb-0.5 md:mb-1 ${
-                             theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                           }`} style={{ fontSize: '0.65rem' }}>
-                             {getFieldLabel(field)}
-                           </p>
+                          <p className={`text-xs font-medium uppercase tracking-wide mb-0.5 md:mb-1 ${
+                            theme === 'dark' ? 'text-gray-300' : 'text-gray-400'
+                          }`} style={{ fontSize: '0.65rem' }}>
+                            {getFieldLabel(field)}
+                          </p>
                            <p className={`text-xs md:text-sm ${
                              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                            }`}>
@@ -707,11 +707,11 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                  <div className="py-2 md:py-4">
                    <div className="flex justify-between items-start">
                      <div className="flex-1">
-                       <p className={`text-xs font-bold uppercase tracking-wide mb-0.5 md:mb-1 ${
-                         theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                       }`}>
-                         Items ({editableItems.length})
-                       </p>
+                      <p className={`text-xs font-medium uppercase tracking-wide mb-0.5 md:mb-1 ${
+                        theme === 'dark' ? 'text-gray-300' : 'text-gray-400'
+                      }`}>
+                        Items ({editableItems.length})
+                      </p>
                        <p className={`text-xs md:text-sm ${
                          theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                        }`}>
@@ -736,11 +736,11 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                  <div className="py-2 md:py-4">
                    <div className="flex justify-between items-start">
                      <div className="flex-1">
-                       <p className={`text-xs font-bold uppercase tracking-wide mb-0.5 md:mb-1 ${
-                         theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                       }`} style={{ fontSize: '0.65rem' }}>
-                         {getFieldLabel('terms')}
-                       </p>
+                      <p className={`text-xs font-medium uppercase tracking-wide mb-0.5 md:mb-1 ${
+                        theme === 'dark' ? 'text-gray-300' : 'text-gray-400'
+                      }`} style={{ fontSize: '0.65rem' }}>
+                        {getFieldLabel('terms')}
+                      </p>
                        <p className={`text-xs md:text-sm ${
                          theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                        }`}>
@@ -765,11 +765,11 @@ export default function QuotationBuilder({ quotationData, savedTemplates }: Quot
                  <div className="py-2 md:py-4">
                    <div className="flex justify-between items-start">
                      <div className="flex-1">
-                       <p className={`text-xs font-bold uppercase tracking-wide mb-0.5 md:mb-1 ${
-                         theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                       }`} style={{ fontSize: '0.65rem' }}>
-                         {getFieldLabel('notes')}
-                       </p>
+                      <p className={`text-xs font-medium uppercase tracking-wide mb-0.5 md:mb-1 ${
+                        theme === 'dark' ? 'text-gray-300' : 'text-gray-400'
+                      }`} style={{ fontSize: '0.65rem' }}>
+                        {getFieldLabel('notes')}
+                      </p>
                        <p className={`text-xs md:text-sm ${
                          theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                        }`}>

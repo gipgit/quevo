@@ -12,31 +12,41 @@ export default function SectionSupport({ locale }) {
       icon: BookOpen,
       title: t('Support.features.knowledgeBase.title'),
       description: t('Support.features.knowledgeBase.description'),
-      badge: t('Support.features.knowledgeBase.badge')
+      badge: t('Support.features.knowledgeBase.badge'),
+      iconBg: 'bg-blue-50',
+      iconColor: 'text-blue-600'
     },
     {
       icon: Clock,
       title: t('Support.features.premiumSupport.title'),
       description: t('Support.features.premiumSupport.description'),
-      badge: t('Support.features.premiumSupport.badge')
+      badge: t('Support.features.premiumSupport.badge'),
+      iconBg: 'bg-purple-50',
+      iconColor: 'text-purple-600'
     },
     {
       icon: Globe,
       title: t('Support.features.multiLanguage.title'),
       description: t('Support.features.multiLanguage.description'),
-      badge: t('Support.features.multiLanguage.badge')
+      badge: t('Support.features.multiLanguage.badge'),
+      iconBg: 'bg-green-50',
+      iconColor: 'text-green-600'
     },
     {
       icon: Zap,
       title: t('Support.features.fastResponse.title'),
       description: t('Support.features.fastResponse.description'),
-      badge: t('Support.features.fastResponse.badge')
+      badge: t('Support.features.fastResponse.badge'),
+      iconBg: 'bg-amber-50',
+      iconColor: 'text-amber-600'
     },
     {
       icon: MessageSquare,
       title: t('Support.features.multipleChannels.title'),
       description: t('Support.features.multipleChannels.description'),
-      badge: t('Support.features.multipleChannels.badge')
+      badge: t('Support.features.multipleChannels.badge'),
+      iconBg: 'bg-pink-50',
+      iconColor: 'text-pink-600'
     },
   ];
 
@@ -78,32 +88,60 @@ export default function SectionSupport({ locale }) {
         </div>
 
         {/* Support Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-1 md:gap-2 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2 md:gap-3 lg:gap-2 mb-20">
           {supportFeatures.map((feature, index) => (
             <div
               key={index}
-              className="group relative p-3 md:p-4 text-center"
+              className="group relative p-4 md:p-5 lg:p-6"
             >
-              {/* Icon and title in same row for mobile */}
-              <div className="flex items-center justify-center lg:flex-col mb-1 lg:mb-2">
-                <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-blue-50 flex items-center justify-center lg:mb-3 mr-3 lg:mr-0">
-                  <feature.icon className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 text-blue-600" />
+              {/* Mobile: Absolutely positioned icon on left, vertically centered */}
+              <div className="lg:hidden absolute left-0 top-1/2 -translate-y-1/2">
+                <div className={`w-9 h-9 rounded-xl ${feature.iconBg} flex items-center justify-center flex-shrink-0`}>
+                  <feature.icon className={`w-4 h-4 ${feature.iconColor}`} />
                 </div>
-                <h3 className="text-base md:text-lg font-semibold text-gray-900">
-                  {feature.title}
-                </h3>
               </div>
               
-              {/* Plan Badge - Only show for Pro+ */}
-              {feature.badge === 'Pro+' && (
-                <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium mb-2 bg-blue-100 text-blue-700">
-                  {feature.badge}
-                </div>
-              )}
+              {/* Mobile: Content with minimal left padding */}
+              <div className="lg:hidden pl-11">
+                {/* Plan Badge - Only show for Pro+ */}
+                {feature.badge === 'Pro+' && (
+                  <div className="absolute top-1 left-10 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 rotate-[-8deg]">
+                    {feature.badge}
+                  </div>
+                )}
+                
+                <h3 className="text-base font-medium text-gray-900 mb-1">
+                  {feature.title}
+                </h3>
+                
+                <p className="text-xs leading-tight text-gray-600">
+                  {feature.description}
+                </p>
+              </div>
               
-              <p className="text-xs md:text-sm leading-snug text-gray-600">
-                {feature.description}
-              </p>
+              {/* Desktop: Horizontal layout with icon on left */}
+              <div className="hidden lg:flex lg:items-start lg:gap-3">
+                <div className={`w-10 h-10 rounded-xl ${feature.iconBg} flex items-center justify-center flex-shrink-0`}>
+                  <feature.icon className={`w-5 h-5 ${feature.iconColor}`} />
+                </div>
+                
+                <div className="flex-1 relative">
+                  {/* Plan Badge - Only show for Pro+ */}
+                  {feature.badge === 'Pro+' && (
+                    <div className="absolute -top-2 left-0 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 rotate-[-8deg]">
+                      {feature.badge}
+                    </div>
+                  )}
+                  
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    {feature.title}
+                  </h3>
+                  
+                  <p className="text-sm leading-tight text-gray-600">
+                    {feature.description}
+                  </p>
+                </div>
+              </div>
             </div>
           ))}
         </div>
