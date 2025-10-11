@@ -55,7 +55,7 @@ export default function Header() {
         <div className="container mx-auto px-4 lg:px-4">
           <div className="flex items-center justify-between h-16">
             {/* Left Column - Mobile: Hamburger + Logo, Desktop: Logo + Locale */}
-            <div className="flex items-center space-x-2 lg:space-x-3">
+            <div className="flex items-center space-x-1 lg:space-x-3">
               {/* Mobile Hamburger Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -122,14 +122,14 @@ export default function Header() {
             <div className="flex items-center space-x-1.5 lg:space-x-4">
               <Link 
                 href="/signin/business" 
-                className="border border-black text-gray-900 text-sm lg:text-base px-3 lg:px-4 py-1.5 lg:py-2 rounded-md hover:text-black transition-colors"
+                className="border border-gray-300 text-gray-900 text-xs lg:text-base px-2.5 lg:px-4 py-1 lg:py-2 rounded-md hover:border-gray-400 hover:text-black transition-colors"
               >
                 {tHeader('signIn')}
               </Link>
               
               <Link 
                 href="/signup/business" 
-                className="bg-blue-600 text-white text-sm lg:text-base px-3 lg:px-4 py-1.5 lg:py-2 rounded-md hover:bg-blue-700 transition-colors"
+                className="bg-gradient-to-b from-black to-gray-700 text-white text-sm lg:text-base px-3 lg:px-4 py-1.5 lg:py-2 rounded-md hover:from-gray-800 hover:to-gray-900 transition-all duration-200 shadow-md"
               >
                 {tCommon('getStarted')}
               </Link>
@@ -230,7 +230,7 @@ export default function Header() {
                 <div className="space-y-3">
                   <Link 
                     href="/signin/business" 
-                    className="block w-full text-center py-3 text-lg font-medium border border-black text-gray-900 rounded-lg hover:text-black transition-colors"
+                    className="block w-full text-center py-3 text-lg font-medium border border-gray-300 text-gray-900 rounded-lg hover:border-gray-400 hover:text-black transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {tHeader('signIn')}
@@ -238,7 +238,7 @@ export default function Header() {
                   
                   <Link 
                     href="/signup/business" 
-                    className="block w-full text-center py-3 bg-blue-600 text-white text-lg font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                    className="block w-full text-center py-3 bg-gradient-to-b from-black to-gray-700 text-white text-lg font-medium rounded-lg hover:from-gray-800 hover:to-gray-900 transition-all duration-200 shadow-md"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {tCommon('getStarted')}

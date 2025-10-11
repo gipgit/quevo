@@ -15,7 +15,6 @@ export default function FeaturePreview({ featureType, locale, featureColor }) {
       case 'appointmentsScheduling':
         return (
           <div className="bg-white rounded-lg shadow-lg p-4 lg:p-6 border max-w-2xl min-w-[20rem] lg:min-w-[28rem]">
-            <h3 className="text-base lg:text-lg font-semibold text-gray-900 mb-3 lg:mb-4">Prenotazione Appuntamento</h3>
             <div className="space-y-3 lg:space-y-4">
               <div className="grid grid-cols-7 gap-2">
                 {['L', 'M', 'M', 'G', 'V', 'S', 'D'].map((day, i) => (
@@ -34,14 +33,24 @@ export default function FeaturePreview({ featureType, locale, featureColor }) {
                 ))}
               </div>
               <div className="border-t pt-3 lg:pt-4">
-                <div className="space-y-1 lg:space-y-2">
-                  <div className="flex justify-between text-xs lg:text-sm">
-                    <span className="text-gray-600">9:00 - 10:00</span>
-                    <span className="text-green-600">Disponibile</span>
+                <div className="flex flex-wrap gap-1.5 lg:gap-2">
+                  <div className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-md text-[10px] lg:text-sm font-medium bg-gray-50 text-gray-700 border border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors">
+                    9:00 - 10:00
                   </div>
-                  <div className="flex justify-between text-xs lg:text-sm">
-                    <span className="text-gray-600">10:00 - 11:00</span>
-                    <span className="text-red-600">Occupato</span>
+                  <div className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-md text-[10px] lg:text-sm font-medium bg-gray-50 text-gray-700 border border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors">
+                    10:00 - 11:00
+                  </div>
+                  <div className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-md text-[10px] lg:text-sm font-medium bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed opacity-60">
+                    11:00 - 12:00
+                  </div>
+                  <div className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-md text-[10px] lg:text-sm font-medium bg-gray-50 text-gray-700 border border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors">
+                    14:00 - 15:00
+                  </div>
+                  <div className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-md text-[10px] lg:text-sm font-medium bg-gray-50 text-gray-700 border border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors">
+                    15:00 - 16:00
+                  </div>
+                  <div className="px-2 lg:px-3 py-1 lg:py-1.5 rounded-md text-[10px] lg:text-sm font-medium bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed opacity-60">
+                    16:00 - 17:00
                   </div>
                 </div>
               </div>
@@ -65,7 +74,7 @@ export default function FeaturePreview({ featureType, locale, featureColor }) {
                     key={item.id}
                     className={`
                       relative flex flex-row items-center justify-between p-1.5 lg:p-2 rounded-lg border
-                      ${item.selected ? 'border-l-4 border-blue-500 bg-blue-50' : 'border-l border-gray-200 bg-gray-50'}
+                      ${item.selected ? 'border-l-4 border-gray-400 bg-gray-50' : 'border-l border-gray-200 bg-gray-50'}
                     `}
                   >
                     <div className="text-sm lg:text-base flex-1">
@@ -74,7 +83,7 @@ export default function FeaturePreview({ featureType, locale, featureColor }) {
                     
                     <div className="flex items-center gap-2 lg:gap-3">
                       <div className="text-right">
-                        <p className="text-xs font-medium">
+                        <p className="text-[10px] lg:text-xs font-medium">
                           {item.selected 
                             ? `€${(item.price * item.quantity).toFixed(2)}`
                             : `${item.price.toFixed(2)}€ / ${item.unit}`
@@ -88,13 +97,13 @@ export default function FeaturePreview({ featureType, locale, featureColor }) {
                         </div>
                       ) : (
                         <div className="flex items-center space-x-1 lg:space-x-2">
-                          <div className="px-1.5 py-1 lg:px-2 lg:py-1 rounded-full text-xs lg:text-sm font-bold shadow-sm bg-blue-600 text-white">
+                          <div className="w-5 h-5 lg:w-6 lg:h-6 rounded-full text-xs lg:text-sm font-bold shadow-sm bg-gray-700 text-white flex items-center justify-center">
                             -
                           </div>
-                          <span className="font-bold text-center text-xs min-w-[1.5rem] lg:min-w-[2rem]">
+                          <span className="font-medium text-center text-xs min-w-[1.5rem] lg:min-w-[2rem]">
                             {item.quantity} {item.unit}
                           </span>
-                          <div className="px-1.5 py-1 lg:px-2 lg:py-1 rounded-full text-xs lg:text-sm font-bold shadow-sm bg-blue-600 text-white">
+                          <div className="w-5 h-5 lg:w-6 lg:h-6 rounded-full text-xs lg:text-sm font-bold shadow-sm bg-gray-700 text-white flex items-center justify-center">
                             +
                           </div>
                         </div>
@@ -108,7 +117,7 @@ export default function FeaturePreview({ featureType, locale, featureColor }) {
               <div className="border-t pt-2 lg:pt-3">
                 <div className="flex justify-between items-center">
                   <span className="text-sm lg:text-base font-semibold text-gray-900">Totale</span>
-                  <span className="text-lg lg:text-xl font-bold text-blue-600">€280</span>
+                  <span className="text-lg lg:text-xl font-bold text-gray-900">€280</span>
                 </div>
               </div>
             </div>
@@ -188,8 +197,8 @@ function GuidedRequestPreview() {
     switch (step.id) {
       case 'overview':
         return (
-          <div className="w-full px-3 lg:px-4 pt-2 pb-4">
-            <h3 className="text-sm lg:text-base font-semibold text-gray-900 mb-1">Consulenza Legale</h3>
+          <div className="w-full px-2 lg:px-4 pt-2 pb-4">
+            <h3 className="text-xs lg:text-base font-semibold text-gray-900 mb-1 uppercase">Consulenza Legale</h3>
             <p className="text-xs lg:text-sm text-gray-600 leading-relaxed mb-3 lg:mb-4">
               Servizio di consulenza legale specializzato in diritto del lavoro. 
               Analisi approfondita dei contratti e assistenza nella risoluzione di controversie.
@@ -209,8 +218,8 @@ function GuidedRequestPreview() {
 
       case 'extras':
         return (
-          <div className="w-full px-3 lg:px-4 pt-2 pb-4">
-            <h3 className="text-sm lg:text-base font-semibold text-gray-900 mb-1.5 lg:mb-2">Servizi Aggiuntivi</h3>
+          <div className="w-full px-2 lg:px-4 pt-2 pb-4">
+            <h3 className="text-xs lg:text-base font-semibold text-gray-900 mb-1.5 lg:mb-2 uppercase">Servizi Aggiuntivi</h3>
             <div className="space-y-1.5 lg:space-y-2">
               <div className="flex items-center justify-between p-1.5 lg:p-2 border rounded-lg">
                 <div className="flex items-center space-x-1.5 lg:space-x-2 flex-1">
@@ -238,8 +247,8 @@ function GuidedRequestPreview() {
 
       case 'items':
         return (
-          <div className="w-full px-3 lg:px-4 pt-2 pb-4">
-            <h3 className="text-sm lg:text-base font-semibold text-gray-900 mb-1.5 lg:mb-2">Elementi del Servizio</h3>
+          <div className="w-full px-2 lg:px-4 pt-2 pb-4">
+            <h3 className="text-xs lg:text-base font-semibold text-gray-900 mb-1.5 lg:mb-2 uppercase">Elementi del Servizio</h3>
             <div className="space-y-1.5 lg:space-y-2">
               <div className="flex items-center justify-between p-1.5 lg:p-2 border rounded-lg bg-blue-50 border-blue-200">
                 <div className="flex items-center space-x-1.5 lg:space-x-2 flex-1">
@@ -273,8 +282,8 @@ function GuidedRequestPreview() {
 
       case 'datetime':
         return (
-          <div className="w-full px-3 lg:px-4 pt-2 pb-4">
-            <h3 className="text-sm lg:text-base font-semibold text-gray-900 mb-1.5 lg:mb-2">Seleziona Data e Ora</h3>
+          <div className="w-full px-2 lg:px-4 pt-2 pb-4">
+            <h3 className="text-xs lg:text-base font-semibold text-gray-900 mb-1.5 lg:mb-2 uppercase">Seleziona Data e Ora</h3>
             <div className="grid grid-cols-7 gap-0.5 lg:gap-1 mb-2 lg:mb-3">
               {['L', 'M', 'M', 'G', 'V', 'S', 'D'].map((day, i) => (
                 <div key={i} className="text-center text-xs font-medium text-gray-500 py-0.5 lg:py-1">
@@ -306,8 +315,8 @@ function GuidedRequestPreview() {
 
       case 'questions':
         return (
-          <div className="w-full px-3 lg:px-4 pt-2 pb-4">
-            <h3 className="text-sm lg:text-base font-semibold text-gray-900 mb-1.5 lg:mb-2">Domande Aggiuntive</h3>
+          <div className="w-full px-2 lg:px-4 pt-2 pb-4">
+            <h3 className="text-xs lg:text-base font-semibold text-gray-900 mb-1.5 lg:mb-2 uppercase">Domande Aggiuntive</h3>
             <div className="space-y-2 lg:space-y-3">
               <div>
                 <label className="block text-xs lg:text-sm font-medium text-gray-700 mb-1">
@@ -340,8 +349,8 @@ function GuidedRequestPreview() {
 
       case 'requirements':
         return (
-          <div className="w-full px-3 lg:px-4 pt-2 pb-4">
-            <h3 className="text-sm lg:text-base font-semibold text-gray-900 mb-1.5 lg:mb-2">Requisiti del Servizio</h3>
+          <div className="w-full px-2 lg:px-4 pt-2 pb-4">
+            <h3 className="text-xs lg:text-base font-semibold text-gray-900 mb-1.5 lg:mb-2 uppercase">Requisiti del Servizio</h3>
             <div className="space-y-1.5 lg:space-y-2">
               <div className="flex items-start space-x-1.5 lg:space-x-2 p-1.5 lg:p-2 border rounded-lg">
                 <input type="checkbox" className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-blue-600 mt-0.5 lg:mt-1 flex-shrink-0" defaultChecked />
@@ -370,8 +379,8 @@ function GuidedRequestPreview() {
 
       case 'details':
         return (
-          <div className="w-full px-3 lg:px-4 pt-2 pb-4">
-            <h3 className="text-sm lg:text-base font-semibold text-gray-900 mb-1.5 lg:mb-2">I Tuoi Dettagli</h3>
+          <div className="w-full px-2 lg:px-4 pt-2 pb-4">
+            <h3 className="text-xs lg:text-base font-semibold text-gray-900 mb-1.5 lg:mb-2 uppercase">I Tuoi Dettagli</h3>
             <div className="space-y-1.5 lg:space-y-2">
               <div>
                 <label className="block text-xs lg:text-sm font-medium text-gray-700 mb-1">Nome completo</label>
@@ -426,7 +435,7 @@ function GuidedRequestPreview() {
             </svg>
           </div>
           
-          <h3 className="text-base lg:text-lg font-semibold text-gray-900">Consulenza Legale</h3>
+          <h3 className="text-sm lg:text-lg font-medium text-gray-900">Consulenza Legale</h3>
           
           {/* Step Navigation Progress */}
           <div className="flex items-center">
