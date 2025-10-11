@@ -287,7 +287,7 @@
   "Landing": {
     "Hero": {
       "title": "Plataforma de Experiencia del Cliente y Marketing Impulsada por IA Que Crece Contigo",
-      "subtitle": "Simplifica las interacciones complejas de servicios y amplifica tu marketing con automatización inteligente. Desde la guía y soporte al cliente hasta el contenido generado por IA y características en evolución - tu plataforma empresarial se adapta y crece con tus necesidades.",
+      "subtitle": "Simplifica las interacciones complejas de servicios y amplifica tu marketing con automatización inteligente. Desde orientación y soporte al cliente hasta contenido generado por IA y características en evolución - tu plataforma de negocio se adapta y crece con tus necesidades.",
       "startFree": "Comienza GRATIS. No se requieren datos de pago.",
       "viewExample": "Ver Ejemplo",
       "getStarted": "Comenzar",
@@ -299,205 +299,147 @@
     },
     "Actions": {
       "title": "Acciones Predefinidas para Gestión Instantánea de Servicios",
-      "subtitle": "Inserta rápidamente acciones predefinidas desde cualquier dispositivo cuando recibas los emails automáticos de solicitud de servicio. Crea tableros de servicio transparentes donde los clientes ven exactamente qué está pasando, qué se ha hecho, qué necesita hacerse y qué viene después. Cada proceso se convierte en un servicio claro y transparente.",
+      "subtitle": "Inserta rápidamente acciones predefinidas desde cualquier dispositivo cuando recibes los emails automáticos de solicitud de servicio.",
       "domainLink": "domain.com/tunegocio/s/board",
       "cards": {
         "serviceListing": {
-          "title": "Listado de Servicios",
+          "title": "Listados de Servicios",
           "description": "Muestra tus ofertas con claridad. Atrae más clientes detallando cada servicio."
         },
         "serviceRequests": {
           "title": "Solicitudes de Servicio Guiadas",
-          "description": "Proceso de solicitud de servicio fluido y paso a paso que guía a los clientes a través de cada interacción. Formularios inteligentes se adaptan a las necesidades del cliente, haciendo que las solicitudes de servicio complejas sean simples e intuitivas."
+          "description": "Proceso de solicitud de servicio fluido, paso a paso, que guía a los clientes en cada interacción. Formularios inteligentes que se adaptan a las necesidades del cliente, haciendo que las solicitudes de servicio complejas sean simples e intuitivas."
         },
         "appointmentsScheduling": {
-          "title": "Reserva de Citas Online",
-          "description": "Simplifica la programación. Los clientes reservan cuando es conveniente, tú gestionas con facilidad."
+          "title": "Reserva de Citas en Línea",
+          "description": "Simplifica la programación. Los clientes reservan cuando les conviene, tú gestionas con facilidad."
         },
         "quoteSimulation": {
-          "title": "Simulación de Presupuestos Instantánea",
-          "description": "Dale a los clientes la capacidad de estimar costos. Aumenta la transparencia y las conversiones."
+          "title": "Simulación de Presupuesto Instantáneo",
+          "description": "Permite a los clientes estimar costos. Aumenta la transparencia y las conversiones."
         },
         "qrWebsite": {
-          "title": "Sitio Web QR Code",
-          "description": "Hazte descubrir en cualquier lugar. Un código QR único enlaza directamente a tu presencia digital."
+          "title": "Sitio Web con Código QR",
+          "description": "Sé descubierto en cualquier lugar. Un código QR único enlaza directamente a tu presencia digital."
         },
         "digitalMenu": {
           "title": "Menú Digital",
-          "description": "Moderniza tus ofertas. Menús de fácil acceso para una navegación fluida de los clientes."
+          "description": "Moderniza tus ofertas. Menús de fácil acceso para una navegación fluida del cliente."
         },
         "mailingList": {
           "title": "Listas de Correo y Campañas",
-          "description": "Construye tu audiencia, envía emails dirigidos. Mantente conectado y genera negocios recurrentes."
+          "description": "Construye tu audiencia, envía correos dirigidos. Mantente conectado e impulsa negocios recurrentes."
         },
         "fidelityCard": {
           "title": "Programa de Fidelización de Clientes",
-          "description": "Premia a tus mejores clientes. Fomenta la retención y construye relaciones duraderas."
+          "description": "Recompensa a tus mejores clientes. Fomenta la retención y construye relaciones duraderas."
         },
         "surveys": {
-          "title": "Feedback y Encuestas",
-          "description": "Comprende mejor a tus clientes. Recopila insights para mejorar continuamente."
+          "title": "Comentarios y Encuestas",
+          "description": "Comprende mejor a tus clientes. Recopila información para mejorar continuamente."
         },
         "promotions": {
           "title": "Gestión de Promociones",
-          "description": "Crea ofertas irresistibles. Impulsa las ventas y compromete a tu audiencia."
+          "description": "Crea ofertas irresistibles. Impulsa ventas e involucra a tu audiencia."
         }
       }
     },
-    "Features": {
-      "title": "Viaje del Cliente Guiado que Convierte",
-      "subtitle": "Transforma las interacciones de servicio complejas en experiencias fluidas y guiadas que llevan naturalmente a los clientes desde la consulta hasta la conversión. Cada función está diseñada para guiar, simplificar y aumentar tu tasa de éxito.",
+    "MarketingFeatures": {
+      "title": {
+        "highlighted": "Impulsada por IA",
+        "rest": "Características de Marketing"
+      },
+      "subtitle": "Transforma tu estrategia de marketing con automatización inteligente, generación de contenido inteligente e insights impulsados por IA",
       "cards": {
-        "serviceListing": {
-          "title": "Listado de Servicios",
-          "description": "Muestra tus ofertas con claridad. Atrae más clientes detallando cada servicio."
+        "socialMedia": {
+          "title": "Creador de Contenido para Redes Sociales",
+          "description": "La IA genera publicaciones atractivas para Facebook, Instagram, LinkedIn, Twitter y TikTok. Incluye programaciones de publicación y recomendaciones de horarios óptimos."
         },
-        "serviceRequests": {
-          "title": "Solicitudes de Servicio Guiadas",
-          "description": "Proceso de solicitud de servicio fluido y paso a paso que guía a los clientes a través de cada interacción. Formularios inteligentes se adaptan a las necesidades del cliente, haciendo que las solicitudes de servicio complejas sean simples e intuitivas."
-        },
-        "appointmentsScheduling": {
-          "title": "Reserva de Citas Online",
-          "description": "Simplifica la programación. Los clientes reservan cuando es conveniente, tú gestionas con facilidad."
-        },
-        "quoteSimulation": {
-          "title": "Simulación de Presupuestos Instantánea",
-          "description": "Dale a los clientes la capacidad de estimar costos. Aumenta la transparencia y las conversiones."
-        },
-        "qrWebsite": {
-          "title": "Sitio Web QR Code",
-          "description": "Hazte descubrir en cualquier lugar. Un código QR único enlaza directamente a tu presencia digital."
-        },
-        "digitalMenu": {
-          "title": "Menú Digital",
-          "description": "Moderniza tus ofertas. Menús de fácil acceso para una navegación fluida de los clientes."
-        },
-        "mailingList": {
-          "title": "Listas de Correo y Campañas",
-          "description": "Construye tu audiencia, envía emails dirigidos. Mantente conectado y genera negocios recurrentes."
-        },
-        "fidelityCard": {
-          "title": "Programa de Fidelización de Clientes",
-          "description": "Premia a tus mejores clientes. Fomenta la retención y construye relaciones duraderas."
-        },
-        "surveys": {
-          "title": "Feedback y Encuestas",
-          "description": "Comprende mejor a tus clientes. Recopila insights para mejorar continuamente."
-        },
-        "promotions": {
-          "title": "Gestión de Promociones",
-          "description": "Crea ofertas irresistibles. Impulsa las ventas y compromete a tu audiencia."
+        "emailMarketing": {
+          "title": "Asistente de Email Marketing",
+          "description": "Crea campañas de email dirigidas con contenido generado por IA. Segmenta clientes, programa envíos y rastrea engagement con plantillas de email profesionales."
         }
       }
     },
-    "Board": {
-      "title": "Comunicación clara y fluida, transformando procesos complejos en experiencias claras y guiada.",
-      "description": "Las Service Board están diseñadas para simplificar la gestión de servicios complejos que requieren interacción continua con el cliente, actualizaciones, citas y pagos. La Service Board es versátil y permite a los negocios adaptarla a su propio flujo de trabajo.",
-      "benefits": {
-        "unifiedView": {
-          "title": "Un Punto Central Accesible en Cualquier Lugar",
-          "description": "Un punto central para todo el proceso de servicio, consultable y gestionable desde cualquier dispositivo. Sin mensajes o emails dispersos."
+    "RequestFeatures": {
+      "title": "Características de Gestión de Solicitudes",
+      "subtitle": "Simplifica tu flujo de trabajo de solicitudes de servicio con automatización inteligente y herramientas profesionales",
+      "features": {
+        "requestManagement": {
+          "title": "Gestión Inteligente de Solicitudes",
+          "description": "Organiza y prioriza solicitudes de servicio con categorización inteligente, seguimiento de estado y seguimientos automatizados."
         },
-        "clearView": {
-          "title": "Visión Clara y Completa",
-          "description": "Los clientes ven exactamente el estado actual del servicio, qué ya ha sucedido, qué se necesita hacer y qué viene después. Cada proceso se convierte en un servicio claro y transparente."
-        },
-        "effortlessManagement": {
-          "title": "Gestión Sin Esfuerzo y Versátil",
-          "description": "Acciones genéricas versátiles y acciones predefinidas para agregar rápidamente solicitudes de pago, programar citas, proporcionar documentos etc."
-        },
-        "automatedNotifications": {
-          "title": "Notificaciones Automatizadas",
-          "description": "Mantén a los clientes informados. Las actualizaciones clave activan alertas de email instantáneas, sin esfuerzo manual requerido."
-        },
-        "secureAccess": {
-          "title": "Acceso Reservado y Seguro",
-          "description": "Enlaces únicos y seguros para cada servicio. Comparte sin esfuerzo, con protección de contraseña opcional."
-        },
-        "problemSolving": {
-          "title": "Tickets de Soporte e Historial Completo",
-          "description": "Los clientes solicitan soporte a través de tickets desde la board. Historial cronológico compartido de eventos y acceso inmediato a todos los registros para resolución rápida de problemas."
+        "quotationGenerator": {
+          "title": "Generador de Cotizaciones Impulsado por IA",
+          "description": "Cotizaciones pre-construidas con nombre del cliente y artículos/extra seleccionados de solicitudes de servicio. Todo permanece completamente personalizable y editable antes de exportar a PDF con el branding de tu negocio."
         }
       }
     },
-    "Steps": {
-      "title": "Cómo Funciona",
-      "subtitle": "Obtén tu sitio web profesional para tu negocio en solo unos simples pasos.",
-      "steps": {
-        "optionalServices": {
-          "title": "Servicios adicionales opcionales",
-          "description": "Crea tu perfil en minutos"
+    "SupportFeatures": {
+      "title": {
+        "highlighted": "Impulsada por IA",
+        "rest": "Gestión de Soporte"
+      },
+      "subtitle": "Transforma tu soporte al cliente con automatización inteligente, enrutamiento inteligente e insights impulsados por IA",
+      "features": {
+        "aiTicketClassification": {
+          "title": "Clasificación de Tickets por IA",
+          "description": "Categoriza y prioriza automáticamente tickets de soporte usando aprendizaje automático. Enruta tickets a los miembros del equipo correctos y establece niveles de urgencia apropiados."
         },
-        "requirementsConsents": {
-          "title": "Requisitos, Consentimientos y Detalles",
-          "description": "Requisitos o consentimientos a confirmar, Información obligatoria a proporcionar"
+        "smartResponseSuggestions": {
+          "title": "Sugerencias de Respuesta Inteligentes",
+          "description": "Obtén sugerencias de respuesta impulsadas por IA basadas en el contenido del ticket y el historial del cliente. Mantén comunicación consistente y profesional en todos los canales de soporte."
         },
-        "dateSelection": {
-          "title": "Selección de fechas",
-          "description": "Fechas seleccionables"
-        },
-        "quoteSimulation": {
-          "title": "Simulación de presupuesto",
-          "description": "Haz crecer tu negocio online"
-        },
-        "processManagementTitle": "Obtén tu sistema de gestión de procesos"
+        "textCorrection": {
+          "title": "Corrección y Mejora de Texto",
+          "description": "La IA corrige automáticamente gramática, ortografía y formato en mensajes de clientes para hacerlos más fáciles de leer y entender. Mejora la claridad de la comunicación."
+        }
       }
     },
-    "Categories": {
-      "title": "Pensado para muchos tipos de actividades",
-      "subtitle": "Puedes usarlo de varias maneras y siempre hay un plan gratuito. Descubre cómo Flowia puede simplificar la experiencia de tus clientes, ayudarte a construir su lealtad y recibir comentarios valiosos directamente de ellos."
-    },
-    "FAQ": {
-      "title": "Preguntas Frecuentes",
-      "showMore": "Mostrar más preguntas",
-      "showLess": "Mostrar menos preguntas",
-      "questions": {
-        "accountCreation": {
-          "question": "¿Cómo puedo crear una cuenta?",
-          "answer": "Puedes crear tu cuenta haciendo clic en el enlace \"Crea tu cuenta\" en la sección principal o visitando la página de registro. El proceso es simple y rápido, solo toma unos minutos para completar el registro."
+    "Support": {
+      "title": {
+        "prefix": "Soporte de",
+        "highlighted": "Clase Mundial"
+      },
+      "features": {
+        "knowledgeBase": {
+          "title": "Base de Conocimiento Integral",
+          "description": "Acceso a documentación detallada, tutoriales en video y guías paso a paso. Recursos de autoservicio para preguntas comunes.",
+          "badge": "Todos los Planes"
         },
-        "freePlan": {
-          "question": "¿Flowia es gratuito?",
-          "answer": "Sí, ofrecemos un plan gratuito que te permite probar las funciones básicas. También puedes probar Flowia Premium gratis durante un mes sin compromiso. El plan gratuito incluye todas las funciones esenciales para comenzar."
+        "premiumSupport": {
+          "title": "Soporte Premium 24/7",
+          "description": "Asistencia las 24 horas para planes Pro y Enterprise. Obtén ayuda cuando la necesites, sin importar tu zona horaria.",
+          "badge": "Pro+"
         },
-        "pointsSystem": {
-          "question": "¿Cómo funciona el sistema de puntos y recompensas?",
-          "answer": "Tus clientes ganan puntos cada vez que visitan tu establecimiento y escanean su código QR personal. Puedes definir las recompensas que pueden canjear una vez que alcancen ciertos puntos. El sistema es completamente personalizable y te permite crear programas de fidelización a medida."
+        "multiLanguage": {
+          "title": "Soporte Multiidioma",
+          "description": "Obtén soporte en tu idioma nativo. Nuestro equipo habla más de 15 idiomas incluyendo inglés, español, francés, alemán, italiano y más.",
+          "badge": "Todos los Planes"
         },
-        "mobileMenu": {
-          "question": "¿Puedo gestionar el menú digital desde mi teléfono?",
-          "answer": "¡Absolutamente sí! Tu menú digital es completamente personalizable y se puede gestionar cómodamente desde tu teléfono o tablet, actualizándose en tiempo real para tus clientes. Puedes modificar precios, agregar nuevos platos y gestionar la disponibilidad desde cualquier lugar."
+        "fastResponse": {
+          "title": "Respuesta Rápida",
+          "description": "Tiempo de respuesta promedio bajo 2 horas para planes Pro, 4 horas para planes estándar. Los problemas críticos reciben manejo prioritario.",
+          "badge": "Todos los Planes"
         },
-        "profileSupport": {
-          "question": "¿Ofrecen soporte para la creación del perfil?",
-          "answer": "¡Por supuesto! Si necesitas ayuda, podemos crear tu perfil, subir el menú y configurar las promociones iniciales para ti. También ofrecemos formación para asegurar que seas autónomo en la gestión. Nuestro equipo de soporte siempre está disponible para ayudarte."
-        },
-        "dataSecurity": {
-          "question": "¿Mis datos están seguros?",
-          "answer": "Absolutamente sí. Utilizamos las tecnologías de seguridad más avanzadas para proteger tus datos y los de tus clientes. Toda la información está encriptada y cumplimos estrictamente con las normativas de privacidad, incluyendo el GDPR."
-        },
-        "customerSupport": {
-          "question": "¿Cómo puedo contactar al soporte al cliente?",
-          "answer": "Nuestro equipo de soporte está disponible 24/7 a través de email, chat en vivo y teléfono. Te responderemos en pocas horas y siempre estamos listos para ayudarte con cualquier pregunta o problema técnico que puedas tener."
-        },
-        "integration": {
-          "question": "¿Flowia se integra con otros sistemas?",
-          "answer": "Sí, Flowia se integra perfectamente con los principales sistemas de gestión de restaurantes, POS y plataformas de delivery. Ofrecemos APIs abiertas e integraciones nativas para garantizar una transición fluida sin interrumpir tu flujo de trabajo."
-        },
-        "pricing": {
-          "question": "¿Cuáles son los costos de los planes premium?",
-          "answer": "Nuestros planes premium comienzan desde €29/mes e incluyen funciones avanzadas como análisis detallados, marketing automatizado, soporte prioritario y personalizaciones avanzadas. También ofrecemos descuentos para pagos anuales y planes personalizados para grandes empresas."
-        },
-        "technicalRequirements": {
-          "question": "¿Cuáles son los requisitos técnicos?",
-          "answer": "Flowia funciona en cualquier dispositivo con un navegador web moderno. No se requieren instalaciones de software complejas. Para los clientes, solo un smartphone con cámara para escanear códigos QR. El sistema está optimizado para funcionar incluso con conexiones de internet lentas."
+        "multipleChannels": {
+          "title": "Múltiples Canales de Soporte",
+          "description": "Elige tu forma preferida de obtener ayuda: chat en vivo, email, teléfono o videollamadas. Nos adaptamos a tu estilo de comunicación.",
+          "badge": "Todos los Planes"
         }
+      },
+      "testimonials": {
+        "title": "Lo Que Dicen Nuestros Clientes",
+        "subtitle": "No solo tomes nuestra palabra - escucha a los negocios que confían en nuestro soporte"
       }
     },
     "CTA": {
-      "title": "Crea tu sitio web profesional en minutos",
-      "subtitle": "Comienza ahora con el plan gratuito",
-      "button": "Comenzar"
+      "title": {
+        "part1": "¿Listo para Transformar",
+        "part2": "Tu Negocio?"
+      },
+      "subtitle": "Únete a miles de negocios que ya usan IA para simplificar sus operaciones y aumentar la productividad",
+      "button": "Comenzar Gratis"
     }
   },
   "BusinessSignIn": {
@@ -920,15 +862,42 @@
       "open": "Abrir"
     },
     "cards": {
-      "profile": { "title": "Perfil", "description": "Edita el perfil de tu negocio, enlaces, configuraciones y apariencia." },
-      "services": { "title": "Servicios", "description": "Gestiona tus servicios." },
-      "serviceRequests": { "title": "Solicitudes de Servicio", "description": "Ver y gestionar solicitudes de servicio." },
-      "serviceBoards": { "title": "Tableros de Servicio", "description": "Gestiona tus tableros de servicio." },
-      "appointments": { "title": "Citas", "description": "Ver y gestionar citas." },
-      "clients": { "title": "Clientes", "description": "Gestiona tus clientes y envía campañas de correo masivo." },
-      "supportRequests": { "title": "Solicitudes de Soporte", "description": "Ver y gestionar solicitudes de soporte." },
-      "products": { "title": "Productos", "description": "Gestiona tus productos." },
-      "promotions": { "title": "Promociones", "description": "Crear y gestionar promociones." }
+      "profile": {
+        "title": "Perfil",
+        "description": "Edita el perfil de tu negocio, enlaces, configuraciones y apariencia."
+      },
+      "services": {
+        "title": "Servicios",
+        "description": "Gestiona tus servicios."
+      },
+      "serviceRequests": {
+        "title": "Solicitudes de Servicio",
+        "description": "Ver y gestionar solicitudes de servicio."
+      },
+      "serviceBoards": {
+        "title": "Tableros de Servicio",
+        "description": "Gestiona tus tableros de servicio."
+      },
+      "appointments": {
+        "title": "Citas",
+        "description": "Ver y gestionar citas."
+      },
+      "clients": {
+        "title": "Clientes",
+        "description": "Gestiona tus clientes y envía campañas de correo masivo."
+      },
+      "supportRequests": {
+        "title": "Solicitudes de Soporte",
+        "description": "Ver y gestionar solicitudes de soporte."
+      },
+      "products": {
+        "title": "Productos",
+        "description": "Gestiona tus productos."
+      },
+      "promotions": {
+        "title": "Promociones",
+        "description": "Crear y gestionar promociones."
+      }
     },
     "noBusiness": "Ningún negocio seleccionado.",
     "createBusiness": "Crear Negocio",
@@ -1398,117 +1367,6 @@
       "problemSolvingDescription": "Termina malentendidos y disputas. Un registro cronológico compartido mantiene a todos alineados.",
       "mobileReady": "Experiencia Lista para Móvil",
       "mobileReadyDescription": "Accede y gestiona desde cualquier dispositivo. Tus clientes obtienen una experiencia fluida, donde sea que estén."
-    }
-  },
-  "Landing": {
-    "Hero": {
-      "title": "Plataforma de Experiencia del Cliente y Marketing Impulsada por IA Que Crece Contigo",
-      "subtitle": "Simplifica las interacciones complejas de servicios y amplifica tu marketing con automatización inteligente. Desde orientación y soporte al cliente hasta contenido generado por IA y características en evolución - tu plataforma de negocio se adapta y crece con tus necesidades.",
-      "startFree": "Comienza GRATIS. No se requieren datos de pago.",
-      "viewExample": "Ver Ejemplo",
-      "getStarted": "Comenzar",
-      "benefits": {
-        "freePlan": "1 plan siempre gratuito",
-        "noPaymentDetails": "Comienza gratis sin datos de pago",
-        "cancelAnytime": "Cambia o cancela en cualquier momento"
-      }
-    },
-    "MarketingFeatures": {
-      "title": {
-        "highlighted": "Impulsada por IA",
-        "rest": "Características de Marketing"
-      },
-      "subtitle": "Transforma tu estrategia de marketing con automatización inteligente, generación de contenido inteligente e insights impulsados por IA",
-      "cards": {
-        "socialMedia": {
-          "title": "Creador de Contenido para Redes Sociales",
-          "description": "La IA genera publicaciones atractivas para Facebook, Instagram, LinkedIn, Twitter y TikTok. Incluye programaciones de publicación y recomendaciones de horarios óptimos."
-        },
-        "emailMarketing": {
-          "title": "Asistente de Email Marketing",
-          "description": "Crea campañas de email dirigidas con contenido generado por IA. Segmenta clientes, programa envíos y rastrea engagement con plantillas de email profesionales."
-        }
-      }
-    },
-    "RequestFeatures": {
-      "title": "Características de Gestión de Solicitudes",
-      "subtitle": "Simplifica tu flujo de trabajo de solicitudes de servicio con automatización inteligente y herramientas profesionales",
-      "features": {
-        "requestManagement": {
-          "title": "Gestión Inteligente de Solicitudes",
-          "description": "Organiza y prioriza solicitudes de servicio con categorización inteligente, seguimiento de estado y seguimientos automatizados."
-        },
-        "quotationGenerator": {
-          "title": "Generador de Cotizaciones Impulsado por IA",
-          "description": "Cotizaciones pre-construidas con nombre del cliente y artículos/extra seleccionados de solicitudes de servicio. Todo permanece completamente personalizable y editable antes de exportar a PDF con el branding de tu negocio."
-        }
-      }
-    },
-    "SupportFeatures": {
-      "title": {
-        "highlighted": "Impulsada por IA",
-        "rest": "Gestión de Soporte"
-      },
-      "subtitle": "Transforma tu soporte al cliente con automatización inteligente, enrutamiento inteligente e insights impulsados por IA",
-      "features": {
-        "aiTicketClassification": {
-          "title": "Clasificación de Tickets por IA",
-          "description": "Categoriza y prioriza automáticamente tickets de soporte usando aprendizaje automático. Enruta tickets a los miembros del equipo correctos y establece niveles de urgencia apropiados."
-        },
-        "smartResponseSuggestions": {
-          "title": "Sugerencias de Respuesta Inteligentes",
-          "description": "Obtén sugerencias de respuesta impulsadas por IA basadas en el contenido del ticket y el historial del cliente. Mantén comunicación consistente y profesional en todos los canales de soporte."
-        },
-        "textCorrection": {
-          "title": "Corrección y Mejora de Texto",
-          "description": "La IA corrige automáticamente gramática, ortografía y formato en mensajes de clientes para hacerlos más fáciles de leer y entender. Mejora la claridad de la comunicación."
-        }
-      }
-    },
-    "Support": {
-      "title": {
-        "prefix": "Soporte de",
-        "highlighted": "Clase Mundial"
-      },
-      "features": {
-        "knowledgeBase": {
-          "title": "Base de Conocimiento Integral",
-          "description": "Acceso a documentación detallada, tutoriales en video y guías paso a paso. Recursos de autoservicio para preguntas comunes.",
-          "badge": "Todos los Planes"
-        },
-        "premiumSupport": {
-          "title": "Soporte Premium 24/7",
-          "description": "Asistencia las 24 horas para planes Pro y Enterprise. Obtén ayuda cuando la necesites, sin importar tu zona horaria.",
-          "badge": "Pro+"
-        },
-        "multiLanguage": {
-          "title": "Soporte Multiidioma",
-          "description": "Obtén soporte en tu idioma nativo. Nuestro equipo habla más de 15 idiomas incluyendo inglés, español, francés, alemán, italiano y más.",
-          "badge": "Todos los Planes"
-        },
-        "fastResponse": {
-          "title": "Respuesta Rápida",
-          "description": "Tiempo de respuesta promedio bajo 2 horas para planes Pro, 4 horas para planes estándar. Los problemas críticos reciben manejo prioritario.",
-          "badge": "Todos los Planes"
-        },
-        "multipleChannels": {
-          "title": "Múltiples Canales de Soporte",
-          "description": "Elige tu forma preferida de obtener ayuda: chat en vivo, email, teléfono o videollamadas. Nos adaptamos a tu estilo de comunicación.",
-          "badge": "Todos los Planes"
-        }
-      },
-      "testimonials": {
-        "title": "Lo Que Dicen Nuestros Clientes",
-        "subtitle": "No solo tomes nuestra palabra - escucha a los negocios que confían en nuestro soporte"
-      }
-    },
-    "CTA": {
-      "title": {
-        "part1": "¿Listo para Transformar",
-        "part2": "Tu Negocio?"
-      },
-      "subtitle": "Únete a miles de negocios que ya usan IA para simplificar sus operaciones y aumentar la productividad",
-      "button": "Comenzar Gratis"
     }
   },
   "Privacy": {

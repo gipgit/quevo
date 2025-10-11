@@ -8,7 +8,9 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { DynamicFormGenerator } from '@/lib/form-generators';
 import { getActionTemplatesForModal } from '@/lib/unified-action-system';
 import { transformActionDetailsForRendering } from '@/lib/action-data-transformer';
-import { ACTION_TYPE_ICONS, ACTION_TYPE_COLORS } from '@/lib/unified-action-system';
+import { ACTION_TYPE_ICONS, ACTION_TYPE_COLORS, ACTION_TYPE_ICON_COMPONENTS } from '@/lib/unified-action-system';
+import BoardIconAction from '@/components/board/BoardIconAction';
+import { getActionColorScheme } from '@/lib/action-color-schemes';
 
 interface AddActionModalProps {
   show: boolean;
@@ -507,22 +509,20 @@ export default function AddActionModal({
                       }`}
                     >
                       <div className="flex items-start gap-3">
-                        <div className={`w-6 h-6 lg:w-7 lg:h-7 flex items-center justify-center rounded-full shadow-sm mt-0.5 flex-shrink-0 transition-all duration-200 ${
-                          ACTION_TYPE_COLORS[template.action_type] || 'bg-blue-50'
-                        } ${
-                          selectedTemplate?.template_id === template.template_id
-                            ? 'ring-2 ring-white/50 scale-110'
-                            : 'group-hover:ring-2 group-hover:ring-white/30 group-hover:scale-110'
-                        }`}>
-                          <Image
-                            src={ACTION_TYPE_ICONS[template.action_type] || '/icons/sanity/info-outline.svg'}
-                            alt={template.translated_title}
-                            width={24}
-                            height={24}
-                            className={`w-4 h-4 lg:w-4 lg:h-4 transition-transform duration-200 group-hover:scale-110 ${
-                              selectedTemplate?.template_id === template.template_id ? 'scale-110' : 'scale-100'
-                            }`}
-                          />
+                        <div className="mt-0.5 flex-shrink-0">
+                          {(() => {
+                            const colors = getActionColorScheme(template.action_type);
+                            return (
+                              <BoardIconAction 
+                                icon={ACTION_TYPE_ICON_COMPONENTS[template.action_type]}
+                                color1={colors.color1}
+                                color2={colors.color2}
+                                color3={colors.color3}
+                                size="xs"
+                                isActive={selectedTemplate?.template_id === template.template_id}
+                              />
+                            );
+                          })()}
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className={`text-sm lg:text-base truncate transition-colors ${
@@ -562,16 +562,37 @@ export default function AddActionModal({
               <div className="p-5 lg:p-6 animate-[slideDown_0.3s_ease-out_0.1s_both]">
                 <div className="flex items-center justify-between mb-6 animate-[slideDown_0.3s_ease-out_0.2s_both]">
                   <div className="flex items-center gap-2 lg:gap-3">
-                    <div className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-lg ${
-                      ACTION_TYPE_COLORS[selectedTemplate.action_type] || 'bg-blue-50'
-                    }`}>
-                      <Image
-                        src={ACTION_TYPE_ICONS[selectedTemplate.action_type] || '/icons/sanity/info-outline.svg'}
-                        alt={selectedTemplate.translated_title}
-                        width={24}
-                        height={24}
-                        className="w-5 h-5 lg:w-6 lg:h-6"
-                      />
+                    {/* Mobile - sm size */}
+                    <div className="lg:hidden">
+                      {(() => {
+                        const colors = getActionColorScheme(selectedTemplate.action_type);
+                        return (
+                          <BoardIconAction 
+                            icon={ACTION_TYPE_ICON_COMPONENTS[selectedTemplate.action_type]}
+                            color1={colors.color1}
+                            color2={colors.color2}
+                            color3={colors.color3}
+                            size="sm"
+                            isActive={true}
+                          />
+                        );
+                      })()}
+                    </div>
+                    {/* Desktop - sm size */}
+                    <div className="hidden lg:block">
+                      {(() => {
+                        const colors = getActionColorScheme(selectedTemplate.action_type);
+                        return (
+                          <BoardIconAction 
+                            icon={ACTION_TYPE_ICON_COMPONENTS[selectedTemplate.action_type]}
+                            color1={colors.color1}
+                            color2={colors.color2}
+                            color3={colors.color3}
+                            size="sm"
+                            isActive={true}
+                          />
+                        );
+                      })()}
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-base lg:text-xl font-semibold text-gray-900 truncate">{selectedTemplate.translated_title}</h3>

@@ -616,15 +616,42 @@
       "open": "Ouvrir"
     },
     "cards": {
-      "profile": { "title": "Profil", "description": "Modifiez votre profil d'entreprise, liens, paramètres et apparence." },
-      "services": { "title": "Services", "description": "Gérez vos services." },
-      "serviceRequests": { "title": "Demandes de service", "description": "Affichez et gérez les demandes de service." },
-      "serviceBoards": { "title": "Tableaux de service", "description": "Gérez vos tableaux de service." },
-      "appointments": { "title": "Rendez-vous", "description": "Affichez et gérez les rendez-vous." },
-      "clients": { "title": "Clients", "description": "Gérez vos clients et envoyez des campagnes d'emailing." },
-      "supportRequests": { "title": "Demandes de support", "description": "Affichez et gérez les demandes de support." },
-      "products": { "title": "Produits", "description": "Gérez vos produits." },
-      "promotions": { "title": "Promotions", "description": "Créez et gérez les promotions." }
+      "profile": {
+        "title": "Profil",
+        "description": "Modifiez votre profil d'entreprise, liens, paramètres et apparence."
+      },
+      "services": {
+        "title": "Services",
+        "description": "Gérez vos services."
+      },
+      "serviceRequests": {
+        "title": "Demandes de service",
+        "description": "Affichez et gérez les demandes de service."
+      },
+      "serviceBoards": {
+        "title": "Tableaux de service",
+        "description": "Gérez vos tableaux de service."
+      },
+      "appointments": {
+        "title": "Rendez-vous",
+        "description": "Affichez et gérez les rendez-vous."
+      },
+      "clients": {
+        "title": "Clients",
+        "description": "Gérez vos clients et envoyez des campagnes d'emailing."
+      },
+      "supportRequests": {
+        "title": "Demandes de support",
+        "description": "Affichez et gérez les demandes de support."
+      },
+      "products": {
+        "title": "Produits",
+        "description": "Gérez vos produits."
+      },
+      "promotions": {
+        "title": "Promotions",
+        "description": "Créez et gérez les promotions."
+      }
     },
     "noBusiness": "Aucune entreprise sélectionnée.",
     "createBusiness": "Créer une entreprise",
@@ -1080,7 +1107,6 @@
     "upcomingAppointment": "Prochain rendez-vous",
     "scanToAccessBoard": "Scannez pour accéder à ce tableau",
     "scanQrDescription": "Scannez ce code QR pour accéder rapidement à ce tableau de service sur votre appareil mobile",
-    "copy": "Copier",
     "open": "Ouvrir",
     "openLink": "Ouvrir le lien",
     "addAction": "Ajouter une action",
@@ -1098,7 +1124,6 @@
     "estimatedPrice": "Prix estimé basé sur la demande initiale",
     "questionResponses": "Réponses aux questions",
     "requirementsConfirmation": "Confirmation des exigences",
-    "confirmed": "Confirmé",
     "notConfirmed": "Non confirmé",
     "tryAgain": "Réessayer",
     "errorLoadingActions": "Erreur lors du chargement des actions",
@@ -1123,7 +1148,6 @@
     "shareBoardLink": "Partager le lien du tableau",
     "share": "Partager",
     "copyLink": "Copier le lien",
-    "copied": "Copié !",
     "close": "Fermer",
     "cashPaymentOnDelivery": "Paiement en espèces à la livraison/service",
     "paymentReason": "Raison du paiement",
@@ -1140,15 +1164,9 @@
     "emailOptional": "E-mail (optionnel)",
     "enterEmailForReminder": "Entrez votre e-mail pour le rappel de rendez-vous",
     "confirming": "Confirmation en cours...",
-    "confirm": "Confirmer",
     "inProgress": "En cours",
     "invalidActionDetails": "Détails d'action invalides pour le type :",
     "pending": "En attente",
-    "completed": "Terminé",
-    "cancelled": "Annulé",
-    "confirmed": "Confirmé",
-    "rejected": "Rejeté",
-    "rescheduled": "Reporté",
     "shareWhatsApp": "Partager WhatsApp",
     "shareEmail": "Partager E-mail",
     "rescheduleOrCancelPrompt": "Si vous ne pouvez pas venir, faites-le nous savoir :",
@@ -1162,8 +1180,6 @@
     "reason_familyemergency": "Urgence familiale",
     "reason_other": "Autre",
     "enterYourReason": "Entrez votre raison",
-    "requestReschedule": "Demander un report",
-    "cancelAppointment": "Annuler le rendez-vous",
     "cancelWarning": "L'entreprise verra le rendez-vous comme annulé et pourrait vous contacter pour clarification.",
     "confirmCancel": "Confirmer l'annulation",
     "optionalReasonPrompt": "Si vous le souhaitez, vous pouvez fournir une raison pour votre demande :",
@@ -1212,7 +1228,7 @@
     },
     "Actions": {
       "title": "Actions Prédefinies pour Gestion Instantanée des Services",
-      "subtitle": "Insérez rapidement des actions prédefinies depuis n'importe quel appareil lorsque vous recevez les emails automatiques de demande de service. Créez des tableaux de service transparents où les clients voient exactement ce qui se passe, ce qui a été fait, ce qui doit être fait et ce qui vient ensuite. Chaque processus devient un service clair et transparent.",
+      "subtitle": "Insérez rapidement des actions prédefinies depuis n'importe quel appareil lorsque vous recevez les emails automatiques de demande de service.",
       "domainLink": "domain.com/votreentreprise/s/tableau",
       "cards": {
         "serviceListing": {
@@ -1701,4 +1717,4 @@
       "compliance": "Ces conditions sont conformes à la loi italienne et aux réglementations de l'UE, y compris la Directive sur les Droits des Consommateurs"
     }
   }
-} 
+}

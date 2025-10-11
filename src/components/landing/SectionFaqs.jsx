@@ -170,23 +170,39 @@ export default function SectionFaqs() {
                     </div>
                 )}
 
-                {/* Links to Guide and Support */}
-                <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mt-12">
+                {/* Link to Guide */}
+                <div className="flex justify-center items-center mt-12">
                   <a 
                     href="/guide"
-                    className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors font-medium group"
+                    className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors font-medium group"
                   >
                     <BookOpen className="w-5 h-5" />
                     <span>View Complete Guide</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </a>
+                </div>
+
+                {/* Still Got Questions Card */}
+                <div className="mt-16 text-center">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-6">
+                    Still got questions?
+                  </h3>
                   <a 
                     href="/support"
-                    className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors font-medium group"
+                    className="inline-flex items-center gap-3 md:gap-4 text-gray-700 hover:text-gray-900 transition-colors group"
                   >
-                    <MessageCircle className="w-5 h-5" />
-                    <span>Contact Support</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    <div className="flex items-center relative">
+                      <div className="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg z-10 relative">
+                        <span className="text-white font-bold text-xl md:text-2xl">Q</span>
+                      </div>
+                      <div className="w-12 h-12 md:w-14 md:h-14 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-200 transition-colors flex-shrink-0 -ml-3 md:-ml-4 shadow-md">
+                        <MessageCircle className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
+                      </div>
+                    </div>
+                    <div className="text-left">
+                      <div className="text-base font-medium text-gray-900">Contact Support</div>
+                      <div className="text-sm text-gray-500">We're here to help</div>
+                    </div>
                   </a>
                 </div>
             </div>

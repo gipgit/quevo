@@ -12,6 +12,7 @@ import SectionCTA from '@/components/landing/SectionCTA';
 import SectionCategories from '@/components/landing/SectionCategories';
 import SectionFeatures from '@/components/landing/SectionFeatures';
 import SectionMarketingFeatures from '@/components/landing/SectionMarketingFeatures';
+import SectionComparison from '@/components/landing/SectionComparison';
 
 interface HomePageProps {
   params: {
@@ -44,6 +45,8 @@ export default function HomePage({ params }: HomePageProps) {
                 <SectionCategories/>
 
                 <SectionSupport locale={params.locale} />
+                
+                <SectionComparison locale={params.locale} />
                 
                 <SectionFaqs />
 

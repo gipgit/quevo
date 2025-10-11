@@ -3,6 +3,21 @@
 
 import { ActionConfig } from './form-generators/shared/types';
 import { getActionConfig, getAvailableActionsForPlan, getPlanLimits, getAllActionConfigs } from './form-generators/shared/config';
+import { 
+  MessageSquare, 
+  CreditCard, 
+  Calendar, 
+  HelpCircle, 
+  FileDown, 
+  PenTool, 
+  CheckCircle, 
+  MessageCircleHeart, 
+  TrendingUp, 
+  Link, 
+  CheckSquare,
+  Upload,
+  type LucideIcon
+} from 'lucide-react';
 
 // Action type to icon mapping
 export const ACTION_TYPE_ICONS: Record<string, string> = {
@@ -37,6 +52,23 @@ export const ACTION_TYPE_COLORS: Record<string, string> = {
   'checklist': 'bg-blue-50',
 
   'opt_in_request': 'bg-lime-100'
+};
+
+// Action type to Lucide React icon component mapping
+export const ACTION_TYPE_ICON_COMPONENTS: Record<string, LucideIcon> = {
+  'generic_message': MessageSquare,
+  'payment_request': CreditCard,
+  'appointment_scheduling': Calendar,
+  'information_request': HelpCircle,
+  'document_download': FileDown,
+  'signature_request': PenTool,
+  'approval_request': CheckCircle,
+  'feedback_request': MessageCircleHeart,
+  'milestone_update': TrendingUp,
+  'resource_link': Link,
+  'checklist': CheckSquare,
+  'media_upload': Upload,
+  'opt_in_request': CheckSquare
 };
 
 // Action template translations - SHORT descriptions for AddActionModal
@@ -563,19 +595,19 @@ export const featureMetadata = {
 
 // Features array for the landing page
 export const features = [
-  { id: 1, key: 'information_request' },
-  { id: 2, key: 'payment_request' },
-  { id: 3, key: 'appointment_scheduling' },
-  { id: 4, key: 'resource_link' },
-  { id: 5, key: 'document_download' },
+  { id: 1, key: 'information_request', iconComponent: ACTION_TYPE_ICON_COMPONENTS['information_request'] },
+  { id: 2, key: 'payment_request', iconComponent: ACTION_TYPE_ICON_COMPONENTS['payment_request'] },
+  { id: 3, key: 'appointment_scheduling', iconComponent: ACTION_TYPE_ICON_COMPONENTS['appointment_scheduling'] },
+  { id: 4, key: 'resource_link', iconComponent: ACTION_TYPE_ICON_COMPONENTS['resource_link'] },
+  { id: 5, key: 'document_download', iconComponent: ACTION_TYPE_ICON_COMPONENTS['document_download'] },
 
-  { id: 7, key: 'approval_request' },
-  { id: 8, key: 'signature_request' },
-  { id: 9, key: 'checklist' },
-  { id: 10, key: 'milestone_update' },
-  { id: 11, key: 'generic_message' },
-  { id: 12, key: 'feedback_request' },
-  { id: 13, key: 'media_upload' }
+  { id: 7, key: 'approval_request', iconComponent: ACTION_TYPE_ICON_COMPONENTS['approval_request'] },
+  { id: 8, key: 'signature_request', iconComponent: ACTION_TYPE_ICON_COMPONENTS['signature_request'] },
+  { id: 9, key: 'checklist', iconComponent: ACTION_TYPE_ICON_COMPONENTS['checklist'] },
+  { id: 10, key: 'milestone_update', iconComponent: ACTION_TYPE_ICON_COMPONENTS['milestone_update'] },
+  { id: 11, key: 'generic_message', iconComponent: ACTION_TYPE_ICON_COMPONENTS['generic_message'] },
+  { id: 12, key: 'feedback_request', iconComponent: ACTION_TYPE_ICON_COMPONENTS['feedback_request'] },
+  { id: 13, key: 'media_upload', iconComponent: ACTION_TYPE_ICON_COMPONENTS['media_upload'] }
 ];
 
 // Helper function for SectionActions - LONGER descriptions with metadata

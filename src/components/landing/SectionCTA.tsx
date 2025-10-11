@@ -8,9 +8,19 @@ export default function SectionCTA() {
     
     return (
         <section className="">
+            <style jsx>{`
+                .gradient-container {
+                    --scale: 0.65;
+                }
+                @media (min-width: 768px) {
+                    .gradient-container {
+                        --scale: 1;
+                    }
+                }
+            `}</style>
             <div className="mx-auto">
                 <div 
-                    className="relative p-8 lg:p-20 overflow-hidden"
+                    className="gradient-container relative p-8 lg:p-20 overflow-hidden"
                     style={{ backgroundColor: 'rgb(27, 12, 37)' }}
                 >
                     {/* Gradient Layer 1 */}
@@ -21,10 +31,10 @@ export default function SectionCTA() {
                             filter: 'blur(80px)',
                             borderRadius: '100%',
                             opacity: 0.24,
-                            height: '548px',
-                            left: '-246px',
-                            top: '-186px',
-                            width: '658px'
+                            height: 'calc(548px * var(--scale))',
+                            left: 'calc(-246px * var(--scale))',
+                            top: 'calc(-186px * var(--scale))',
+                            width: 'calc(658px * var(--scale))'
                         }}
                     ></div>
                     
@@ -36,10 +46,10 @@ export default function SectionCTA() {
                             filter: 'blur(80px)',
                             borderRadius: '100%',
                             opacity: 0.18,
-                            height: '548px',
-                            right: '-86px',
-                            top: '590px',
-                            width: '658px'
+                            height: 'calc(548px * var(--scale))',
+                            right: 'calc(-86px * var(--scale))',
+                            top: 'calc(590px * var(--scale))',
+                            width: 'calc(658px * var(--scale))'
                         }}
                     ></div>
                     
@@ -50,8 +60,8 @@ export default function SectionCTA() {
                             background: '#8A5FBF',
                             filter: 'blur(80px)',
                             opacity: 0.9,
-                            height: '180px',
-                            bottom: '-90px',
+                            height: 'calc(180px * var(--scale))',
+                            bottom: 'calc(-90px * var(--scale))',
                             left: '0',
                             width: '33.33%',
                             borderRadius: '100%'
@@ -65,8 +75,8 @@ export default function SectionCTA() {
                             background: '#FFB366',
                             filter: 'blur(80px)',
                             opacity: 0.9,
-                            height: '180px',
-                            bottom: '-90px',
+                            height: 'calc(180px * var(--scale))',
+                            bottom: 'calc(-90px * var(--scale))',
                             left: '33.33%',
                             width: '33.33%',
                             borderRadius: '100%'
@@ -80,8 +90,8 @@ export default function SectionCTA() {
                             background: '#7ED321',
                             filter: 'blur(80px)',
                             opacity: 0.9,
-                            height: '180px',
-                            bottom: '-90px',
+                            height: 'calc(180px * var(--scale))',
+                            bottom: 'calc(-90px * var(--scale))',
                             left: '66.66%',
                             width: '33.33%',
                             borderRadius: '100%'

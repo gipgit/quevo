@@ -636,15 +636,42 @@
       "open": "Apri"
     },
     "cards": {
-      "profile": { "title": "Profilo", "description": "Modifica profilo, link, impostazioni e aspetto attività." },
-      "services": { "title": "Servizi", "description": "Gestisci i tuoi servizi." },
-      "serviceRequests": { "title": "Richieste Servizi", "description": "Visualizza e gestisci le richieste servizi." },
-      "serviceBoards": { "title": "Bacheche Servizi", "description": "Gestisci le bacheche servizi." },
-      "appointments": { "title": "Appuntamenti", "description": "Visualizza e gestisci appuntamenti." },
-      "clients": { "title": "Clienti", "description": "Gestisci i tuoi clienti e invia campagne email." },
-      "supportRequests": { "title": "Richieste Supporto", "description": "Visualizza e gestisci le richieste di supporto." },
-      "products": { "title": "Prodotti", "description": "Gestisci i tuoi prodotti." },
-      "promotions": { "title": "Promozioni", "description": "Crea e gestisci promozioni." }
+      "profile": {
+        "title": "Profilo",
+        "description": "Modifica profilo, link, impostazioni e aspetto attività."
+      },
+      "services": {
+        "title": "Servizi",
+        "description": "Gestisci i tuoi servizi."
+      },
+      "serviceRequests": {
+        "title": "Richieste Servizi",
+        "description": "Visualizza e gestisci le richieste servizi."
+      },
+      "serviceBoards": {
+        "title": "Bacheche Servizi",
+        "description": "Gestisci le bacheche servizi."
+      },
+      "appointments": {
+        "title": "Appuntamenti",
+        "description": "Visualizza e gestisci appuntamenti."
+      },
+      "clients": {
+        "title": "Clienti",
+        "description": "Gestisci i tuoi clienti e invia campagne email."
+      },
+      "supportRequests": {
+        "title": "Richieste Supporto",
+        "description": "Visualizza e gestisci le richieste di supporto."
+      },
+      "products": {
+        "title": "Prodotti",
+        "description": "Gestisci i tuoi prodotti."
+      },
+      "promotions": {
+        "title": "Promozioni",
+        "description": "Crea e gestisci promozioni."
+      }
     },
     "noBusiness": "Nessuna attività selezionata.",
     "createBusiness": "Crea Attività",
@@ -1121,7 +1148,6 @@
     "upcomingAppointment": "Prossimo Appuntamento",
     "scanToAccessBoard": "Scansiona per accedere a questa bacheca",
     "scanQrDescription": "Scansiona questo codice QR per accedere rapidamente a questa bacheca servizi sul tuo dispositivo mobile",
-    "copy": "Copia",
     "open": "Apri",
     "openLink": "Apri Link",
     "addAction": "Aggiungi Azione",
@@ -1139,7 +1165,6 @@
     "estimatedPrice": "Prezzo stimato basato sulla richiesta iniziale",
     "questionResponses": "Risposte alle Domande",
     "requirementsConfirmation": "Conferma Requisiti",
-    "confirmed": "Confermato",
     "notConfirmed": "Non Confermato",
     "tryAgain": "Riprova",
     "errorLoadingActions": "Errore nel caricamento delle azioni",
@@ -1164,7 +1189,6 @@
     "shareBoardLink": "Condividi Link del Board",
     "share": "Condividi",
     "copyLink": "Copia Link",
-    "copied": "Copiato!",
     "close": "Chiudi",
     "cashPaymentOnDelivery": "Pagamento in contanti alla consegna/servizio",
     "paymentReason": "Motivo del Pagamento",
@@ -1181,15 +1205,9 @@
     "emailOptional": "Email (opzionale)",
     "enterEmailForReminder": "Inserisci la tua email per il promemoria dell'appuntamento",
     "confirming": "Confermando...",
-    "confirm": "Conferma",
     "inProgress": "In Corso",
     "invalidActionDetails": "Dettagli azione non validi per il tipo:",
     "pending": "In Attesa",
-    "completed": "Completato",
-    "cancelled": "Annullato",
-    "confirmed": "Confermato",
-    "rejected": "Rifiutato",
-    "rescheduled": "Riprogrammato",
     "shareWhatsApp": "Condividi WhatsApp",
     "shareEmail": "Condividi Email",
     "rescheduleOrCancelPrompt": "Non puoi più partecipare? Fallo sapere:",
@@ -1204,8 +1222,6 @@
     "reason_familyemergency": "Emergenza familiare",
     "reason_other": "Altro",
     "enterYourReason": "Inserisci il tuo motivo",
-    "requestReschedule": "Richiedi Riprogrammazione",
-    "cancelAppointment": "Annulla Appuntamento",
     "cancelWarning": "L'attività vedrà l'appuntamento come annullato e potrebbe contattarti per chiarimenti.",
     "confirmCancel": "Conferma Annullamento",
     "appointments": "Appuntamenti",
@@ -1236,7 +1252,7 @@
     },
     "Actions": {
       "title": "Azioni Predefinite per Gestione Servizi Istantanea",
-      "subtitle": "Inserisci velocemente azioni predefinite da ogni dispositivo quando ricevi le email automatiche di richiesta servizio. Crea board di servizio trasparenti dove i clienti vedono esattamente cosa sta succedendo, cosa è già stato fatto, cosa serve fare e cosa viene dopo. Ogni processo diventa un servizio chiaro e trasparente.",
+      "subtitle": "Inserisci velocemente azioni predefinite da ogni dispositivo quando ricevi le email automatiche di richiesta servizio.",
       "domainLink": "domain.com/tuaattivita/s/board",
       "cards": {
         "serviceListing": {

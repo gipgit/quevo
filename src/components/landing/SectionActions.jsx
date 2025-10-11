@@ -4,6 +4,8 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { features, getFeatureData, getActionIconAndColor } from '@/lib/unified-action-system';
+import LandingIconAction from './LandingIconAction';
+import { getActionColorScheme } from '@/lib/action-color-schemes';
 // import ActionCardScreenshot from './ActionCardScreenshotNew';
 
 // Action-specific preview component
@@ -548,23 +550,10 @@ export default function SectionActions({ locale }) {
   // Use the passed locale prop instead of detecting from URL
   const currentLocale = ['it', 'en', 'es', 'de', 'fr'].includes(locale) ? locale : 'it';
 
-  // Map action types to gradient colors
+  // Map action types to gradient colors - using color2 from action-color-schemes
   const getActionGradientColor = (actionType) => {
-    const colorMap = {
-      'generic_message': '#3B82F6', // blue-500
-      'payment_request': '#10B981', // emerald-500
-      'appointment_scheduling': '#8B5CF6', // violet-500
-      'information_request': '#EAB308', // yellow-500
-      'document_download': '#0EA5E9', // sky-500
-      'signature_request': '#EF4444', // red-500
-      'approval_request': '#F97316', // orange-500
-      'feedback_request': '#06B6D4', // cyan-500
-      'milestone_update': '#14B8A6', // teal-500
-      'resource_link': '#22D3EE', // cyan-400
-      'checklist': '#6366F1', // indigo-500
-      'opt_in_request': '#84CC16', // lime-500
-    };
-    return colorMap[actionType] || '#3B82F6'; // default to blue
+    const colorScheme = getActionColorScheme(actionType);
+    return colorScheme.color2; // Use the middle color for gradient
   };
 
   // Auto-play slideshow
@@ -668,10 +657,10 @@ export default function SectionActions({ locale }) {
           </p>
         </div>
 
-        {/* Actions Cards Row - Responsive: Slider on mobile, Grid on desktop */}
-        <div className="mb-6 lg:mb-12">
+        {/* Actions and Preview Container - Flex on mobile for ordering */}
+        <div className="flex flex-col lg:block">
           {/* Mobile Slider (xs to md) */}
-          <div className="lg:hidden">
+          <div className="lg:hidden order-2 mb-6">
             <div className="flex items-center justify-center space-x-4">
               {/* Left Arrow */}
               <button
@@ -710,7 +699,7 @@ export default function SectionActions({ locale }) {
                     return (
                       <div
                         key={action.id}
-                        className="w-full flex-shrink-0 px-2"
+                        className="w-full flex-shrink-0 px-2 py-4"
                       >
                         <div className={`relative transition-all duration-300 cursor-pointer text-center ${
                           isActive ? 'scale-100 opacity-100' : 
@@ -719,9 +708,9 @@ export default function SectionActions({ locale }) {
                         onClick={() => handleActionSelect(index)}
                         >
                           {/* Action Icon with Circular Progress */}
-                          <div className="relative flex-shrink-0 w-16 h-16 mx-auto mb-3">
+                          <div className="relative flex-shrink-0 w-16 h-16 mx-auto mb-4">
                             {/* Circular Progress Background */}
-                            <svg className="absolute inset-0 w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
+                            <svg className="absolute inset-0 w-16 h-16 transform -rotate-90 z-20 pointer-events-none" viewBox="0 0 36 36">
                               <path
                                 className="text-transparent"
                                 stroke="currentColor"
@@ -734,10 +723,9 @@ export default function SectionActions({ locale }) {
                               {/* Progress Circle */}
                               {isActive && isAutoPlaying && (
                                 <path
-                                  className="text-blue-500 transition-all duration-50 ease-linear"
+                                  className="text-white transition-all duration-50 ease-linear"
                                   stroke="currentColor"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
+                                  strokeWidth="1.5"
                                   fill="none"
                                   strokeDasharray={`${progressPercentage}, 100`}
                                   d="M18 2.0845
@@ -746,34 +734,18 @@ export default function SectionActions({ locale }) {
                                 />
                               )}
                             </svg>
-                            {/* Icon Container */}
-                            <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
-                              getActionIconAndColor(action.key).color
-                            }`}>
-                              <img 
-                                src={getActionIconAndColor(action.key).icon}
-                                alt={localizedAction.title}
-                                className="w-8 h-8"
-                                onError={(e) => {
-                                  e.target.style.display = 'none';
-                                  e.target.nextSibling.style.display = 'block';
-                                }}
-                              />
-                              <svg 
-                                className="w-8 h-8 text-gray-600"
-                                style={{ display: 'none' }}
-                                fill="currentColor" 
-                                viewBox="0 0 20 20"
-                              >
-                                <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                              </svg>
-                            </div>
+                            {/* LandingIconAction */}
+                            <LandingIconAction 
+                              icon={action.iconComponent}
+                              {...getActionColorScheme(action.key)}
+                              size="md"
+                              isActive={isActive}
+                              className="absolute inset-0"
+                            />
                           </div>
                           
                           {/* Action Title - Bigger text */}
-                          <h3 className={`text-sm font-medium leading-tight ${
-                            isActive ? 'text-blue-700' : 'text-gray-900'
-                          }`}>
+                          <h3 className="text-base font-medium leading-tight text-gray-900">
                             {localizedAction.title}
                           </h3>
                         </div>
@@ -800,7 +772,7 @@ export default function SectionActions({ locale }) {
             </div>
 
             {/* Line Indicators */}
-            <div className="flex justify-center space-x-1 mt-2">
+            <div className="flex justify-center space-x-1 mt-6">
               {features.map((_, index) => (
                 <button
                   key={index}
@@ -814,7 +786,7 @@ export default function SectionActions({ locale }) {
           </div>
 
           {/* Desktop Grid (lg+) */}
-          <div className="hidden lg:block">
+          <div className="hidden lg:block mb-12">
             <div className="grid grid-cols-6 gap-2 max-w-7xl mx-auto">
             {features.map((action, index) => {
               const localizedAction = getLocalizedAction(action);
@@ -829,7 +801,7 @@ export default function SectionActions({ locale }) {
                       {/* Action Icon with Circular Progress */}
                       <div className="relative flex-shrink-0 w-16 h-16 mx-auto mb-2">
                         {/* Circular Progress Background */}
-                        <svg className="absolute inset-0 w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
+                        <svg className="absolute inset-0 w-16 h-16 transform -rotate-90 z-20 pointer-events-none" viewBox="0 0 36 36">
                           <path
                             className="text-transparent"
                             stroke="currentColor"
@@ -842,10 +814,9 @@ export default function SectionActions({ locale }) {
                           {/* Progress Circle */}
                           {index === currentActionIndex && isAutoPlaying && (
                             <path
-                              className="text-blue-500 transition-all duration-50 ease-linear"
+                              className="text-white transition-all duration-50 ease-linear"
                               stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
+                              strokeWidth="1.5"
                               fill="none"
                               strokeDasharray={`${progressPercentage}, 100`}
                               d="M18 2.0845
@@ -854,46 +825,29 @@ export default function SectionActions({ locale }) {
                             />
                           )}
                         </svg>
-                        {/* Icon Container */}
-                        <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
-                      getActionIconAndColor(action.key).color
-                    }`}>
-                      <img 
-                        src={getActionIconAndColor(action.key).icon}
-                        alt={localizedAction.title}
-                            className="w-8 h-8"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'block';
-                        }}
-                      />
-                      <svg 
-                            className="w-8 h-8 text-gray-600"
-                        style={{ display: 'none' }}
-                        fill="currentColor" 
-                        viewBox="0 0 20 20"
-                      >
-                        <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                      </svg>
-                        </div>
+                        {/* LandingIconAction */}
+                        <LandingIconAction 
+                          icon={action.iconComponent}
+                          {...getActionColorScheme(action.key)}
+                          size="md"
+                          isActive={index === currentActionIndex}
+                          className="absolute inset-0"
+                        />
                     </div>
                     
                     {/* Action Title - Centered, not bold */}
-                      <h3 className={`text-sm font-normal leading-tight ${
-                      index === currentActionIndex ? 'text-blue-700' : 'text-gray-900'
-                    }`}>
+                      <h3 className="text-sm font-normal leading-tight text-gray-900">
                       {localizedAction.title}
                     </h3>
                   </div>
                 </div>
               );
             })}
-            </div>
           </div>
         </div>
 
         {/* Action Card Screenshot Preview - Now full width below the actions */}
-        <div className="flex justify-center">
+          <div className="flex justify-center order-1 lg:order-none mb-6 lg:mb-0">
           <div 
             className="rounded-3xl p-2 lg:p-6 overflow-hidden max-w-4xl w-full transition-all duration-300 ease-linear border"
             style={{
@@ -919,9 +873,10 @@ export default function SectionActions({ locale }) {
               
               {/* Action Description - Moved below the screenshot */}
               <div className="text-center">
-                <p className="text-xs lg:text-sm text-gray-500 leading-tight max-w-2xl mx-auto">
+                <p className="text-xs lg:text-sm text-white leading-tight max-w-2xl mx-auto">
                   {localizedCurrentAction.description}
                 </p>
+              </div>
               </div>
             </div>
           </div>

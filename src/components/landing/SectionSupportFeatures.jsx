@@ -235,9 +235,20 @@ export default function SectionSupportFeatures({ locale }) {
 
   return (
     <section 
-      className="min-h-screen flex items-center relative overflow-hidden"
+      className="gradient-container min-h-screen flex items-center relative overflow-hidden"
       style={{ backgroundColor: 'rgb(17, 17, 17)' }}
     >
+      <style jsx>{`
+        .gradient-container {
+          --scale: 0.65;
+        }
+        @media (min-width: 768px) {
+          .gradient-container {
+            --scale: 1;
+          }
+        }
+      `}</style>
+
       {/* Gradient Layer 1 - Top Left - Cyan/Blue */}
       <div 
         className="absolute pointer-events-none"
@@ -246,10 +257,10 @@ export default function SectionSupportFeatures({ locale }) {
           filter: 'blur(80px)',
           borderRadius: '100%',
           opacity: 0.22,
-          height: '548px',
-          left: '-246px',
-          top: '-186px',
-          width: '658px',
+          height: 'calc(548px * var(--scale))',
+          left: 'calc(-246px * var(--scale))',
+          top: 'calc(-186px * var(--scale))',
+          width: 'calc(658px * var(--scale))',
           zIndex: 1
         }}
       ></div>
@@ -262,10 +273,10 @@ export default function SectionSupportFeatures({ locale }) {
           filter: 'blur(80px)',
           borderRadius: '100%',
           opacity: 0.18,
-          height: '548px',
-          right: '-86px',
-          bottom: '-100px',
-          width: '658px',
+          height: 'calc(548px * var(--scale))',
+          right: 'calc(-86px * var(--scale))',
+          bottom: 'calc(-100px * var(--scale))',
+          width: 'calc(658px * var(--scale))',
           zIndex: 1
         }}
       ></div>
@@ -277,11 +288,11 @@ export default function SectionSupportFeatures({ locale }) {
           background: 'radial-gradient(circle, rgb(168, 85, 247) 0%, rgb(147, 51, 234) 40%, transparent 100%)',
           filter: 'blur(100px)',
           opacity: 0.16,
-          height: '500px',
+          height: 'calc(500px * var(--scale))',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '900px',
+          width: 'calc(900px * var(--scale))',
           zIndex: 1
         }}
       ></div>

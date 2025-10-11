@@ -559,7 +559,6 @@
     "availableQuotationDescription": "Allow customers to request online quotations",
     "yes": "Yes",
     "no": "No",
-    "editService": "Edit Service",
     "basicInformation": "Basic Information",
     "buffer": "Buffer",
     "availableForBooking": "Available for Booking",
@@ -574,20 +573,15 @@
     "generatingImage": "Generating...",
     "aiImageError": "Failed to generate image. Please try again.",
     "aiImageRateLimitError": "AI image generation rate limit exceeded. You can generate {count} images per week. Next refill in {days} days.",
-    "addItem": "Add Item",
-    "addQuestion": "Add Question",
-    "addRequirement": "Add Requirement",
     "updateSuccess": "Service Updated",
     "updateSuccessMessage": "Service updated successfully!",
     "updateError": "Update Failed",
     "updateErrorMessage": "An error occurred while updating the service.",
     "saving": "Saving...",
-    "save": "Save",
     "textarea": "Text Area",
     "select": "Select",
     "checkbox": "Checkbox",
     "type": "Type",
-    "optional": "Optional",
     "requirementsText": "Requirements Text",
     "events": "Events",
     "addEvent": "Add Event",
@@ -631,15 +625,42 @@
       "open": "Open"
     },
     "cards": {
-      "profile": { "title": "Profile", "description": "Edit your business profile, links, settings, and appearance." },
-      "services": { "title": "Services", "description": "Manage your services." },
-      "serviceRequests": { "title": "Service Requests", "description": "View and manage service requests." },
-      "serviceBoards": { "title": "Service Boards", "description": "Manage your service boards." },
-      "appointments": { "title": "Appointments", "description": "View and manage appointments." },
-      "clients": { "title": "Clients", "description": "Manage your clients and send mass email campaigns." },
-      "supportRequests": { "title": "Support Requests", "description": "View and manage support requests." },
-      "products": { "title": "Products", "description": "Manage your products." },
-      "promotions": { "title": "Promotions", "description": "Create and manage promotions." }
+      "profile": {
+        "title": "Profile",
+        "description": "Edit your business profile, links, settings, and appearance."
+      },
+      "services": {
+        "title": "Services",
+        "description": "Manage your services."
+      },
+      "serviceRequests": {
+        "title": "Service Requests",
+        "description": "View and manage service requests."
+      },
+      "serviceBoards": {
+        "title": "Service Boards",
+        "description": "Manage your service boards."
+      },
+      "appointments": {
+        "title": "Appointments",
+        "description": "View and manage appointments."
+      },
+      "clients": {
+        "title": "Clients",
+        "description": "Manage your clients and send mass email campaigns."
+      },
+      "supportRequests": {
+        "title": "Support Requests",
+        "description": "View and manage support requests."
+      },
+      "products": {
+        "title": "Products",
+        "description": "Manage your products."
+      },
+      "promotions": {
+        "title": "Promotions",
+        "description": "Create and manage promotions."
+      }
     },
     "noBusiness": "No business selected.",
     "createBusiness": "Create Business",
@@ -710,7 +731,7 @@
     "nextInvoice": "Next Invoice"
   },
   "marketing": {
-    "title": "Social Media Marketing",
+    "title": "Title",
     "subtitle": "Generate AI-powered social media content for your business",
     "generateContent": "Generate Content",
     "generating": "Generating...",
@@ -739,7 +760,6 @@
     "fetchError": "Failed to fetch services",
     "selectPlatforms": "Select Social Media Platforms",
     "generatedContent": "Generated Content",
-    "title": "Title",
     "description": "Description",
     "hashtags": "Hashtags",
     "callToAction": "Call to Action",
@@ -1204,7 +1224,6 @@
     "upcomingAppointment": "Upcoming Appointment",
     "scanToAccessBoard": "Scan to access this board",
     "scanQrDescription": "Scan this QR code to quickly access this service board on your mobile device",
-    "copy": "Copy",
     "open": "Open",
     "openLink": "Open Link",
     "addAction": "Add Action",
@@ -1222,7 +1241,6 @@
     "estimatedPrice": "Estimated price based on initial request",
     "questionResponses": "Question Responses",
     "requirementsConfirmation": "Requirements Confirmation",
-    "confirmed": "Confirmed",
     "notConfirmed": "Not Confirmed",
     "tryAgain": "Try again",
     "errorLoadingActions": "Error loading actions",
@@ -1247,7 +1265,6 @@
     "shareBoardLink": "Share Board Link",
     "share": "Share",
     "copyLink": "Copy Link",
-    "copied": "Copied!",
     "close": "Close",
     "cashPaymentOnDelivery": "Cash payment on delivery/service",
     "paymentReason": "Payment Reason",
@@ -1264,15 +1281,9 @@
     "emailOptional": "Email (optional)",
     "enterEmailForReminder": "Enter your email for appointment reminder",
     "confirming": "Confirming...",
-    "confirm": "Confirm",
     "inProgress": "In Progress",
     "invalidActionDetails": "Invalid action details for type:",
     "pending": "Pending",
-    "completed": "Completed",
-    "cancelled": "Cancelled",
-    "confirmed": "Confirmed",
-    "rejected": "Rejected",
-    "rescheduled": "Rescheduled",
     "shareWhatsApp": "Share WhatsApp",
     "shareEmail": "Share Email",
     "rescheduleOrCancelPrompt": "If you will not be able to go, let us know:",
@@ -1286,8 +1297,6 @@
     "reason_familyemergency": "Family emergency",
     "reason_other": "Other",
     "enterYourReason": "Enter your reason",
-    "requestReschedule": "Request Reschedule",
-    "cancelAppointment": "Cancel Appointment",
     "cancelWarning": "The business will see the appointment as cancelled and may contact you for clarification.",
     "confirmCancel": "Confirm Cancel",
     "optionalReasonPrompt": "If you want, you can provide a reason for your request:",
@@ -1336,7 +1345,7 @@
     },
     "Actions": {
       "title": "Predefined Actions for Instant Service Management",
-      "subtitle": "Quick-insert predefined actions from any device when you receive automatic service request emails. Create transparent service boards where customers see exactly what's happening, what's been done, what needs to be done, and what comes next. Every process becomes a clear and transparent service.",
+      "subtitle": "Quick-insert predefined actions from any device when you receive automatic service request emails.",
       "domainLink": "domain.com/yourbusiness/s/board",
       "cards": {
         "serviceListing": {
